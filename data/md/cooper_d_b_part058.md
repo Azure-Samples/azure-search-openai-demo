@@ -1,0 +1,8974 @@
+# cooper_d_b_part058
+
+## Page 1
+
+12/1/72
+
+AIRIEL
+
+b6
+
+b7C
+
+TO :
+
+FROM:
+
+SUBJECT:
+
+SAC, SEATTLE
+
+SAC, MINNEAPOLIS (164-73) (P)
+
+NORJAK
+
+(Seattle Files 164-81)
+
+b6
+
+b7C
+
+00:
+
+SEATTLE
+
+(Seattle Files 164-129)
+
+Re Seattle airtel to Bureau, 11/8/72, concerning
+
+3-53
+
+164-81-741
+
+Enclosed for Seattle
+
+are two photographs of BRADLEY
+
+E. AYERS.
+
+On 11/30/72, & photograph of
+
+was displayed to
+
+Northwest Airlines Stewardess
+
+to
+
+and on 12/1/72,
+
+who advised that he in no manner resembled
+
+the Unknown Subject involved in Norjak.
+
+BRADLEY, EARL AYERS
+
+AYERS was suggested to the Minneapolis Office as
+
+a possible suspect by Washington County, Minnesota Sheriff
+
+ED WESTPHAL, Stillwater, Minnesota. WESTPHAL had a confidential
+
+Seattle (164-81) (Enc. 2)
+
+1 64-81-4165
+
+(2 - 164-129)
+
+SEARCHED
+
+_ INDEKED....
+
+2 - Minneapolis
+
+R#G: kao
+
+DEC4
+
+1972
+
+_FBI - SEATILE
+
+(6)
+
+DB Cooper-24029
+
+b6
+
+b7C
+
+b7C
+
+---
+
+## Page 2
+
+MP 164-73
+
+source, who considered AYERS to be the type of individual
+
+who could have perpetrated the Norjak hijacking.
+
+AYERS is described as follows:
+
+Name
+
+Residence
+
+Date of Birth
+
+Height
+
+Weight
+
+Date appointed
+
+Occupation
+
+BRADLEY E. AYERS
+
+Route #1, Lake Elmo, Minnesota
+
+March
+
+7, 1935
+
+- 5' 8"
+
+160 Ibs.
+
+March, 1970
+
+Commercial Pilot;
+
+Bradley E. and Lee Ayers
+
+Insurance Company,
+
+2933 Manning Avenue North
+
+Lake Elmo, Minnesota
+
+AYERS had been considered a suspect by the
+
+Ramsey County Sheriff's Office, St. Paul, Minnesota,
+
+• Photographs taken during the
+
+course of this investigacion were displayed to Northwest
+
+Airlines stewardesses
+
+Jon 11/30/72 and
+
+on 12/1/72; and both stewardesses advised
+
+AVERS in no way resembled the Unknown Subject involved in
+
+Horjak.
+
+LEAD
+
+b3
+
+b6
+
+b70
+
+SEATTLE
+
+AT SEATILE, WASHINGTON
+
+will display photographs of AYERS as deemed
+
+appropriate to witnesses involved in Norjak.
+
+ARMED AND DANGEROUS.
+
+-2-
+
+DB Cooper-24030
+
+---
+
+## Page 3
+
+.PD-36 (Rov, 5-22-64)
+
+. "
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date: 12/1/72
+
+(Type in plaintext or code)
+
+(Priority)
+
+TO:
+
+SUBJECT:
+
+SAC, SEATTLE
+
+MINNEAPOLIS (164-73) (P)
+
+NORJAK
+
+(Seattle File: 164-81)
+
+b6
+
+B7C
+
+00: SEATTLE
+
+(Seattle File: 164-129)
+
+Re Seattle airtel to Bureau, 11/8/72, concerning
+
++64-81-196353766
+
+b7C
+
+Enclosed for Seattle are two photographs of BRADLEY
+
+E. AYERS.
+
+on 11/30/72, a photograph of
+
+was displayed to
+
+Northwest Airlines Stewardess
+
+and on 12/1/72,
+
+to
+
+who advised that he in no manner resembled
+
+the Unknown Subject involved in Norjak.
+
+Sucl
+
+54Y
+
+1 06
+
+b7C
+
+Sus:
+
+BRADLEY EARL AYERS
+
+AYERS was suggested
+
+to the Minneapolis Office as
+
+a possiblé suspect by Washington County, Minnesota Sheriff
+
+ED WESTPHAL, Stillwater,
+
+"Minnesota.
+
+WESTPHAL, had
+
+a confidential
+
+- Seattle (164-81) (Enc.
+
+(2- 164-129)
+
+2 - Minneapolis
+
+RWG: kao
+
+Approved:
+
+(6)
+
+2)
+
+164-81-3465
+
+SEARCHED
+
+..INDEXEO......
+
+SERIALZER
+
+.FILED....
+
+DEC4
+
+1972
+
+Sent
+
+Special Agent in Charge
+
+U,S.Gover
+
+Sub SyX
+
+b6
+
+b7C
+
+DB Cooper-24027
+
+---
+
+## Page 4
+
+= =
+
+4=
+
+MP 164-73
+
+source, who considered AYERS to be the type of individual
+
+who could have perpetrated the Norjak hijacking.
+
+AYERS is described as follows:
+
+Name
+
+Residence
+
+Date of Birth
+
+Height
+
+Weight
+
+Date appointed
+
+Occupation
+
+BRADLEY E. AYERS
+
+Route #1, Lake Elmo, Minnesota
+
+March 7, 1935
+
+5' 8"
+
+.160 lbs.
+
+March, 1970
+
+Commercial Pilot;
+
+Bradley E. and Lee Ayers
+
+Insurance Company,
+
+2933 Manning Avenue North
+
+Lake Elmo, Minnesota
+
+AYERS had been considered a suspect by the
+
+Ramsey County Sheriff's Office, St. Paul, Minnesota,
+
+• Photographs taken during
+
+the
+
+course of this investigation were displayed to Northwest
+
+Airlines stewardesses
+
+on 11/30/72 and
+
+on 12/1/72; and both stewardesses advised
+
+AYERS in no way resembled the Unknown Subject involved in
+
+Norjak.
+
+LEAD
+
+b3
+
+B6
+
+b7c
+
+SEATTLE
+
+AT SEATTLE,
+
+WASHINGTON
+
+Will display photographs of AYERS as deemed
+
+appropriate to witnesses involved in Norjak.
+
+ARMED. AND DANGEROUS.
+
+- 2 -
+
+DB Cooper-24028
+
+---
+
+## Page 5
+
+FD-340 (REV. 6-24-55)
+
+353
+
+File Ho. /64-81 SUB
+
+Date Received_
+
+12/4/22
+
+From.
+
+MINNEAPOLIS
+
+(NAME DE CONTRIBUTOR)
+
+(ADDRESS DE CONTRIBUTOR)
+
+b61
+
+b7C
+
+(NAME OF SPECIAL AGENT).
+
+To Be Returned El Yes
+
+Receipt given • Yes
+
+I No
+
+Description:
+
+(2) pHOTO's Of BrIoLEy
+
+E. AYERS
+
+See Ser. Y165
+
+DB Cooper-24033
+
+b7C
+
+54 Y
+
+---
+
+## Page 6
+
+DB Cooper-24034
+
+---
+
+## Page 7
+
+164-73 BR
+
+Bradly E. AYERS
+
+6343103N10
+
+58%
+
+150
+
+2
+
+b6
+
+b7C
+
+Sub 544
+
+POLAROID
+
+40103410
+
+164-81-140
+
+353
+
++14473974
+
+BradlyC: AYERS
+
+58%
+
+150.
+
+5
+
+b7C
+
+Suck 544
+
+POLAROID
+
+DB Cooper-24035
+
+353
+
+16V8/1a
+
+---
+
+## Page 8
+
+TO
+
+:
+
+FROM :
+
+SUBJECT:
+
+"OPTIONAL FORM NO. 1
+
+AY 1962 EDITIOL
+
+GSA FPMR (41 CFR) 101-11.6
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAG, MINNEAPOLIS (164-73) (P)
+
+SA
+
+NORJAK
+
+DATE: 11/7/72
+
+b6
+
+b7c
+
+RE: BRADLEY E. AYERS
+
+2933 Manning Avenue North, Lake Elmo, Minnesota, could
+
+possibly be considered a suspect in this case.
+
+AYERS
+
+formerly served with the CIA and has a backeround of
+
+AYERS is described as follows:
+
+Name
+
+Residence
+
+Date of Birth
+
+Height
+
+Weight
+
+Date appointed
+
+Occupation
+
+BRADLEY E. AYERS
+
+Route #1,
+
+Lake Elmo, Minnesota
+
+March /, 1934
+
+160 pounds
+
+March, 1970
+
+Commercial pilot;
+
+Bradley E. and Lee Ayers
+
+Insurance Company
+
+2933 Manning Avenue North
+
+Lake Elmo, Minnesota
+
+Ramsey County Sheriff's Office,
+
+advised that in September.
+
+1971. AYERS was a very strong
+
+b3
+
+b6
+
+b7C
+
+5010-108-07
+
+• strong case against AYERS but when AYERS was
+
+to appear in a show-up to be witnessed by the victim, he
+
+left the area and was later found to be in the State of
+
+Florida.
+
+stated that investigation fairly well
+
+established that AYERS was in Florida in November, 1971, when
+
+NORJAK occurred.
+
+However, positive proof has not been
+
+obtained as yet.
+
+A good photograph and a very detailed resume of the
+
+County Prosecutor's office.
+
+Involving AYERS" is in the possession of the Ramsey 414-4181
+
+assistant prosecuting attorney
+
+The case was beine handled by
+
+A back-
+
+ground investigation was conducted concernig
+
+AYERS,
+
+who apparently
+
+b6
+
+b7C
+
+participated in the Bay of Pigs Invasion and
+
+activities.
+
+SEARCHED
+
+2'- Minneapolis
+
+Pout
+
+SERJALIZED.
+
+RWG:mjt
+
+L(2)
+
+200y
+
+NOV
+
+-_FILED.
+
+8 1972
+
+Bie U.S. Savings Bands Regularts on the list
+
+DB Cooper-24031
+
+iner
+
+b6
+
+b7C
+
+41570155
+
+---
+
+## Page 9
+
+MP 164-73
+
+the file in possession of the Ransey County Prosecutor's
+
+office.
+
+LEAD
+
+MINNEAPOLIS DIVISION
+
+AI RAMSEY COUNTY, MINNESOTA
+
+Will obtain photograph of AYERS and display to
+
+Northwestern Airlines stewardesses
+
+b7C
+
+stewardesses.
+
+Ill also shoy phote, of
+
+_ to above
+
+noco or
+
+is
+
+enclosed in serial 415.
+
+savise shuff of resute.
+
+2*
+
+-unar DB Cooper-24032
+
+"*""
+
+---
+
+## Page 10
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI / PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790-02
+
+Total Deleted Page (s) = 4
+
+Page 33 • Duplicate;
+
+Page 34 • Duplicate;
+
+Page 60 ~ Duplicate;
+
+Page 61 • Duplicate;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+X
+
+Deleted Page (s)
+
+X
+
+No Duplication Fee
+
+For this Page
+
+X
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 11
+
+4/12/72
+
+70:
+
+SAC, STAT. Li (164-181)
+
+ZAC, DALLAS (164-101) (0)
+
+MOILJAK
+
+b6
+
+b7C
+
+Vallas alrtel to Scattle, dated 214/72 and
+
+kansas city airtol to soattle, 3/30/72.
+
+is get forth
+
+in relerenced ball atriol, personnel illus of lane
+
+international Alriines contain
+
+photagraph.ofl
+
+сn. 4/4/72,
+
+Branilt International Airlines, advised
+
+that personnel files
+
+ate
+
+10
+
+LOnger
+
+available for either
+
+she noted that
+
+f:les of former esployees aro maintained only for one year and
+
+thereafter only an index card ia kopi.
+
+The following intorea-
+
+tion is all that 19 avilable conceroing
+
+b6
+
+b7C
+
+16
+
+b7C
+
+ГОВ:
+
+social security Nisher:
+
+Imployed:
+
+4/5/65 AB, 8
+
+resigned 7/27/69
+
+(Card shors resigned for personal
+
+reapons but there la a notation
+
+Marital litetus:
+
+2 - Scattle
+
+• Kansas City (164-80)
+
+Los Angeles
+
+2 ~ IRllAN
+
+EEJ:gal
+
+(8)
+
+164-6
+
+SERIALIZED.
+
+__FILED
+
+17 APR 171372
+
+LES
+
+I.ORS
+
+b7C
+
+DB Cooper-24036
+
+---
+
+## Page 12
+
+DL 164-191
+
+b6
+
+b7C
+
+DOB.
+
+Doc in our sey trumber:
+
+Employers
+
+...
+
+Roeldanco:
+
+10/3/88,
+
+raalgned 7/19/8
+
+71l0 slows for personal reasons
+
+00.4/1/72,1
+
+D. 9. Postal
+
+Inspector's offico, Dallas, Texas, adviaid that port
+
+01f10e files contale so record of a channe of address
+
+stated that contact with the
+
+cartiar on the route shlch covera the above addrous
+
+revealed that be has dallpared that route for sever
+
+years and does not focall
+
+as barias livod thare.
+
+No further setion la being taken by Dallas
+
+CORCOrDIBE SUNDACt
+
+b6
+
+b7C
+
+b7C
+
+• 2.
+
+DB Cooper-24037
+
+---
+
+## Page 13
+
+TO
+
+TOMAL FORM NO
+
+Y 1861 LITIO
+
+OSA MAMA (11 C7X) 101-11.6
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, LOS ANGELES (164-497)
+
+DATE: 4/13/72
+
+FROM :
+
+SUBJECT:
+
+NORJAK
+
+Re Los Angeles letter to Seattle 3/20/72,
+
+enclosing an anonymous letter with a retouched news-
+
+paper picture.
+
+Seattle is unable to identify letter forwarded
+
+to Seattle with any letter received at Seattle. Seattle
+
+does not feel that additional investigation concerning
+
+this matter is warranted in view of the nature of the
+
+letter.
+
+O= Los Angeles
+
+Seattle
+
+JSD :k1b
+
+(5)
+
+164-477373
+
+SEARCHED
+
+ERIALIZE,
+
+_INDEXED.
+
+13 APR 1 7 1972
+
+GeL&s
+
+b6
+
+b7C
+
+8010+104
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-24038
+
+---
+
+## Page 14
+
+MR 010 OM PLAIN
+
+10:45 PM CST NITEL 4-12-72 IJS
+
+TO SEATTLE
+
+LOS ANGELES
+
+FROM OMAHA
+
+149-179
+
+4P
+
+b6
+
+b7C
+
+NORJAK.
+
+RE
+
+INVESTIGATION!
+
+DES MOINES, IOWA, REFLECIS
+
+WAS
+
+HMPLOYED AT
+
+DES MOINES, IOWA, FOR
+
+SEVERAL YEARS UP TO NINETEEN SEVENTY AT WHICH TIME ME WAS
+
+DISMISSED IN VIEW OF
+
+RECORDS, VA HOSPITAL, DES MOINES, IOWA REFLECT
+
+HAS RECORD OF
+
+b6
+
+b6
+
+b7C
+
+BORN
+
+TREATMENT
+
+HE LISTED SSAN
+
+_AND U.S. ARMY SERIAL NUMBER
+
+AND VA CLAIM NUMBER
+
+HE WAS
+
+END PAGE ONE
+
+164-497-350
+
+I SEARCHED. INDEXED.
+
+SERIALIZED. ZA FIELE
+
+30
+
+2
+
+b6
+
+b7C
+
+Rich
+
+DB Cooper-24039
+
+---
+
+## Page 15
+
+PAGEC TWO
+
+HE WAS
+
+RELEASED SAME DATE AND RECORDS DO NOT REFLECT
+
+CALLED HOSPIIAL APRIL THREE LASI AND APPEARED AT
+
+HOSPITAL SAME DATE BUT LEFI HOSPITAL WITHOUT TREATMENT AND
+
+DID. NOT RETURN. HOSPITAL RECORDS REFLECT
+
+b7C
+
+CALIFORNIA.
+
+RECORDS,
+
+DES NINES,
+
+IOWA, REFLECIL
+
+APPEARED
+
+MARCH IWENTYEIGHT LAST
+
+AND PURCHASED
+
+THREE THOUSANDOXXX TWO HUNDRED FIFTYONE DOLLARS, SIXTY
+
+EIGHT CENTS CASHIERS CHECK WITH A THREE THOUSAND SIX HUNDRED
+
+FIFTYONE DOLLARS, SIXTYEIGHT CENTS CASHIERS CHECK DATED MARCH
+
+FOURTEEN LAST, NUMBER
+
+DRAWN ON THE LOS ANGELES INTERNATIONAL AIRPORT BRANCH
+
+b6
+
+b7C
+
+OF
+
+AND RECEIVED THE FOUR HUNDRED DOLLAR DIFFERENCE IN
+
+CASH. HE REAPPEARED AT
+
+APRIL THREE LAST AND PURCHASED A
+
+THREE THOUSAND DOLLAR CASHIERS CHECK WITH ABOVE DESCRIBED THREE
+
+THOUSAND TWO HUNDRED FIFTYONE DOLLARS, SIXTYEIGHT CENTS CASHIERS
+
+END PAGE TWO
+
+DB Cooper-24040
+
+---
+
+## Page 16
+
+:
+
+PAGI, THREE
+
+CHECK, RECEIVING TWO HUNDRED FIFTYONE DOLLARS, SIXTYEIGHI
+
+CENTS DIFFERENCE IN CASH. 53 5-53.3,559 ?--1
+
+EMPLOYEES AS TO PURPOSE OF CHECKS. BANK HAS NO RECORD OF
+
+PRESENT OR PAST SAVINGS OR CHECKING ACCOUNTS, OR SAFETY DEPOSIT
+
+BOXES IN
+
+NAME.
+
+ON APRIL TWELVE INSTANT
+
+DES
+
+MOINES, IOWA ADVISED
+
+ON APRIL
+
+THREE LAST AND
+
+PAID TUENTYDOLLARS FEE IN CASH.
+
+REFUSED TO DISCUSS
+
+AS QUOTE A TWENTY DOLLAR JOB UNQUOTE AND IHAT
+
+PERSONS INTERVIEVED AT DES MOINES,
+
+IOWA, ADVISED
+
+HAS
+
+BUT THEY ARE UNAWARE
+
+OF
+
+NO VERIFICATION AT DES MOINES
+
+OF BACKGROUND AS PARATROOPER BUT |
+
+SUPPOSEDLY PREVIOUSLY
+
+HAD PILOT'S LICENSE.
+
+INVESTIGATION AT DES MOINES FAILS TO PLACE
+
+IN DES
+
+MOINES PREVIOUS TO FIRST OF MARCH, LAST.
+
+LOS ANGELES
+
+CALIFORNIA. CONDUCT INVESTIGATION
+
+TO ESTABLIS
+
+_WHEREABOUTS ON NOVEMBER TWENTYFOUR NINETEEN
+
+SEVENTYONE, AND TO ESTABLISH WHETHER HE HAS À LARGE AMOUNT OF
+
+MONEY.
+
+END PAGE THREE
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-24041
+
+---
+
+## Page 17
+
+PAGE] FOUR
+
+AT LOS ANGELES INTERNATIONAL AIRPORT. WILL CONTACI
+
+REPRESENTATIVE OF LOS ANGELES
+
+AND ASCERTAIN|
+
+FORM OF PAYMENT FOR CASHIERS CHECK DESCRIBED PREVIOUSLY.
+
+AT FOLLOWS ALONG WITH PHOTOGRAPHS OF
+
+ANGELES, LAS VEGAS, AND SEATTLE DIVISIONS.
+
+AIR MAIL COPY FURNISHED TO LAS BEGAS. ARMED AND
+
+DANGEROUS. P.
+
+END
+
+b6
+
+b7C
+
+FOR LOS
+
+DB Cooper-24042
+
+---
+
+## Page 18
+
+-p*.
+
+CEE
+
+CENTS DIFFERENCE IN CASH. HE MADE NO STATEMENTST TO BANK
+
+OK GA
+
+OK GA AHEAD WITH SECOND TEL
+
+DB Cooper-24043
+
+---
+
+## Page 19
+
+FD-36 (Rev, 5-22-64)
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date:
+
+.4/12/72
+
+(Type in plaintext or code)
+
+AIRMAIL
+
+(Priority)
+
+TO:
+
+SAC, LOS ANGELES
+
+SAC, SACRAMENIO (164-50) (P)
+
+SUBJECI: NORJAK
+
+Re Las Vegas nitel to Seattle; ET AL, 4/11/72.
+
+Enclosed for Seattle and. Los Angeles is one copy
+
+of California driver's license
+
+AI SACRAMENTO, CALIFORNIA:
+
+California Department of Motor Vehicles,
+
+furnished the enclosed
+
+copt graph of one a deiver's licexse
+
+which bears
+
+California.
+
+is described as a white male; born
+
+6' 1"; 160 pounds; brown hair; brown eyes; marital status,
+
+Previous license held in the State of Iowa.
+
+2. Los Angeles (Enc. 1) \N.
+
+2--Seattle (164-81)
+
+2--Sacramento
+
+PRH: alt
+
+(6)
+
+b6
+
+bIC
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+. pu!"
+
+1A37
+
+164-197-373
+
+SERIALIZED
+
+LL INDEXED
+
+- FILED.
+
+12:41
+
+LES
+
+b6
+
+b7C
+
+Approved:
+
+Sent
+
+Special Agent in Charge
+
+_ Mi
+
+Per -
+
+U.5. GOVERNMENT FRINTING OFFICE: 1971-413-135
+
+DB Cooper-24044
+
+---
+
+## Page 20
+
+4/12/72
+
+AIRTEL
+
+AIRMAIL
+
+REGISTERED
+
+TO
+
+:
+
+SAC, SEATTLE (164-31)
+
+FROM
+
+: SAC, DENVER (104-93) (P)
+
+SUBJECT: NORJAK
+
+00: Seattle
+
+Re Pittsburgh airtet to Seattle, 3/2/72.
+
+Re: Suspect
+
+b6
+
+b7C
+
+11/24/41, have been completely negative.
+
+Places listed by
+
+on this daily sales repor
+
+re either ficitious or the party Tisted as contacted '
+
+at existing facilities cannot be determined as
+
+existing.
+
+Jis not known to management of any of
+
+existing establishments listed by him on daily sales roport.
+
+If a photograph for
+
+Jis available, it is
+
+suggested it be forwarded to the Denver Division for display
+
+to management personnel of existing business establishments
+
+listed by
+
+on daily sales report.
+
+- Seattle (AM) (RM)
+
+1) - Los Angeles (164-497) (Inio.) (AM) (RM
+
+1 - San Francisco (164-220) (Info.)
+
+(AM) (RM)
+
+1 ~ Sacramento (164-50) (Info.) (AM) (R$)
+
+2 - Denver
+
+AWB/jrd
+
+1
+
+b6
+
+b7C
+
+b7C
+
+14L - 4/41
+
+INDEXE OL
+
+SERIALIZED. _FILED.
+
+LAPD 1Z 1972
+
+BELES
+
+TORS
+
+b6
+
+b7C
+
+DB Cooper-24045
+
+---
+
+## Page 21
+
+DN #164-98
+
+If not previously done, it is suggested the office
+
+of origin consider displaying
+
+Iphotograph to one or
+
+more witnesses of captioned hijacking for possible identifica-
+
+FD-302s follow.
+
+b6
+
+b7C
+
+-2 -
+
+DB Cooper-24046
+
+---
+
+## Page 22
+
+4/12/72
+
+PLAINTEXT
+
+TELETYPE
+
+NITEL
+
+TO:
+
+SEATTLE
+
+LOS ANGELES
+
+FROM:
+
+OAHA (149-179)
+
+NORJAK.
+
+RE
+
+INVESTIGATION,
+
+DES MOINGS, JONA, REFLECTS
+
+WAS
+
+EMPLOYSD AT
+
+DES MOINES, IONA, FOR
+
+SEVERAL YEARS UP TO NINETEEN SEVENTY AT WHICH TIME HE WAS
+
+DISMISSED IN VILN OF
+
+RECORDS, VA HOSPITAL, DES MOINES, IOWA REFLECT
+
+67C
+
+b6
+
+b7C
+
+BORN
+
+TREATHENT
+
+HAS RECORD OF
+
+HE LISTED SSAN
+
+AND U. S. ARMY SERIAL NUMBER
+
+AND VA CLAIM NUMBER
+
+HE HAS
+
+Los Angeles
+
+IJH: Ame
+
+(2)
+
+(164-60) (Ai)
+
+164-489-3770
+
+SEARCHEDA
+
+SERIALIZED,
+
+_INDEXEL
+
+_FILED.
+
+$ 10
+
+723
+
+ELES
+
+b7C
+
+DB Cooper-24047
+
+---
+
+## Page 23
+
+OM 149-179
+
+PAGE THO
+
+HE WAS
+
+RELEASED SAME DATE AND RECORDS DO NOT REFLECT
+
+CALLED HOSPITAL APRIL THREE LAST AND APPEARED AT
+
+HOSPITAL SAME DATE BUT LEFT HOSPITAL WITHOUT TREATMENT AND
+
+DID NOT RETUEN, HOSPITAL RECORDS REFLECT|
+
+b6
+
+b7C
+
+CALIFORNIA.
+
+RECORDS,
+
+DES MOINES,
+
+IOHA, RETLECT
+
+APPEARED
+
+MARCH TWENTYEIGHT, LAST
+
+AND PURCHASED TEREE THOUSAND TWO HUNDRED FIFTYONE DOLLARS, SIXTY
+
+EIGHT CENTS CASHIERS CHECK WITH A THREE THOUSAND SIX HUNDRED
+
+FIFTYONE DOLLARS, SIXTYEIGIT CANTS CASHIERS CHECK DATED MARCH
+
+FOURTEEN LAST, NUMBER
+
+DRAWN ON THE LOS ANGELIS INTERNATIONAL AIRPORT BRANCH
+
+b7C
+
+OF
+
+AND RECEIVED THE FOUR HUNDRED DOLLAR DIFFERENCE IN
+
+CASH. HE REAPPEARED AT
+
+APRIL THREE LAST AND PURCHASED A
+
+THREE THOUSAND DOLLAR CASHIERS CHECK WITH ABOVE DESCRIBED THREE
+
+THOUSAND THO HUNDRED FIFTYONE DOLLARS, SIXTYEIGHT CENTS CASHIERS
+
+DB Cooper-24048
+
+---
+
+## Page 24
+
+ОЦ 149-179
+
+PAGE THREE
+
+CHACK, RECEIVING THO HUNDRED FIFTYONE DOLLARS, SIXTYEIGHT
+
+CENTS DIFFERENCE IN CASH. HE MADE NO STATEHENTS TO BANK
+
+EMPLOYEES AS TO PURPOSE OF CHECKS, BANK HAS NO RECORD OF
+
+PRESENT OR PAST SAVINGS OR CHECKING ACCOUNTS, OR SAPETY DEPOSIT
+
+BOXES IN
+
+NAME:
+
+ON APRIL TWELVE INSTAKTI
+
+DES
+
+MOINES, JONA ADVISED
+
+ON APRIL
+
+THREE LAST AHD
+
+PAID TWENTY DOLLARS FEE IN CASH.
+
+REFUSED TO DISCUSS
+
+AS QUOTE A THENTY DOLLAR JOB UNQUOTE AND THAT
+
+PERSONS INTERVIEWED AT DES MOINES,
+
+IOMA, ADVISED
+
+I HAS_
+
+BUT THEY ARE UNAWARE
+
+OF
+
+NO VERIFICATION AT DES MOINES
+
+OF BACKGROUND AS PARATROOPER BUT
+
+SUPPOSEDLY PREVIOUSLY
+
+HAD PILOT'S LICENSE.
+
+INVESTIGATION AT DES MOINES FAILS TO PLACE
+
+IN DES
+
+MOINES PREVIOUS TO FIRST OF MARCH, LAST.
+
+LOS ANGELES
+
+CALIFORNIA. CONDUCT INVESTI-
+
+GATION TO ESTABLISH
+
+WHEREABOUTS ON NOVEMBER THENTY-
+
+b6
+
+b7C
+
+• b6
+
+b7C
+
+b6
+
+b70
+
+b7C
+
+DB Cooper-24049
+
+---
+
+## Page 25
+
+OM 149-179
+
+PAGE FOUR
+
+FOUR, NINETREN SEVENTYONE, AND TO ESTABLISE WHETHER HE HAS A
+
+LARGE AMOUNT OF MONEY.
+
+AT LOS ANGELES INTERNATIONAL AIRPORT. MILI, CONTACT
+
+REPRESINTATIVE OF LOS ANGELES
+
+AND ASCERTAIN
+
+FORM OF PAYMENT FOR CASHIERS CHECK DESCRIBED PREVIOUSLY.
+
+AT FOLLONS ALONG WITH PHOTOGRAPHS OF
+
+FOR LOS
+
+ANGELES, LAS VEGAS, AND SEATTLE DIVISIONS.
+
+AIR MALE COPY FURNISHED TO LAS VEGAS. ARMOD AND
+
+DANGEROUS. P.
+
+b6
+
+67C
+
+DB Cooper-24050
+
+---
+
+## Page 26
+
+-=..
+
+TO
+
+:
+
+FROM :
+
+SUBJECT:
+
+OPTIONAL FORM NO, 1
+
+AY 10EZ EDITION
+
+GSA FPMR (1I CF7) 501-11.6
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, LOS ANGELES (164-497)
+
+DATE: 4/18/72
+
+SA
+
+NORJAK
+
+00: Seattle
+
+Re Salt Lake City telcall to Los Angeles, today.
+
+Resident Agent
+
+_ Cedar City, Utan, tere-
+
+phonically contacted the writer and advised that their
+
+Office
+
+that his parents in los engeles,
+
+stated
+
+california, nad recently been
+
+contacted by FBl Agents concerning an aircraft hijacking.
+
+_was provided with complete background information
+
+available regarding the activities of
+
+which had brought
+
+about his consideration as a suspect in the NORJAK case. He
+
+was also provided with the results of the investigation con-
+
+ducted to date in Los Angeles.
+
+stated that arrangements would be made to
+
+interview
+
+who was currently staying at the l
+
+St. George, Utah. He stated that it was not necessary
+
+to provide the information given to him telephonically by tele-
+
+type since it would not be available to him at the Resident
+
+Agency,
+
+He would provide the results of the interview with
+
+Called again at 19:45 AM. ANd
+
+Advised that
+
+Bad Been interviewed
+
+thotographed And he would advise sentle t
+
+LA with results,
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+MMW/ml.h
+
+(1)
+
+164-797 =
+
+378
+
+ADR 1 73972
+
+ORS
+
+b6
+
+b7C
+
+5010-101
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan DB Cooper-24051
+
+---
+
+## Page 27
+
+FD-36 (Fov5-22-64)
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+TO:
+
+FROM:
+
+FBI
+
+Date: #714/92
+
+CODE
+
+(Type in plaintext or code)
+
+(Priority)
+
+DIRECTOR, FBI (164-2111) Urgent
+
+SAC, SEA TRANCIS - 1164-220) IMMediAte CAR
+
+SEATTLE (164-81) IMMediated
+
+SAC, IOS ANGELES (264-497)) *
+
+b6
+
+b7C
+
+NORJAK, 00: SEATTLE.
+
+RE LOS ANGELES NITEL TO BUREAU, MARCH TWENTY NINE, •
+
+LASI; SAN FRANCISOO NIPPE IO DUREAU, MARCH THIRTY ONE,
+
+INSE, STANTEE NITRI SO BURBAD, NARDU SINGS, LASS. * SE NITRITU, 41414-
+
+FOR INFOSULUUET OI SAN FRANCISCO, ON MARCHNINE,
+
+LAST,
+
+HE HAS
+
+ADVISED
+
+b6
+
+b7C
+
+b7D
+
+DESCRIBED AS
+
+AND ONCE EMPLOYED IN
+
+RELIABLE AND EMOTIONALLY
+
+b6
+
+b7C
+
+b7D
+
+STABLE.
+
+Approved:
+
+WHO FEELS HE MAY NOT COOPERATE IF CONTACTED BESEERGHED
+
+RELATED FOLLOWING INFORMATION OBTAINED IN
+
+LAST:
+
+164-497
+
+CRS /Aan
+
+(1) 20
+
+Sent
+
+Special Agent in Charg
+
+WA
+
+1035/a
+
+SE
+
+760%
+
+SE 100%M
+
+DB Cooper-24052
+
+Per
+
+CXT
+
+164-49-00-0579
+
+---
+
+## Page 28
+
+IA 164-497
+
+PAGE TWO
+
+166
+
+b7C
+
+b7D
+
+ADDING
+
+PURSUED MATTER WITH
+
+wHO ALLEGED
+
+TRAVELED TO SEATTLE, WASHINGION, FOR
+
+PURPOSE OF
+
+b6
+
+b7C
+
+b7D
+
+MET BY
+
+UPON ARRIVAL AT SEATTLE, TACOMA AIRPORT, THEY WERE
+
+_AND DRIVEN TO A
+
+NO DETAILS REGARDING CONTENTS OF
+
+DISCUSSED BY
+
+UPON COMPLETION OF STORY. FOLLOWING MEETING,
+
+WERE DRIVEN BACK TO AIRPORT AND RETURNED
+
+TO LOS ANGELES SAME DATE.
+
+-2 -
+
+DB Cooper-24053
+
+---
+
+## Page 29
+
+LA 164-497
+
+PAGE THREE
+
+STATES CONVERSATION WITH
+
+INDICATES
+
+TRIP TO SEATTLE TOOK PLACE ON MONDAY, EITHER FEBRUARY
+
+TWENTY EIGHT OR MARCH SIX, LAST.
+
+DESCRIBED AS WHITE MALE, BORN
+
+FIVE FEBT NINE INCHES JALI, ONE HUNDRED THEATY
+
+FIVE TO ONE HUNDRED FORTY FIVE POUNDS, DARK BROWN HAIR
+
+MEDIUM LENGTH, BROWN EYES, MOUSTACHE, USUALLY ATTIRED
+
+LEVIS JEANS OR CASUAL CLOTHES, AND RESIDESL
+
+TARZANA, CALIFORNIA, WITH
+
+INVESTIGATION REVEALS ONE PRIOR ARREST FOR
+
+IN NINETEEN SIXTY SEVEN BY LOS ANGELES POLICE DEPARIMENT
+
+CRIMINAL IDENTIFICATION AND
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b6
+
+FOR
+
+INVESTIGATION NUMBER
+
+CHECKS OF ALL LOGICAL AIRLINE FLIGHT MANIFESTS ON
+
+ABOVE DATES FAIL TO REVEAL ANYONE IDENTIFIABIE WITH
+
+LAST,
+
+IT HAS BEEN ESIABLISHED THAT ON FEBRUARY TWENTY FOUR,
+
+AND ANOTHER WHITE MALE, POSSIBLY ONE
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+RENTED
+
+- 3 -
+
+DB Cooper-24054
+
+---
+
+## Page 30
+
+IA 164-497
+
+PAGE FOUR
+
+PAID FOR|
+
+FROM
+
+HOLLYWOOD, CALIFORNIA.
+
+ON AFTERNOON OF FEBRUARY TWENTY EIGHT, LAST,
+
+DESCRIBED AS ENOUGH TO
+
+HE
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+STATES
+
+VERY IMPATIENT AT TIME OF RENTAI, ON FEBRUARY TWENTY FOUR,
+
+LAST, AND STATED WAS "GOING
+
+INDICATED EQUIPMENT BEING SHIPPED BY PLANE.
+
+BANK RECORDS AT LOS ANGELES REVEAL CHECK
+
+MADE PAYABLE TOL
+
+ON MARCH TEN, LAST.
+
+• IT HAS BEEN ASCERTAINED THIS CHECK WAS IN PAYMENT FOR
+
+RENTAL OF CAR BY|
+
+IN SEATTLE ON FEBRUARY TWENTY
+
+THREE, LAST, THIS VEHICLE RENTED AI EIGHT OCLOCK AM ON
+
+FEBRUARY TWENTY THREE, LAST, AND RETURNED AT TWO FIFTY
+
+EIGHT PM ON SAME DATE.
+
+NAMED AS POSSIBLE COMPANION OF
+
+BY /
+
+IDENTIFIED AS
+
+A WHITE MALE, BORN
+
+SIX FEET, ONE HUNDRED EIGHTY POUNDS,
+
+- 4 -
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-24055
+
+---
+
+## Page 31
+
+IA 164-497
+
+PAGE FIVE
+
+BROWN HAIR AND EYES. HE RESIDES IN
+
+AT
+
+IN HOLLYWOOD DISTRICT.
+
+FLIGHT MANIFEST FOR WESTERN AIRLINES FLIGHT SIX
+
+IWO IWO ON FEBRUARY TWENTY IWO, LAST, REVEALED
+
+PASSENGERS ON BOARD. FLIGHT DEPARTED
+
+LAX AT SIX TEN PM AND ARRIVED SEATTLE EIGHT TWENTY FIVE
+
+PM ON FEBRUARY TWENTY TWO, LAST.
+
+PLACE OF LODGING OR PERSONS CONIACTED BY|
+
+| IN SEATTLE NOT IDENTIFIED TO DATE.
+
+LOS ANGELES FILES REVEAL
+
+SUBJECT OF CASE
+
+CAPTIONED
+
+IN NINETEEN
+
+SIXTY SEVEN,
+
+WAS
+
+JOF DAILY BRUIN,
+
+UCLA DAILY STUDENI NEWSPAPER, AND IN THIS CAPACITY
+
+ASSOCIATED WITH SEVERAL ORGANIZATIONS CONCERNED WITH
+
+CIVIL RIGHTS, THE VIETNAM WAR, AND FREE SPEECH INVOLVEMENTS
+
+ON COLLEGE CAMPUSES. HE TRAVELED WIDELY, COVERING ABOVE
+
+TYPE ACTIVITIES FOR STUDENT NEWSPAPER.. THIS CASE
+
+CLOSED AFTER INVESTIGATION FAILED TO INDICATE ANY
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+- 5 -
+
+DB Cooper-24056
+
+---
+
+## Page 32
+
+LA 164-497
+
+PAGE SIX
+
+TO TELEPHONE NUMBER
+
+SEATTLE IS REQUESTED TO IMMEDIATELY IDENTIFY SUBSCRIBER
+
+b6
+
+b7c
+
+CALLED FROM RESIDENCE OFI
+
+ON JANUARY SIX LAST, AND IMMEDIATELY ADVISE SAN
+
+FRANCISCO. AND LOS ANGELES IF APPEARS SIGNIFICANT IN THIS
+
+MATTER. LOS ANGELES IS ATTEMPTING TO LOCATE
+
+FOR
+
+INTERVIEW THIS DATE.
+
+SAN FRANCISCO IMMEDIATELY ASCERTAIN CURRENT LOCATION OF
+
+AND ADVISE LOS ANGELES SO SIMULTANEOUS INTERVIEWS
+
+OF
+
+CAN BE CONDUCTED.
+
+ARMED AND DANGEROUS. PENDING.
+
+b6
+
+b7C
+
+DB Cooper-24057
+
+---
+
+## Page 33
+
+"ROID SE PLAIN
+
+713 PM NITEL 4/17/72 FEE
+
+TO DIRECTOR (164-2111)
+
+SAN FRANCISCO (164-220)
+
+LOS ANGELES (164-497)
+
+PORTLAND (164-41)
+
+FROM SEATTLE (164-81) IP
+
+--ATTN: ADH. DIVISION-
+
+NORJAK.
+
+. THE TEN AGENST ON SPECIAL ASSIGIMENT FROM SF, LA AND PD
+
+ASSISTING IN SEARCH IN THIS CASE, WILL HAVE COMPLETED THEIR
+
+ASSTGNFENT AND VILL BE DEPARTING THIS DIVISION O APRIL EIGHTEEN
+
+NEXT.
+
+END
+
+NEE FBI LOS ANGELES CLR
+
+FOR TWO TELS
+
+164-487-380
+
+DB Cooper-24058
+
+b6
+
+b70
+
+LORS
+
+Roh
+
+---
+
+## Page 34
+
+ROP SA PLAIN
+
+710,PM URGENT 4/17/72 FEE
+
+TO LOS ANGELES (164-497)
+
+SAN FRANCISCO (164-225)
+
+MON SEATTLE (164-81) 13
+
+GORJAK. 00: SEATTLE.
+
+CIA L
+
+GP 0 909-767
+
+RE LOS ANGELES TELETYPE APRIL SEVENTEEN LAST.
+
+SEATTLE TELEPHONE NUMBER
+
+IS CURRENTLY LISTED TO A
+
+SEATTLE, EMPLOYYENT
+
+SHOWN
+
+IN CITY DIRECTORY AND COUFIRNED BY CREDIT BUREAU CHECK IN MAY,
+
+NINETEEN SEVENTY-ONE, IS
+
+PUNICIPAL COURT, SEATTLE,
+
+WASHINGION, SINCE AI LEAST NINETEE! SIXTY-EIGHT
+
+IS A WHITE
+
+MALE AMERICAN, BORN APRIL FOURTEEN, FORTY-ONE, BROOKLYi, NEW YORK,
+
+IS FIVE FEET SEVEN ONE HALF, ONE HUNDRED SIXTY, BLUE EYES, RE HAIR.
+
+PHOTOGRAPHED IN KING COUNTY SHERIFF'S OFFICE AUGUST NINETESN
+
+SIXTY-SIX,
+
+NO ARRESTS. PHOTOGRAPH AVAILABALE.
+
+WILL NOT BE INTERVIEWED AT THIS TIME UNLESS RECEIVING OFFICES FIND
+
+NEED FOR THIS INTERVIEW IN CONJUNCTION WITH THEIR CONTACT WITH
+
+DESCRIPTIVE BACKGROUND ON
+
+TAKED. FRO:
+
+BULET JUTE FIVE SIXTY-EIGHT TO SEATTLE, SAN FRANCISCO, AND OTHERS
+
+BUT NOT LOS ANGELES, CONCERWING
+
+INVESTIGATION ONL
+
+SAM FRANCISCO REFER YOUR INDICIES FOR BACKGROUND.
+
+END
+
+118-72
+
+164-417-381
+
+12 APR 1% 1972
+
+PERLES
+
+DB Cooper-24059
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 35
+
+*D-36 Agor. 5-22-641
+
+1<.
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+TO:
+
+FROM:
+
+RE:
+
+FBI
+
+Date:
+
+4/17/72
+
+(Type in plaintext or code)
+
+AIR MAIL
+
+(Priority)
+
+SAC, SEATTLE (164-81)
+
+SAC, LOS ANGELES (164-497) (P)
+
+NORJAK
+
+• 00: Seattle
+
+Re: Possible Suspect
+
+Jof the Los
+
+Angeles Division has received information from pilot
+
+currently employed by United Airlines (VAL), requesting to
+
+emain anonymous, that l
+
+The source states l
+
+I bears
+
+a resemolance
+
+to the artist's sketch of the Seattle hijacker,
+
+with UAL under unusual circumstances
+
+and was believed to have
+
+been flying for JAi, out of San Francisco.
+
+LEADS
+
+b6
+
+b6
+
+b7C
+
+b7D
+
+!.
+
+CHICAGO
+
+AT CHICAGO, ILLINOIS: (1) Throuch UAL Headquarters,
+
+identify
+
+J ascertainl
+
+JUAL employment
+
+under unusual circumstances and if so, obtain
+
+background data,
+
+photograph and furnish office of origin.
+
+(2) Set forth logical leads to establish where-
+
+abouts during pertinent period.
+
+- seattle (AM
+
+2 - Chicago (AM
+
+= San Francisco (Als)
+
+, LOS Angeles
+
+Crs/kah
+
+(8)
+
+OFFICE COPY
+
+- SEARCHED
+
+INDEXED
+
+SERIALIZED
+
+FILED
+
+Approved:
+
+114!
+
+- Sent
+
+M
+
+577-3?2
+
+Per
+
+Special Agent in ChargSB Cooper-24060 #U.S. COVERNMEY PARTING OFFICE: 1909 0 - 985-090 1111
+
+66
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 36
+
+IA 164-497
+
+SAN FRANCISCO
+
+representat SAY FRANCISCO, CAITORITA: Throud MAr
+
+employment
+
+and if so, conduct appropriate
+
+Investigation to establish whereabouts during pertinent period.
+
+ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+-2 -
+
+DB Cooper-24061
+
+---
+
+## Page 37
+
+NRO47 WA PLAIN 727PM
+
+355 PN JUROSUT 4-18-72 EB
+
+TO DIRECIOR, FBI 164-2111
+
+LOS ANGELES
+
+SALT LAKE CITY
+
+SAN FRANCISCO
+
+PORTLAND
+
+SEATTLE
+
+ALL OFFICES VIA WASHINGION
+
+FROM LAS VEGAS 164-60
+
+NORJAK
+
+RE RICHARD FLOYD MC COY, JRO, ARA DAN COOPER, D. B. COOPER,
+
+Do COOPER, J. JOHNSON - SUSPECT.
+
+RE SALT LAKE CITY TEL APRIL SEVENTEEN LAST.
+
+SALI LAKE CITY TELCALL APRIL SEVENTEEN LAST NOTES POSSIBILITY
+
+IC COY DROVE FROM SALT LAKE CITY TO LAS VEGAS, FLEW TO PORTLAND
+
+TO COMMIT HIJACKIUG, RETURNED TO LAS VEGAS, AND DROVE BACK TO
+
+SALT LAKE CITY. INVESTIGATION INDICATES COLLECI CALL TO MC COY'S
+
+RESIDENCE NOVEMBER TWENTY-FIVE LAST AT TEN FORTY-ONE PM FROM
+
+LAS VEGAS AS WELL AS GAS PURCHASE IN LAS VEGAS SAME DATE USING
+
+BANK AMERICARD.
+
+CORDS, WESTVARD HO NOTEL, LAS VEGAS, CHECKED FOR NT 91 - 323
+
+PONTH OF NOVEMBER, SEVENTY-ONE AND NO REGISTRATION LOCATED FOR
+
+IC COY UNDER KNOWN NAMES AND ALIASES OTHER THAN RESERVATION ON
+
+NOVEMBER TWO, PREVIOUSLY DESCRIBED. ALL AIRLINE MAMBAR THAT A
+
+HAVE FLIGHIS TO PORTLAND FRAN LAS VEGAS DESTROTED
+
+AF
+
+200101072
+
+LES
+
+NINETY DAYS.
+
+DB Cooper-24062
+
+b6
+
+b7C
+
+---
+
+## Page 38
+
+PAGE THO
+
+LV 164-68
+
+FOR INFORMATION, AIRWEST, UNITED AIRLINES AND WESTERN
+
+PROVIDE SERVICE BETWEEN LAS VEGAS AND PORTLAND. NO DIRECT
+
+FLIGHTS, ALL ARE VIA EITHER LOS ANGELES OR SAN FRANCISCO.
+
+RE SALT LAKE CITY TEL REQUESTED LAS VEGAS IO INSTITUTE CHECK
+
+OF AIRLINE RECORDS FOR ABOVE AIRLINES IN AN EFFORT TO DETERMINE
+
+IF MC COY UNDER HIS TRUE NAME OR THAT OF D. COOPER, DAN COOPER
+
+OR J. JOHNSON TOOK FLIGHT FROM LAS VEGAS TO PORTLAND ON NOVEMBER
+
+TWENTY-THREE OR TWENTY-FOUR AND RETURNED TO LAS VEGAS FROM
+
+PORTLAND NOVEMBER TWENTY-FOUR OR TWENTY-FIVE LAST.
+
+LOS ANGELES CHECK RECORDS OF WESTERN AIRLINES FOR
+
+RESERVATION FOR MC COY FOR ABOVE DATES AND SUTEL.
+
+SAN FRANCISCO CHECK RECORDS AIRVEST AND UNITED AIRLINES.
+
+PHOTOGRAPH OF MC COY DISPLAYED TO SECURITY AND HOTEL
+
+PERSONNEL CONCERHING COLLECT CALL MADE NOVEIBER IVENTY-FIVE
+
+LAST WITHOUT EFFECTING ANY IDENTIFICATION
+
+GASOLINE CHARGE SLIP ON BANK AMERICARD STATED IN RE SALT
+
+LAKE CITY TEL LAS VEGAS INDICATES PURCHASE AT POWER THRUST,
+
+LAS VEGAS, NEVADA, ON NOVEMBER TWENTY-FIVE LAST. POWER THRUST
+
+STATION FROM WHICH GAS PURCHASED LOCATED TWO MILES SOUTH OF
+
+END PGE TWO
+
+DB Cooper-24063
+
+---
+
+## Page 39
+
+PAGE THREE
+
+LV 164-69
+
+TROPICANA HOTEL ON DIRECT ENTRANCE TO INTERSTATE FIFTEEN.
+
+IT IS POINTED OUT THIS ACCESS TO INTERSTATE FIFTEEN IS FOR
+
+SOUTHBOUND TRAFFIC ONLY. DATE WRITTEN ON GAS RECEIPT IS
+
+NOVEMBER TWENTY-SIX, SEVENTY-ONE, FOR FIVE AND SIX-TENTHS
+
+GALLONS OF GAS. MANAGER INDICATES, AFTER LOCATED TICKET,
+
+THAT IT WAS OBVIOUSLY MADE BY HIS ATTENDANI WHO WORKED THE
+
+ELEVEN PM TO SEVEN AM SHIFI, MANAGER INDICATES THAT HE DID NOT
+
+CHANGE HIS DATE STANP UNTIL NINE AM ON NOVEMBER TWENTY-SIX,
+
+SEVENTY-ONE; THEREFORE, THE GAS COULD HAVE BEEN PURCHASED
+
+BETWEEN MIDNIGHT AND SEVEN AI, NOVEMBER TWENTY-SIX AND STILL
+
+BEAR DATE STAMP OF NOVEMBER IWENTY-FIVE.
+
+SALT LAKE CITY REQUESTED TO ADVISE WHETHER COLLECT CALL
+
+AT TEN FORTY-ONE WAS MOUNTAIN STANDARD TIME OR PACIFIC
+
+STANDARD TIME.
+
+AT CEDAR CITY ASCERTAIN TIME OF PURCHASE OF GAS ON
+
+NOVEMBER TWENTY-SIX, SEVENTY-ONE.
+
+INVESTIGATION CONTINUING TO LOCATE ATTENDANT WHO WAS ON
+
+DUTY AT ABOVE POWER THRUST STATION NIGHT OF NOVEMBER TWENTY-FIVE -
+
+TUENTY-SIX, SEVENTY-ONE.
+
+END
+
+DB Cooper-24064
+
+---
+
+## Page 40
+
+NR047 WA PLAIN 72 7PM
+
+355 PM URGENT 4-18-72 EB
+
+TO DIRECTOR, FBI 164-2111/
+
+LOS ANGELES
+
+SALI LAKE CITY
+
+SAN FRANCISCO
+
+PORTLAND
+
+SEATTLE
+
+FROM LAS VEGAS 164-68
+
+SPECIAL
+
+GP O 909-767
+
+ALL OFFICES VIA WASHINGION
+
+NORJAK
+
+RE/RICHARD FLOYD MC COY,/
+
+/JR., AKA DAN COOPER, p. B. COOPER,
+
+D. COOPER
+
+S. JOHNSON -
+
+SUSPECT.
+
+RE SALT LAKE CITY TEL: APRIL SEVENTEEN LAST.
+
+SALT LAKE CITY TELCALL APRIL SEVENTEEN LAST NOTES POSSIBILITY
+
+MC COY DROVE FROM SALT LAKE CITY TO LAS VEGAS, FLEW TO. PORTLAND
+
+TO COMMIT HIJACKING, RETURNED, TO LAS VEGÄS, AND DROVE BACK TO
+
+SALT LAKE CITY. INVESTIGATION INDICATES COLLECT CALL TO ME COY'S
+
+67C
+
+RESIDENCE NOVEMBER IWENTY-FIVE: LAST AT TEN FORTY-ONE PM FROM
+
+LAS VEGAS. AS WELL AS GAS: PURCHASE IN LAS VEGAS SAME DATE USING
+
+BANK AMERICARD.
+
+RECORDS, WESTWARD: HO MOTEL, LAS VEGAS; CHECKED FOR ENTIRE
+
+64-497-383
+
+MONTH OF NOVEMBER,: SEVENTY-ONE-AND NO REGISTRATION LOCATED FOR
+
+16404970°
+
+COY UNDER KNOWN NAMES'AND ALIASES OTHER THAN RESERVATION ON
+
+164=5-83
+
+NOVEMBER TWO, PREVIOUSLY DESCRIBED, ALL AIRLINE MANIFESISAAT
+
+INDEXED
+
+SERIALIZED L
+
+SEIELD..
+
+HAVE FLIGHTS TO PORILAND FROM LAS VEGAS DESTROYED AFTER
+
+In A00
+
+1972
+
+KELES
+
+b6
+
+ab7C
+
+NINETY DAYS.
+
+DB Cooper-24065
+
+---
+
+## Page 41
+
+WR
+
+NO SU PLAIN
+
+5:42 PE URGENT 4-18-72 GRJ
+
+TO
+
+LOS ANGELES (154-497)
+
+SEATTLE (164-81)
+
+OMAHA '
+
+FROM SALT LAKE CITY (164-24) 4P
+
+SPECIAL
+
+GP 0 909-767
+
+NORJAK.
+
+RE:
+
+- SUSPECI.
+
+RE SALT LAKE CITY TELEPHONE CALL TO LOS ANGELES INSTANT DATE.
+
+INTERVIEVED SI. GEORGE, UTAH, BY BUREAU AGENT INSTANT
+
+DATE FOLLOWING
+
+TELEPHONE CALL TO CEDAR CITY RESIDENT
+
+AGENCY REQUESTING BACKGROUND COICERNING VISIT BY BUREAU AGENTS
+
+CALIFORNIA.
+
+DURING INTERVIEW
+
+APPEARED UNDER INFLUENCE OF ÁLCOHOL
+
+AND HAD DIFFICULTY WITH MEMORY AND IN ANSWERING QUESTIONS.
+
+CONTRADICTED HIMSELF AS TO HIS WHEREABOUTS ON NOVEMBER TVENTYFOUR
+
+AND IWENTYFIVE LAST, STATING SEVERAL INSTANCES THAT HE WAS AT
+
+CALIFORNIA, THEN STATING HE WAS AT
+
+HOME, RESIDENCE NOT RECALLED, DES MOINES, IOWA; THEN HE STATED
+
+TOTALLY UNABLE TO RECALL WHEREABOUIS.
+
+FURTHER AMBIGUOUS
+
+AS ID INJURED ANKLES, FIRST STATING INJURY DUE
+
+TO AUTOMOBILE
+
+ACCIDENT IN DES MOINES, IOWA, AROUND. FIRST OF YEAR, THEN CHANGING
+
+END PAGE ONE
+
+164-497+384
+
+, SEARCHED.
+
+SCARE 20 TEN UPE
+
+102 APR 1 8 1972
+
+ES
+
+DB Cooper-24058
+
+Cho
+
+b7C
+
+66
+
+b7C
+
+b6
+
+67C
+
+b6
+
+b7C
+
+---
+
+## Page 42
+
+164-2.4
+
+PAGE TVO
+
+STORY IO STATE INJURIES DUE TO PARACHUTE
+
+JUMP FROM AIRCRAFT
+
+PILOTED BY
+
+MUNICIPAL AIRPORT, MASON CITY, IOUA,
+
+APPROXIMATELY. SIX MONTHS AGO:
+
+STATED PURCHASED
+
+VINYL TOP OVER WHITE BODY, NEVADA LICENSE
+
+b6
+
+1b7C
+
+b6
+
+b7C
+
+BLACK
+
+VIN
+
+FROM UNKNOWN
+
+AUTOMOBILE AGENCY
+
+AT LAS VEGAS, NEVADA, DATE NOT RECALLED, PAID
+
+EIGHTEEN HUNDRED DOLLARS BY CASHIER'S CHECK DRAWN ON BANK OF
+
+CALIFORNIA, CITY NOT
+
+RECALLED.
+
+ADMITTED PREVIOUS PARACHUTING EXPERIENCE WITH MILITARY
+
+AND IS AMATEUR; STATED HAS PARACHUTED WITH OFFICERS OF CERRO GORDO
+
+COUNTY AND OFFICERS OF MASON CITY, IOWA.
+
+STATES HE SAW
+
+A DOCTOR, NAME NOI RECALLED, AI VETERANS ADMINISTRATION HOSPITAL,
+
+DES MOINES, IOWA, AND PRODUCED SLIP VERIFYING SAME OCCURING
+
+MARCH THIRTY LASI, NINE THIRTY A.M., IN REGARD TO HIS INJURED
+
+ANKLES.
+
+DENIED KNOWLEDGE OF HIJACKING, DENIED EVER BEING
+
+IN PORTLAND, SEATTLE, OR IN STATES. OF VASHINGTON OR OREGON.
+
+VOLUNTARILY SUBMITTED TO PHOTOGRAPHS WHICH INCLUDED
+
+WITH AND WITHOUT GLASSES AND A PROFILE. THESE BEING FURNISHED
+
+END PAGE. TWO
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-24069
+
+---
+
+## Page 43
+
+SEPARATE CONMUNICATION ALONG WITH FD THREE ZERO TWOS.
+
+IN POSSESSION, APPROXIMATELY TWO THOUSAND DOLLARS
+
+CASH AND INTENDS DEPARTING A.M. APRIL NINETEEN NEXI FOR DES MOINES,
+
+CURRENTLY RESIDING
+
+ST. GEORGE, UTAM.
+
+INDICATED OWWERSHIP OF
+
+b6
+
+-67C
+
+b6
+
+-67C
+
+BOTH CURRENTLY IN POSSESSION OF MIS
+
+CALIFORNIA.
+
+DESCRIBED AS WHITE MALE AMERICAN, DOB
+
+POB
+
+SIX FEET TALL,
+
+ONE HUNDRED SIXTY POUNDS, BLACK HAIR, BROWN EYES, WEARING PLAIN
+
+GLASSES,
+
+b6
+
+• b7C
+
+HAS SLIGHT
+
+AND
+
+WITH NOTICEABLE
+
+LIPS NOT
+
+PROMINENI. WEARING SILVER WAICH WITH WHITE FACE AND BLACK NYLO!!
+
+BAND ON LEFT URIST. ADDRESS THROUGH WHICH CAN BE REACHED - IN
+
+CARE OP
+
+DES MOINES, IOWA.
+
+END PAGE THREE
+
+DB Cooper-24070
+
+---
+
+## Page 44
+
+SU 164-24
+
+PAGE
+
+FOUR
+
+SEATILE FOLLOWING REVIEW OF ABOVE, SET FORTH ANY ADDITIONAL
+
+LEADS AND INVESTIGATION DETERMINED NECESSARY FOR ELIMINATION OF
+
+AS SUSPECT.
+
+UNSUB SHOULD BE CONSIDERED ARMED AND DANGEROUS.
+
+66
+
+b7C
+
+END
+
+XXPLS CHANGE TIME TO READ4:42 PM IKS
+
+DLW
+
+FBI LOS ANGELES CLR
+
+DB Cooper-24071
+
+---
+
+## Page 45
+
+SPECIA
+
+GP 0 908-767
+
+NR 006 SF PLAIN
+
+1147AM URGENT 4-19-72 MS
+
+TO DIRECTOR <164-2111)
+
+SEATTLE (164-81)
+
+LOS ANGELES (164-497)
+
+FROM SAN FRANCISCO (164-228) (P)
+
+2P
+
+NORJAK, 00: SEATTLE
+
+RE LOS ANGELES TEL IO BUREAU APRIL SEVENTEEN, LAST, AND SAN
+
+FRANCISCO TELCALL TO LOS ANGELES THIS DATE.
+
+ATTEMPIS IO LOCATE
+
+b6 |
+
+b7C
+
+LOS ALTOS,.
+
+CALIF., HAVE MET WITH NEGATIVE RESULTS.
+
+THIS DATE A PRETEXI TELCALL TO TELEPHONE NUMBERL
+
+SUBSCRIBED TO BY|
+
+DETERMINED
+
+IS IN VAN
+
+NUYS, CALIF., AND IS NOT EXPECTED TO RETURN FOR THREE OR FOUR DAYS.
+
+HE CAN BE REACHED THROUGH TELEPHONE NUMBER
+
+b6
+
+b7C
+
+56 |
+
+b7C
+
+END PAGE ONE
+
+164-497
+
+SEARCHED_..
+
+SERIALIZED. FIELD..
+
+15 APR 19 1972
+
+ELES
+
+TORS
+
+85
+
+b6
+
+b7C
+
+DB Cooper-24072
+
+---
+
+## Page 46
+
+PAGE TWO
+
+REFLECT
+
+LOS ANGELES NOTE THAI CALIFORNIA DEPARTMENT OF MOTOR VEHICLES
+
+IS THE REGISTERED OWNER OF A NINETEEN SIXTYSEVEN,
+
+NINETEEN SEVENTYTWO CALIFORNIA LICENSE
+
+b6
+
+b7C
+
+LOS ANGELES, AT VAN NUYS, CALIF., LOCATE
+
+ABOVE TELEPHONE NUMBER SO HE AND|
+
+INTERVIEWED.
+
+ARMED AND DANGEROUS.
+
+THROUGH
+
+CAN BE SIMULTANEOUSLY
+
+b6
+
+b7C
+
+END
+
+NJZ
+
+FBI LOS ANGELES
+
+CLR
+
+DB Cooper-24073
+
+---
+
+## Page 47
+
+гD-38
+
+(Re
+
+5-22-641
+
+Transmit the following in -
+
+Via
+
+TELETYPE
+
+TO:
+
+FROM:
+
+• FBI
+
+Date:
+
+4/19/72
+
+PLAINT EXT
+
+NITE.
+
+(Type in plaintext or code)
+
+(Priority)
+
+DIRBCIOR, FBI (164-2121) EIF
+
+SAC, IAS VEGAS
+
+SAC, SEATTLE (164-81)
+
+SAC, PORTIAND ALA
+
+SAC, LOS ANGELES (164-497)
+
+b6
+
+67C
+
+NORJAK.
+
+RIE: ATCHARD PEOD ME COSE, AA DAN COOPER, D. B. COOSER.
+
+D. COOPER, I. JOHNSON - SUSPECT.
+
+RE LAS VEGAS TEL TO BUREAU, DATED APRIL EIGHTEEN, LAST.
+
+CHECK OF WESTERN AIRLINE RECORDS AT LOS ANGELES, CALIFORNIA,
+
+DID NOT LOCATE EVIDENCE OF ANY TRAVEL BY MC COY UNDER TRUE NAME
+
+AND KNOWN ALIASES BETWEEN LAS VEGAS AND PORTIAND, OREGON, ON
+
+APPROPRIATE DATES. WESTERN DID IOCATE A UNITED AIRLINE TICKET
+
+NUMBER ZERO ONE SIX TWO THREE TWO EIGHT SEVEN NINE ZERO SIX
+
+SIX, ISSUED NOVEMBER TWO, LAST, AT UNITED AIRLINES, SAN FRANCISCO
+
+INTERNATIONAL AIRPORT TICKET OFFICE, IN NAME INITIAL "PSEARCHED
+
+(ILLEGIBLE) JOHNSON. ROUND TRIP TICKET PURCHASED BY
+
+164-497
+
+MDG/sarsa
+
+(1)
+
+SERIALIZED
+
+LED
+
+BI
+
+b6
+
+b7C
+
+Approved:
+
+Special Agent in Chal
+
+WA-10Z
+
+EK-HOOS PIA FACS.
+
+SE- SENT
+
+33
+
+Sent PD-10
+
+_M
+
+DB Cooper-24074
+
+Per -
+
+idea
+
+GPO: 1970 0 - 402-
+
+164-497-386
+
+b6
+
+67C
+
+---
+
+## Page 48
+
+IA 164-497
+
+PAGE TWO
+
+TRANSPORTATION FROM SAN FRANCISCO TO PORTIAND VIA UNITED
+
+FLIGHT TWO FIVE EIGHT, NOVEMBER IWENTY THREE, LAST, WITH
+
+RETURN FROM PORTIAND TO SAN FRANCISCO VIA WESTERN FLIGHT
+
+SIX THREE THREE, NOVEMBER TWENTY FIVE, LAST.
+
+- 2*-
+
+DB Cooper-24075
+
+---
+
+## Page 49
+
+"on
+
+'D-36 1Roy,5-22-6414
+
+Transmit the following in
+
+Via TELETYPE
+
+TO DIRECTOR (164-21115
+
+SEATTLE (164-81)
+
+FELI
+
+RIft
+
+SAN FRANCISCO
+
+FROM LOS ANGELES (164-497)
+
+FBI
+
+Date:
+
+PLAINTEXT
+
+(Type in plaintext or code)
+
+NITEL
+
+(Priority)
+
+NORJAK. 00: SEATTLE.
+
+RE SEATTLE NITEL TO BUREAU, APRIL THIRTEEN LAST.
+
+RE UNSUB;
+
+SOURCE.
+
+LOCATED AI HIS RESIDENCE N
+
+TARZANA, CALIFORNIA THIS DATE.
+
+LOCATED RESIDENCE
+
+] VAN NUYS, CALIFORNIA.
+
+SIMULTANEOUS INTERVIEWS CONDUCTED.
+
+REFUSED TO BE INTERVIEWED AND INVITED
+
+AGENTS TO LEAVE.
+
+ADVISED WOULD NOT SUBMIT TO INTERVIEW WITHOUT
+
+CONSULTING ATTORNEY BEFOREHAND. INDICATED WOULD ADVISE FBI
+
+IF ATTORNEY RECOMMENDS HE SUBMIT TO INTERVIEW.
+
+SEARAMED
+
+RECONTACIED LATE TODAY AND AGREED TO INTERVIEW
+
+INTERVIEWED
+
+AT HIS
+
+HILLU
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+AT HIS RESIDENCE THIS EVENING.
+
+RESIDENCE IN TARZANA AND ADVISED AS FOLLOWS:
+
+WA-18OM
+
+144-497-381
+
+DB Cooper-24076
+
+Approved:
+
+WoZ.
+
+Special Agent in Charge
+
+5E-130A
+
+Sent -
+
+57-45941
+
+Per
+
+# U.S, GOVERNMENT PROMING OFFICE: 1969 0-316-090 411)
+
+---
+
+## Page 50
+
+A.
+
+LA 164-497
+
+PAGE TWO
+
+AFTER CONTACI BY FBI THIS MORNING HE CONSULTEDL
+
+LOS ANGELES
+
+RECOMMENDED TO
+
+THAT HE, I
+
+FURNISH FBI
+
+INFORMATION RE TRIP TO SEATTLE LATE FEBRUARY LAST.
+
+ON FEBRUARY TWENTY TWO LAST L
+
+TRAVELED
+
+BY WESTERN AIRLINES TO SEATTLE, WASHINGTON. TRIP MADE AT
+
+SPECIFIC REQUEST OFL
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+AND EXPENSES PAID.
+
+UPON ARRIVAL SEATTLE
+
+MET
+
+AT
+
+MOTEL EVENING OF FEBRUARY TWENTY TWO LAST AT WHICH TIME
+
+DISCUSSED
+
+FOLLOWING MORNING
+
+DRIVEN BY UNIDENTIFIED
+
+WHITE MALE IN
+
+_TO BEACH AREA,
+
+EXACT LOCATION UNKNOWN TO
+
+SHORTLY AFTER ARRIVAL
+
+WERE JOINED BY L
+
+AND INDIVIDUAL
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+THEN
+
+7 OR ABOUT ONE HUNDRED AND TEN
+
+FEET, |
+
+DB Cooper-24077
+
+---
+
+## Page 51
+
+LA 164-497
+
+PAGE THREE
+
+AND
+
+LASTED ABOUT TWENTY MINUTES AFTER WHICH
+
+_DEPARTED.
+
+b6|
+
+b7C
+
+b6|
+
+b7C
+
+AIR WITHL
+
+DEPARTED SEATTLE SAME DATE BY
+
+THAT SAME EVENING
+
+AT SANTA
+
+MONICA, CALIFORNIA, RESIDENCE OF
+
+ADVISES AT NO TIME DID
+
+OTHER THAN TO STATE
+
+TOOK PLACE IN SEATTLE AND EXTENSIVE
+
+NEWS COVERAGE BEING GIVEN HIJACKING.
+
+ADMITS DISCUSSING SEATTLE TRIP WITH SEVERAL CLOSE
+
+FRIENDS AND RELATIVES AND POSSIBLY SPECULATED WITH THEM
+
+INSISTS HE HAS NO ADDITIONAL
+
+b6 |
+
+b7C
+
+INFORMATION RE IDENIITY OF
+
+_ AS WHITE MALE, L
+
+YEARS OF AGE, FIVE FEET EIGHT INCHES - FIVE FEET NINE
+
+INCHES, ONE HUNDRED SIXTY POUNDS, SLENDER BUILD, AVERAGE FACE -
+
+• NO DETAILS RECALLED, HAIR AND EYES UNKNOWN, NOT RECALLED TO
+
+HAVE SMOKED, WORE BLACK PLASTIC WRAP AROUND SUN GLASSES, A
+
+WOOLEN JOCKEY CAP, BALLOONED AT SIDES IN APPARENT ATTEMPT TO
+
+COVER HAIR.
+
+b6
+
+b7C
+
+DB Cooper-24078
+
+---
+
+## Page 52
+
+LA 164-497
+
+PAGE FOUR
+
+CAP DESCRIBED AS ABOUT SIX BLACK AND WHITE TRIANGLES
+
+RADIATING FROM THE TOP CENTER. WORE TAN TRENCH COAT AND
+
+BLACK SHOES.
+
+STATES COULD NOT IDENTIFY PERSON IF SEEN
+
+AGAIN.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+_ STATED UNABLE TO EXPLAINI
+
+TO BE INTERVIEWED AND DID NOT KNOW WHETHER
+
+RELUCTANCE
+
+WOULD BE
+
+AMENABLE TO FBI INTERVIEW.
+
+FULL DETAILS OF INTERVIEW OF
+
+FOLLOWS.
+
+LA INDICES CONTAIN NUMEROUS REFERENCES TO
+
+HOWEVER, NO DEROGATORY INFORMATION IDENTIFIABLE
+
+WITH
+
+CONTAINED THEREIN.
+
+UACB BACKGROUND CHECK THROUGH ESTABLISHED SOURCES WILL
+
+BE CONDUCTED WITH A VIEW TOWARDS RECOMMENDING TO BUREAU THAT
+
+BE INTERVIEWED TO IDENTIFY
+
+AT
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+SEATTLE.
+
+DB Cooper-24079
+
+---
+
+## Page 53
+
+NR0G4 SE PLAIN
+
+4:46PM URGENT 4/21/72 VAB
+
+TO DIRECTOR <164-2111) (MAIL)
+
+LOS ANGELES
+
+SAN FRANCISCO
+
+NEW YORK CITY
+
+WFO
+
+CHARLOTTE
+
+FROM SEATTLE (164-81) 2P
+
+NORJAK
+
+RE: UNSUB;
+
+- INFORMANT.
+
+RECORDS, EDGEWATER INN, SEATTLE, WASHINGTON, REFLECI THAIL
+
+REGISTERED EDGEWATER INN FEBRUARY TWENTY, LAST, CHECKING
+
+OUT FEBRUARY TWENTYTHREE, LAST. WHILE THERE, MADE LONG DISTANCE
+
+TELEPHONE CALLS TO FOLLOWING NUMBERS:
+
+CHARLOTTE DIVISION:
+
+END PAGE ONE
+
+the 9
+
+#- 21-72
+
+164-497-
+
+SEARCHED /9 (A6 INDEXED._
+
+SERA DDS 1100
+
+LES
+
+DB Cooper-24080
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 54
+
+PAGE TWO
+
+164-81
+
+LOS ANGELES:
+
+b7C
+
+(COLLECT CALL
+
+MADE FROM AI
+
+NEW YORK' CITY:
+
+b6|
+
+b7C
+
+(PERSON TO PERSON TO
+
+SAN FRANCISCO:
+
+(PERSON TO PERSON MADE BY
+
+WASHINGTON, D.C.:
+
+b6]
+
+b7C
+
+b6|
+
+b7C
+
+RECEIVING OFFICES IDENTIFY SUBSCRIBERS TO LISTED PHONES IMMED-
+
+IATELY, CHECK INDICES, SUTEL TODAY.
+
+-P-
+
+END
+
+HOLD
+
+LLS
+
+FBI LOS ANGELES CLR
+
+DB Cooper-24081
+
+---
+
+## Page 55
+
+FD-36 (Rov. 51122-64)
+
+(
+
+FBI
+
+Date:
+
+4/21/72
+
+PLAIN
+
+(Type in plaintext or code)
+
+(Priority)
+
+Transmit the following in
+
+Via.
+
+TELETYPE
+
+TO:
+
+FROM:
+
+b7C
+
+SAC, SAN FRANCISCO (URGENT)
+
+SAC, LOS ANGELES (164-497)
+
+JAK
+
+NORJAK. 00: SEATTLE.
+
+osl
+
+RE LOS ANGELES NITEL TO BUREAU APRIL TWENTY LAST.
+
+RE: UNSUB;
+
+DASH SOURCE.
+
+KITTED TO
+
+'INTERVIEWED LOS ANGELES FBT
+
+y Los Anxeles
+
+OFFICE THIS DATE.
+
+HE
+
+STATES FIRST MET
+
+FEARLY
+
+FEBRUARY LAST AFTER BECOMING AWARE THROUGH SOCIAL ACQUAINTANCES
+
+IN LOS ANGELES
+
+HE AND I
+
+WHO OFTEN WORKS WITH HIM,
+
+AGREED TO I
+
+FAOM INATION
+
+FISSUMCAS
+
+DEDUCED FROM COMMENTS BY
+
+THIS CASE; ANE WAS TO RECEIVEL
+
+FROM
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-497
+
+crs/kah
+
+(2)
+
+Approvedy f
+
+Special Agent in Charge
+
+SEASCHED
+
+INGRED
+
+3F: 512
+
+SE: 45%
+
+Sent
+
+WA:528
+
+DB Cooper-24082
+
+__M
+
+Per
+
+*U, S. GOVERNMENT PRINTING OFFICE: 1969 0 - 346-090 (11)
+
+---
+
+## Page 56
+
+JA 164-497
+
+PAGE TWO
+
+ON AFTERNOON FEBRUARY TWENTY TWO LAST, HE AND
+
+WITH NECESSARY
+
+DEPARTED LOS ANGELES FOR
+
+SEATTLE VIA WESTERN AIRLINES ARRIVING SEATTLE EVENING SAME
+
+DAY. TRAVELED BY TAXI TO EDGEWATER INN, SEATTLE, WHERE
+
+ALREADY RESIDING.
+
+I OUTLINED TWO PLANS FOR|
+
+UNSUB.
+
+JIN ADJOINING ROOMS AT EDGEWATER
+
+INN DISCARDED DUE
+
+ALTERNATE PLAN
+
+TOl
+
+AT NEARBY BEACH AREA, PUGEI SOUND, DECIDED UPON.
+
+IN MORNING FEBRUARY TWENTY THREE LAST, L
+
+INTRODUCED
+
+"DRIVER" ANSWERING TO NAMEL
+
+DESCRIBED WHITE MALE, L
+
+FIVE FEET TEN,
+
+ONE SEVENTY FIVE POUNDS, DARK BROWN HAIR, WELL TRIMMED FULL
+
+BEARD, WEARING SPORT CLOTHES AND OBVIOUSLY FAMILIAR WITH
+
+SEATTLE.
+
+REFERRED TO BY
+
+DRIVING NEW YELLOW SEDAN, NOT FORD AND POSSIBLY DODGE DARI,
+
+BELIEVED TO BE RENTED CAR, TRANSPORIEDL
+
+TO NEARBY
+
+RENTED WHITE FORD WITH RED INTERIOR
+
+AND FOLLOWED
+
+BACK TO MOTEL.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-24083
+
+---
+
+## Page 57
+
+LA 164-497
+
+PAGE THREE
+
+PLACED IN FORD AND
+
+AND
+
+JAS DRIVER, DEPARTED FOR PRE-ARRANGED BEACH SITE.
+
+REMAINED AT MOTEL.
+
+I PROCEEDED IN NORTHERLY DIRECTION VIA FREEWAY
+
+FOR ABOUT THIRTY MINUTES TO ROADSIDE PARK ON OCEAN.
+
+TAKEN FROM VEHICLE TO POINT DESIGNATED ON BEACH
+
+BY
+
+PATH TAKEN TO BEACH NECESSITATED USING ELEVATED
+
+WALKWAY OVER RAILROAD TRACKS. NO MARINA OBSERVED IN EITHER
+
+DIRECTION. $ PARK MAINTENANCE MAN OBSERVED PAINTING GREEN
+
+FENCE.
+
+APPROXIMATELY FIFTEEN TO TWENTY MINUTES LATER,
+
+AND UNSUB APPEARED FROM AREA OF PARKING LOT.
+
+CONDUCTED AT DISTANCE OF SHER 100 2 FROM I
+
+WHO PREVIOUSIY
+
+] MID WAY I
+
+30 FeeT.
+
+MOVED APPROXIMATELY TEA YARDS NEARER L
+
+I UNSUB
+
+b6'
+
+b7C
+
+b6
+
+b6
+
+b7C
+
+BY UNSUB. AFTERL
+
+I UNSUB SUBSTITUTED
+
+TBY UNSUB.
+
+ToT UNSUB.
+
+DB Cooper-24084
+
+---
+
+## Page 58
+
+LA 164-497
+
+PAGE FOUR
+
+NEAR
+
+b6
+
+b7C
+
+LASTED ABOUT THIRTY MINUTES. UNSUB DESCRIBED WHITE MALE,
+
+FORTIES, FIVE FEET TEN, ONE SIXTY FIVE POUNDS, HAIR AND EYE
+
+COLOR UNKNOWN AND DESCRIBED VERY ORDINARY IN APPEARANGE.
+
+DRESS SAME AS PREVIOUSLY DESCRIBED BY
+
+STATES COULD POSSIBLY IDENTIFY UNSUB IF IN SAME ATTIRE.
+
+TAND UNSUB DEPARTED IN SAME DIRECTION AS ARRIVED.
+
+IN FORD AND
+
+RETURNED TO EDGEWATER INN. UPON ARRIVAL, HE OBSERVED
+
+AND UNSUB STANDING BESIDE YELLOW CAR IN MOTEL PARKING LOT.
+
+FORD PARKED TWO SPACES AWAY. AFTER SHORT PERIOD,
+
+AND UNSUB DROVE AWAY IN YELLOW CAR.
+
+HAD NO FURTHER CONTACT WITH HIM AND RETURNED LOS
+
+ANGELES SAME AFTERNOON.
+
+ON APRIL ELEVEN LAST, AFTER REPEATED ATTEMPIS TO
+
+SECURE PAYMENT FOR ABOVEL
+
+CONTACTED
+
+IN LOS ANGELES.
+
+HE DETERMINED
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+IN LOS ANGBIES AND
+
+DB Cooper-24085
+
+---
+
+## Page 59
+
+LA 164-497
+
+PAGE FIVE
+
+PREPARED UNDER CONDITIONS WHICH ALLOWED ONLY |
+
+ADVISED INITIAL, ARRANGEMENTS WITH
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+WERE THAT HE I
+
+AND_
+
+CASH
+
+IN ADVANCE FOR EXPENSES.
+
+ADVISED HE HAD SPOKEN WITH
+
+SINCE CONTACT BY FBI ON MORNING OF APRIL TWENTY LAST. ON
+
+THEIR ADVICE, HE DECIDED TO COOPERATE WITH FBI.
+
+JAPPEAR COOPERATIVE AND WOULD VIEN
+
+PHOTOGRAPHS.
+
+UACB,
+
+OFFICE AT THIS TIME.
+
+ARMED AND
+
+DANGEROUS.
+
+PENDING.
+
+WILL NOT BE CONTACTED BY LOS ANGELES
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+DB Cooper-24086
+
+---
+
+## Page 60
+
+NR003 SE PLAIN
+
+9:20 PM NITEL 4/22/72 DCA
+
+TO
+
+LOS ANGELES (164-497)
+
+FROM SEATTLE (164-81)
+
+2P
+
+NORJAK
+
+RE LOS ANGELES TELETYPES TO BUREAU, SEATTLE AND SAN FRAN-
+
+CISCO APRIL SEVENTEEN AND IWENTYONE, LAST, AND SEATTLE TELEPHONE
+
+CALL THIS DATE.
+
+INTERVIEW WITH
+
+JAI TARZANA, CALIFORNIA,
+
+DISCLOSED THAT HE HAD TRAVELLED TO SEATTLE AND STAYED AT THE EDGE-
+
+WATER INN, FEBRUARY TWENTYTWO, SEVENTYTWO, WHERE HE AND
+
+ALSO FROM LOS ANGELES.
+
+HAD
+
+INDICATED ON LATER INTERVIEW, THAT AT SEATTLE THEY WERE DRIVEN BY
+
+A MAN NAMED
+
+IN A RENTED
+
+CAR TO A WATER-SIDE PARK IN
+
+THE NORTH AREA OF SEATTLE WHERE
+
+b6
+
+b7C
+
+UP BY
+
+TELEPHONE CALL BY ROOM REGISTERED TO
+
+TO TELEPHONE NUMBER AREA CODE|
+
+RECORDS OF EDGEWATER INN REFLECT A
+
+IN SILVERDALE, X, 7
+
+END PAGE ONE
+
+SA
+
+aduised
+
+22-7284K
+
+164-497
+
+SEARCHED - INDEXED C
+
+SERIALIZED__ FIELD._
+
+ÄPR 2 2 1972
+
+LES
+
+0120
+
+b6
+
+b7C
+
+DB Cooper-24087
+
+---
+
+## Page 61
+
+PAGE TWO
+
+SE 164-81
+
+WASHINGTON, LISTED TO A
+
+TRANSPORTATION AI THE MOTEL WHICH
+
+WAS FURNISHED BY
+
+WAS •
+
+IN A YELLOW SMALL CAR AND INVESTIGATION NOW REFLECTS THAT
+
+DOES IN FACT POSSESS SUCH A CAR WHICH IS A PINTO:
+
+IS
+
+YEARS OLD, HAS BROWN HAIR, WEARS
+
+A BEARD AND OTHERWISE FITS THE DESCRIPTION OF L
+
+HAS
+
+BEEN INTERVIEVED EXTENSIVELY TODAY. HE ADMITS KNOWING
+
+LADMITS HAVING NEGOTIATED WITH HIM ABOUT
+
+BUT WILL NOT ADMIT ACTUALLY HAVING INTRODUCED
+
+b6,
+
+b7C
+
+HE
+
+WILL NOT ADMIT TAKING PART IN A MEETING IN SEATTLE, DESCRIBED IN
+
+REFERENCED TELETYPES.
+
+IN NEGOTIATING WITH
+
+SAID HE ASKED
+
+b6 |
+
+b7C
+
+FOR
+
+BUT
+
+_SAID IT WAS WORTH ONLY
+
+STATES HE GAVE CONSIDERABLE BACKGROUND IN-
+
+FORMATION ON HIMSELF IN INTERVIEWS WITHI
+
+E N DSSSSSSS
+
+JUS FBI LOS ANGELES
+
+CLR
+
+DB Cooper-24088*
+
+_...._
+
+---
+
+## Page 62
+
+NRG05 UF PLAIN
+
+5;45PM URGENT 4-22-72
+
+GEA
+
+TO DIRECIOR
+
+LOS ANGELES
+
+MINNEAPOLIS (164-73)
+
+PORTLAND.
+
+SEATTLE (164-81)
+
+FROM WASHINGTON FIELD (164-169) (P) (3P)
+
+NORJAK.
+
+RE BUREAU TELEPHONE CALL TO UFO, APRIL TWENTY ONE, LAST.
+
+REFERENCE PHOTOGRAPHS OF UNIDENTIFIED SUSPECI, ALSO
+
+KNOWN AS D.B. COOPER, FURNISHED WO BY BUREAU APRIL TWENTY
+
+ONE LAST, AND APRIL TWENTY TWO, INSTANT.
+
+NORTHWEST AIRLINES (NWA) STEWARDESS,
+
+LOCATED TODAY AI WASHINGTON, DOGO, CUDC), AND WAS EXRIBITED
+
+SPREAD OF SEVEN PHOTOGRAPHS CONIAINING PHOTOGRAPH OF SUSPECT
+
+WEARING SUNGLASSES AND KNIT CAP. [
+
+UNABLE TO MAKE
+
+POSITIVE IDENTITY BUT STATED PHOTOGRAPH MORE CLOSELY RESEMBLED
+
+HIJACKER THAN ANY OF THE APPROXIMATE THREE HUNDRED OTHER
+
+PHOTOGRAPHS SHE HAS OBSERVED TO DATE. SHE SPECIFICALLY NOTED
+
+SIMILARITIES IN MOUTH, NOSE, LIPS, AND STYLE OF SUNGLASSES.
+
+SHE STATED HIJACKER'S FACE THINNER THAN INDIVIDUAL DEPICTED
+
+IN CAPTIONED PHOTOGRAPH.
+
+END PAGE ONE
+
+DB Cooper-24089
+
+SEARCHED..
+
+SERIALIZEN..... FILED...
+
+APR2 21972-
+
+FBI - LOS ANGELES
+
+b6
+
+b7C
+
+---
+
+## Page 63
+
+- 1=1-77.751
+
+WrO 164-169
+
+PAGE TWO
+
+IT SHOULD BE NOTED AFOREMENTIONED SPREAD OF PHOTOGRAPHS
+
+CONSISTED OF SIX WHITE MALES ALL WEARING SUNGLASSES AND ONE
+
+PHOTOGRAPH OF WHITE MALE WITHOUT SUNGLASSES IN ADDITION TO
+
+PHOTOGRAPH OF UNKNOWN SUBJECT WEARING KNIT CAP.
+
+WAS RECONTACTED TODAY AT WDC AND WAS EXHIBITED
+
+SECOND PHOTOGRAPH OF SUSPECI BARE HEADED AND WEARING SUNGLASSES.
+
+SHE ADVISED THAT THIS PHOTOGRAPH DID NOT RESEMBLE HIJACKER
+
+AND NOTED MOD APPEARANCE DEPICTED IN PHOTOGRAPH NOI SIMILAR
+
+TO HIJACKER.
+
+16 |
+
+b7C
+
+DEPARTING WDC VIA NWA FLIGHT THREE SEVEN FIVE
+
+AT SEVEN Pollo, INSTANT, ARRIVING MINHEAPOLIS, MINNESOTA, AT
+
+TEN FORTY TWO P.M., MINNEAPOLIS TIME.
+
+WAS FURNISHED
+
+PHOTOGRAPHS OF SUSPECT FOR DELIVERY TO FBI MINNEAPOLIS. MINNEA-
+
+POLIS DIVISION TELEPHONICALLY ADVISED OF ABOVE INFORMATION.
+
+IN EVENT ADDITIONAL CONTACT WITH I
+
+NECESSARY
+
+IN NEAR FUTURE SHE WILL BE OFF DUTY IHROUGH APRIL TWENTY SIX
+
+NEXT, AND WILL BE EITHER AT HER RESIDENCE AT
+
+END PAGE TWO
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+DB. Cooper-24090
+
+---
+
+## Page 64
+
+WFO 164-169
+
+PAGE THREE
+
+RICHFIELD, MINNESOTA, OR ATL
+
+FORDISE,
+
+ARKANSAS.
+
+COPIES OF PHOTOGRAPHS DEPICTED UNKNOWN SUBJECI BARE
+
+HEADED VITH SUNGLASSES BEING FURNISHED LOS ANGELES, PORTLAND,
+
+AND SEATTLE BY AIRLINE PILOT.
+
+UNKNOWN SUBJECT CONSIDERED DANGEROUS.
+
+END
+
+LRS FBI LOS ANGELES CLR
+
+DB Cooper-24091
+
+---
+
+## Page 65
+
+SPECIAL
+
+NRODS WE PLAIN
+
+5;45PM URGENT 4-22-72 GEA
+
+TO DIRECTOR
+
+LOS ANGELES
+
+MINNEAPOLIS (164-73>
+
+PORTLAND
+
+SEATTLE (164-81)
+
+FROM WASHINGTON FIELD (164-169) (P) (3P)
+
+NORJAK.
+
+RE BUREAU TELEPHONE CALL TO WFO, APRIL TWENTY ONE, LAST.
+
+REFERENCE PHOTOGRAPHS OF UNIDENTIFIED SUSPECI, ALSO
+
+KNOWN AS D.B. COOPER, FURNISHED WO BY BUREAU APRIL TWENTY
+
+ONE LAST, AND APRIL TWENTY TWO, INSTANT.
+
+NORTHWEST AIRLINES (NWA) STEWARDESS,
+
+-
+
+LOCATED TODAY AT WASHINGION, DOG., CUDG), AND VAS EXHIBITED
+
+SPREAD OF SEVEN PHOTOGRAPHS CONTAINING PHOTOGRAPH OF SUSPECT
+
+WEARING SUNGLASSES AND KNIT CAP. |
+
+UNABLE TO MAKE
+
+POSITIVE IDENTITY BUT STATED PHOTOGRAPH MORE CLOSELY RESEMBLED
+
+HIJACKER THAN ANY OF THE APPROXIMATE THREE-HUNDRED OTHER
+
+PHOTOGRAPHS SHE HAS OBSERVED TO DATE. SHE SPECIFICALLY NOTED
+
+SIMILARITIES IN MOUTH, NOSE, LIPS, AND STYLE OF SUNGLASSES.
+
+SHE STATED HIJACKER'S FACE THINNER THAN INDIVIDUAL DEPICTED
+
+IN CAPTIONED PHOTOGRAPH.
+
+SEATSHO
+
+SERIALTZED.,,
+
+......FILED..
+
+END PAGE ONE
+
+13 APR2 2 1972
+
+Juisio
+
+b6
+
+b70
+
+1497
+
+(
+
+b6
+
+b70
+
+DB Cooper-24092
+
+---
+
+## Page 66
+
+NR: 004 LA PLAIN
+
+3:59 PM NITEL 4-22-72 LRS
+
+TO DIRECTOR (164-2111)
+
+SEATTLE (164-81)
+
+FROM LOS ANGELES (164-497) 1P
+
+NORJAK, 00: SEATTLE.
+
+RE BUREAU AMSD LETTER TO LOS ANGELES DATED APRIL
+
+TWENTY-ONE LAST; UNSUB,
+
+-SOURCE.
+
+PHOTOS OF UNIDENTIFIED MALE IN BLACK AND WHITE JOCKEY
+
+STYLE CAP DISPLAYED TOL
+
+THIS DATE.
+
+POSITIVELY IDENTIFIES PHOTOS
+
+AS SAME
+
+INDIVIDUAL
+
+SEATTLE, WASHINGION, FEBRUARY LAST/.
+
+ON BEACH IN
+
+HE ALSO IDENTIFIES
+
+OF UNIDENIIFIED MALE
+
+ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+b7C
+
+END
+
+LJW FBI SE CLR
+
+SEARCHED
+
+INDEXED
+
+SERIALIZED
+
+FILED
+
+do
+
+CRA
+
+b6
+
+67C
+
+DB Cooper-24095
+
+---
+
+## Page 67
+
+FD.302 REV. $41-27.701
+
+FEDERAL BUREAU OF INVESTIGATION
+
+4/21/72
+
+Date of tronscription.
+
+b6
+
+b7C
+
+ste exorto, utan, was advised of tus identity of
+
+na a Special Agent of the Iedazzl Apreau
+
+of Investigation and the fact that Spoolal Agentl
+
+desired
+
+to interview his concerning the hijacking of a Korthwent Air
+
+Accompanying
+
+Special Agant l
+
+Goorge Faller Departuent.
+
+at the onest of the intervion vas advisad of
+
+his rights by Spocial Agent
+
+warning and waiver fort.
+
+as contained on the executed
+
+thereaftar provided the
+
+folloning infortation:
+
+It should be noted that
+
+was extremely sluggiah,
+
+almost lncoherant in yome of his answers and nould respond
+
+diffoxantly to the some question numerous tinas during the
+
+Intarviaw.
+
+vas asked by Special Agent
+
+to provide
+
+his whoreabouts as Noveaber 24 and 25, 19973
+
+Hadnanday
+
+and Thursday of Havenber of 1871.
+
+fixat indicated
+
+that he was In Bez Molner, Iona, at his residence, the address
+
+of uhlah he osald sot recall.
+
+Than infarned by Special Agent
+
+that investigation indicatod he peasibly vas in Alhoabra,
+
+california, on Thankagiying Day of 1971.
+
+stated that it
+
+is possible he could have been.
+
+Inter changed this
+
+zarment that be had bean in les Hoines,
+
+Iona, or at Alhaabra,
+
+CaLLIONaIA, DA HOVenDor 24 or 25, 1971, to state that he slaply
+
+could not remembas.
+
+Indiested throughout the interview that ha
+
+Mas w1211ng to anoner any and all questione to the extent of.
+
+hio Memory.
+
+stated he has boen out of nort for approx.
+
+falloning his resignation
+
+for the state of Imar
+
+Ke indronted
+
+that in hai born liven the an because of
+
+b6
+
+b7C
+
+b6
+
+67C
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+interviewed on
+
+4/18/72
+
+_o St, George, Utah
+
+by-
+
+/ras
+
+Date diclaled
+
+This document contoins
+
+neilher
+
+recommendations nor conclusions of the FBl. It is the property of the FBl
+
+il and ils contents are not to be distributed outside your agency.
+
+SEAT 8/164-82"
+
+SERING
+
+4/20/72
+
+MERSIAS
+
+b6
+
+b7C
+
+DB Cooper-24096
+
+---
+
+## Page 68
+
+SU 164-21
+
+SE 164-87
+
+2
+
+In regard to his ling, which was quite noticeable,
+
+indicated he had hurt his ankles in an accident near
+
+Des Moines, Iowa, on Decenber 24, 1971, Which had been
+
+investigated by a
+
+Iowa, Police Departuent. He stated, which he later refuted,
+
+he had been driving at that tine a 1969 Dodge Polara, a
+
+State vehicle, which was involved in the accident.
+
+later rafuted
+
+this to say that this was not the incident
+
+which hurt his ankles; however, he lad hurt his ankles
+
+pproxinately lIve to sint months ago in des holnes.
+
+ten he had parachuted fron an aircraft polited byl cowa
+
+Municipal Airport, Mason City, Jonas
+
+in regard to his parachuting experience he had
+
+parachuted for the military and since leaving the military
+
+he had parachuted several times as an anateur with police
+
+officer of Cerro Gordo County and police officers of Mason
+
+City, Iowa.
+
+Is response to several questions by Special Agent
+
+exhibited a good knowledge of aircrafts and
+
+parachuting techniques to the extent that how you woulo
+
+lower your landing gear and drop full flaps in order to slos
+
+an aircraft down to a landing speed and other seni-technical
+
+teminology which a person faniliar with aircraft and
+
+parachuting techniques would use.
+
+stated one would
+
+be a foot for juping tron an aircrait over 10,000 feet and
+
+would be a fool to come out of an aircraft above 170 to 200
+
+miles per hour as he night be caught in the air strean and
+
+be dashed against the fuselage of the aircraft.
+
+Lindicated he had sold his fomer residence,
+
+Des Moines, Ioua, and had nade an
+
+undisclosed amount of money fron the sale. He further
+
+indicated he was divorced; honever, he declined to nention
+
+his ex-wife's nane or whereabouts,
+
+In regard to his hurt ankles,_
+
+otated he
+
+had seen a doctor, name not recalled, at the la (veterans
+
+Administration) Hospital, Des Hoines:
+
+1972,
+
+at 9:30 al. lle provided a slip which verified the
+
+place and date as an outpatient.
+
+b6|
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+DB Cooper-24097
+
+1e -
+
+---
+
+## Page 69
+
+• SU 264-24
+
+SE 264-81
+
+3
+
+stated he derinitely had not Doon InvoLvec
+
+In the hijacking of Northwest Airlines Fligh: sue on Roverber
+
+24, 1972, and further he had never been to tho citico. te
+
+Portland on Seattle, nor had he bre to the statos of Onogon
+
+When asked if he hit ever flown in a 727 jot
+
+/concidorably between Des loines, Jowa, and Alhanbra, California.
+
+stated he quned al
+
+I which
+
+J Alhambra,
+
+California.
+
+stated that presently his finances consisted
+
+b6
+
+b7C
+
+b61
+
+b7C
+
+stated were in
+
+of approximatelyl
+
+Des Moiner. Iowa, and
+
+stated he had recently purchased, date not
+
+recalled,
+
+in Las Vegas from an
+
+autonobile company
+
+which he could not recall with a cashierts
+
+This vehicle was determined by Special Agent
+
+Nevada License l
+
+Vehicle Identification Number
+
+I and to be a four door sedan with black vinyl top
+
+and white body.
+
+The following descriptive data was obtained from
+
+observation and intervier:
+
+Name
+
+Date of Birth
+
+Place of Birth
+
+Race
+
+Sex
+
+Nationality
+
+licight
+
+Weight
+
+Hair
+
+Eves
+
+White
+
+Male
+
+American
+
+6 feet
+
+160 pounds
+
+Black
+
+Brown, wears brown clear
+
+glasses
+
+b7C
+
+b6!
+
+b7C
+
+b6|
+
+b7C
+
+DB Cooper-24098
+
+---
+
+## Page 70
+
+SU 164-24
+
+SE 164-81
+
+Characteristic
+
+Remarks
+
+Tattoos
+
+Sears and larks
+
+Permanent Address
+
+Wearing silver watch with white
+
+face and black nuion band
+
+b6
+
+b7C
+
+Des Hones, iowa
+
+DB Cooper-24099
+
+---
+
+## Page 71
+
+• 4/21/92
+
+iS1
+
+AIRMAIL
+
+FROM:
+
+HE!
+
+SAC, SEATTLE (164-81)
+
+SAC, SALT LAKE CITY (164-24) (P)
+
+NORJAK
+
+(00%
+
+SE)
+
+RR1
+
+SUSPECT
+
+Re salt baka Olty teletype to Saattie, 4/18/72.
+
+saclosed for seattle are five copias, for Los Angeles
+
+aid dunne two copies each, of FD-302 showing an Intervier with
+
+mugact
+
+Anton conde sent le notion ge
+
+lada and
+
+tunestigation atomina ton this interview are boing
+
+ton discretion of the office of eristh. Photographe
+
+meirg dupissated and will ba farmardad as soon aá copies
+
+LEAD
+
+67C
+
+b6
+
+• 67C
+
+b6
+
+b7C
+
+SAN LAXE CRET DIYUBION
+
+remias photographe of
+
+and Oxana.
+
+to seattle, los Añzeles
+
+66
+
+67C
+
+Boattie
+
+orahs tine
+
+Los Ange sAC. 2) (284-197) 404
+
+= Salt like
+
+stripas
+
+118)
+
+164-497
+
+394
+
+SEARCHED
+
+SERIALIZED.
+
+4 1972
+
+LES
+
+..b6
+
+670
+
+DB Cooper -241:00.
+
+---
+
+## Page 72
+
+"TIONAL FORM NO.
+
+GSA FEMR (41 CFR) 101-11.E
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, LOS ANGELES (164-497)
+
+DATE: April 23, 1972
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+Re Seattle telephone call to Los Angeles today.
+
+SAL
+
+Seattle telephonically advised that the photographs
+
+ofL
+
+in custody o1T
+
+Jwho is l
+
+Lare being sent te poetereles
+
+Airlines.
+
+the plane departs Seattle at
+
+5:55PM, flight 639, and arrives
+
+Los Angeles 8:04 PM
+
+Airport RA, was advised of the above information
+
+Sa laid he would meet the
+
+sending Los Angeles a teletype to confirm above telephone call. He
+
+requested to be
+
+advised upon receipt of teletype from Seattle.
+
+b6
+
+b7C
+
+b6
+
+Jo7C
+
+copies
+
+(2)
+
+BRC : bfc
+
+164-497-395
+
+INDEXED EX
+
+APR 2 4 1972
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-24101
+
+5410-708-01
+
+---
+
+## Page 73
+
+FD-36 (Rov. 5-22-59)
+
+Transmit the following in —
+
+Via
+
+TELETYPE
+
+TO:
+
+FROM:
+
+FBI
+
+Date:
+
+4/23/72
+
+PLAIN
+
+(Type in plaintext or code)
+
+URGENT
+
+(Priority)
+
+DIRECTOR, TET (164-2122) E
+
+SAC, SEATTLE (164-81)
+
+SAC, NEW YORK
+
+GMD
+
+SAC, LOS ANGELES (164-497)
+
+As ..
+
+NORJAK. 00: SEATTLE.
+
+RE FACSIMILES OF FOUR LOS ANGELES TELETYPES TO BUREAU
+
+APRIL SEVENTEEN LASI, APRIL TWENTY ONE LASI, APRIL TWENTY
+
+TWO LAST; SEATTLE TELETYPE TO LOS ANGELES APRIL TWENTY TWO
+
+LAST AND TWO PHOTOGRAPHS OF UNIDENTIFTED MALE IN BLACK AND
+
+WHITE CAP, SENT NEW YORK VIA TELECOPIER MACHINE THIS DATE.
+
+RE: UNSUB;
+
+DASH SOURCE.
+
+FOR INFORMATION OF NEW YORK,
+
+AND
+
+HAVE BEEN INTERVIEWED AT LOS ANGELES
+
+AND BOTH ADVISE WERE IN COMPANY OF
+
+LOS ANGELES
+
+ON FEBRUARY TWENTY THREE
+
+AN UNIDENTIFIED
+
+WHITE
+
+1-497-396
+
+b6
+
+b7C
+
+LAST, AT WHICH TIME
+
+MALE IN SEATTLE, WASHINGTON, WHOM_
+
+164-497
+
+crs/kah
+
+(1)
+
+is.
+
+Approved:
+
+Sent .
+
+Special Agent in Charge
+
+GPO : 1970 0 - 402-735
+
+DB Cooper-24102
+
+---
+
+## Page 74
+
+soon won
+
+LA 164-497
+
+PAGE TWO
+
+THIS CASE. IDENTITY OF
+
+UNKNOWN TO
+
+ON APRIL TWENTY TWO LAST,
+
+SON OF|
+
+CONTACTED AT LOS ANGELES. HE STATES FATHER IN
+
+NEW YORK CITY AND NOT EXPECTED TO RETURN LOS ANGELES UNTIL
+
+ABOUT WEDNESDAY, APRIL TWENY SIX NEXT. ADVISED L
+
+COULD BE CONTACTED THROUGH L
+
+NEW YORK CITY.
+
+IT IS RECOMMENDED BUREAU AUTHORIZE NEW YORK TO INTERVIEW
+
+LOS ANGELES
+
+FOR PURPOSE OF IDENTIFYING [
+
+IN SEATTLE.
+
+ARMED AND DANGEROUS.
+
+106
+
+b7C
+
+b6
+
+b7C
+
+1b6
+
+b7C
+
+DB Cooper-24103
+
+---
+
+## Page 75
+
+NRO04 SE PLAIN
+
+6:03 PM URGENT REXUW DCA
+
+0
+
+DIRECTOR, FBI
+
+NEW YORK
+
+LOS ANGELES
+
+FROM SEATTLE (164-81)
+
+6P
+
+NORJAK
+
+RE: UNSUB;
+
+SOURCE
+
+RE LOS ANGELES TELETYPE TO BUREAU, SEATTLE AND NEW YORK,
+
+APRIL TWENTYTHREE, INSTANT.
+
+FOR THE ADDITIONAL INFORMATION OF NEW YORK IN THE EVENT
+
+BUREAU GRANTS AUTHORITY FOR INTERVIEW OF
+
+THE
+
+FOLLOWING INFORMATION IS FURNISHED:
+
+INTERVIEW WITHI
+
+LAT TARZANA, CALIFORNIA,
+
+DISCLOSED THAT HE HAD TRAVELLED TO SEATTLE AND STAYED AT THE EDGE-
+
+WATER INN, FEBRUARY TWENTYIWO, SEVENTYTWO, WHERE HE AND
+
+ALSO FROM LOS ANGELES.
+
+HAD IN-
+
+DICATED ON LATER INTERVIEW
+
+THAT AT SEATTLE THEY WERE DRIVEN BY A
+
+MAN NAMED
+
+IN A RENTED
+
+CAR TO A WATER-SIDE PARK IN
+
+THE NORTH AREA OF SEATTLE WHERE
+
+END PAGE ONE
+
+SEARCHED.
+
+164 - 4922
+
+a... INDEXED,
+
+SERIALIZED.:
+
+..FILED...
+
+72
+
+CLES
+
+DB Cooper-24104
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+b6
+
+27?
+
+166
+
+b7C
+
+---
+
+## Page 76
+
+PAGE TWO
+
+SE 164-81
+
+b6|
+
+b7C
+
+RECORDS OF EDGEWATER INN REFLECI A TELE-
+
+PHONE CALL FROM ROOM REGISTERED TO L
+
+TO TELEPHONE NUMBER AREA
+
+CODE
+
+IN
+
+SILVERDALE, WASHINGION, LISTED TO AL
+
+TRANSPORIATION AT THE MOTEL WHICH WAS FURNISHED BY |
+
+WAS
+
+IN A YELLOW SMALL CAR AND INVESTIGATION NOW REFLECIS THAT I
+
+DOES IN FACT POSSESS SUCH A CAR WHICH IS A PINTO.
+
+IS
+
+YEARS OLD, HAS BROWN HAIR, WEARS A BEARD
+
+AND OTHERWISE FITS THE DESCRIPTION OF|
+
+WAS INTERVIEWED ON THREE SEPARATE OCCASIONS
+
+APRIL TWENTYTWO, TWENTYTHREE, SEVENTYTWO AND HAS NOT GIVEN A COM-
+
+PLETE AND ACCURATE ACCOUNT OF HIS INVOLVEMENT OR ASSOCIATION WITH
+
+b6|
+
+b7C
+
+b6 1
+
+b7C
+
+STATED THAT THE ONLY TIME HE SAW
+
+_WAS ON A FRIDAY NIGHI, LATER CORRECTED WHEN L
+
+WIFE REMINDED HIM IT WAS A MONDAY, DURING THE LATTER PART OF
+
+FEBRUARY, LAST, DATE NOT RECALLED, WHEN
+
+END PAGE TWO
+
+b6
+
+b7C
+
+DB Cooper-24105
+
+---
+
+## Page 77
+
+PAGE THREE
+
+SE 164-81
+
+AT LENGTH FOR PERSONAL BACKGROUND. AFTER THAT INTERVIEW
+
+HAD DINNER AT
+
+SEATTLE, AND ON THAI SAME EVENING
+
+WAS GIVEN
+
+CASH BYL
+
+ON BEHALF OF
+
+BASED ON HIS THEORY OF THE NOV. TWENTYFOUR,
+
+SEVENTYONE, HIJACKING OF A NORTHWESI AIRLINES PLANE.
+
+WAS
+
+GIVEN A RECEIPT FOR THAT PAYMENT.
+
+STATED THE MONEY WAS
+
+ACTUALLY FOR EXPENSES INCURRED BY HIM IN RESEARCH AND TRAVEL ALL OVER
+
+THE COUNTRY.
+
+ADMIIS HAVING MADE SEVERAL CALLS TO THE EDGEWATER INN,
+
+SEATTLE, FOR
+
+BUT MAINTAINS THAT HE NEVER GOT IN TOUCH WITH
+
+HIM IN THE MOTEL. HIS REASON FOR CALLING, WAS TO SEE IFL
+
+AND IF
+
+"b6
+
+b7C
+
+b6
+
+57C
+
+ORNIA TO SEE IF
+
+HIJACKING.
+
+SUBSEQUENTLY CALLED
+
+THOUGHT
+
+SAIDL
+
+HOWEVER, [
+
+AT
+
+HOME IN CALIF-
+
+FOR THE
+
+] WAS ENTHUSIASTIC AND THOUGHT E
+
+SAID HE DID NOT KNOW WHERE
+
+b6
+
+b7C
+
+HE WAS GOING TO GET THE
+
+END PAGE THREE
+
+DB Cooper-24106
+
+---
+
+## Page 78
+
+PAGE FOUR
+
+SE 164-81
+
+WAS SHOWN TWO SEPARATE PHOTOGRAPHS. ONE OF A MAN
+
+WEARING A BLACK AND WHITE KNIT CAP AND SUNGLASSES AND ANOTHER
+
+OF A MAN STANDING AT THE CURB, ALSO WEARING SUNGLASSES AND SHOWING
+
+STORE FRONTS.
+
+THE
+
+LATTER PICTURE BELIEVED MADE AT BREMERTON,
+
+WASHINGTON.
+
+DENIES KNOWING ANYTHING WHATEVER ABOUT EITHER
+
+PICTURE AND STATES HE HAD NOTHING TO DO WITH THEIR BEING MADE AND
+
+DS N KNE IDENTITY OF THE PERSONS IN THE PICTURES. HOWEVER,
+
+HE DID SUGGEST THAI PERHAPS THE MAN IN THE BLACK AND WHITE CAP WAS
+
+OF BELLEVUE, WASHINGTON.
+
+INTERVIEWED APRIL TWENTYTWO AND TWENTYTHREE, SEVENTY-
+
+TWO AND STEADFASTLY DENIES BEING THE MAN IN EITHER PHOTO AND MAIN-
+
+TAINS HE HAD NOTHING TO DO WITH THEM..
+
+STATED HE CAN CONFIRM
+
+BY RECORDS HIS WHEREABOUTS ON NOVEMBER TWENTYFOUR, SEVENTYONE AND
+
+FEB. TWENTYTHREE, SEVENTYTWO, THE LATTER DATE BEING THE ONE ON
+
+WHICH THE PHOTO OF THE MAN IN THE KNIT CAP WAS MADE. THIS WILL BE
+
+DONE THROUGH RECORDS/ ON MONDAY, APRIL TWENTYFOUR.
+
+DURING INTERYIEW WITH
+
+HE SUGGESTED THAT CONTACT BE MADE
+
+WITH
+
+FOR THE BREMERTON SUN.
+
+PORT ORCHARD, WASHINGION
+
+INTERVIEWED ON APRIL IWENTYTHREE, INSTANT AND ADVISED SHE HAD
+
+END PAGE FOUR
+
+b6
+
+b7C
+
+b70
+
+b6
+
+b7C
+
+DB Cooper-24107
+
+---
+
+## Page 79
+
+..
+
+•
+
+PAGE FIVE
+
+SE 164-81
+
+TALKED TO
+
+OF SEABECK, WASHINGTON, SEVERAL TIMES AS A
+
+RESULT OF A "D. B. COOPER ADD" HE HAD PLACED IN THE NEWSPAPER IN
+
+CONNECTION WITH A
+
+ACCORDING TO
+
+SAID HE HAD TALKED TO A MAN WHOM HE BELIEVED TO BE THE
+
+HIJACKER, RECOGNIZING HIS VOICE AS SOMEONE HE KNEW BEFORE AND HAD
+
+DEALT WITH.
+
+TOLD HER HE HAD SEEN SOME TWENTY DOLLAR BILLS
+
+WHICH HE INFERRED WERE FROM THE HIJACKING LOOT.
+
+ALSO TOLD HER
+
+AND THAT HE,
+
+AND THAT THEY WERE
+
+DROVE THEM AROUND AND SAID
+
+b6
+
+b7C
+
+TOLD HER
+
+IN
+
+HE WAS ORIGINALLY
+
+CALIFORNIA IN WHICH
+
+AND
+
+WAS GOING
+
+SHE STATED SHE CALLED
+
+JIN LOS ANGELES AND HE AT
+
+FIRSI DENIED EVER HEARING THIS STORY AND THEN SAID HE GOT A CALL
+
+LATE ONE NIGHT BASED ON A WILD SUPPOSITION WHICH WAS SO
+
+WILD HE DISREGARDED THE CALL.
+
+TOLD
+
+ABOUT
+
+AND, AFTER MAKING SOME INQUIRY, THEY DECIDED
+
+NOI IO USE II SINCE THEY DOUBTED HIS VERACITY.
+
+END PAGE FIVE
+
+b7c
+
+DB Cooper-24108
+
+---
+
+## Page 80
+
+PAGE SIX
+
+SE 164-81
+
+A PHOTOGRAPH OF
+
+AS WELL AS A PHOTOGRAPH
+
+OF THE UNSUB IN THE BLACK AND WHITE KNIT CAP WILL BE FORWARDED
+
+TO NEW YORK BY AIR COURIER TODAY. IF
+
+IS INTERVIEWED THESE
+
+PHOTOGRAPHS SHOULD BE EXHIBITED TO HIM TO DETERMINE IF
+
+IS
+
+AND ANY INFORMATION HE CAN FURNISH ON UNSUB IN KNIT CAP.
+
+NEW YORK ALSO
+
+SHOULD SHOW TO
+
+THE PHOTOGRAPH OF THE
+
+MAN STANDING IN THE STREET AS ORIGINALLY FURNISHED BY THE NEW YORK
+
+OFFICE TO THE BUREAU TO SEE IF HE CAN IDENTIFY THE PERSON PHOTO-
+
+GRAPHED.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+NEW YORK WILL BE ADVISED SUBSEQUENTLY OF FLIGHT SCHEDULES.
+
+END
+
+NEED CORRECTION
+
+PAGE FOUR LINE SEVEN
+
+FIRST THREE WORDS GA
+
+"DOES NOT KNOW THE IDENTITY..." OK?
+
+GREAT!
+
+JUS FBI LOS ANGELES
+
+CLR
+
+DB Cooper-24109
+
+---
+
+## Page 81
+
+R002 SE PLAIN
+
+142 PM URGENT 4/23/72 FEE
+
+TO LOS ANGELES
+
+FROM SEATTLE (164-81) IP
+
+NORJAK.
+
+RE
+
+- SOURCE.
+
+SEATTLE IS SENDING
+
+BY/COURIER TODAY PHOTOGRAPHS OF
+
+IT IS BELIEVED
+
+MAY BE
+
+IDENTICAL WITH THE
+
+WHO PARIICIPATED IN THE MEETING ON
+
+FEB. TWENTY-THREE, SEVENTY-TWO. IN INTERVIEW WITH KE
+
+INDICATED, ALTHOUGH DID NOI STATE DEFINATELY THAI AN ACQUAINTANCE,
+
+MAY HAVE BEEN THE HIJACKER.
+
+EXHIBIT PHOTO OF
+
+TO DETERMINE
+
+IF IDENTICAL WITH
+
+EXHIBIT PHOTO OF
+
+TO DETERMINE
+
+IF THEY CONSIDER HIM IDENTICAL WITH UNSUB WHO WAS PHOTOGRAPHED AT
+
+SEATTLE.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+LA WILL BE ADVISED TELEPHONICALLY OF PLANE SCHEDULE.
+
+640n
+
+END
+
+NJZ
+
+CLR
+
+FBI LOS ANGELES
+
+Called
+
+and.
+
+ISEARCHED...
+
+164-49 P
+
+LES
+
+b6
+
+b7C
+
+DB Cooper-24110
+
+---
+
+## Page 82
+
+NROD6 SE PLAIN
+
+6÷56 PM URGENT 4/23/72 DCA
+
+TO
+
+LOS ANGELES
+
+FROM SEATTLE (164-81)
+
+1P
+
+NORJAK
+
+REMYTEL APRIL IWENTYTHREE INSTANT.
+
+PHOTOGRAPHS OF
+
+PLACED ON WESTERN AIRLINES
+
+FLIGHT NUMBER SIX THREE NINE. IN POSSESSION|
+
+TO ARRIVE LOS ANGELES INTERNATIONAL AIRPORT EIGHT PM
+
+TONIGHT, DEPARIING SEATTLE FIVE FIFTYFIVE PM.
+
+LOS ANGELES AGENT IS TO CONTACI
+
+ON FLIGHT LINE AT
+
+ARRIVAL OF FLIGHT NUMBER SIX THREE NINE TO OBTAIN PHOTOS, WHICH
+
+ARE IN BROWN ENVELOPE ADDRESSED TO LOS ANGELES OFFICE.
+
+EN D
+
+JUS FBI LOS ANGELS
+
+CLR
+
+b61
+
+b6|
+
+b7C
+
+164-497-379
+
+..INDEXED.-
+
+SERIALIZED,
+
+..FILED..
+
+12
+
+b6
+
+b7C
+
+DB Cooper-24111
+
+---
+
+## Page 83
+
+70
+
+817
+
+Memorandum
+
+SAC,
+
+SEATTLE (165-81)
+
+SA
+
+ROSSAN
+
+REE
+
+Ur SUB:
+
+4/22/72
+
+b6
+
+b7C
+
+- • TAPERKANIE
+
+was intervioned
+
+tone. He adrised he is bequeinted with_
+
+Jat his cositepes do.
+
+having. contacted hit after
+
+alone Seattle ate nespaper requesting
+
+ran/an ad of his own in the local
+
+an errort to obtain kuzaneszetor hia
+
+He stated the ad he tan read,
+
+thave, 24
+
+dore tract.
+
+Will defer downpayment.
+
+15
+
+aãy hè received a number of tolophone calls,
+
+which
+
+ne:
+
+weis from pranksters.
+
+He stated
+
+midid receive one telephone call one nighe at
+
+aunately 1:00 AM, and' felt that because of the timo
+
+santa, and the fact thathe could hear no background
+
+corindicate tie.
+
+call came from a tavern, he melt'
+
+call had fore validity.
+
+atatesthe recognized the voice of
+
+Known to him and Instructed they
+
+chithe next day, however, he dig. not
+
+stated he does not geszre to disclose his
+
+Come ming the identity of thine
+
+feels that this indiviQual will contact hima
+
+bet. to invest the $200,000 through investment
+
+channel
+
+hich are
+
+open: tol
+
+feel
+
+that
+
+Itoss surprising he haatre been contacted
+
+DEER
+
+approprate tine for investrents a detreen June and
+
+maur Trig thaFaesmile an eft
+
+ceo hate the money anve
+
+(4)
+
+REC.
+
+88/221
+
+periora.
+
+b7C
+
+b6
+
+b7C
+
+INT.
+
+SENT.
+
+INT
+
+DATE
+
+Tile
+
+Bay U.S. Parings Bonds Regularly en the Eegrall Savin,
+
+DB Cooper-24112
+
+SCARPET.
+
+Bt
+
+S071/112EB.av
+
+AEROA
+
+4192-4001
+
+iN BEARCHED..
+
+INDEXEDIE!
+
+SERIALIZED.
+
+ADR2 2 1972
+
+ES
+
+b6
+
+b7C
+
+ORt
+
+---
+
+## Page 84
+
+SE 154-81
+
+Be stated he feels he can invest this money of li can be
+
+Invested through hin, rather that the; individual with the
+
+apney depoaiting it or usshing it himself, inasmuch as he
+
+handles large quantities of cash,
+
+Concerning the
+
+identity of the individual, he stated that he feels he
+
+is I forer Boeing employee and alac. has had dealinge with
+
+Northwest hirlines and haa a grudge against both companies.
+
+ic contacted
+
+After he received the call from this individual
+
+and advised
+
+of his interest
+
+In Locating COOPER.
+
+He telephonically contacted
+
+and then personally contacted hirt while on a business trip
+
+to Los Angeles.
+
+He stated he belleves thi- was in carly to
+
+nA-February, 1972, MIter these contacte he contacted
+
+Jon several occasions concerning COOPER and he was
+
+contacted byl
+
+when
+
+Jwas in Seattle in late
+
+2/32.
+
+he stated that he does not knok the purpose of
+
+trip to seattle and he believes
+
+made the
+
+Stap by himsolf.
+
+He stated that he thinks
+
+possibly
+
+purpose of the trip vas in consection with
+
+the
+
+acquiring
+
+antiques, in snich he ils interested. while
+
+WAS iN
+
+Seattle,
+
+he met with Mii at the idgerater Inn to discuss
+
+locating COOPER and had lunch with
+
+nin.Duting the afternoon
+
+they went to sea-tac where the
+
+ated was
+
+viewed byl
+
+ands'then they went out for, dinner
+
+at the Mindjammer that evening.
+
+He stated this was. the
+
+extent of dealinus with
+
+introduce
+
+in Seattle and he did not
+
+anyone or put him in contact with
+
+anyone in
+
+sesttle at any' time.
+
+stated he feels he can identify COOPER
+
+through having money invested through him and he can
+
+sell the stoty and also furnish the infornation to the FBI.
+
+come ring
+
+the identity of the individual who:
+
+was advisco that inasmich as it appeared
+
+, from infoimation he furnished, that he had infoznation which
+
+dealt with a Federal, violation, it was possible he could.
+
+ke subpoenaed before a Grand Jury concerning this information.
+
+Tie stated he did not desire this because of his political
+
+¡aspirations within Kitsap Coanty and if he were served
+
+with a subpochar he would bave his attorney fight the matter.
+
+so that he kould not have to tostify or could delay testimony
+
+"as long as possib)e.
+
+16
+
+67C
+
+66
+
+b7C
+
+b6
+
+67C
+
+b6
+
+b7C
+
+- 2 -
+
+DB Cooper 24113
+
+---
+
+## Page 85
+
+a."
+
+164-81
+
+stated he plans on contacting his attorney
+
+and apprising him of the situation and folloving this will
+
+contaçt the FBi as to what his attorney advises hin concerning
+
+his obligations to furniah information.
+
+During the course of the conversation.
+
+several occasions ipdicated that during his dealings in
+
+attempeing to locate COBraR. he became somewhat scared becaase
+
+of the
+
+land he did not want to become
+
+11001148 In =
+
+• this type and be prosecuted as a result
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+.в..
+
+-3-
+
+DB Cooper-24114
+
+---
+
+## Page 86
+
+D-36 (Rov. 5-22-69)
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+TO:
+
+FROM:
+
+FBI
+
+Date:
+
+4/24/72
+
+PLAIN
+
+(Type in plaintext or codel
+
+NITEL
+
+(Priority)
+
+DIRECTOR, FBI (164-2211) KAU
+
+SAC, SEATTLE (164-81)
+
+SAC, SAN FRANCISCO
+
+SAC, IOS ANGELES 1164-497>
+
+b6
+
+67C
+
+NORJAK. 00: SEATTLE
+
+RE LOS ANGELES TELETYPE TO BUREAU; SEATTLE AMSD LETTER
+
+TO LOS ANGELES, BOTH DATED APRIL TWENTY THREE LAST.
+
+RE UNSUB;
+
+DASH SOURCE.
+
+PHOTOS OF
+
+AND
+
+UNIDENTIFIED MALE WEARING GLASSES AND STRIPED TIE, DISPLAYED
+
+THIS AM.
+
+b6 |
+
+b7C
+
+TO
+
+STATES PHOTO OFI
+
+CLOSELY RESEMBLES PERSON
+
+WHO DROVE
+
+HE AND
+
+TO BEACH FRONT AREA
+
+IN SEATTLE WHERE UNIDENTIFIED
+
+HE ADVISED HIS MEMORY NOT VIVID ENOUGH TO POSITIVELY
+
+SEARCHED
+
+IDENTIFY PHOTO OF
+
+AS DRIVER.
+
+INDEXED
+
+SERIALIZED
+
+164-497
+
+FILED
+
+crs/kah
+
+(1)
+
+WA-po6
+
+sE 8578
+
+164-457-
+
+Approved: 2213
+
+Special Agent indEl
+
+Per- JeA
+
+GPO: 19700-402-755
+
+DB Cooper-24115
+
+b6 |
+
+b7C
+
+401
+
+---
+
+## Page 87
+
+IA 164-497
+
+PAGE THO
+
+UPON VIEWING PHOTO OF
+
+STATED HE
+
+DEFINITELY HAS NOT SEEN THAT PERSON BEFORE.
+
+UPON VIEWING PHOTO OF WHITE MALE WEARING WIRE-RIM SUN-
+
+GLASSES, DRESS SHIRT AND TIE, AND SWEATER, L
+
+STATED MAN
+
+IN PHOTO CLOSELY RESEMBLES UNIDENTIFIED MAN
+
+ON BEACH IN SEATTLE. HE STATED HE COULD NOT
+
+POSITIVELY STATE MAN IN PHOTO IS IDENTICAL TO PERSON_
+
+BUT MOUTH AND JAWLINE APPEARS SAME.
+
+CONTACT WITHI
+
+] VAN NUYS, CALIFORNIA,
+
+FATHER OF
+
+REVEALS HIS SON DEPARTED LOS
+
+ANGELES FOR HIS RESIDENCE,
+
+LOS ALTOS HILIS, CALIFORNIA ON AFTERNOON APRIL TWENTY
+
+THREE LAST.
+
+SEATTLE TELEPHONICALLY ADVISED OF ABOVE AND HANDLING LEAD
+
+TO DISPLAY PHOTOGRAPHS TO L
+
+AT LOS ALTOS HILLS,
+
+CALIFORNIA.
+
+ARMED AND DANGEROUS.
+
+b6|
+
+b7C
+
+b6|
+
+b6
+
+b7C
+
+b7C
+
+DB Cooper-24116
+
+---
+
+## Page 88
+
+FD-36 (Roy, 5-22-64)
+
+Transmit the following in
+
+TELETYPE
+
+Via
+
+TO:
+
+Approved:
+
+FBI
+
+Date:
+
+4/24/72
+
+PLAINTEXT
+
+(Type in plaintext or code)
+
+NITEL
+
+(Priority)
+
+FROM:
+
+DIRECTOR, FBI (104-2111
+
+SAC, SACRAMENTO (164 50) h
+
+SAC, SAN FRANCISCO (164-220)014
+
+SAC, SEATTLE (164-81)
+
+SAC, LOS ANGRIS (264-482) E
+
+NOBJAK, 0O: SEATTLE
+
+RE BUREAU TEL, CALI TO LOS ANGELES THIS DATE AND LOS MAtR
+
+fel call
+
+ANGELESITO SACRAMENTO THIS DATE.
+
+RE UNSUB,
+
+DASH SOURCE.
+
+BUREAU ADVISED THIS DATE PHOTOGRAPHS OF
+
+BE DISCREFTLY
+
+OBTAIN IMMEDIATELY. SET FORTH IS DESCRIPTIVE DATA
+
+REGARDING ABOVE INDIVIDUALS:
+
+CALIFORNIA DL NUMBER
+
+BORN
+
+FIVE FEET NINE, ONE HUNDRED THIRTYFIVE TO ONE HUNDRED FORTY
+
+POUNDS, BROWN EYES, DARK BROWN HAIR DASH LONG BUT NOT TO
+
+SHOULDERS, WEARS MOUSTACHE AND EMPLOYED AS
+
+164-497
+
+CRS/rr
+
+(1)
+
+SF-114
+
+SEARCHE
+
+INDEYES
+
+SSIALIZES
+
+1135
+
+30/
+
+Wgolfe
+
+Special Agent in Charge
+
+Sent WA
+
+_ M
+
+Per.
+
+Tec
+
+DB Cooper-24117
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+67C
+
+b6
+
+b70
+
+---
+
+## Page 89
+
+LA 164-497
+
+PAGE TWO
+
+CALIFORNIA DI NUMBER|
+
+BORN |
+
+SIX FEET, TWO HUNDRED TWENTY POUNDS,
+
+BROWN EYES AND BROWN SHOULDER LENGTH HAIR. ALSO WEARS
+
+GLASSES AND HAS FULL BEARD.
+
+CALIFORNIA DI NUMBER
+
+I BORN
+
+SIX FEET ONE, ONE HUNDRED EIGHTY POUNDS, BROWN EYES, BLACK
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+HAIR.
+
+SACRAMENTO, THROUGH CALIFORNIA DMV DRIVERS LICENSE DIVISION
+
+IMMEDIATELY OBTAIN COPIES OF PHOTOS
+
+AND
+
+AND FORWARD VIA AIR MAIL, SPECIAL DELIVERY TO
+
+SEATTLE. ALSO FORWARD COPIES TO BUREAU AND LOS ANGELES VIA
+
+AIRTEL.
+
+ARMED AND
+
+DANGEROUS
+
+b6
+
+b7C
+
+- 2 -
+
+DB Cooper-24118
+
+---
+
+## Page 90
+
+NR B01 SF PLAIN
+
+1115AM URGENT 4-25-72 MS
+
+TO DIRECTOR (164-2111)
+
+LOS ANGELES (164-497)
+
+SEATTLE (164-81)
+
+FROM SAN FRANCISCO (164-220)
+
+(P)
+
+2P
+
+NORJAK, 00: SEATTLE
+
+RE SEATTLE TEL TO SAN FRANCISCO APRIL IWENTYFOUR LASI.
+
+RETEL ADVISED SIX PHOZOS FOR DISPLAY TO
+
+WERE TO ARRIVE IN SAN FRANCISCO VIA UNITED AIRLINES FLIGHT APRIL
+
+ZWENTYFOUR, LASI. PACKAGE CONTAINED ONLY FIVE PHOTOS. PHOTO OF MAN
+
+IN BLACK AND WHITE KNITTED HAT NOT RECEIVED.
+
+CONTACTED APRIL TWENTYFOUR, LAST, AT
+
+LOS ALTOS HILLS, CALIF.., AND VIEWED THE
+
+b6
+
+b7C
+
+b6 |
+
+b7c
+
+FIVE PHOTOGRAPHS.
+
+PHOTO OF
+
+NEGATIVELY.
+
+END PAGE ONE
+
+AND MAN IN STREET WITH STIPED TIE VIEWED
+
+67C
+
+1 164-497-413
+
+SERIALIZED/
+
+12 APR 2 51072
+
+b6
+
+b7C
+
+FORs
+
+DB Cooper-24119
+
+---
+
+## Page 91
+
+PAGE THO
+
+NAMED
+
+STATED PHOTOS OF E
+
+"MIGHT BE" OF MAN
+
+WHO ACTED AS DRIVER.
+
+SEATTLE FURNISH PHOTO OF MAN IN BLACK AND WHITE HAT FOR DISPLAY
+
+b6
+
+b7c
+
+TO
+
+b6
+
+b7C
+
+ARMED AND DANGEROUS.
+
+END
+
+ILS
+
+FBI LOSA ANGELES CLR
+
+DB Cooper-24120
+
+---
+
+## Page 92
+
+MR OLS SE PLAIN
+
+19 59 0M NITEL
+
+4/14/72 BEH
+
+TO :
+
+DIRECTOR (164-2111)
+
+SEATTLE (164-81)
+
+LOS ANGELES (164-497)
+
+FROM: SAN FRANCISCO (164-228)
+
+(P) ? PAGES
+
+NORJAK. 00: SEATTLE.
+
+RE LOS ANGELES NITELS TO DIRECIOR MARCH IWENTYNINE LAST AND
+
+APRIL SIX LAST, SAN FRANCISCO NITEL MARCH THIRTYFIRSI LAST
+
+AND SEATLE WITEL APRIL THIRTEEN LASI.
+
+PHONE RECORDS FOR TELEPHONE NUMBER
+
+WHICH IS SUBSCRIBED TO BY
+
+LOS ALTOS HILLS, CALIFORNIA, HAVE BEEN REVIEWED FOR THE MONIHS
+
+OF DECEMBER, NINETEEN SEVENTYONE, JANUARY, FEBRUARY AND MARCH LASI.
+
+THE ONLY TELEPHONE CALL TO SEATTLE CHARGED TO THIS NUMBER WAS
+
+ON JANUARY SEVEN AT SIX TWENTYTHREE PM TO PHONE NUMBER
+
+WHICH LASTED FOR THREE
+
+b6
+
+b70
+
+• MINUTES. THE SIGNIFICANCE OF THE SEATTLE PHONE NUMER IS NOT KNOWN
+
+AT SAN FRANCISCO. ON APRIL FOURTEEN INSTANT IT WAS ASCERTAINED
+
+THAT TELEPHONE NUMBER
+
+OF
+
+IS A SEMI-PUBLIC TELEPHONE (PAY PHONE) IN THE RESIDENCE
+
+STRUGGLE MOUNTAIN,
+
+END OF PAGE ONE
+
+PAGE
+
+16404974404
+
+I SEARCHED
+
+SERIALIZED.
+
+SHIELD TiC
+
+12 APR 14. 1972
+
+SELES
+
+1.001
+
+b6
+
+b70
+
+DB Cooper-24121
+
+---
+
+## Page 93
+
+PAGE SIO
+
+SP 164-220
+
+LOS ALTOS HILLS, CALIFORNIA. SINCE THIS IS A PAY PHONE
+
+AND CALLS ARE PAID FOR AS USED, THERE IS NO BILLING AND NO WAY TO
+
+IDENTITY OUTGOING CALLS.
+
+LOS ANGELES REQUESTED TO FURNISH SAN FRANCISCO WITH BACKGROUND
+
+INFORMATION IN ORDER THAT INTELLIGENT INTERVIEW WITH |
+
+CAN
+
+BE CONDUCTED.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+END
+
+HOLD
+
+DB Cooper-24122
+
+---
+
+## Page 94
+
+NR 848 LA PLAIN
+
+11:59 PM NITEL 4-21-72 DJW
+
+TO SEATTLE (164-81)
+
+FROM LOS ANGELES (164-497)
+
+NORJAK
+
+UNSUB;
+
+-SOURCE.
+
+RE SEATTLE TEL TO BUREAU, EI, APRIL IWENTY ONE INSTANI.
+
+AVAILABLE SUBSCRIBER INFORMATION RE TELEPHONE NUMBERS
+
+SET FORTH IN RETEL IS AS FOLLOWS:
+
+TO
+
+VAN NUYS, CALIFORNIA.
+
+FATHER OF L
+
+NÓ IDENTIFIABLE INFORMATION IN LOS ANGELES INDICES.
+
+TO
+
+WEST LOS ANGELES.
+
+TO
+
+LOS
+
+ANGELES.
+
+PREVIOUSLY CONTACTED AND IS COOPERATIVE.
+
+SUBSCRIBER INFORMATION FOR REMAINING NUMBER WILL BE
+
+OBTAINED WHEN AVAILABLE AND FURNISHED PROMPTLY TO SEATTLE.
+
+END
+
+FEE
+
+FBI SEATTLE 'CLR
+
+DB Cooper-24123
+
+-
+
+b6
+
+b7C
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 95
+
+NR002 SE PLAIN
+
+5:00 PM IMMEDIATE 4/22/72 DCA
+
+TO
+
+LOS ANGELES (164-497)
+
+PHOENIX (164-100)
+
+FROM
+
+SEATTLE (164-81)
+
+2P
+
+NORJAK
+
+THE FOLLOWING TELEPHONE CALLS WERE MADE FROM
+
+TELEPHONE NUMBERL
+
+LISTED TO
+
+DALE, WASHINGTON.
+
+PHOENIX:
+
+• AREA CODE
+
+b6
+
+b70
+
+b6
+
+b70
+
+WEST LOS ANGELES:
+
+AREA CODE
+
+LOS ANGELES:
+
+AREA CODE
+
+b6
+
+b7C
+
+END PAGE ONE
+
+7-22z2
+
+b6
+
+670
+
+SA
+
+advesto
+
+164-499-400
+
+SEARCHED..
+
+SERIAL 60. LEE D1, 7
+
+APR 2 Z 1972
+
+BELES
+
+DB Cooper-24124
+
+---
+
+## Page 96
+
+SE
+
+SANTA MONICA:
+
+AREA CODE
+
+b6
+
+b7C
+
+OFFICES RECEIVING,
+
+IMMEDIATELY DETERMINE LISTED SUB-
+
+SCRIBER TO ABOVE PHONES, CHECK INDICES, SUTEL TODAY.
+
+END
+
+JJS FBI LOS ANGELES
+
+aLR
+
+DB Cooper-24125
+
+---
+
+## Page 97
+
+FD-36 (Rov.5-22-64)
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+FBI.
+
+Date?
+
+PLAINTEXT
+
+(Type in plaintext or codel
+
+NITEL
+
+(Priority)
+
+4-22-72
+
+TO SEATTLE (164-81)
+
+FROM LOS ANGELES (164-497)
+
+NORJAK
+
+RE SEATTLE TEL TO LOS ANGELES AND PHOENIX APRIL TUENTY TVO INSTANT.
+
+PHONE NUMBERS
+
+TARE NOT LISTED IN DIRECTORIES.
+
+JIS LISTED
+
+b6
+
+b7C
+
+NUMBER
+
+TO QUOTE
+
+WEST LOS ANGELES ENQUOTE.
+
+LOS ANGELES INDICIES INDICATE SHE ATTENDED A ONE
+
+THOUSAND DOLLAR PER PLATE DINNER FOR AMERICAN CIVIL
+
+LIBERTIES UNION ON TEN TWENTY FIVE NINETEEN SIXTY NINE.
+
+SEATTLE HAS BEEN FURNISHED INFORMATION ON
+
+67C
+
+END
+
+Approved:
+
+Sent
+
+Special Agent in Charge
+
+SEARCHED
+
+WE&D
+
+LIZED CA
+
+164- 495. 407
+
+M
+
+Per
+
+# U.S. GOVERNMENT PAINTING OFFICE: 1969 0 - 596-090 (11)
+
+DB Cooper-<4126
+
+---
+
+## Page 98
+
+TO
+
+OPTIONAL FORM NO. 10
+
+MAY INEZ EDITION
+
+GSA FPMR (1: CFR) 105-11.8
+
+UNITED STATES GOVERNMENT
+
+Memorandum •
+
+: SAG, LOS ANGELES 264-647)
+
+DATE: 4/21/72
+
+FROM : NIGHT SUPERVISOR
+
+b6|
+
+b7C
+
+SUBJECT: NORJAK
+
+RE:
+
+- SOURCE
+
+Re Seattle Teletype to Bureau, etal, 4/21/72, re telephone calls
+
+from
+
+motel room.
+
+1972 Criss Cross directory reveals following;
+
+listingg not located
+
+listing not located/
+
+b6]
+
+b7C
+
+to
+
+Van, Nuys, Calif
+
+West Los Angeles.
+
+b6
+
+Los Angeles. (From PácifiC Telephone Company). It
+
+b7C
+
+is a published number.
+
+164-497-408
+
+SEARCHEL
+
+INDEXED UL
+
+APR? 41972
+
+FLES
+
+b6
+
+b7C
+
+5010-108-05
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-24127
+
+---
+
+## Page 99
+
+4/24/72
+
+AIRTSL
+
+TOs
+
+SAC, SEATILE (164-81)
+
+FROM:
+
+•SAC, MINNEAPOLIS (164-73) (P)
+
+SUBJECTE NORTAK
+
+Re Saattle lettar to Los Angeles, 4/5/72;
+
+•Kansas City alrtel to Seattie, 3/16/72:
+
+Portland telaphone call to Minneapolis, 4/4/723
+
+Los Angeles airtal to Seattio, 4/7/12;
+
+Seattle letter to Minneapolla, 4/13/72.
+
+The folloning photographs were displayed to Harth-
+
+wastain Airlinas stewardeszos
+
+who advised that the following Individuals did not resamble
+
+Unsub:
+
+044-573-721
+
+b6
+
+b7C
+
+Kansas City
+
+Portland
+
+seattle
+
+Seattle
+
+Los Angales
+
+IDE Angales
+
+I08 Argalas
+
+b6
+
+b7C
+
+SONSID
+
+EROUS
+
+7. * Seattle
+
+2 - Kansas City (164-30)
+
+2- Los Angeles (164-497)
+
+2 - Portland (164-41)
+
+? - Minneapolis
+
+RNG I CH
+
+(10)
+
+164-497-409
+
+26
+
+b6
+
+b7C
+
+DB Cooper-24128
+
+---
+
+## Page 100
+
+TO
+
+FROM :
+
+• SUBJECT:
+
+TIONAL FORM NO:
+
+OSA FPMR (61 677) 108-1.8
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAG, LOS ANGELES (164-497)
+
+DATE:
+
+4/25/72
+
+SAL
+
+NORJAK
+
+At about 8:05 p.m., 4/22/72, ASAC
+
+Seattle Office, telephonically advised the writer of the
+
+following:
+
+received a call from SA
+
+at about 6:00 p.m., 4/22/72. SA
+
+Imentioned the son
+
+of|
+
+and said father was in New York City and
+
+would not be back until Wednesday, 4/26/72.
+
+called the Bureau and was advised by Assistant
+
+Director
+
+CHARLES W. BATES that contacting
+
+I to locate
+
+I suggested Los Angeles send a
+
+teletype to the Bureau with copies for New York and Seattle
+
+which would summarize the interviews of_
+
+and set forth recommendation for the interview of
+
+Jin
+
+New York. The purpose of this would be to determine the
+
+identity of the person he interviewed in Seattle, together
+
+with details of the interview.
+
+stated he is preparing a teletype setting
+
+forth the
+
+reasons why Seattle belleves
+
+is identical
+
+with |
+
+At approximately 9:00 p.m., 4/22/72, SAl
+
+was advised of the above.
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+JGK/kah
+
+(1)
+
+164-497-410
+
+SEARCHED
+
+INDEXED
+
+SERIALIZED ¿TOMED
+
+b6
+
+• b7c
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-24129
+
+5010-109
+
+---
+
+## Page 101
+
+NR35 NY PLAIN
+
+1221 AM 4-26-72,
+
+URGENT 4-25432 FPN
+
+TO DIRECIOR !
+
+SEATTLE
+
+LOS ANGELES
+
+FROM NEW YORK (164-627)
+
+NORJAK
+
+RESIDING
+
+CALIFORNIA, INTERVIEWED AT NEW YORK OFFICE OF
+
+PRESENCE OF
+
+BORN
+
+LOS ANGELES
+
+-IN
+
+IS A WHITE, MALE
+
+SIX FOOT ONE, ONE SEVENTY
+
+FIVE LBS, BROWN EYES, GREYING HAIR.
+
+HAS BEEN CONNECTED WITH
+
+FOR
+
+YEARS AND HAS FORMED A CORPORATION IN
+
+LOS ANGELES, WITH
+
+CORPORATION IS UNDER NAME
+
+AGE APPROXIMATELY
+
+THIS
+
+AND PLANS TO
+
+IN THE NEAR FUTURE.
+
+ADVISED HE WAS INTERESTED IN THE HIJACKING INCIDENT
+
+AND HAD PLACED ADVERTISEMENIS IN THE SAN FRANCISCO CHRONICLE,
+
+PORTLAND, OREGONIAN AND SEATTLE TIMES INDICATING HE
+
+AND ASKING THAT " D. B. COOPER" CONTACT HIM
+
+LISTING HIS,
+
+END PG ONE
+
+HOME TELEPHONE NUMBER., IN EARLY FEBRUARY
+
+168
+
+0498-411
+
+SEARCHED....
+
+INDEXED...)
+
+SERIALIZED I FIELD..
+
+A 5 APR 2 5 1972
+
+INGELES
+
+104
+
+DB Cooper-24130
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 102
+
+PG TWO
+
+RECEIVED A TELEPHONE CALL AT HIS HOME AND REQUESTED CALLER
+
+RECONTACT HIM THE FOLLOWING EVENING SO THAT HE COULD SET UP
+
+ARRANGEMENIS FOR A SECURE TELEPHONE CALL. THIS INDIVIDUAL THEN
+
+CALLED THE FOLLOWING EVENING FURNISHING HIS NAME AS
+
+AND
+
+BASED ON THIS TELEPHONE CALL,
+
+AGREED TO MEET
+
+AT A
+
+MOTEL AT THE SEATTLE AIRPORI, NAME UNRECALLED, ON OR ABOUT FEBRUARY
+
+FIFTEEN LAST.
+
+CONTACTED
+
+AT THIS MOTEL AND SHORTLY
+
+THEREAFTER ANOTHER INDIVIDUAL, KNOCKED ON THE SIDE DOOR OF THE MOTEL
+
+ROOM AND ENTERED THROUGH THIS SLIDING PATIO-TYPE DOOR. HE WAS
+
+INTRODUCED AS THE KIJACKER D. B. COOPER. AT THIS INITIAL NEETING
+
+HAD REQUESTED THE SUM OF L
+
+FOR THE
+
+CONCERNING THE HIJACKING. THIS WAS TO BE IN
+
+EACH. THE
+
+WAS
+
+-b6
+
+b7C
+
+THE
+
+AND THE
+
+ADVISED THAT
+
+WAS NOT AGREEABLE
+
+] OBTAINED
+
+FROM
+
+END PG TWO
+
+DB Cooper-24131
+
+---
+
+## Page 103
+
+PG THREE
+
+AND THIS WAS THE FINAL PRICE AGREED ON
+
+BY
+
+AND COOPER TOI
+
+J AND TO
+
+REQUESTED THAT
+
+_WHO RECENTLY HAD A SEVERE HEART ATTACK AND OPERATION,
+
+NOT BE CONTACTED DUE TO HIS POOR HEALTH AND. IN VIEW OF THE FACT
+
+WAS NOT AWARE OF THE FULL DETAILS CONCERNING
+
+MEETING WITH COOPER AND
+
+COOPER WAS PRESENT
+
+ON FEB. TWENTY LAST AT THE EDGEWATER INN
+
+SEATTLE, WHEN
+
+TURNED OVER THE
+
+IN
+
+CASH CONSISTING OF AN UNKNOWN AMOUNT OF BILLS IN TWENTY DOLLAR,
+
+FIFTY DOLLAR AND ONE HUNDRED DOLLAR DEMONINATIONS.
+
+OBTAINED
+
+A RECEIPT FROM
+
+FOR THIS SUM OF MONEY, WHICH STIPULATED AN
+
+AGREEMENT THAT IT WOULD BE PUT IN Al
+
+BY COOPER AND
+
+TO USE AS FUNDS FOR LEGAL DEFENSE IN THE EVENT COOPER WAS CHARGED
+
+WITH THE CRIME.
+
+STATED THAT DURING THE COURSE OF CONTACTS WITH
+
+HE LEARNED THAT THE TRUE NAME OF
+
+AND
+
+COOPER BECAME EXTREMELY AGITATED AND CRITICIZEDE FOR LETTING
+
+HIS TRUE NAME BECOME KNOWN.
+
+END PG THREE
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-24132
+
+---
+
+## Page 104
+
+PG FOUR
+
+ADVISED THAT ALL HIS CONTACIS WITH THE INDIVIDUALS HE KNEW
+
+• AS D. B. COOPER WERE THROUGH
+
+HE ADVISED THAT HE INTERVIEWED
+
+COOPER ON FEB. TWENTY SECOND AND TWENTY THIRD AND ON THE SECOND
+
+DATE, USED
+
+TO
+
+COOPER. HE DID
+
+NOT ALLOW THESE TWO INDIVIDUALS TO HAVE DIRECT CONTACI WITH COOPER AND
+
+b6
+
+b7C
+
+WITH COOPER. THEY WERE NOT AWARE OF THE IDENTITY OFL
+
+OTHER
+
+THAN BY HIS NICKNAME
+
+HE IDENTIFIED A PHOTO OFI
+
+FURNISHED BY SEATTLE OFFICE AS IDENTICAL IO THE INDIVIDUAL NAMED
+
+HE HAD DEALT WITH INITIALLY USING ALIAS|
+
+AND TO
+
+WHOM HE PAID THE
+
+]HE IDENTIFIED THE PHOTO OF
+
+INDIVIDUAL WEARING A BLACK AND WHITE KNIT CAP AND THE PHOTO OF AN
+
+INDIVIDUAL WEARING WHAI APPEARED TO BE A WIG, AS THE SAME INDIVIDUAL
+
+HE INTERVIEVED, IDENTIFYING HIMSELF AS D. B. COOPER.
+
+END PG FOUR
+
+DB Cooper-24133
+
+---
+
+## Page 105
+
+PG FIVE
+
+WAS NOT ONE OF INDIVIDUALS PRESENT WHEN WIG WAS
+
+PURCHASED. HE DOES NOT RECALL SEEING COOPER WITHOUT A HAT OR CAP
+
+WHENEVER HE MET HIM. COOPER DESCRIBED AS A DEVOUI CATHOLIC WHO HAD
+
+BEEN MARRIED TO THE SAME WOMAN FOR TWENTY FIVE YEARS. COOPER ALLEGED
+
+HE OWNED A BOAT, A CAMPER AND THREE AUTOMOBILES. FURTHER
+
+DESCRIPTION NOT KNOWN. COOPER INDICATED HE HAD TUO CHILDREN, A
+
+MARRIED DAUGHTER AND A SON IN COLLEGE. COOPER INDICATED HE HAD OWRKED
+
+FOR BOEING AIRCRAFI COMPANY, SEATTLE, FOR FOURTEEN YEARS AND HAD :
+
+BEEN DISCHARGED AND REPLACED BY A MAN FIFTEEN YEARS YOUNGER THAN
+
+HIMSELF, APPROXIMATELY TWO YEARS AGO, WHEN THERE WAS A GENERAL
+
+LAY-OFF AT BOEING. COOPER INDICATED HE FORMERLY LIVED NEXT DOOR TO A
+
+EPISCOPAL MINISTER.
+
+DESCRIBED COOPER AS A WHITE MALE ALMOST
+
+FIFTY YEARS OLD, ABOUT FIVE FOOT NINE TO TEN, ONE SIXTY TO ONE
+
+SIXTY FIVE LBS., LARGE EARS, THIN LIPS, SHARP NOSE, WITH BALDING
+
+DARK BROWN HAIR, RIGHT HANDED AND A HEAVY SMOKER OR FILTERED TYPE
+
+CIGARETTE. COOPER HAS SOME SORT OF TATTOO, FURTHER DESCRIPTION
+
+NOT NOTICED, ON THEL
+
+COOPER HAS A
+
+END PG FIVE
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-24134
+
+---
+
+## Page 106
+
+_COOPER,
+
+COOPER ALLEGED HE HAS
+
+CONCEALED THE MONEY WHERE NO ONE CAN FIND IT, EXCEPT FOR THREE
+
+IWENTY DOLLAR BILLS HE KEPT FOR COMPARISON WITH ANY PUBLISHED LIST.
+
+END PG SIX
+
+!
+
+PG SIX
+
+AND HAS SLIGHTLY PROMINENT VEINS IN THE CENTER OF HIS. FOREHEAD
+
+WHICH ARE SOMEWHAT OBVIOUS IN THE PHOTO OF COOPER TAKEN ON THE STREET.
+
+COOPER HAS
+
+OF THEM. HE CONCEALED
+
+WITH MAKEUP PRIOR TO
+
+ON FEB. TWENTY THREE
+
+ADVISED THAT HE WAS FURNISHED A XEROX COPY OF THREE
+
+TWENTY DOLLAR BILLS AND THE PHOTO OF COOPER ON THE STREET.L
+
+DELIVERED THESE ITEMS TO THE NYO ON
+
+APRIL TWENTY ONE LAST BASED ON INSTRUCTIONS FROMI
+
+PERSONAL ATTORNEY, TO FURNISH ALL INFO TO THE FBI
+
+HAD PREVIOUSLY FURNISHED A
+
+COOPER TO THE DEPARIMENT OF JUSTICE, ALONG WITH THE PHOTO OF COOPER
+
+IN THE BLACK AND WHITE CAP
+
+TON THE
+
+BEACH. THIS
+
+b6|
+
+b7C
+
+DB Cooper-24135
+
+---
+
+## Page 107
+
+PG SEVEN
+
+ADVISED THAT
+
+JAI THE EDGEWATER INN MOTEL, EXHIBITED THREE
+
+TWENTY DOLLAR BILLS TO
+
+J IS " NINETY EIGHT
+
+PERCENT" POSITIVE THAT THE SERIAL NUMBERS OF THOSE THREE BILLS ARE
+
+IDENTICAL WITH THE XEROX COPY OF THREE BILLS HE RECEIVED FROM
+
+DID NOT RECORD THE SERIAL NUMBERS OF THE THREE BILLS EXHIBITED
+
+WAS
+
+TO HIM BY
+
+ATTEMPTING TO
+
+TOLD
+
+HE MET COOPER WHEN
+
+TO A GROUP OF BOEING EMPLOYEES.
+
+COOPER ASKED
+
+HOW HE COULD INVEST SUFFICIENT MONEY TO OBTAIN A
+
+RETURN OF TEN TO IWELVE THOUSAND DOLLARS A YEAR.
+
+VISITED COOPER
+
+AT HIS HOME AND OBSERVED TWO SKY-DIVING AWARDS ON A MANTLE PLACE AT
+
+COOPER'S HOME. COOPER IS ALLEGEDLY UNEMPLOYED AND EXISTING ON INTEREST
+
+AND DIVIDENDS FROM OTHER INVESTMENTS HE HAS MADE IN THE PAST.
+
+ADVISED THAT HE WAS HOPEFUL THAT COOPER WOULD SURRENDER HIMSELF
+
+AND THE RANSOM MONEY.
+
+HAS HAD NO CONTACT WITH COOPER SINCE
+
+FEB. TWENTY THREE AND SOMETIME SEVERAL WEEKS AGO,
+
+ADVISING
+
+HE WISHED TO TALK TO COOPER.I
+
+ADVISED
+
+THAT COOPER HAS REFUSED TO CONTACTI
+
+CALLED
+
+SUBSEQUENTLY
+
+UNTIL THE
+
+END PG SEVEN
+
+b6
+
+b7C
+
+DB Cooper-24136
+
+---
+
+## Page 108
+
+-.-
+
+PG EIGHT..
+
+ADVISED THAT
+
+b6,
+
+b7C
+
+CONTACI WITH COOPER.
+
+J ADVISED THAT HE HAD CONTACTED[
+
+COOPER IS, APPREHENDED AND
+
+CONVICTED.
+
+ATTORNEY,
+
+ADVISED THAT HE WILL RECONTACI HIS PERSONAL
+
+TO DETERMINE IF
+
+WILL AGREE TO
+
+b6
+
+b7C
+
+COOPER AND RECEIPT FOR
+
+RECEIVED BY
+
+STATES HE BELIEVES HE TALKED TO THE
+
+ACTUAL HIJACKER, WHO IS REVEALING HIS BACKGROUND AND IS WILLING
+
+TO CONFESS TO THIS INCIDENT BECAUSE OF HIS CATHOLIC UPBRINGING.
+
+STATED THAT BASED ON HIS
+
+JYEARS EXPERIENCE ÁS A
+
+HE IS MORE THAN NINETY PERCENT CONVINCED THAT THE
+
+INDIVIDUAL HE CONTACTED WAS THE HIJACKER.
+
+NYO HAS APPOINTMENT WITH
+
+AM OF APRIL TWENTYSIX NEXT RE OBIAINING
+
+JAND RECEIPT. BUREAU AND OTHER OFFICES WILL BE
+
+IMMEDIATELY ADVISED OF RESULIS.
+
+END
+
+AXV
+
+FBI LOS ANGELES CLR
+
+SORRY
+
+LA PLS GO TO TALK HAVE SHORT FACSIMILE
+
+AS I WAS ABOUT TO SAY FACSIMILE MACHINE IS BUSY CALL US IN
+
+ABOUT @ Q 18.8,753
+
+10 MINUTES CLR
+
+DB Cooper-24137
+
+---
+
+## Page 109
+
+FRO12 NY PLAIN
+
+530 PM
+
+IMMEDIATE 4-2
+
+172
+
+JAH
+
+TO DIRECIOR 164-2111
+
+LOS ANGELES 164-497
+
+SEATTLE 164-81
+
+FROM NEW YORK 164-627
+
+6P
+
+NORJAK
+
+RE NEW YORK TEL. APRIL IWENTYFIVE LAST.
+
+RE-
+
+CONTACTED APRIL TWENTYSIX INSTANT.
+
+JADVISED THAT HE
+
+HAD GONE TO WASHINGION, DO EVENING OF APRIL/VENTYFIVE,
+
+INSTANT BY HIMSELF TO CONTACT
+
+PERSONAL
+
+*ATTORNEY WHO IS REPRESENTING
+
+DECLINED TO INDICATE WHERE HE HAD CONTACTED
+
+AND
+
+b6
+
+b7C
+
+ADVISED HE
+
+RETURNED FROM WASHINGTON, DO TO NYC AT
+
+TWO AM APRIL TWENTY SIXTH, INSIANT.
+
+JADVISED THAT
+
+HE WAS AN ASSISTANT USA IN THE SNY APPROXIMATELY
+
+TEN YEARS AGO AND WAS PERSONALLY DESIROUS OF ASSISTING
+
+THE FBI AS MUCH AS POSSIBLE.
+
+ADVISED THAT
+
+HAD INDICATED TO HIM DURING THE LATER AFTERNOON OF APRIL
+
+TWENTYFIVE INSTANT THAT HE,
+
+PLANNED TO RETURN
+
+TO HIS HOME IN LOS ANGELES.
+
+EMPHATICALLY STATED THAT
+
+HE DID NOT KNOW THE FLIGHT NUMBER OF THE AIRCRAFT
+
+MAY HAVE TAKEN TO LOS ANGELES AND DID NOT HAVE
+
+ANY CONTACT NUMBER FOR
+
+IN NEW YORK. HE
+
+DID NOT KNOW WHETHER
+
+MAY HAVE
+
+164-499-412
+
+... INDEXED
+
+STAYED AI A HOTEL IN NEW YORK CITY OR WITH UNKNOWN FRIESTRALIZED..
+
+STRATED CCTED..
+
+AND HIS INQUIRY OF
+
+AND STAFF MEMBERS
+
+1J& APR 2 6 1972
+
+END PAGE ONE
+
+DB Cooper-24138
+
+---
+
+## Page 110
+
+PAGE TWO
+
+FOR
+
+WHEREABOUTS WHILE IN NEW YORK WAS
+
+UNPRODUCTIVE.
+
+ADVISED THAT
+
+HAD DETERMINED
+
+THROUGH A REVIEW OF HIS OWN RECORDS THAT HE HAD STAYED
+
+AT THE SWEPTWING• MOTEL AT THE SEATTLE AIRPORT ON
+
+FEBRUARY SIXTEENTH INSTANT.
+
+VOLUNTARILY MADE
+
+AVAILABLE A XEROX COPY OF A
+
+COOPER WHICH
+
+JAS D.B.
+
+THIS
+
+b7C
+
+A COPY BEING FORWARDED TO BUREAU.
+
+J INDICATED THAT
+
+WAS FURNISHED ON SATURDAY, APRIL
+
+FIFTEENTH, INSTANT, TO DEPARTMENT AT WHICH TIME
+
+DID NOT INDICATE TO DEPARTMENT OF JUSTICE THAT HE
+
+WAS REPRESENTING
+
+ALSO MADE AVAILABLE
+
+A POLAROID PHOTOGRAPH OF A BALDING WHITE MALE WHO IS
+
+IDENTICAL TO THE INDIVIDUAL OBSERVED WEARING A WIG,
+
+"AND IS WEARING IDENTICAL CLOTHING AND SUNGLASSES.
+
+ADVISED THAT
+
+INDICATED TO HIM THAT HE HAD
+
+RECEIVED THIS PHOTOGRAPH FROM
+
+HAD ADVISED
+
+END PAGE TWO
+
+..:
+
+DB Cooper-24139
+
+---
+
+## Page 111
+
+PAGE THREE
+
+HE DID NOT KNOW WHERE EITHER PHOTOGRAPH WAS TAKEN
+
+OR THE DATE WHEN THE PHOTOGRAPHS WERE TAKEN.
+
+ADVISED
+
+THAT
+
+WILL MAKE A DECISION BY APRIL TWENTY
+
+SEVEN, INSTANT AS TO WHETHER HE WILL AUTHORIZE THE L
+
+b6
+
+b7C
+
+AS D. B. COOPER.
+
+_WILL
+
+ALSO MAKE A DECISION AS TO RELEASE OF THE ORIGINAL
+
+OR A COPY OF THE RECEIPT
+
+OBTAINED FROM
+
+FOR
+
+THE
+
+PAYMENT ON FEBRUARY TWENTY,
+
+INSTANT. THIS RECEIPT IS ALLEGEDLY SIGNED
+
+STATED HE DOES NOI KNOW WHERE THEL
+
+OR RECEIPT ARE CURRENTLY LOCATED AND HE DOES
+
+NOT HAVE POSSESSION OF THEM.
+
+INTRODUCED
+
+b6
+
+b7C
+
+ALSO ADVISED
+
+IO THE NYO AGENIS.
+
+HAD MADE A DECISION NOT TO
+
+ALLEGED HIJACKER AS
+
+WHEN
+
+COMPARED WITH VARIOUS NEWSPAPER CLIPPINGS FROM WEST
+
+END PAGE THREE
+
+DB Cooper-24140
+
+---
+
+## Page 112
+
+PAGE FOUR
+
+COAST PAPERS WHICH HAD REPORTED NUMEROUS INTERVIEWS OF
+
+PASSENGERS ON THE FLIGHT AND INTERVIENS OF OTHER
+
+INDIVIDUALS IN THE SEATTLE AREA.
+
+ADVISED
+
+THAT
+
+b6
+
+b7C
+
+ALLEGED HIJACKER
+
+AND WISHED TO FURNISH
+
+FOR POSSIBLE INVESTIGATIVE ASSISTANCE.
+
+ADVISED HE UNDERSTOOD NO COMMITMENTS COULD BE MADE BY THE
+
+FBI TO ALLOW
+
+_IF THE HIJACKER WAS APPREHENDED AS A
+
+RESULT OF INFORMATION FURNISHÉD BY D
+
+AS
+
+HE DID REQUEST IT BE MADE
+
+A MATTER OF RECORD AND WOULD APPRECIATE I
+
+JIF THE HIJACKER
+
+b6
+
+b7C
+
+WAS APPREHENDED SO
+
+ALLEGED HIJACKER. NO COMMITTMENT WHATSOEVER MADE
+
+TO L
+
+TVOLUNTEERED THE INFORMATION THAT
+
+NOT FURTHER IDENTIFIED, WHO HAD REVIEWED THE
+
+END PAGE FOUR
+
+b6
+
+b7C
+
+DB Cooper-24141
+
+---
+
+## Page 113
+
+PAGE FIVE
+
+HAD NOTED A NUMBER OF DISCREPANCIES BETWEEN
+
+INTERVIEWS OF ALLEGED WITNESSES ON THE HIJACKED AIRCRAFT,
+
+AND
+
+ALLEGED
+
+HIJACKER.
+
+OF OPINION
+
+ALSO
+
+CONTACTED UNKNOWN REPRESENTATIVES OF FAA. SPECIFICALLY,
+
+VOLUNTEERED BY
+
+PERTAIN TO THE
+
+CORRECI FIRSI NAME OF COOPER AS DAN RATHER THAN D.
+
+B. COOPER; HIJACKER SITTING ON LEFT SIDE RATHER THAN
+
+RIGHT SIDE; PURCHASE OF ROUND TRIP TICKET RATHER
+
+THAN ONE WAY TICKET; SOME QUESTION AS TO TYPE OF AND
+
+NUMBER OF PARACHUTES LEFI ON BOARD; WHETHER OR NOT HIJACKER
+
+HAD A DRINK ON BOARD FLIGHT AS ALLEGED BY SOME UNKNOWN
+
+FEMALE PASSENGER IN NEWSPAPER ACCOUNT OR DID NOT HAVE A
+
+DRINK AS ALLEGED
+
+AND
+
+"SOMETHING ABOUT A NOTE"
+
+STATED IT WAS HIS
+
+OPINION THAT
+
+b6
+
+b7C
+
+_ALLEGED HIJACKER.
+
+ADVISED THAT HE DID NOT KNOW THE LOS ANGELES
+
+ADDRESS FOR
+
+DOING
+
+BUSINESS WITH OFFICE SPACE IN LOS ANGELES UNDER THE
+
+FIRM NAME OF
+
+JASSUMES
+
+THAT
+
+COULD BE CONTACTED AT THAT FIRM OR AT HIS
+
+HOME ADDRESS IN LOS ANGELES THIS DATE APRIL TWENTY
+
+SIXTH, INSTANT.
+
+END PAGE FIVE
+
+b6
+
+b7C
+
+DB Cooper-24142
+
+---
+
+## Page 114
+
+PAGE SIX
+
+ADVISED THAT THE
+
+b6 |
+
+b7C
+
+REGARDING HIS coNTActINg THE ALLEGeD
+
+HIJACKER AND
+
+PURSUANT TO INSTRUCTIONS OF ATTORNEY
+
+COPIES OF PHOTOGRAPH OF ALLEGED HIJACKER
+
+WITHOUT WIG OBTAINED THIS DATE BEING DUPLICATED AT NYO
+
+AND BEING IMMEDIATELY DISPAICHED TO BUREAU, LOS
+
+ANGELES AND SEATTLE.
+
+NEW YORK WILL RECONTACT
+
+APRIL TWENTY SEVENTH. BUREAU
+
+WILL BE ADVISED OF RESULIS IMMEDIATELY. P.
+
+b6|
+
+b7C
+
+END
+
+LLS SANXXX LSXXX LOS ANGELES CLR
+
+DB Cooper-24143
+
+---
+
+## Page 115
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI/PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790-02
+
+Total Deleted Page (s) = 137
+
+Page 1 • Referral/Consult;
+
+Page 2 • Referral/Consult;
+
+Page 3 ~ Referral/Consult;
+
+Page 4
+
+~ Referral/Consult;
+
+Page 5 ~ Referral/Consult;
+
+Page 6 ~ Referral/Consult;
+
+Page 7 ~ Referral/Consult;
+
+Page 8 ~ Referral/Consult;
+
+Page 9 ~ Referral/Consult;
+
+Page 10 • Referral/Consult;
+
+Page 11 • Referral/Consult;
+
+Page 12 • Referral/Consult;
+
+Page 13 ~ Referral/Consult;
+
+Page 14 • Referral/Consult;
+
+Page 15 • Referral/Consult;
+
+Page 16 • Referral/Consult;
+
+Page 17 ~ Referral/Consult;
+
+Page 18 ~ Referral/Consult;
+
+Page 19 • Referral/Consult;
+
+Page 20 • Referral/Consult;
+
+Page 21 • Referral/Consult;
+
+Page 22 ~ Referral/Consult;
+
+Page 23 • Referral/Consult;
+
+Page 24 • Referral/Consult;
+
+Page 25 • Referral/Consult;
+
+Page 26 ~ Referral/Consult;
+
+Page 27 ~ Referral/Consult;
+
+Page 28 • Referral/Consult;
+
+Page 29 • Referral/Consult;
+
+Page 30 • Referral/Consult;
+
+Page 31 ~ Referral/Consult;
+
+Page 32 • Referral/Consult;
+
+Page 33 • Referral/Consult;
+
+Page 34 • Referral/Consult;
+
+Page 35 • Referral/Consult;
+
+Page 36 ~ Referral/Consult;
+
+Page 37 • Referral/Consult;
+
+Page 38 - Referral/Consult;
+
+Page 39 • Referral/Consult;
+
+Page 40 • Referral/Consult;
+
+Page 41 ~ Referral/Consult;
+
+Page 42 • Referral/Consult;
+
+Page 43 - Referral/Consult;
+
+Page 44 ~ Referral/Consult;
+
+Page 45 ~ Referral/Consult;
+
+Page 46 • Referral/Consult;
+
+Page 47 • Referral/Consult;
+
+Page 48 • Referral/Consult;
+
+---
+
+## Page 116
+
+Page 49 ~ Referral/Consult;
+
+Page 50 • Referral/Consult;
+
+Page 51 • Referral/Consult;
+
+Page 52 ~ Referral/Consult;
+
+Page 53 ~ Referral/Consult;
+
+Page 54 • Referral/Consult;
+
+Page 55 • Referral/Consult;
+
+Page 56 • Referral/Consult;
+
+Page 57 ~ Referral/Consult;
+
+Page 58 ~ Referral/Consult;
+
+Page 59 • Referral/Consult;
+
+Page 60 • Referral/Consult;
+
+Page 61 ~ Referral/Consult;
+
+Page 62 ~ Referral/Consult;
+
+Page 63 • Referral/Consult;
+
+Page 64 - Referral/Consult;
+
+Page 65 • Referral/Consult;
+
+Page 66 • Referral/Consult;
+
+Page 67 ~ Referral/Consult;
+
+Page 68 - Referral/Consult;
+
+Page 69 • Referral/Consult;
+
+Page 70 • Referral/Consult;
+
+Page 71 ~ Referral/Consult;
+
+Page 72 ~ Referral/Consult;
+
+Page 73 • Referral/Consult;
+
+Page 74 • Referral/Consult;
+
+Page 75 • Referral/Consult;
+
+Page 76 • Referral/Consult;
+
+Page 77 - Referral/Consult;
+
+Page 78 • Referral/Consult;
+
+Page 79 • Referral/Consult;
+
+Page 80 ~ Referral/Consult;
+
+Page 81 ~ Referral/Consult;
+
+Page 82 • Referral/Consult;
+
+Page 83 • Referral/Consult;
+
+Page 84 • Referral/Consult;
+
+Page 85 ~ Referral/Consult;
+
+Page 86 - Referral/Consult;
+
+Page 87 • Referral/Consult;
+
+Page 88 • Referral/Consult;
+
+Page 89 ~ Referral/Consult;
+
+Page 90 ~ Referral/Consult;
+
+Page 91 • Referral/Consult;
+
+Page 92 - Referral/Consult;
+
+Page 93 • Referral/Consult;
+
+Page 94 • Referral/Consult;
+
+Page 95 • Referral/Consult;
+
+Page 96 • Referral/Consult;
+
+Page 97 - Referral/Consult;
+
+Page 98 ~ Referral/Consult;
+
+Page 99 ~ Referral/Consult;
+
+Page 100 • Referral/Consult;
+
+Page 101 • Referral/Consult;
+
+Page 102 • Referral/Consult;
+
+---
+
+## Page 117
+
+Page 103 ~ Referral/Consult;
+
+Page 104 • Referral/Consult;
+
+Page 105 - Referral/Consult;
+
+Page 106 ~ Referral/Consult;
+
+Page 107 • Referral/Consult;
+
+Page 108 • Referral/Consult;
+
+Page 109 • Referral/Consult;
+
+Page 110 • Referral/Consult;
+
+Page 111 • Referral/Consult;
+
+Page 112 ~ Referral/Consult;
+
+Page 113 • Referral/Consult;
+
+Page 114 • Referral/Consult;
+
+Page 115 ~ Referral/Consult;
+
+Page 116 ~ Referral/Consult;
+
+Page 117 • Referral/Consult;
+
+Page 118 - Referral/Consult;
+
+Page 119 • Referral/Consult;
+
+Page 120 ~ Referral/Consult;
+
+Page 121 ~ Referral/Consult;
+
+Page 122 • Referral/Consult;
+
+Page 123 - Referral/Consult;
+
+Page 124 • Referral/Consult;
+
+Page 125 ~ Referral/Consult;
+
+Page 126 • Referral/Consult;
+
+Page 127 • Referral/Consult;
+
+Page 128 • Referral/Consult;
+
+Page 129 ~ Referral/Consult;
+
+Page 130 • Referral/Consult;
+
+Page 131 • Referral/Consult;
+
+Page 132 - Referral/Consult;
+
+Page 133 • Referral/Consult;
+
+Page 134 ~ Referral/Consult;
+
+Page 135 ~ Referral/Consult;
+
+Page 136 - Referral/Consult;
+
+Page 137 - Referral/Consult;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+Deleted Page (s)
+
+X
+
+No Duplication Fee X
+
+For this Page
+
+X
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+

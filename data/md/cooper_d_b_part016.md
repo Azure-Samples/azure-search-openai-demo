@@ -1,0 +1,32418 @@
+# cooper_d_b_part016
+
+## Page 1
+
+FD-36 (Rex03-32-81)
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+'PLAINTEXT
+
+URGENT
+
+FBI
+
+Date: 12-13-71
+
+(Type in plaintext or sode)
+
+(Priority)
+
+TO
+
+SAC, wFo
+
+SAC, NEW YORK
+
+Jusp
+
+SAC, LOS ANGELES
+
+FROM: SAC, SEATTLE (264-81)
+
+130
+
+G
+
+NORJAK.
+
+RE D. B. COOPER LETTER.
+
+THE SEATTLE TIMES, SEATTLE, HAS TURNED OVER TO THE SEATTLE
+
+OFFICE A LETTER RECEIVED BY THE NEWSPAPER TODAY ADDRESSED TO THE
+
+MANAGING EDITOR OF THE SEATTLE TIMES, BEARING THE POST MARK
+
+"U, S. POSTAL SERVICE, WA NINE EIGHT ZERO" WITH THE DATE
+
+DECEMBER ELEVEN, SEVENTYONE, POST MARK INDICATES LETTER WAS
+
+MAILED IN THE GREATER SEATTLE AREA, BUT OUISIDE THE CITY OF
+
+SEATTLE ITSELF. IN THE LETTER SIGNED "D. B. COOPER, " HE CLAIMS
+
+HE LEFT NO FINGERPRINTS, THAT HE WORE A TOUPEE, AND WORE PUTTY
+
+MAKE-UP.
+
+LETTER INDICATES COPIES WERE SENT TO THE WASHINGTON POST,
+
+THE NEW YORK TIMES, AND THE LOS ANGELES TIMES.
+
+WFO, NEW YORK AND LOS ANGELES ARE REQUESTED TO OBTAIN, IF
+
+POSSIBLE, THE COPY OF THE LETTER RECEIVED BY THE INDICATED
+
+NEWSPAPERS AND FORWARD SAME TO THE LABORATORY FOR APPROPRIATE
+
+LABORATORY EXAMINATION, INCLUDING USE OF THE TYPEWRITER AND FOR
+
+39
+
+Approved: -
+
+Special Adön in Charge
+
+Sen by 10 T
+
+LA /0%
+
+---
+
+## Page 2
+
+5D-96 (ROx. 5-22-811
+
+Transmit the following in
+
+Via.
+
+FBI
+
+Date:
+
+(Type in plaintext or code)
+
+(Priozisy)
+
+PAGE TWO
+
+SE 164-81
+
+LATENT FINGERPRINT EXAMINATION. SEATTLE IS FORWARDING TODAY ITS
+
+COPY OF INSTANT LETTER.
+
+Approved:
+
+Special Agent in Charge
+
+Sent
+
+........AI..""11..
+
+_M
+
+Per -
+
+-ĐB-Eooper-4306
+
+---
+
+## Page 3
+
+NRB13 SE PLAIN
+
+1029 PM URGENT 12/13/71 FEE
+
+TO WFO
+
+NEW YORK
+
+LOS ANGELES
+
+FROM SEATILE (164-81) IP
+
+NORJAK.
+
+RE D.B. COOPER LETTER.
+
+THE SEATTLE: TIMES, SEATILE, HAS TURNED OVER TO THE SEATTLE
+
+OFFICE À LETTER RECEIVED BY THE NEWSPAPER TODAY ADDRESSED TO THE
+
+MANAGING EDITOR OF THE SEATTLE TIMES, BEARING THE. POST MARK "U.S.
+
+POSTAL SERVICE. WA NINE EIGHT ZERO WITH THE DATE DECEMBER ELEVEN,
+
+SEVENTY-ONE. POSTMARK INDICATES LETTER WAS MAILED IN THE GREATER
+
+SEATTLE AREA, BUT OUISIDE THE CITY OF SEATTLE ITSELF. THE LETTER
+
+SIGNED "D.B. COOPER," HE CLAIMS HE LEFI NI FINGERPRINTS, THAT KE
+
+WORE A TOUPEE, AND WORE PUTTY MAKE-UP.
+
+LETTER INDICATES COPIES WERE SENT TO THE WASHINGTON POST, THE
+
+NEW YORK TIMES AND THE LOS ANGELES TIMES.
+
+UFO, NEW YORK AND LOS ANGELES ARE REQUESTED TO OBTAIN, IF
+
+POSSIBLE, THE COPY OF THE LETTER RECEIVED BY THE INDICATED NEWSPAPER
+
+AND FORWARD SAME TO LABORATORY FOR APPROPRIATE LABORATORY EXAMINA-
+
+TION, INCLUDING USE OF THE TYPWRITER AND FOR LATENT FINGERPRINT
+
+EXAMINATION. SEATTLE IS FORWARDING TODAY ITS COPY OF INSTANT LETTER.
+
+END
+
+FBI WFO PRM
+
+ALR
+
+164-81-885E8oper-4307
+
+---
+
+## Page 4
+
+FD-I6 (Rov. 5-22-54)
+
+oll
+
+Transmit the following in
+
+Vio
+
+NITEL
+
+FBI
+
+Date:
+
+12/13/71
+
+(Type in plainiest or code)
+
+(Priority)
+
+TO : SAC, KANSAS CITY (164-80)
+
+FROM: SAC, SEATTLE (164-81)
+
+NORJAK.
+
+RE:
+
+RE KANSAS CITY TEL TO SEATTLE, DECEMBER THIRTEEN,
+
+NINETEEN SEVENTY ONE AND SAN FRANCISCO TELETYPE DECEMBER
+
+EIGHI, NINETEEN SEVENTY ONE.
+
+INITIAL INFORMATION IN THIS MATTER WAS INFORMATION
+
+RECEIVED FROM EDITORS OF PORTLAND, OREGON NEWSPAPER WHO
+
+HAD RECEIVED CALI, STATING THAT ABOVE CAPTIONED
+
+INDIVIDUALS WERE RESPONSIBLE FOR INSTANT HIJACKING. IN-
+
+ASMUCH AS LITTLE INFORMATION IS KNOWN ABOUT
+
+KANSAS CITY IS REQUESTED TO INTERVIEW
+
+CONCERNING
+
+IDENTITIES OF
+
+IN VIEW OF POSSIBLE CONSPIRACY
+
+IN THIS MATTER.
+
+JSD: set
+
+(3)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1151
+
+Approved:
+
+Sent
+
+1048
+
+ecial Agent in Charge
+
+.M
+
+U.S. GOVERNMENT PRINTING OFFICERB, CASEY-4308
+
+---
+
+## Page 5
+
+FD:9$ (Rei. 3-22-81)
+
+Transmit the following in
+
+NITEL
+
+Via
+
+old
+
+F B1
+
+Date: 12/13/71
+
+PLAINTEXT
+
+(Type inplaintext.0r code)
+
+(Priorizy)
+
+TO : SAC, ANCHORAGE (VIA HASILINGTON, D.C.) (164-59)
+
+PORTLAND (164-41)
+
+FROM: SAC, SEATTLE (164-81) (P)
+
+ENSUB, AKA-DAN COOPER,-HORTINEST AIRLINES FITGIT THREE
+
+ZERO FIVE, PORTLAND DO SEATTLE, TOTEMBER TWENTYFOUR,
+
+SEVENTYONE CAN HIJACKENA,EXTORTION. A GET
+
+NORJAK
+
+RE BT NITEL ELEVEN TWENTYNINE, SEVERTYONE TO AN, PD,
+
+SE; AN AIRTEL TO SE TWELVE THREE LAST AND PP ; SE TELETYPE
+
+TO PD TWELVE EIGHT LAST, AND PD TELETYPE TO SE, AN AND BI
+
+TWELVE TEN LAST.
+
+b6
+
+b7C
+
+SUSPECT
+
+DISCONTINUE INESTIGAIOX OF
+
+ELIMINATED AS HIJACKER.
+
+b6
+
+b7C
+
+164-81-1157
+
+Approved:
+
+Special Agent in Charge
+
+AN IItE
+
+Sen: PD > eN
+
+Per.
+
+DB Cooper-4309
+
+---
+
+## Page 6
+
+50-36 (Ror-5-22-61)
+
+Transmit the following in
+
+NITEL
+
+Via.
+
+FBI
+
+Date: 12/13/71
+
+PLAINTEXI
+
+(Type in plaintext or code)
+
+(Priority)
+
+TO : SAC, AXCHORACE (VIA HASHINGION, D.C.) (164-59)
+
+PORTLAND (164-41)
+
+FROSE: SAC, SEATTLE (264-81) (P)
+
+ZERO TIVE, PORTENTO SEATTLE, NOVE NET MENTYFOUR;
+
+NORJAK
+
+RE BY NITEL ELEVEN TEXTININE; SEVENTYONE IO AN, PD,
+
+SE; AN AIRIEL, TO SE MELVE THREE LAST AND PE; SE TELETYPE
+
+TO PD TIBLVE BICHT LASI, AND PD TELETYPE TO SE, AX AND IT
+
+THELVE TEN LAST.
+
+SUSPECT
+
+DISCONTINUE INVESTIGATION OF
+
+ELIHINATED AS HIJACKER.
+
+b6
+
+b7C
+
+164-81-1152
+
+Approved:
+
+Sent
+
+__ M
+
+Per
+
+Special Agent in Charge
+
+DB Cooper-4310
+
+---
+
+## Page 7
+
+NR012 SE PLAIN
+
+713 PM NITEL 12/13/71 FEE
+
+TO ANCHORAGE (164-59)
+
+PORTLAND (164-41)
+
+FROM SEATTLE (164-31) 1P
+
+--VIA WASH DC--
+
+NORJAK. •
+
+7
+
+RE BI NITEL NOVEMBER TWENTY-NINE, SEVENTY-ONE, TO AN AND PD
+
+AND SE; AN AIRTEL TO SE DECEMBER THREE LAST; SE TELETYPE TO PD
+
+DECEMBER EIGHT LAST, AND PD TELETYPE TO SE, AN AND BI DECEMBER
+
+TEN LASI.
+
+SUSPECT
+
+ELIMINATED AS HIJACKER. DISCONTINUE
+
+INVESTIGATION ON
+
+END
+
+REC'D FOUR TELS
+
+AJW
+
+FBI PORTLAND
+
+/
+
+b6
+
+b7C
+
+b6
+
+164-81-47538
+
+DB d65per-4311
+
+---
+
+## Page 8
+
+FD-96 (R87, 5-22-84)
+
+a14
+
+Transmit the following In
+
+NITEL
+
+Via
+
+FBI
+
+Date:
+
+12/13/71
+
+(Type in plaintext or code)
+
+(Priority)
+
+b7C
+
+TO
+
+SAC, PITTSBURGH (164-93)
+
+FROM: SAC, SEATTLE (164-81)
+
+NORJAK.
+
+RE PITTSBURGH NITEL TO ST. LOUIS AND SEATTLE, DECEMBER
+
+SEVEN, LAST, AND SI. LOUIS NITEL TO PITTSBURGH AND SEATTLE,
+
+DECEMBER EIGHT, LAST.
+
+ON DECEMBER THIRTEEN, INSTANT,
+
+ADVISES
+
+WASHINGTON,
+
+RESIDES AT
+
+b7C
+
+SHE ADVISES
+
+SPENT THANKSGIVING DAY WITH
+
+JILNU) • SHE STATES ARTIST'S CONCEPTION DOES NOT RESEMBLE:'
+
+IS RELATIVELY HEAVY NOW, OF
+
+AVERAGE HEIGHT, SMOKES A PIPE AND|
+
+NO RECENT PHOTO AVAILABLE.
+
+PITTSBURGH AT
+
+INVESTIGATION RE
+
+ARMED AND DANGEROUS. P.
+
+RST: set
+
+(1)
+
+SHE HAS
+
+PENNSYLVANIA. CONDUCT APPROPRIATE
+
+b6
+
+b7C
+
+164-9
+
+1115}
+
+Approved:
+
+Sostel Agont in Charge
+
+Sent
+
+—M
+
+Per
+
+U.S. GOVERNMENT PRINTINO OrNICEMB, OFNCEMB,CQOpSJ-4312
+
+---
+
+## Page 9
+
+OPTIONAL, MOTEM NO. 10
+
+3019-109-08
+
+MAY 19B2 EDITION
+
+GIA FEN, PET. NO. 21
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO : SAC, SEATTLE (164-81) (P)
+
+DATE: 12/13/71
+
+FROM : SA THOMAS J. MANNING
+
+SUBJECT:
+
+NORJAC
+
+00: SEATTLE
+
+On 12/13/71
+
+who identified himself as a
+
+California tel-
+
+ephonically contacted the writer and advised he had just furnished
+
+a large amount of material concerning tabsornia Resident Arency.
+
+to SA BOB JEFFRIES of the San Mateto
+
+He described this materall as something he received from
+
+and classified|
+
+as a good
+
+suspect after viewing the composite photograph of the subject
+
+and one of
+
+He furnicher information concernina
+
+who is on a leave
+
+of absence and hasn't been seen or
+
+heard from in several months.
+
+He continued that according to the
+
+identified by name)l
+
+discussed his plan for a bijacking which was followed by the
+
+hijacker in captioned matter.
+
+was thanked for his interest and cooperation ib
+
+this matter and was advised that any comments concerning
+
+as a subject of suspect in this matter would have to be secured
+
+through contact with SAC, Seattle and this phone number was furnished
+
+to him.
+
+Above information telephonically furnished to SA GHARLES
+
+FARPELL on 12/13/71. Memo for file information.
+
+SAN FRAu. WAS ADISED
+
+12-13-21 THAt WE HaD
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1 641-81-1154
+
+b6
+
+b7C
+
+(2) TJM/
+
+DB Cooper-4313
+
+---
+
+## Page 10
+
+PD-36' (Rov, 5-22-867
+
+Transmit the following in
+
+TELETYPE
+
+Via.
+
+NITEL
+
+008
+
+FBI
+
+Date:
+
+12/13/71
+
+(Type in plaintexi or sodel
+
+(Priority)
+
+SUB
+
+TO:
+
+FROM:
+
+DIRECTOR, FBI (164-2711)
+
+SAC, SEATTLE (164-81)
+
+NORJAK.
+
+IN ORDER TO SECURE MAXIMUM DISTRIBUTION OF THE SERIAL, NUMBERS
+
+OF THE MONEY PAID IN THIS CASE,
+
+SEATTLE TIMES, SAC CONTACI, HAS BEEN APPROACHED BY ME TO DETERMINE
+
+IF THE PAPER WOULD BE WILLING TO PUBLISH THIS LIST.
+
+HA'S ADVISED THAI A STUDY OF THE COST OF THIS
+
+MATTER REVEALS THAT LABOR COSTS. IN COMPOSING WOULD RUN APPROXIMATELX
+
+SIX HUNDRED DOLLARS AND THE NEWS PRINT COST WOULD RUN APPROXIMATELY
+
+ONE THOUSAND DOLLARS. SHOULD THEY PUBLISH THIS AT THE PUBLIC
+
+SERVICE RATE, THE COST WOULD BE APPROXIMATELY THREE THOUSAND
+
+DOLLARS AND AT THE REGULAR COMMERCIAL RATE, IT WOULD RUN APPROXI-
+
+MATELY FIVE THOUSAND DOLLARS. HE HAS ADVISED THAT BY PROKIDING
+
+A PREPRINTED MAT, THE COMPOSITION COST COULD NOT BE ELIMINATED
+
+SINCE THEIR UNION CONTRACT WOULD REQUIRE THAT THE COST BE PAID
+
+NONETHELESS.
+
+HAS INQUIRED IF THE BUREAU WOULD BE
+
+WILLING TO PAY THE ACTUAL COST UP TO SIXTEEN HUNDRED FOR PUBLISHING
+
+THIS LIST.
+
+JEM: eon
+
+(1)
+
+Approved:
+
+Sent
+
+Pet
+
+Special/Adent in Charge
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+164-8188899per-4314
+
+---
+
+## Page 11
+
+aFD:36 (Rev: 5022-84)
+
+Transmit the following in
+
+Via
+
+FBI.
+
+Date:
+
+(Type in plaintext or cade)
+
+(Priorizy)
+
+PAGE TWO
+
+I PRESUME THE COST WOULD BE COMPARABLE IF OTHER DAILY NEWS-
+
+PAPERS WERE REQUESTED TO PUBLISH THE LIST SINCE ALL WOULD BE
+
+FACED WITH THE SAME OR SIMILAR PROBLEMS.
+
+OF THE SEATTLE POST-INTELLIGENCER, HAS
+
+ALSO BEEN APPROACHED BY ME CONCERNING THIS MATTER BUT HAS NOT
+
+RESPONDED THUS FAR TO MY INQUIRY.
+
+I KNOW OF NO WAY WHERE THE LIST COULD BE MADE AVAILABLE TO
+
+AS MANY PEOPLE AS PUBLICATION THROUGH A DAILY NEWSPAPER. THE
+
+SEATTLE TIMES CIRCULATES THROUGHOUT THE STATE OF WASHINGTON, ITS
+
+PRINCIPAL CIRCULATION AREA BEING THE SEATILE METROPOLITAN AREA.
+
+IN THE EVENT MAXIMUM ADVANTAGE OF THIS TECHNIQUE IS TO BE OBTAINED!
+
+THEN I WOULD SUGGEST THE SAME STEPS BE TAKEN BY A DAILY NEWSPAPER
+
+IN PORTLAND, SACRAMENTO, SAN FRANCISCO AND POSSIBLY RENO, NEVADA.
+
+BUREAU IS REQUESTED TO ADVISE IF IT WOULD AUTHORIZE THES
+
+EXPENDITURE OF UP TO SIXTEEN HUNDRED DOLLARS FOR PUBLICATION OF THIS
+
+LIST IN THE SEATTLE TIMES.
+
+'b6,
+
+b7C
+
+• Approved:
+
+Special Agent in Charge
+
+Sent -
+
+Per .
+
+DB Cooper-4315
+
+---
+
+## Page 12
+
+SolD
+
+NR201 DL PLAIN
+
+NITED DATED 12-13-71 SENT 2:00AM 12-14-71 IPR
+
+TO SEATTLE (164-81)
+
+LOS ANGELES
+
+SAN FRANGISCO
+
+• FROM DALLAS (164-191)
+
+L.
+
+NORJAK
+
+OF THE DALLAS PARACHUTE
+
+ASSOCIATION, ADVISED TODAY ELGHTY PER CENT OF THE PARACHUTISIS
+
+AND SKYDIVERS BELONG TO THE U.S. PARACHUTE ASSOCIATION CUSPA)
+
+BOX ONE ZERO NINE, MONTERREY, CALIFORNIA AND RECEIVE A MONTHLY
+
+PUBLICATION CALLED THE "PARACHUTIST".
+
+IN ADDITION
+
+OF THE USPA,
+
+PUBLISHES THE "SKYDIVER" MAGAZINE. ADDRESS P.O. BOX FORTY-FOUR,
+
+BUENA PARK, CALIFORNIA.
+
+LOS ANGELES AND SAN FRANCISCO SHOULD CONTACT ABOVE TWO
+
+ORGANIZATIONS IN THEIR RESPECTIVE TERRITORIES. DETERMINE IF
+
+END PAGE ONE
+
+b6|
+
+b7C
+
+164-81-1156
+
+SEARCHED
+
+_M INDEXED.
+
+SERIALIZED_A-ELED S
+
+DEC 1 31971
+
+EBI-SEATLE
+
+DB Cooper-4316
+
+---
+
+## Page 13
+
+PAGE TWO
+
+164-191
+
+THEY WILL PUBLISH THE COMPOSITE DRAWING OF UNKNOWN SUBJECT.
+
+ASCERTAIN DEGREE OF COVERAGE WHICH CAN BE EXPECTED. ' NOTIFY.
+
+SEATTLE AND BUREAU. DALLAS HOLDING LEAD IN ABEYANCE TO CONTACT
+
+PARACHUTE, SKYDIVER AND AFFILIATED ORGANIZATIONS.
+
+CONSIDER UNSUB DANGEROUS.
+
+END
+
+SUD FBI SEATTLE CLR
+
+DB Cooper-4317
+
+---
+
+## Page 14
+
+NR. BB4 LA PLAIN
+
+1222PM URGENT 12-14-71 CXF.
+
+TO ST. LOUIS
+
+SEATTLE (164-81)
+
+FROM. LOS ANGELES (164-497)
+
+b6
+
+670
+
+NORJAK.
+
+Elim
+
+RE SEATTLE TELETYPE TO LOS ANGELES AND ST. LOUIS,. '
+
+DECEMBER EIGHT LAST
+
+RE SUSPECI
+
+IT IS TO BE NOTED
+
+THAT INVESTIGATION HAS DETERMINED
+
+CORRECT SPELLING FOR SUSPECT
+
+AS PREVIOUSLY SET FORTH.
+
+INVESTIGATION AT LOS ANGELES HAS LOCATED
+
+ADVISES
+
+IS
+
+YEARS OLD, HAS LONG HAIR, AND
+
+•HE PROVIDED AN ADDRESS FOR
+
+LOS ANGELES
+
+CORROBORATING INFORMATION FURNISHEDL
+
+ST. LOURS DISCONTINUE.
+
+ARMED AND DANGEROUS. PENDING.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+, END
+
+JUT
+
+FBI SEATTLE
+
+164-81-1157
+
+SEARCHED-.
+
+SERLALIZED
+
+-SELEDS
+
+DEC 1 4 1971
+
+FBI - SEATTLE
+
+DB Cooper-4318
+
+---
+
+## Page 15
+
+NR002 MP PLAIN
+
+154 PM URGENT 12-14-71 IJT
+
+TO DENVER
+
+PORTLAND
+
+(164-41)
+
+SEATTLE
+
+(164-81)
+
+FROM MINNEAPOLIS
+
+(164-73)
+
+IP
+
+b6
+
+b7C
+
+NORJAK
+
+RE:
+
+RE MINUEAOL IS TELEIXPE DECEMBER THIRTEEN, LAST;
+
+DALLAS TELETYPE TO MINNEAOLIS DECEMBER THIRTEEN, LAST.
+
+FOR INFO PORTLAND AND DENVER, REFERENCED DALLAS
+
+TELETYPE TO MINNEAPOLIS RELATED NO FEDERAL PENITENTIARY
+
+LOCATED AT LUBBOCK, TEXAS •
+
+IT IS REQUESTED THAT DENVER AND PORTLAND, DURING
+
+COURSE OF INVESTIGATION, DETERMINE INSTITUTION OF INCARCERATION
+
+FOR
+
+AND SET OUI APPROPRIATE LEADS CONCERNING BACKGROUND
+
+INFORMATION AND OBTAIN PHOTOGRAPH.
+
+UNSUB SHOULD BE CONSIDERED DANGEROUS.
+
+P. END
+
+b6
+
+b7C
+
+66|
+
+b7C
+
+KB
+
+FBI SE CLR
+
+164-81-1158
+
+SEARCHED INDEXED.
+
+BERLALIZEA
+
+DEC 1 4 1971
+
+FBI - SEATTLE
+
+DB Cooper-4319
+
+---
+
+## Page 16
+
+NR 883 SF PLAIN
+
+2:38 PM URGENT 12/14/71 MCC
+
+IQ
+
+SEATTLE (164-81)
+
+DALLAS (164-191)
+
+SACRAMENTO (164-58)
+
+IP
+
+FROM SAN FRANCISCO (164-228)
+
+NORJAK
+
+Sel
+
+L
+
+RE SACRAMENTO TELETYPE DATED IWELVE THIRTEEN LAST AND DALLAS
+
+NITEL DATED TWELVE THIRTEEN LAST.
+
+FOR INFORMATION OF DALLAS AND SACRAMENTO, DAILY CONTACT HAS BEEN
+
+MAINTAINED, WITH THE U.S. PARACHUTE ASSOCIATION, (USPA), AND ARRANGEMEN
+
+HAVE' BEEN MADE TO HAVE COMPOSITE PHOTOGRAPH OF UNSUB AS WELL AS A:
+
+DESCRIPTIVE ARTICLE OF THE CRIME PUBLISHED IN THE PUBLICATION "THE
+
+PARACHUTIST". THERE ARE SIXTEEN THOUSAND MEMBERS OF USPA. A LISI OF
+
+ALL AFFILIATED CLUBS OF THE USPA FOR THE ENTIRE UNITED STATES HAS.
+
+BEEN FURNISHED THE BUREAU AND SEATTLE, SEATTLE HAS ALSO BEEN FURNISHE
+
+AN INDEX OF IHE MEMBERS OF THE AFFILIAIED CLUBS FOR THE STATES OF
+
+FERSILG
+
+CALIFORNIA, WASHINGTON, OREGON, NEVADA, IDAHO AND ARIZONA.
+
+DALLAS COVER LEAD MENTIONED IN REFERENCED DALLAS NITEL AS
+
+TO PARACHUTE SKY DIVER AND AFILIATED ORGANIZATIONS. WITH REFERENCE
+
+TO SACRAMENTO'S REQUEST TO OBTAIN A COMPLETE MEMBERSHIP LIST OF
+
+JOPA MEMBERS, I 1S NOT BELIEVED THAT THES IS FEASIBLE AND SHOULD
+
+BE LEFT TO THE DISCRETION OF THE OFFICE OF ORIGIN.
+
+164-81-1159
+
+SEARCHED A
+
+• INGERIB
+
+END
+
+SKRIALIIEDA
+
+_ FILEDS
+
+VAB
+
+DEC 1 4 1971
+
+FBI SEATTLE CLR
+
+FEI-SEATLEIR GOODer-4320
+
+---
+
+## Page 17
+
+JuB-
+
+NR B4 SC CODED
+
+11:42 AM URGENT 12-14-71 XL
+
+TO
+
+DIRECTOR (164-2!11>
+
+SEATILE (164-81)'
+
+FROM
+
+SACRAMENTO
+
+(164-58)
+
+WHOn
+
+1P
+
+NORJAK• 00: SEATTLE.
+
+RE SACRAMENTO TEL TO SEATTLE, DEC. THIRTEEN, LAST.
+
+AERIAL SEARCH OF ROUTE TAKEN BY NORTHWEST FLIGHT NO THREE ZERO
+
+FIVE IN CAPTIONED MAITER CONDUCTED DEC. THIRTEEN, LAST, BY BUAGENTS,
+
+ALL OF WHOM WERE EITHER EXPERIENCED PILOTS OR PARACHUTISTS, WITH
+
+NEGATIVE RESULTS. AIRCRAFT UTILIZED WAS RENTAL CESSNA ONE EIGHT TWO:
+
+BLIZZARD CONDITIONS IN MOUNTAINS ALONG WITH FOG AND RAIN IN NORTHERN
+
+CALIF. VALLEY PRECLUDED SEARCH OVER WEEKEND, DEC. ELEVEN-TWELVE,
+
+LAST:
+
+END.
+
+JJI
+
+FBI SEATTLE
+
+aLR
+
+T.
+
+DAiLY
+
+1 6641-81-1160
+
+BLAREHER L
+
+SERIALIZED A ELEGA
+
+_ /N6EXE6
+
+DEC/1 1971
+
+FBI - SEATTLE
+
+DB Cooper-4321
+
+---
+
+## Page 18
+
+BUR 164-2111
+
+11-30-71
+
+THIeD KETCH
+
+164-81-
+
+1161
+
+MARINIO
+
+NOV 3 01971
+
+DB
+
+per 4322
+
+---
+
+## Page 19
+
+GSA TAMA (4l G77) 101-120
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: FILE (164-81)
+
+FROM : SAC, SEATTLE
+
+DATE:
+
+12/14/71
+
+SUB-
+
+# 130
+
+-G.
+
+SUBJECT: NORJAK
+
+Re Seattle letter 12/13/71 transmitting copy
+
+of a letter received by the managing editor of the
+
+SEATTLE TIMES On 12/13/71, signed "D. B. COOPER."
+
+On 12/14/71 SA BOB MATHESON called from the
+
+Bureau. He advised that the UPI carried an article today
+
+concerning a letter received by the LOS ANGELES TIMES; and
+
+wanted to know where the original of this letter could be
+
+located since Los Angeles advised they had a copy.
+
+I told him that the SEATTLE TIMES likewise re-
+
+ceived a copy, as did the WASHINGTON POST and the NEW YORK
+
+TIMES, and that we had sent a wixe to Los Angeles, New
+
+York and WO to get the copy
+
+While talking to SA MATHESON, I called
+
+Jat the SEATTLE IIMES, who had furnished the letter
+
+originally and he said he had given us everything they
+
+received.
+
+I advised MATHESON that I suspected that very
+
+likely the original was still in the hands of the
+
+writer.
+
+$6|
+
+b7C
+
+JEM:eon
+
+(3)
+
+164-81-1162
+
+(SEARCHED_
+
+3010-104
+
+DEC 1 4 1971
+
+FBI — SEATTLE
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+-
+
+cooper 13271
+
+---
+
+## Page 20
+
+NR D11 LA PLAIN
+
+426PM URGENT 12-14-71 CXF
+
+TO SEATTLE (164-81)
+
+KANSAS CITY
+
+PORTLAND
+
+SACRAMENTO
+
+FROM LOS ANGELES (164-497)
+
+16
+
+b7C
+
+NORJAK•
+
+RE KANSAS CITY TELETYPE IO LOS ANGELES, 'DECEMBER TEN LAST.
+
+RE SUSPECT
+
+FOR INFORMATION SEATTLE AND SACRAMENTO, L
+
+ADVISED
+
+b6
+
+b7C
+
+IS POSSIBLY RESPONSIBLE
+
+FOR CAPTIONED CRIME. OPINION BASED ON ARTIST'S SKEICH.
+
+WHEREABOUTS UNKNOWN AND
+
+b6
+
+b7C
+
+b7D
+
+END PAGE ONE
+
+164-81-1163
+
+- INDEXED.
+
+AN BLED S
+
+DEG 1 41971
+
+FBI - SEATTLE
+
+DB Cooper-4324
+
+---
+
+## Page 21
+
+LA 164-497
+
+PAGE TWO
+
+_DESCRIBED AS WHITE MALE AMERICAN, BORN
+
+FIVE FEET NINE INCHES,
+
+J EYES, [
+
+COMPLEXION,
+
+NO RECENT PHOTO AVAIL-
+
+b6
+
+b7C
+
+ONE SIXTY EIGHT POUNDS, BROWN HAIR,
+
+FBI NUMBER
+
+ABLE
+
+INVESTIGATION BY LOS ANGELES AT
+
+CALIFORNIA, FAILS TO REVEAL ANY RECORD IDENTIFIABLE
+
+WITH
+
+NCIC NEGATIVE. NO RECORD IDENTIFIABLE LOS
+
+ANGELES INDICES OR DRIVERS LICENSE DIVISION, CALIFORNIA DEPARIMENT
+
+OF MOTOR VEHICLES.
+
+KANSAS CITY, AT
+
+KANSAS, CONDUCT ADDITIONAL
+
+INVESTIGATION TO DEVELOP INFORMATION REGARDING RELATIVES AND
+
+ASSOCIATES POSSIBLY KNOWING WHEREABOUTS OF
+
+AND SET
+
+FORTHSDERASTIQTESANBLESY ONEREOBODAS DURING REBORUSNI PERIOD.
+
+CALIFORNIA CORRECTIONAL INSTITUTION,
+
+IN EFFORT TO
+
+IDENIIFY
+
+AS FORMER INMATE AND DEVELOP LEADS TO LOCATE
+
+AND ESTABLISH WHEREABOUTS.
+
+PORTLAND, AT PORTLAND, OREGON, CHECK CREDIT AND CRIMINAL
+
+RECORDS IN EFFORI IO ASCERTAIN WHEREABOUTS OF
+
+ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b6
+
+b7C
+
+END
+
+PLS CORRECT LINES FOUR AND FIVE OF PARA THREE PAGE TWO LINES
+
+OVERLAPPED GA
+
+FORTH LEADS TO ESTABLISH WHEREABOUTS DURING PERTINENT PERIOD.
+
+SACRAMENTO, AT
+
+I CALIFORNIA, REVIEW RECORDS
+
+ARE THESE THE CORRECT LINES GA
+
+YES TU VAB
+
+b6
+
+b7C
+
+DB Cooper-4325
+
+---
+
+## Page 22
+
+DIRECTOR,
+
+FBI
+
+(164-2111)
+
+Attention: "ABI IaboIatOry
+
+SAC, SEATTLE (234-91}(P)
+
+NORJAK
+
+SuB
+
+SusP.
+
+12-13-71
+
+G
+
+130
+
+Enclosed la one copy of a letter and the
+
+envolope on which it Mes aLled,
+
+received this date by
+
+the Managing tultor of the seattle tinos Nerspaper.
+
+Seattlo, Mashington,
+
+Instant letter is signed D. B. COOPER and
+
+Indicaton that copios of that lottor more sent to the
+
+Mashington Post, the Ner Xork Iines and the Lok Angeles
+
+T105.
+
+The writer of the lottor claims, among other
+
+things, that he is not a boasting man; that ha lett no
+
+fingerprints, that ha soro s toupee; and that bo more
+
+putty nake-up.
+
+The lotter 1teolf nes possibly handled by tho
+
+employees of the seattle Ilmer.
+
+They arol
+
+ров
+
+The laboratory is roquentod to mako aul oxanination
+
+of the onclosed lottor, in order to determina any similar
+
+lattora that havo been formardod.
+
+The Imboratory la a1n0
+
+requested to determine 11 the paper on which tia letter 15
+
+writton could concolvably be Iron government stock, noting
+
+that it resemblon the carbon copy br the airtal material
+
+used by the fleld offices.
+
+It is als0 roquested thit the enclosed letter
+
+and invalope lo procossad fox latent fingerpriate.
+
+WFO, New York and los Angoles havo also been
+
+roquestad to obtain tho coplos of theso lotters sent to
+
+the indicated neuspapers and forward then to the Bureau.
+
+~ Burosu (Enclosures 2)
+
+Seattlo
+
+CEI/k9
+
+(5)
+
+arched
+
+"lalizod
+
+Indexed.
+
+141PA
+
+i. .
+
+b6
+
+b70
+
+164-81-1164
+
+DB Cooper-4326
+
+---
+
+## Page 23
+
+12-13-71
+
+b6
+
+b7C
+
+AIRTEL
+
+AIRHAIL
+
+TO
+
+:SAC, PORTLAND
+
+FROM : SAC, SBATTS
+
+SUBJECT: NORJAK
+
+SUSPECT
+
+SUSPECT
+
+(164-41)
+
+(261-81)(P)...
+
+Re Portland tel to seattle 12-6-71.
+
+Enclosed for portland 1s one group photograph
+
+supplied by
+
+Hashington.
+
+On November 27, 1971.
+
+was interviewed
+
+by Bureau Agent at
+
+Hashington.
+
+During the nterven
+
+vas exalbited &
+
+group photographl
+
+as well as a composito of the UNsUB.
+
+was not
+
+exhibited & group of mug shots; horever, he may have
+
+assumed the photo vas a mug shot.
+
+It should be noted that the enclosed photograph is
+
+the personal property of I
+
+Hashington, and he has requested its
+
+return when we are
+
+through with it.
+
+ATIADS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+PORTLAND
+
+TORRCON
+
+111 exhibit enclosed nhotagraph to
+
+determine 1f he can Identify
+
+- Portland (Enclosure 1)
+
+132
+
+- Seattle
+
+(5)
+
+b7c
+
+to
+
+inar
+
+1-11. 1
+
+... =
+
+164-81-1165
+
+DB Cooper-4327
+
+---
+
+## Page 24
+
+:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO : SAC, SEATTLE (164-81)
+
+DATE: 12/14/71
+
+FROM : SA JORN A. DRAKE
+
+SUBJECT:
+
+UNSUB., aka. Dan Cooper
+
+NW Airlines
+
+• Flight 309,
+
+11/24/71
+
+CAA - HIJACKING
+
+07:SE
+
+Elim
+
+RePortland teletype to Seattle 12/7/71.
+
+On 12/9/711
+
+Lemplovees as exhibited
+
+artist's conception of the sibject.
+
+They advised
+
+that
+
+had never worked there and was unknown to them.
+
+They added that never
+
+knew anyone who resembled this artist s conception.
+
+On 12/13/71
+
+of the Credit Bureau of
+
+advised that
+
+of only one crecht nautry and that was on 12/9/71. At that time he
+
+the subject
+
+was employed at
+
+On 12/13/711
+
+Ladvised thatl
+
+Jis employed there in
+
+He added that
+
+about 33 years of
+
+WMA
+
+511", 140#, black hair and definitely does not even resemble the
+
+age,
+
+artist's conception of the unsub.
+
+is suspect
+
+as set forth in serial 164-81-69i.)
+
+JAD CC: 2
+
+164-81
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+7018-100
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plar
+
+164-81-1166
+
+SEARCHED A 100-0-
+
+DECA 51971
+
+FBI - SEATTLE
+
+A Cooper-4328
+
+---
+
+## Page 25
+
+TO
+
+OFTIONAL FORM NO, 19
+
+MAY 1082 EDITION
+
+ESA FRMA (41 047) 105-114
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)(P)
+
+DATE: 12/14/71
+
+FROM : SA
+
+SUBJECT: UNSUB; aka Dan Cooper
+
+NORTHWEST AIRLINES
+
+ELIGHT #305
+
+PORTLAND TO SEATTLE
+
+11/24/71
+
+CAA - HIJACKING; EXTORTION
+
+00: SE
+
+RE SUSPECT
+
+Rememo of SA
+
+dated 12/7/71.
+
+On 12/13/71,l
+
+advised she had located the personnel
+
+file off
+
+who had worked for
+
+when he was
+
+laid oft due to a general reduction in force. She furnished
+
+the file of this individual, a review of which revealed
+
+the following descriptive information:
+
+ĐOB:
+
+POB:
+
+ADDRESSA
+
+SSAN:
+
+HT:
+
+61.15"
+
+WT: 165 Ibse
+
+HIFB:
+
+OCCUP:
+
+PREVIOUS
+
+ADDRESSES:
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+JWAI: jm
+
+ca)
+
+3010-108
+
+'..
+
+PARENTS:
+
+164-81-1167
+
+It was noted in the file that suspects
+
+address above,
+
+was current as of
+
+also furnished a photo
+
+of
+
+which need not be returned.
+
+1H8T
+
+Lead
+
+*14)1/E0.-
+
+DEC 1 41971
+
+b7C
+
+b6
+
+b70
+
+DB Cooper-4329
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 26
+
++7791755
+
+164-81
+
+RE SUSPECT|
+
+b6 |
+
+b7C
+
+LEAD
+
+SEATTLE, at Seattle, Washington
+
+Will set out lead for credit/criminal.
+
+SBATTLE, atL
+
+_Washington
+
+Will attempt locate
+
+in order to verify his whereabouts on 11/24/71 and to
+
+compare with
+
+artist's
+
+• sketch.
+
+b7C
+
+- 2% -
+
+DB Cooper-4330
+
+---
+
+## Page 27
+
+SAC, SEATTLE (164-81) (P)
+
+12/14/71
+
+SA
+
+UNSUB; aka Dan Cooper
+
+NORTIMEST AIRLINES
+
+BLIGHT #305
+
+PORTLAND TO SEATTLE
+
+11/24/71
+
+CAN - HIJACKING; EXTORTION
+
+00: SE
+
+RE SUSPECT
+
+Rememo of SA
+
+dated 12/7/71.
+
+en 12/3/2 ded sha bad Locatod the personnel
+
+1i1e orl
+
+Who had worked for
+
+laid oft due to a general reduction in lorce. She furnished
+
+tho file of this individual, a review of which revealed
+
+the following descriptive information:
+
+DOB:
+
+POBS
+
+ADDRESSE
+
+SSAN:
+
+IT: 6'17
+
+IT: 165 ins
+
+WIFE:
+
+PREVIOUS
+
+ADDRESSES:
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+PARENTS:
+
+164-81-1167
+
+It was noted in the filo that suspocts address above,
+
+has current as ofl
+
+-also furnished a photo of
+
+which was taten
+
+which need not be returned.
+
+/SEARCHED-
+
+_INDEXED...
+
+SEELATED AUFLED SO
+
+DEC 1 41971
+
+b6|
+
+b7C
+
+JIll: jm
+
+(37)
+
+DB Cooper-4331
+
+---
+
+## Page 28
+
+164-81
+
+RE SUSPECT
+
+LEAD
+
+b6|
+
+bIC
+
+SEATTLE, at Seattlo, Washington
+
+1111 set out lead for crodit/criminal.
+
+SEATTLE, at Washington
+
+11111 attompt locatol
+
+In order to verify his whereabouts on 11/24/71 and to
+
+compare
+
+with
+
+artist's sketch.
+
+DB Cooper -4332
+
+---
+
+## Page 29
+
+DATIONAL FORM NO, 10
+
+MAY 1862 EDXYJON
+
+ESAFAMA (41 CF7) 101-14.4
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+i SAC, SEATTLE (164-81)
+
+FROM
+
+: SA
+
+DATE:
+
+12/14/71
+
+SUBJECT: UNSUB; NORTHWEST AIRLINES
+
+FLIGHT 305, 11/24/71
+
+CAA-HIJACK ING; EXTORTION
+
+On 12/14/71
+
+was contacted at
+
+and was shown
+
+photographs.of the following persons, with throw downs, and he elliminated
+
+each persong
+
+b6
+
+b7C
+
+b6.
+
+b7c
+
+b6
+
+b7C
+
+SUB J
+
+b6
+
+b7C
+
+2-161-81
+
+cc
+
+11
+
+CNG
+
+13
+
+164-81-1168
+
+/ SEARCHED_
+
+INDEXE
+
+DEC 1 41971
+
+8010-100
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+b6
+
+b7C
+
+DB Cooper-4333
+
+---
+
+## Page 30
+
+OPTIONAL FORM MO 10
+
+MAY 1062 EDITION
+
+ESAFAMA (41 0974) 191-11.8
+
+UNITED STATES GO
+
+RNMENT
+
+Memorandum
+
+1O
+
+: SAC, SEATTLE (164-81)
+
+FROM : SA
+
+DATE:
+
+12/14/71
+
+SUBJECT: UNSUB; NORTHEST AIRLINES
+
+FLIGHT 305, 11/24/71
+
+CAA-HIJACK ING; EXTORTION
+
+0n 12/14/71 Г
+
+Twas contacted at
+
+and was shown
+
+each pershs of the following persons, with throw downs, and he eliminated
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+SUB J
+
+b6
+
+b7C
+
+2164-81
+
+11
+
+CNG
+
+13
+
+3018-100
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+164-81-1168
+
+SEARCHED!
+
+_INDEXED.
+
+,DS17E0-EHLEDGE
+
+DEC 1 41971
+
+FBLE SENILLE
+
+1926.
+
+DB Cooper-4334
+
+---
+
+## Page 31
+
+NROB6 MP PLAIN
+
+1006 PM URGENT 12-14-71 MPC
+
+TO
+
+DIRECTOR (164-211)
+
+CHICAGO
+
+DETROIT (164-115)
+
+PITISBURGH (164-93)
+
+PHILADELPHIA (164-133)
+
+SEATTLE (164-73)
+
+NFROM MINNEAPOLIS (164-73)
+
+ORJAK
+
+b6
+
+b7C
+
+RE PITISBURGH TELETYPE TO CINCINNATI, DETROIT,
+
+PHILADELPHIA, AND SEATTLE DECEMBER EIGHT LAST.
+
+RE:
+
+INFORMANT
+
+NORTHWEST AIRLINES,
+
+MINNEAPOLIS, MINNESOTA, ON DECEMBER THIRTEEN LASI, RECEIVED A
+
+PHONE CALL FROM
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+END PAGE ONE
+
+1164-81-169
+
+_ INDEXED.
+
+FBI • SEATTLE
+
+DB Cooper-4335
+
+---
+
+## Page 32
+
+MP 164-73
+
+PAGE IWO
+
+ON DECEMBER FOURTEEN INSTANT
+
+WHO IDENTIFIED
+
+HIMSELF AS
+
+PHONE
+
+AND STATED HE
+
+b6
+
+b7C
+
+b7D
+
+AND
+
+MA, BOTH IDENTIFIED PHOTOGRAPH. OF
+
+PITTSBURGH PD NUMBER
+
+FOR THE INFORMATION OF THE CHICAGO DIVISION, NWA RECEIVED
+
+TELEGRAM NOVEMBER THIRTY LAST
+
+b6
+
+b7C
+
+b7D
+
+END
+
+PAGE TWO
+
+DB Cooper-4336
+
+---
+
+## Page 33
+
+MP 164-73
+
+PAGE THREE
+
+b6
+
+b7C
+
+b7D
+
+NO SUCH INDIVIDUAL
+
+AND INVESTIGATION BY SEVERAL FIELD
+
+LOCATED
+
+DIVISIONS HAS REVEALED
+
+ABOVE INFORMATION BEING FURNISHED BUREAU IN EVENT PRESS
+
+INQUIRES RECEIVED.
+
+CHICAGO AT CHICAGO, WILL ATTEMPT TO LOCATE AND REINTERVIEW
+
+WILL CONSIDER CONTACI
+
+IN REGARD TO INFORMATION
+
+b6
+
+b7D
+
+WITH
+
+FURNISHED TO HIM BY
+
+CONSIDER UNSUB DANGEROUS.
+
+P
+
+END
+
+FEE
+
+FBI SEATTLE CLR
+
+DB Cooper-4337
+
+---
+
+## Page 34
+
+NR088 CG PLAIN
+
+930PM NITEL 12-14-71 RWR
+
+TO DIRECTOR
+
+PITISBURGH
+
+MINNEAPOLIS
+
+DENVER.
+
+PORTLAND
+
+SEATTLE
+
+FROM CHICAGO (164-297)
+
+67C
+
+NORJAX.
+
+SUSPECT •
+
+INSTANT DATE,
+
+ADVISED INDIVIDUAL GIVING NAME
+
+APPEARED
+
+DECEMBER THIRTEEN, LAST, ADVISING
+
+FORTYFIVE TO FIFTY YEARS OLD,
+
+RESPONSIBLE FOR TWO HUNDRED THOUSAND DOLLAR RANSOM AND
+
+HIJACKING NORTHWEST ORIENT AIRLINES. PLANE LAST MONTH
+
+• OVER OREGON.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7D
+
+INDICATED
+
+b6
+
+b7C
+
+b7D
+
+REPORTEDLY PAROLED ON
+
+END PAGE ONE
+
+1164-81-11701
+
+• INDEXEDIA
+
+SERIALIZEO. -
+
+DEC 14 1971
+
+FBI - SEATILE
+
+b6
+
+b70
+
+DB Cooper-4338
+
+---
+
+## Page 35
+
+PAGE TWO
+
+PENNSYLVANIA STATE PRISON, PITISBURGH, ABOUT
+
+IDENTIFICATION COULD BE MADE.
+
+SHOWN TO NORTHWESI AIRLINES STEWARDESS
+
+ALLEGEDLY HAS
+
+b6
+
+b7C
+
+b7D
+
+RELATED
+
+b7C
+
+b7D
+
+ALSO DESCRIBED
+
+END PAGE THO
+
+DB Cooper-4339
+
+---
+
+## Page 36
+
+the co: o
+
+PAGE THREE
+
+STATED
+
+b7C
+
+b7D
+
+STATED TELEPHONIC CONTACT NORINWEST AIRLINES
+
+SECURITY OFFICE, MINNEAPOLIS, MINNESOTA, CONFIRMED
+
+b7c
+
+b7D
+
+STATED SHOULD
+
+CONTACT AGAIN, HE WILL
+
+IMMEDIATELY
+
+ADVISE CHICAGO
+
+FBI.
+
+PITTSBURGH, THROUGH PENNSYLVANIA STATE PRISON AUTHORITIES,
+
+DETERMINE IF
+
+J EVER INCARCERATED, IF SO,
+
+SECURE. ALL BACKGROUND AND PHOTOGRAPH TO BE EXHIBITED TO
+
+APPROPRIATE AIRLINE PERSONNEL FOR POSSIBLE IDENTIFICATION.
+
+MINNEAPOLIS AT MINNEAPOLIS. WILL CONTACI SECURITY
+
+OFFICIALS, NORTHWESI AIRLINES, DETERMINE ALL AVAILABLE
+
+INFORMATION RE CONTACT BY
+
+END
+
+FEE
+
+PBI SEATTLE CLR
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b6|
+
+b7c
+
+b7D
+
+DB Cooper-4340
+
+---
+
+## Page 37
+
+AR 002 PD. PLAIN
+
+4:57 PM URGENT 12-14-71 LUQ
+
+TO: SEATTLE (164-81)
+
+FROM: PORTLAND
+
+(164-41)
+
+1P
+
+Sabo
+
+NORJAX
+
+SUMMARY TELETYPE
+
+ITVESAIGATION RE ELIMINATION OF LOOK-ALIKE SUSPECIS
+
+CONTINUING BUT NO POSITIVE INFORMATION HAS BEEN DEVELOPED.
+
+END
+
+JAC
+
+SE FBI RED CLE
+
+164-81-1171
+
+- INDEXED
+
+SKRIALIZEO SILED
+
+DEC 1 41971
+
+DB Cooper-4341
+
+---
+
+## Page 38
+
+MR B24 PD. PLAIN
+
+6:18. PM URGENT 12-14-71 AJW
+
+TO:
+
+'SEATTLE (164-81)
+
+FROM: PORTLAND (164-41)
+
+b6
+
+b7C
+
+IP
+
+• MORJAK
+
+1
+
+RE SACRAMENTO AIRTEL TO SEATTLE, DECEMBER SEVEN SEVENTYONE.
+
+SUSPECI:
+
+WITNESS
+
+b6
+
+b7C
+
+_ NORTHWEST AIRLINES, PORTLAND, OREGON, .
+
+BEARS A RESEMBLANCE TO THE HIJACKER BUT HE IS NOT THE
+
+b6
+
+b7C
+
+SAID
+
+HIJACKER.
+
+WITNESS
+
+NORINVEST AIRLINES, PORTLAND, SAID
+
+PHOTOGRAPH OF|
+
+iS NOI FAMILIAR TO HIM. PENDING.
+
+AIRMAIL COPY TO SACRAMENTO.
+
+b6
+
+b7C
+
+END
+
+164-81-1172
+
+«KAPCTO
+
+DERLALIZER
+
+INDEXER
+
+DEC 1 4 1971
+
+FBI - SEATTLE
+
+•DB Cooper-4342
+
+---
+
+## Page 39
+
+b6
+
+b7C
+
+M 01I PD PLAIN
+
+6:25. PM NITEL 12-14-71 AJW
+
+IO: SEATTLE (164-81)
+
+, FROM: PORTLAND (164-41)
+
+NORJAK
+
+RE SE NITEL TO BUTTE AND PORTLAND DECEMBER THIRTEEN SEVENTYONE.
+
+SUSPECI:
+
+b6
+
+b7C
+
+U.S. FOREST SERVICE,
+
+OREGON, ADVISED SA
+
+ON DECEMBER FOURTEEN
+
+SEVENTYONE HE DOES NOT RECOGNIZE NAME
+
+OR SIMILAR
+
+NAME. HE KNOWS
+
+BUT THIS INDIVIDUAL DOES NOI FIT DESCRIPTION
+
+b6
+
+b7C
+
+OF UNSUB IN ANY WAY AND HE HAS I
+
+AIR MAIL COPY TO BUTTE.
+
+HAIR.
+
+END
+
+REC'D FIVE
+
+FEE
+
+FBI SEATTOLE CLR
+
+164-81-1173
+
+- INDEXED
+
+SERLALIZED A FILED
+
+DE0 1 2 1971
+
+FBI - SEATTLE
+
+DB Cooper-4343
+
+---
+
+## Page 40
+
+-29911
+
++D+36 (907-5-22-81)
+
+002
+
+Transmit the following in
+
+TELETYPE
+
+Via
+
+TO :
+
+FROM:
+
+FBI
+
+Date: 12/14/71
+
+(Type in plaintext or code)
+
+URGENT
+
+(Priority)
+
+DIRECTOR, FBI (264-2111)
+
+SAC, SEATILE (164-81)
+
+NORJAK.
+
+DAILY TELETYPE
+
+A"D.B. COOPER" LETTER RECEIVED BY THE "SEATTLE TIMES"
+
+DECEMBER THIRTEEN LAST, HAS BEEN OBTAINED AND FORWARDED TO THE
+
+FBI LABORATORY. SIMILAR LETTER ALSO APPARENTLY HAS BEEN
+
+SENT TO THE "WASHINGTON POST", THE "NEW YORK TIMES" AND THE
+
+"LOS ANGELES TIMES". THOSE OFFICES HAVE BEEN ASKED TO OBTAIN
+
+THEIR LETTER AND FORWARD TO THE LABORATORY.
+
+AERIAL SEARCH OF ROUTE TAKEN BY VICTIM AIRCRAFT
+
+WAS CONDUCTED BY THE SACRAMENTO DIVISION ON DECEMBER THIRTEEN
+
+LAST, UTILIZING A RENTED CESSNA ONE EIGHT TWO, WITH NEGATIVE
+
+RESULTS.
+
+SEATTLE CONTINUING INVESTIGATION ON NUMEROUS
+
+LOOK ALIKES.
+
+CEF: kIb
+
+Kill
+
+Approved:
+
+- Sent 2°%
+
+- M
+
+Special Agent in Charge
+
+Per
+
+164-81-1174
+
+terror and
+
+---
+
+## Page 41
+
+5D-96 (R87-5-22-61)
+
+FBI
+
+Date: 12/14/71
+
+Transmit the following in
+
+TELETYPE
+
+Via
+
+(Type in plointext or code)
+
+URGENT
+
+(Priorizy)
+
+TO :
+
+FROM:
+
+DIRECTOR, FBI (164-2111)
+
+SAC, SEATILE (164-81)
+
+NORJAK.
+
+DAILY TELETYPE
+
+'A"D.B. COOPER" LETTER RECEIVED BY THE "SEATTLE TIMES"
+
+DECEMBER THIRTEEN LAST, HAS BEEN OBTAINED AND PORWARDED TO THE
+
+PBI LABORATORY, SIMILAR LETTER ALSO APPARENTLY HAS BEEN
+
+SENT TO THE "WASHINGTON POST", THE "NEW YORK TIMES" AND THE
+
+TOS ANGELES TIMES". THOSE OFFICES HAVE BEEN ASKED TO OBTAIN
+
+THEIR LETTER AND FORWARD TO THE LABORATORY.
+
+AERIAL SEARCH OF ROUTE TAKEN BY VICTIM AIRCRAFT
+
+WAS CONDUCTED BY THE SACRAMENTO DIVISION ON DECEMBER THIRTEEN
+
+LAST, UTILIZING A RENTED CESSNA ONE EIGHT TWO, WITH NEGATIVE
+
+RESULTS.
+
+SEATTLE CONTINUING INVESTIGATION ON NUMEROUS
+
+LOOK ALIKES.
+
+CEF: klb
+
+(2)
+
+Approved:
+
+Special Agent in Charge
+
+Sent
+
+Per
+
+164-81-1174
+
+DB Cooper-4345
+
+---
+
+## Page 42
+
+з
+
+1R023 LA CODE
+
+920 PM NITEL 12/14/71 DAB.
+
+TO DIRECTOR (164-2111)
+
+SEATTLE (164-81)
+
+FROM LOS ANGELES (164-4973
+
+Sub e
+
+D
+
+L.
+
+3P
+
+NORJAK.
+
+•RE SEATTLE TELETYPE TO BUREAU AND LOS ANGELES, DECEMBER
+
+EIGHT LAST, AND LOS ANGELES TELCALL TO BUREAU, DECEMBER EIGHT
+
+LAST.
+
+ARTISI'S CONCEPTION
+
+AND NARRATIVE CONCERNING UNSUB. FOR INFORMATION OF BUREAU,
+
+b6
+
+b7C
+
+CASE CAPTIONED
+
+BUFILE
+
+LOS ANGELES
+
+b3
+
+b6
+
+67C
+
+b7E
+
+END PAGE ONE
+
+164-81-1175
+
+SEARCHED
+
+SERIALIZED -
+
+DE0 1 41971
+
+FBI • SEATTLE
+
+Se arre
+
+DB Cooper-4346
+
+---
+
+## Page 43
+
+LA 164-497
+
+PAGE TWO
+
+FILE
+
+FOLLOVING
+
+CASE CAPTIONED
+
+LOS ANGELES FILE
+
+END PAGE TWO
+
+REVEALS THAT
+
+b3
+
+b6
+
+b7C
+
+'b7E
+
+b3
+
+b6
+
+b7C
+
+b7D
+
+b7E
+
+b6
+
+b7C
+
+b7D
+
+1
+
+DB Cooper-4347
+
+---
+
+## Page 44
+
+-----.-..--
+
+LA 164-497
+
+PAGE THREE
+
+b6
+
+'b7C
+
+b7D
+
+'b6
+
+b7C
+
+b7D
+
+'AUSA, LOS ANGELES, DECLINED PROSECUTION OF
+
+VIEW OF
+
+IN
+
+b6
+
+b7C
+
+NO DEROGATORY INFORMATION IN LOS ANGELES FILES CONCERNING
+
+PENDING.
+
+ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+END
+
+FEE
+
+FBI SEATTLE CLR
+
+DB Cooper-4348
+
+---
+
+## Page 45
+
+1RO16 PH PLAIN
+
+10:45 PM 12-14-71 URGENT RJ C
+
+TO DIRECTOR (164-2111)
+
+LAS VEGAS
+
+SEATTLE (164-81)
+
+FROM PHILADELPHIA (164-133) (P)
+
+106
+
+67C
+
+NORJAK
+
+RE BU TEL CALL TO PH AND LAS VEGAS, TODAY.
+
+ON TVELVE FOURTEEN INSTANT,
+
+ADVISED
+
+CONCLUDED THAT UNSUB, AS DEPICTED IN NEWS ACCOUNTS, IS VERY
+
+SIMILAR TO
+
+IS A
+
+WHITE MALE, FIVE FEET ELEVEN INCHES, ONE HUNDRED NINETY POUNDS,
+
+b6
+
+b7C
+
+b7D
+
+END PAGE ONE
+
+164-87-1176
+
+SEARCHED_
+
+BERLALIZED. INDEXELLS
+
+_FILED-+/
+
+DEC 1 4 1971
+
+FBI • SEATTLE
+
+DE Cooper-4349
+
+---
+
+## Page 46
+
+PAGE TWO
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+KNOWN TO RESIDE AT
+
+FURTHER ADVISED THAT
+
+PHOTOS. OF
+
+OBTAINED AND
+
+WILL BE REPRODUCED AND SENT FROM
+
+LAS VEGAS AND SEATTLE.
+
+LAS VEGAS AT
+
+b6
+
+b7c
+
+RA DIRECTLY IO
+
+CONDUCT APPROPRIATE INVESTIGATION AT
+
+b7C
+
+SEAITLE - UPON RECEIPT OF PHOTOS CAUSE SAME TO BE EXHIBITED TO
+
+NECESSARY WITNESSES. AM COPY TO MINNEAPOLIS:,
+
+FD THREE ZERO TWOS FOLLOW.
+
+ARMED AND
+
+DANGEROUS
+
+END
+
+DB Cooper-4350
+
+---
+
+## Page 47
+
+IR 815 PLAIN
+
+1852 PM 12-14-71 MCA NITEL
+
+TO :
+
+DIRECTOR (164-2111)
+
+LAS VEGAS (164-68)
+
+NEWARK
+
+SEATILE (164-81)
+
+FROM: PHILADELPHIA (164-133) (P)
+
+RE BUREAU NITEL TO ALL SACS DEC. EIGHT SEVENTYONE.
+
+IN LETTER DATED DEC. THIRTEEN SEVENTYONE,
+
+b7C
+
+b6 |
+
+b7C
+
+ADVISED HE HAD SEEN SRTIST'S DRAWING OF UNSUB IN NEWSPAPER. ADVISED
+
+THOUGHT VERY SIMILAR TO PHOTO OF JOHN E. LIST APPEARING IN PHILA.
+
+INQUIRER ON DEC. TWELVE SEVENTYONE, PAGE NOT GIVEN. LIST IS
+
+CHURCH WORKER, WEST FIELD, N.J., SUSPECTED OF MASS SLAYING OF FAMILY.
+
+SIMILIARITIES NOTED.
+
+NEWARX AT UNION COUNTY, NOJ. - WILL FURNISH APPROPRIATE DETAILS
+
+RE BACKROUND OF LIST AND CONDUCI APPROPRIATE INVESTIGATION TO
+
+RESOLVE YHEREABOUTS OF LIST DATE OF MORJAK:
+
+ARMED
+
+AND DANGEROUS
+
+END
+
+ACKN NR'S 815 & 016
+
+FEE
+
+FBI SEATLE
+
+164-81-1127
+
+SEARCHED.
+
+_ INDEXED
+
+SERIALIZED A FILED I
+
+DEC 1 4 1971
+
+FBI - SEATTLE
+
+DB
+
+Cooper-4351
+
+.-eA._._.
+
+---
+
+## Page 48
+
+FD: 36 (Rov. 5122-64)
+
+FBI
+
+Date:
+
+12/10/71
+
+Transmit the following in.
+
+(Type in plaintext or codel
+
+Via
+
+AIRTEL
+
+(Priority)
+
+TO:
+
+RE:
+
+SAC, SEATTLE (164-8I5
+
+SAC, CHARLOTTE (164-101) (P)
+
+NORJAK
+
+Re
+
+a self-styled artist who most cooperative assists local law
+
+enforcement agencies in drawing composite photographs and
+
+other art work, on seeing the artist conception of the unsut
+
+in captioned case appearing in the "Wilmington Morning Star,"
+
+12/1/71,
+
+noted close similarities to an artist conception he
+
+drew following
+
+a series of armed robberies in 1966 in
+
+Wilmington, N.
+
+contacted the FBI and the
+
+Wilmington Police Department on noting the similarities in
+
+the artist conception of Unsub to the one he drew in 1966.
+
+Lieutenant
+
+Wilminaton
+
+Ne Cu. PD. on TayL win cases identifis being the inchyidual
+
+FBI Number
+
+Idrew the artist conception.
+
+charged against nim by the charlotte 2). 1
+
+confined at
+
+serving an
+
+Iwas located
+
+I years to life.
+
+On 7/24/66, Detectives
+
+Charlotte, N. Cr. PD, returned
+
+-- b6|
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+complete his sentence there. Lieutenant l
+
+advised
+
+Wilmington witnesses were taken to Charlotte,
+
+N. C., where in
+
+committing the robberies at Wilmington.
+
+- Seattle (Encl-1) Me le
+
+San Francisco (Encl-1)
+
+1 - Charlotte
+
+1604.8
+
+SENTCHED ....
+
+SERILIZED
+
+INDEXED...
+
+FILE moro
+
+DE01 51971
+
+FBI - SEATTLE
+
+178
+
+(5)
+
+Approved:
+
+- Sent .
+
+Special Agent in Charge
+
+__ M
+
+Per
+
+U.S. GOVERNMENT PRINTING OFFICE, 19 DBEdUper-4352
+
+---
+
+## Page 49
+
+8D-36 (Rer. 5322-94)
+
+Transmit the following in
+
+Via.
+
+FBI
+
+Date:
+
+(Type in plaintexi or code)
+
+(Priority)
+
+•CE I64=I01"
+
+A detainer should be on record
+
+agamnse this subject.
+
+Lieutenant
+
+advised all witnesses describe
+
+o metes ve set spoken individual and most polite in hi.
+
+The following is a description of l
+
+as obtained from the records of the Identification
+
+Division, Wilmington PD:
+
+Name:
+
+Race:
+
+Sex:
+
+White
+
+Male
+
+Born:
+
+Height:
+
+Weight:
+
+Eyes:
+
+Hair:
+
+5' 103"
+
+182 pounds
+
+Brown
+
+Scars and marks:
+
+FBI Number:
+
+suspect
+
+Enclased for San Francisco if ene phote rape as
+
+Enclosed
+
+for Seattle is one photo of
+
+14187
+
+LEADS:
+
+SAN FRANCISCO:
+
+AT
+
+CALIE.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+If he was in an escaped
+
+Approved:
+
+Special Agent in Charge
+
+2
+
+Sent
+
+_M Per -
+
+U.S.GOVERNMENT PRINTING.OrMICE: I*B«Gouper-4353
+
+---
+
+## Page 50
+
+TD-38 (901-5522-84)
+
+Transmit the following in
+
+Via
+
+FBI
+
+Date:
+
+(Type in plaintext or code)
+
+(Priority)
+
+CE "I64-IOT
+
+No further investigation is being conducted by the
+
+Charlotte Division concerning
+
+until so
+
+directed by the office of origin.
+
+b6
+
+b7C
+
+3
+
+Approved:
+
+Sent
+
+Special Agent in Charge
+
+_M Per.
+
+1. 5. 60VERNMEN? PAINTING OFFICE:DE COOper-4354
+
+---
+
+## Page 51
+
+PD-38 (Rov. 5-22-641
+
+Transmit the following in
+
+Via -
+
+A IRTEL
+
+FBI
+
+• Date: 12/13/71
+
+(Type in plaintext or code)
+
+AIRMA ILL - REGISTERED
+
+(Priority)
+
+то:
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, PORTLAND (264-41) (P)
+
+SUBJECT: NORJAK
+
+RE: SUSPECT
+
+The following Investigation was conducted by
+
+SA THOMAS J. DUGAN:
+
+Det.
+
+Oregon, PD, advised
+
+on 12/8/71 that he had conducted a considerable amount of
+
+investization concernine the
+
+he stated
+
+he recently obtained a Calliornia driver's license photograph
+
+of this individual and on the
+
+basis of the description and
+
+the photograph, belleved that
+
+closely resembled
+
+the sketch of the unsub which appeared in the newspapers.
+
+ladyised that
+
+had been
+
+arrested sometime
+
+by the Portland, Oregon, PD
+
+on a charge of
+
+He stated
+
+a better photograph of the suspect could probably be located
+
+at the Identification Bureau of the Portland PD. He
+
+described
+
+as follows:
+
+Race
+
+Sex
+
+DOB
+
+Hair
+
+White
+
+Male
+
+Brown (receding)
+
+Eyes
+
+Height
+
+6
+
+weight
+
+170 pounds
+
+CalIfornia driver's
+
+license number
+
+164-81-1179
+
+z= seattlo (EnO. 15*"
+
+(AM) (RM)
+
+Portland
+
+JHR: tms (4)
+
+Approved:
+
+Sent
+
+Per.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+67C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Special Agent in Charge
+
+#U. Si GOVERNMENT PRiNTING OPTICE: DB Wooper-4355
+
+---
+
+## Page 52
+
+PD 164-41
+
+The following Investigation was conducted by
+
+On 12/10/71,
+
+PD Identification
+
+Division, [
+
+of suspect
+
+I oreron,
+
+made available two photographs
+
+TheN to photographe has enclosed herewith for
+
+the Seattle Division.
+
+1A88
+
+LEAD:
+
+SEATTLE
+
+IT SEATTLE, WASHINGTON.
+
+1ll exhibit photographe
+
+o witnesses to either identity or eliminate
+
+suspect.
+
+106
+
+b7C
+
+b6
+
+b7c
+
+b6
+
+b7
+
+^=2-
+
+DB Cooper-4356
+
+---
+
+## Page 53
+
+12/10/71
+
+AIRIEL
+
+AIRMAIL
+
+b6
+
+b7C
+
+TO
+
+: SAG, LOS ANGELES
+
+FROM : SAC, SACRAMENTO (164-50) (P)
+
+SUBJROT; NORJAK
+
+00: Seattle
+
+Re Sacramento nitel to los Angeles, 12/10/71.
+
+of California driver's license
+
+•Enclosed for Los Angeles and Seattle i8 one copy A/89)
+
+Iwith photograph of
+
+It should be noted the address
+
+"On the driver'& license is not the nost current according
+
+to Inforsation recelved tIon
+
+Telecommunications SysteRe
+
+the Cal Event Lay Enforcement
+
+b6
+
+b7C
+
+' 2 ' Los Angeles (ENC. 1)
+
+- Seattle (164-81) (Enc. 1) Mi du
+
+2 • Sacramento
+
+BRLK: snd
+
+(6)
+
+1 611-81-1180
+
+DB Cooper-4357
+
+---
+
+## Page 54
+
+D-36 19 95-5-22-612
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+TO
+
+FROM
+
+FBI
+
+Date: 12-17-71
+
+PLAINTEXT
+
+(Type in piaintext or code)
+
+NITEL
+
+(Priority)
+
+MILWAUKSE
+
+DALLAS < 164-191)
+
+b6
+
+b7C
+
+b7D
+
+UNSUB, AKA DAN COOPER; NORTHWEST AIPLINES FLIGHT THREE ZERO FIVE,
+
+PORTLAND TO SEATILE, NOVEMBER IWENTYFOUR, SEVENTYONE. CAA DASH
+
+HIJACKING; EXTORTION.
+
+00:
+
+SEATILE.
+
+CTREAT CONFIDENTIALI, ADVÍSED
+
+TODAY THAI ARTIS SKETCH OF HIJACKER
+
+IS "DEAD RINGER" FOR
+
+BELIEVED
+
+167D
+
+IS DESCRIBED AS A WHITE, MALE
+
+YEARS OF AGE,
+
+FIVE TEN IO FIVE ELEVEN, ONE HUNDRED FIFTY FIVE TO ONE HUNDRED
+
+SIXIX POUNDS, SLENDER BUILD, HAIR AND EYÉS NOT RECALLED BUT HAIR
+
+RECEDING AS SHOWN IN ARTIST SKEICH,
+
+IS NOT
+
+KNOWN.
+
+164-81-1181
+
+I-DALLAS
+
+WJW/IPR
+
+b6
+
+b7C
+
+b7D
+
+SERVALIZED, ALL FILED -
+
+DEC 1 51979
+
+FBI - SEATTLE
+
+Approved:
+
+TANT
+
+UGS
+
+Special Agent in Charge
+
+Sent.
+
+-_M • Per-
+
+Gro, BB Cooper-4358
+
+---
+
+## Page 55
+
+.
+
+F81
+
+Date:
+
+ransmit the following in —
+
+(Type in plaintexi or code›
+
+Via
+
+(Priority)
+
+PER A PHONE CALL TO DUTY AGENT SERGEANT
+
+LOCATOR SERVICE, RANDOLPH AFB, SAN ANTONIO, TEXAS.
+
+PERSONNEL
+
+IS CURRENTLY
+
+STATIONED AI
+
+LEADS: MILWAUKSE AT
+
+DETERMINE WNEREABOUIS OF
+
+AT TIME OF CAPTIONED HIJACKING.
+
+IF NOT ACCOUNTED FOR,
+
+SECURE PHOTO FOR SEATILE, PORTLAND AND MINNEAPOLIS DIVISIONS.
+
+AIR MAIL COPIES TO SEATTLE, PORTLAND, AND MINNEAPOLIS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+END
+
+Approved:
+
+_ Sent
+
+Special Agent in Charge
+
+_M
+
+Pes.
+
+Go DE Cdupèr-4359
+
+---
+
+## Page 56
+
+7T
+
+FD-I6 (R9415-22-88)
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date: 12/13/71
+
+T Type in plaintext or codel
+
+AIRMAIL - REGISTERED
+
+(Priority)
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, PORTLAND (164-41) (P)
+
+SUBJECT: NORJAK
+
+Re Seattle airtol to Portland, 12/8/71.
+
+RE: SUSPECT|
+
+The following Investigation was conducted by
+
+SA
+
+at Portland, Oregon, on 12/10/71:
+
+Twas contacted at his ph ce of
+
+business,
+
+Jand through observation alone
+
+by special Agent conducting investigation, L
+
+I was
+
+soted to weigh approximately 230 to 240 pounds and to be
+
+No further investigation 1s being conducted
+
+regarding
+
+b6
+
+67C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+2- Seattle (AM) (RM)
+
+*- Portland
+
+JWR: tmg
+
+(4)
+
+1641-81-1182
+
+Approved:*
+
+• Sent
+
+Special Agent in Charge
+
+-AN)
+
+manning
+
+Per.
+
+U,S. GOVERNMENT PRNTING OFFICE DE Coopér-4360
+
+---
+
+## Page 57
+
+11.0r.
+
+."*
+
+1
+
+5D-36 (7-94-3-22-61)
+
+es tastel, nate 1144
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date: 12/13/71
+
+(Type in picintext or codel
+
+AIRMAIL - REGISTERED
+
+(Priority)
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, PORILAND (164-41) (P)
+
+SUBJECT: NORJAK
+
+=/im
+
+Re Seattle airtol to Portland, 12/8/71.
+
+RE: SUSPECT
+
+The following investigation was conducted by
+
+SA
+
+at Portland, Oregon, on 12/10/71:
+
+was contacted at his place of
+
+business,
+
+and through observation alone
+
+by Special Agent conducting Investigation, [
+
+was
+
+noted to weigh approximately 230 to 240 pounds and to be
+
+f']" tall. No further investigation is being conducted
+
+regarding
+
+b6
+
+b70
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+2
+
+-Seattle (AM) (RM)
+
+Portland
+
+JWR: tms
+
+(4)
+
+164-81-1182
+
+171
+
+Approved:'
+
+Special Agent in Charge
+
+Sent
+
+Menaci
+
+Per .
+
+MV. S. GOVEANMENY FISNTING OFFICE, 1071-413-135
+
+DB Cooper-4361
+
+---
+
+## Page 58
+
+b6
+
+b7C
+
+ẼE 164-81
+
+EJA/s1b
+
+16
+
+1-81.504
+
+the following personnel at Northwest Airlines,
+
+sealac International Alrport, were interviewed on December
+
+6, 1971, by SA EDWARD J. ANDERSON, regarding the Opaque
+
+polyethylene bag alluded to in the Sacramento airtel to
+
+Seattle, November 29, 1971. Each stated that the type bag
+
+displayed is not the standard type used by Northwest Airlines
+
+nationwide.
+
+It is possible that this bag may have been
+
+substituted aboard #305 on November 24, 1971, by airline
+
+personnel somewhere along the line, but it is highly improbable:
+
+Transportation
+
+Service;
+
+1b6
+
+b7C
+
+164-81 - 1183
+
+THANIED ...
+
+Arifi fine
+
+DEC 141974
+
+FEL SEALE
+
+DB Cooper-4362
+
+---
+
+## Page 59
+
+12/6/71
+
+AIXTEL
+
+AIR MAIL
+
+Sub-130
+
+TOX
+
+DIARGI
+
+FRONTE
+
+SUBJECTI LIBSUBS
+
+ILJACKINO DE MONTANESI AIRLINES
+
+FLICHT 305
+
+11/24/71
+
+CLÀ - HIJACKIN
+
+EXTORIZON
+
+protrasked Us Parkal Sexy
+
+one net of alindration peda
+
+Riclaned for the 1ù
+
+sono a cante renins.
+
+coopert
+
+M Des 1
+
+1577, e0d
+
+oa 12/12/71,
+
+recal ed
+
+1P41.
+
+nottar empiagoa
+
+scotte",
+
+12/211
+
+hid handlad the letter.
+
+16
+
+b70
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+(Into)
+
+JANtaks
+
+(9)
+
+164-81-1184
+
+SEARCHED.
+
+JNDEXED
+
+DEC 1 31971
+
+BI - SEATTL
+
+-ĐB Cooper-4363
+
+---
+
+## Page 60
+
+FD-302 (REV, 11-27-70)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Data of transeription 12/9/7,1.
+
+Northwest
+
+Seattle,
+
+washington, provided the following information:
+
+Sealac international Airport,
+
+stated that a postcard
+
+Northwest Airlines, SeaTac International
+
+Airport, seattle, Washington, was being temporarily held by
+
+him pending inspection by FBI Agents.
+
+He thought it unusual
+
+mall at Seattle, Inasmuch as
+
+my misrepresentation? *and the mangao reads, "Do you know about
+
+The return address was
+
+and was
+
+postmarked November 28, 1971, with & November 27, 1971,
+
+date
+
+written on the message side.
+
+provided three copies of the postcard to
+
+SA EDWARD
+
+ANDERSON, stating that he would forward the card
+
+1n Minneapolis by company mail.
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+Ineerviewed on. 12/6/71
+
+551
+
+SA EDWARD J. ANDERSON/s 1b
+
+_ Seattle, Washington
+
+_ria+SE 261-81-1185
+
+12/8/71
+
+This document contains neither recommendations not conclutions of the 981, ll is ma propelty of she fel ond is looned to your ogency;
+
+it and its contents pre nos to de distributed outside your agency,
+
+DB Cooper-4364
+
+---
+
+## Page 61
+
+OFTIONAL FORM NO. 10
+
+MAY 1092 EDITION
+
+G5A FEMA (11 059) 101-524
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+FROM : SA
+
+SUBJECT:
+
+UNKNOWN SUBJECI, aka
+
+Dan Cooper
+
+NORTHWEST AIRLINES FLIGHT 305
+
+PORTLAND TO SEATTLE
+
+11/24/71
+
+CAA - HIJACKING; EXTORTION
+
+00: Seattle
+
+mitt
+
+DATE: 12/9/71
+
+b6
+
+b7C
+
+seXi
+
+RE: SUSPECT
+
+0л 12/8/71,1
+
+Seattle Post-Intelligencer, newspaper, Seattle,
+
+washington
+
+provided the enclosed typewritten page
+
+concerningl
+
+According to L
+
+this
+
+information was received by the PI in connection with their
+
+public informant program.
+
+The PI offers cash awards to
+
+individuals providing information in major cases where the
+
+Intermation provided leads to an arrest and conviction.
+
+therefore, declined to name his source.
+
+typed page is contained in the l-A
+
+• serial of this file.
+
+b6
+
+b7C
+
+b7C
+
+(2)
+
+aquel
+
+164-81-1/86
+
+SEARCHED. ' Hor
+
+377739.1
+
+DEC
+
+91971
+
+8010-104
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+DB Cooper-4365
+
+---
+
+## Page 62
+
+Tbe O. B. Cooper thing
+
+b6
+
+b7C
+
+718196
+
+DB Cooper-4366
+
+-
+
+---
+
+## Page 63
+
+80-36(9107-3-22-61)
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+FBI
+
+Date: 12/10/71
+
+(Type in plainiexi or code)
+
+URGENT
+
+(Priorily)
+
+TO :
+
+FROM:
+
+SAC, MINNEAPOLIS (164-73)
+
+SAC, SEATTLE (164-81)
+
+NORJAK.
+
+sub.
+
+b6
+
+b7C
+
+suggested as
+
+pascably
+
+Mega-l
+
+REVIEW OF INFORMATIOSY FURNISHED, BY
+
+ON INSTANT FLIGHT,
+
+DREVEALS THAT
+
+AFTER RECEIVING INITIAL DESCRIPTION OF HIJACKER FROM SYEWARDESS,
+
+THEY RADIOED THE COMPANY FOR ANY LIKELY SUSPECIS OR MODUS
+
+OPERANDI AND THE COMPANY FURNISHED THE NAME OF
+
+AND/WAS
+
+b7C
+
+SUSPECTED AS A POSSIBILITY OF BEING THE HIJACKER.
+
+IT IS TO BE NOTED THAT THERE WAS AN
+
+ON BOARD THIS FLIGHT AND IT IS NOT KNOWN WHETHER THIS
+
+REFERENCE WAS TO HIM.
+
+MINNEAPOLIS CONTACT
+
+CONCERNING THE BASIS OF
+
+FOR INFORMATION
+
+BEING MENTIONED IN CONNECTION
+
+WITH THIS MATTER.
+
+JSD: klb
+
+(1)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Approved:
+
+Special Ag
+
+ht in Charge
+
+, Sent.
+
+164-81-1187
+
+per lat
+
+_DB.6aoper-4367
+
+---
+
+## Page 64
+
+NRO04 MP PLAIN
+
+1241PM URGENT 12-13-71 MAW
+
+TO SEATILE (164-81)
+
+FROM MINNEAPOLIS (164-73) 2P
+
+but I.
+
+NORJAK.
+
+• .
+
+RE SEATTLE TELETYPE TO MINNEAPOLIS DECEMBER TEN LAST.
+
+b6
+
+b7C
+
+RE:
+
+NORTHWEST
+
+AIRLINES, MINNEAPOLIS, MINNESOTA, ADVISED HE HAD NO
+
+RECOLLECTION CONCERNING
+
+NWA, RECALLED THAT ON THE NIGHT OF THE
+
+HIJACKING THE NAME
+
+WAS ASSOCIATED WITH
+
+b6
+
+b7C
+
+WAS INVOLVED IN
+
+AN ALTERCATION ABOARD A NORTHWEST AIRCRAFT IN WHICH
+
+IS
+
+OPINION HAS NO
+
+CONNECTION THE THIS CASE.
+
+END PAGE ONE
+
+ADVISED THAT IN REVIEWING CONVERSATIONS HELD
+
+164-81-1188
+
+SEARCHED INDEXES
+
+AERIALIZED. A FILED.
+
+DEC 1'3 1971'
+
+FBI • SEATTLE
+
+b6
+
+b7C
+
+DB Cooper-4368
+
+---
+
+## Page 65
+
+PAGE IWO
+
+BY THE PILOT DURING THE HIJACKING THE COMMENT WAS
+
+MADE BY THE HIJACKER CONCERNING IFR CLEARANCE, "YOU CAN
+
+PICK IT UP IN THE AIR." THIS INDICATES TO
+
+THAT
+
+THE HIJACKER HAS FLYING BACKGROUND INASMUCH AS HE KNEW
+
+PROCEDURES FOR IFR CLEARANCE.
+
+P.
+
+=
+
+CORR PAGE ONE LINE 15 FIRST WORLD SHOULD BE
+
+b6
+
+b7C
+
+END
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+b6
+
+b7C
+
+DB Cooper-4369
+
+---
+
+## Page 66
+
+-
+
+70250-
+
+REPORT
+
+of the
+
+TO: SAC, Las VOgaE
+
+RO: "NORJAR"
+
+¿LABORATORY.
+
+FEDERAL BUREAU OF INVESTIGATION
+
+WASHINGTON, D. C. 20535
+
+Date:
+
+December 8, 1971
+
+FBI FiLeXO. 164-2111
+
+Lab. No.
+
+РС-13225 ИС.
+
+Specimens rocoired
+
+12/7/71
+
+Q1
+
+02
+
+Contents of ashtray
+
+Towel
+
+Also Submitted:
+
+Fingorprint card Iron
+
+Fingerprint card froM
+
+Isngorprint card Iron
+
+Singerprint card trou
+
+Fingerprint card txon
+
+Fingerprint card fron
+
+Fingexprint card IXOM
+
+Pingerprint card Iron
+
+b6
+
+b7C
+
+Rosult of axamination:
+
+Spectson I1 contains sight cigaretto butte.
+
+Soven of those are Raleigh 85au 11ltor-tippod cigarette butts.
+
+The eighth cigaretto butt has the sase desigu and composition
+
+as Raloigh 85ma cigaxettos and, accordinaly, ls probably a
+
+Raleigh 85mn otaarotte, This type of cigarette in sold 1n
+
+& "soft pack. "
+
+A brown head hais clipping and a brown liub balx
+
+both of Caucasian origin vero found on 02.
+
+The head hair
+
+clipping 1a sultablo for significant couparison results;
+
+however, the Ilab halt possesson too lon unique ulcroscoplo
+
+characteriation to be of valua for this puxpose.
+
+Foreign tortilo libers of various types and colors
+
+ranoved Ixon a2 have been placad 1n a pillbox.
+
+164-81-1189
+
+SEARCHED
+
+INDEED
+
+SERIALIZED /
+
+_FILED_
+
+DEA 1 31971
+
+FBI - SEATTLE
+
+DB Cooper-4370
+
+---
+
+## Page 67
+
+Laboratory Tragatal Forma
+
+To: SAC, Las Vegas (164-60)
+
+• LABORATORY
+
+FEDERAL BUREAU OF INVESTIGATION
+
+WASHINGTON, D. C. 20535
+
+Date;
+
+December 8, 1971
+
+Ro:
+
+• disove
+
+"NORWAK"
+
+FBI File No.
+
+Lab. No.
+
+Examination requested by:
+
+Reference:
+
+Examination requested:
+
+Las Vegas
+
+Alrtal 12/3/71
+
+MICrOSCOpIC AnalySOS - FIngerprint
+
+164-2211
+
+PC-H3225 MC
+
+Sub G
+
+Remarks;
+
+The hairs on specime
+
+a2 have been sounted on
+
+a Blass nicroscopo slide.
+
+should you desiro future
+
+alcroscopic comparisons between the head hair clipping and
+
+a known head hair sauple, xesubalt the slass alcroscope slide
+
+containing the heir cllpping no that dixect nicroscopto
+
+comparisons say bo nado.
+
+You are boing advised of the result of the
+
+Lingerprint exanination and the disposition of Ql and the
+
+"Also Subalttod" Itemsly a separato report.
+
+Specimen 02 is being raturnod as an enclosure
+
+to this report.
+
+EDCLOsUres (3) (94, 2 van report)
+
+Seattla Baclosuxe
+
+(Lab report)
+
+DO NOT INCLUDE ADMINISTRATIVE
+
+PAGE (S) INFORMATION IN
+
+INVESTIGATIVE REPORT
+
+ADMINISTRATIVE PAGE
+
+164-81-1190
+
+ESACHED.
+
+INDEXT
+
+DEC 131971
+
+FBI - SEATLE Y
+
+DB Cooper-4371
+
+---
+
+## Page 68
+
+FD:102 (REV, 11-27-70)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Doto of Monstripon 12/74/72
+
+Seattle Times
+
+Newspaper, Fairview North and John Street, Seattle, Washington,
+
+furnished the following information:
+
+said that the Seattle Times Newspaper received
+
+a letter allegedly mailed to the newspaper by D. B. COOPER.
+
+He said that this letter was received on December 13, 1971.
+
+He said the letter was received by regular mail and handled
+
+in a routing manner by the receiving department of the
+
+newspaper.
+
+He said the letter had been brought to his attentior
+
+to so cetoyee in the receiving department whose job it was
+
+to route the mail to the correct department.
+
+furnishe
+
+this letter to the interviewing Agent.
+
+66}
+
+b7C
+
+b6
+
+b7c
+
+Interviewed.on.
+
+12/13/71
+
+- Seattle, Washington
+
+_File *_SE 264-82 - 1191
+
+_Dare distored 22/13/72
+
+b6
+
+b7C
+
+This document contatis neither recommandalions nor conclusions ol the fBl, Ml is the proparty of lha #81 pad is toaned la your agency,
+
+il ond its contents one not to do distributed ovisido your agency,
+
+DB Cooper-4372
+
+---
+
+## Page 69
+
+..
+
+NRB63 WA PLAIN
+
+9:00PM URGENT 12-14-71 BJM
+
+TO MINNEAPOLIS (164-73)
+
+SEATTLE (164-81)
+
+PORTLAND (164-41)
+
+FROM DIRECTOR (164-2111)
+
+1P
+
+NORJAK
+
+RE MINNEAPOLIS AIRTEL DECEMBER EIGHT.
+
+NO LATENT PRINTS OF VALUE AIRLINES TICKET.
+
+CONFIRMING.
+
+END
+
+FEE
+
+FBI SEATTLE CLR
+
+164-81-1192
+
+PARCH T
+
+INDEXED
+
+SERIALIZED A FILESE
+
+DEC1 41971
+
+FBI - SEATTLE
+
+DB Cooper-4373
+
+---
+
+## Page 70
+
+IR
+
+18
+
+SD PLAIN
+
+1016 PM
+
+NITEL
+
+TO
+
+SEATTLE
+
+SAN FRANCISCO
+
+LOS ANGELES
+
+PORTLAND
+
+FROM
+
+SAN DIEGO
+
+12-14-71 . DDC
+
+164-81-
+
+164-228
+
+164-497
+
+164-41
+
+164-91
+
+6P
+
+b6
+
+b7C
+
+NORJAX
+
+RE SUSPECT
+
+b6
+
+b7C
+
+ON DECEMBER FOURTEEN INSTANT, SAID HE IS ALMOST
+
+POSITIVE HE KNOWS THE NAME OF PERSON WHO HIJACKED INSTANT PLANE ON
+
+NOVEMBER IWENTYFOUR LAST. HE REQUESTED ANONYMITY AND THAT
+
+HE BE CONSIDERED FOR ANY REWARD MONEY THAT MIGHT BE OFFERED
+
+FOR IDENTIFICATION OF THE HIJACKER, BASED ON HIS INFORMATION.
+
+HE SAID ABOUT TWO WEEXS AGO, HE VAS ARTIS. CONCEPTION
+
+OF THE HIJACKER AT ONE OF THE LOS ANGELES NEWSPAPERS AND
+
+IT STRUCK HIM AS CLOSELY RESEMBLING A MAN HE XNOWS AS
+
+ib6
+
+b7C
+
+b7D
+
+b6
+
+b70
+
+b7D
+
+END PAGE ONE
+
+164-81-1193.
+
+BRANCHID.
+
+SERIALIZED
+
+- INDEXRO
+
+DEG Y 41971
+
+F8I - SEATTLE
+
+DB Cooper-4374
+
+---
+
+## Page 71
+
+PAGE TWO
+
+b7C
+
+b7D
+
+BELIEVES
+
+HE SAID
+
+'b6
+
+b7C
+
+b7D
+
+END PAGE TWO
+
+DB Cooper-4375
+
+---
+
+## Page 72
+
+PAGE THREE
+
+b6
+
+b7C
+
+b7D
+
+SAID
+
+b6
+
+b7C
+
+b7D
+
+END PAGE THREE
+
+DB Cooper-4376
+
+---
+
+## Page 73
+
+• SD
+
+164-41
+
+PAGE FOUR
+
+HE ADVISED
+
+HE BELIEVES
+
+'END PAGE FOUR
+
+b6
+
+b7C
+
+b7D
+
+BELIEVES THIS
+
+b7C
+
+b7D
+
+DB Cooper-4377
+
+---
+
+## Page 74
+
+SD 164-91
+
+PAGE FIVE
+
+SAID HE COULD NOT BE MORE DEFINITE RE THIS
+
+b6
+
+b7C
+
+b7D
+
+DESCRIBED
+
+WMA, FORTYIVO TO FORTYSIX YEARS,
+
+FIVE FEET NINE TO FIVE FEET ELEVEN INCHES, ONE HUNDRED EIGHTY,
+
+HAIR LIGHT BROWN, RECEDING, REGULAR CUT, EYES BELIEVED
+
+AND OCCASIONALLY WEARS GLASSES, WORE FASHIONABLE CLOTHES,
+
+VERY NEAT,
+
+COMPLEXION,
+
+b6
+
+b7C
+
+b7D
+
+END PAGE FIVE
+
+DB Cooper-4378
+
+---
+
+## Page 75
+
+..
+
+S0 164-91
+
+PAGE SIX
+
+LOS ANGELES AND SAN FRANCISCO.
+
+IDENTITY AND LOCATION OF
+
+DETERMINE FURTHER
+
+AND ATTEMPT TO
+
+DETERMINE HIS WHEREABOUTS AT TIME OF HIJACKING.
+
+PENDING
+
+b6
+
+b7C
+
+67D
+
+END
+
+FEE
+
+FBI SEATTLE CLR
+
+/.
+
+DB Cooper-4379
+
+---
+
+## Page 76
+
+OPTIONAL FORM NO, 10
+
+MAY 1962 EDITION
+
+ASA FAMA (4 (7R) 901-118
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC SEATTLE (164-81) (P)
+
+DATE:
+
+12/9/71
+
+FROM
+
+SA
+
+SUBJECT: UNKNOWN SUBJECT;
+
+NORTHWEST AIRLINES
+
+FLIGHT # 305,
+
+PORTLAND TO SEATTLE,
+
+11/24/71
+
+CAA - HIJACKING; EXTORTION
+
+00 :SE
+
+On 12/8/71 Sgt.
+
+Identification Bureau,
+
+County Sheriff
+
+his me sentime identifiable winin
+
+Washington advised
+
+1/8 De advised that thou sales contain no arrest
+
+record for
+
+however, takex they de
+
+reflect that
+
+he provided this agent wit
+
+nd it is being placed in a FD-340
+
+• a copy of|
+
+A review of the
+
+fails to reflect a
+
+listing for
+
+Telephone Directory reflects a
+
+Washington.
+
+Wash. Telephone dires county
+
+listing for a
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+On 12/9/71
+
+advised that he is
+
+Wn. b6
+
+b7C
+
+and is emploved as!
+
+He stated that l
+
+to the company. He stated
+
+thatl
+
+Istated that.
+
+and told him that he was
+
+He stated thatl
+
+Oregon •b6
+
+b7C
+
+but did not specity when or where
+
+t11s
+
+stated that|
+
+see
+
+$010-101
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+164-81-1199
+
+SEARCHED ...
+
+... INDEXED M
+
+SERIALIZED,
+
+FBI - SEATTLE
+
+DB Cooper-4380
+
+---
+
+## Page 77
+
+SE 164-81
+
+continued stating that
+
+lalse told
+
+would be up to see him soon. bic
+
+didn't feel us to traveline
+
+would take the bus or sonething and
+
+_to pick him up in
+
+stated he talked to
+
+b7C
+
+told him that
+
+withl
+
+Iwas staying
+
+Thad als& saidl
+
+may not be able to make it up to
+
+se would omented the a de late ta til not the he store
+
+land a dheck with the company should be able to tell us
+
+where
+
+was when the plane was hi-jacked.
+
+stated he does
+
+was on 11/24/71 but he believes he
+
+provided thei agent with
+
+b6|
+
+and requested
+
+that this photo be
+
+returned to him.
+
+DB Cooper-4381
+
+---
+
+## Page 78
+
+1036 (90r. 12106» FEDERA BUREAU OF INVEST&SATION
+
+Washington, D. C. 20537
+
+REPORT
+
+/
+
+of the
+
+IDENTIFICATION DIVISION
+
+LATENT FINGERPRINT SECTION
+
+YOUR FILE NO.
+
+164-60
+
+FBI FILE NO.
+
+164-2111
+
+LATENT CASE NO.
+
+A-45410
+
+TO: SAC, Las Vegas
+
+December 10, 1971
+
+sul-G.
+
+147
+
+UNSUB.;
+
+RE: NORTHWEST AIRLINES FLIGHT 305
+
+PORTLAND TO SEATTLE
+
+11/24/71
+
+CAA - HIJACKING; EXTORIION
+
+REFERENCE: AÎxtel 11/30/71
+
+EXAMINATION REQUESTED BY: LAg Vegas
+
+SPECIMENS: Envelope, Ql
+
+Message, 02
+
+Enclosed specimens described separate
+
+Laboratory report.
+
+One latent fingerprint of value Q2. No latent
+
+• prints of value developed Qi.
+
+Latent fingerprint not Identical fingerprints
+
+following persons:
+
+b6
+
+b7C
+
+ERe. (2)
+
+@ - Seattle (164-81)
+
+1
+
+Sacramento
+
+1 - Portland
+
+(Continued on next page)
+
+164481-1195
+
+Jobn Edge Hos
+
+•, DIEDEC 1 3 1971
+
+FBI - SEATTLE
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONL
+
+---
+
+## Page 79
+
+.:
+
+SAC, Las Vegas
+
+December 10, 1971
+
+b6
+
+b7c
+
+This report supplenants and confirma Butel
+
+12/8/71.
+
+Page 2
+
+LE #A-45410
+
+DB Соорег-433₴
+
+---
+
+## Page 80
+
+1-36 Roy. 12-10-69) FEDERAL
+
+BUREAU OF INVEST ATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+IDENTIFICATION DIVISION
+
+LATENT FINGERPRINT SECTION
+
+YOUR FILE NO.
+
+164-133
+
+FBI FILE NO.
+
+164-2111
+
+LATENT CASE NO.
+
+A•45410
+
+To: SAC, Philadelphla
+
+December 10, 1971
+
+Sul. G
+
+147
+
+UNSUB.;
+
+NORTHWEST AIRLINES FLIGHT 305
+
+PORTLAND TO SEATTLE
+
+• 11/24/71
+
+CAA - HIJACKING; EXTORTION
+
+REFERENCE:ALIbeL I/3TT
+
+EXAMINATION REQUESTED BU: PALLadeLphIA
+
+Envelope,
+
+93
+
+Letter,
+
+Q4
+
+Enclosed specimens dencribed separate
+
+Laboratory report.
+
+Five latent fingerprints of value developed 04.
+
+No latent prints of value developed 03.
+
+Two latent fingerprints identical elimination
+
+fingerprints
+
+Three latent fingerprints
+
+not identicat iIngerprintsl
+
+Jor following persons:
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Enc. (2)
+
+• Seattle (164-81)
+
+Minneapol1s (164-73)
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONL
+
+164-81-1196
+
+(Continued on next page)
+
+SEARCHEDA
+
+SERIALIZED
+
+Jobn Edgar Ho
+
+es, DIreBEC 1 31971
+
+FBI - SEATTLE
+
+VIES
+
+DB Cooper-4384
+
+---
+
+## Page 81
+
+SAC, Philadelphia
+
+December 10, 1971
+
+b6
+
+b7C
+
+This report supplementa and confirms Butel 12/8/71.
+
+Pag 2
+
+IC #A-45410
+
+DB Cooper-4385
+
+---
+
+## Page 82
+
+2
+
+NR047 WA PLAIN
+
+6:1 4PM NITEL 12-14-71 LMR
+
+TO SEATTLE
+
+FROM DIRECTOR 1P
+
+Suh.5
+
+= M
+
+NORJAK.
+
+RE SEATTLE TELETYPE DECEMBER FOURTEEN LAST REQUESTING
+
+AUTHORITY TO EXPEND UP TO SIXTEEN HUNDRED DOLLARS FOR PUBLICATION
+
+OF THE RANSOM LIST IN A LOCAL NEWSPAPER.
+
+BUREAU AUTHORITY IS NOT GRANTÉD FOR THIS EXPENDITURE AT THIS/
+
+TIME. SUGGEST SEATTLE ENCOURAGE LOCAL PAPERS IN SEATTLE AND
+
+NEIGHBORING DIVISIONS' TERRITORIES' TO REPUBLISH INFORMATION THAT
+
+RANSOM LIST IS AVAILABLE AND ENCOURAGE PUBLIC TO CONTACI LOCAL
+
+FBI OR LAW ENFORCEMENI AGENCY CONCERNING SUSPECTED BILLS.
+
+SEATTLE SHOULD INSURE THAT TERRAIN SEARCHES ARE VIGOROUSLY
+
+PURSUED BY ALL INTERESTED OFFICES AND SOLICIT COOPERATION OF
+
+LOCAL LAW ENFORCEMENT, FORESTRY PERSONNEL, HUNTING GROUPS, AND
+
+OTHER LOGICAL PERSONS WHO WOULD BE IN THE AREA OVER WHICH THE
+
+HIJACKED AIRCRAFT TRAVELED.
+
+END
+
+JJT
+
+FBI SEATTLE
+
+164-81-1197
+
+ALAROHED_.
+
+- INDEXED-
+
+ERIALIZEB-
+
+1581 A 197
+
+FBI • SEATTLE
+
+DB Cooper-4386
+
+---
+
+## Page 83
+
+OPTIONAL FORM NO, 10
+
+MAY 1882 EDITION
+
+G54 5PMA (41 (77) 101-11-8
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: SAC, SEATTLE (164-81)
+
+DATE: 12/14/71
+
+SUB
+
+FROM : ASAC PAUL R. BIBLER
+
+SUBJECT: NORJAK
+
+ASAC CHARLIE DULINSKY called from Las Vegas.
+
+le said that with regard to SAC MILNES' phone call earlier
+
+today, they had arranged with the banks to check any
+
+large deposits of 20'g and to advise the FBI of any suspicious
+
+situation where anybody attempted to change 20's for other
+
+denominations. They have also alerted the casinos in the
+
+In regard to the newspaper, he advised that
+
+the newspaper in Reno was not willing to publish the ransom
+
+list.
+
+PRB: eon
+
+(3)
+
+5010-108
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+164-81-1198
+
+SERIALIZED //
+
+DEC 141971
+
+FBI - SEATTLE
+
+- а собрет 438
+
+---
+
+## Page 84
+
+TD-36 (R01-5-22-88)
+
+Transmit the following in
+
+Via
+
+AIRIEL
+
+TO:
+
+FROM: '
+
+SUBJECT:
+
+FBI
+
+Date:
+
+12/8/71
+
+(Type in plaintext or code)
+
+AIRMAIL
+
+(Priority)
+
+DIRECTOR, FBI (164-2111)
+
+ATTN: FBI IABORATORY
+
+SAC, PORIIAND (264-41) (P)
+
+UNSUB;
+
+NORTHWEST AIRLINES FLIGHT 302,
+
+PORIL AND TO SEATTLE
+
+13/24/71
+
+CAA - HIJACKING; EXTORE ON
+
+00: SEATTLE
+
+Soh
+
+130
+
+Enclosed for the Bureau is a letter and envelope
+
+forwarded to
+
+from. "B. D. COOPER," dated 12/6/71.
+
+Elimination fingerprints will be obtained if
+
+necessary.
+
+The laboratory is requested to conduct appropriate
+
+examination of the enclosed letter and envelope to determine
+
+any pertinent latent fingerprints which could be identified
+
+with the sender and furnish the results to listed offices.
+
+After examination, please return the letter and envelopeto
+
+Portland.
+
+Enclosed for soattle i8 & copy of the B.D.
+
+COOPER letter and ontolopo.
+
+3 - Bureau (AM), (RM) (Enc.
+
+Satan (264-81) InFo) Ple
+
+- Sacramento (Info)
+
+1 - Las Vegas (Info)
+
+2 - Portland
+
+BHY : sao
+
+(8)
+
+164-81.1199
+
+JNDEXE.
+
+SERIALZER ANILED
+
+DES 1 51971
+
+FBI - SEATTLE
+
+b6
+
+b7C
+
+Approved:
+
+Sent
+
+Special Agént in Charge
+
+Per;
+
+DB Cooper-4388
+
+---
+
+## Page 85
+
+Here!
+
+You
+
+share
+
+SS$
+
+ADE.
+
+Fool
+
+4,
+
+D. Cooque
+
+DB Cooper-4389
+
+---
+
+## Page 86
+
+$6
+
+Trầi
+
+-FISENI
+
+b6
+
+b7C
+
+N1F451441
+
+DB Cooper-4390
+
+---
+
+## Page 87
+
+In Reply, Please Refer 10
+
+File No.
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTICATION
+
+Portland, Oregon
+
+December 8, 1971
+
+UNKNOWN SUBJECT, also known as
+
+Dan Cooper, Northwest Airlines Flight #305,
+
+Portland to Seattle, November 24, 1971
+
+contained an eat last to one no need per,
+
+"Mr.' Brown"
+
+This individual hoaxed the Qantas Airline at the Sydney
+
+International Airport, apparently in Australia, into paying
+
+235,000 pounds ransom
+
+money after a bomb threat. The
+
+aircraft involved was a Boeing 707 Airliner..
+
+"Mr. Brown""
+
+"Identikit"
+
+picture
+
+unknown subject who hijacked an airliner between Portland,
+
+Oregon,
+
+Seattle, Washington, on November 24, 1971, and
+
+extorted $200,000 from Northwest Orient Airlines. This
+
+individual is described as white male,
+
+6'1" tall, 170-175
+
+164-81-1200
+
+SEASCHED_
+
+INDEXED
+
+SEPIALIZED
+
+IS FILEDO
+
+DB Cooper-4391
+
+---
+
+## Page 88
+
+LEADS
+
+Will obtain disposition of the case relating to
+
+"Mr. Brown"
+
+and the Qantas Airline in May, 1971.
+
+Will obtain description of "Mr. Brown".
+
+Will attempt to determine if "Mr. Brown" could
+
+have been in the United States, particularly in the
+
+Seattle, Washington, Portland,
+
+Oregon, region during
+
+November, 1971.
+
+The Northwest Orient
+
+Airlines hijacking
+
+took place on November 24, 1971.
+
+iso
+
+-2it-
+
+DB Cooper -4392
+
+---
+
+## Page 89
+
+The gelignite bomb whose discovery in a locker at
+
+Sydney International Airport triggered off the train
+
+ot events in Wednesday's £235.000 hoax involving
+
+., a Qantas Boeing 707 airliner.
+
+CLUES TO
+
+QANTAS
+
+HOAXER
+
+By J. D. HOLDSWORTH
+
+In Sydney :
+
+AUSTRALIAN
+
+police
+
+are
+
+hopeful that they
+
+will
+
+" soon be able to trace
+
+"Mr
+
+Brown"
+
+and his accomplice
+
+who hoaxed Qantas Airline
+
+into paying £235,000 ransom
+
+money after a bomb threat
+
+on Wednesday.
+
+Close scrutiny of & bomb and
+
+bag found in a
+
+locker at Sydney
+
+Airport has yielded valuable in
+
+formation, they say. Examination
+
+recordings
+
+• Mr
+
+Browne rice on the relepone
+
+nas -also
+
+given read to
+
+nationality,
+
+information
+
+-from
+
++ other
+
+sources.
+
+has given useful
+
+and
+
+police
+
+hope
+
+the
+
+leads
+
+£23,300
+
+reward offered
+
+will
+
+bring - lips
+
+from the underworld.
+
+The ransomt money
+
+Has
+
+paid.
+
+out to the accomplice In new
+
+nearly new 20 dollar
+
+notes
+
+or.
+
+after
+
+phone
+
+calls threatened that
+
+1X3 C popey: 463933
+
+An Identikie picture of
+
+" Mr Brown:
+
+bomb would explode on
+
+borne
+
+Boeing
+
+707
+
+passengers
+
+The
+
+aboard.
+
+on an air
+
+116
+
+serial numbers
+
+of th
+
+notes are
+
+known and lists art
+
+being published.
+
+All international police agen
+
+cies have been given a full des
+
+cription
+
+of the
+
+accomplice
+
+an
+
+Identikit picture has
+
+and
+
+been
+
+distributed.
+
+The
+
+airline delended their
+
+handling of the
+
+expensin hoax
+
+athey were not insured against
+
+such a loss and the money must
+
+told by
+
+yesterday:
+
+---
+
+## Page 90
+
+12/8/71
+
+AIRTEL.
+
+AIRMATI
+
+TO:
+
+DIRECTOR, FBI (164-2111)
+
+FROM:
+
+SAC, PORTLAND (264-41) 619)
+
+SUBJECT: UNSUB, aka:
+
+Dan Cooper,
+
+Northwest Airlines Flight 1305,
+
+Portland to Seattle,
+
+• 11/24/71
+
+CAA-HIJACKING; EXTORTION
+
+(00:
+
+seactle
+
+X -A
+
+enclosed for the Bureau, are/six copies of a letter-
+
+235,000 pounds in May, 1971,
+
+The Delly Telegrapk, a London, England, newspapers.
+
+One copy of the news article contained on Page 4
+
+of the newspaper and one copy of the lil are being forwarded
+
+to seattle office.
+
+The news iten was furnished by
+
+by undated letter received IX/7171.
+
+-Bureau (Bacs. "
+
+2 Seattle (Encs. 2)r 1
+
+2-Portland
+
+NBB: sup
+
+(6)
+
+66
+
+17C
+
+104 - 120
+
+SERIALIZER... FLEDia
+
+FBI - SEATTLE
+
+DB Cooper-4394
+
+---
+
+## Page 91
+
+12/8/71
+
+AIRTEL
+
+AIRMAIL,
+
+TO:
+
+DIRECTOR, FBI (164-2111)
+
+FROM:
+
+SAC, PORTLAND (164-41) (8)
+
+SUBJECT: UNSUB, aka
+
+san cooper.
+
+Northrest Alriines Flight 1305,
+
+Portland to Seattle, 11/24/71
+
+CAA-HIJACKING, EXTORTION
+
+enclosed for the jureau are six copies of a letter-
+
+head menorandun dated 12/3/11, setting out information Ie
+
+& hoax concerning the lantas Airline where an unsub obtained
+
+235,000 pounds in May, 1971, Also enclosed 18 Page 4 Of
+
+The Dally Telegraph, a London, England, newspaper;
+
+One copy of the news article contained on Page 4
+
+of the neuspaper and one copy of the LIM are being forwarded
+
+to Seattle Office.
+
+The News
+
+1tem was furnished by
+
+by undated letter received I7/T/71.
+
+b6
+
+b7C
+
+NBB: sup
+
+(6)
+
+164-81-1701
+
+SEARCHED.
+
+JNDEXER
+
+IL FLED O
+
+DEO L: 1971
+
+FBL-SEATTLE *
+
+DB Cooper-4395
+
+---
+
+## Page 92
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI/PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790
+
+Total Deleted Page (s) = 77
+
+Page 22 • Referral/Consult;
+
+Page 65 • Referral/Consult;
+
+Page 66 ~ Referral/Consult;
+
+Page 68 ~ Referral/Consult;
+
+Page 69 • Referral/Consult;
+
+Page 121 • Referral/Consult;
+
+Page 122 ~ Referral/Consult;
+
+Page 124 ~ b6; b7C;
+
+Page 125 • b6; b7C;
+
+Page 126 - 06; b7C;
+
+Page 127 - b6; b7C;
+
+Page 129 ~ Referral/Consult;
+
+Page 130 ~ Referral/Consult;
+
+Page 131 • Referral/Consult;
+
+Page 132 - Referral/Consult;
+
+Page 133 • Referral/Consult;
+
+Page 134 ~ Referral/Consult;
+
+Page 139 ~ b6; b7C;
+
+Page 186 - Referral/Consult;
+
+Page 187 - Referral/Consult;
+
+Page 208
+
+~ b6; b7C;
+
+Page 209 • b6; b7C;
+
+Page 210 - 66; b7C;
+
+Page 211
+
+- b6; b7C;
+
+Page 243 - Referral/Consult;
+
+Page 244 • Referral/Consult;
+
+Page 245 ~ Referral/Consult;
+
+Page 246 - Referral/Consult;
+
+Page 247 - Referral/Consult;
+
+Page 248 ~ Referral/Consult;
+
+Page 249 • Referral/Consult;
+
+Page 250 - Referral/Consult;
+
+Page 251 - Referral/Consult;
+
+Page 252 • Referral/Consult;
+
+Page 253 ~ Referral/Consult;
+
+Page 254 • Referral/Consult;
+
+Page 255 • Referral/Consult;
+
+Page 256 - Referral/Consult;
+
+Page 257 ~ Referral/Consult;
+
+Page 258 • Referral/Consult;
+
+Page 259 ~ Referral/Consult;
+
+Page 260 - Referral/Consult;
+
+Page 261 • Referral/Consult;
+
+Page 262 ~ Referral/Consult;
+
+Page 263 ~ Referral/Consult;
+
+Page 264 • Referral/Consult;
+
+Page 265 - Referral/Consult;
+
+Page 266 • Referral/Consult;
+
+---
+
+## Page 93
+
+Page 267 ~ Referral/Consult;
+
+Page 268 • Referral/Consult;
+
+Page 269 - Referral/Consult;
+
+Page 270 ~ Referral/Consult;
+
+Page 271 • Referral/Consult;
+
+Page 272 ~ Referral/Consult;
+
+Page 273 - Referral/Consult;
+
+Page 274 - Referral/Consult;
+
+Page 275 ~ Referral/Consult;
+
+Page 276 ~ Referral/Consult;
+
+Page 277 - Referral/Consult;
+
+Page 278 - Referral/Consult;
+
+Page 280 ~ Referral/Consult;
+
+Page 281 ~ Referral/Consult;
+
+Page 282 • Referral/Consult;
+
+Page 283 - Referral/Consult;
+
+Page 284 • Referral/Consult;
+
+Page 306 ~ Referral/Consult;
+
+Page 319 ~ Referral/Consult;
+
+Page 327 • Duplicate;
+
+Page 328 - Duplicate;
+
+Page 329 - Duplicate;
+
+Page 330 ~ Duplicate;
+
+Page 331 • Duplicate;
+
+Page 332 • Duplicate;
+
+Page 333 • Duplicate;
+
+Page 335 ~ Duplicate;
+
+Page 336 • Duplicate;
+
+Page 337 • Duplicate;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+X
+
+X
+
+Deleted Page(s)
+
+No Duplication Fee X
+
+For this Page
+
+X
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 94
+
+SEE
+
+NEXT
+
+......
+
+-.
+
+VOLUME
+
+DB Cooper-4396
+
+---
+
+## Page 95
+
+5D-SipiRor, 5-22-64)
+
+FBI
+
+Date:
+
+12/11/71
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+(Type in plainiext or code)
+
+(Priority)
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, DENVER (164-98) (P)
+
+SUBJECT:
+
+NORJAK
+
+00: Seattle
+
+Re:
+
+Re Seattle teletype to Denver, 12/8/71.
+
+one conv af Colorado driver's license
+
+a Sent cente and Minneapolis 25
+
+that [
+
+matter.
+
+Seattle previously advised in referenced teletype
+
+Jhas been named as a suspect in this
+
+Correct name of suspect determined to be
+
+b6
+
+670
+
+b7C
+
+b70
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Frontier Air Lines, Stapleton International Airport, Denver,
+
+Colorado, stated on 12/9/71, that
+
+following descriptive information concerninovided the
+
+Name
+
+Sex
+
+Race
+
+Male
+
+White
+
+DOB
+
+POB
+
+Marital Status
+
+Address
+
+vidu
+
+(2-Seattle (Encl. 1) (RM)
+
+2-Minneapolis (Encl.
+
+1) (RM)
+
+2-Portland (Encl. 1) (RM)
+
+2-Denver
+
+JMB/skc
+
+(8)
+
+164-81-1202
+
+SERIC ¡ED....
+
+INCEXED.....
+
+FBI - SEATTLE
+
+Approved:
+
+Special Agent in Charge
+
+sent f7
+
+- M
+
+Per.
+
+-ĐB-Cooper 4397
+
+#4. 5, GOVCRNMENT PRINTING OFFICE: 1971-419-11
+
+b6
+
+b70
+
+---
+
+## Page 96
+
+DN 164-98
+
+further advised that
+
+a Flight fron Denver, Colorado fot de emmeles Calafonia,
+
+whereabouts on 11/24/71.
+
+LEADS:
+
+SEATTLE, PORTLAND AND MINNEAPOLIS DIVISIONS:
+
+1. Display photograph of
+
+to
+
+witnesses in this matter.
+
+2. Seattle will advise Denver if interview of
+
+required.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+2
+
+DB Cooper-4398
+
+---
+
+## Page 97
+
+1098 199Y. 1218-83 FEDERA BUREAU OF INVESTESATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+IDENTIFICATION DIVISION
+
+LATENT FINGERPRINT SECTION
+
+YOUR FILENO.
+
+164-627
+
+December 13; 1971
+
+FBI FILE NO.
+
+164-2111
+
+LATENT CASE NO.
+
+A-45410
+
+TO, SAC, New York
+
+Sub
+
+G
+
+13°
+
+RE: NORJAR
+
+REFERENCE: Airtel 12/4177
+
+EXAMINATION REQUESTED BY: New York
+
+SPECIMENS: EnvelOpe, 07
+
+Four-page article, 09 through Q12
+
+Letter, 08
+
+Enclosed specinens described in separate
+
+Laboratory repoxt.
+
+Iwo latent fingerprints of value developed
+
+Q12, fourth page of four-page article. No latent prints
+
+of value developed other specimens.
+
+latent fingerprints not identical previously
+
+reported latent prints this case or with fingerprints
+
+following persons;
+
+Enc. (6)
+
+- Seattle (164-81)
+
+• Portland (164-41)
+
+(Continued on next page)
+
+164-81-1203
+
+USEAECHEA
+
+DEC 1 5 1971
+
+THIS REPORT IS FURNISHED FOR OFFICIAL UJE ONLY
+
+FBI-SEATLE
+
+1so cooper-4399
+
+---
+
+## Page 98
+
+3io, den Jork
+
+T'ecember 15, 1971
+
+b6
+
+b7C
+
+Specimens enclosed.
+
+This report supplemanta are confirma Butel
+
+12/10/71.
+
+Jage 2
+
+L0 ."A-45410
+
+DB Cooper-4400
+
+---
+
+## Page 99
+
+Site RoN, 121069) FEDERA BUREAU OF INVESTISATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+IDENTIFICATION DIVISION
+
+LATENT FINGERPRINT SECTION
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+TO: SAC, Portland
+
+184-41
+
+164-2111
+
+A-45410
+
+December 13, 1971
+
+Sul.
+
+sub-
+
+G
+
+130
+
+RE: NORJAK
+
+REFERENCE:
+
+SPECIMENS:
+
+Envolope, 25
+
+Letter, Q8
+
+Four latent fingerprints of value developed Q5 and
+
+Elve latent lingerprints of value developed Q6.
+
+Latent fingerprints not identical fingerprints following
+
+persons:
+
+b6
+
+b7C
+
+Enc. (2)
+
+2) Seattle (184-81)
+
+John Edgat
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONE
+
+(Continued on next page)
+
+C4-81.120
+
+SALACHED
+
+DEC 1 51971
+
+DB(der-101
+
+---
+
+## Page 100
+
+SAC, Portland
+
+December 13, 1971
+
+b6
+
+b7C
+
+report,
+
+Enclosed specimens described separate Laboratory
+
+This report supplements and contirms Butel of 12-10-71.
+
+Page 2
+
+IC 4A-45410
+
+DB Cooper-4402
+
+---
+
+## Page 101
+
+1-336 (Rey. 12-19-631 FEDERA
+
+BUREAU OF INVESTSATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+IDENTIFICATION DIVISION
+
+LATENT FINGERPRINT SECTION
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+164-60
+
+164-2111
+
+A- 45410
+
+TO:
+
+SAC, Las Vegas
+
+December 13, 1971
+
+Sub
+
+G
+
+RE: NORJAK
+
+REFERENCE:
+
+Alrtel 12-3-71
+
+EXAMINATION REQUESTED $X1
+
+Las Vegas
+
+SPECIMENS:
+
+Contents of ashtray, Ql
+
+Elimination fingerprints of
+
+and seven other individuala
+
+(No lntent prints of value deyeloped contents
+
+of ashtray.
+
+Latent fingerprint previously reported message,
+
+92, not identical subaitted elimination fingerprints.
+
+Q1 enclosed, Elimination prints being retained
+
+Latent Fingerprint Section for use in possible future
+
+submiasions this case.
+
+Results of laboratory examination and dispost-
+
+tlon other specimen subjects separate report.
+
+Enc.
+
+164-81-1205
+
+- Seattle (164-81)
+
+SEARCHES'
+
+John Edga!
+
+- Ho
+
+SERENIED
+
+-AILED A
+
+DEC 1 5 1971
+
+FBI - SEATILE
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONL
+
+—B-E
+
+b6
+
+b7C
+
+тpel-4403
+
+---
+
+## Page 102
+
+OPTIONAL FORM NO, 18
+
+MAY IPAZ EDITION
+
+G$A FEMA (11 551) 103-11.8
+
+UNITED STATES GOV NMENT
+
+Memorandum
+
+TO
+
+¡SAC, SEATTLE (264-81) (P)
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+DATE: 12/25/71
+
+b6|
+
+b7C
+
+On 12/6/71, Chief of Police CECIL KLEIN, Bellingham,
+
+Washington, Police
+
+Department, advised that he has been
+
+contacted by one
+
+Washington
+
+Ite stated thatl
+
+land related to him a conversation he
+
+overheard
+
+Chief KLEIN that thel
+
+(LNU), had commented that the artist's concertsion
+
+of the hijacker was
+
+a good likeness of a guy named
+
+(LNU) had indicated that he knewl
+
+and that
+
+had been in the Scattle area last spring trying to
+
+b6
+
+b7C
+
+Attempts to contact
+
+Washington,
+
+were negative on 1276/71, and
+
+12/1/11.
+
+On 12/8/71,
+
+Supra, was contacted
+
+at his business address,
+
+Washington. He advised that on
+
+he had been engaged in a conversation with a group of men at
+
+uNU) talking about the harlacker. He heard
+
+He stated thatl
+
+namely
+
+in the Seattle area,
+
+stated that he doubts
+
+Jas he is of the opinion that
+
+is
+
+not the type to give information.
+
+• On
+
+12/9/71,L
+
+advised that the onlyl
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+around
+
+RST: m2c
+
+(2)
+
+niel
+
+who works
+
+164-81-1206
+
+ESEARCHED....
+
+...IN DEXED.........
+
+SERIALIZED.
+
+DEC 1 5 1971
+
+FBI - SEATTLE
+
+Bay U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+is Cooper-4404
+
+17=1.
+
+M...
+
+or: 124949497999
+
+---
+
+## Page 103
+
+"IT.
+
+SE: 164-81
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+Attempts to contact
+
+negative on
+
+12/9/71, and 12/20/71.
+
+I 23/23/7en Has contacted at his place of wor
+
+related to the writer how l
+
+He stated that he is
+
+He stated that
+
+recently in a Seattle paper as a suspect in instant hijacking.
+
+He stated that he knows
+
+I having
+
+come around to l
+
+Jon occasion, and
+
+he does not know
+
+very well.
+
+He stated he does
+
+even know where
+
+is employed or if he is married, or
+
+anything about his personal life. He stated that the last
+
+time he sawl
+
+b6
+
+b7C
+
+Istated that on the date thatl
+
+He stated in his opinionl
+
+showed very poor
+
+judgment.
+
+He stated that he does not have any direct knowledge
+
+had anything to do with the hijacking but
+
+b6
+
+b7C
+
+He could furnish no additional
+
+Intormation regarding
+
+- 2 -
+
+DB Cooper-4405
+
++412195-91-4-9+19294
+
+19774444199
+
+---
+
+## Page 104
+
+TO
+
+NITH (+097) 107-351
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+:
+
+SAC, SBATTLE (164-82)
+
+DATE: 12/14/71
+
+++=
+
+FROM :
+
+SA ROBERT H. WICK
+
+sUBjECT:
+
+NORJAK
+
+Re Denver teletype to Seattle, 12/6/71.
+
+Re suspect|
+
+On December 8, 1921,
+
+Probation and
+
+Parole Division, Olympia,
+
+advised
+
+was formerly on probation in the State of lashington. but
+
+was removed and his file was destroyed on
+
+On December 8, 1971, the Polk's City Directory
+
+for Aberdeen-Hoquiam, the Aberdeen-Hoquiam Telephone Directory
+
+and the files of the Aberdeen
+
+1 Police Department were reviewed
+
+and contained no reference to
+
+On December 8, 1971, records of the
+
+Sheriff's Office at
+
+Washington, disclosed that
+
+date of birthl
+
+charged with
+
+J6' I, I60 pounds, brown eyes, brown haz disposition
+
+this case was dismissed. In
+
+he was charged with
+
+case dismissed. On
+
+was charged with
+
+On December 8, 1971.
+
+washington.
+
+advised that
+
+Credit Bureal their
+
+files, under the name of|
+
+contained no
+
+information more resent than l
+
+when they were advised that
+
+he was residing at l
+
+Credit bureau files failed to disclose a present
+
+address for
+
+There were two references
+
+who died
+
+in 1961, and his wife,
+
+moved in
+
+164-81-1207
+
+ESEARCHED......
+
+..INDEXED
+
+RHW/r1g
+
+(3)
+
+b61
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b70
+
+b6
+
+b7C
+
+b7C
+
+5014-138
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plän
+
+DEC 1 5 1971
+
+FBI SEATTLE
+
+stooper -4106
+
+---
+
+## Page 105
+
+SE 164-81
+
+Credit Bureau stles further reflect that in
+
+there was al
+
+residing at l
+
+however, there is no intormation
+
+conceming these people following that time following either
+
+To the pose a a 2602
+
+_Assistant Postmaster,
+
+that he checked the route books
+
+record of a
+
+than several years.
+
+sata nosay they do not shop
+
+area, and could locate ne
+
+or a forwarding address for
+
+they do not keep these records
+
+• more
+
+Usual sources, including the police department, creat
+
+ureau, telephone directories and city directories were searche
+
+and disclosed no information pertaining to
+
+166
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+-2 -
+
+DB Cooper-4407
+
+---
+
+## Page 106
+
+SAC, SEATTLE (164-82)
+
+12/14/71
+
+SA ROBERT H. WICK
+
+NORJAK
+
+Re Denver teletype to Seattle, 12/6/71.
+
+Re suspect
+
+on December o
+
+Parole DiVisIon, Olymp1a1971,
+
+Probation and
+
+washington, advised that
+
+was formerly on
+
+probation in the state of washington, but
+
+was removed and his file was destroyed on
+
+on bevember 8,. 1971, the Polk's City Directory
+
+for Aberdeen-Hoguiam,
+
+the Aberdeen-Hoquian Telephone Directory
+
+and the files of the
+
+Aberdeen
+
+Polion Department were reviewed
+
+and contained no reference to
+
+On December 8, I921, records of the
+
+Sheriff's Office
+
+Washington, disclosed that
+
+date of sirth
+
+Charged with
+
+160 pounds, brown eyes, brown ta faisposition
+
+this case was dismissed. In
+
+The was charred with I
+
+case dismissed.
+
+nati
+
+ChaRan Finan
+
+On Dacamber 8, 1991.
+
+Illes, under the name of |
+
+Information more recent than
+
+he was residine at l
+
+credit bureau,
+
+Hashinston
+
+advised that their
+
+contained no
+
+when they were advised that
+
+164-81-1207
+
+Credit Bureau files falled to disclose a present
+
+address for
+
+There were two references
+
+to [
+
+Twho died
+
+in 1961, and his wife, I
+
+moved in
+
+1
+
+.: 1. 197:
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+RHW/rIg
+
+(3)
+
+DB Cooper-4408
+
+---
+
+## Page 107
+
+SE 164-81
+
+there was redit Bureau files further reflect that in
+
+residing atl
+
+however,
+
+there Is no information
+
+conceming these peoble Sollowing that time following either
+
+Assistant rostmaster.
+
+area, and could locate no
+
+record of al
+
+Jor & lorwarding address for|
+
+He said nornally they do not keep these records more
+
+than several years.
+
+Usual sources, including the police department, credit
+
+bureau, telephone directories and city directories were searched
+
+and disclosed no information pertaining to
+
+b6
+
+b7C
+
+b6
+
+7C
+
+-2.
+
+DB Cooper-4409
+
+---
+
+## Page 108
+
+NRBB2 MP PLAIN
+
+400PM URGENT 12-15-71 MAW
+
+TO
+
+SAN FRANCISCO
+
+PORTLAND (164-41>
+
+SACRAMENTO
+
+SEATILE (164-81>
+
+FROM MINNEAPOLIS (164-73) 2P
+
+b7C
+
+b7D
+
+Unaul <
+
+Laft
+
+NORJAX.
+
+RE:
+
+INFORMANT.
+
+b6
+
+b7C
+
+b7D
+
+NWA, MINNEAPOLIS,
+
+MINNESOTA, RECEIVED A PHONE CALL FROM
+
+CALIFORNIA, AND WHO REQUESTED
+
+INFORMATION CONCERNING POSSIBLE REWARD FOR FURNISHING INFORMATION
+
+ABOUT IDENTITY OF UNSUB.
+
+STATED A REWARD WOULD BE
+
+POSSIBLE ON. A COD BASIS IF ACCURATE INFORMATION WAS FURNISHED
+
+QUESTIONED
+
+AS TO THE AMOUNT OF THE
+
+REWARD AND ASKED
+
+PER CENT OF IHE AMOUNT
+
+OSTAINED BY THE HIJACKER WOULD IN ORDER •
+
+STATED THAT THIS
+
+WAS POSSIBLE.
+
+WAS REFERRED TO THE NEARESI FBI OFFICE;
+
+END PAGE ONE
+
+b6
+
+b7C
+
+b7D
+
+104-8) - 1208
+
+SÉARCHEO
+
+Ar INDEXESCA
+
+SERLALIZED-.A
+
+-FILED...
+
+DEO T 51971
+
+FBI • SEATTLE
+
+TAHS
+
+DB Cooper-4410
+
+---
+
+## Page 109
+
+PAGE THO
+
+HOWEVER, NO CITY WAS MENTIONED.
+
+• SAN FRANCISCO AI WALNUT CREEX, CALIFORNIA, CONDUCI
+
+' APPROPRIATE INVESTIGATION IN ATTEMPT TO LOCATE
+
+AND
+
+INTERVIEW HIM CONCERNING INFORMATION HE MAY POSSESS ABOUT
+
+IDENTITY OF UNSUB. IT SHOULD BE NOTED THAT NVA HAS ADVISED
+
+THAT THEY WOULD CONSIDER OFFERING A REWARD ON A COD BASIS.
+
+INFORMATION ABOVE SENT TO SACRAMENTO IN VIEW OF FACI
+
+WAS NOT SURE OF OFFICE WHERE
+
+WOULD APPEAR.
+
+UNSUB SHOULD BE CONSIDERED DANGEROUS.
+
+P.
+
+b6
+
+b7C
+
+b7D
+
+b7C
+
+b7D
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+"
+
+DB Cooper-4411
+
+---
+
+## Page 110
+
+LYMPIC
+
+ELICOPTERS, INC.
+
+BOEING FIELD • SEATTLE, WASHINGION 98108
+
++ 767-3055
+
+December 11, 1971
+
+Officer in Charge
+
+Federal Bureau of Investigation
+
+1015 2nd Avenue
+
+Seattle, Washington 98104
+
+Dear Sirs,
+
+Olympic Helicopters can provide valuable assistance to
+
+you as a time saver in your investigations and search
+
+operations.
+
+By eliminating wasted travel time for Inves-
+
+tigators and for evidence to reach your laboratories,
+
+a chartered helicopter can result in economies far ex-
+
+ceeding the charter cost.
+
+A helicopter can also be in-
+
+valuable for searches
+
+or surveillance operations.
+
+We have two types of helicopter available for your
+
+charter.
+
+The Hughes 300 is a small two passenger
+
+machine
+
+congested or non-existant roads:
+
+that is ideal for beating the ferry scheduled
+
+cruises at 80 MPH and charters for $15 'der hour.
+
+of for searches. for
+
+longer distances and when you are in a real hurry, our
+
+Hughes 500 turbine powered
+
+helicopter is the answer.
+
+It carries four passengers at 140 MPH cruise for $225
+
+per hour.
+
+Respectfully yours,
+
+b61
+
+b7C
+
+164-81-1209
+
+DEC 1 41971
+
+FBI - SEATTLE
+
+mackinte
+
+• DB Cooper-4412
+
+---
+
+## Page 111
+
+LYMPIC
+
+HLICOPTERS, INC.
+
+BOEING FIELO • SEATTLE, WASHINGTON 98108 = 767-3055
+
+CHARTER RATES
+
+HUGHES 300
+
+Two passengers (Passengers and cargo max. 550#)
+
+$75 per hour
+
+Cruise speed - 80 MPH
+
+Normal endurance - two hours
+
+Reference chart for estimating times and charges:
+
+Distance
+
+Time
+
+Per trip leg
+
+20 Miles
+
+15 Min.
+
+$20
+
+40
+
+30
+
+40
+
+60
+
+45
+
+60
+
+80
+
+100
+
+1+00
+
+80
+
+1+15
+
+100
+
+Round trip
+
+$40
+
+80
+
+120
+
+160
+
+200
+
+HUGHES 500
+
+Four passengers (Passengers and cargo max. 1000#)
+
+$225 per hour
+
+Cruise speed - 140 MPH
+
+Normal endurance - two and one half hours
+
+Reference chart for estimating times and charges:
+
+Distance
+
+Time
+
+Per trip leg
+
+20 Miles
+
+10 Min.
+
+$40
+
+40
+
+18
+
+70
+
+60
+
+25
+
+80
+
+95
+
+100
+
+34
+
+125
+
+200
+
+42
+
+160
+
+1+25
+
+315
+
+Round trip
+
+$80
+
+140
+
+190
+
+250
+
+320
+
+630
+
+DB Cooper-4413
+
+---
+
+## Page 112
+
+1015 Second Avenue
+
+seattle, Washington
+
+December 15, 1971
+
+5.1, 5
+
+X-HELICOPTER
+
+ster
+
+b7C
+
+Olyupic Halicopters, Inc.
+
+Boeing Field
+
+Seattie, Washington 98108
+
+Dear Sir:
+
+i have received your communication o1
+
+recember 11, 1971, advising me of the cost of you
+
+services.
+
+Your thoughtfulness in calling this matter
+
+to our attention is indeed appreciated.
+
+Very truly yours,
+
+Trial.
+
+2
+
+(4) 1
+
+Addressee
+
+• Seattle
+
+(164-81)
+
+164-81-1210
+
+DB Cooper-4414
+
+---
+
+## Page 113
+
+NR027 WA PLAIN
+
+5:20 PM URGENT
+
+12-15-71 LMR
+
+TO PORTLAND
+
+(164-41)
+
+SEATTLE (164-81)
+
+FROM DIRECTOR
+
+(164-2111)
+
+1P
+
+Sab: F
+
+: 130
+
+NORJAK.
+
+RE PORTLAND AIRTEL DECEMBER SIX SUBMITTING ENVELOPE,
+
+PRINTED MESSAGE AND CLIPPING.
+
+NO LATENT PRINTS DEVELOPED.
+
+CONFIMING .
+
+END
+
+BBAB
+
+FBI SEATTLE CLR
+
+164-81-1212
+
+• INDEXEI
+
+PA SEATE
+
+DB Cooper-4416
+
+---
+
+## Page 114
+
+TO
+
+:
+
+FROM :
+
+SUBJECT:
+
+CAT OAL FORE NA 10
+
+ESARAMA (41 09X) 104-158
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)
+
+SA
+
+NORJAK
+
+DATE: 12/15/71
+
+SubL
+
+Re memo of SA CHARLES E. FARRELL, 11/26/71.
+
+b6
+
+b7C
+
+JEC:bfr
+
+164-81-1213
+
+SEARCHED..........INDEXED
+
+DEC 15 1971
+
+MBI - SEATTLE "
+
+3010-504
+
+B
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4417
+
+---
+
+## Page 115
+
+Routing Stio
+
+(Copies to Officos Checked)
+
+0-7 (Rev. 2-12-71)
+
+TO: SAC:
+
+→ Albasy o
+
+L Houston
+
+• Oklahomas City
+
+Alexana Jacien
+
+Anchorage
+
+2 Jacienolis Philadelphia
+
+Pboenix
+
+Atlanta
+
+Kensas City
+
+Pittsburgh
+
+Baltimore
+
+Knoxville
+
+Portland
+
+Birmingham
+
+Las Vegas
+
+Richmond
+
+Boston
+
+Little Rock
+
+Sacramento
+
+Buffalo
+
+Los Angeles
+
+St Louis
+
+Butte
+
+Louisville
+
+Salt Lake City
+
+Cherlotte
+
+Memphis
+
+San Antonio
+
+Chicago
+
+Misusi
+
+San Diego
+
+Cincinnati
+
+Mil weakee
+
+San Francisco
+
+Cleveland
+
+Minnespolis
+
+San Juan
+
+Columbia
+
+1 Mobile
+
+Savenne
+
+Newark
+
+Seattle
+
+New Haven
+
+New Orleaus
+
+Springfield
+
+Tanpa
+
+El Paso
+
+New York City
+
+Washington Field
+
+Quantica
+
+Dato
+
+TO LEGAT:
+
+- Copenb agen
+
+12/9/71
+
+RE: NORJACK
+
+Retention
+
+For appropriate
+
+→ For infomation D optional @ action
+
+[I, Surep, by
+
+[ The enclosed is for your lafomation. Il used in a future report, (j conceal all
+
+sources, [ paraphrase contents.
+
+[ Enclosed are corrected pages froza report of SA
+
+dated
+
+Remorks:
+
+Attached are 20 copies each of glossy photographs
+
+of an artist's conception of the subject with and
+
+Without glasses.
+
+la in a
+
+Be fut21o
+
+1664-81-1214
+
+SEAr
+
+trestratinto
+
+Enc. 40
+
+Bufile
+
+Urfile
+
+893....
+
+DB Cooper-4418
+
+---
+
+## Page 116
+
+AR BID SF PLAIN
+
+11:32 PM NITEL
+
+12/1571 FCO
+
+TO :
+
+SEATTLE (164-81)
+
+SACRAMENTO (164-58)
+
+PORTLAND (164-41)
+
+MINNEAPOLIS (164-73)
+
+FROM:
+
+SAM FRANCISCO
+
+(164-220)
+
+b6
+
+b7C
+
+b7D
+
+1P
+
+HORJAK.
+
+RE MINNEAPOLIS TEL TO SAN FRANCISCO INSTANT DATE.
+
+RE
+
+INFORMANI.
+
+ADVISED INSTANT DATE TELEPHONE NUMBER AREA
+
+CODE FOUR ONE FIVE, NINE THREE FOUR - NINE EIGHT FIVE TWO ISSUED
+
+TO PUBLIC PAY PHONE BOOTH LOCATED AT GREYHOUND BUS DEPOT, ONE
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+B7C
+
+b7D
+
+WILL BE IMMEDIATELY INTERVIEWED IF HE PHONES OR PERSONALLY CONTACTS
+
+ANY OFFICE WITHIN THE SAN FRANCISCO DIVISION.
+
+UNSUB CONSIDERED ARMED AND DANGEROUS.
+
+END
+
+HOLD
+
+164-81-1215
+
+EC 1 5 197
+
+FBI - SEATTLE
+
+• DB: Cooper-4419
+
+---
+
+## Page 117
+
+$D-96(784-5-22-84)
+
+Transmit the following in
+
+Vin
+
+AIRTEL
+
+FBI
+
+Date:
+
+December 25, 1971
+
+(Type in ploinient or codel
+
+AIRMAIL
+
+(Priority)
+
+TO
+
+FROM
+
+SUBJECT: NORJAK
+
+: SAC, NEWARK (264-196)
+
+b6
+
+b7C
+
+RE:
+
+Photograph of
+
+witnesses at Seattle who advise
+
+with Unsub in this matter.
+
+b6
+
+exhibited to
+
+is not identical
+
+b7C
+
+2 - Newark
+
+2
+
+- New York
+
+2
+
+- Norfolk
+
+- WFO
+
+& - seattie
+
+JSD: kd1
+
+(10)
+
+(164-627)
+
+(164-41)
+
+(164-169)
+
+alizen
+
+Approved:
+
+- Sent
+
+Special Agent in Charge
+
+164-81-1216
+
+—M Per -
+
+SU.S. COVEANMEN RAINTING OR X& DE. CAORE 4420
+
+---
+
+## Page 118
+
+TO
+
+MAY I TORNO, 10
+
+GSA FPMA (11 C87) 191-11.8
+
+UNITED STATES GOV..
+
+INMENT
+
+-Memorandum
+
+¡SAC, SEATTLE (164-81) (P)
+
+FROM iSA
+
+SUBJECT:NORJAK
+
+DATE: 12/25/71
+
+b6
+
+b7C
+
+8010-104
+
+Suspect
+
+Re Seattle memo of SA THOMAS j. MANNING, 12/4/71.
+
+Seattle,
+
+Twas contacted on 12/13/71, at
+
+Washington,
+
+phone l
+
+his place of employment,
+
+Seattle.
+
+advised that he met the suspect inl
+
+while both were incarcerated in
+
+spent approximatelyl
+
+with
+
+In the County Jail and during this period of time
+
+Tared and in opirinally from
+
+reportedly servedl
+
+Penitentiary from
+
+and upon his release received
+
+also married
+
+aas time the suspect l
+
+unine this peried ef timi. At avoroxinately
+
+using the false name of
+
+He
+
+when they determined his true
+
+Identity and was picked up in
+
+Washington, by thel
+
+Police Department.
+
+returned to
+
+and was subsequently apprchended
+
+Dy the
+
+Sheriff's Office.
+
+According to
+
+released
+
+the suspect.
+
+These events
+
+occurred
+
+between
+
+During
+
+ten yoat's in the
+
+TENURE
+
+RDM: mic
+
+(5)
+
+164-81-1212
+
+Leads
+
+SEARCHED.....
+
+... INDEXED.
+
+SERIALIZER MA FLED UMIR
+
+DEC4 5 1971
+
+EBI - SEATILE
+
+Buy U.S. Swings Bonds Regularly on tbe Payron
+
+0714
+
+b6
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+• Cooper-4421
+
+b6
+
+b7C
+
+714-74-76-40
+
+---
+
+## Page 119
+
+SE 164-81
+
+(FNU), using his assumed
+
+name atl
+
+netl
+
+is uncertain whether or
+
+charges were ever filed.
+
+He feels however, that
+
+Sheriff's Office has complete details.
+
+feels that
+
+may have committed
+
+this hijacking Decausel
+
+Washington, has many criminally inclined friends in the
+
+familiar with terrain
+
+and is very experienced with
+
+described
+
+as follows:
+
+Name
+
+Build
+
+Medaun
+
+Age
+
+30-32 years
+
+Complexion
+
+Dark
+
+Hair
+
+Dark brown
+
+Eyes
+
+Brown
+
+Height
+
+5'10"
+
+It should be noted thatl
+
+provide any information concerning
+
+ability and in fact does not know if
+
+was unable to
+
+parachuting
+
+is trained te
+
+jump.
+
+LEADS
+
+b6|
+
+b7C
+
+b6
+
+b7c
+
+b6'
+
+b7C
+
+b7C
+
+SEATTLE
+
+At
+
+Washington
+
+1. Will conduct criminal check atl
+
+inston Police Department concerning
+
+Wash-
+
+Jand the names
+
+2. If available, obtain suspect's photo.
+
+At
+
+Washington
+
+Will obtain details of suspect's
+
+arrest by
+
+Sheriff's Office in
+
+and obtain photo
+
+It available.
+
+b6
+
+b7C
+
+-
+
+b6
+
+b7C
+
+• 2 .
+
+DB Cooper-4422
+
+---
+
+## Page 120
+
+SE 164-81
+
+At
+
+11/24/71.
+
+Washington
+
+Wizl determipe d determine his whereabouts on
+
+ARMED AND DANGEROUS
+
+b6,
+
+b7C
+
+- 3 -
+
+DB Cooper-4423
+
+---
+
+## Page 121
+
+MAYOR FORM NO 10
+
+654 FAME (4) 658) 44-11.4
+
+UNITED STATES GOVNMENT
+
+Memorandum
+
+#SAC, SEATTLE (164-81) (P)
+
+FROM :SA
+
+SUBJECT NORJAK
+
+DATE:
+
+12/15/71
+
+b6
+
+b7C
+
+Suspect|
+
+Re Seattle memo of SA THOMAS j. MANNING, 12/4/71.
+
+Seattle,
+
+Washington,
+
+phonel
+
+was sontacted on 12/13/71, at
+
+his place of employment,
+
+seattle.
+
+advised that he met the suspect in
+
+while both were incarcerated in
+
+spent approximately
+
+In the County Jail and during this period of time
+
+with
+
+b6 |
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+is originally from
+
+Lared, and had l
+
+reportedly senved
+
+Penitentiary from
+
+Land upon his relcase received
+
+Durina this period
+
+a girl from
+
+this time the
+
+• suspect l
+
+using the false name ofl
+
+time
+
+( FNU) •
+
+Jalso married
+
+At approximately"
+
+He
+
+they determined his true
+
+Identity and was picked up
+
+Police Department.
+
+_ Washington, by thel
+
+returned to
+
+and was subsequently apprehended
+
+by thel
+
+Iralcased
+
+Sheriff's Office.
+
+According to
+
+the suspecte
+
+These events
+
+occurred
+
+between
+
+During
+
+ten yaars
+
+in the
+
+TENURE
+
+RDM: mic
+
+(5)
+
+164-81-1217
+
+SEARCHED....
+
+..INDEXED...
+
+66
+
+b7C
+
+3010-100
+
+Buy U.S. Savings Bonds Regularly on she Payroll Sairer Pla SEATTLE peedoper-1424
+
++.b7C
+
+---
+
+## Page 122
+
+SE 164-81
+
+(FNU), using his assumed
+
+name at
+
+noti
+
+is uncertain whether or
+
+charges were ever filed. He feels however, that
+
+Sheriff's Office has complete details.
+
+this hijacking becausefts that
+
+may have conmitted
+
+lis intelligent,
+
+shrewd, used
+
+b6|
+
+b7C
+
+b7C
+
+Familiar with terrain
+
+as follows:
+
+Name
+
+Build
+
+Medium
+
+Age
+
+30-32 years
+
+Complexion
+
+Dark
+
+Hair
+
+Dark brown
+
+Eyes
+
+Brown
+
+Height
+
+5'20"
+
+It should be noted thatl
+
+provide any information concerningl
+
+ability and in fact does not know if
+
+jump.
+
+LEADS
+
+described
+
+b7C
+
+was unable to
+
+parachuting
+
+is trained to
+
+i l
+
+b7C
+
+SEATTLE
+
+At
+
+Washington
+
+1. Will conduct criminal check at
+
+ington Police Department concerning
+
+Wash-
+
+and the names
+
+2. If available, obtain suspect's photo.
+
+At.
+
+Washington
+
+Will obtain details of suspect's arrest by
+
+Sheriff's Office in
+
+and obtain photo
+
+ax available.
+
+B7C
+
+' b6
+
+b7C
+
+-2 -
+
+DB Cooper-4425
+
+---
+
+## Page 123
+
+SE 164-81
+
+At
+
+I1/24/71.
+
+Washington
+
+Will determine if [
+
+land determine his whereabouts on
+
+ARMED AND DANGEROUS
+
+b6
+
+b7C
+
+..
+
+- 3-
+
+DB Cooper-4426
+
+---
+
+## Page 124
+
+b6
+
+b7C
+
+Be BR
+
+-.-...
+
+DB Cooper-4427
+
+---
+
+## Page 125
+
+SAFENA (11 C58) 109-11
+
+UNITED STATES GOV.
+
+UNMENT
+
+'Memorandum
+
+TO
+
+¡SAC, SEATTLE (164-81) (P)
+
+FROM
+
+"SA
+
+SUBJEGT:NORJAK
+
+DATE:
+
+12/25/72
+
+b6
+
+b7C
+
+Suspectl
+
+Re Seattle memo of SA THOMAS J. MANNING, 12/4/71.
+
+Seattle,
+
+was contacted on 12/13/71, at
+
+Washington,
+
+phone
+
+his place of enployment,
+
+Seattle.
+
+advised that he met the suspect in
+
+while both were incarcerated in
+
+spent approximately
+
+with
+
+In the county jail and during this period of time
+
+is originally from
+
+area, and had
+
+reportedly served
+
+Penitentiary from I
+
+and upon his release received
+
+During are period ai time
+
+a girl
+
+•(FNU) -
+
+this
+
+time the suspect
+
+usins the false name ofl
+
+Jalso married
+
+At approximately
+
+Tite
+
+saentity and was picked up
+
+Police Department.
+
+Dy thei
+
+between
+
+RDM: mIc
+
+(5)
+
+when
+
+they determined mis true
+
+Washington, by the
+
+returned to
+
+subsequently apprenended
+
+Sheriff's
+
+Ircleased the suspect.
+
+According to
+
+office, These events occurred
+
+During
+
+in the
+
+104-81-1217
+
+SEARCHED......
+
+.. INDEXED.....
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+3010-104
+
+FBI - SEATTLE
+
+Buy U.S. Savings Bonds Regularly on she Payroll savings-Plaz
+
+usdeooper-4428
+
+---
+
+## Page 126
+
+SE 164-81
+
+LINU), using his assumed
+
+name atl
+
+not
+
+is uncertain whether or
+
+charges were ever filed.
+
+He feels however, that
+
+Sheriff's
+
+Office has complete details.
+
+feels that
+
+_may have committed
+
+this hijacking because
+
+as intelligent, shrewd, used
+
+to hang around an airport, name unknown, neax.
+
+Washanaton. has many crininally inclined friends in the
+
+and is very experienced
+
+ramusar with terrain
+
+described
+
+Jas follows:
+
+Name
+
+Build
+
+Medium
+
+Age
+
+30-32 years
+
+Complexion
+
+Dark
+
+Hair
+
+Dark brown
+
+Eyes
+
+Brown
+
+Height
+
+5'10"
+
+It should be noted that l
+
+provide any information concerning
+
+ability and in fact does not know if
+
+was unable to
+
+parachuting
+
+is trained to
+
+jump.
+
+LEADS
+
+. b6|
+
+b7C
+
+b6
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+SEATTLE
+
+At
+
+Washington
+
+1. Will conduct criminal check atl
+
+inston Police lenartment concerning
+
+Wash-
+
+and the names
+
+2.
+
+If available, obtain suspect's photo.
+
+At
+
+Washington
+
+Will obtain details of suspect's arrest by
+
+Sheriff's Office in
+
+and obtain photo
+
+as available.
+
+b6
+
+b7C
+
+• b6
+
+b7C
+
+-2 -
+
+DB Cooper-4429
+
+---
+
+## Page 127
+
+SE 164-81
+
+At
+
+Washington
+
+Will determina d determine his whereabouts on
+
+IITZ4T/1.
+
+ARMED AND DANGEROUS
+
+66:
+
+b7C
+
+- 3 -
+
+DB Cooper-4430
+
+---
+
+## Page 128
+
+GSATAMA (ACTA) 101-118
+
+-UNITED STATES GOVUKNMENT
+
+Memorandum
+
+TO
+
+¡SAC, SEATTLE (164-81) (P)
+
+FROM
+
+iSA
+
+SUBJECT:NORJAK
+
+DATE: 12/15/71
+
+1b6
+
+b7C
+
+Suspect L
+
+Re Seattle memo of SA THOMAS J. MANNING, 12/4/73.
+
+Seattle,
+
+was contacted on
+
+12/13/71, at
+
+washington, phone l
+
+as place of endloument.
+
+Seattle.
+
+advised that he met the suspect in
+
+while both nere incarcerated in
+
+spent approximately
+
+with
+
+In the county Jail
+
+. and during this period of time
+
+is originally from
+
+area, and had l
+
+reportedly served
+
+Penitentiary from I
+
+and upon his release received
+
+During this period
+
+of time
+
+Jalso married
+
+•(PNU).
+
+At approximately"
+
+this time the suspect
+
+using the false name ofl
+
+when they determined his true
+
+Identity and was picked up in
+
+Washington, by the
+
+Police Department.
+
+returned to
+
+subsequently appichende
+
+Dy thel
+
+Sheriff's Office.
+
+According to
+
+Ineileased
+
+the suspect
+
+These events
+
+occurred
+
+between
+
+During
+
+Thes in the
+
+RDM: m1c
+
+SEARCHSO........INDEED
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+8010 - 704
+
+FBI - SEATTLE
+
+тр/б.
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4431
+
+164-81-1217
+
+---
+
+## Page 129
+
+-
+
+SE 164-81
+
+geNU), using his assumed
+
+name atl
+
+not
+
+is uncertain whether or
+
+charges were ever filed.
+
+He feels however, that
+
+Sheriff's Office has complete details.
+
+this hijacking becaufects that
+
+_may have committed
+
+to hang around an airport, name unknot ent, shrewd used
+
+washington, has many criminally inclined friends in the
+
+and is very experienced with l
+
+Familiar with terrain I
+
+I described
+
+as follows:
+
+Name
+
+Build
+
+Medium
+
+Age
+
+30-32 years
+
+Complexion
+
+Dark
+
+Hair
+
+Dark brown
+
+Eyes
+
+Brown
+
+Height
+
+5'10"
+
+It should be noted that l
+
+provide any information concerning
+
+Juipity and in fact does not know if
+
+was unable to
+
+parachuting
+
+is trained to
+
+LEADS
+
+b7C
+
+b6|
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+SEATTLE
+
+At
+
+Washington
+
+2. Will conduct criminal sheck at
+
+inaton Police Depantment concerning
+
+Wash-
+
+and the names
+
+2. If available, obtain suspect's photo.
+
+At
+
+Washington
+
+Will obtain details of suspect's arrest by
+
+Sheriff's Office inl
+
+and obtain photo
+
+Is available.
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+-2 -
+
+DB Cooper-4432
+
+---
+
+## Page 130
+
+='
+
+SE 164-81
+
+At
+
+11/24/71.
+
+Washington
+
+Wild determine if L
+
+and determine his whereabouts on
+
+ARMED AND DANGEROUS
+
+b6
+
+67C
+
+DB Cooper-4433
+
+---
+
+## Page 131
+
+.
+
+ESAFPMA (41 C59) 107-128
+
+UNITED STATES GOVENNMENT
+
+Memorandum
+
+TO
+
+:SAC, SEATTLE (164-81) (P)
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+DATE: 12/15/71
+
+b6
+
+b7C
+
+8010-108
+
+Re Los Angeles Nitel to
+
+Seattle and New Haven,
+
+12/2/71.
+
+RE:
+
+On 12/9/212
+
+Post Office,
+
+Jis assigned to a
+
+Washington. and that 2. 0. 30xl
+
+Clerk, U.S.
+
+Washington, advised that P.
+
+0. Box
+
+assigned tol
+
+Washington.
+
+Оп 12/9/71,
+
+advised that no one by the name ofl
+
+resides
+
+at this address and he is not acquainted with him.
+
+He stated
+
+that a
+
+letter forl
+
+been delivered to this
+
+address and it was
+
+returned to the Post Office. He stated
+
+he understood that the
+
+Box|
+
+correct box number forl
+
+On 12/9/71,
+
+Jp. 0. Box
+
+Washington, advised thatl
+
+does
+
+reside here nor is he a relative of his.
+
+stated he
+
+but none have the same name,
+
+description
+
+or wife's name asl
+
+I sIt is noted that
+
+is a former
+
+and can be considered
+
+a reliable source).
+
+On 12/10/71,
+
+SuDra,
+
+advised
+
+that a review of records indicates
+
+Age 40-
+
+45, had P. 0. Boxl
+
+and left a
+
+forwarding address
+
+She further stated that he lived atl
+
+and she believes that
+
+this address.
+
+RST: mac
+
+(3)
+
+Everett
+
+Lead
+
+also had
+
+164-8L-1218
+
+SEARCHES
+
+....INDEXED
+
+ERIAL MASHED M
+
+DEC Q 51971(
+
+§BI - SEATTLE
+
+Ther
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4434
+
+...l... =
+
+040-077.
+
+---
+
+## Page 132
+
+....
+
+SE. 164-81
+
+en 12/10/71.
+
+advised thatl
+
+ISSAN I
+
+Iiis permanent address is shown as L
+
+telephone |
+
+Washington,
+
+was employed
+
+00 32/10/22
+
+washington, advised that he could suonish no information in
+
+aartion to that eiven byl
+
+He stated that
+
+11d not refer
+
+Ito any panticular lob and he assumes
+
+he returned tol
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+On 12/13/71, L
+
+Washinaton. advised she isl
+
+She stated she is managing]
+
+stated that to her knowledge,
+
+aid,
+
+not live there, but she added it is possible he lived with
+
+Who does live here.
+
+She stated that several
+
+days ago al
+
+Laddress unknown, same by te
+
+b6
+
+b7C
+
+Washington.
+
+She mentioned tol
+
+how
+
+recently lost his job
+
+and has returned
+
+stated it is possible,
+
+and may be that
+
+was riving with!
+
+il
+
+b7C
+
+Ол 12/13/71,
+
+Washingtor, advised tharl
+
+Thas returned to
+
+b6
+
+b7C
+
+-2-
+
+DB Cooper-443p
+
++8441127949457
+
+---
+
+## Page 133
+
+....
+
+....
+
+SE 164-81
+
+He stated that he had talked with
+
+He stated that l
+
+was
+
+he is inl
+
+He stated that
+
+Lat the residence of
+
+phone l
+
+or could be reached through
+
+He stated diet oe araripe at
+
+Washington, tele-
+
+Is enroute to
+
+be staving at'this address,
+
+at this address.
+
+further is stayinel
+
+advised that thei
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+washington.
+
+LEAD
+
+SEATTLE
+
+At I
+
+Washington
+
+Will locate and interview
+
+establish whereabouts
+
+b6
+
+b7C
+
+through
+
+telephone
+
+during pertinent period.
+
+- 3-
+
+DB Cooper-4436
+
+поті
+
+---
+
+## Page 134
+
+ЗАГАМА (1 СРА) R1-11
+
+UNITED STATES GOVEKNMENT
+
+Memorandum
+
+:SAC, SEATTLE (164-81) (P)
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+DATE: 12/15/71
+
+b6
+
+b7C
+
+Re Los Angeles Nitel to Seattle and New Haven,
+
+12/2/71.
+
+RE:
+
+On 12/9/712
+
+Clerk, U.s.
+
+Pest Office,
+
+Washington, advised that P. 0. Box
+
+s assigned to al
+
+lashineton. and that 2. 0. Box
+
+assigned tol
+
+Washington.
+
+On 12/9/71,
+
+advised that no one by the name ofl
+
+resides
+
+at this address and he is not acquainted with him.
+
+Re stated
+
+that a letter for
+
+had been delivered to this
+
+address and it was returned to the Post Office.
+
+He stated
+
+he understood that the correct box number for
+
+Ол 12/9/71,
+
+Др. о. Вох
+
+Washington, advised that
+
+reside here nor is he a relative of his.
+
+stated he
+
+or wite's name as I
+
+but none have the same name,
+
+description
+
+I cIt is noted that
+
+is a former
+
+and can be considered
+
+a reliable source).
+
+On 12/10/71,
+
+Supra,
+
+advised
+
+that a review of records
+
+indicates
+
+Age 40-
+
+45, had P. Q. Box
+
+and left a forwarding address
+
+She further stated that he lived atl
+
+and she believes that
+
+also had
+
+at this address.
+
+RST: mIc
+
+(3)
+
+164-81-12.18
+
+SEARCHED
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+67C
+
+16
+
+b7C
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Sdoings Plan
+
+F91 - SEAIILE
+
+To Eбopeг-4437
+
+5010-107
+
+---
+
+## Page 135
+
+SE 164-81
+
+en 12/10/72.
+
+advised that l
+
+I SSANI
+
+His permanent address is shown as L
+
+telephone
+
+Washington,
+
+I was employec
+
+On 12/10/22.
+
+Washington, advised that he could furnish no information in
+
+addition to that given by l
+
+He 'stated that he
+
+did not refer
+
+Ite any particular job and he assumes
+
+he returned to
+
+b6
+
+b7C
+
+b6
+
+bC
+
+She stated she is managing l
+
+I She stated that to her knowledge,!
+
+not live there.
+
+but she added it is possible he lived with
+
+I who does live here.
+
+She stated that several
+
+days ago al
+
+Laddress unknown, came by to
+
+b6
+
+b7C
+
+rashington
+
+acentet lost she mentioned te
+
+how
+
+and has returned
+
+land matede thas Dosgias
+
+GLas Taving with
+
+is
+
+On 12/13/71,
+
+Washington, advised thatl
+
+Thas returned tol
+
+b6
+
+b7C
+
+b7C
+
+- 2-
+
+DB Cooper-4438
+
+---
+
+## Page 136
+
+.. .
+
+SE 164-81
+
+He stated that he had talked with
+
+I He stated thatl
+
+was
+
+he is in
+
+He stated that
+
+Lat the residence of
+
+I Washington, tele-
+
+phone l
+
+THe stated thatl
+
+as enroute to
+
+Ibe staying at this address,
+
+or could be reached through
+
+at this address.
+
+further advised that thei
+
+Jis staving
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Washington.
+
+LEAD
+
+SEATTLE
+
+At I
+
+Washington
+
+Will locate and interview L
+
+establish whereabouts
+
+b6
+
+through
+
+telephone L
+
+during pertinent period.
+
+- 3-
+
+DB Cooper-4439
+
+1411011
+
+tales to 71+1474 ,tthtt ht u ught.
+
+---
+
+## Page 137
+
+1
+
+OPTIONAL FORM NO, 10
+
+TO MAY 1962 EDITION
+
+8010-10009
+
+GSA GEN. AER, NO 2O
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+SAC, SEATTLE (164-81) (P) .
+
+DATE: 12/13/71
+
+FROM : SA THOMAS J. MANNING
+
+SUBJECT:
+
+NORJAC
+
+12/13/71
+
+Washington advised that after vinwing the composite photo
+
+of the subject
+
+resemblance to
+
+n this matter he feels the composite bears a marked
+
+He explained that on 11/1/71l
+
+form they stated they were I
+
+werel
+
+telephone l
+
+JOn their personnel
+
+Washington and 'the last
+
+where they
+
+The nearest relative was listed
+
+Iras listed
+
+I Occupation ofl
+
+They listed an addressof
+
+Washington.
+
+The address
+
+is a small house
+
+neighborhood and was
+
+found to be vacant
+
+No intormation was tound to further identify
+
+RA area-
+
+LEAD:
+
+At|
+
+b6|
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+Washington
+
+Conduct investigation to further identify
+
+and secure photogrash
+
+• if possible to be shown
+
+¿denien to witnesses.
+
+67C
+
+(2) TJM/
+
+Leak
+
+164-81-1219
+
+BSM
+
+DB Cooper-4440
+
+66
+
+67C
+
+---
+
+## Page 138
+
+SAC, SEATTLE (164-81) (P)
+
+SA THOMAS J. MANNING
+
+NORJAC
+
+12/13/71
+
+b6 |
+
+b7C
+
+Washinston advised that atter viewing the composite photo
+
+in this matter he feels the composite bears a marked
+
+He explained that on 11/1/71l
+
+form they stated they were l
+
+b6
+
+b7C
+
+On their personnel
+
+Washington and the last
+
+where they
+
+I the negrest relative was listed
+
+• telephone
+
+Occupation ofl
+
+They listed
+
+• an addressof
+
+was listed
+
+I Washington.
+
+The address
+
+is a small house
+
+neighborhood and was found to be vacant.
+
+No information was found to further identifyI
+
+RA area.
+
+LEAD:
+
+At|
+
+66 |
+
+b7C
+
+Washington
+
+Conduct investigation to further identityl
+
+and secure photograph if possible to be shown
+
+to witnesses.
+
+b6|
+
+b7C
+
+(2) TJM
+
+164-811219
+
+DB Cooper-4441
+
+---
+
+## Page 139
+
+DPTIONIAL PORCH NO. K
+
+MAY 1NEZ EDITION
+
+ESA, SEN, XEO, NO. D
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81) (P)
+
+DATE: 12/14/71
+
+FROM:
+
+SA THOMAS J. MANNING
+
+SUBJECT:
+
+NORJAC
+
+Information developed originally through
+
+Washington [
+
+Ja jump school which previously
+
+operated in
+
+washinston area.
+
+One name developad
+
+through contact withl
+
+Washington re
+
+list of members of school revealed name (PNJ) |
+
+Information now developed through
+
+Washinston'
+
+reflects
+
+I presently employed by
+
+is 5'10" tall and' has jet
+
+8/19/66 a report was made
+
+b6
+
+b7C
+
+b6
+
+67C
+
+167C
+
+In view of information re
+
+being experienced sky diver
+
+and meeting general physical description of hi-jacker in instant
+
+matter following lead is being set.
+
+LEAD:
+
+At
+
+Washington
+
+•Conduct appropriate investigation to determine
+
+if
+
+meets physical description of hi-jacker and
+
+if
+
+so ascertain his location night of 11/24/71.
+
+b6
+
+67C
+
+(2) TJM/
+
+tess
+
+164-81-1220
+
+1071
+
+Missing
+
+DB Cooper-4442
+
+---
+
+## Page 140
+
+SAC, SEATTLE (164-81) (P)
+
+12/14/71
+
+SA THOMAS J. MANNING
+
+NORJAC
+
+Information developed originally through l
+
+operated Mashinston!
+
+Ja jump school which previously
+
+Washington area. One name developed
+
+through contact withl
+
+list of members of school revealed name (FNU) |
+
+Information now developed through
+
+Washingten
+
+reflects!
+
+presently employed
+
+black hair and isl
+
+to l
+
+SO that
+
+Ivears of
+
+age.
+
+sky diving
+
+In view of information re
+
+being experienced sky diver
+
+and meeting general physical description of hi-jacker in instant
+
+natter following lead is being set.
+
+LEAD:
+
+At_
+
+b6 |
+
+B7C
+
+66 |
+
+b6 |
+
+Washington
+
+Conquet a prostat dent on on to determan
+
+so ascertain his location night of 11/24/71.
+
+b6 |
+
+670
+
+(2)
+
+TJM/
+
+164-81-1220
+
+L21244
+
+DB Cooper-4443
+
+---
+
+## Page 141
+
+ATIONAL FORM NO. 1
+
+MAY 1002 EDITION
+
+9010-100-09
+
+ASI GEN. REG, NO, 1I
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+SAC, SEATTLE (164-91) (F)
+
+DATE: 12/14/72
+
+FROM : SA THOMAS J. MANNING
+
+SUBJECT: NORJAC
+
+On. 12/13/71
+
+Washineton advised that he has recaived information
+
+that a
+
+of the
+
+1971 asterl
+
+branch ef the company returned to work oorks out
+
+He is an ex paratrooperand has done
+
+and is tamiliar with the area which has been searched as a jump
+
+area for the hi-jacker.
+
+He advised he is close in description to
+
+the hi-jacker.
+
+LEAD:
+
+Seattle
+
+At
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+Washington
+
+Exhibit composite photo to determine if
+
+resembles same and conduct indicated investigation re his
+
+location if composite resemblance is found.
+
+b6|
+
+b7C
+
+* .
+
+b6
+
+b7C
+
+(2) TJM/
+
+Leas
+
+164-81-1221
+
+sing. My!
+
+b6
+
+b7C
+
+DB Cooper-4444
+
+---
+
+## Page 142
+
+SAC, SEATTLE (164-81) (P)
+
+SA THOMAS J. MANNING
+
+12/14/71
+
+NORJAC
+
+On 12/13/71|
+
+Washington advised that he has received information
+
+Its after t
+
+Torare of i Can sarate to and no a eut
+
+and is familiar with the area which has been searched as a jump
+
+area for the hi-jacker.
+
+He advised he is close indescription to
+
+the hi-jacker.
+
+LEAD:
+
+Seattle
+
+At
+
+Washington
+
+Exhibit composite photo to determine if
+
+esembles same and conduct indicated investigation re his
+
+Location if composite resemblance is found.
+
+b6|
+
+164-81-1221
+
+(2) TJM/
+
+11122 420
+
+DB Cooper-4445
+
+---
+
+## Page 143
+
+OPTIONAL FORM NO. 10 -
+
+0010-106-03
+
+MAY 1092 EDITION
+
+OSA GEN, REE. NO $
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAG, SEATTLE (184-61) (P)
+
+DATE: 12/14/71
+
+FROM : SA THOMAS J. MANNING
+
+SUBJECT: NORJAC
+
+le Memo of Sa
+
+12/9/72
+
+Memo of si
+
+12/6/71
+
+Attached to this memorandum is a recent photograph of
+
+ANTHONY (TONY) FERNANDEZ per instructions in referenced memo dated
+
+L2/5/72•
+
+This photo was obtained from the morgue of the Longview
+
+ras turnished by the city iditor
+
+nished by the otly attor available at ihat leation
+
+and he requested
+
+that it be returned to him upon completion of use by the FBI.
+
+It is requested that before this photograph is shown to
+
+witnesses that it be copies and returned upon this copying to
+
+the writer in orderthat it may be expeditiously returned to
+
+the donor.
+
+b6
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+(2) Attachment 1
+
+1164-81-1222
+
+Mening in 106
+
+---
+
+## Page 144
+
+...
+
+SAC, SSATTLE (184-61) (P)
+
+12/14/71
+
+SA THOMAS J. MANNING
+
+NORJAC
+
+Re Memo of SA
+
+12/9/71
+
+Memo of SA
+
+12/6/71
+
+Attached to this memorandum is a recent photograph of
+
+ANTHONY (TONY) FERNANDEZ per Instructions in referenced memo dated
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+that it be returned to him upon completion of use by the FBI.
+
+It is requested that before this photograph is shown to
+
+witnesses that it be copies and returned upon this copying to
+
+the writer in orderthat it may be expeditiously returned to
+
+the donor.:
+
+(2) Attachment i
+
+164=81-1222
+
+10-0500
+
+7
+
+DB Cooper-4447
+
+---
+
+## Page 145
+
+NR 89 SC PLAIN
+
+2:08 PM URGENT 12/15/71 VLS
+
+TO
+
+SEATTLE (164-81)
+
+KANSAS CITY
+
+PORTLAND
+
+LOS ANGELES (154-497)
+
+FROM SACRAMENTO (164-50) 3P
+
+b6
+
+67C
+
+NORJAK
+
+RE LOS ANGELES TELETYPE TO SEATTLE, DECEMBER FOURTEEN, LAST.
+
+RE SUSPECT
+
+RECORDS CALIFORNIA DEPARIMENT OF CORRECIIONS,
+
+CALIFORNIA, REVIEWED DECEMBER FIFTEEN, INSTANT, DISCLOSE SUSPECT
+
+RECEIVED
+
+b6l
+
+b7C
+
+b6 |
+
+b7C
+
+SENTENCED
+
+PAROLED
+
+RETURNED AS PAROLE VIOLATORWITH ADDITIONAL
+
+AND DISCHARGED FROM PAROLE,
+
+LATEST RESIDENCE ON PAROLE
+
+b6
+
+b7C
+
+- .
+
+END PAGE ONE
+
+1604-81-1223
+
+EE 161971
+
+FBI • SEATTLE
+
+DB Cooner -4448
+
+---
+
+## Page 146
+
+SC 164-58
+
+PAGE IWO
+
+CALIFORNIA, WITH PRIOR ADDRESS OF
+
+LAST EMPLOYMENT SHOWN wAS
+
+66 1
+
+b7C
+
+RELATIVES IDENTIFIED IN ADDITION TO
+
+CALIFORNIA.
+
+IDENTIFIED
+
+b6 |
+
+b7C
+
+IN RETEL ARE
+
+CALIFORNIA.
+
+SUSPECT HAS CII NUMBER
+
+AND SSAN
+
+b6
+
+b7C
+
+KANSAS CITY ATTEMPT TO LOCATE AND INTERVIEW
+
+b6 1
+
+b7C
+
+b61
+
+b7c
+
+LOS ANGELES WILL ATTEMPT TO LOCATE AND INTERVIEW
+
+CALIFORNIA.
+
+END PAGE• TWO
+
+DB Cooper-4449
+
+---
+
+## Page 147
+
+a some we
+
+SC 164-50
+
+PAGE THREE
+
+SACRAMENTO WILL OBRAIN PHOTOGRAPHS AT CII, SACRAMENTO,
+
+AND FORWARD TO INTERESTED OFFICES.
+
+.
+
+ARMED AND DANGEROUS
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+DB Cooper-4450
+
+---
+
+## Page 148
+
+19 BB3 PD PLAIN
+
+4:28 PM URGENT 12-15-71 LUQ
+
+TO: SEATTLE (164-81)
+
+NEWARK (164-196)
+
+MINNEAPOLIS (164-73)
+
+FROM: PORTLAND (164-41>
+
+2P
+
+Sus 203
+
+NORJAK
+
+SUSPECT: JOHN EMIL LISI
+
+OREGON, FORWARDED TO EDITOR OF LAKE
+
+COUNTY EXAMINER, NEWSPAPER, LAKEVIEW, OREGON, PICTURE OF SUSPECT
+
+WITH OPINION HE RESEMBLES ARTIST'S SKETCH OF UNSUB.
+
+LIST IS SUBJECT IN UFAP - MURDER CASE, 00: NEWARK, FILE
+
+EIGHT EIGHT DASH EIGHT FOUR SIX EIGHT, AND IS DESCRIBED AS DOB
+
+SEPTEMBER SEVENTEEN TWENTYFIVE, SIX FEEI, ONE EIGHTY POUNDS,
+
+STRAIGHT BLACK GRAYING HAIR, FAIR COMPLEXION, WEARS GLASSES, COLOR
+
+EYES NOT GIVEN. HIS PRESENT WHEREABOUIS IS UNKNOWN.
+
+.. END PAGE ONE
+
+b6
+
+b7C
+
+164-81-1224
+
+- INDEKEI
+
+DEC 151971<
+
+FB1 • SEATTLE
+
+DB Cooper-445,1
+
+---
+
+## Page 149
+
+PAGE TWO
+
+PD 164-41
+
+NEWARK REQUESTED TO, FURNISH SEATTLE, PORTLAND AND MINNEAPOLIS
+
+COLOR OF SUSPECT'S EYES AND FURNISH SEATTLE AND MINNEAPOLIS
+
+PICTURE OF SUSPECI TO DISPLAY TO APPROPRIATE WITNESSES.
+
+PORTLAND WILL DISPLAY SUSPECI'S PICTURE IO WITNESSES.
+
+AIRMAIL COPY TO NEWARK, FILE EIGHT EIGHT DASH EIGHT FOUR SIX
+
+EIGHT. PENDING.
+
+END
+
+..
+
+DB Cooper-4452
+
+---
+
+## Page 150
+
+SuB-
+
+IR BA6 PD PLAIN
+
+-
+
+6;52 PM URGENT 12-15-71 AJW
+
+TO :
+
+SEATTLE (164-81)
+
+FROM: PORTLAND (164-41)
+
+1P
+
+NORJAK
+
+DAILY SUMMARY.
+
+PORTLAND CONTINUES COVERING LEADS INVOLVING ELIMINATION
+
+OF SUSPECTS, NO SIGNIFICANI DEVELOPMENIS CURRENTLY EXIST.
+
+-p-
+
+END
+
+164-81-1225
+
+— INDEX
+
+DEC 165 1971
+
+FBI - SEATTLE
+
+DB Cooper-4453
+
+---
+
+## Page 151
+
+ARB02 NK PLAIN
+
+1023AM URGENT 12-16-71 MAW.
+
+TO SEATTLE (164-81)
+
+PORTLAND <164-41)
+
+MINNEAPOLIS (164-73)
+
+FROM NEWARK (164-196)
+
+tub 203
+
+NORJAK SUSPECI: JOHN EMIL LIST.
+
+RE PORTLAND TELETYPE TO NEWARK, SEATTLE, MINNEAPOLIS,
+
+DECEMBER FIFTEEN, LAST.
+
+NEW JERSEY DRIVER'S LICENSE REVEALS LIST'S EYE COLOR
+
+AS BROWN. PHOTOS OF LIST SENT TO RECEIVING OFFICES BY PREVIOUS
+
+• COMMUNICATIONS.
+
+END
+
+SWD FBI SEATTLE CLA
+
+164-81-1226
+
+DEC 1 61971
+
+FBI • SEATTLE
+
+DB Cooper-4454
+
+---
+
+## Page 152
+
+1RBA8 PG PLAIN
+
+1035 PM URGENT 12-15-71
+
+TO
+
+CAK
+
+DIRECTOR (164-2111)
+
+CHICAGO (164-297)
+
+SEATILE (164-81)
+
+MINNEAPOLIS (164-73
+
+FROM PITISBURGH (164-93)
+
+DETROIT (164-115)
+
+ST. LOUIS (164-63)
+
+PORTLAND.
+
+b6
+
+b7C
+
+b7D
+
+NORJAX.
+
+RE
+
+SUSPECT;
+
+INFORMANI.
+
+RE MINNEAPOLIS TELETYPE TO BUREAU, ET AL, DECEMBER FOURISEN
+
+LAST AND CHICAGO TELETYPE IO BUREAU, ET AL, DECEMBER FOURTEEN
+
+LAST •
+
+b6
+
+b7C
+
+b7D
+
+RECORDS, STATE CORRECTIONAL INSTITUTION,
+
+(SCI)
+
+INMATE NUMBER
+
+b6
+
+b7C
+
+SHOW ADMITTED
+
+SENTENCED
+
+RELEASED
+
+RECEIVED AS
+
+INMATE NUMBER
+
+SENTENCED
+
+b6
+
+b7C
+
+END. PAGE ONE
+
+164-81-1227
+
+BEARCHED _ INDEXED_
+
+DEC 195 1971
+
+FBI - SEATTLE
+
+трб
+
+DB Cooper-4455
+
+---
+
+## Page 153
+
+PAGE IWO
+
+RELEASED|
+
+FILES INDICATE
+
+WHITE MALE, DATE OF BIRTH
+
+b6
+
+b7C
+
+RELEASE PHOTO OF
+
+FBI NUMBER
+
+BEING FORWARDED AMSD.
+
+DESCRIBED WHITE MALE, DATE AND PLACE OF BIRTH
+
+FIVE FEET
+
+ELEVEN AND ONE HALF INCHES, ONE HUNDRED FORTY - ONE HUNDRED
+
+BROWLEYES
+
+EVENTY POUNDS, BROWN HAIR, 749973
+
+COMPLEXION, SLENDER BUILD, [
+
+b6
+
+b70
+
+FBI NUMBER
+
+ARRESTED PITISBURGH BUREAU OF POLICE
+
+CHARGES DISMISSED
+
+DESCRIBED FILES OF PITISBURGR POLICE DEPARIMENI AS WHITE MALE,
+
+SIX FEET, BROWN HAIR,
+
+EYES, TWO HUNDRED POUNDS,
+
+END PAGE TWO
+
+b6
+
+b7c
+
+DB Cooper-4456
+
+---
+
+## Page 154
+
+PG 164-93
+
+PAGE THREE
+
+COMPLEXION, SOCIAL SECURITY ACCOUNT NUMBER
+
+b6
+
+'b7C
+
+PRESENTLY
+
+PITISBURGH, AND IS
+
+INVESTIGATION AT|
+
+b6
+
+67C
+
+JHAS FAILED TO
+
+EFFORTS TO
+
+DEVELOPE WHETHER
+
+IMMEDIATELY CONTACT
+
+CONTINUING.
+
+PITTSBURGH BUREAU OF POLICE PHOTO OF
+
+RESEMBLES ARTIST'S CONCEPT OF UNKNOWN SUBJECI. THIS
+
+PHOTO WILL BE FORWARDED BY TELECOPIER AND AMSD AIRTEL.
+
+SI. LOUIS IMMEDIATELY REVIEW
+
+CONSIDER SUBJECT DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+END
+
+HOLD
+
+DCA FBI SEATTLE CLRXX
+
+DB Cooper-4457
+
+---
+
+## Page 155
+
+FD-502 (REV, 11-27-70)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Dain oftconscriptsor. 17/7/71
+
+On November 25, 1971
+
+film
+
+canister to United Airlines Captain
+
+Virginia. Captain
+
+telephone number isl
+
+I Captain
+
+was the flight captain on United Airlines Flight
+
+which
+
+departed from Seattle-Tacoma International Airport at 1:05
+
+p."., Pacific Standard Time, and arrived at Friendship
+
+Airport at ten minutes after 10:00 p."., Eastern Standard
+
+Time.
+
+Captain
+
+was advised of the writer's identity
+
+and the general nature of the package which was handed to him.
+
+He was also advised that there would be another special agent
+
+of the Federal Bureau of Investigation on hand to meet his
+
+flight when it arrived at Friendship Airport and to relieve
+
+him of the package which was handed to him by the writer.
+
+The film canister which was handed to, Captain
+
+contained a microfilm upon which was
+
+recorded the
+
+serial numbers of all the bills which were given to the
+
+hijacker of Northwest Airlines Flight #305, which was
+
+hijacked out of Seattle, Washington, on November 24, 1971.
+
+film canister was obtained from
+
+Seattle-First National
+
+Bank, Main, Branch, Seattle, Washington, on November 25, 1971.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+11/25/71
+
+Interriewed on,
+
+__ot.
+
+Seattle, Washington
+
+_File #
+
+SE 164-81-1229
+
+1m1c
+
+12/1/71
+
+_Date dicrored.
+
+b6
+
+b7C
+
+This dosument contoins neither recommondations nor conclusions of the F81, ll is the property of the fBI and la loomed to your opendy;
+
+it and its sonienta ore nol lo be distribured ouisido your agency.
+
+DB Cooper-4460
+
+---
+
+## Page 156
+
+IR DES PD PLAIN
+
+6:19 PM NITEL 12-14-71 AJW
+
+TO:
+
+DIRECTOR <164-2111)
+
+SEATILE (164-81)
+
+FROM:
+
+PORTLAND (164-41>
+
+2P
+
+NORJAK
+
+b6
+
+b7C
+
+RE BUREAU TELETYPE TO PORTLAND DATED DECEMBER 'THIRTEEN,
+
+SEVENTYONE.
+
+SUSPECT
+
+ON NOVEMBER IVENTYFIVE, SEVENTYONE, SUSPECT
+
+INTER-
+
+VIEWED AT
+
+OREGON, BY OFFICER
+
+SHERIFF'S OFFICE.
+
+ADVISED THAT THE SUSPECT, BORN
+
+LOOKS HIS AGE AND COULD NOT BE IDENTICAL WITH THE HIJACKER.
+
+SUSPECT ARRESTED
+
+BY OFFICER
+
+SHERIFF'S
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+OFFICE, ARREST NUMBER
+
+END OF PAGE ONE
+
+164-81-1231
+
+SERLALIZE
+
+nEe 104 1971
+
+FUl - SEATTLE
+
+DB Cooper-4463
+
+---
+
+## Page 157
+
+PD 164-41
+
+PAGE TWO
+
+ALSO STATES THAT SUSPECI DEFINITELY DOES NOT FIT DESCRIPTION OF
+
+HIJACKER.
+
+IS DESCRIBED AS WHITE, MALE
+
+POUNDS,
+
+ONE INCH, ONE
+
+ADDRESS
+
+PATION
+
+END
+
+AGE
+
+SIX FOOT
+
+EYES.
+
+SHORT BROWN HAIR,
+
+OREGON, OCCU-
+
+b6'
+
+b7C
+
+(P)
+
+DB Cooper-4464
+
+---
+
+## Page 158
+
+IR 814 LV PLAIN
+
+8:56 PM NITEL 12-15-71 SH
+
+TO
+
+DIRECTOR
+
+(164-2111)
+
+PHILADELPHIA
+
+(164-133)
+
+SEATTLE
+
+(164-81)
+
+FROM LAS VEGAS
+
+(164-60)
+
+b6
+
+b7C
+
+(P)
+
+NORJAK
+
+Eliin
+
+REBUTELCALL TO LAS VEGAS, DEC. FOURTEEN LAST.
+
+RE SUSPECT:
+
+INVESTIGATION REFLECTS |
+
+b6
+
+b7C
+
+NEVADA, WAS
+
+EMPLOYED AS
+
+NEVADA,
+
+AND WORKED SIX THIRTY AM TO THO THIRTY
+
+PM, NOV. TWENTYTHREE LAST: WAS OFF NOV. TWENTYFOUR LAST, AND
+
+WORKED THO THIRTY PM TO TEN THIRTY PM, NOV. TWENTYFIVE LAST.
+
+b6
+
+b7C
+
+CURRENTLY RESIDES AT'ABOVE ADDRESS
+
+SEVENTYONE. THEY MOVED INTO
+
+END PAGE ONE
+
+164-81-1232
+
+SEARCHER
+
+_ INDEXEI
+
+SERIALIZED-
+
+_ FILED
+
+DEC 1 5 1971
+
+FBI • SEATTLE
+
+DB Cooper-4465
+
+---
+
+## Page 159
+
+PAGE TWO
+
+FROM TALK AND ACTIONS,
+
+SHE WAS
+
+IN DAILY CONTACT WITH THEM AND AT. NO TIME DID THEY HAVE ANY
+
+LARGE AMOUNTS OF MONEY. IS POSITIVE
+
+BETWEEN TWO PM AND FOUR PM, NOV.
+
+WENTYFOUR LASI.
+
+ALSO WAS
+
+ABOUT FIVE
+
+THIRTY PM, NOV. IWENTYFOUR LAST, WHEN
+
+PREPARE TURKEY FOR THANKSGIVING.
+
+ROOMER,
+
+ADVISED REASONABLY SURE HE TALKED TO
+
+PM AND TEN PM, NOV. IVENTYFOUR LAST.
+
+BETWEEN NINE
+
+SHE IS POSITIVE SHE SAW AND TALKED TO
+
+NEVADA, ADVISED
+
+PERIODICALLY
+
+b6
+
+b7C
+
+HE WAS DOING THIS ON HIS DAY OFF FROM
+
+WORK. HE HAD
+
+END PAGE IWO
+
+DB Cooper-4466
+
+---
+
+## Page 160
+
+-*==
+
+PAGE THREE
+
+WAS INTERVIEWED AT RESIDENCE, DEC.
+
+• FOURTEEN LAST, AND FROM OBSERVATION AND IDENT CARDS DETERMINED
+
+TO BE A WHITE MALE; BORN
+
+FIVE FEET NINE INCHES; ONE HUNDRED NINETY LBS.;
+
+MEDIUM-HUSKY BUILD; BROWN HAIR;
+
+COMPLEXION; NOTICEABLE AGE LINES FROM BASE OF NOSE TO CORNERS
+
+OF MOUTH, NOSE SLIGHTLY CROOKED
+
+SSN|
+
+b6
+
+b7C
+
+_STATES
+
+TO DÁTE.
+
+WORKED FOR
+
+WHEN RESIGNED; L
+
+END PAGE THREE
+
+DB Cooper-4467
+
+---
+
+## Page 161
+
+PAGE FOUR
+
+b6
+
+b7C
+
+INTERVIEWED AND STATED SAW
+
+LATE AFTERNOON
+
+AND EVENING, NOV. IWENTYFOUR, LASI, SPECIFICALLY RECALLS TALKING
+
+TO HIM ABOUT
+
+ALSO VERIFIED INFORMATION RE
+
+STATED IN JOKING MANNER, THAT EVERYONE BACK
+
+DID HIJAXING AND TO WATCH THE
+
+THOUGHT
+
+TWENTY DOLLAR BILLS.
+
+DOES NOT APPEAR TO BE SIMILAR WITH FACIAL
+
+DRAWING OF UNSUB. FROM ALL ABOVE,
+
+CONsIDERED
+
+ELIMINATED AS SUSPECT. ARMED AND DANGEROUS.
+
+END
+
+DCA
+
+FBI SE CLR •
+
+b6
+
+b7C
+
+DB Cooper-4468
+
+---
+
+## Page 162
+
+!
+
+IR 825 LA PLAIN
+
+750 PM URGENT 12-15-71 VLB
+
+TO SEATILE (164-81)
+
+OXLAHOMA CITY
+
+PROM LOS, ANGELES (164-497) 3P
+
+b6
+
+b7C
+
+NORJAK
+
+RE SUSPECT:
+
+THIS DATE, LI.
+
+LOS ANGELES, CALIF. PD, ADVISED A
+
+REQUESTING, IDENTITY BE CONCEALED, FURNISHED
+
+b6
+
+b7C
+
+b6 '
+
+b7C
+
+FOLLOWING INFO:
+
+A FORMER PILOT FOR
+
+HAS HAD PILOT'S LICENSE REVOKED FOR UNKNOWN REASON.
+
+HAS BEEN BITTER
+
+MAS SUBSEQUENILY ARRESTED FOR
+
+b6
+
+b7C
+
+HE
+
+EXCELLENT NAVIGATOR AND ALSO SKY DIVER WHO HAS SERVED TIME U.S.
+
+PENITENTIARY, I
+
+_LAST SEEN BY LT.
+
+b6
+
+b7C
+
+b7D
+
+WHERE
+
+FACIAL MAKEUP AS PART OF COSTUME. FOR PARTY.
+
+END PAGE ONE
+
+TO USE OF MORTICIANS WAX FOR
+
+164-81-12331
+
+SEARCHED
+
+SERIALIZED ILLA FILEO
+
+1EC US 197
+
+FBI • SEATTLE
+
+DB Cooper-4469
+
+---
+
+## Page 163
+
+PAGE THO
+
+LA 164-497
+
+RESIDING
+
+PHONE
+
+b6
+
+b70
+
+b7D
+
+HE WAS LIVING WITH
+
+APPEARS IDENTICAL TO SUBJECI OF CASE CAPTIONED
+
+AKA
+
+ITSMV, LA FILE|
+
+b6
+
+b7C
+
+IN
+
+INTERVIEWED BY BUAGENTS IN
+
+AND ADMITTED CONSPIRING WITH
+
+CASE CAPTIONED
+
+LA FILE
+
+ASSOCIATE OF
+
+FUGITIVE; UFAP - BURGLARY,
+
+REVEALS
+
+IN ABOVE ITSMU MATTER AND WHEN ARRESTED IN
+
+THIS FILE
+
+b7C
+
+DONIAINS
+
+END PAGE IWO
+
+PHOTO OF
+
+DB Cooper-4470
+
+---
+
+## Page 164
+
+PAGE THREE
+
+LA 164-497
+
+_DESCRIBED AS WHITE MALE AMERICAN, BORN
+
+FIVE FEET NINE INCHES, ONE HUNDRED
+
+SIXTY FIVE POUNDS, BROWN HAIR,
+
+EYES, |
+
+b6
+
+b7C
+
+OKLAHOMA CITY AT
+
+WHEREABOUIS OF
+
+ADDRESSES OF
+
+OKLAHOMA: ATTEMPT TO ESTABLISH
+
+ON NOV. IWENTY FOUR LAST THROUGH LAST KNOWN
+
+b6
+
+b7C
+
+IF NECESSARY, ATTEMPT TO LOCATE AND INTERVIEW
+
+ALLEGEDLY |
+
+UNSUB SHOULD BE CONSIDERED DANGEROUS.
+
+b6
+
+b7C
+
+END
+
+DCA
+
+FBI SE CLR
+
+DB Cooper -447=
+
+---
+
+## Page 165
+
+MR BB4 SF PLAIN
+
+5:15 PM. URGENT 12/15/71 MCC
+
+TO
+
+HONOLULU
+
+---VIA HASH---
+
+SEATTLE (164-81)
+
+FROM SAN FRANCISCO <164-220)
+
+36
+
+67C
+
+2P.
+
+NORJAK
+
+RE SEATTLE NITEL TO SAN FRANCISCO, DECEMBER EIGHT LAST.
+
+RE SUSPECT
+
+FOR INFORMATION HONOLULU, RETEL ADVISED INFORMATION RECEIVED
+
+BY SEATTLE OFFICE,
+
+RESEMBLED ARTIST'S CONCEPTION OF UNSUB,
+
+I# CAPTIONED HIJACKING. ACCORDING TO MR. EARL COSSEY, SEATTLE,
+
+WASHINGTON, HE RECEIVED POSTCARD FROM
+
+POSIMARKED NOVEMBER
+
+TWENTYTHREE LAST. THIS POST CARD WAS SENT FROM HAWAII AND IN
+
+SAID HE HAD ARRIVED IN HAWAII ON NOVEMBER TWENTYONE LAST
+
+AND WAS TO RETURN TO
+
+NOVEMBER TWENTYSEVEN LAST.
+
+EMPLOYED AS
+
+b6]
+
+b7C
+
+16
+
+b7C
+
+HOME RESIDENCE
+
+CALIFORNIA, INTERVIEWED
+
+INSTANT DATE, ADVISED HE AND WIFE ON VACATION IN HONOLULU, HAWAII
+
+DURING PERIOD NOVEMBER TWENTY LAST, RETURNING TO
+
+NOVEMBER IWENTYSEVEN LAST.
+
+AND WIFE REGISTERED AT
+
+END PAGE ONE
+
+164-81-1234
+
+SEARCHED
+
+SERLADZEAM
+
+DEC X05 1971
+
+EBL. SEA
+
+b6
+
+b7C
+
+DB Cooper-4472
+
+---
+
+## Page 166
+
+PAGE TWO
+
+HOTEL, HONOLULU, HAWAII, DURING ABOVE PERIOD.
+
+ADVISED HE HAS
+
+PARACHUTE JUMPS
+
+THROUGH AFFILIATION WITH
+
+CLAIMS NO FLYING EXPERIENCE.
+
+b6
+
+b70
+
+DESCRIBED AS WMA, BORN
+
+FIVE FEET ELEVEN INCHES, ONE HUNDRED AND
+
+FIFTY NINE POUNDS, BLACK HAIR (GRAYING), BROWN EYES, WEARS LONG
+
+SIDEBURNS
+
+COMPLEXION.
+
+SLIGHILY RESEMBLES ARTIST'S CONCEPTION OF UNSUB..
+
+HONOLULU CONFIRM
+
+REGISTRATION AND PHYSICAL PRESENCE AT
+
+HOTEL DURING PERTINENT PERIOD
+
+IN ORDER THAT HE MAY
+
+BE LOGICALLY ELIMINATED AS SUSPECT.
+
+UNSUB CONSIDERED ARMED AND DANGEROUS.
+
+b6
+
+b70
+
+END
+
+DCA
+
+FBI SE CLR
+
+DB Cooper-4473
+
+---
+
+## Page 167
+
++51
+
+004 .SF PLAIN
+
+5815 PM URGENT 12/15/71 MCC
+
+TO HONOLULU
+
+-- -VIA WASH---
+
+SEATTLE (164-81)
+
+FROM SAN FRANCISCO (164-228)
+
+2P
+
+NORJAK
+
+RE SEATTLE NITEL TO SAN FRANCISCO, DECEMBER EIGHT LAST.
+
+RE SUSPECT
+
+FOR INFORMATION HONOLULU, RETEL ADVISED INFORMATION RECEIVED
+
+BY SEATTLE OFFICE,
+
+RESEMBLED ARTIST'S CONCEPTION OF UNSUB,
+
+IN CAPTIONED HIJACKING.
+
+ACCORDING. TO MR. EARL COSSEY, SEATTLE,
+
+WASHINGTON, HE RECEIVED POSTCARD FROM
+
+POSTMARKED NOVEMBER
+
+TVENTYTHREE LAST. THIS POST CARD WAS SENT FROM HAWAII AND IN
+
+IT
+
+SAID HE HAD ARRIVED IN HAWAII ON NOVEMBER TWENTYONE LAST
+
+AND WAS TO RETURN TO
+
+NOVEMBER TWENTYSEVEN LAST.
+
+EMPLOYED AS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+HOME RESIDENCE
+
+CALIFORNIA, INTERVIEWED
+
+INSTANT DATE, ADVISED HE AND WIFE ON VACATION IN HONOLULU, HAWAII
+
+DURING PERIOD NOVEMBER TWENTY LAST, RETURNING TO
+
+NOVEMBER TVENTYSEVEN LAST.
+
+AND WIFE REGISTERED AT
+
+END PAGE ONE
+
+164-81-1234
+
+DEC 105 1971
+
+FBI - SEATTLE
+
+DB Cooper-4474
+
+---
+
+## Page 168
+
+PAGE TWO
+
+HOTEL, HONOLULU, HAWAII, DURING ABOVE PERIOD.
+
+ADVISED HE HAS
+
+PARACHUTE JUMPS
+
+THROUGH AFFILIATION WITH
+
+CLAIMS NO FLYING EXPERIENCE.
+
+1b6
+
+b7C
+
+DESCRIBED AS WMA, BORN
+
+FIVE FEET ELEVEN INCHES, ONE HUNDRED AND
+
+FIFTY NINE POUNDS, BLACK HAIR (GRAYING), BROWN EYES, WEARS LONG
+
+SIDEBURNS
+
+COMPLEXION,
+
+SLIGHTLY RESEMBLES ARTIST'S CONCEPTION OF UNSUB.
+
+HONOLULU CONFIRM
+
+REGISTRATION AND PHYSICAL PRESENCE AT
+
+HOTEL DURING PERTINENT PERIOD IN ORDER THAT HE MAY
+
+BE LOGICALLY ELIMINATED AS SUSPECT.
+
+UNSUB CONSIDERED ARMED AND DANGEROUS.
+
+b6|
+
+b7C
+
+END
+
+DCA
+
+FBI SE CLR
+
+i.
+
+DB Cooper-4475
+
+---
+
+## Page 169
+
+RODI DN PLAIN
+
+6:86 PM NITEL 12-15-71 JSG
+
+TO :
+
+SEATTLE (164-81)
+
+PORILAND (164-41)
+
+MINNEAPOLIS (164-73)
+
+FROM: DENVER (164-98>
+
+4P
+
+EL PASO
+
+b6
+
+b7C
+
+NORJAK
+
+RE
+
+RE MINNEAPOLIS TELETYPES DEC. THIRTEEN AND FOURTEEN, LAST.
+
+SEARCH OF LOGICAL PUBLIC SOURCE RECORDS AT DENVER, COLO.,
+
+FAILS TO LOCATE ANY RECORD IDENTIFIABLE WITH
+
+DENVER INDICES SHOW
+
+IDENTICAL WITH CASE CAPTIONED
+
+CGR - ISSUING FRAUDULENT CHECKS, *00:
+
+ALBUQUERQUE, A
+
+APPARENTLY RESIDED
+
+HAD BEEN A
+
+CASE AT WHICH TIME
+
+DENVER, AND
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+END PAGE ONE
+
+164-81-1235
+
+BEARCHED
+
+DEC 105 1971
+
+BI - SEATTL
+
+DB Cooper-4476
+
+---
+
+## Page 170
+
+w тат на
+
+PAGE THO
+
+ĐN 164-98
+
+APPARENTLY CASHED INSUFFICIENI FUNDS CHECKS AT
+
+b6
+
+b7C
+
+ACCORDING TO RECORDS OF OSI,
+
+SERIAL NUMBER
+
+WAS DISCHARGED FROM ALL COMMISSIONS IN
+
+b6
+
+b7C
+
+DENVER FILE SHOWS THAT USA, ALBUQUERQUE, DECLINED
+
+PROSECUTION ONI
+
+NEIGHBORHOOD INVESTIGATION AT
+
+UNPRODUCTIVE. RECORDS, DENVER PD, SHOW THAT
+
+WAS BOOKED
+
+INTO DENVER COUNTY JAIL ON
+
+ON
+
+HOLD FOR
+
+AND RECORD CONTAINS NOTATION
+
+END PAGE TWO
+
+b6|
+
+b7C
+
+b7C
+
+DB Cooper-4477
+
+---
+
+## Page 171
+
+PAGE THREE
+
+DN 164-98
+
+SENTENCED TO
+
+NO FBI NUMBER SHOWN AND NO INDICATION OF PENAL
+
+INSTITUTION TO WHICH SENTENCED.
+
+INQUIRY. OF POSTAL INSPECIORS, DENVER, LOCATES NO FILE
+
+b6
+
+b7C
+
+FOR
+
+INQUIRY OF USM, DENVER, REFLECIS THAT
+
+TO
+
+SENTENCED
+
+CHARGES COMMENCING
+
+AT FEDERAL CORRECTIONAL INSTITUTE,
+
+b6
+
+b70
+
+b6
+
+b7c
+
+FOR BACKGROUND INFORMATION OF EL PASO,
+
+TO MINNEAPOLIS OFFICE AS SUSPECI BY
+
+MINNEAPOLIS, ON CONFIDENTIAL BASIS AS
+
+THIGHLY SUSPECT.
+
+WAS FURNISHED
+
+b6
+
+b70
+
+b7D
+
+DEALINGS
+
+ARRESTED AND CONFINED FOR
+
+BACKGROUND,
+
+END PAGE THREE
+
+PREVIOUSLY
+
+HAS FLYING
+
+CURRENTLY
+
+DB Cooper-4478
+
+---
+
+## Page 172
+
+10,7
+
+PAGE FOUR
+
+DN 164-98
+
+DESCRIBED AS
+
+WMA, BORN
+
+SIX FEET ONE
+
+INCH, ONE HUNDRED SEVENTY POUNDS, OLIVE COMPLEXION, DARK,
+
+• SLIGHTLY GREYING HAIR. PHOTO OF
+
+DISPLAYED SIEWARDESSES
+
+OF CAPTIONED FLIGHT WHO ADVISED HE WAS TOO YOUNG, GOOD LOOKING
+
+AND CLEAN-CUT TO BE SUBJECI; HOWEVER, PHOTO IS ENLARGED SNAPSHOT
+
+TAKEN IN
+
+EL PASO AI
+
+TEXAS, REVIEW PENAL FILE ON
+
+FOR
+
+ADDITIONAL BACKGROUND INFORMATION.
+
+MINNEAPOLIS SPECIFICALLY REQUEST THAT CURRENT PHOTO OF
+
+BE
+
+OBTAINED, FOR DISPLAY TO WITNESSES. P.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+.
+
+b6
+
+b7c
+
+END.
+
+HOLD
+
+DCA FBI SE
+
+DB Cooper-4479
+
+----
+
+---
+
+## Page 173
+
+MR DOT PD PLAIN
+
+6:53 PM NITEL 12-15-71 AJ!
+
+TO: SEATTLE (164-81)
+
+• FROM: PORTLAND (164-41) (P)
+
+57C
+
+1P
+
+SORJAK. WIINESS:
+
+SUSPECT:
+
+b6
+
+b7C
+
+WASHINGTON..
+
+WHO RESIDES
+
+OLUMBIA RIVER ADJACENT TO THE PORTLAND INTERNATIONAL
+
+AIRPORI, ADVISED THIS DATE THAT UPON RECEIVING HER TELEPHONE
+
+BILL A LONG DISTANCE CALL WAS CHARGED TO HER ACCOUNT ON
+
+NOVEMBER NINE SEVENTY ONE IO |
+
+WASHINGTON.
+
+BOTH STATE
+
+THEY DID NOT MAKE IHIS CALL.
+
+TELEPHONE COMPANY ADVISED
+
+ABOVE NUMBER LISTED TO
+
+WASHINGTON.
+
+THOUGHT THAT HIJACKER POSSIBLY WAS CASING PORTLAND
+
+INTERNATIONAL AIRPORI, BROKE INTO THEIR KOUSE, AND CALLED
+
+THE ABOVE NUMBER WHILE NO ONE WAS IN THE RESIDENCE.
+
+SEATILE AT
+
+WASHINGTON IDENTIFY
+
+TELEPHONE NUMBER
+
+b6
+
+b7C
+
+1
+
+b6
+
+b7C
+
+END
+
+Lead
+
+164-81-1236
+
+SEARCHED-
+
+FBI - SEATTLE
+
+b6
+
+b7C
+
+DB Cooper-4480
+
+---
+
+## Page 174
+
+AR BBT PD PLAIN
+
+6853 PM NITEL 12-15-71 AJM
+
+SEATTLE (164-31)
+
+FROM: PORTLAND (164-41) (P) IP.
+
+-
+
+NORJAK. WITNESS!
+
+SUSPECT:
+
+b7C
+
+WASHINGTON.
+
+WHO RESIDES
+
+COLUMBIA RIVER ADJACENT TO THE PORTLAND INTERNATIONAL
+
+AIRPORI, ADVISED THIS DATE THAT UPON RECEIVING HER TELEPHONE
+
+BILL A LONG DISTANCE CALL WAS CHARGED TO HER ACCOUNT ON
+
+NOVEMBER NINE SEVENTY ONE TO
+
+WASHINGTON®
+
+BOTH STATE
+
+THEY DID NOT MAKE THIS CALL.
+
+TELEPHONE COMPANY AdVISED
+
+ABOVE NUMBER LISTED TO
+
+VASHINGTON.
+
+THOUGHT THAT HIJACKER POSSIBLY WAS CASING PORTLAND
+
+INTERNATIONAL AIRPORT, BROXE INTO THEIR HOUSE, AND CALLED
+
+THE ABOVE NUMBER WILE NO ONE WAS IN THE RESIDENCE.
+
+SEATTLE AT
+
+WASHINGTON. IDENTIFY
+
+TELEPHONE NUMBER
+
+b6
+
+67C
+
+b7C
+
+END
+
+164-81-1236
+
+ГАСН&Ом іноІ
+
+FRUZOM FLA
+
+DEC M5 1971
+
+PI-SATIE
+
+•DB Cooper-4481
+
+---
+
+## Page 175
+
+FARROS OC PLAIN
+
+651 PM 12-15-71 NITEL CWW
+
+TO ALBUQUERQUE
+
+(149-131)
+
+PORTLAND
+
+(164-41)
+
+SEATTLE
+
+(164-81)
+
+FROM OXLAHOMA CITY (164-56)
+
+b7C
+
+-P-
+
+2P
+
+NORJACK
+
+RE
+
+AKA
+
+RE OXLAHOMA CITY TEL TO ALBUQUERQUE, DECEMBER NINE, LAST,
+
+ALBUQUERQUE TEL TO OXLAHOMA CITY, DECEMBER TEN, LAST, SPRINGFIELD
+
+TEL TO OXLAHOMA CITY DECEMBER TEN, LAST.
+
+ABOVE REFERENCED OKLAHOMA CITY TEL STATES
+
+IN
+
+THIS SHOULD READ
+
+16
+
+b6
+
+b7C
+
+b7D
+
+ON DECEMBER FIFTEEN INSTANI, THE SAME CONFIDENTIAL SOURCE
+
+AS IN RE OKLAHOMA CITY, TEL ADVISED
+
+1b6
+
+b7c
+
+b7D
+
+DURING THANKSGIVING
+
+ADVISED
+
+WESK, LAST. SOURCE COULD NOT OBTAIN PHOTO OFI
+
+AND REQUESTED
+
+NOI BE BE CONTACTED.,
+
+•ON DECEMBER FIFTEEN, INSTANT,
+
+HAD
+
+NOVEMBER NINETEEN, LAST, IN
+
+END PAGE ONE
+
+ADVISED
+
+A.ND
+
+164-81-1232
+
+MEMACHEA
+
+DEC 108 1971
+
+FBI • SEATTLE
+
+b6
+
+b7C
+
+67D
+
+JDB Cooper-4482
+
+---
+
+## Page 176
+
+06 164-56
+
+PAGE TWO
+
+TWENTYSEVEN, LAST, DATES NOT RECORDED.
+
+NOVEMBER IWENTYFIRST THROUGH
+
+ACCOMPANIED BY
+
+OTHER EFFORTS TO VERIFY ARRIVAL AND DEPARTURE DATES OF
+
+NEGATIVE.
+
+RE ALBUQUERQUE TEL QUOTED
+
+NOVEMBER THENTYTHREE, LAST, FOR
+
+RE SPRINGFIELD TEL REVEALED
+
+• NOVEMBER SEVENTEEN, LAST.
+
+ALBUQUERQUE, RE- INTERVIEW
+
+RE DISCREPANCIES, OBTAIN
+
+VEHICLE INFORMATION AND TAXE PHOTO, IF NOT ALREADY DONE.
+
+END.
+
+DCA
+
+FBI SE CLR
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4483
+
+---
+
+## Page 177
+
+MR803 MP PLAIN
+
+444PM URGENT 12-15-71 MAW
+
+TO WASHINGTON FIELD (164-169)
+
+SEATTLE (164-81>
+
+FROM. MINNEAPOLIS (164-73) 1P
+
+b7C
+
+b7D
+
+faft.
+
+NORJAK.
+
+XiSoviCE
+
+NWA, MINNEAPOLIS,
+
+MINNESOTA, ADVISED ON DECEMBER FOURTEEN LAST HE RECEIVED A
+
+PHONE CALL FROM
+
+WASHINGION, DO PHONE NUMBER
+
+HOME PHONE
+
+b6
+
+b7C
+
+b7D
+
+AREA CODE
+
+ADVISED HE RECENTLY CONTACTED SPECIAL
+
+AGENE OF FBI
+
+HDC, AND ADVISED OF IDENTITY OF
+
+HE CONSIDERS A POSSIBLE SUSPECT IN
+
+CONNECTION WITH HIJACKING, AS THIS SUSPECT APPEARS IDENTICAL
+
+TO ARTIST'S CONCEPTION PUBLISHED BY NEWS MEDIA.
+
+WFO ADVISE MINNEAPOLIS AND SEATTLE RESULIS OF
+
+INVESTIGATION CONCERHING THIS SUSPECI.
+
+UNSUB CONSIDERED DANGEROUS.
+
+P.
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+164-81-1238
+
+SEANSEE ME HILD!
+
+DEC 1 3 1971
+
+FBJ - SEATTLE
+
+DB Cooper -4484
+
+---
+
+## Page 178
+
+IR 083 PD PLAIN
+
+6:17 PM URGENT 12-14-71 AJW
+
+IO :
+
+SEATTLE (164-81>
+
+FROM:
+
+PORTLAND
+
+(164-41>
+
+b6
+
+b7C
+
+IP
+
+NORJAX
+
+Elim
+
+RE PD NITEL TO SE AND LA DECEMBER ELEVEN SEVENTYONE, AND
+
+SE NITEL TO PD DECEMBER THIRTEEN SEVENTYONE.
+
+SUSPECT:
+
+b6
+
+b7C
+
+WAS ELIMINATED ON BASIS OF COLOR OF HAIR, COLOR OF
+
+EYES, AGE AND HEIGHI. IS IS NOTED PORTLAND WITNESS
+
+PUTS UNSUB AT SIX FEET ONE INCH PLUS AND HE OBSERVED HIM
+
+WHILE HE WAS STANDING.
+
+END
+
+b6
+
+b7C
+
+164-81-1239
+
+DEC T01 1971 0
+
+FBI - SEATTLE
+
+DB Cooper-4485
+
+---
+
+## Page 179
+
+TO
+
+FROM :
+
+SUBJECT:
+
+OPTIONAL FORH NO. 10
+
+MAY IHSL EOTTION
+
+ESATAMA (4 (5R) 14-116
+
+UNITED STATES GOVENMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)
+
+SA
+
+NORJAK
+
+DATE: 12/15/71
+
+b6
+
+b7C
+
+Attached is information furnished by
+
+Editor of the SEATTLE POST INTELLIGENCER which
+
+information
+
+was received by him under the POST INTELLIGENCER Secret
+
+JSD: kIb
+
+16
+
+b7C
+
+1014-107
+
+164-81-1240
+
+SEARCHED -
+
+INDON
+
+DEC D41971
+
+FBI-SKALILE
+
+1920
+
+DB Cooper-4486
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+MATHIAN.141411441140 ATHIrtHMETERSETTATEO
+
+---
+
+## Page 180
+
+. '
+
+The artist's composite drawing of the man suspected of
+
+hijacking the Northwest Airlines jet, strongly resembles the
+
+following person.
+
+b6
+
+b7c
+
+DB Cooper-4487
+
+---
+
+## Page 181
+
+NRO011 CE PLAIN
+
+5:34 PM NITEL 12-15-71 DAM
+
+TO: SEATILE 164-181 AND BOSTON 164-153
+
+FROM: CHARLOTTE 164-101
+
+b6
+
+b7C
+
+NORJAK
+
+RE:
+
+b6
+
+b7C
+
+SSAN
+
+N. Go, AND
+
+NOVEMBER TWENTYFOUR, SEVENTYONE. UPON INTERVIEW, HE ADVISED HE
+
+WAS FORMERLY
+
+b6
+
+b7C
+
+SURNAME
+
+ARMED AND DANGEROUS.
+
+UNFAMILIAR TO HIM.
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+164-81-1241
+
+SC 14 1971
+
+FBI - SEATTLE
+
+OB Cooper -4488
+
+---
+
+## Page 182
+
+ARORS AL PLAIN
+
+8:55 PM NITEL 12-15-71 LVV
+
+TO DIRECIOR (164-211)
+
+SEATILE (164-31>
+
+FROM ALBANY
+
+(164-47)
+
+2P
+
+b6
+
+b7C
+
+Elim
+
+NORJAK
+
+RE NEW HAVEN AIRIEL TO BUREAU DATED DECEMBER TEN LAST.
+
+MENTIONED
+
+IN REFERENCED NEW HAVEN
+
+b6
+
+b7C
+
+AIRTEL.
+
+ON THIS DATE
+
+DEPARIMENT OF
+
+CORRECTIONAL FACILITIES, INTERSTATE DIVISION, ALBANY, NEW YORK,
+
+ADVISED THAT THEIR RECORDS AS OF OCTOBER, NINETEEN SEVENTYONE, .
+
+SHOW
+
+DATE OF BIRTH
+
+AS BEING INCARCERATED IN
+
+NEW YORK.
+
+ON THIS DATE,
+
+b6
+
+b7C
+
+CLERK,
+
+NEW YORX, ADVISED THAT
+
+IS PRESENTLY INCARCERATED THERE AND HAS BEEN SINCE
+
+WHEN HE WAS TRANSFERRED FROM
+
+b6
+
+b7C
+
+END PAGE ONE
+
+164-81-1242
+
+SEARCHED
+
+DEC 151971-
+
+FBI - SEATTLE
+
+DB Cooper-4489
+
+---
+
+## Page 183
+
+PAGE THO
+
+OORRECTIONAL FACILITY.
+
+IS NOT SCHEDULED. TO
+
+SEVENTYTWO, ELIMINATED AS SUSPECI.
+
+MAIL COPY SENT TO. NEW HAVEN.
+
+-p-
+
+FURIHER ADVISED THAT
+
+UNTIL NOVEMBER OF NINETEEN
+
+b6]
+
+67C
+
+END
+
+DCA
+
+FBI SEATTLE CLR
+
+DB Cooper-4490
+
+---
+
+## Page 184
+
+IR BOT LA PLAIN
+
+631PM NITEL 12-15-71 CXF
+
+TO SEATTLE (164-81)
+
+SACRAMENTO (164-59)
+
+FROM LOS ANGELES (164-497)
+
+166
+
+b7C
+
+NORJAK
+
+RE SACRAMENTO TELETYPE TO SEATTLE AND LOS ANGELES,
+
+DATED DECEMBER TEN LAST.
+
+RE SUSPECT
+
+WIFE
+
+INTERVIEWED AT
+
+CALIFORNIA, AND ADVISED WITH CAPTIONED SUSPECT SHOPPING MOST
+
+OF DAY NOVEMBER IWENTY-FOUR LAST. SHE STATES HUSBAND CASHED
+
+CHECK AT LOCAL BANK THAT DATE.
+
+INSTANT DATE
+
+PACIFIC BANK,
+
+ADVISED
+
+NOVEMBER IWENTY-FOUR LAST AND EXHIBITED
+
+BEARING SUSPECI'S SIGNATURE CASHED BY
+
+SECURITY
+
+AT BANK ABOUT NOON
+
+CHECK
+
+ON NOVEMBER
+
+TWENTY-FOUR LASI. SACRAMENTO DISCONTINUE.
+
+• UNKNOWN SUBJECI SHOULD BE CONSIDERED DANGEROUS.
+
+-P-
+
+END
+
+RECD. 2 TELS
+
+DCA FBI SE CLR
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-1243
+
+EC 197
+
+FBI - SEATTLE
+
+DB Cooper-4491 i
+
+---
+
+## Page 185
+
+NROD4 DL PLAIN
+
+617 PM NITEL 12-13-71 KJH
+
+TO DIRECTOR (164-2111)
+
+SEATTLE (164-81)
+
+FROM DALLAS (164-191)
+
+1P
+
+NORJAK
+
+Subs
+
+444
+
+den to d
+
+RE CINCINNATI TELETYPE TO BUREAU DATED DECEMBER THREE, LAST.
+
+H. E. WHITE GRAIN COMPANY,
+
+WASHBURN, TEXAS, JAS
+
+'INTERVIEWED UPON HIS RETURN TO CITY ON
+
+DECEMBER TEN, LAST, AND SHOWN ARTIST'S CONCEPTION OF SUBJECT IN
+
+THIS CASE.
+
+ADVISED THAT HE COULD NOT RELATE THIS CONCEPTION
+
+WITH ANY PERSON THAT HE HAD EVER KNOWN OR ANYONE WHO MIGHT HAVE
+
+BEEN IN
+
+b6
+
+b7C
+
+HE ADVISED THAT HE HAD NO IDEA WHO
+
+MIGHT BE THINKING ABOUT. NO FURTHER ACTION BEING TAXEN
+
+DALLÀS RE SUSPÈCI.
+
+need
+
+Yat
+
+P..
+
+164-81-1214
+
+SENTGHED,
+
+DEC 1 8 1971
+
+FBI • SEATTLE
+
+DB Cooper-4492
+
+---
+
+## Page 186
+
+*
+
+7 signed
+
+1015 Second Avenue
+
+Seattle, Washington
+
+December 15, 1971
+
+Mr. Charles Gill
+
+Sheriff
+
+Cowlitz County Sheriff's Office
+
+Kelso, Washington
+
+Dear Chuck:
+
+I appreciate the notice. It is amusing
+
+and anazing what
+
+ingenuity will produce.
+
+Very truly yours,
+
+J. E. MILNES
+
+Special Agent in Charge
+
+Addressee
+
+Seattle (164-81)
+
+DB Cooper-4493
+
+164-81-1245
+
+---
+
+## Page 187
+
+From the desk of
+
+CHARLES E. GILL, SHERIFF
+
+Dear Earl:
+
+I thought you would get a kick
+
+out of this.
+
+Pick Ge
+
+DB Cooper-4494|
+
+---
+
+## Page 188
+
+D. B. Cooper
+
+Where Are You?
+
+WHAT'S YOUR VERSION OF.
+
+THE MYSTERY OF THE YEAR?
+
+Tell us your story and
+
+WIN A
+
+PRIZE!
+
+Seven,Toy Union Tow Trucks given away
+
+from now until Christmas
+
+CONTEST RULES:
+
+1. Write your version in 100 words or less.
+
+2. We will never tell who the judges are.
+
+3. D. B. Cooper and law enforcement officers not eligible.
+
+4. All ages welcome to participate.
+
+5. Lars especially urged to enter.
+
+6. Bring entries to Bill's Union Service.
+
+DB Cooper-4495
+
+7. No purchase necessary but' "Bill is a Nice Guy!"
+
+Thia Union Certified Servico,
+
+BILL'S
+
+Truck is steerable, rideable,
+
+durablo ...
+
+a great sift..
+
+UNION SERVICE
+
+233 Davidson
+
+Ph. 225-3651
+
+---
+
+## Page 189
+
+ПОГО-НО
+
+TO
+
+HIGH - HIGH
+
+PRICES
+
+when you get one of
+
+• our December,
+
+specials in
+
+OK
+
+Used Cars
+
+& Pickups
+
+1966 Mereury Parklane
+
+Set a gate tias
+
+1969 Volkswagen 2-Door,
+
+4-cylinder,
+
+4-speed,
+
+Iadio and heater *$1545
+
+1963 Ford Galaxie Con-
+
+vertible, y8, 3-speed,
+
+radio and heater ...$475
+
+1971 Vega 2-Door, 4-0y).
+
+inder, 4-speed, radio
+
+and heater, custom in-
+
+terior. New car
+
+warranty ..
+
+$1965•
+
+1969 Torino Sport Coupe,
+
+v8, automatic, radio
+
+and heater ....
+
+-$1945
+
+1964 Chevrolet Bel Air
+
+4-Door, v8, automatic,
+
+radio & heater ....$495
+
+1965 Buick LaSabre Sport
+
+Coupe, y8, automatic,
+
+power. steering and
+
+brakes, radio and
+
+heater .....
+
+"$875
+
+1966 Oldsmobile 98 Sport
+
+Coupe. v8, automatic
+
+full power, radio and
+
+heater, like new $1445
+
+1970 Oldsmobile Delta 88
+
+matic, power steering
+
+and brakes, xadio and
+
+heater
+
+$2946
+
+• PICKUPS
+
+Rent returise.
+
+Large Selection - Terms
+
+Free Delivery
+
+OLD
+
+MES
+
+RTEN'S
+
+2 miles
+
+to
+
+Wood
+
+Longview
+
+425-3400
+
+• 25-11c
+
+Douglas Fir
+
+trees
+
+room house with 3
+
+FOR SALE - Late 1967 23-
+
+Small barn, $14,001
+
+ánch RCA color TV. Ph. 226-
+
+3361.
+
+40-3tc
+
+RURAL LIV
+
+FOR
+
+• SALE — Filberts
+
+30
+
+1
+
+acre
+
+rents & pound, 125 Pekin Rd.
+
+Fir.
+
+choice lans
+
+New
+
+woode:
+
+South. 225-4281.
+
+building: Drilled w
+
+new spacious mobi
+
+BOOKS
+
+BOOKS
+
+miles to Woodlanc
+
+1000 paper backs, From 10c
+
+and up. Woodland Shoe. Shop.
+
+WOODLAND
+
+40-t1c
+
+Ideal 3 bedroom 2
+
+GARAGE SALE - Thurs,
+
+with lovely family
+
+Fri, and Sat., 311 Madrona
+
+fireplace
+
+with
+
+• g!
+
+Drive-off. Gun Club Road.
+
+drapes. New carpe
+
+41-1tc
+
+Green house.
+
+$27,500.
+
+SureR stuff, sure nufl That's
+
+Blue mustre for cleaning rugs
+
+PRICED TO
+
+and upholstery. Rent electric;
+
+shampooer
+
+$1.
+
+Waltwood
+
+¿40 acres 7 miles to
+
+Hardware,
+
+218
+
+Davidson,
+
+two. crèeks, Lewis
+
+Woodland.
+
+41-1te age, $600 per acr
+
+BEAUTIFUL
+
+PINK
+
+DOG-
+
+211 Davidson
+
+WOOD, Plant them now, Also
+
+P.O. Box
+
+English
+
+Walnut and other
+
+Woodland, Washin
+
+trees. Dan Hallowell Nursery;
+
+East
+
+Frontage Road,
+
+Wood-
+
+Harold Knight
+
+land, 225-5363.
+
+38-41c;
+
+225-776
+
+FOR SALE, — Complete Bell
+
+Alma Bailey, :
+
+and Howell set, 8mm camera,
+
+projector,
+
+screen
+
+and light,
+
+$10: like
+
+new buffet,
+
+, $10;
+
+many misc. items, 746%
+
+: 5th
+
+St., Woodland,
+
+41-1tc '
+
+FOR SALE — 305ce Honda
+
+just
+
+overhauled.
+
+,LaCent
+
+2 NEW +
+
+Financing À
+
+CALL 263.
+
+225-7535 after 4 p.m. week-
+
+days.
+
+41-1tc
+
+CUSTOM
+
+FIRESCREENS-
+
+LEGAL NI
+
+CHEAP FOR CASH. Any size,
+
+shape, style. A glass firescreen
+
+GUARANTEED
+
+TO
+
+STOP
+
+FOR SA
+
+The Board of
+
+-WoodlandSchool
+
+FREE ESTIMATE. Portland, ington will sell b
+
+246-7281.
+
+775-7574 anytime.
+
+to the highest bir
+
+BarkAmericard
+
+Mastercharge
+
+---
+
+## Page 190
+
+AR 003 LY PLAIN
+
+1:18 AM URGENT
+
+TO
+
+SEATTLE
+
+PORTLAND
+
+FROM LAS VEGAS
+
+12-15-71 SH'
+
+(164-81)
+
+b6
+
+17C
+
+(164-618)
+
+(P)
+
+ГАМ
+
+NORJAK
+
+RE PORTLAND TELETYPE TO LAS VEGAS, DEC, FOURTEEN, LASI.
+
+b6
+
+b7C
+
+NEVADA, ADVISED HE IS SOLE RESIDENI AT THIS ADDRESS AND
+
+NOT AWARE ANYONE WITH LAST NAME
+
+VIEWED
+
+ARIIST'S CONCEPIION OF SUSPECT WITH NEGATIVE RESULTS.
+
+ONLY TRAILER COURT IN THIS VICINITY IN
+
+IS
+
+TRAILER COURT,
+
+CONTACIED WITH NEGATIVE RESULIS ON ARTIST'S
+
+CONCEPIION AND ON ANYONE WITH LAST NAME
+
+_RENO SKY DIVERS CLUS, CARSON CITY,
+
+AIRPORT, ADVISED RECORDS LIST NO MEMBER WITH LAST NAME
+
+PREVIOUSLY VIEWED ARTIST'S CONCEPTION WITH
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+NEGATIVE RESULIS.
+
+END PAGE ONE
+
+1104-81-1216
+
+DEC 101971
+
+FBI • SEATTLE
+
+DB Cooper-4497
+
+---
+
+## Page 191
+
+PAGE TWO
+
+RECORDS, CARSON CITY SO, NEGATIVE UNDER NAME FNU
+
+b6
+
+b7C
+
+_PORTLAND REQUESTED TO FURNISH ANY ADDITIONAL AVAILABLE
+
+DATA THAT MIGHT ASSIST IN IDENTIFYING
+
+b6
+
+b7c
+
+END
+
+VAB
+
+FBI
+
+SEATTLE CLR
+
+DB Cooper-4498
+
+---
+
+## Page 192
+
+AR 013 PD PLAIN
+
+11:15 PM NITEL 12-15-71 AJW
+
+TO :
+
+SAC, LAS VEGAS' (164-68)
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, PORTLAND (164-41)
+
+b6
+
+b7C
+
+FM4.
+
+(P)
+
+1P
+
+NORJAK
+
+RE LAS VEGAS TELETYPE TO PORTLAND, DECEMBER FIFTEEN SEVENTYONE.
+
+RECONTACT WITH
+
+(PROTECT IDENTITY>
+
+OBEG
+
+THIS DATE DISCLOSED FULL JAME OF (ENU)
+
+• NAME MAY BE SPELLED
+
+JUST
+
+MAY BE
+
+AND LAST
+
+TRAILER PARK WAS
+
+AND
+
+LIVED IN FIRST OF ROW OF
+
+TRAILERS PARKED IN LINE AT
+
+THERE WAS ALSO ROW OF MAIL BOXES IN
+
+FRONT AND SMALL ROUGH SURFACED ROAD LEADING ALONG TRAILER ROW.
+
+THE TRAILERS WHICH WERE
+
+b6
+
+b7C
+
+b7D
+
+USED AND INEXPENSIVE AND THEY RENTED THEM OUT.
+
+AND WERE PROBABLY LISTED IN DIRECTORY.
+
+NEVADA, AND WAS SPORIS PARACHUTE JUMPER
+
+HAD TELEPHONE
+
+NINETEEN
+
+SEVENTYONE AND ABOVE INFORMATION WAS VALID AS OF THAT TIME, BUT HE
+
+HAS NOI BEEN BACK SINCE, AND ABOVE EXHAUSTS HIS AND WIFE'S KNOW-
+
+LEDGE OF
+
+164-81-1247
+
+EARCH A MEN INDEXE
+
+END
+
+ERIALIZED IN ALEDIA
+
+DEC 1 @1971
+
+DCA
+
+FBI • SEATTLE
+
+FBI SEATTLE CLR
+
+• DB Cooper-4499
+
+---
+
+## Page 193
+
+SATIALL FORM NO. 1O
+
+MAY 1NZ OTTION
+
+-ESATAMA (0 044) 67-128
+
+1J UNITED STATES GO ENMENT
+
+Memorandum
+
+TO
+
+SAC, SEATTLE (164-81)
+
+FROM :
+
+SA
+
+SUBJECT:
+
+NORJAK
+
+DATE: 12/15/71
+
+b6
+
+b7C
+
+Attached is information furnished by
+
+Jof the SEATTLE POST INTELLIGENCER which
+
+¡ Information
+
+was received by him under the POST INTELLIGENCER Secret
+
+Witness Program.
+
+JSD: k1b
+
+b6
+
+b7C
+
+:
+
+164-81-1248
+
+DEC 061971
+
+FBI - SCALILE
+
+@ trichler
+
+8014-704
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4500
+
+447799
+
+---
+
+## Page 194
+
+Have you thoroughly investigated
+
+He is a person who is
+
+b6
+
+b7C
+
+capable of doing this hijacking job.
+
+He is an
+
+I heard him say, just a short time before the hijacking, that
+
+With a "four o'clock.
+
+he had just
+
+shadow" he could. look swarthy and in his mid-forties, especially
+
+wearing dack clothing and dark glasses.
+
+If I'm wrong,
+
+please forgive me.
+
+and you are an honest man,
+
+If I'm right, may God have mexcy on your soul
+
+and also on mine.
+
+b6
+
+b7C
+
+DB Cooper-4501
+
+---
+
+## Page 195
+
+TO
+
+FROM :
+
+SUBJECT:
+
+OFTIONAL FORM NO, 10
+
+MAY 1957 LDITION
+
+ESA FAMA (11 CTPR) 101-1L9
+
+• *UNITED STATES GONENMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)
+
+SA
+
+NORJAK
+
+DATE: 12/15/71
+
+b6
+
+b7C
+
+Attached is information furnished byl
+
+of the SEATTLE POST INTELLIGENCER which information
+
+was received by him under the POST INTELLIGENÇER Secret
+
+Witness Program.
+
+JSD: k1b
+
+1b6
+
+b7C
+
+-—-
+
+164.81-1248
+
+SURES ME REDLA
+
+DECY 6 1971
+
+FBI-StAl iU
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+74444444414474494444
+
+DB Cooper-450%
+
+---
+
+## Page 196
+
+TO
+
+:
+
+FROM :
+
+SUBJECT:
+
+DATIONAL FOAM MO 1
+
+LAY 1N2 FONTION
+
+GIATAMA (60579) 801-176
+
+UNITED STATES GO UNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)
+
+SA
+
+NORJAK
+
+DATE: 12/15/71
+
+Sub
+
+203
+
+b6
+
+b7C
+
+Attached is information furnished by
+
+of the SEATTLE POST INTELLIGENCER which
+
+information
+
+was received by him under the POST INTELLIGENÇER Secret
+
+Witness Program.
+
+JSD: k1b
+
+b6
+
+b7c .
+
+• .
+
+1016-504
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4503
+
+---
+
+## Page 197
+
+In reference to the recent hijacking committed by
+
+(D. Cooper) I've been reading various news articles and I believe
+
+I've discovered something of value. Consider the enclosed news-
+
+paper clippings. There is a definite resemblance between the
+
+photo of John E. List and the artist conception of D. Cooper.
+
+It would seem that Mr. List has the type of grooming,
+
+background and intelligence that has been desdribed by witnesses
+
+in the hijacking incident. Also, Mr. List would have the motive
+
+because if he were killed during the hijacking, he would have
+
+nothing to lose since he had already murdered his family. It
+
+is suspected in both cases that each man, has left the country.
+
+DB Cooper-4504
+
+---
+
+## Page 198
+
+ACCORDING TO
+
+ADDRESS
+
+END
+
+FEE
+
+FBI SEATTLE CLR
+
+107-8/- 250
+
+SEARCHE IMA HOM
+
+DEC 1 @ 1971
+
+FBI - SEATTLE
+
+_-------
+
+IR 014 PD PLAIN
+
+6:47 PM NITEL 12-13-71- AJW
+
+TO :
+
+SAC, LAS VEGAS (164-68)
+
+SAC, SEATTLE <164-81)
+
+FROM: SAC, PORTLAND <164-41)
+
+67C
+
+FMM
+
+NORJAK
+
+RE LAS VEGAS TEL TO PD, TWELVE TWO SEVENTYONE.
+
+RECONTACIS WITH
+
+(PROTECI IDENTITY>,
+
+OREGON, DISCLOSED IDENTITY OF SUSPECT HE HAD IN MIND IS (FRUS
+
+NEVADA.
+
+TRAILER PARX AT ABOVE
+
+NEVADA.
+
+b7C
+
+b7D
+
+DB Cooper-4505
+
+---
+
+## Page 199
+
+OH JIEXUAG
+
+66
+
+b7C
+
+MR 003 PD PLAIN
+
+10:46 PXAM URGENT 12-16-71 LUQ
+
+TO: SEATILE (164-81)
+
+FROM: PORTLAND (164-41) 2P°
+
+"NORJAK
+
+WITNESS:
+
+1 ww.
+
+b6 |
+
+b7C
+
+ON DECEMBER FIFTEEN, SEVENTY ONE,
+
+DATE
+
+OF BIRTH
+
+INMATE, MC NEIL ISLAND FEDERAL
+
+PENITENTIARY, INTERVIEWED AT U.S. MARSHAL'S OFFICE, PORTLAND. HE
+
+HAS APPROACHED BY UNKNOWN HOMOSEXUAL IN SAN FRANCISCO, CALIFORNIA,
+
+IN DECEMBER, NINETEEN SEVENTY, WHO, WITH A SECOND HOMOSEXUAL,
+
+INIRODUCED HIM TO UNKNOWN MALE WHO ASKED
+
+IF HE KNEW HOW TO
+
+PARACHUTE AND IF HE WANTED TO PARIICIPATE IN HIJACKING AN AIRPLANE.
+
+DECLINED.
+
+TWO HOMOSEXUALS DESCRIBED AS WHITE MALES, APPROXIMATELY SIXTY
+
+TO SIXTY FIVE YEARS. UNSUB WHO MADE OFFER DESCRIBED AS WHITE MALE,
+
+EARLY FORTIES, FIVE FEET SEVEN INCHES, ONE HUNDRED EIGHTY POUNDS,
+
+BROWN MAIR, EYES
+
+BELIEVED CONNECTED WITH GAMBLING OPERATIONS IN NEVADA.
+
+SAW
+
+UNSUB IN LAS VEGAS, NEVADA IN
+
+BELIEVES HIS
+
+END PAGE ONE
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+pr
+
+164-81-1251
+
+SEARCHED
+
+BRRIALZIDNL
+
+_ INDEMONTIN
+
+060161971.
+
+FBI - SEATTLE
+
+-DB-Coopel-4506
+
+---
+
+## Page 200
+
+PD 164-41
+
+PAGE THO
+
+NEVADA.
+
+UNSUB MAY BE KNOWN BY
+
+LAS VEGAS, AND
+
+66
+
+b7C
+
+LAST KNOWN RESIDENCE
+
+LAS VEGAS.
+
+BY UNSUB WHEN
+
+CASINO IN LAS VEGAS IN
+
+SCHEDULED IO RETURN MC NEIL ISLAND FEDERAL PENITENTIARY
+
+IN NEAR FUTURE.
+
+ANY ACTION LEFT TO DISCRETION OF OO.
+
+-p-.
+
+b6
+
+b7C
+
+END
+
+SLT
+
+FBI SE CLR
+
+DB Cooper-4507
+
+---
+
+## Page 201
+
+1R833 WA PLAIN
+
+6:45PM URGENT 12-15-71 DRL
+
+TO LAS VEGAS
+
+(164-60)
+
+SEATTLE
+
+(164-81>
+
+PORTLAND
+
+(164-41>
+
+SACRAMENTO
+
+FROM DIRECIOR
+
+<164-2111)
+
+Sol: 6
+
+136
+
+IP
+
+NORJAK.
+
+RE LAS VEGAS AIRTEL DECEMBER SIX, SUBMITTING ENVELOPE,
+
+ACCOMPANYING MESSAGE AND FINGERPRINIS
+
+LATENT PRINTS ENVELOPE IDENTICAL
+
+ELIMINATION PRINIS.
+
+ADDITIONAL LATENT PRINTS.
+
+CONFIRMING.
+
+b6
+
+b7C
+
+END
+
+ALL OFFICES PLS RETURN TO TALK TKS
+
+164-81-1252
+
+&BAROHED.
+
+INDETE
+
+DEC 1 8 1971
+
+FBI - SEATTLE.
+
+DB Cooper-4508
+
+---
+
+## Page 202
+
+FROM :
+
+SUBJECT:
+
+DATIONAL PORN NO 10
+
+LAY 1062 EDITION
+
+ESATEMA (4 ETA) 103-118
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE
+
+(164-81)
+
+SA ROBERT H. WICK
+
+DATE:
+
+12/15/71
+
+bel?
+
+NORJACK
+
+On December 13, 1971,l
+
+Tolympia!
+
+contacted the writer and suggested the name or
+
+as a possible suspect in this matter.
+
+changed his name and is known
+
+helocopter around the Olympia area.
+
+could not be any
+
+more specific, but wanted to pass along the information.
+
+On December 14, 1971,
+
+adyised thatl
+
+changed hits name
+
+re tolrapie Gredit Buteau,
+
+He is a
+
+employere but now is working
+
+He resides
+
+OLympia.
+
+There is no explanation to this in file.
+
+on Deceabe? 15, 1971,l
+
+Drivers Licenses,
+
+DMV. Olympia, made avaibable photographs of both of the
+
+These license when
+
+obtained showed them living at
+
+Olympia.
+
+birth date is
+
+shOwn as
+
+which appears too youthful for the
+
+subject or this case.
+
+(2)
+
+b6
+
+b7C
+
+(98
+
+b6
+
+b70
+
+b6
+
+b7C
+
+1
+
+164-81-1253
+
+SEARCHED.
+
+_INDEXED,
+
+SERIALLED IN FLED TI
+
+DEC D6 1971 0
+
+FBI - SEATTLE
+
+DB Cooper-4509
+
+8010-104
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 203
+
+CATIONAL FORM NO 10
+
+MAY 1082 EDITION
+
++54 TAMA (# (778) 101-528
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+SAC, SEATTLE (164-81)
+
+DATE: 12/15/71
+
+FROM:
+
+SA ROBERT H. WICK
+
+SUBJECT:
+
+NORJACK
+
+RAmero fror SA
+
+12/9/71 (Serial #1058)
+
+RE: SUSPECT
+
+On December 15, 1971,l
+
+Drivers Licanses,
+
+DHV, Olympia, Washington, made avaialbe the drivers license
+
+photograph of suspect
+
+DOB:
+
+751 9"5, 168.1
+
+One speeding arrest at
+
+This photograph taken
+
+Wash.,
+
+leyes, no restrictions.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+(2)
+
+164-81-1254
+
+DB Cooper-4510
+
+3010-100
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+.-...mnon die-e.
+
+---
+
+## Page 204
+
+12/13/71
+
+AIR TEL
+
+Suf 203
+
+70
+
+DIRSCTOR, FBI (164-2111)
+
+: ATTENTION: FBI LABORATORY; PROTOGRAPHIC UNIT
+
+TROM : SAC, NAVARX (164-196) (P)
+
+SUBJACT: MORJAK
+
+Ro: Henark talotypo to the sureru, 12/13/71
+
+TOLOBOR 10r tO BUTORN ANA LORETLe IS OI
+
+hotorrapa of doil Thin lIsT, subjeat o1 Novark 1110 88u40:
+
+One photograph of LIST is boing lurnlshod to the
+
+FBI Laboratory (Photographio Unit) 1a vion of the fact
+
+seattlo may nish to hayo changon nade in photorraph at
+
+No ponitive
+
+SKATTLE
+
+AT BRANTLS, MABHINaTON: M1l1 dimplar photo ot
+
+LIsT to appropfulto do to barT la MoRJax.
+
+ARNED AND DAMOROUS.
+
+164-81-1255
+
+SEARCHED
+
+SERIALIED IME FILEC
+
+DEC 10.1971
+
+DB Cooper-4511
+
+---
+
+## Page 205
+
+12/14/71
+
+PLAINTEXT
+
+TELETYPE
+
+URGENT
+
+b6 ]
+
+b7C
+
+TO:
+
+FROM:
+
+LOS ANGELES (164-497)
+
+SAN FRANCISCO (164-220)
+
+NORJAK.
+
+RE LOS ANGELES NITEL TO SAN FRANCISCO, DECEMBER SEVEN LAST.
+
+SUSPECT: (
+
+INVESTIGATION OAKLÄND" DISCLOSED SUSPECT MOVED
+
+FROM
+
+b6
+
+b7C
+
+TO
+
+b6
+
+b7C
+
+CALIPORNIA. FURTHER INQUIRY DISCLOSED SUSPECT AND WIFE
+
+SUSPECT RECEIVED
+
+CORRESPONDENCE FROM REAL ESTATE FIRM HANDLING SALE OF SUSPECT'S
+
+HOUSE. PAPERS SENT TO SUSPECT
+
+LOS ANGELES,
+
+CAL IPORNIA.
+
+LOS ANGELES: DETERMINE SUSPECT'S WHEREABOUTS NOVEMBER
+
+TWENTY FOUR - TWENTY FIVE, LASI, IN ORDER THAT HE MIGHT BE
+
+LOGICALLY ELIMINATED AS SUSPECT: IN IHIS MATTER.
+
+UNSUB ARMED AND DANGEROUS.
+
+164•81-1256
+
+AM COPY TO SEATTLE
+
+1. - San Francisco
+
+1, 1
+
+(/- Seattle (164-81)
+
+DRE/cad
+
+B Cooper-4512
+
+---
+
+## Page 206
+
+164-81-1258
+
+FBI: SEATTLE
+
+DEST
+
+-. -:
+
+!:.
+
+DB Cooper 4519
+
+---
+
+## Page 207
+
+10221 (90r,8030-699
+
+TO:
+
+Dato 12-14-71
+
+7
+
+Your laquiry
+
+SAC, Seattle
+
+b6
+
+b7C
+
+RE:
+
+BUREAU FILE #164-2111
+
+NORJAK
+
+b7C
+
+M Attached furalabed ta reply to your lagulty,
+
+I Attachod furnished in comoliance with roguest from
+
+Qaly record availablo attachod.
+
+Tole matter ta recalring attentlos and you will be adrised'at an early date.
+
+| Sapplementina FBI Laboratory report dated
+
+| Records FBI #
+
+are faralabed since there to a posalbillly that one say pertalo to the subloct la whom you are interested.
+
+| Fingerpiint tilea fail to diacioso
+
+Confirming FBi wire of
+
+A wanted notice has not been piaced as sublect appects to bo la custody.
+
+When you so longer desite your notico maintained, please adviso.
+
+1 you determine subject to bo la custody, please advise so that your solde say bo concolos
+
+inclosed record(s) posalbly identical, il Identica
+
+C 11 11 1s determioed that the subject of tois record la bor the indiridual lo whom you are interested, please advice.
+
+@ Your commualçatton la returaod.
+
+& Attached
+
+records may contain pertinent information in captioned
+
+matter.
+
+* Ene
+
+XI Copy to: SAC, Portland
+
+SAC,
+
+Las Vegas
+
+SAC, Minneapolis
+
+SAC, Llttle Rock
+
+Enc (1)
+
+(1)
+
+(1)
+
+(1)
+
+Jobs Edgar Hooves
+
+Director
+
+164-81-1259
+
+DEC 03 1971
+
+FBI - SEATTLE
+
+DB Cooper-4520
+
+---
+
+## Page 208
+
+5D-38 (9 87-5-22-51)
+
+Transmit the following in
+
+Via
+
+' AIRTEL
+
+FBI
+
+Date:
+
+* 12/11/71
+
+(Type in plainiesi or code)
+
+(Priority)
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, SAN ANTONIO (164-111) (P)
+
+RE:
+
+UNSUB, aka
+
+Dan Cooper;
+
+NORTHWEST AIRIINES
+
+FLIGHT $305,
+
+PORTLAND TO SEATTLE,
+
+21/24/72
+
+CAA - HIJACKING; EXTORTION
+
+00: SEATTLE
+
+Bufile: 164-2111
+
+Re San Antonio telcall to Seattle, 11/27/71,
+
+and houston airter to Seattie, 42/30/72.
+
+Enclosed for seattie and Minneapolis are
+
+photographs be
+
+TIA (055
+
+gnà
+
+102
+
+For information of-Séattle, was furnished... by
+
+referenced telcall the following:
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Seattle (Encs. 2)
+
+2
+
+- San Antonio
+
+RLS: doz
+
+(6)
+
+164-81-1262
+
+DEC O: 1971
+
+FBI - SEATTLE
+
+grat
+
+Approved:
+
+- Sent
+
+Special Agent In Charge
+
+M
+
+Per.
+
+#U, S, OOVIRNUINI PRINTING OTTICE 1 1008 O= 116-090 (11)
+
+DB-Gooper-4527
+
+---
+
+## Page 209
+
+SA 164-111
+
+on 11/27/71, at approximately 11:45 a.m.,
+
+I Texas, telephone No.
+
+telephonically contacted FBi, San Antonio, and stated
+
+that he had some information that may possibly be of some value
+
+in above-captioned case.
+
+b7C
+
+stated, that on 11/23/71, he tookL
+
+66
+
+to Austin
+
+Municipal Airport, Austin, Texas,
+
+so she
+
+b7C
+
+could fly to Dallas,
+
+Texas, via Braniff Airlines Flight $8,
+
+departing, Austin at 1:05 p.M. for Dallas.
+
+While standing at the Branift Airways window at
+
+12:20 p.m. he noticed a man who came up to the window and started
+
+talking to the Baniff employee.
+
+said that the unknown
+
+man questioned the employee about connections from Dallas to Seattlebic
+
+When the employee informed him of different matters concerning the
+
+flight he refused to take her word for it and insisted that she
+
+verify it all by making different phone calls.
+
+Unknown individual
+
+would ask the employee some questions and then step aside and talk
+
+to another individual who seemed to be with him. Unknown indivi-
+
+dual doing all the talking with the Braniff employee seemed overly
+
+ith the cract gime an
+
+concerned with the exact time and connections for this proposed
+
+flight.
+
+Ging
+
+the Braniff employee were obtained from
+
+The following doesno of the the uninosin miles and
+
+b6
+
+-b7C
+
+Unknown Subject #1 (person doing talking) :
+
+'Sex
+
+Race
+
+Weight
+
+Age
+
+Hair
+
+Dress
+
+Complexion
+
+Male
+
+White'
+
+170 to 180 pounds
+
+38 - 45 years of age
+
+Brown slightly m straight back
+
+Medium
+
+Unknown (Subject 12:
+
+Sex
+
+Race :
+
+Height
+
+Weight
+
+Age
+
+Hair
+
+Male
+
+White
+
+6'2" -6'3"
+
+175 - 180 pounds
+
+35 to 40 ycars of age
+
+Dark
+
+- 2 -
+
+DB Cooper-4528
+
+---
+
+## Page 210
+
+SA 164-111
+
+Braniff Employee:
+
+-Sex
+
+Hair
+
+Age
+
+Female
+
+Black
+
+30 - 35 years oa age
+
+further described Unknown Subject #1
+
+as looking like Vice President AGNEW in the face but said
+
+that the man was not as heavy as AGNEW:
+
+also stated that both unknown subjects seemtea to
+
+have a slight accent, possibly German. According tol
+
+unknown Subject #2 also mentioned Northwest Airlines
+
+when
+
+talking about going to Seattle,
+
+Unknown Subject #1
+
+flew to Dallas on Flight 8.
+
+Speciad Agent, FBl, Seattle,
+
+was telephonically contactea
+
+at'approximately 5:30 p.m.
+
+on 11/23/71, and he advised that investigation should be
+
+conducted at the airport in Austin to ascertain the names of the
+
+two unknown individuals that
+
+was suspect
+
+= 0f -2)
+
+On 12/8/72.
+
+Texas, Braniff Employee,.
+
+advised she does not recall. the above incident.
+
+Fox information of Seattle and Minneapolis
+
+photoaraohs perviously submitted bv Houston of
+
+are most recent
+
+ones available to the Texas Department of Public Safety Identi-
+
+fication Division.
+
+on 12/8/71, photographs of
+
+may be identical tol
+
+Jand |
+
+_were obtained from the Texas Department of Public Safety
+
+Drivers License Section. Their driving records describe them
+
+b6
+
+b7C
+
+b6
+
+*Ъ7C
+
+mei;
+
+b7C
+
+b7C
+
+66 !
+
+b7C
+
+b6
+
+b7C
+
+Race
+
+Sex
+
+BOrn :
+
+Eyes
+
+Height
+
+. ' White
+
+Male
+
+51g*
+
+DB Cooper-4529
+
+---
+
+## Page 211
+
+. ..:
+
+SA 264-111
+
+Address.
+
+Drivers License #
+
+Previous License
+
+b6
+
+b7C
+
+Houston, Texas
+
+Texas
+
+issue
+
+photographed
+
+Race
+
+Sex
+
+BOrn
+
+Place of Birth
+
+Height
+
+Weight
+
+-
+
+Hair
+
+Eyes
+
+Address
+
+Drivers License #
+
+Previous License
+
+White
+
+Male
+
+5'11"
+
+180 pounds
+
+BrOWn
+
+Brown
+
+Houston. Texas
+
+Texas
+
+issue
+
+photographed
+
+1b6
+
+b7C
+
+.. "
+
+DB Cooper-4530
+
+---
+
+## Page 212
+
+5D-36 (597-5-28-64)
+
+FBi
+
+Dote: 12/14/71
+
+Transmit the following in -
+
+Via
+
+AIRTEL
+
+(Type in plaintext or code)
+
+AIRMAIL
+
+(Priorizy)
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+FROM!
+
+SAC, SACRAMENTO (164-41)
+
+(P)
+
+SUBJECI: NORJAK
+
+Re Portland teletype to Seattle and Sacramento,
+
+12/13/71.
+
+Enclosed for Seattle and Portland is one copy each
+
+of California Identification Record and CII photo, CII
+
+Numberl
+
+On 12/14/71,L
+
+_ Wanted Persons
+
+Unit, CII, advised that a search of their files regarding
+
+revealed that one
+
+has CII Number
+
+furnished the enclosed
+
+copy of
+
+California Identification Record, CII Number
+
+Jand CII photograph.
+
+LEADS
+
+b6 ]
+
+b7C
+
+b6|
+
+b7C
+
+SACRAMEN TO
+
+AT
+
+CALIFORNIA
+
+Will contact L
+
+]County Sheriff's Office
+
+to determine if a current picture was taken of
+
+when he was arrested on
+
+If current photo
+
+taken, forward to Portland and Seattle.
+
+=2.
+
+1 - Portland (164-41) (Encs. 2)
+
+2 - Sacramento
+
+RJA: ccm
+
+Approved: (5)
+
+Sent
+
+164-81-1264
+
+SEARCHE
+
+SERIES SILEO M
+
+DEC 0: 1971
+
+IRL-SEATTLE
+
+b6
+
+b7C
+
+Special Agent in Charge
+
+M
+
+# 0. 5.51
+
+'b6|
+
+F-413-133
+
+• b7c
+
+DB Cooper-4532
+
+---
+
+## Page 213
+
+12/14/71
+
+AIRTEL -
+
+AIRMAIL
+
+TO:
+
+FROM:
+
+SAC, SEATTLE (164-81)
+
+• SAC, SACRAMENTO (164-41) (P)
+
+• SUBJECT: NORJAK
+
+Re Portland teletype to Seattle and Sacramento,
+
+12/13/71.
+
+Enclosed for Seattle and Portland is one copy each
+
+of California Identification Record and CII photo, CII
+
+Number
+
+On 12/14/71,
+
+Wanted Persons
+
+Unit, CIle advised that a
+
+search
+
+their files regarding
+
+born
+
+revealed that one
+
+born
+
+'has CII Number
+
+furnished' the enclosed copy of
+
+california Identitication Record, CII Number
+
+and CII photograph.
+
+LEADS
+
+SACRAMENTO
+
+AT
+
+CALTFORNIA
+
+Will contact
+
+County Sheriff's Office
+
+to determine if a current picture was taken of
+
+when he was arrested on
+
+If current photo
+
+taken, forward to Portland and Seattle.
+
+22- Seattle (Eries. 2)
+
+164-81-1264
+
+1 - Portland (164-41) (Encs. 2)
+
+2 - Sacramento
+
+RJA: CCI
+
+(5)
+
+b6
+
+57C
+
+b6
+
+b7C
+
+66
+
+670
+
+DE Co 4533
+
+---
+
+## Page 214
+
+12/14/72
+
+AIRTEL
+
+A IRMA IL
+
+TO:
+
+FROM:
+
+SAC, MINNEAPOLIS (164-73)
+
+BAC, PORTLAND (164-41) (P)
+
+SUBJECT: MORJAI
+
+Ro Minnospolls airtal to portland, 12/8/71.
+
+b6
+
+b7C
+
+BUSPECT:
+
+Portland Offico obtained photogranh Iron
+
+Multnonah County Sherlff's Offleo of
+
+but this in
+
+sans photograph as formerdod to Portland by Minneapollo.
+
+¡Adult parole and Probation offico,
+
+state of Uregon, Portland, Oregon, advised on 12/14/71
+
+1u on probation and vas last soon by his probatior
+
+located &
+
+ploturo of
+
+and shoms
+
+ploture.
+
+In the tile which was taken lo 1970
+
+vinilar to the 5/20/70
+
+mont
+
+Dato
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+parole officer.
+
+ot return to his offico la not known.
+
+PortIRm Mill not show photograph of
+
+portiand witnesara minco it has been reportad le to not
+
+good Ilkanees.
+
+Minneapolis
+
+Boattle (161-81) (2110)
+
+portland
+
+NBB: kod
+
+(5)
+
+164:81: 1265
+
+b6
+
+b7C
+
+---
+
+## Page 215
+
+PD 164-41
+
+presen. telenione
+
+LEAD
+
+aBides at
+
+Portland,
+
+66
+
+67C
+
+and 1 &
+
+PORTLAND
+
+on 11/34/71.
+
+b6]
+
+b7C
+
+- 2-
+
+DB Cooper-4535
+
+---
+
+## Page 216
+
+0-9 (Ror, 5-22-61)
+
+-
+
+FBI
+
+Date: December 7, 1971
+
+Transmit the following in
+
+Via
+
+Airtel.
+
+(Type in plaintext or code?
+
+(Priority)
+
+To:
+
+From:
+
+SAC, Seattle
+
+SuB -
+
+Director, FBI
+
+NORJAK
+
+G
+
+C
+
+H
+
+Reurairtel 11/25/71- 1B(3)
+
+Enclosed are the films forwarded the Bureau in
+
+connection with captioned matter. Seattle should insure these
+
+films are protected as evidence. If it is necessary to
+
+return any of this material to the source, insure that they
+
+are appropriately advised of the evidentiary nature of this
+
+material and take appropriate precautions to insure its return
+
+if needed.
+
+Consider contact with the U. S. Attorney's Office
+
+prior to returning the rims for his guidance.
+
+P. 1)
+
+In accordance with Section 66, Volume III, Manual
+
+of Instructions dealing with photographing ransom or loot,
+
+immediately submit a letter suitable for dissemination to
+
+T. S. Secret Service Headquarters in Washington, D. C.
+
+Enclosures (3)
+
+with
+
+Lettucan
+
+164-81-1266
+
+Sent Via
+
+_M Per
+
+DB Cooper -4536
+
+---
+
+## Page 217
+
+December 7, 1971
+
+Alrtel
+
+To:
+
+SAC, Seattle
+
+From: Director, FBI
+
+NORJAK
+
+Reurairtel 11/25/71.
+
+Enclosed are the films forwarded the Bureau in
+
+connection with captioned matter. Seattle should insure these
+
+films are protected as evidence. If 1t 1s necessary to
+
+return any of this material to the source, insure that they
+
+are appropriately advised of the evidentiary nature of this
+
+material and take appropriate precautions to insure its return
+
+if needed, Consider contact with the U. S. Attorney's Office
+
+prior to returning the films for his guidance.
+
+In accordance with Section 66, Volume III, Manual
+
+of Instructions dealing with photographing ranson or loot,
+
+Immediately submit a letter suitable for dissenination to
+
+U. S. Secret Service Headquarters in Washington, D. C.
+
+Enclosures (3)
+
+164-81-1266
+
+DEC D
+
+DB Cooper-4537
+
+---
+
+## Page 218
+
+50-35 (907-9-22-61)
+
+09
+
+Transmit the following in
+
+Via
+
+NITEL
+
+FBI
+
+Date: Dec. 16, 1971.
+
+NITEL.
+
+(Type in plaintext or codel
+
+(Priority)
+
+TO
+
+FROM:
+
+:
+
+DIRECTOR, FBI (164-2111)
+
+_ SAC, SEATTLE
+
+(164-81)
+
+DAILY TELETYPE
+
+NORJAR.
+
+PORTLAND AND SEAT TLE ARE CONTINUING TO CHECK OUT
+
+SUSPECIS BUT ALI, HAVE BEEN NEGATIVE TO DATE.
+
+CEF.
+
+Approved:
+
+- Sent
+
+Special Agent in Charge
+
+164-811267
+
+105/P Por JM DB Cagper-1538
+
+---
+
+## Page 219
+
+164f-*/
+
+SEASCHEO..
+
+INDEXIT...
+
+SERIALIZED.
+
+FILED....
+
+DEC 1 ₴ 1971
+
+FBI -PORTLAPHO
+
+Federal Bureaii
+
+OF frostigation
+
+Porttand OfficI
+
+June.
+
+A would like to
+
+help you with some.
+
+Fand D6. Cooper: you
+
+parbat have Phonight
+
+of The sanse things, that
+
+As about to mention or a
+
+then man have been.
+
+plant
+
+ragested? But if anot
+
+here they are Why not.
+
+an at cope from
+
+the same accipt. lave.
+
+the darknes ont. Have
+
+at teast tis Stry Sier
+
+law at 30 a intenals
+
+along the quspected departuse...
+
+164-81 - 1266
+
+Deedener: 4539
+
+1
+
+---
+
+## Page 220
+
+route. Have Air out Graines
+
+observers picke the jumpera....
+
+would give you some better
+
+Asta where to start digging e
+
+... At demos a critic..
+
+could stant picking up. tocon
+
+and ad. Plia some other.
+
+thing. But if it haant ben
+
+Ground Scarch Man nogth
+
+Thorough but' did. givent
+
+amrotten. Ting. the arful easy.
+
+the mice something zou..
+
+hosting for some i
+
+speciall, it it. s blended.
+
+in.mith.su
+
+wrowsdingo.o
+
+Of course-what. he
+
+DB Cooper,4540
+
+---
+
+## Page 221
+
+many have beess stanisy plis
+
+i chute jall not pesple.
+
+wiscould
+
+sould think heid be ambul
+
+That car. The Standows
+
+assil different colored foilage
+
+stise things. com phan.
+
+some auful Tricks on th
+
+searches ega for hord.
+
+-people with sist couldnt.
+
+see deer ceer It asian
+
+man could disapian in the
+
+sorts and almost never be...
+
+found. d personal belerie.
+
+he this up midwas.
+
+reioneita.-
+
+DB Cooper-4541
+
+---
+
+## Page 222
+
+ne.77
+
+in a Talk tree with the
+
+is shin booking for deer.
+
+you dont look for the
+
+whole deer, you took for
+
+How song of gon
+
+scarchers me lasting for.
+
+ww.ellors.or.a.ntesscs.com
+
+a foot. Probathy a majority.
+
+were shooting for
+
+11p.0. in the mohole.
+
+How the smon
+
+present a prsslem.... a.
+
+no, tenti
+
+Sparing Search is most protable
+
+But I'd Kupinp on Winter
+
+canch alao,
+
+Page It Phase.
+
+DB Cooper-4542
+
+---
+
+## Page 223
+
+Big. a Minter starshe A serin.
+
+a small sew tos Hmes..
+
+with son show to sold.
+
+stop ap thise in the trish
+
+assed, book this trees. ove
+
+alitate better: Manese.
+
+The looked at fross all Sides?
+
+mini wate
+
+onected wit
+
+Girl. Defense. Goonspi
+
+b6
+
+b7C
+
+b6
+
+ib7c
+
+Ittee
+
+use of Topographical Mapss
+
+practise searches...ban.
+
+actual Search
+
+the Area. Regrested top the
+
+=-herrift-
+
+66
+
+67C
+
+#74.
+
+..
+
+DB Cobpèr-4543
+
+---
+
+## Page 224
+
+The i stais
+
+pid mention the
+
+teasonismit
+
+Talking. about.
+
+-If there isi assig
+
+ward can he of assistance
+
+b6
+
+b7C
+
+"66
+
+b7C
+
+Respectsube Tosso
+
+b6
+
+b70
+
+P. (Mo Phone)
+
+DB Cooper-4544
+
+---
+
+## Page 225
+
+ARKLANA
+
+1974
+
+b6
+
+• b7C
+
+Federal Binean of
+
+Anestigation
+
+U5. Federal Pldoy,
+
+Porttans, Ore.
+
+DB Coaper-4545
+
+---
+
+## Page 226
+
+5D-38 (Ro1-5-22-84)
+
+Transmit the following in
+
+Via -
+
+AIRTEL
+
+FBI
+
+Date: 12/14/71
+
+(Type in plaintext or code)
+
+_AIRMA IL
+
+(Priorily)
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, PORTLAND (164-41) (P)
+
+SUBJECT: NORJAK
+
+Sub B
+
+/ Enosed for seattle 1s copy of letter from
+
+furnished his observations and offered his assistance
+
+in this matter.
+
+No action is being taken by Portland because
+
+resides at
+
+Washington.
+
+2-Portland
+
+NBB: smp
+
+(4)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-1269
+
+DEC P6 19710
+
+FBI - SEATTLE
+
+VENI
+
+Approved:
+
+- Sent
+
+Special Agent in Charge
+
+_M Per —
+
+SU.S. COVERNMENE PRiNTING OFFICE, D.B-G@Oper-4546
+
+---
+
+## Page 227
+
+Dec, 8. 1971
+
+Pa
+
+b6
+
+b7c
+
+Dear Sir,
+
+I am writing this letter in regards to the
+
+plane Hi_jacking of Nov. 24th over Washington
+
+State.
+
+fits The man described as being the H_jackex
+
+Perhaps its just a coincidence but I have been
+
+un-easy about it ever since I read about it. I have
+
+tried several times to get in touch with chel
+
+Pa. Office. But no one answers the phone there.
+
+'b6
+
+b7C
+
+!r:
+
+b6
+
+b6
+
+b7C
+
+usually work short. so 5, pant nk be an hai
+
+The carries a brown brief case when traveling.
+
+I do not wish to cause him trouble unnecessarily
+
+(but I am concerned
+
+This has really bothered me since the
+
+Hi. jacking and so many of my relatives have called me
+
+and expressed their amazement as to how much this
+
+Perhaps X am being silly but I
+
+that there will be no
+
+harm done if he
+
+is not the man.
+
+I sincerely hope not.
+
+164-81 1220
+
+SEARGHED.
+
+INDEXA
+
+SERIALES LIL FILED
+
+copy:wsk
+
+DEC Dà 1971
+
+FBI - SEATTLE
+
+b6
+
+b7C
+
+DB Cooper-4547
+
+---
+
+## Page 228
+
+b6 '
+
+b7C
+
+Nevada.
+
+His name is
+
+b6
+
+b7C
+
+I regret if I have caused you any unnecessary trouble
+
+but I felt I. had an obligation to let the f.B.,.
+
+know my
+
+¡suspicions.
+
+Very Truly Yours
+
+b6"
+
+b7C
+
+P.s. I would appreciate an acknowledgement of this letter.
+
+Thank you.
+
+2
+
+DB Cooper-4548;
+
+---
+
+## Page 229
+
+Airtal
+
+December 14, 1971
+
+To:
+
+SACs Les Vegas
+
+Philadelphia
+
+seattle
+
+From: Director, FBI
+
+NORJAK
+
+b6
+
+b7C
+
+ReButelcalls and teletype to Philadelphia and Las
+
+Vegas 12/14/71.
+
+Enclosed for recelving offices 18 a Xerox copy of
+
+of a true copy of a letter recelved at the Burenu 12/13/71 from
+
+Pennsylvanda.
+
+164-81.1221
+
+DB Cooper-4549
+
+---
+
+## Page 230
+
+in
+
+-
+
+PLAINTEXT
+
+TELETYPE
+
+URGENT
+
+TO
+
+SACS LAS VEGAS
+
+• DECEMBER 14, 1971
+
+PHILADELPHIA
+
+FROM DIRECTOR FBI
+
+NORJAK
+
+REBUTELCALLS IO PHILADELPHIA AND LAS VEGAS TODAY.
+
+BUREAU IS IN RECEIPT OF LEITER FROM
+
+PENNSYLVANIA, WHEREIN SHE INDIGATES
+
+ARTIST'S CONCEPTION OF CAPTIONED UNSUB IS SIMILAR TO|
+
+STATES
+
+b6
+
+b7C
+
+b6
+
+bIC
+
+FORMER PARATROOPER WITH
+
+CONSIDERABLE EXPERIENCE. DESCRIBED
+
+WHITE MALE
+
+AMERICAN,
+
+YEARS, FIVE FEET ELEVEN INCHES, DARK
+
+BROWN HAIR, USUALLY WORN SHORI AND CARRIES BROWN BRIEF CASE
+
+WHEN TRAVELING.
+
+SINCE APPROXIMATELY
+
+HE IS
+
+LAS VEGAS AND PHILADELPHIA IMMEDIATELY INSTITUIE
+
+Seattle (Afrma11)
+
+164-81-1222
+
+FBI - SEATILE
+
+DB Cooper-4550
+
+---
+
+## Page 231
+
+i+..
+
+TELETYPE TO SACS LAS VEGAS
+
+PHILADELPHIA
+
+RE: NORJAK
+
+INVESTIGATION CONCERNING
+
+TO DETERMINE IF HE IS
+
+IDENTICAL WITH CAPTIONED UNSUB. PHILADELPHIA ACKNOWLEDGE
+
+RECEIPT OF
+
+LETTER AND ATTEMPT TO OBTAIN
+
+CURRENT PHOTOGRAPH OF L
+
+HANDLE LEADS IMMEDIATELY
+
+AND KEEP BUREAU ADVISED. BUREAU INDICES BEING SEARCHED FOR
+
+INFORMATION CONCERNING
+
+AIRMAIL COPY FURNISHED
+
+SEATTLE.
+
+CONSIDER UNSUB DANGEROUS.
+
+b6
+
+b7C
+
+- 2.-
+
+DB Cooper-4551
+
+---
+
+## Page 232
+
+12/14/71
+
+AIRTEL
+
+AIRMAIL, - REGISTERED
+
+SuB
+
+F
+
+TO:
+
+DIRECTOR, FBI (164-2111)
+
+FROM: SAC, SACRAMENTO (164-50) (P) •
+
+NORJAK
+
+00: SE
+
+• Enclosed for the Bureau are two aeronautical
+
+charts on which the flight path of Northrest Airlines
+
+Flight 1305 has been drawn with a green sarker pen.
+
+It is noted that tracking of the aircraft was
+
+handed over fron FlA, Oakland, to Reno ali control approaca
+
+at a point just north of Portola, California.
+
+- Bureau (Enc. 2) (RM)
+
+3/- Secremento
+
+Seattle (164-81) (RM)
+
+HAW: epg
+
+(4)
+
+164-81:1213
+
+DB Cooper-4552
+
+---
+
+## Page 233
+
+0-9 (Rev. 5-18-71)
+
+FBI
+
+Transmit in -
+
+Via
+
+(Type in plaintext or code)
+
+manana dre
+
+Airtel
+
+-Priority
+
+Date -
+
+12/14/71
+
+To: SAC, Seattle
+
+¿From: Director, FBI (164-2111)
+
+SUB-
+
+G.
+
+UNSUB; AKA DAN COOPER;
+
+D.
+
+NORTHWEST AIRLINES FLIGHT
+
+THREE ZERO FIVE, PORTLAND TO
+
+SEATTLE, NOVEMBER TWENTYFOUR,
+
+SEVENTYONE;
+
+CAA - HIJACKING; EXTORTION
+
+Re Las Vegas airtel 12/7/71, and teletype 12/13/71.
+
+The referred to narachute is being forwarded under separate
+
+cover by registered airmail to your office.
+
+This
+
+line for LEFT MARGIN.I
+
+"Do noi lype below this line."
+
+164-81-1274
+
+ERIALSO MIL FILED
+
+DEC O$ 1971
+
+FBI -SEATTLE.
+
+DB Cooper-4553
+
+---
+
+## Page 234
+
+OFTIONAL FORM NO TO
+
+MAY 1N5 EDITION
+
+65A57MR (5 CFT) 101-11.8
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+DATE:
+
+12/15/71
+
+FROM : SA ROBERT H. WICK
+
+SUBJECT:
+
+UNSUB
+
+NWA HIJACK
+
+On December 15, 1971,1
+
+Washington, appeared at the Olyapia RA to state that he had a
+
+device bu which he could locate the money involved in this case.
+
+is obviously a mental case and in spite of offering
+
+to demonstrate his devining device whläh consisted of an Alka
+
+Seltser bottle attached to a chain, he was ushered out of the RA.
+
+(17
+
+b6
+
+b7C
+
+164-81-1225
+
+SEARCHED,
+
+SERIALZED MR GILED.
+
+-INDEXER
+
+DEC P61971
+
+FBI - SEATTLE
+
+DB Cooper-4554
+
+3010-708
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 235
+
+REPORT
+
+of the
+
+Li INBORATORT L
+
+FEDERAL BUREAU OF INVESTIGATION
+
+WASHINGTON, D. G. 20535
+
+To: SAC, Portland (264-41)
+
+Date:
+
+FBi Flie No.
+
+Ro:
+
+NORJAK
+
+Lab. No.
+
+December 14, 1971
+
+164-2111
+
+D-711210079 LL
+
+D-711213033 LL
+
+!!
+
+Speckoens received
+
+12/10/71 fron Portland
+
+Q13 Envelope postmarked "U.S. POSTAL SERVICE 970 PM
+
+3 DEC 1971" bearing hand printed address "OREGONIAN
+
+1320 SW BROADWAY PORTLAND, ORE."
+
+Q14
+
+slip of paper bearing hand printed message beginning
+
+'I AM RIGHT HERE IN PORTLAND! AND..."
+
+ALSO SUBHITIED:
+
+Specimens received 12/10/71 fron Las Vegas
+
+Envelope postmarked "U. S. POSTAL SERVICE, CA 956
+
+PM 1 DEC 1971," bearing hand printed address "RENO
+
+GAZETTE RENO NEVADA"
+
+Q,26
+
+Accompanying sheet of paper bearing cutout words with
+
+message "Plan Ahead for Retirement Incone D. B. Cooper,"
+
+ALSO SUBMITTED: Pingerprint card for
+
+Result of examination:
+
+b6
+
+b7C
+
+No watermarks, indented writing or other features
+
+were sound on Q13 through Q16 which would be of value in
+
+determining the source of these specimens..
+
+It Is noted in this regard that Q15 dears a
+
+J. S. Postal watermark, wnich indicates that this envelope
+
+was sold by the u. S. Postal Service.
+
+164-81-127k
+
+Page 1
+
+SERIALS.
+
+DEC 961971
+
+FBI - SEATTLE
+
+DB Cooper-4555
+
+---
+
+## Page 236
+
+The questioned hand printing on l13 through
+
+Q1s was not identified with any of the questioned hand
+
+printing on the specimens submitted previously in this
+
+matter and no connection could be establtshed between
+
+Q13 through Ql6 and the other questioned items in this
+
+The submitted evidence was photographed and
+
+will be returned separately.
+
+8-711220079 12
+
+DB Cooper-4556
+
+---
+
+## Page 237
+
+Laboratory Tra0s8alal Forta
+
+To: SAC, Portland (264-41)
+
+Ro: NORJAK
+
+ZABORATORY LA
+
+FEDERAL BUREAU OF INVESTIGATION
+
+WASHINGTON, D. C. 20535 SuB- G.
+
+Date:
+
+December 14, 1971
+
+Sub 130
+
+A gor share,
+
+FBI File No.
+
+Lab. No.
+
+164-2111
+
+D-711220079 LL
+
+D-711213033 Ll
+
+Exartoolon requested by: Portland, las Vegas
+
+Reference:
+
+Airtele 12/6/71
+
+Examination requested:
+
+Document - Fingerprint
+
+Remarks:
+
+The subnitted evidence will be returned with
+
+the fingerprint report.
+
+DO NUT INCLUDE AUSINISPRATIVE
+
+PAGE(S) INFORMATION IN
+
+INVESTIGATIVE REPORT
+
+Enclosures (2) (2 Lab report)
+
+2-Seattle (164-81) Enclogured
+
+(2) 62 Lab report)
+
+-Las Vegas (164-60) Enclosure:
+
+: (2) (2 Lab report)
+
+ADMINISTRATIVE PAGE
+
+164-81-1277
+
+SEARCHED.
+
+DEC Q6 1971
+
+DB Cooper-4557
+
+---
+
+## Page 238
+
+ARB08 WA PLAIN SENT 2IDAM 12-17-71
+
+839 PM HSI 12-16-71 URGENT DD
+
+TO SAN FRANCISCO (164-228) VIA WASHINGTON
+
+SEATILE
+
+(164-81) VIA WASHINGTON •
+
+FROM HONOLULU
+
+(164-85)
+
+(P) 1P'.
+
+b6
+
+b7C
+
+NORJAK.
+
+.RE SAN FRANCISO TEL DECEMBER FIFTEEN LAST.
+
+RE SUSPECI
+
+RECORDS
+
+HOTEL LIST
+
+b6
+
+b7C
+
+CALIFORNIA
+
+CHECKED INTO ROOM
+
+NOVEMBER IWENTY, LAST, AND
+
+CHECKED OUT NOVEMBER IWENTY SEVEN LAST.
+
+PART OF PACKAGED.
+
+TOUR GROUP WITH HOTEL BILLS PREPAID.
+
+TRIP HANDLED THROUGH.
+
+UNITED AIRLINES (UAL), TWO THREE FIVE ONE POWELL, PHONE
+
+THREE NINE SEVEN DASH TWO ONE ZERO ZERO, EXTENSION
+
+SAN FRANCISCO. ABOUT FORTY OF GROUP OF OVER TWO HUNDRED
+
+PERSONS BOOKED THROUGH UAL, SAN FRANCISCO.
+
+NOT RECALLED BY
+
+HOTEL PERSONNEL.
+
+RETURNING. TO
+
+HAWAII DECEMBER SEVENTEEN NEXT AND WILL BE CONTACIED TO DETERMINE
+
+IF HE RECALLS |
+
+SAN FRANCISCO CONTACI UAL FOR IDENTITY OF OTHERS ON TOUR AND
+
+INTERVIEW IN EFFORT TO PLACE
+
+JIN HAWAII DURING PERTINENT PERIOD.
+
+END
+
+TIM
+
+FBI SEATTLE
+
+CLR
+
+164-81-1228
+
+SEARCHED
+
+DEC& 6 1971
+
+ARLeSEATTLE
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+DB Cooper-4558
+
+---
+
+## Page 239
+
+1R8B8 WA PLAIN SENT 218AM 12-17-71
+
+839 PM HST 12-16-71 URGENT DD
+
+TO SAN FRANCISCO (161-228) VIA WASHINGTON
+
+SEATTLE
+
+<164-81) VIA WASHINGTON
+
+FROM HONOLULU
+
+(164-85) (P) 1P
+
+NORJAK.
+
+RE SAM FRANCISO TEL DECEMBER FIFTEEN LAST.
+
+RE SUSPECT
+
+RECORDS
+
+HOTEL LIST
+
+b7C
+
+CALIFORNIA
+
+CHECKED INTO ROOM
+
+NOVEMBER IWENTY, LAST, AND
+
+CHECKED OUT NOVEMBER TWENTY SEVEN LAST.
+
+PART OF PACKAGED
+
+TOUR GROUP WITH HOTEL BILLS PREPAID.
+
+TRIP HANDLED THROUGH
+
+UNITED AIRLINES CUAL), THO THREE FIVE ONE POWELL, PHONE
+
+'THREE NINE SEVEN DASH TWO ONE ZERO ZERO, EXTENSION
+
+SAN FRANCISCO, ABOUT FORTY OF GROUP OF OVER TWO RUNDRED
+
+PERSONS BOOKED THROUGH UAL, SAN FRANCISCO.
+
+NOT RECALLED BY
+
+HOTEL PERSONNEL.
+
+RETURNING TO,
+
+HAWAII DECEMBER SEVENTEEN NEXT AND WILL BE CONTACTED TO DETERMINE
+
+IF HE RECALLS
+
+SAN FRANCISCO CONTACT VAL FOR IDENTITY OF OTHERS ON TOUR AND
+
+INTERVIEN IN EFFORT TO PLACE
+
+IN HAWAII DURING PERTINENI PERIOD.
+
+END
+
+TIM
+
+FBI SEATTLE
+
+CLR
+
+164-81-1228
+
+SEARCHED.
+
+-INDEXEI
+
+-FILED-
+
+ĐEC 108 1971
+
+FBI - SEATTLE L
+
+b6
+
+b7C
+
+b6!
+
+b7C
+
+DB Cooper-4559
+
+---
+
+## Page 240
+
+MR 012 SF PLAIN
+
+936 PM NITEL 12/ 081 BEN
+
+TO :
+
+ALBUQUERQUE (149-131)
+
+SEATILE (164-81)
+
+FROM:
+
+SAN. FRANCISCO (164-220)
+
+b6
+
+b7C
+
+NORJAK.
+
+RE ALBUQUERQUE NITEL TO SAN FRANCISCO, INSIANT DATE-:
+
+RE SUSPECT
+
+ON INSTANT DATE, SUSPECT L
+
+OF NOVEMBER TWENIY FOUR LAST, HE WAS WORKING FOR
+
+STATED THAT DURING THE DAY
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+NEW
+
+MEXICO, L
+
+WAS WITH
+
+ON THE EVENING. OF NOVEMBER TWENTY FOUR LAST,
+
+STATED HE
+
+b6
+
+b7C
+
+ALBUQUERQUE, NEW MEXICO.
+
+FURTHER
+
+ADVISED HIS SUPERVISOR
+
+PHYSICAL APPEARANCE BEARS SOME RESEMBLANCE TO THE ARTIST•
+
+b6
+
+b7C
+
+CONCEPTION OF UNSUB.
+
+ALBUQUERQUE AT
+
+]
+
+WILL CONTACI SUSPECI'S SUPERVISOR
+
+TO VERIFY WHEREABOUIS OF SUSPECT DURING THE DAY OF
+
+NOVEMBER IWENTY FOUR LAST.
+
+CONSIDER UNSUB ARMED AND DANGEROUS.*
+
+END
+
+RECD. 2 TELS
+
+DCA FBI SE CLR
+
+164-81-1279
+
+EARCHED INDEXED.
+
+ERLALIZED AMA FILES 1A
+
+DEC 106 1971
+
+BEL. SEATS
+
+b7c
+
+DB Eoper-4560
+
+b6
+
+b7C
+
+---
+
+## Page 241
+
+IR ONE SO PLANN
+
+936 PM NITEL 12/1
+
+BEK
+
+TOs
+
+ALBUQUERQUE (149-151)
+
+SEATTLE (164-81)
+
+FROME SAN FRANCISCO (164-228)
+
+NORJAK.
+
+RE ALBUQUERQUE NITEL TO SAN FRANCISCO, INSTANT DATE.
+
+RE SUSPECT
+
+ON INSTANT DATE, SUSPECT
+
+OF NOVEMBER TWENTY FOUR LAST, HE WAS WORKING FOR|
+
+STATED THAT DURING THE DAY
+
+b7C
+
+b6
+
+MEXICO,
+
+WAS WITH
+
+ON THE EVENING OF NOVEMBER TWENTY FOUR LAST,
+
+ALBUQUERQUE, NEW MEXICO.
+
+NEW
+
+STATED HE
+
+_FURTHER
+
+b7C
+
+ADVISED HIS SUPERVISOR
+
+PHYSICAL APPEARANCE BEARS SOME RESEMBLANCE TO THE ARTIST'
+
+CONCEPTION OF UNSUB.
+
+ALBUQUERQUE AT
+
+7 WILL CONTACT SUSPECT•S SUPERVISOR
+
+TO VERIFY WHEREABOUTS OF SUSPECT DURING THE DAY OF
+
+NOVEMBER TWENTY FOUR LAST..
+
+CONSIDER UNSUB ARMED AND DANGEROUS.
+
+END
+
+• RECD. 2 TELS
+
+DCA FBI SE. CLR
+
+164-81:1229
+
+- INDER
+
+BERIALIZED. IN FILES
+
+DEC 1'8 1971
+
+FdI - SEATTLE
+
+b6]
+
+b7C
+
+66]
+
+: b7C
+
+•ĐB Cooper-4561
+
+---
+
+## Page 242
+
+5D-26 (99w:5-23-88) -
+
+F BL
+
+Date:
+
+12/15/71
+
+Traisost the followto in
+
+VIC TELECOPLER
+
+(Tape la planteri or code)
+
+URGENT
+
+(Priority)
+
+TO:
+
+SACE SEATTLE, (141-91)
+
+HINNBAPOLIS, (144.23)
+
+PORTLAND
+
+SAC, PITTSEURGH (261-83) 077
+
+NORJAK
+
+REL
+
+RE PITTSBURGI TRL TO DIRECTOR EMIS DATE.
+
+Sent.
+
+Special Agent in Charge
+
+b6
+
+b7C
+
+Suspect
+
+}
+
+b6
+
+b7C
+
+1b6
+
+4b7C
+
+165-81-1380
+
+SEARCHED. LED...
+
+SERLALIZED..
+
+DEC 151971
+
+No erret: in
+
+_De Cooper-4562 /
+
+---
+
+## Page 243
+
+NR B09 PD PLAIN
+
+11:00 PM NITEL 12-16-71 AJW
+
+TO:
+
+SEATILE (164-81)
+
+LOS ANGELES (164-497)
+
+FROM:
+
+PORTLAND {164-41>
+
+IP
+
+b6
+
+67C
+
+NORJAK
+
+SUSPECT:
+
+UNKNOWN CALLER, LISTANT DATE, ADVISED HE
+
+AND THAT HE FITS CAPTIONED MATTER UNSUB PERFECTLY, SUSPECT WAS
+
+b6
+
+b7C
+
+SUSPECI HAS
+
+PHOTO THOUGHT AVAILABLE
+
+THROUGH
+
+WHERE SUSPECT ONCE WORKED.
+
+SUSPECT HAS
+
+PHONETIC,
+
+TURO CALLER FEELS MAY BE IMPLICATED DUE TO TELEVISION REPORT
+
+ON A SUSPECT DEVELOPED IN
+
+AREA WITH POSSIBILITY
+
+OF
+
+ACCOMPLICE.
+
+LOS ANGELES AT LOS ANGELES WILL CONDUCT INVESTIGATION DEEMED
+
+APPRÓPRIATE TO DETERMINE IF SUSPECI IDENTICAL TO UNSUB OF NORJAX.
+
+END
+
+TIM
+
+FBI SEATTLE
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-1281
+
+SLARCHED.
+
+ARRIAURSIL
+
+TILIOLM
+
+DEC 161971 -
+
+FBI • SEATTLE
+
+DB Cooper-4563
+
+---
+
+## Page 244
+
+APONAL PORM NO
+
+STK
+
+ESATAMA (41 C7X) 101-110
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC
+
+(164-81)
+
+* FROM : SA
+
+SUBJECT: NORJAK
+
+00: SEATTLE
+
+DATE:
+
+12/16/71
+
+b6
+
+b7c
+
+5010-104
+
+RE:
+
+SUSPECT
+
+Elim
+
+On 12/8/71,l
+
+for the
+
+Seattle, Washington, phone number
+
+whose home address is
+
+seattle,
+
+washington, home phone
+
+Istated thatl
+
+and that she distinctly remembers him being in
+
+the office on 11/24/71 as he was in a very grouchy mood
+
+that day.
+
+TIl.
+
+On 12/9/71,
+
+was interviewed
+
+at which time he stated by referring to his appointment
+
+oook that on 11/24/11 he ecove
+
+a friend
+
+of his, to the office of
+
+Washington.
+
+He further stated ther he had an applusiness that date.
+
+concerning|
+
+further stated that he was an experienced
+
+skydiver taking an active part in this sport on almost
+
+every weekend.
+
+He further stated he knows many of the
+
+skydivers in the area and out of the ones he knows the two
+
+whon he would be suspicious of as being capable of pulling
+
+such an extortion would be
+
+oregon.
+
+Due to the verification of
+
+presence
+
+in the office at the
+
+12/24/71, it is suggested that this subject be discontinued
+
+as a possible suspect in the above captioned case
+
+164-81-1282
+
+It is also suggested that leads be sent on
+
+been done so as possible suspects.
+
+if they
+
+have not already
+
+SEARCHED
+
+SERIALIZED
+
+• INDEXED_
+
+FILED
+
+JBJ/djs
+
+-(2)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+FBI - SEATTLE
+
+DEJ 222071-4564
+
+---
+
+## Page 245
+
+AROO4 AQ PLAIN
+
+5:28PM NITEL 12/16/71 DJC
+
+TO :
+
+OKLAHOMA CITY (164-56)
+
+SEATTLE (164-81)
+
+FROM:
+
+ALBUQUERQUE (149-131)
+
+b6
+
+67C
+
+-P-
+
+NORJACK
+
+RE :
+
+AKA
+
+b6
+
+b7C
+
+RE OKLAHOMA CITY NITEL, DECEMBER FIFTEEN LAST.
+
+INQUIRY ON DECEMBER SIXTEEN INSTANT AT
+
+NEW
+
+MEXICO, MOTEL WHERE
+
+HAD BEEN STAYING REFLECIS HE DEPARTED
+
+FOR
+
+ON A.M., DECEMBER FIFTEEN LAST.
+
+TOLD MOTEL OPERATOR THAT IF FBI MADE INQUIRIES IHAT HE HAD
+
+ADDITIONAL INFO POSSIBLY PERTINENT TO THIS INVESTIGATION AND
+
+COULD BE CONTACIED AT
+
+b6
+
+b7C
+
+END PAGE ONE
+
+.
+
+164+81-1283
+
+SEARCHED
+
+DEC K$ 1971
+
+FRI-SEATTLE
+
+DB Cooper-4565
+
+---
+
+## Page 246
+
+PAGE TWO AQ <149-131)
+
+WAS DRIVING
+
+AUTOMOBILE,
+
+COLOR, OXLAHOMA SEVENTYONE LICENSE
+
+NO PHOTOGRAPH OBTAINED. .
+
+OKLAHOMA CITY AT
+
+WILL CONTACT
+
+FOR
+
+ADDITIONAL INFO AND OBTAIN PHOTO AND RESOLVE DISCREPANCIES AS
+
+MENTIONED IN RETEL.
+
+b7C
+
+b6 1
+
+END
+
+‚SLAA
+
+FBI SEATTLE CLR
+
+DB Cooper-4566
+
+---
+
+## Page 247
+
+NR 821 LA PLAIN
+
+554PM NITEL 12-16-71 IDH
+
+TO SEATTLE $164-81) .
+
+FROM LOS ANGELES (164-497)
+
+b6
+
+67C
+
+1P
+
+NORJAK
+
+RE LOS ANGELES TELETYPE TO SEATTLE AND
+
+ST. LOUIS, TWELVE FOURTEEN LAST.
+
+RE: SUSPECT
+
+LOS ANGELES LOCATED
+
+ELin
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+OBSERVED
+
+BY BUAGENT AND HAS LONG HAIR, APPROXIMATELY ONE FOOT IN
+
+LENGTH, AND A MUSTACHE.
+
+HE IS
+
+YEARS OLD WITH
+
+A DATE OF BIRTH OF
+
+FIVE FEET SEVEN INCH
+
+TALL, WEIGHT ONE SIX ZERO POUNDS.
+
+DOES NOT BEAR
+
+CLOSE RESEMBLANCE TO ARTIST CONCEPTION OF UNSUB."
+
+NO FURTHER ACTION BEING TAKEN BY LOS ANGELES RE
+
+b6
+
+b7C
+
+END
+
+DCA
+
+FBI SE HOLD
+
+164-81-1284
+
+ĐEC 108 1971
+
+FBI - SEATTLE
+
+DB Cooper-4567
+
+---
+
+## Page 248
+
+b6
+
+b7C
+
+N611 OC PLAIN
+
+507 PM 12-16-71 URGENT CWW
+
+TO
+
+SEATILE
+
+FROM' OXLAHOMA CITY
+
+(164-81)
+
+(164-56)
+
+NORJACK
+
+RE :/ SUSPECI:
+
+-P-
+
+2P
+
+b6
+
+b7C
+
+ELIM
+
+RE LOS ANGELES TEL TO OKLAHOMA CITY TODAY.
+
+INTERVIEWED
+
+SUSPECT
+
+THIS DATE. STATES
+
+THIRTY DAYS. SUSPECT'S
+
+OKLA. 9
+
+FOR THE LAST
+
+J AND SUSPECI'S
+
+BOTH STATE SUSPECI INL
+
+NOVEMBER IWENTYFOUR IO TWEÑTYFIVE, LAST.
+
+FOLLOWING IS PHYSICAL DESCRIPTION OF SUSPECT: UMA,
+
+FIVE FEET TEN;
+
+LBS)
+
+CAS HEIGHED
+
+DECEMBER SIXTEEN, LAST), WITH NOTICEABLE
+
+FACE; EYES
+
+b6
+
+b7C
+
+GLASSES; TEETH
+
+DOES NOT WEAR
+
+WITH VERY NOTICEAVLEI
+
+ADVISES OTHER RELATIVES WHO LIVE IN
+
+CAN/ ALSO VERIFY HIS PRESENCE-
+
+b6
+
+b7C
+
+164-8/1235
+
+SLARCH INDEX OM
+
+AILED.
+
+DEC 1C 1971
+
+b6
+
+FBI • SEATULE
+
+b7C
+
+END PAGE ONE.
+
+DB Cooper-4568
+
+---
+
+## Page 249
+
+00 164-56
+
+PAGE TWO
+
+NOVEMBER INENTYFOUD TO THENSUSIVE LAST ATL
+
+NO FUTHER INVESTIGATION BEING CONDUCTED,
+
+OKLA•, DAS
+
+AMCC LOS ANGELES.
+
+b6
+
+b7C
+
+END.
+
+JJI.
+
+FBI SEATILE
+
+OLR
+
+...
+
+DB Cooper-4569
+
+---
+
+## Page 250
+
+b6
+
+57C
+
+1R031 WA PLAIN 5:32PM
+
+12:08PM NITEL 12-16-71 JNK
+
+TO:
+
+SEATTLE (164-81) VIA WASH DC
+
+FROM:
+
+ANCHORAGE (164-59) 1-P
+
+RE PORTLAND TELETYPE TO SEATILE AND ANCHORAGE, DECEMBER
+
+THIRTEEN LASI.
+
+SUSPECT
+
+ON DECEMBER FIFTEEN LAST
+
+JU.S. DEPARIMENT OF
+
+AGRICULTURE,
+
+ALASKA, ADVISED THAI HE RECALLS
+
+AT
+
+WORK
+
+ON NOVEMBER TWENTY FOUR LASI. OFFICIAL RECORDS
+
+, AT
+
+REVEAL
+
+WORKING IN
+
+_ALASKA THAI DATE.
+
+AIRMAIL-COPY TO PORTLAND. P.
+
+Elim
+
+ELIM
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+..
+
+END
+
+JJI
+
+FBI SEATTLE CLLR
+
+164-81-1286
+
+SEÄRCHED
+
+ділі
+
+DB Cooper-4570
+
+---
+
+## Page 251
+
+b6
+
+b7C
+
+RE SEATTLE NITELS, DECEMBER TWO, AND DECEMBER SEVEN, LAST; AND
+
+ALBUQUERQUE TEL CALL TO SAN FRANCISCO, DECEMBER SIXTEEN LAST.
+
+FOR INFO SAN FRANCISCO, RE SEATTLE NITELS REFLECT
+
+EMPLOYED AT
+
+SEATTLE, WASHINGTON, AND FORMER
+
+EMPLOYER THERE STATES
+
+STATED
+
+IS A PARATROOPER AND HIS PHYSICAL APPEARANCE RESEMBLES
+
+THAT OF ARTISI'S CONCEPTION IN THIS MATTER. INVESTIGATION
+
+b6
+
+b7C
+
+END PAGE ONE
+
+164-81-1287
+
+SEARCHED
+
+SERIALKED AMZ FILED!
+
+DEC 10 19710
+
+FBI - SEATTLI
+
+.. -..
+
+ARDO3 AQ PLAIN
+
+5:26PM NITEL 12/16/71 .DUC
+
+TO:
+
+SAN FRANCISCO
+
+SEATTLE (164-81)
+
+FROM:
+
+ALBUQUERQUE <149-131) -p-
+
+b7C
+
+2P
+
+NORJACK
+
+RE:
+
+DB Cooper-4571
+
+---
+
+## Page 252
+
+PAGE TWO AQ (149-131)
+
+REFLECIS
+
+EMPLOYED BY
+
+AND CAN NOW BE REACHED AT THE I
+
+CALIFORNIA,
+
+'b6
+
+b7C
+
+TELEPHONE NO. AREA CODE
+
+FURTHER, SIATED THAT
+
+STAYING AT
+
+IS PRESENTLY
+
+I CALIFORNIA.
+
+AND ESTABLISH.
+
+SAN FRANCISCO AT
+
+LOCATE
+
+HIS WHEREABOUTS AT TIME OF CAPTIONED MATTER.
+
+b6
+
+b7C
+
+UNSUB CONSIDERED ARMED AND DANGEROUS.
+
+END
+
+DB Cooper-4572
+
+---
+
+## Page 253
+
+-
+
+ROBA MP PLAIN
+
+6:39
+
+PM NITEL 12-16-71 MLF
+
+TO DIRECIOR 164-2111
+
+CHICAGO
+
+164-297
+
+DETROIT 164-115
+
+PITTSBURGH 164-93
+
+PORTLAND 164-41
+
+ST. LOUIS, 164-63
+
+SEAITLE 164-81
+
+FROM MINNEAPOLIS
+
+164-73
+
+b7C
+
+NORJAK
+
+RE
+
+SUSPECT
+
+RE PITISSURGR TELETYPE TO DIRECTOR' ST AL' DECEMBER
+
+FIFTEEN' LAST.
+
+SUSPECIS PHOTO DISPLAYED TO NWAL STEWARDESS
+
+ON DECEMBER SIXTEEN' INSTANI.
+
+ADVISED
+
+NOT IDENTICAL WITH HIJACKER.
+
+NWAL StEWARDESSES
+
+UNAVAILABLE FOR PHOTO DISPLAY UNTIL DECEMBER EIGHTEEN'
+
+NEXI.'
+
+UNSUB SHOULD BE CONSIDERED DANGEROUS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b61
+
+b7C
+
+P
+
+END
+
+- DCA
+
+FBI SE CLR
+
+164-81-1288
+
+_ INDIREC
+
+SERIAUZCO. MA TILED M
+
+DEC L$ 1971
+
+FBI - SEATTLE
+
+DB Cooper-4573
+
+---
+
+## Page 254
+
+MR B06 PD PLAIN
+
+6:22 PM URGENT 12-16-71 AJW
+
+TO:
+
+SAC, SEATTS
+
+1(164-81)
+
+FROM: SAE, PORTLAND
+
+X164-41) (P) 1P
+
+Sil O
+
+NORJAK
+
+DAILY SUMMARY.
+
+NO POSITIVE INFORMATION DEVELOPED.
+
+INVESTIGATION CONTINUING.
+
+END
+
+' DCA
+
+FBI SEATILE CLR
+
+164-81-1290
+
+RATO AM IS DI
+
+ERALIZE
+
+DEC 16 1971
+
+FB1 - SEATTLE
+
+трно
+
+DB Cooper-4576
+
+---
+
+## Page 255
+
+NR 031 LA PLAIN
+
+7:18 PM NITEL 12-16-71 GLD
+
+TO SEATTLE (164-81)
+
+• PORTLAND (164-41)
+
+FROM LOS ANGELES (164-497).
+
+66
+
+.b7C
+
+NORJAX.
+
+RE PORTLAND NITEL TO SEATTLE AND LOS ANGELES, DECEMBER
+
+THIRTEEN LAST.
+
+SUSPECT:
+
+b6
+
+b7C
+
+INVESTIGATION AT
+
+ONE
+
+CALIFORNIA PD, REVEALS NO RECORD
+
+DOB
+
+IS FORMER
+
+EMPLOYED®
+
+b6
+
+b7C
+
+HAD EXCELLENT
+
+RECORD AND LEFT
+
+IN PORTLAND, OREGON AREA. RECORDS INDICATE HE
+
+END PAGE ONE
+
+164-81-1291
+
+SEARCHED M
+
+SERIALIZER.
+
+FOR - SEATTLE
+
+Tphs
+
+DB Cooper-4577
+
+---
+
+## Page 256
+
++*+
+
+PAGE TWO
+
+LA 164-497
+
+INDICATE
+
+LOS ANGELES INDICES NEGATIVE AND CALIFORNIA DMU RECORDS
+
+HAS DRIVERS LICENSE NUMBER
+
+DOB
+
+SIX FEET, ONE HUNDRED SIY POUS, 3492, 363,
+
+BROWN HAIR AND
+
+ADDRESS EFFECTIVE
+
+b6
+
+b7C
+
+WAS
+
+PORTLAND, CONDUCI LOGICAL INQUIRIES IN EFFORT TO
+
+DETERMINE CURRENT ADDRESS OF L
+
+AND
+
+ESTABLISH WHEREABOUIS DURING PERTINENT PERIOD.
+
+LOS ANGELES, ATTEMPTING THROUGH
+
+JPD AND POST OFFICE, IO ASCERTAIN CURRENT ADDRESS
+
+.b6
+
+b6
+
+b7C
+
+OF
+
+UNSUB ARMED AND DANGEROUS.
+
+DCA
+
+. FBI SEATTLE CLR
+
+DB Cooper-4578
+
+---
+
+## Page 257
+
+OPTIONAL, FORMA NO, 10
+
+MAY 106Z EDITION
+
+G54 FRMA (41 C772) 501-15.8
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81 Sub D)
+
+DATE:
+
+12/16/71
+
+SuB-D
+
+FROM : SA
+
+PARACHDTES
+
+SUBJECT: NORJACK
+
+On 12/16/71 at 5:50 DM SAL
+
+received a telephone
+
+call from
+
+Seattle. telenhone
+
+Tie works for the
+
+telephone l
+
+has had
+
+some experience with chutes, although he has
+
+never had to jump.
+
+on 12/16/71 in company of a realtor, he examined some proerty
+
+miled east of l
+
+Washington on State Highway
+
+(This can
+
+also be described as being about 3 miles west
+
+[liashinaten.)
+
+The property is on the south side of the road.
+
+in buying the property.
+
+The property isl
+
+move soon to
+
+Lemployed in
+
+lis to
+
+the above property to
+
+has a section map
+
+• of
+
+were not home when he saw the property.
+
+the property, if needed.)
+
+The property has two houses on it. The main house is white gith
+
+two dedar trees
+
+in the front. A quarter mile east of the main house is
+
+another house with a garage.
+
+In this garage
+
+saw, on 12/16/71 an orange and white
+
+could not see the rigging or harnass. From the way
+
+was draped, it appeared whoever did it ras familiar mith
+
+chutes.
+
+SA THOMAS CAREER was advised at 6:10 pm. lle instructed to advise
+
+6:15 pm MANNING was not home. Message left to call night clerk,
+
+who is to give MANNING the above information.
+
+CNG
+
+(2)
+
+manning 61478M12/1617wels
+
+TIlL
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-1292
+
+SEARCHED
+
+DEC 1 61971
+
+FBI • SEATILE
+
+501Q-106
+
+su
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4579
+
+---
+
+## Page 258
+
+TO
+
+FROM :
+
+SUBJECT:
+
+ONTIONAL PORN NO, 10
+
+MAY 1DEZ EDITION
+
+GSA FAHR (6) CA) 204-118
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81) (P)
+
+DATE:
+
+12/16/71
+
+SA
+
+UNSUB, aka
+
+Dan Cooper
+
+NORTHWEST AIRLINES
+
+FLIGHT #305
+
+PORTLAND TO SEATTLE
+
+13/24/71
+
+CAA - HIJACKING;
+
+EXTORTION
+
+(00:SE)
+
+Re: Witness
+
+was contacted at his home,
+
+Washington, and furnished
+
+the tollowing intormation:
+
+advised that since talking with his parents
+
+who had subsequently
+
+talked to
+
+County Sheriff's Office,
+
+he has since discovered
+
+that the person whom he
+
+nad suspected of being the hejacker eas
+
+already been interviewed by FBi Agents.
+
+stated that he
+
+was referring to a person he knows only by the name of
+
+(Last Name Unknown).
+
+(Last Name Unknown-INu
+
+is known
+
+height 5 lo
+
+as being a
+
+weight 180, build
+
+marital status
+
+further stated it is known that
+
+had been arrested on
+
+state of Washington.
+
+(ANU) Is currently serving time
+
+place of incarceration is unknown.
+
+(LNU) is released on weekends.
+
+(LNU)
+
+]knowledge
+
+although
+
+• the
+
+Known,
+
+however, that
+
+161-81-1293
+
+.... INDEXED
+
+C-seattle
+
+BME/rmh
+
+b6
+
+b7C
+
+who.
+
+b6
+
+b7C
+
+67C
+
+b6
+
+b7C
+
+66
+
+b7C
+
+8010-108
+
+ICan
+
+Buy U.S. Savings Bonds Regularly on she Pell Savings Prame
+
+b6
+
+b7C
+
+ritain
+
+DB dboper-4580
+
+---
+
+## Page 259
+
+aimedia
+
+SE 164-81
+
+stated that he had been told by other persons
+
+at the
+
+(LNU) had been inter-
+
+viewed by Special Agents of the FBI concerning the hijacking.
+
+further stated that he has heard from other persons that
+
+(LNU) has been
+
+since the
+
+hijacking has occurred.
+
+Istated that he now assumes that
+
+had nothing to do with the hijacking but became suspicious
+
+when he associated
+
+(LNU's) past history of crime along with
+
+his skyjumping abilities.
+
+at the
+
+lis currently working the graveyard shift
+
+Washington, and can be
+
+reached at telephone number [
+
+b6
+
+b7C
+
+2
+
+DB Cooper-4581
+
+---
+
+## Page 260
+
+SAC, SBATTLE (164-81) (P)
+
+12/16/71
+
+SA
+
+UNSUB, aka
+
+Dan Cooper
+
+NORTHWEST AIRLINES
+
+FLIGHT $305
+
+PORTLAND TO SEATTLE
+
+11/24/71
+
+CAA - HIJACKING;
+
+EXTORTION
+
+(00:SE)
+
+66|
+
+b7C
+
+Re: Witness
+
+b6
+
+b7C
+
+b6
+
+67C
+
+nas contacted at his nome,
+
+Mashington, and
+
+Furnished
+
+the following In ormation:
+
+advised that gince talking with his parents
+
+who had subsequently
+
+talked to
+
+County Sherift's Office,
+
+Oregon, he has since discovered
+
+that the person whom he
+
+had suspected of being the hijacker has
+
+already been intervlewed by FBI Agents.
+
+stated that he
+
+was referring to a parson he knows only by the name of
+
+(Last Name Unknown).
+
+(Last Name Unknown-IND is known
+
+as being a
+
+] height 5'10"
+
+weight 180, build
+
+mediu to a tatu, dark brom, oyo color unknown, complexon
+
+had been arfested on
+
+further stated it is know that (INU)
+
+I State of lashington.
+
+knowledge
+
+(LNU) is currently serving time
+
+although
+
+the
+
+Dlage of incarceration is unknown.
+
+It is known,
+
+however, that
+
+(LNU) Is released on weekends.
+
+164-81-1293
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+(2-seattle
+
+BHE /rih
+
+(2)
+
+mB Cooper-4582
+
+---
+
+## Page 261
+
+SE 164-81
+
+Istated that he had been told by other persons
+
+at the
+
+_(LNU) had been Inter-
+
+viered
+
+by Special Agents of the FBl concerning the hijacking.
+
+further stated that he has heard fron other persons that
+
+(LNU) has been
+
+since the
+
+hacking has occurred.
+
+stated that he now assumes that
+
+had nothing to
+
+do with the hijacking but became suspicious
+
+when he associated
+
+(INU's) past history of crine along with
+
+his skyjumping abifttles.
+
+at the
+
+Tis currently working the graveyard shift
+
+Mashington, and can be
+
+reached at telephone number
+
+b6
+
+b7C
+
+b6|
+
+2
+
+DB Cooper-4583
+
+---
+
+## Page 262
+
+TO
+
+FROM :
+
+SUBJECT:
+
+ORTIONAL FORM NO 10
+
+1967 EDITION
+
+ESATAMA (41 CT1) 101-120
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: SAC, SEATTLE (164-81)
+
+DATE: 12/13/71
+
+SA
+
+UNSUB, aka Dan Cooper,
+
+NORTHWEST AIRLINES
+
+FLIGHT #305
+
+PORTLAND TO SEATTLE
+
+11/24/71
+
+CAA - HIJACKING; EXTORTION
+
+00: SEATTLE
+
+RE: SUSPECT
+
+On 12/13/71,l
+
+I advised she could located only
+
+personnel
+
+is concerned with a
+
+file regardina al
+
+Land this file
+
+individual began workl
+
+I His employment relationship was
+
+terminated on
+
+lue to a general reduction in force
+
+as file indicated that he had l
+
+A review of his file
+
+furnished the following descriptive information:
+
+ADDRESS:
+
+DOB:
+
+POB:
+
+HT:
+
+WT: 165 lbs.
+
+HAIR:
+
+Dark brown
+
+BYES:
+
+SSAN:
+
+PREVIOUS
+
+ADDRESSES:
+
+PARENTS:
+
+Father:
+
+Mother:
+
+(Deceased)
+
+RELATIVES:
+
+b6
+
+B7C
+
+b6
+
+b7C
+
+b6
+
+bIC
+
+b6
+
+b7C
+
+5010-108
+
+164-81-1294
+
+MILITARY:
+
+HOEXED.
+
+furnished a photo of|
+
+takerl
+
+b6
+
+a copy of which is being made
+
+a part
+
+the file Bi-saine
+
+b7C
+
+JHM: j'Buy U.S. Savings Bonds Regularly on she Payroll Savings Plan
+
+I Aper-4584
+
+---
+
+## Page 263
+
+:
+
+FROM :
+
+SUBJECT:
+
+ITIONAL FORMA NO 10
+
+MAY IPER EDITION
+
+ESA TAMA (11 07X) 101-120
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)
+
+DATE: 12/13/71
+
+SA
+
+UNSUB, aka Dan Cooper,
+
+NORTHEST AIRLINES
+
+FLIGHT #305
+
+PORTLAND TO SEATTLE
+
+11/24/71
+
+CAA - HIJACKING; EXTORTION
+
+00: SEATTLE
+
+RE: SUSPECE
+
+00 12/13/71,
+
+advised she cond Located only one
+
+personnel 11te regardina a
+
+Land this file
+
+is concerned with a
+
+individual began work
+
+This employment relationship has
+
+terminated onl
+
+due to a
+
+His filo indicated that he had general reduction in force.
+
+turnashed the followang descriptavo informayton or no file
+
+ADDRESS:
+
+ров:
+
+HT:
+
+WT: 165 Ibs.
+
+HAIR:
+
+Dark brown
+
+EYES:
+
+SSAN:
+
+PREVIOUS
+
+ADDRESSES:
+
+PARENTS:
+
+Father:
+
+Mother:
+
+(Deceased)
+
+RELATIVES:
+
+'b6
+
+b7C
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+164-81-1294
+
+JOLITARY:
+
+furnished a photo ofl
+
+telent
+
+a copy of which is being made
+
+• a part.
+
+the file voi-starta
+
+JW: 1 Buy U.S. Savings Bonds Regularly on she Payroll Savings evan
+
+b6
+
+b7C
+
+Di Cooper-4585
+
+---
+
+## Page 264
+
+TO
+
+OPTIONAL FORM NO 10
+
+MAY 1062 EDITION
+
+ESA FFMR (4I 6774) 101-118
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: SAC, SEATTLE (164-81
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+DATE: 12/16/71
+
+b6
+
+b7C
+
+Eling
+
+RE:
+
+On December 13, 1971,
+
+telephone
+
+advised that l
+
+Iwas injured on November 24,
+
+1971, while unloading a truck at the
+
+Portland, Oregon.
+
+NDS: set
+
+(2)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-1295
+
+19F = SEATTLE
+
+5010-108
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4586
+
+---
+
+## Page 265
+
+TO
+
+SAYIN CONTENNA 10
+
+MAX PALEO CER NOTUSLA
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: SAC, SEATTLE (164-81
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+DATE: 12/16/71
+
+b6
+
+b7C
+
+Re Portland teletype to Seattle, 12/8/71.
+
+SUSPECT
+
+On December 13, 1971,
+
+telephone
+
+Mashington, advised that|
+
+retired
+
+so, would be the only person he knows
+
+that could provide information on former employees of the
+
+Northwest Industrial Security Service who had men work-
+
+1ng at & track
+
+because l
+
+on a contract basis.
+
+Jadvised that the name
+
+is not tamiliar to him.
+
+Deputy
+
+Sheriff's Office,
+
+and Officer|
+
+JPD,
+
+caused & search
+
+of their records which revealed nothing identifiable with
+
+the captioned suspect.
+
+NDS: set
+
+(3)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81.1296
+
+SEARCHED...
+
+SERIALITO STA
+
+3000. n
+
+DEC @ 61971
+
+FBI - SEATTLE
+
+8010-10%
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4587
+
+---
+
+## Page 266
+
+SAC, SEATTLE (161-82
+
+SA
+
+NORJAK
+
+12/16/71
+
+66 |
+
+b7C
+
+Re Portland teletypo to Seattle, 12/8/71.
+
+SUSPECT
+
+On December 13, 1971, L
+
+telephone L
+
+Mashington, advised thatl
+
+retired|
+
+30, would
+
+be the only person he knows
+
+that could provide information on former employees of the
+
+Nos heat radustrial Socucaty Service who had men work-
+
+ing at s track
+
+bacause l
+
+on & contract basis.
+
+advised that the name
+
+1s not familiar to him.
+
+Deputy
+
+Shertft's Office,
+
+and Officer
+
+02 their records which revealed, nothing dentitlable with
+
+caused & search
+
+the captioned suspect.
+
+NDS: set
+
+(3)
+
+b6|
+
+b7C
+
+b6
+
+b7c
+
+b6|
+
+b7C
+
+64:8L12161
+
+DB Cooper-4588
+
+---
+
+## Page 267
+
+F0-36 (R8v-5-22-64)
+
+00l
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+F BI
+
+Date: 12/16/71
+
+(Type in plaintexi or code)
+
+URGENT
+
+(Priority)
+
+b6
+
+b7C
+
+TO
+
+SAC, LOS ANGELES
+
+PORTLAND (164-41)
+
+FROM:
+
+SAC, SEATTLE (164-81)
+
+NORJAK.
+
+RE PORTLAND TELETYPE DECEMBER FIFTEEN LAST.
+
+RE
+
+INVESTIGATION CONCERNING|
+
+HAS PREVIOUSLY
+
+ELIMINATED HIM AS HE WAS AT
+
+CALIFORNIA ON NOVEMBER
+
+TWENTY-FOUR, NINETEEN SEVENTY-ONE.
+
+ARMED AND DANGEROUS.
+
+P
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+JSD :kdl
+
+(2)
+
+164-81-1297
+
+Approved:
+
+Special Agem in Thys
+
+---
+
+## Page 268
+
+RODi SE PLAIN
+
+11-18AM URGENT
+
+TO LOS ANGELES
+
+PORTLAND (164-41)
+
+FROM SEATTLE (164-81)
+
+12/16/71
+
+JUT
+
+NORJAK.
+
+RE PORTLAND TELETYPE DECEMBER FIFTEEN LAST.
+
+RE
+
+INVESTIGATION CONCERNINGI
+
+ELIMINATED HIM AS 'HE WAS AT
+
+TWENTY-FORU, NINETEEN SEVENTY-ONE.
+
+ARMED AND DANGEROUS.
+
+END
+
+FBI PORTLAND
+
+GEO
+
+CLR
+
+HAS PREVIOUSLY
+
+CALIFORNIA ON NOVEMBER
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+DB Cooper-4590
+
+1 64-81-1297
+
+---
+
+## Page 269
+
+PG 164-93
+
+SE 164-81
+
+RHS/ms1
+
+(2)
+
+At Pittsburgh, Pennsylvanta:
+
+On November 30. 1971, a roman who identified herself
+
+the Pittsburgh office of the fi to advise thee composite
+
+Pa,, telephoned
+
+photograph of the unknown subject in this matter, which recently
+
+sh a co ten mean e in the pittsburgi
+
+is similar to a person
+
+area.
+
+recalled the name of this individual as
+
+She described this man as follows:
+
+Race:
+
+White
+
+Male
+
+Approximatelyl
+
+Height:
+
+weight:
+
+Build:
+
+Hair:
+
+Address:
+
+Education:
+
+58711
+
+140 Ibs.
+
+Slender
+
+Seattle, Washington
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Former Employer:
+
+Military Service:
+
+The following Investigation was conducted by SA
+
+At California, Pennsylvanda:
+
+Office of the
+
+so isra a recentl State one, resort on tune sable
+
+either a current or former record for a student by
+
+the name of
+
+b6 |
+
+b7C
+
+b6 |
+
+b7C
+
+164•81
+
+1298
+
+SEARCHED-
+
+-_INDEXED.
+
+SEMANZED AL FILEDA
+
+DEC 871971
+
+DB Cooper 4591
+
+---
+
+## Page 270
+
+PG 164-93
+
+SE 164-81
+
+RHS/ms]
+
+At Pittsburgh, Pennsylvania:
+
+was recontacted
+
+on December 3, 1971, and requested to attempt to obtain more
+
+descriptive information regarding the individual she had
+
+previously reported to the FBI on November 30, 1971.
+
+recontacted SA
+
+on December 6,
+
+1971, at which time she stated she had determined the true
+
+name of the Individual in question was
+
+She advised
+
+that she mati
+
+and that she was acquainted
+
+with him for a period of approximately one month at that time.
+
+told her he was originally from the State of Hashington,
+
+that he was a paratrooper in
+
+D6
+
+b7C
+
+b6
+
+b7C
+
+At California, Pennsytanta:
+
+On December 7, 1971,
+
+Office of
+
+the Registrar, California State College, advised
+
+that according
+
+to school records one
+
+born
+
+Hashington, was a student at the college,
+
+His residence address while he attended the
+
+college wasl
+
+pennsylvania.
+
+His mother's name
+
+Ino address
+
+shown; and it is indicated that his lather is deceased.
+
+According to school records, [
+
+Indicates that
+
+also indicates
+
+that a transcript of
+
+record was forwarded to
+
+Pa,, in
+
+are listed as
+
+no addresses shown.
+
+I Seattle, Washington, and received
+
+The £110
+
+The file
+
+scholastic
+
+b6
+
+67C .
+
+DB Cooper-4592
+
+---
+
+## Page 271
+
+PG 184-93
+
+X 164-81
+
+(1)
+
+At Pittsburgh, Ponnaylvande
+
+On Nonamber 30, 1971 A NoR Mo Went 210d heraple
+
+Pa,, talophoned
+
+tho PIttsburgh Offica of the IBl to advieo that the compostte
+
+Raco:
+
+BoX:
+
+Ада:
+
+Hoight:
+
+taight:
+
+Bulld:
+
+Hatt:
+
+Addross:
+
+Iducation:
+
+Irecalled the name of this Individual as
+
+sho dosortbed this nan as 1011018:
+
+Malto
+
+Ma lo
+
+Approximataly
+
+5*790
+
+140 lba.
+
+slonder
+
+attle, Hashinston
+
+¡откаї БАРОА:
+
+Military strtoo:
+
+Tho 10110niny 1nr9stigatlon vas conducted by sA
+
+At Calisornia, Pennaylvania:
+
+On Decomber '3, 1971,
+
+Offloo of the
+
+Rogistrat, Calliornia Fato Collego, adthead that sho vas unablo
+
+to locato ofther a current or lorner rocord 105 & student by
+
+the nus of
+
+161: 81-1298
+
+DEC 70. 1971
+
+230
+
+DB Cooper-4593
+
+b6
+
+b7C
+
+b6
+
+67c
+
+b6
+
+b70
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 272
+
+PC 164-93
+
+A. 164-81
+
+KH S/mB]
+
+(2)
+
+At Pittaburgh, Pennayirania:
+
+van rscontroted
+
+on Deconbar 3, 1971, and requestod to attempt to obtain moro
+
+descriptire Information Yogarding the Individual sho had
+
+previously raported to the IBI O1 November 30, 1971.
+
+rocontrated dA
+
+on Deconber 8,
+
+1971, at which tine she statod she had dotermined the true
+
+of the indiyidual in question vasI
+
+I she adylead
+
+that she retl
+
+Jand that sho was acquinted
+
+with hin for a period of approximatoly ons nonth at that timo.
+
+told bor ho vas originally fron the stato of Mashington,
+
+that he ma a peratrooper in l
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+At California, Pennsylanta:
+
+On December 7, 1971,
+
+offico of
+
+the sagiatra, Californie Atate colton, advice
+
+that according
+
+to achool recorda one
+
+washington, vas a student at the college,
+
+His residence address whilo he attendod the
+
+Pannsylvania. b6
+
+Hia sotbor'a nano ln
+
+no address
+
+whown; and it la Indiented that al tatiar iu deceased.
+
+Accordine to school regardo,
+
+seattlo, mashington, and received
+
+Tha 1110
+
+Indicates that
+
+The 1110
+
+a120 indleaten that a transcript orl
+
+scholantic
+
+rocord ma ferraaded. tol
+
+Pare In
+
+are Tinted as
+
+по пастонвав элотк.
+
+DB Cooper-4594
+
+---
+
+## Page 273
+
+12/14/71
+
+AINTEL
+
+T0:
+
+SAC, BRATTZE (161-81)
+
+ПАС, РІТІДТВСЯ (181-93) (P)
+
+datod 12/1/1 PAttaburgh airtol to at. Louis and deattle
+
+1o: suspoct
+
+Inclosod foT soattlo Are nine copios of an insert
+
+reportine background investigation regarding suspect
+
+conducted at Pittsburgh and Californts,
+
+Pennsy Ivania.
+
+AMMED AND DANCIROUS.
+
+12-5
+
+seattlo (Encls, 9)
+
+2 - Pittsburgh
+
+MW1S1
+
+(4)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-1299
+
+÷ 71
+
+---
+
+## Page 274
+
+ND-36 (R01-5-22-81)
+
+FBI
+
+Date:
+
+12/13/71
+
+Transmit the following in
+
+(Type in plainiexe or code)
+
+Via
+
+AIRTEL
+
+AIRMAIL.
+
+(Priority)
+
+SAC, SEATTLE (164-81)
+
+SAC, LAS VEGAS (164-60) (P)
+
+UNSUB, aka
+
+Dan Cooper
+
+HIJACKING OF NORTHWEST AIRLINES FLIGHT 305
+
+11/24/71
+
+CAA - HIJACKING; EXTORIION
+
+00: SEATTLE
+
+Re Las Vegas airtel to Seattle, 12/9/71.
+
+Enclosed for Seattle and San Francisco are three (3)
+
+ographs are being forwarded to the
+
+receiving offices for utilization in the investigation of this
+
+matter.
+
+UNSUB CONSIDERED ARMED AND DANGEROUS.
+
+D- Seattle (Enc. 3) we
+
+2 - San Francisco (Enc. 3) (164-220)
+
+1 - Las Vegas
+
+JEH: jhp
+
+(5)
+
+b6
+
+b7C
+
+b6|
+
+b7c
+
+164-81-1300
+
+SEEN 3113 BLED -
+
+INDEXERN
+
+DEC 10/1971
+
+Approved:
+
+• Sent ~
+
+Special Agent in Charge
+
+_M
+
+Per.
+
+I U.S. GOVERNMENT PRINTING OFFICE, DE DB-CI@Oper-4600
+
+---
+
+## Page 275
+
+FD-15 (ROY, 5-22-81)
+
+Transmit the following In
+
+Via
+
+AIRTEL
+
+FBI
+
+Date:
+
+12/14/71
+
+(Type in plaintexi or code)
+
+(Priority)
+
+TO : /
+
+SUBJECT:
+
+SAC, SEATTLE (164-81)
+
+SAC, PITTSBURGH (164-93) (P)
+
+NORJAK
+
+Re Pittsburgh airtel to St. Louis and seattle
+
+dated 12/7/71.
+
+Re: Suspect
+
+Enclosed for seattle are nine copies of an insert
+
+reporting background investigation regarding suspect
+
+conducted at Pittsburgh and California,
+
+PennsyIvania.
+
+ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+RHS/ms 1
+
+164-81-1299
+
+DEC 10,1971
+
+ISSa
+
+b6
+
+b7C
+
+Approved: :-
+
+- Sent
+
+Special Agent in Charge
+
+-M Per
+
+# U.S. GOVERNMENT PRINTING OrREE I DBr@ooper-4601
+
+---
+
+## Page 276
+
+FD-36 (Ror, 5-22-64)
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date:
+
+12/15/71
+
+(Type in plaintext or codel
+
+AIR MAIL
+
+(Priority)
+
+. *
+
+Approved:
+
+SAC, SEATTLE (164-81)
+
+Fan We, SecRETo (164-50) (0)
+
+SUBJECT:
+
+NORJAK
+
+00: Seattle
+
+Re suspect
+
+Enclosed for Seattle is one copy of FBI
+
+Identification Record, FBI number L
+
+Jand one copy of California
+
+State Bureau of Criminal Identification and Inves-
+
+tigation (CII) photo, CII number
+
+regarding
+
+On 11/29/71, L
+
+California
+
+Correctional Industries,
+
+Sacramento, California, con-
+
+tacted the Sacramento Office regarding the highjacking
+
+which took place on 11/24/71.
+
+advised he had formerly been employed
+
+and he recalls
+
+a prisoner named |
+
+which he felt
+
+resembles the composite drawing in the newspapers of
+
+unsub.
+
+further stated
+
+had also been an
+
+inmate at l
+
+which would probably make him familiar with that
+
+general area where the unsub
+
+disappeared.
+
+further stated that sometime
+
+he recalls an
+
+¿ - Seattle (Encls. 2)
+
+164-81-1302
+
+2 -
+
+Sacramento
+
+SEARCHED
+
+RJA/dar
+
+(4)
+
+Rest
+
+DEC 07971
+
+FOL- CRATTLE
+
+- Sent._
+
+Special Agent in Charge
+
+- M
+
+# U.S. GOVIRN
+
+197
+
+=419-131
+
+OB Cooper-4602
+
+b6
+
+• b6
+
+b6
+
+67C
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 277
+
+SC 164-50
+
+RJA/ dgr
+
+Individual resembling
+
+attending a skydiving
+
+school possible in L
+
+also
+
+indicated to the best of his knowledge L
+
+had
+
+always told other cellmates he was going to pull
+
+a big job in the future.
+
+LEADS
+
+b6
+
+b7C
+
+SEATTLE
+
+incarceration.
+
+WASHINGION:
+
+Will verify
+
+2*
+
+DB Cooper-4603
+
+---
+
+## Page 278
+
+12/15/71
+
+AIRTEL,
+
+AIR MAIL
+
+TO:
+
+SAC, SEATTLE (264-81)
+
+FROM;
+
+SAG, SACRAMENTO (164-50) (P)
+
+SUBJECT: NORJAK
+
+00: Seattle
+
+Re suspect
+
+Identification Record, FBI number
+
+and one copy of California
+
+State Bureau of Criminal Identification and Inves-
+
+tigation (CII) photo, CII number
+
+regarding
+
+On 11/29/71, [
+
+7 California
+
+Correctional Industrles, Sacramento, California, con-
+
+tacted the Sacramento Office regarding the highjacking
+
+which took place on 11/24/71.
+
+advised he had formerly been employed
+
+and he recalls
+
+& prisoner named |
+
+which he felt
+
+resembles the composite drawing in the newspapers of
+
+unsub.
+
+I further stated|
+
+had also been an
+
+inmate at
+
+which would probably nake him faniliar with that
+
+general area where the unsub disappeared.
+
+further stated that sometime
+
+he recalls an
+
+2- Seattle (Encls. 2)
+
+164-81-1302
+
+Sacramento
+
+ing:
+
+(4)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4604
+
+---
+
+## Page 279
+
+SC 164-50
+
+RJA/ dgr
+
+individual resembling
+
+attending a skydiving
+
+school possible in
+
+also
+
+indicated to the best of his knowledge L
+
+]had
+
+always told other cellmates he was going to pull
+
+a big job in the future.
+
+LEADS
+
+b6
+
+b7C
+
+SEATTLE
+
+Incarceration.
+
+WASHINGTON: Will verify
+
+b6
+
+b7C
+
+2*
+
+DB Cooper-4605
+
+---
+
+## Page 280
+
+FD -18 (R07-5-22-64)
+
+Transmit the following in
+
+Via.
+
+AIRTEL
+
+FBI
+
+Date:
+
+(Type in plaintext or code)
+
+(Priority)
+
+12/13/71
+
+, TO:
+
+SAC, BALTIMORE
+
+SAC, ALEXANDRIA (164-72) - P-
+
+FROM:
+
+UNSUB; •
+
+NORTHWEST AIRLINES FLIGHT 305,
+
+PORTLAND TO SEATTLE, 11/24/71
+
+CAA - HIJACKING; EXTORTION
+
+(00: SE)
+
+Re Phoenix airtel to Baltimore, 12/1/71, and
+
+WFO airtel to Alexandria, 12/6/71.
+
+Info made available byl
+
+Review ofl
+
+folder at
+
+Va., reflected the following information:
+
+Twas hired
+
+- *
+
+official personnel
+
+Va.
+
+work entailed
+
+3 - Baltimore
+
+@ - Seattle (164-81)
+
+1 - Alexandria
+
+JJS: sW
+
+(5)
+
+Approved:
+
+1 64-81-1303
+
+SEARCHED
+
+Sent
+
+__ M
+
+Special Agent in Charge
+
+-Per
+
+b6
+
+b70
+
+b6|
+
+b7C
+
+b6 |
+
+b7C
+
+b6 |
+
+b7C
+
+b6
+
+b7c
+
+---
+
+## Page 281
+
+AX 164-72
+
+...
+
+employment record showed previous employment
+
+b6
+
+b7C
+
+Previous Employment
+
+-
+
+b6
+
+b7C
+
+Education
+
+b6
+
+b7C
+
+Organizations
+
+b6
+
+b7C
+
+-2-
+
+DB Cooper-4607
+
+---
+
+## Page 282
+
+AX 164-72
+
+Militasy
+
+b6|
+
+b7C
+
+Description
+
+white male,
+
+DPOB
+
+b6|
+
+b7C
+
+SSAN
+
+Home address-|
+
+LEAD
+
+BALTIMORE
+
+AT
+
+MD.
+
+Conduct investigation at
+
+I Md., to determine if l
+
+resides there. Obtain
+
+background information to determine if|
+
+possibly
+
+identical with unsub.
+
+ARMED AND DANGEROUS.
+
+b6]
+
+b7C
+
+- 3-
+
+DB Cooper-4608
+
+---
+
+## Page 283
+
+i
+
+Sirs,
+
+I new from the start that I nouldn't be caught.
+
+I didn't rob Northwest Orient because I thought it
+
+would be romantic, heroic of any of the other euphemisus
+
+that seem to attach themselves to situations of high
+
+I'I no modern day Robin Hood. Unfortunately do have
+
+• only 14 months to live.
+
+My life has been one of hate, turmoil, hunger and more
+
+hate, this seemed to be the fastest and nost profitable
+
+way to gain a few fast grains of peaco of ainà.
+
+I don't blave people for hating re for what I've done
+
+nor do i blame anybody for wanting me to be caught and
+
+punished, though this can never happen,
+
+Here are some (not all) of the things working against
+
+the authoritles:
+
+I'e not a boasting nan
+
+lift no fingerprints
+
+wore a toupee
+
+I wore putty make-up
+
+They could add or subtract from the composite a hundred
+
+times and not come up with an accurate description; and
+
+we both know It.
+
+I've cone and gone on several airline flights already
+
+and an not holed up in some obsure backwoods town.
+
+Neither am I a psycho-pathic killer. As a matter of
+
+fact I've never even recelved a speeding ticket.
+
+Thank you for your attention.
+
+D. B. COOPER
+
+Wash Post - 7171716848
+
+New York Iimes -
+
+Seattle Limes -
+
+Los Angeles Times -
+
+981g1-6
+
+164-81-1304
+
+DEC 071971 0
+
+FBI - SEATTLE
+
+DB Cooper-4609
+
+GUIT
+
+---
+
+## Page 284
+
+itirid ndl dliadlir",
+
+aiett
+
+!:!4
+
+ScARuiai
+
+"rii!
+
+c te.
+
+од то viin-ileg: i!
+
+•!dtiad.nitoid
+
+..
+
+Te cl.111900d
+
+.:.=
+
+:?
+
+elwot ig tire
+
+11 4.t
+
+1.s :.i
+
+„ii"jani
+
+•1I:5 + 1116 21
+
+tor Pie cGrroüife
+
+detfrtate driaal igre ald
+
+dt "a?:
+
+Mu.ste
+
+caae&1
+
+sid.dd
+
+DB Cooper-4610
+
+-.. *
+
+Manaring Publisher
+
+Washington,Post News Paper
+
+Washington D. C.
+
+11 DEC
+
+197)
+
+PM
+
+SERVICT
+
+Chcsmas
+
+icihries
+
+---
+
+## Page 285
+
+12/15/71
+
+IC;
+
+DIUNCE, FBI (164- 2121)
+
+ally laD (164-163) (2)
+
+Sub- 130
+
+(00:5F)
+
+Ro Seattla teletype ta 1770, les Zonk, ani
+
+103 ingeles, Iatod 12/13/71.
+
+envelopo pastonikod 12/11/71 da stato of lasidagtoes,
+
+E1p code $80,
+
+closeu for los Angeles, low Jork, e
+
+loatila 15 asantony cach of susa
+
+22D. 3. 000VE 1 2091031
+
+belosed Iettar for Iwas, thich 15 a carbe
+
+Jor "The Hashduston Post", 1515 L Stroet,
+
+T.Wo, Washington, D, C. (irD),
+
+Tropested that
+
+his Identlty be protected as the sourco of tiz letter.
+
+3n Eutronts (5xxc, 2)
+
+1- I0s Angolas (154-497) (2xc.1) (Info)
+
+In Her Tarl: (164-627) (E3c,1) (InIO)
+
+settlo (164-31) (doc. u ea
+
+164-81-1305
+
+C371:L90
+
+(3)
+
+SLICKED
+
+66
+
+b7C
+
+67D
+
+---
+
+## Page 286
+
+170 154-269
+
+'For Information of WiI Isboratory, referented.
+
+teletype reflects condus of son lotter received by the
+
+"Jow Tock Ilnes", "Seattle I'lnes", and 'los ingeles
+
+the sama sens stitcod by to la capetoned batter.
+
+The Inttlals "GIH"" and tha date 112/14/71" on
+
+the lover right cousers on the back of both the cryslope
+
+and latter vere placed there by TD agent. The sigatficence
+
+of tie suriber 727171634t', appestiny nest to the copy corest
+
+In the lover last comer on the face of the letter, renades
+
+tasksonali
+
+Afarts Were sade by WO to preserve the latter
+
+had are lope For Tote Flee at date ar, both sere
+
+handted by an inions zumber of incluldeals at
+
+Washdagton Post" prlor to botog obtalsed by kro.
+
+PIUEST OF TED TURERU
+
+Isa FEI Inboratory 1s requested to dotordna the
+
+style of type and nabe ai typewilter utillied in typing the
+
+letter and emmalopa, The letter should also ba comicred
+
+With any coples of sane furnished by otiver divladors.
+
+The step ou tha somelope sixeild be compered sdth.
+
+the stamps on azy othar expelopas subaltted by other divioles
+
+to deterise 1f at out thas they wore pout of the sune boel
+
+af stange.
+
+The IdentifIcation Division is requental to exene
+
+both the letter and ermelope for the presence of my Intent
+
+Fingerputats of value.
+
+It li also requented tisat the above coclosures be
+
+mut seto to ce thi interdate eat one tech would
+
+112 «
+
+DB Cooper-4612
+
+---
+
+## Page 287
+
+VF0 164-169
+
+15703 C43
+
+DB Cooper-4613
+
+---
+
+## Page 288
+
+FD-56 (R04-5-22-64)
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+AIRMAIL
+
+FBI
+
+Date:
+
+(Type in plaintext or code)
+
+(Priority)
+
+12/11/71
+
+TO
+
+: SAC,' SEATTLE (164-81)
+
+FROM : SAC; BUTTE (164-26) (P)
+
+SUBJECT: NORJAK
+
+Reurnitel, 12/13/71.
+
+Re:
+
+(phonetic)
+
+U:S: Forest Service (USFS), Smoke
+
+Jumping School and Aerial Depot, Missoula, Montana,
+
+advises
+
+no one with a phonetically similar last name tol
+
+ever worked out of Region #1.
+
+Glent
+
+- Seattle (AM)
+
+2 -
+
+Butte
+
+AJEM/jrd
+
+(1)
+
+164-81-1306
+
+SEINGHED.
+
+.., INDEXED.
+
+SER LISM,
+
+DECO÷1971 0
+
+Approved:
+
+Special AgeN
+
+in Sharge
+
+Sent
+
+•M Per ..
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+---
+
+## Page 289
+
+12/14/71
+
+AIRIEL
+
+AIRMAIL
+
+3 SAC, SBATTIE (101-81)
+
+FROM : BAC, BUTTE (161-26) (P)
+
+SUBJECI: MORJAI
+
+Rauraltal, 12/13/71.
+
+(phonatto)
+
+U.S. Torest ServiCe (USTB), Buole
+
+Jumping School and Aorial Depot, Mlanoula, Montana,
+
+advises
+
+check of records, pant and prosent anployean, ravaala no one
+
+by the above name jumped through Ragton i1, uses further,
+
+no one with a phonatically alullar Inst nana to
+
+aver worked out of Region #1.
+
+36
+
+b7C
+
+b6
+
+b7C
+
+2 - Boattle (AM)
+
+2 - Butte
+
+AJFK/jId
+
+(4)
+
+164-81 - 1306
+
+iing
+
+vig.
+
+Ms.
+
+DB Cooper-4615
+
+---
+
+## Page 290
+
+12-14-71
+
+AIRTEL
+
+AIR MAIL
+
+b6
+
+b7C
+
+rensul robber of
+
+: SAC, ALBUQUERQUE
+
+Frid State Bank.
+
+FROM : SAC, MILWAUKEE (164-37) (P) 1f Cuba
+
+SUBJECT: NORJAK
+
+corrales, 1. Men
+
+Re Bureau Nitel to all offices, 12-8-71.
+
+Upon viewing artist's conception of UNSUB
+
+SA JAIS B. BENNETT of the Milwaukee
+
+LEAD
+
+ALBUQUERQUE DIVISION
+
+Identity of bank robbery subject should be
+
+determined, as well as whereabouts of subject during
+
+pertinent period.
+
+(164-81)
+
+JBB: gme
+
+(4)
+
+164-81-1307
+
+im,
+
+д5.
+
+DB Cooper-4616
+
+---
+
+## Page 291
+
+FD:36 (Rov. 5-22-64)
+
+Transmit the following in
+
+TELETYPE
+
+Via
+
+FBI
+
+Date:
+
+12/15/71
+
+PLAINTEXT
+
+(Type in plainiext or code)
+
+NITEL
+
+(Priority)
+
+TO:
+
+SAC, PORTLAND
+
+FROM: SAC, SEATTLE (164-81)
+
+NORJAK
+
+RE:
+
+1
+
+INFORMATION RECEIVED BY SEATTLE THAT|
+
+IS AN EXPERT
+
+PARACHUTIST, A SKY DIVER AND A PILOT, AND BEARS STRONG RESEMBLANCE
+
+TO COMPOSITE DRAWING OF UNSUB. INFORMATION RECEIVED FURNISHES
+
+NO BACKGROUND CONCERNING
+
+HOWEVER, INDICATES THAT HE CAN
+
+PROBABLY BE LOCATED THROUGH
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+b6
+
+b7c
+
+PORTLAND DEVELOP BACKGROUND INFORMATION CONCERNING
+
+b6]
+
+b7C
+
+(P)
+
+JSD/rmh
+
+Approved:
+
+Special Agent in horse
+
+Sent
+
+164-81-1308
+
+11:10 PM Per -
+
+DUA
+
+U. F. GOVERNMEN PRINTING OFFICE, PR, SCgORgr-4617
+
+---
+
+## Page 292
+
+12/15/72
+
+AIRTEL
+
+AIRMAIL
+
+TO:
+
+SAC, OKLAHOMA CITY (164-58)
+
+FROM:
+
+SA, SEAT 1384-012689
+
+SUBJECT: NORJAK
+
+he Indicated to her that he possessed
+
+considerable knowledge of aircraft and fiying.
+
+In view of
+
+this it is felt that he could quite possibly be a pilot.
+
+LEAD:
+
+OKZAHOMA CITY
+
+AT OKLAHOMA CITY.
+
+_OKLAHOMA W111 Teview records of
+
+FAA concerning licensed pilots having the name of DAN or DANIEl
+
+COOPER and who night fit the description of Unsub in this
+
+matter.
+
+This lead is being set out aven though it is
+
+realized that Unsub quite possibly did not use his real name
+
+when purchasing his ticket.
+
+b6
+
+b7C
+
+? - Oklahona city
+
+(2) - Seattle
+
+JSD: bfr
+
+(4)
+
+164-81-1309
+
+DB Cooper-4618
+
+---
+
+## Page 293
+
+12/13/71
+
+PLAINTEXT
+
+TELETYPE
+
+URGENT
+
+: DIRECTOR, FBI (164-2111)
+
+FROM
+
+: SAC, LAS VEGAS (164-60)
+
+UNSUB, AKA DAN COOPER; NORTHWEST AIRLINES FLIGHT THREE ZERO
+
+FIVE, PORTLAND TO SEATTLE, NOVEMBER TWENTY-FOUR, SEVENTY-ONE,
+
+CAA - HIJACKING; EXTORTION; 00: SEATTLE.
+
+RE LAS VEGAS AIRIEL DECENBER SEVEN, SEVENTY-ONE, INDICATING
+
+TWENTY-FOUR FOOT RIP STOCK PARACHUTE BEING FORWARDED TO FBI
+
+LABORATORY FOR APPROPRIATE EXAMINATION.
+
+THIS PARACHUTE WAS INADVERTENTLY SENT TO THE FBI LABORATORY.
+
+IT SHOULD HAVE BEEN SENT TO THE SEATTLE OFFICE, BUREAU IS
+
+REQUESTED TO FORWARD PARACHUTE TO THE SEATTLE OFFICE.
+
+AIRMAIL COPY SEATTLE.
+
+164-81-1310
+
+1 - Las Yegas
+
+(L- Seattle (AM)
+
+MCD: Ifs
+
+(2)
+
+DB Cooper-4619
+
+• —I
+
+-
+
+-
+
+---
+
+## Page 294
+
+DATIONAL, FORM NO, 10
+
+2010-100-49
+
+MAY 1062 EDITION
+
+GS4 GEN, RED, NO, 29
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81) (P)
+
+DATE: 12/4/71
+
+FROM : S A THOMAS J, MANNING
+
+SUBJECT:
+
+UNSUB;
+
+orthwest Flight Number 300.
+
+Portland to soattle,
+
+11/24/71
+
+CAA - HIJACKING: EXTORTION
+
+00: Seattle
+
+It Is suggested that consideration be given to writing letters to
+
+thank the below listed organizations for their assistance in providing helicopter
+
+coverage of an extended search area.
+
+Weyerhaeuser, Company, Tacoma,
+
+on 11/26/71 B08 11/27/72 -
+
+Pilots were
+
+Hashtagton - provaded a lu man helicopter fr
+
+Weyerhaeuser, Longrion was also at the scene to
+
+b6
+
+67C
+
+assist de belciopter pillots.
+
+US Army - Capt,
+
+and CiR
+
+- both from
+
+AIR CAY TROOP. 3Nd Armor CaT. Regt. Ft.
+
+Lowls, Washington
+
+- Commanding officer 7o
+
+b6
+
+b7C
+
+MAjOr
+
+Two helicopters for morn ing of 11/26/11..
+
+donneville Power Aduinistration, Box 491, Vancouver,
+
+Hashington
+
+rilot - 4 san belicopter for 11/26, J1/27 and 11/30/71.
+
+:b6
+
+b7C
+
+but any letter should be addressed to the adanistrator, bià..
+
+was extresely cooperative and did an outstabding job. '
+
+Command Offscer 16. Col. (Yanoer Pelico Ofter)
+
+(Vancouver Polico Officer) one helicopter 11/27/77
+
+stone, 56
+
+Commaning Officer It. Col.
+
+Arty Reserto, Vancouver, Wis.
+
+b7C
+
+In event you doen It advisable lettere to SherlE CHAPLES B. GILL, COUl1E1
+
+County and to sheriff EUGENE COTTON, Clark County SO as well as to Chief of
+
+POLICO JOE MAX For his assistance and use of their piyaical Sactlities at Hoodland, Mo
+
+Washington would also be in order.
+
+164-81-1311
+
+(5) TIM
+
+-+1.+==7
+
+DB Cooper-4620/
+
+---
+
+## Page 295
+
+1015 Second Avenue
+
+Seattle, Washington 98104
+
+December 16, 1971
+
+SUB-Search
+
+President
+
+Weyerhaeuser Lumber Co.
+
+76derai 33%, Washington
+
+Dear Mr. Weyerhaeuser:
+
+I wanted to drop you a letter and let you know
+
+how appreciative we are of the services performed by
+
+as well as
+
+at Longvlew, in connection
+
+with the search for the individual who hijacked North-
+
+west Airlines Flight 305.
+
+The services of Messrs.
+
+together with the use of your helicopters, were arranged
+
+through
+
+While we have not found the hijacker up to this
+
+point, we are nonetheless most appreciative of the
+
+services of these men.
+
+Sincerely yours,
+
+b6 |
+
+b7C
+
+66
+
+b7C
+
+MILNES
+
+Special Agent in Charge
+
+b6
+
+b7C
+
+Regional Services Manager
+
+Weyerhaeuser
+
+Longview, Hashington
+
+164-81
+
+164-810950p22-4621
+
+---
+
+## Page 296
+
+310 164-31
+
+GRA/mab
+
+1
+
+The fellowing investigation was conducted by SA
+
+on December 1, 1971:
+
+b6
+
+b7C
+
+Major
+
+aswoLl Air Forco Base, Alabama,.
+
+b6
+
+b7C
+
+northwestorn section of the United States.
+
+The U. S, Parachute Association has divided the
+
+country up into rbout seven regions with a total nembership
+
+ot about 25,000 to 30,000 people.
+
+He further indicated that he firmly believed that
+
+If this had been a skydiver who committed the hijacking, the
+
+skydiver would not have come fron the Northwest section of the
+
+United States.
+
+He believed that since most skydivers know each
+
+other in a section of the country, this would preclude it being
+
+an individunl from that section of tho country.
+
+advised the jump from 10,000 fcct in
+
+bad weather is not a great physical feat and there would be no
+
+problem in jumping at that altitude in bad weather,
+
+He advised
+
+that an individual would not need jump boots and stated that
+
+he, hinself,has skydived with tennis shoes 'on.
+
+At this time Major
+
+mas shown an artist con-
+
+ception ot an individual, altegedly
+
+the hijacker of Northwest
+
+Air Lines Flight 305, and he indicated he did not know anybody
+
+further stated that whoever set up the hijacking
+
+further indicated that probably the reason behind tho four
+
+parachutes given to the hijacker was that the hijacker wanted
+
+to test the good faith of the people on the ground inasnuch as
+
+a skydiver would be able to tell whether or not parachutes were
+
+operable.
+
+He further indicated that if two parachutes were left
+
+behind in the aircraft, the hijacker could have dropped one
+
+'chutc:and activated it as a decoy to ward off any trailing-air-
+
+craft, and then could have bailed out after the decoy 'chute was
+
+dropped,
+
+164-81-1313
+
+DEC 10:1971
+
+FBI - SEATTLE
+
+тек
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+DB Cooper-4622
+
+---
+
+## Page 297
+
+MO 164-34
+
+2
+
+advised that if the hijacker pere
+
+knowledgoable in flying and skydiving, he could have checked
+
+with the Portland, Seattlo or Reno Weather Bureau a day or two
+
+before his feat concerning the weather forecast along the
+
+routo, If a pilot is about to take a cross-country, he would
+
+normally check the weather bureau by indicating his
+
+nano and
+
+aircraft nunber to the weather bureau in order that this infor-
+
+mation could bo furnished. If this were the case, there is a
+
+possibility that soncone could havo checked the weather on a
+
+route between Seattlo to Reno a day of two bofore the hijacking.
+
+Majorl
+
+further indicated that he was going to
+
+Callfornia, area for Christnas and intended
+
+to take a new juups (skydive)
+
+in that arca of the country regarding the hijacking and if
+
+holidays, or he would contact the San Francisco Offico of tho FBI.
+
+The followine investiention
+
+conducted by SAs
+
+at Montgonory, Alabana,
+
+December 2, 1971:
+
+Montgonery,
+
+advised that o
+
+Airlinos,
+
+was a ticketed
+
+passonger on Flight 320 leaving Montgonery at 1:58 PM this date
+
+chroute to Atlanta, Georgia,
+
+with connecting Flight Dolta 119
+
+leaving Atlanta on
+
+December
+
+2, 1971, chroute to Los Angeles,
+
+California.
+
+On December 2. 1971
+
+Australia
+
+advised that he is
+
+the
+
+of Australia with an
+
+address of
+
+SAS
+
+advised hin that he sonerally
+
+fit the description of an artist's conception of a hijacker
+
+1971 Nortlwest Air Lines jet which was hijacked on Novorbor
+
+• 24,
+
+' 1971.
+
+Itinerary is basically as follows since
+
+his departure iron Sydney, Austria:
+
+Departed sydnoy,
+
+Australia
+
+11/15/71 (9:01)
+
+via Anerican Air Lines Flight 20%
+
+Arrived Washington, D. C.
+
+11/15/71 (1:40 PM)
+
+American Air Lines Flight 226
+
+to the hone of hit not directly to
+
+virginia,
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4623
+
+---
+
+## Page 298
+
+H0 164-34
+
+3
+
+Virginia, telephone nurber
+
+He advised that he was residing at his nother's
+
+until he departed for Montgomery,
+
+b6
+
+b7C
+
+He advised he was at his mother's home on
+
+November 24, 1971; and that his nother could verify this fact.
+
+On November 20, 1972, he attended
+
+wedding.
+
+he is a
+
+nave is
+
+and
+
+At present he is
+
+congressman
+
+The wedding was hold at
+
+lnshineton he also visited
+
+BLACKBURN in Washington, D. C.
+
+While in
+
+Istend at the state Department,
+
+office telephone number is
+
+hone phone area code
+
+advised that he would be more than happy
+
+to show the contents of his luggage and briefcasé to the
+
+Agents at this time,
+
+which he did,
+
+but there was no evidence
+
+concerning the
+
+hijacking or the $200,000 100t,
+
+further, indicated his itinerary on this
+
+date was
+
+tentatively set for arrival at los Angeles on
+
+Delt Flight 119 and departure fro Los Angeles on BAC
+
+Flight 591 at 7:00 PM local time.
+
+He advised this BOAC
+
+Flight 591 was scheduled to stop at Fiji Islands and that
+
+he might stay at the Fiji Islands for one day on business,
+
+but he was not positive at this time.
+
+He further advised
+
+that ho has a U. S. passport
+
+Issued at
+
+produced a passport visa number
+
+He also produced
+
+license issued
+
+the Fad. number
+
+along with an
+
+The following descriptive data was obtained through
+
+observation and interview:
+
+Name
+
+Height
+
+Weight
+
+Hair
+
+597"
+
+110 pounds
+
+Dark Brown
+
+--
+
+Eyes
+
+Social Security Number
+
+Military service
+
+None
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4624
+
+---
+
+## Page 299
+
+110 161-31
+
+b6
+
+b7C
+
+Employnent
+
+Married
+
+Children
+
+Educạt 1on
+
+DB Cooper-4625
+
+---
+
+## Page 300
+
+5D-36 17 89-3-23-843
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date:
+
+12/10/71
+
+(Type in piaintext or code)
+
+AIRMAIL
+
+(Priorisy)
+
+b6
+
+b7c
+
+TO:
+
+FROM:
+
+SUBJECT:
+
+SAC, SEATTLE (164-81)
+
+SAC, MOBILE (164-34)
+
+(P)
+
+NORJAK
+
+RE:
+
+Re Bureau airtel to Albany, 12/7/71, and Seattle
+
+airtel to Albany, 12/7/71.
+
+Enclosed for Seattle are nine copies of investigative
+
+Insert.
+
+SA
+
+The following Investigation was conducted by
+
+on 11/29/71, at Mobile, Alabama:
+
+said he viewed the
+
+Alabat Coaception of the ireness of the hijacker do para-
+
+chuted from the Northwest Airlines flight with $200,000 ranson
+
+after it was airborne out of Seattle.
+
+said captioned individual bears a remote
+
+resemblance to the hijacker.
+
+1sscheduled to arrive
+
+11/30/71,
+
+1s to visit with
+
+Iplans to
+
+spend & lew days.
+
+described
+
+being 'honest to the core
+
+Althoug he feels his remote resemblance to
+
+the hijacker is reason enough to be apprehensive about|
+
+/ Seattle
+
+Mobile
+
+GRM: mb
+
+(4)
+
+Sent
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b6
+
+b7C
+
+164-81-1314
+
+INCEX
+
+CAL PHED....
+
+DEC D8 1971
+
+TRI. CHATT
+
+.. M
+
+Per.-
+
+SU.S. GOVERNMENT PRiNTING oriC&DBGeoper-4626
+
+---
+
+## Page 301
+
+MO 164-34
+
+Australia, Before
+
+Came to this country about one weekshan to business.
+
+The
+
+has been in #shington, D. C., and
+
+new fork city the past week.
+
+will be met at the airport by l
+
+b6
+
+b7c
+
+b6
+
+-b7C
+
+b6
+
+b7C
+
+1s about
+
+years of age,
+
+white male,
+
+517",
+
+135 pounds,
+
+eyes, light brown hair--thinning in
+
+front, thin face, and a
+
+On 12/30/71
+
+conferred aithf SAs
+
+and
+
+Alabama
+
+Montgomery,
+
+alabama
+
+concerning call received fron]
+
+on the evening of 10/29/71,
+
+stated that
+
+met
+
+in Washington D. C., several years
+
+ago
+
+while
+
+Washingion,
+
+and became relatively close friends.
+
+years agò,!
+
+decided to leave the U.
+
+they stopped to visit,
+
+further recalled that
+
+for Australia. Enroute to Australia,
+
+had served as
+
+She recalled
+
+that he talked about
+
+and around the southeast,
+
+The purpose ofl
+
+visit from
+
+Australia to the U,S. this past week was to attend
+
+wedding which apparently took place in washington.
+
+Whe
+
+_following was description furnished by
+
+on 11/30/71 prior to the arrival of an Eastern
+
+Airlines Jet
+
+at 2:08 PM bearing
+
+white nale,
+
+approximately
+
+5'7", 165 to 170 Ibs.,
+
+approximately
+
+years of age,
+
+eyes, brown hatr.
+
+2
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7c
+
+b6
+
+b7C
+
+DB Cooper-4627
+
+---
+
+## Page 302
+
+NO 164-34
+
+further indicated that
+
+saw a nationwide composite of artist's conception this
+
+past evening on television.
+
+that the
+
+artist's conception favored
+
+On 11/30/71, & fissur
+
+моптдомегу;
+
+by SAs
+
+revealed that
+
+appeared quite varm and friendly upon arrival, and it
+
+was noted that he appeared quite suspicious of his surroundings
+
+Inasmuch as he appeared to be searching through the passengers
+
+and bystanders at the airport.
+
+looked in the direction
+
+of Agents|
+
+and
+
+who were on opposite sides of the
+
+walkway leading Into the air terminal from the arrival gate.
+
+The following is a description of
+
+Race
+
+White
+
+Sex
+
+Male
+
+Age
+
+Height
+
+5 8"
+
+Weight
+
+170 pounds
+
+Eyes
+
+Ha1r
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Mediun brown, high
+
+forehead, thin sideburns
+
+about the bottom of
+
+earlobe
+
+Characteristics
+
+Complexion
+
+Medium to dark
+
+overnight
+
+bag,
+
+was carrylng a bluish-gray Samsonite-type
+
+slightly larger than an attache case.
+
+he arrived at the luggage pickup counter, he obtained tho
+
+other bluish-gray Samsonite-type sultcases that appeared to
+
+be matching..
+
+Suspect also checked the Delta Air Line ticket
+
+counter with
+
+in his presence and apparently was
+
+contirming some type of reservation.
+
+reiterated during the conversation with
+
+the Agents prior to the arrival of
+
+that he was attending
+
+wedding
+
+te washbiguoh,
+
+De Ces and would be returning to sydney, Australia,
+
+after his vigit
+
+Alabana.
+
+b6
+
+'b7C
+
+b6
+
+b7C
+
+Delta Air Lines
+
+b6
+
+b7C
+
+'ticket counter,
+
+Montgonery,
+
+Alabana, advised
+
+that a
+
+checked with him at approximately 2:25 PM
+
+on 11/30/71 concerning his Delta Alr Lines reservations he was
+
+holding.
+
+said that
+
+holds Delta Air Lines reserva-
+
+tions on
+
+Flight 320 departing kontgomery
+
+1:58 PH, to Atlanta,
+
+Georgta,
+
+Atlanta to Los Angelewith & cormecting flight Delta 119 from
+
+further advised that his Atlanta
+
+ticket counter for Delta
+
+advised that
+
+in reservations earlier
+
+an the ate toon on loana
+
+DB Cooper-4628
+
+---
+
+## Page 303
+
+MO 164-34
+
+reservation was originally booked through American Air Lines in
+
+gashington, D. C.,
+
+12/1/71,
+
+allegedly
+
+had a telephone contact number, area code
+
+Photographs of
+
+to follow.
+
+THIS INDIVIDUAL IS BEING SOUGHT IN CONNECTION WITH
+
+THE EXTORTION OF $200,00O FROM NORTHWEST AIRLINES BY THREATENING
+
+THE CREN OF THE AIR LINE WITH A ICKAGE WHICH HE STATED CONTAINED
+
+A BOWB. HE SHOULD BE, CONSIDERED DANGEROUS.
+
+b6
+
+b7C
+
+166
+
+b7C
+
+DB Cooper-4629 *
+
+---
+
+## Page 304
+
+SAC, SEATTLE (164-81)
+
+SA
+
+NORJAK
+
+12/16/71
+
+b6 |
+
+b7C
+
+Re Anchoragelletter to Seattle, 11/30/71.
+
+On December 13. 1971.l
+
+contacted at l
+
+Washing-
+
+ton.
+
+advised his current address
+
+Mashington, and that he was
+
+visiting
+
+Hashington,
+
+furnished the following address where l
+
+could be
+
+contacted:
+
+Oregon.
+
+Turnished the following telephone
+
+number for
+
+advised he has not been in contact
+
+for sone time. He advised that during the
+
+BUMmer Months
+
+they were employed by the Department of
+
+the Interior as suoka
+
+tunners and since the summer months
+
+has gone
+
+Hashington.
+
+advised that|
+
+has not
+
+been in contact with him since they had last worked together.
+
+JDG: 50t
+
+(3)
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+164-81-1315
+
++ 591144-5-13-04-1717
+
+DB Cooper-4630
+
+---
+
+## Page 305
+
+* OFTIONAL FORM NO, 1
+
+LAY 1982 TOrTION
+
+SSATAMA (+1 059) 801-9118
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+DATE: 12/16/71
+
+Re Anchorage.letter to Seattle, 11/30/71.
+
+On December 13, 1971.l
+
+was
+
+contacted atl
+
+Hashing-
+
+tone
+
+ladvised his current address 1s[
+
+hashington, and that he fas
+
+vIsiting
+
+Hashington.
+
+furnished
+
+following address wherel
+
+could be
+
+contacted:
+
+Oregon.
+
+furnished the following telephone
+
+number for
+
+advised he has not been in contact
+
+with
+
+for some time. He advised that during the
+
+summer months they were employed by the Department of
+
+the Interior as smoke jumpers and since the summer months
+
+has gone
+
+Washington.
+
+advised that l
+
+Jhas not
+
+been in contact with him since they had last worked together.
+
+JDG:set
+
+(3)
+
+b6
+
+b7C
+
+b6|
+
+b7c
+
+164-81-1315
+
+SEARCHED
+
+$31 - SEAITLE
+
+трр.
+
+8010-708
+
+Buy U.S. Savings Bonds Regularly on the Pagroll Savings Plan
+
+DB Cooper-4667
+
+---
+
+## Page 306
+
+0-36 801-3-22-841
+
+FBI
+
+Date: 12/13/71
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+(Type in piciniext or code)
+
+AIR MAIL,
+
+(Priorizy)
+
+TO:
+
+SAC, SEATTLE (264-81)
+
+FROM:
+
+SAC, LOS ANGELES (164-497) (3)
+
+SUBJECT: NORAK
+
+Subs
+
+and 12/2/Tle Los Angeles teletypes to Seattle, dated 12/26/72
+
+RE SUSPECIS
+
+California, previously advised that
+
+Thad once
+
+stated|
+
+he could hijack
+
+acquaintance of
+
+about
+
+years ago.
+
+on 12/6/71,
+
+was interviewed and an
+
+artist's sketch of Unknown Subject was displayed to him.
+
+advised
+
+did not resemble in any way the artist's
+
+sketch.
+
+It was further ascertained that l
+
+years
+
+of age in
+
+Jand his current age would be about
+
+years of
+
+age.
+
+Los Angeles County Shertet's Office,
+
+previously furnished information that one
+
+avat sy diver and type of character to pull a hilack.
+
+would be
+
+the person who could furnish information concerning
+
+He added he had not seen
+
+personally for years.
+
+on 12/2/71.
+
+was Interviewed at her
+
+employment,
+
+LOS
+
+Seattle
+
+2
+
+- Los Angeles
+
+crs/jal
+
+(4)
+
+164-81-1319
+
+SEARCHED
+
+FIBI, "rATTLE
+
+b6
+
+b7C
+
+b6
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+Approved: MasaN
+
+Special Agent in Charge
+
+Sent -
+
+---
+
+## Page 307
+
+IA 164-497
+
+Angeles, and stated
+
+She described
+
+Jas white male, mid 60's, 5 feet 4 inches,
+
+140 pounds, anaring hair, emploved as I
+
+I calitornia.
+
+After viewing the artist's sketch of the unknown
+
+subject, she stated there was no resemblance between this
+
+sketch and |
+
+being considered of chose pete the matter at enlare
+
+UNKNOWN SUBJECT. SHOULD BE CONSIDERED DANGEROUS.
+
+b6
+
+'b7C
+
+b6
+
+b7C
+
+-2-
+
+DB Cooper-4674
+
+---
+
+## Page 308
+
+....
+
+2172253
+
+0-4 (Rov. 11-19-64)
+
+FEDERAL BUREAU OF INVESIAVATION
+
+WASHINGTON, D. C. 20535
+
+DATE: 12/14/71
+
+70: FBI, Seattle
+
+Re: UNSUB; AKA DAN COOPER;
+
+NORTHWEST AIRLINES FLIGHT THREE
+
+PORTLAND TO SEATTLE,
+
+1/24/11; CAA - HACKING; EXTORTION
+
+_ Invoice of Contents.
+
+Parachute
+
+Registered Airmail
+
+Il items listed above are contained in this package. A detailed
+
+escription of items will be found in Bureau communication dater
+
+FBI File No.
+
++
+
+12/14/71
+
+. #
+
+164-81-1320
+
+SEARCHED...
+
+DEC 107 1971
+
+FBI - SEATTLE
+
+DB Cooper-4675
+
+---
+
+## Page 309
+
+1015 Second Avenue
+
+Seattle, Washington 98104
+
+December 26, 1971
+
+_ E
+
+it. Col.l
+
+U. S. Army Reserve
+
+Vancouver, Washington
+
+it'
+
+Dear Col.
+
+I wanted to drop you a note and express our
+
+appreciation to you and
+
+to .It.
+
+I'for the
+
+services of It.
+
+together with the use of the
+
+Army Reserve helicopter in connection with the searci
+
+for the indivicual responsible for hijacking Northwest
+
+Airlines Flight 305.
+
+While we were not successful in locating the
+
+hijacker, the work needed to be done and was made
+
+much easier through the use of the helicopter and the
+
+services of It.
+
+We are most appreciative.
+
+Sincerely yours,
+
+b61
+
+67C
+
+b7C
+
+b6
+
+b7C
+
+J. E.IMILNES
+
+Special Agent in Charge
+
+164-91
+
+N64-81- 1929-16764
+
+---
+
+## Page 310
+
+1-338 (Roy, 12-10-69) FEDERA
+
+BUREAU OF INVEST SATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+IDENTIFICATION DIVISION
+
+LATENT FINGERPRINT SECTION
+
+YOUR FILE NO.
+
+164-73
+
+FBI FILE NO.
+
+164-2111
+
+LATENT CASE NO. A-45410
+
+TO: SAC, Minneapolis
+
+December 15, 1971
+
+ful I
+
+Ticke
+
+SUB-
+
+AE: NORJAK
+
+REFERENCE:
+
+EXAMINATION REOUte! 12-8-71
+
+SPECIMENS:
+
+Minneapolis
+
+Northwest Atriines ticket
+
+No latent prints of value developed enclosed ticket.
+
+This report supplements and confirms Butel of
+
+12-14-71.
+
+Enc.
+
+@- Seattle (164-81)
+
+2 - Portiand (164-41)
+
+164-81-1322
+
+SEARCHED
+
+DEC 07 1971
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ON.
+
+---
+
+## Page 311
+
+Airtal
+
+December 16, 1971
+
+To:
+
+SAC, Portland (164-41)
+
+From: Director, FBI (164-2111)
+
+NORJAK
+
+Reurairtel with copy to Seattle dated 12/8/71.
+
+x
+
+Raferenced airtel refers to s hoax Involving
+
+tered attral or to be ving
+
+demand was pald. for your infornation, the two subjects of
+
+this hoax were identifled, prosecuted, and are currently
+
+incarcerated In Australla. A majority of the money was
+
+recoverad.
+
+Unleas the Portland or Seattle Office has Infornation
+
+connecting the above natter vith captioned case, it does not
+
+appear further action is necessary.
+
+Seattle
+
+164-81-1323
+
+DEC 10 1971
+
+FBI - SEATTLE
+
+DB Cooper-4678
+
+---
+
+## Page 312
+
+BRADI AQ PLAIN
+
+5:38PM NITEL 12/17/71 DUC
+
+TO:
+
+SEATTLE (164-81)
+
+FROM:
+
+ALBUQUERQUE
+
+106
+
+b7C
+
+(149-131) -P-
+
+IP
+
+NORJACK
+
+RE SAN FRANCISCO NITEL TO ALBUQUERQUE AND SEATTLE, DECEMBER SIXTÉEN
+
+LAST, RE
+
+_SUSPECT
+
+ELIM
+
+106
+
+b7C
+
+PRESENT IN
+
+LAST, VERIFIED THROUGH
+
+NEW MEXICO, NOVEMBER TWENTY FOUR
+
+bTC
+
+CONCERNING
+
+NO FURTHER INVESTIGATION BEING CONDUCTED
+
+AND HE IS CONSIDERED FOR ELIMINATION AS SUSPECI.
+
+• UNSUS CONSIDERED ARMED AND DANGEROUS.
+
+END
+
+VAB
+
+POI SEATTLE CLR
+
+ar.
+
+164-81-1324
+
+DEC Q 8 197 bB Cooper-4679
+
+EBL- SEATILE
+
+b7C
+
+---
+
+## Page 313
+
+ROBI AR PLAIN
+
+5830PM NITEL 12/17/71 DJC
+
+TO :
+
+SEATTLE (164-81)
+
+PROME
+
+ALBUQUERQUE (149-131) 09-
+
+1P
+
+NORJACK
+
+RE SAN FRANCISCO NITEL TO ALBUQUERQUE AND SEATTLE, DECEMBER SIXTEEN
+
+LAST, RE
+
+SUSPECT
+
+PRESENT IN
+
+LAST, VERIFIED THROUGH
+
+NEW MEXICO, NOVEMBER TWENTY FOUR
+
+b6|
+
+b7C
+
+b6|
+
+CONCERNING
+
+NO FURTHER INVESTIGATION BEING CONDUCTED
+
+AND' HE IS CONSIDERED FOR ELIMINATION AS SUSPECI.
+
+UNSUB CONSIDERED ARMED AND DANGEROUS.
+
+END
+
+. VAB
+
+FBI SEATTLE CLR
+
+164-81-1324.
+
+12 TABER
+
+DEC 1 @ 1971
+
+Fal - SEATTLE
+
+DB Cooper-4680
+
+---
+
+## Page 314
+
+b6
+
+b7C
+
+AR 007
+
+PD
+
+PLAIN
+
+7:85 URGENT ' 12-17-71 LUQ
+
+TO: SEATTLE (164-81)"
+
+FROM: PORTLAND (164-41)
+
+() 2P
+
+Autor eft at
+
+Portland Packing
+
+Lot
+
+NORJAK.
+
+REQUESTED RECONIACI OF MOTELS NEAR AIRPORI, AUTO RENTAL
+
+AGENCIES, AIRPORI FACILITY POLICE, AND LIMOSINE SERVICE, PORTLAND
+
+INTERNATIONAL AIRPORI, WITH NEW SKETCHES OF UNSUB NEGATIVE,
+
+EXCEPT FOR THE FOLLOWING:
+
+LOT ATTENDANT, SELF-SERVICE PARKING LOT, ADVISED ONLY
+
+VEHICLES LEFT ON PARKING LOT SINCE NOVEMBER JENTY FOUR, SEVENTY
+
+ONE, WAS SEVENTY CHRYSLER, OREGON LICENSE
+
+AND FIFTY FIVE OLDSMOBILE, WASHINGTON LICENSE
+
+ATTENDANI ADVISED IT WAS COMMON. PRACTICE FOR CUSTOMERS USING
+
+INTERNATIONAL AIRPORT TO LEAVE THEIR VEHICLES FOR EXTENDED PERIOD
+
+OF TIME AND UPON RETURN TO AIRPORT PAY WEEKLY OR MONTHLY RENTAL
+
+FEE.
+
+b6
+
+b7C
+
+INQUIRY DEPARTMENT OF MOTOR VEHICLES, SALEM, INDICATES OREGON
+
+MINETEEN SEVENTY CHRYSLER, FOUR-DOOR,
+
+LICENSE
+
+REGISTERED OWNER
+
+END PAGE ONE
+
+SAC AOU. 1d/1S (DIA)
+
+SA
+
+named q2
+
+, b6
+
+b7C
+
+12/18111
+
+Leak
+
+164-81-1325
+
+DEC 107 1971
+
+162
+
+DB
+
+Cooper-4681
+
+---
+
+## Page 315
+
+PD 164-41
+
+PAGE IWO
+
+HOOD RIVER, OREGON. DEPARIMENI OF MOTOR VEHICLES, OLYMPIA,
+
+WASHINGTON, INDICATES WASHINGION LICENSE
+
+FIFTY
+
+FIVE OLDSMOBILE, TWO-DOOR HARDTOP, REGISTERED TO
+
+SPOKANE, WASHINGTON.
+
+SEATTLE: AT SPOXANE. WILL INTERVIEW
+
+REGARDING FIFTY FIVE OLDSMOBILE HARDTOP,
+
+PRESENTLY LOCATED PORTLAND INTERNATIONAL AIRPORT SINCE NOVEMBER
+
+IWENIY FOUR, SEVENTY ONE.
+
+PORTLAND AT HOOD RIVER, OREGON. WILL CONTACT
+
+REGARDING SEVENTY CHRYSLER LOCATED
+
+AT INTERNATIONAL AIRPORI, PORTLAND.
+
+END
+
+b6
+
+•67C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4682
+
+---
+
+## Page 316
+
+AR 007 PD PLAIN
+
+7805 URGENT
+
+12-17-71 LUQ
+
+TO& SEATTLE (164-81)
+
+FROMS PORTLAND (164-41)
+
+(P) 2P
+
+NORJAKO
+
+REQUÉSTED RECONTACI OF MOTELS NEAR AIRPORT, AUTO RENTAL
+
+AGENCIES, AIRPORI FACILITY POLICE, AND LIMOSINE SERVICE, PORTLAND
+
+INTERNATIONAL AIRPORI, WITH NEW SKETCHES OF UNSUB NEGATIVE,
+
+EXCEPT FOR THE FOLLOWINGS
+
+LOT ATTENDANT, SELF-SERVICE PARKING LOT, ADVISED ONLY
+
+VEHICLES LEFT ON PARKING LOT SINCE NOVEMBER TWENTY FOUR, SEVENTY
+
+ONE, WAS SEVENTY CHRYSLER, OREGON LICENSE
+
+AND FIFTY FIVE OLDSMOBILE, WASHINGION LICENSE
+
+ATTENDANI ADVISED IT WAS COMMON PRACTICE FOR CUSTOMERS USING
+
+INTERNATIONAL AIRPORT TO LEAVE THEIR VEHICLES FOR EXTENDED PERIOD
+
+OF TIME AND UPON RETURN TO AIRPORT PAY WEEKLY OR MONTHLY RENTAL
+
+• FEE.
+
+b6|
+
+b7C
+
+INQUIRY DEPARIMENT OF MOTOR VEHICLES, SALEM, INDICATES OREGON
+
+LICENSE
+
+NINETEEN SEVENTY CHRYSLER, FOUR-DOOR,
+
+REGISTERED OWNER
+
+END PAGE ONE
+
+b6
+
+b7C
+
+164-81-1325
+
+• DEC T 1971
+
+FBI • SEATTLE
+
+DB Cooper-4683
+
+---
+
+## Page 317
+
+PD 164-41
+
+PAGE THO
+
+* .
+
+HOOD RIVER, OREGON, DEPARIMENT OF MOTOR VEHICLES, OLYMPIA,
+
+WASHINGTON, INDICATES WASHINGION LICENSE
+
+FIFTY
+
+FIVE OLDSMOBILE, TWO-DOOR HARDTOP, REGISTERED TO
+
+SPOXANE, WASHINGTON.
+
+SEATTLE AT SPOKANE. WILL INTERVIEW
+
+REGARDING FIFTY FIVE OLDSMOBILE HARDTOP,
+
+PRESENTLY LOCATED PORTLAND INTERNATIONAL AIRPORT SINCE NOVEMBER
+
+TWENTY FOUR, SEVENTY ONE.
+
+PORTLAND AT HOOD RIVER, OREGON. WILL CONTACT|
+
+REGARDING SEVENTY CHRYSLER LOCATED
+
+AT INTERNATIONAL AIRPORI, PORTLAND.
+
+END
+
+!
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4684
+
+---
+
+## Page 318
+
+, b7C
+
+AR 886 PD PLAIN
+
+7:89 URGENT 12-17-71 LUQ
+
+TO: SEATTLE (164-81)
+
+FROM: PORTLAND
+
+(164-41)
+
+ip
+
+NORJAK
+
+RE DENVER AIRTEL TO SEATTLE DECEMBER ELEVEN SEVENTYONE;
+
+UFO AIRTEL IO SEATTLE, DECEMBER NINE SEVENTYONE.
+
+SUSPECIS:
+
+b6|
+
+b7C
+
+WITNESSES
+
+NORTHWEST
+
+AIRLINES EMPLOYEES, PORTLAND, OREGON, VIEWED PICTURES OF SUSPECTS
+
+AND DID NOT RECOGNIZE EITHER PICTURE AS UNSUB.
+
+PENDING.
+
+END
+
+b7C
+
+SAC ADU, 10/1S
+
+(DIA)
+
+164-81-1326
+
+SEARCHES A NUEE
+
+INDEXED-h
+
+DEC Y7 1971 0
+
+FB1 - SEATTLE
+
+DB "Cooper-4685'
+
+---
+
+## Page 319
+
+b7C
+
+AR 813 PD PLAIN
+
+7:13 PM URGENT 12-17-71 RMB
+
+TO:
+
+SEATTLE (164-81)
+
+• PROM: PORTLAND (164-41>
+
+NORJAX
+
+RE LA TELETYPE TO SEATTLE, KANSAS CITY, PORILAND, AND
+
+SACRAMENTO IWELVE FOURTEEN SEVENTYONE.
+
+SUSPECT
+
+RECORD CHECKS ON DECEMBER FIFTEENTH SEVENTYONE, PORTLAND PD,
+
+• AND MULINOMAN COUNTY SO NEGATIVE RE
+
+CREDIT BUREAU
+
+METRO INCORPORATED NEGATIVE.
+
+END
+
+DCA
+
+FBI SEATILE
+
+RECEIVED SIX TELS CLR
+
+b6
+
+b7C
+
+67C
+
+• SAC ADU: 12/17
+
+/DUA
+
+164-81-1321
+
+- INDEXPOT
+
+DEC 1 21971
+
+FBI - SEATTLE
+
+DB Cooper-4686
+
+---
+
+## Page 320
+
+MR 017 SF PLAIN
+
+4:59 PM URGENT
+
+12/17/71
+
+FCO
+
+TO :
+
+SEATTLE (164-81)
+
+SACRAMENTO
+
+(164-58)
+
+FROM:
+
+SAN FRANCISCO
+
+(164-228)
+
+b6
+
+b7C
+
+2P
+
+NORJAL.
+
+RE SAN DIEGO TEL TO SEATTLE, DECEMBER FOURTEEN, LAST.
+
+RE SUSPECI
+
+'REFERENCED TEL REQUESTED SAN FRANCISCO AND LOS ANGELES TO
+
+DETERMINE FURTHER IDENTIFICATION OF
+
+AND ATTEMPT
+
+TO DETERMINE HIS WHEREABOUTS AT TIME OF HIJACKING.
+
+IDENTIFIED
+
+AS
+
+TELEPHONE
+
+'SUSPECT FURTHER DESCRIBED AS WHITE MALE
+
+AMERICAN, BORN
+
+WASHINGTON STATE,
+
+SIX FEET ONE INCH AND HAS CALIFORNIA DRIVERS LICENSE NUMBER
+
+INQUIRY AT PLACE OF • '
+
+RESIDENCE
+
+STATES
+
+b6
+
+b7C
+
+b6
+
+ble
+
+b6
+
+b7c
+
+ONE
+
+LIVING THIS ADDRESS WITH SUSPECT
+
+END PAGE ONE
+
+164-81-1328
+
+ERICHER ME INOR SPE
+
+SERLALIZET
+
+DEC 1 0 1971
+
+FB1 - SEATILE
+
+тур
+
+DB Cooper-4687
+
+---
+
+## Page 321
+
+PAGE THO
+
+SF 164-228
+
+AND IHAT
+
+DEPARTED A. M., DECEMBER SIXTEEN, LAST DESTINATIION
+
+UNKNOWN.
+
+STATES HAS MAILING ADDRESS IN LOS ANGELES, ADDRESS
+
+UNKNOWN. CLAIMS
+
+HAS BEEN AT THIS RESIDENCE FOR PAST
+
+HAS NO CRIMINAL RECORD, L
+
+COUNTY
+
+SHERRIF'S OFFICE. OR
+
+POLICE DEPARTMENT. CREDIT
+
+RECORD REFLECIS ON FILÉ SINCE |
+
+OCCUPATIONI
+
+SOCIAL SECURITY ACCOUNT NUMBER
+
+SACRAMENTO OBTAIN PHOTOGRAPH FROM DRIVERS LICENSE BUREAU
+
+AND FORWARD TO SEATTLE FOR DISPLAY TO VICTIMS.
+
+SAN FRANCISCO AT
+
+WILL ATTEMPT TO DETERMINE
+
+DESTINATION OF
+
+LOS ANGELES AND SAN DIEGO ADVISED AM.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+END
+
+TIM
+
+FBI SEATILE
+
+OLR
+
+DB Cooper-4688
+
+---
+
+## Page 322
+
+ARBID LA PLAIN
+
+727PM NITEL 12-17-71 DCB
+
+TO SEATTLE <164-81>
+
+SAN FRANCISCO (164-228)
+
+FROM LOS ANGELES (164-497) IP
+
+b6
+
+b7C
+
+NORJAX.
+
+RE SAN DIEGO NITEL TO SEATTLE, DATED DECEMBER FOURTEEN,
+
+LAST.
+
+RE SUSPECT
+
+CALIFORNIA, ADVISES
+
+THAT
+
+WAS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+CALIFORNIA, ADDRESS UNKNOWN.
+
+SAN FRANCISCO AT
+
+CALIFORNIA: INTERVIEW
+
+IN EFFORT TO ESTABLISH THE WHEREABOUTS OF
+
+NOVENBER IWENTY FOUR, LAST.
+
+INVESIIGATION CONTINUING LOS ANGELES IO LOCATE
+
+UNSUB SHOULD BE CONSIDERED DANGEROUS.
+
+b6
+
+ON'
+
+b6
+
+b7C
+
+END
+
+164-81-1329
+
+DEC 10 1971
+
+F81 • SEATTLE
+
+DB Cooper-4689
+
+---
+
+## Page 323
+
+1RO19 LA PLAIN
+
+856PM NITEL 12-17-71 DPK
+
+TO SEATTLE (164-81)
+
+PORTLAND (164-41)
+
+FROM LOS ANGELES (164-497)
+
+NORJAK.
+
+b6
+
+b7C
+
+•Elim
+
+RE PORILAND TELETYPE TO SEATILE AND LOS ANGELES,
+
+DECENBER SIXTEEN LAST.
+
+SUSPECI:
+
+RECORDS,
+
+CALIFORNIA, REVEALED
+
+WHITE MALE, BORN
+
+MINNESOTA, FIVE FEET SEVEN INCHES, ONE HUNDRED
+
+SIXTY POUNDS, IS CURRENILY EMPLOYED BY ABOVE FIRM, FORMERLY
+
+LOCATED
+
+REVEAL
+
+CALIFORNIA. TIME AND ATTENDANCE RECORDS
+
+AT WORK ALL DAY NOVEMBER IWENTY FOUR LAST.
+
+PERSONNEL OFFICE, PERSONALLY KNOWS
+
+AND HAS
+
+b6
+
+b7C
+
+AND STATES HE MAS
+
+END PAGE ONE
+
+164-81-1330
+
+•ACHO IS NOO ONE
+
+DEC 1Q 1971
+
+FUL - SEATTLE
+
+DB Cooper-4690
+
+---
+
+## Page 324
+
+LA 164-497
+
+PAGE TWO
+
+NOTICEABLE
+
+NOTES NO RESEMBLANCE
+
+BETWEEN ARTIST'S SKEICH OF UNSUB AND
+
+LONGER BEING CONSIDERED LOGICAL SUSPECT BY LOS ANGELES.
+
+UNSUB SHOULD BE CONSIDERED ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+NO
+
+END
+
+DCA
+
+FBI SEATTLE CLR
+
+RECEIVED THO TELS
+
+DB Cooper-4691
+
+---
+
+## Page 325
+
+NROD1 PG PLAIN
+
+12:35 AM NITEL 12-18-71 PVC
+
+TO
+
+SEATTLE (164-81)
+
+PORTLAND
+
+FROM
+
+PITISBURGH
+
+b7C
+
+NORJAK
+
+- SUSPECT
+
+ON DECEMBER SEVENTEEN, SEVENTYONE,
+
+PA.,
+
+ADVISED HE HAD JUST RETURNED FROM WEEK LONG
+
+SALES MEETING, ST. LOUIS, MO., WHERE HE MET
+
+IS A SALES REPRESENTATIVE
+
+WITH OFFICE AND RESIDENCE AT
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+OREGON, PHONE
+
+NUMBER
+
+WHO ALSO HAS AN OFFICE AND APARIMENI IN SEATTLE,
+
+LOCATION NOT KNOWN.
+
+HANDLES OREGON
+
+AND WASHINGION AREAS FOR SEVERAL FIRMS. THAT HE COVERS
+
+TERRITORY ENTIRELY BY AIR AND THAT HE HAS PARACHUTED MANY
+
+TIMES WHILE SERVING IN THE MILITARY SEVERAL YEARS AGO.
+
+END PAGE ONE
+
+164-81-1331
+
+SEARCHED
+
+EAT IM
+
+_ INDEXED Y
+
+DEC 107 1971
+
+FBI • SEATTLE
+
+Cooper-4692
+
+---
+
+## Page 326
+
+PAGE TWO
+
+HAD LARGE AMOUNIS OF MONEY WITH HIM, SMOKED FILTER
+
+CIGARETTES, HAD A NOTICEABLE LIMP DUI TO A SPRAINED ANKLE
+
+WHICH HE STATED ONE TIME HE RECEIVED WHILE
+
+AND ANOTHER TIME THAT HE RECEIVED WHILE
+
+BOTH
+
+WRISTS WERE TAPED WITH NO REASON GIVEN.
+
+DESCRIBED AS W/M, ABOUT
+
+SIX FEET, ONE
+
+SIGHI ZERO POUNDS, AVERAGE BUILD, SALLOW SMOOIN COMPLEXION,
+
+HAIR
+
+MORE GLASSES, NO ACCENT, INTELLIGENT TALXER.
+
+ANTICIPATES RETURNING TO
+
+MORNING
+
+OF DECEMBER EIGHTEEN SEVENTYONE.
+
+PORTLAND IDENTIFY AND CONDUCI APPROPRIATE INVESTIGATION
+
+PITISBURGH WILL DISPLAY COMPOSITE PHOTO TO
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+END
+
+TIM
+
+F8I SEATLE
+
+ORL
+
+DB Cooper-4693
+
+---
+
+## Page 327
+
+NR18 PX PLAIN '
+
+417PM URGENT 12-17-71 LEG
+
+TO DIRECTOR (164-2111)
+
+SEATTLE (164-81)
+
+FROM PHOENIX (164-108) (ONE PAGE).
+
+66
+
+b7C
+
+NORJAK. 00 SEATTLE.
+
+RE RICHMOND TELETYPE IO BUREAU DECEMBER SEVENTEEN INSTANT.
+
+RE POSSIBLE SUSPECT
+
+PHOENIX FILE
+
+FAILS IO REVEAL ANY DATA REGARDING PARACHUTING EXPERIENCE
+
+BY
+
+b6 |
+
+b7C
+
+SINCE JACKSONVILLE ORIGIN IN
+
+INFORMATION NOT BEING SET FORTH BY PHOENIX.
+
+JACKSONVILLE AND RICHMOND ADVISED AM.
+
+UNSUB CONSIDERED DANGEROUS.
+
+PENDING
+
+MATTER BACKGROUND
+
+b6|
+
+b7C
+
+END
+
+KB
+
+FBI SE CLR
+
+164-81-1333
+
+SEARCHEDS
+
+SERIALIZE IN INDEYE
+
+DEG 1Q 1971
+
+FBI - SEATTLE
+
+DB Cooper-4695
+
+---
+
+## Page 328
+
+NR0B8
+
+PLAIN
+
+7:26 PM NITEL 12-17-71 ALH
+
+TO
+
+DIRECTOR (164-2111)
+
+RICHMOND (164-74)
+
+SEATTLE
+
+FROM
+
+JACKSONVILLE (164-189> (P)
+
+b7C
+
+NORJAX.
+
+RE RICHMOND TEL TO BUREAU, DEC. SEVENTEEN,, INSTANT.
+
+RE, POSSIBLE SUSPECI,
+
+DASH FUGITIVE, SSN
+
+D03
+
+WISCONSIN.
+
+JACKSONVILLE DIVISION CURRENILY REVIEWING THEIRL
+
+CLASSIFICATION 'RE
+
+LEADS TO FOLLOW BY TELETYPE.
+
+b6 1
+
+b7C
+
+b6
+
+b7C
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+164-81-1334
+
+SEARCHED.
+
+*I INDEXER
+
+tiệp. MX
+
+DEE YY 1971
+
+FBI - SEATTLE
+
+Cooper-4696
+
+---
+
+## Page 329
+
+1R018 MM PLAIN
+
+917PM NITEL 12-17-71 WTC
+
+• TO SEATTLE
+
+164-81
+
+RICHMOND 164-744
+
+JACKSONVILLE 26-21742
+
+MINNEAPOLIS
+
+PORTLAND
+
+FROM-MIAMI 164-552
+
+b6
+
+b7C
+
+2P
+
+.
+
+NORJAK
+
+RE:
+
+RE RICHMOND TET TO THE BU DATED DECEMBER ONE SEVEN,
+
+SEVENTYONE.
+
+REVIEW OF MIAMI
+
+CLASSIFICATION FILE ON
+
+DISCLOSED NO USEFUL INFORMATION OR BACKGROUND TO ASSIST IN
+
+KIS IDENTIFICATION AS HIJACKER. ALL INFORMATION AVAILABLE
+
+MIAMI HAS BEEN REPORTED BY JACKSONVILLE.
+
+REVIEW OF JACKSONVILLE REPORT DATED APRIL EIGHT,
+
+SEVENTY, DISCLOSES
+
+HAS DESCRIBED
+
+HIM AS HAVING NUMEROUS SCARS
+
+WHICH ARE VERY
+
+NOTICEABLE. ALSO JACKSONVILLE REPORT DATED JANUARY IWO SIX,
+
+END PAGE ONE
+
+1 64-81-1335
+
+SEARCHED
+
+DEC 197 1971
+
+FBI • SEATTLE
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b7C
+
+DB Cooper-4697
+
+---
+
+## Page 330
+
+PAGE IWO
+
+SEVENTYONE, SECRIBED
+
+AS HAVING
+
+SCARS
+
+SUGGEST OFFICES INTERVIENING WITNESSES DETERMINE IF ANY
+
+SUCK SCARS, NOTICED ON HIJACKER.
+
+SUGGEST RICHMOND ALSO FORWARD PHOTOS TO PORTLAND AND
+
+MINNEAPOLIS AS SUGGESTED SEATTLE AIRTEL TO ALBANY DATED
+
+DECEMBER SEVEN, SEVENTYONE, WITH COPIES TO ALL OFFICES.
+
+END
+
+- DCA
+
+FBI SEATTLE CLR
+
+b6]
+
+b7C
+
+DB Cooper-4698
+
+---
+
+## Page 331
+
+1R 7012
+
+JK PLAIN
+
+1:17 PM URGENT
+
+12/18/71
+
+MAD
+
+TO
+
+DIRECTOR (164-2111>
+
+SEATTLE <164-81)
+
+RICHMOND: (164-74>
+
+FROM JACKSONVILLE (164-109)
+
+2P
+
+b6
+
+b7C
+
+NORJAK.
+
+RE RICHMOND TELETYPE TO BUREAU AND OTHER OFFICES, DECEMBER
+
+SEVENIFEN, LAST.
+
+" RE. SUSPECT
+
+JACKSONVILLE NOTES SLIGHT PHYSICAL RESEMBLANCE OF
+
+UNSIB IN IHIS MATTER.
+
+WITH
+
+AT TIME OF HIS ARREST AT JACKSONVILLE, FLORIDA, DESCRIBED
+
+b6
+
+b7C
+
+b7C
+
+AS WMA, BORN
+
+FIVE FfE
+
+b7C
+
+EIGHT INGHES TALL, ONE HUNDRED THIRTY SEVEN LBS.,
+
+KAIR, SSAN
+
+SCARS
+
+INCLUDED
+
+EYES, BROWN
+
+FBI NUMBER
+
+END PAGE ONE
+
+5A Faell adored 103 12/18111
+
+газ
+
+71641-81-1336
+
+SEARCHED
+
+- INDEXEE
+
+SERGALIZED ILL
+
+DEC D8 19710
+
+FBI - SEATTLE
+
+D'B Cooper-4699
+
+---
+
+## Page 332
+
+PAGE TWO
+
+JK 164-109
+
+INTENSIVE INVESTIGATION BY JACKSONVILLE DIVISION OVER TWO YEAR
+
+PERIOD TO LOCATE
+
+HAS PRODUCED NUMEROUS RELATIVES, ASSOCIATES
+
+AND BUSINESS CONTACIS, ALL OF WHOM CLAIM NO XNOWLEDGE OF PRESENT WHERE
+
+b6
+
+b7C
+
+ABOUTS OF
+
+NO INFORMATION DEVELOPED IN THIS INVESTIGATION TO
+
+INDICATED
+
+HAVING PARACHUTE EXPERIENCE. THESE LEADS BEING
+
+HELD IN ABEYANCE UNTIL SUCH TIME AS SEATTLE DISPLAYS PHOTOGRAPH OF
+
+TO WITNESSES OR PHYSICAL EVIDENCE DEVELOPED IN THIS MATTER
+
+WHICH INVOLVES
+
+b6
+
+b7C
+
+CONSIDER UNSUB DANGEROUS.
+
+END
+
+SKT
+
+FBI SE CLR
+
+DB Cooper-4700
+
+---
+
+## Page 333
+
+b6
+
+b7C
+
+MR MAS SPRINGFIELD PLAIN
+
+935PM NITEL 12-18-71 AJK
+
+TO DIRECTOR (154-2111)
+
+SEATTLE (1S4-91)
+
+JACKSONVILLE (26-?1742)
+
+MILWAUKEE (26-17766) (MAIL)
+
+RICHMOND (164-74) (MAIL)
+
+FROM SPRINGFIELD (154-31) 025-35357)
+
+2PP
+
+NOR JAK
+
+RE SUSPECT
+
+b6
+
+b7C
+
+DE, PICHMOND TELETYPE TO DIRECTOP DECEMBER SEVENTEEN LAST.
+
+REVIEW OF SPPINGFIELD FILE
+
+PE SUSPECT PEVEALS NO INFOPMATION NOT IN POSSESSION OF
+
+JACKSONVILLE. TO
+
+• AVOID DUPLICATION BACKGPOUND PE
+
+SUSPECI BEING LEFI TO DISCRETION OF JACKSONVILLE.
+
+FOR INFODMATIDN OF SEATTLE FILE REVIEN PEVEALED
+
+HAS |
+
+SCAR
+
+b6
+
+b7C
+
+HAD
+
+b6 /
+
+b7C
+
+END PAGE ONE
+
+164-81-1331
+
+BBAROHED...
+
+DERAL TO MY NDED S
+
+DEC 1 & 1971
+
+F3I - SEATTLE
+
+DB Cooper-4701
+
+---
+
+## Page 334
+
+PAGE TWO
+
+REVIEW DOES NOT INDICATE WHETHER OR NOT
+
+HAS ANY
+
+PARACHUTE EXPERIENCE HOWEVER IN JACKSONVILLE REPORT OF SA
+
+TELEPHONE DIRECIORY OF
+
+ONE TWENTYSIX SEVENTYONE, IT IS NOTED THAT IN
+
+THERE MAS LISTING OF SKY DIVERS
+
+AT
+
+b6
+
+b7C
+
+FLORIDA.
+
+JACKSOMVILLE REVIEW FILE ON
+
+AND PHOTO TO SEATTLE AND MINNEAPOLIS.
+
+AT
+
+FLA., CONTACT
+
+AND PROVIDE BACKAROUND
+
+b6
+
+b7C
+
+SKY DIVEPS,
+
+AND DETERMINE SUBJECTS'
+
+b6
+
+b7C
+
+, PARACHUTE EXPERIENCS.
+
+INVESTIGATION CONTINUING AT SPRINGFIELD.
+
+END
+
+OCA
+
+FBI SEATTLE CLA
+
+DB Cooper-4702
+
+---
+
+## Page 335
+
+ARORA LA PLAIN
+
+852PM NITEL 12-17-71 DPX
+
+TO SEATTLE (164-81)
+
+ST. LOUIS
+
+FROM LOS ANGELES (164-497)
+
+106
+
+NORJAK.
+
+RE SEATTLE TEL TO LOS ANGELES NOVEMBER ELEVEN THIRTY,
+
+AND LOS ANGELES TEL TO SEATTLE DECEMBER TWO LAST.
+
+REGARDING SUSPECT
+
+FOR INFORMATION
+
+05 ST. LOUIS
+
+SEATTLE, WASHINGTON, ADVISED
+
+AN ARTISI SKETCH THERE IS A SIRIXING RESEMBLANCE OF
+
+DESCRIBED AS WHITE, MALE, MID TO LATE THIRTIES,
+
+SIX FEET TALL, ONE HUNDRED NINETY POUNDS,
+
+EYES,
+
+PREMATURE GRAY HAIR
+
+BUI MAY NOT BE SCARRED. HE WENT TO
+
+AND DID GREAT DEAL OF
+
+PARACHUTE JUMPING AND EXPERIMENTED WITH EXPLOSIVES.
+
+END PAGE ONE
+
+b7c
+
+164-81-1338
+
+JLARCHED.
+
+_ INDEXEC
+
+SERIALIZES I FILED.
+
+DEC D7 1971 0.
+
+ERLICKA
+
+DB Cooper-4703
+
+b6
+
+b7C
+
+---
+
+## Page 336
+
+LA 164-497
+
+PAGE INO
+
+b6
+
+b7C
+
+ADVISED
+
+PLANNED TO
+
+RETURN IO
+
+LOS ANGELES, WHERE LIVED PREVIOUSLY.
+
+EXTENSIVE INVESTIGATION AT, COLLEGES, VETERANS ADMIN-
+
+ISTRATION, CREDIT AND CRIMINAL RECORDS, AND RECORDS OF
+
+PARACHUTE CENTER, LOS ANGELES AREA HAVE FAILED TO REVEAL
+
+ANYONE IDENTIFIABLE WITH
+
+SI. LOUIS, AI MILITARY RECORDS CENTER: REVIEW MILITARY
+
+RECORDS FOR INFORMATION REGARDING
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+AND SET OUT APPROPRIATE LEADS TO .
+
+'ESTABLISH WHEREABOUTS ON NOVEMBER IWENTY FOUR LASI.
+
+UNSUB ARMED AND DANGEROUS.
+
+END
+
+LLLL
+
+..
+
+DB Cooper-4704
+
+---
+
+## Page 337
+
+NR
+
+005 PD PLAIN
+
+7:10 URGENT 12-17-71 LUQ
+
+10: SEATTLE (164-81)
+
+FROM: PORTLAND (164-41)
+
+16
+
+b7C
+
+1P
+
+NORJAK
+
+RE LOS ANGELES TELETYPE IO SEATTLE, BUTTE, PORTLAND, HONOLULU,
+
+NEW YORK, SAN FRANCISCO AND CINCINNATI, DECEMBER ONE SEVENTYONE.
+
+SUSPECT:
+
+PORTLAND IF
+
+PORTLAND LEADS STILL OUISTANDING FOR SUSPECT...
+
+ADVISE
+
+IS SIILL SUSPECI. PENDING.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+ÉND
+
+SAC ADU, Idis
+
+'(OCA)
+
+164-81-1339
+
+SEARCHEE
+
+DEC C7 1971
+
+FUl - SEATTLI
+
+fist
+
+DB Cooper-4705:
+
+---
+
+## Page 338
+
+50-38 (Rov-5-22-61)
+
+F 81
+
+Date: 12/15/71
+
+Transmit the following in -
+
+(Type in plainiext or code)
+
+Via AIRTEL
+
+(Priority)
+
+TO:
+
+FROM:
+
+SUBJECT:
+
+SAC, CHICAGO (164-297)
+
+SAC, PITISBURGH (164-93) (P)
+
+NORJAK
+
+RePGtel to Director, 12/15/71, and PGtelecopier
+
+to Seattle, Minneapolis, and Portland, same date.
+
+RE: Suspect
+
+Enclosed for Minneapolis, Portland, and Seattle are:
+
+one photo of L
+
+taken 2/20/57, one photo of
+
+Itaken
+
+taken 5/13/68.
+
+1 6/6/72, and
+
+two photos of
+
+both
+
+JA
+
+Enclosed 10L Chicaza, Datroit. are the, trophotos of
+
+It is noted thatl
+
+has been determined
+
+o be identical to the
+
+who has furnished information
+
+egarding the alleged involvemen
+
+in this
+
+matter to Northwest Airlines officials
+
+and the Chicago Tribune.
+
+LEADS
+
+MINNEAPOLIS, PORTLAND, AND SEATTLE
+
+Exhibit photos of
+
+CHICAGO DETROIT AND MINNEAPOLIS
+
+Utilize more current photos of
+
+Interview him regarding_
+
+2-Chicago (Encl 2) (AMSD) (164-297)
+
+2-Detroit (Encl 2) (AMSD) (164=115)
+
+2-Minneapolis (Encl 1) (AMSD) (161-73)
+
+K-Portland (Encl 1) (AMSD)
+
+-Seattle (EncI 1) (AMSD) (264-81)ree'd all
+
+-Pittsburgi
+
+to witnesses and advise.
+
+to locato and
+
+CONSIDER SUBJECT DANGEROUS
+
+(12)
+
+Approved: -
+
+Sent
+
+b6
+
+"b7c
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Special Agent in Charge
+
+164-81-1340
+
+SEARCHED
+
+ERIALIZED IN ELLED.
+
+DEC 1819716
+
+FBI • SEATTLE
+
+Per -
+
+HUB- CooDer-4706
+
+.#U.G.@OVCRNMINTPRINTING@FFCEI 1911-415-135
+
+---
+
+## Page 339
+
+NORJAK
+
+RE:
+
+RE:
+
+SUSPECT -
+
+PITTSBURGH IELETYPE TO DIRECTOR
+
+TWELVE FIFHIEEN , LAST
+
+RE: MINNEAPOLIS TELETYPE TO DIRECIOR TWELVE SIXIEEN, LAST
+
+b6
+
+b7C
+
+ADVISED
+
+SUSPECIS PHOTO DISPLAYED TO NORTHWESTERN AIRLINES STEWARDESSES
+
+ON INSTANT DATE, BOTH STEWARDESSES
+
+NOT IDENTICAL WITH CAPTIONED HIJACKER.
+
+b6
+
+b7C
+
+UNSUB SHOULD BE CONSIDERED DANGEROUS
+
+!
+
+RADI MP PLAIN
+
+646 PM. NITEL 12-18-71 MPC
+
+TO
+
+DIRECTOR (164-2111)
+
+CHICAGO
+
+DETROIT
+
+(164-297)
+
+<164-115)
+
+PITTSBURGK
+
+(164-93)
+
+PORILAND
+
+(164-41)
+
+SI. LOUIS
+
+(164-63)
+
+SEATTLE (164-81)
+
+FROM MINNEAPOLIS (164-73)
+
+b6
+
+b7C
+
+END
+
+DCA
+
+FBI. SEATILE CLR
+
+..
+
+164-81-1342
+
+SEARCHED...
+
+_ INDEXED.
+
+ĐEC V8 1971
+
+FBI - SEATTLE
+
+DB Cooper-4708
+
+---
+
+## Page 340
+
+NRAM1
+
+MI PLAIN
+
+9:36 AM IMMEDIATE 12/18/71 RAH
+
+TO SEATTLE. (164-81)
+
+FROM MILWAUKEE (164-37) 20
+
+b6
+
+b7C
+
+NOP.JAK
+
+PE RICHMOND TEL TO MILWAUKEE, DECEMBER SEVENTEEN, LAST.
+
+CONTACT MADE OF
+
+BOTH STATED
+
+ON
+
+DECEMBER SEVENTEEN, LAST:
+
+HAD NOT DONE ANY PAPACHUTE JUMPING TO
+
+IHEIR KNOWLEDCE, BUT HE MAS
+
+BOTH
+
+BELIEVED HE IS VERY CAPABLE OF PARACHUTING, OS PARA-
+
+CHUTING TAKES RELATIVELY LITILE PRACTICT.
+
+RESIDES IN
+
+AND WORKS FOR
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+TELEPHONF. NO IS
+
+IN MILVAUKEF..
+
+MILWAUKES FILE REFLECTS PELATIVES AND FRIENDS IN
+
+MILWANKEE HAVE NOT HEARD FROM OR SEEM
+
+END PAGE ONE
+
+b7C
+
+164-81-1343
+
+BEARCHES
+
+DEC 108 1971
+
+FBI - SEATTLE
+
+DB Cooper-4709
+
+---
+
+## Page 341
+
+MI 164-37
+
+PAGE THO
+
+IM TEN OP. TWELVE YEA?S.
+
+HAD
+
+AND FPIEND,
+
+IN JACKSONVILLE.
+
+CAPITOL DRIVE AIRPOPT DECORDS BROOKFIELO, WISCONSIN,
+
+b6
+
+b7C
+
+SHOWED
+
+REPORTED TO BELONG TO
+
+MANIFACTURER'S SEPIAL NO OF
+
+WAS
+
+MODEL MO
+
+AND WAS MANUFACTURED IN
+
+END
+
+FTE
+
+FBI SFATTLEC CLR
+
+DB Cooper-4710
+
+---
+
+## Page 342
+
+NR069 WA PLAIN
+
+955PM IMMEDIATE 12-17-71 IMT
+
+TO RICHMOND (164-74)
+
+PORTLAND (164-41)
+
+SEATTLE (164-81).
+
+FROM DIRECTOR (164-2111)
+
+IP
+
+66
+
+b7c
+
+• NORJAK
+
+'RE RICHMOND TEL DECEMBER SEVENTEEN INSTANI.
+
+LATEN FINGERPRINIS THIS CASE NOT IDENTICAL FINGERPRINTS
+
+FBI NUMBER
+
+NO PALM PRINIS
+
+HERE.
+
+b6
+
+67C
+
+END
+
+SAC ADV. jalI?
+
+DEA
+
+164-81-1344
+
+- INDEKE
+
+DEC MY 1971
+
+F8I - SEATTLE
+
+DB Cooper-4711
+
+---
+
+## Page 343
+
+TIONAL FORM NO,
+
+4Y 1067 EDITH
+
+ESA TAMA (41 07X) 101-17.8
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+• SAC, SEATTLE
+
+(164-81)
+
+FROM
+
+SA
+
+SUBJECT:
+
+UNSUB; NORTHWEST FLIGHT 305
+
+11/24/71
+
+CAA-HIJACKING; EXTORTION
+
+00: SEATTLE
+
+DATE:
+
+12/18/,71
+
+sobs
+
+b6
+
+b7C
+
+on 12/18/71. at approximately 1:30 pm,
+
+Washington State Patrol,
+
+North Bend,
+
+telephonically furnished the following information;
+
+On instant date, anit
+
+individual appeared at their office
+
+and advised that he saw ans individual that appeared to be
+
+identical to the hijacker's description.
+
+at the office refused to give his hame because he isafriends of
+
+the individual he saw at the sarbage dump.
+
+This individaul
+
+advised that he saw
+
+Looked very much like the kjacker's picture.
+
+Lat the garbage dump and that he
+
+He advised that
+
+land gave the following directions:
+
+I1s the
+
+last house on the left.
+
+the Fat the exact have o tupee worth Beat they dedio
+
+if they desired to
+
+speak. with him.
+
+b6 |
+
+b7C
+
+b6
+
+B7C
+
+b6
+
+b7C
+
+164-81-1345
+
+2-Seattle
+
+8010-104
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4712
+
+---
+
+## Page 344
+
+SAC, SEATTLE (164-81) (P)
+
+12/17/71
+
+b6|
+
+b7C
+
+NORJAK
+
+SUSPBCT:
+
+Sub._
+
+On December 14, 1971,
+
+Clark County Sheriff's Office, Vancouver, Washington, provided
+
+the tollowine Intornation:
+
+He advlood that he recoived an anonynous phone call
+
+OR November 29, 1971, Iron & noman who advised that l
+
+age 32-33, told her that he mould shortly make a very
+
+large sun of soney, The anonynous callor then lot it glip that
+
+Tis belleyed to reside in l
+
+at an unknown location. she added that
+
+but has
+
+Hashington, nawed L
+
+(phonetic).
+
+she offered no other informcion other than that she was reluctant
+
+to be contacted or questioned in person. S
+
+LEADS
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+SEATTLE
+
+At
+
+where
+
+be obtained.
+
+Washington
+
+M1ll locatel
+
+Jin an attempt to deteraine
+
+so that a current photograph can
+
+b6
+
+b7C
+
+(3)
+
+NDS/slb
+
+164-81-1346
+
+DB Cooper-47.13
+
+---
+
+## Page 345
+
+FP-302 (REY, 3-17-59)
+
+a de
+
+..
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Doi, DeceRber, 3,, 1971
+
+Intoraation:
+
+Northwest Airiines, Inc., furnished the following
+
+b6
+
+b7C
+
+164:81-
+
+1347
+
+134г
+
+FE""
+
+Or
+
+27/25/71 Minneapolis, Minnesota
+
+_ Fi
+
+by SAI
+
+bab
+
+1,13/
+
+211/30/T5/
+
+b6
+
+b7C
+
+tand is one tore no loit true delay our egoshylons of the el I'le the propoty of the fBi and la looned lo your gency;
+
+DB Cooper-4714
+
+---
+
+## Page 346
+
+MAT ONE POT NO, 10
+
++65477HA (4<5R) 101-11-8
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81) (P)
+
+TO
+
+DATE: 12/17/71
+
+FROM
+
+b6
+
+b7C
+
+SUBJECT: NORJAK
+
+SUSPECT:
+
+b6
+
+b7C
+
+On December 14, 1971,
+
+Clark County Sheriff's Office,
+
+Vancouver, Washington, provided
+
+b6
+
+b7C
+
+the tollowing Infornation:
+
+He advised that he received an anonymous phone call
+
+on November 29, 1971, from a woman who advised that
+
+age 32-33, told her that he would shortly make a very
+
+large sum of monev.
+
+The anonymous caller then let it slip that
+
+b7C
+
+at an unknown location.
+
+She added that
+
+is bellered to feastengton,
+
+but has
+
+named
+
+](phonetic).
+
+She offered no other informtion other than that she was reluctant
+
+to be contacted or questioned in person.
+
+LEADS
+
+SEATTLE
+
+At [
+
+where
+
+be obtained.
+
+Washington
+
+Will locate l
+
+b7C
+
+Iso that a current photose determ
+
+(3)
+
+NDS/slb
+
+1014-104
+
+164-81-1346
+
+Lead
+
+DECQ'2 1971
+
+81 - SEATTI
+
+Info from suther bounce
+
+spid
+
+has lead to get
+
+By U.S. Sarings Bet lay in i est same tet moo
+
+recent
+
+---
+
+## Page 347
+
+FD-36 (R87-5-22-54)
+
+Transmit the following in
+
+Via -
+
+_ AIRTEL
+
+F BI
+
+Date: 12/16/71
+
+(Type in plaintext or code)
+
+(Priority)
+
+SUB-
+
+F
+
+10:
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, MINNEAPOLIS (164-73) (P)
+
+SUBJECT: NORJAK
+
+Saw 140
+
+Re Seattle 'airtel to Minneapolis dated 12/10/71.
+
+Enclosed herewith for Seattle are FD-302's
+
+reflecting interviews with
+
+Northwest Airlines,
+
+Minneapolis, Minnesota.
+
+UNSUB SHOULD BE CONSIDERED DANGEROUS
+
+eit
+
+b6
+
+b7C
+
+seattle (enc. 27) seid alv
+
+Z - Minneapolis
+
+(4)
+
+Approved:
+
+Sent
+
+Special dent in Charge
+
+164-81-1349
+
+SEARCHED
+
+SERLANES ID, FLED
+
+- INDEXE.
+
+DEC .103 1971
+
+FBL:S5
+
+_ M
+
+Per
+
+$ U.S. GOVERNMENT PRINTING OFFICE DB. Cooper-4726
+
+---
+
+## Page 348
+
+TO
+
+AROMAL MORM NO
+
+G5A FRMA (11 057) 101-174
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: FILE (164-81)
+
+FROM : SAC, SEATTLE
+
+SUBJECT: NORJAK
+
+DATE:
+
+SUB-
+
+M
+
+12/17/72
+
+On 12/17/71 I talked to
+
+SEATTLE TIMES, and advised him that the Bureau
+
+Wa publishing the test the airo me i thee st in have
+
+in publishing the list of bills.
+
+the matter under consideration and would possibly run the
+
+list anyway.
+
+SEATTLE P-I, advised
+
+that they still have the matter under consideration and he
+
+will let me know.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+JEM: eon
+
+(3)
+
+164-81-1350
+
+SEARCHED_
+
+_ INDEXED
+
+SERIALIZED TEDIA
+
+DEG 1D 1971
+
+FBI - SEATTLE
+
+$010-10€
+
+Buy U.S. Savings Bonds Regularly of the Pastoll Savings Plan
+
+---
+
+## Page 349
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI / PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790
+
+Total Deleted Page (s) = 18
+
+Page 66 • Referral/Consult;
+
+Page 67 • Referral/Consult;
+
+Page 68 ~ Referral/Consult;
+
+Page 69 ~ Referral/Consult;
+
+Page 86 • Referral/Consult;
+
+Page 87 • Referral/Consult;
+
+Page 88 ~ Referral/Consult;
+
+Page 89 ~ Referral/Consult;
+
+Page 90 • Referral/Consult;
+
+Page 91 • Referral/Consult;
+
+Page 92 • Referral/Consult;
+
+Page 93 • Referral/Consult;
+
+Page 94 • Referral/Consult;
+
+Page 95 - Referral/Consult;
+
+Page 96 • Referral/Consult;
+
+Page 97 - Referral/Consult;
+
+Page 98 ~ Referral/Consult;
+
+Page 99 ~ Referral/Consult;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+Deleted Page (s)
+
+X
+
+X
+
+X
+
+No Duplication Fee X
+
+For this Page
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 350
+
+. SEE
+
+NEXT
+
+.
+
+VOLUME
+
+DB Cooper-4728
+
+---
+
+## Page 351
+
+TO
+
+:
+
+FROM :
+
+SUBJECT:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)
+
+DATE: 12/14/71
+
+SA CHARLES E. FARRELI
+
+NORJAK
+
+By routing slip dated 12/9/71, the Bureau furnished
+
+20 copies each of glossy photos of an artist's conception of the
+
+subject showing him with and without glasses. Copies of
+
+@= 26A-81
+
+164-81 Sub K
+
+CEF : kIb
+
+SuB-K
+
+#3
+
+(GLOSSY)
+
+164-81-1351
+
+SEARCHED
+
+_ INDEXED
+
+SERLALIZED
+
+_FILED.
+
+DEC1 1171
+
+FBI - SEATTLE
+
+5010-704
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4729
+
+---
+
+## Page 352
+
+DB Cooper-4730
+
+---
+
+## Page 353
+
+NR
+
+BD4 PD PLAIN
+
+7:12 URGENT 12-17-71 LJQ
+
+TO: SEAITLE (164-81)
+
+FROM: PORTLAND (164-41) IP
+
+SuB.
+
+NORJAX
+
+- DAILY SUMMARY
+
+NO SIGNIFICANT INFORMATION DEVELOPED, PORTLAND AREA, BUT "
+
+LOOK-ALIKE LEADS CONTINUE TO BE COVERED. PENDING.
+
+END
+
+SAC ADU. 101D
+
+(007)
+
+164-81-1352
+
+SEARCHES NOELON
+
+DEC N7 1971
+
+FEN SATIE,
+
+DB Cooper-4731
+
+---
+
+## Page 354
+
+FD-36 (Roy, 5-22-84)
+
+504
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+FBI
+
+Date: 12/17/71
+
+(Type in plaintext or code)
+
+NITEL
+
+(Priority)
+
+SUB+
+
+TO :
+
+FROM:
+
+SAC, PORTLAND
+
+LAS VEGAS
+
+SAN FRANCISCO
+
+SACRAMENTO
+
+SAC, SEATTLE (164-82)
+
+NORJAK
+
+WITH REFERENCE TO SEATTLE'S COMMUNICATIONS WITH RESPECT
+
+TO HAVING NEWSPAPERS PUBLISH THE LIST OF RANSOM BILLS, THE
+
+RECEIVING OFFICES ARE REQUESTED TO ADVISE IF ANY SUCCESS HAS
+
+BEEN ACHIEVED.
+
+SAN FRANCISCO IS REQUESTED TO CONTACI THE BANKS AND
+
+SAVINGS AND LOAN ASSOCIATIONS TO HAVE THEM ALERT FOR ANY
+
+LARGE DEPOSITS OF IWENTY DOLLAR BILLS OR THE RECENT RENTAL
+
+OF A SAFE DEPOSIT BOX OR ACTIVITY IN AN ALREADY RENTED SAFE
+
+DEPOSIT BOX WHEREIN THE HIJACKER MIGHT HAVE STASHED THE
+
+TWO HUNDRED THOUSAND DOLLARS.
+
+ALL RECEIVING OFFICES ARE REQUESTED TO CONTACT THE
+
+NEWSPAPERS AND HAVE THEM PUBLISH AN ARTICLE ADVISING OF THE
+
+AVAILABILITY OF THE RANSOM LIST. P.
+
+Approved: JEM /CEF/dA
+
+Special Agent in Charge
+
+p0-11:02
+
+LU - 11:0%
+
+164-81-1353
+
+SF-11:30
+
+SentSC - 11:13 PM
+
+Per.
+
+U.S. GOVTENMENT PANTING OFFICE DB-Gooper-4732
+
+---
+
+## Page 355
+
+N:BN9 SE PLAIN
+
+11:02 PM NITEL 12/17/71 DCA
+
+TO
+
+PORTLAND
+
+SAN FRANCISCO
+
+FROM SEATTLE (164-81)
+
+LAS VEGAS
+
+SACRAMENTO
+
+"IP
+
+NORJAX
+
+WITH REFERENCE TO SEATTLE'S COMMUNICATIONS WITH RESPECT TO
+
+HAVING NEWSPAPERS PUBLISH THE LIST OF RANSOM BILLS, THE RECEIVING
+
+OFFICES ARE REQUESTED TO ADVISE IF ANY SUCCESS HAS BEEN ACHIEVED.
+
+SAN FRANCISCO IS REQUESTED TO CONTACI THE BANKS AND SAVINGS
+
+AND LOAN ASSOCIATIONS TO HAVE THEM ALERI FOR, ANY LARGE DEPOSITS OF
+
+TWENTY DOLLAR BILLS OR THE RECENT RENTAL OF A SAFE DEPOSIT BOX OR
+
+ACTIVITY IN AN ALREADY RENTED SAFE DEPOSIT BOX WHEREIN THE HIJACKER
+
+MIGHT HAVE STASHED THE TWO HUNDRED THOUSAND DOLLARS.
+
+ALL RECEIVING OFFICES ARE REQUESTED TO CONTACT THE NEWSPAPERS
+
+AND HAVE THEM PUBLISH AN ARTICLE ADVISING OF THE AVAILABILITY OF
+
+THE RANSOM LIST. - P -
+
+END
+
+RMB
+
+FBI PD CLR
+
+164-81-135308 Cooper-4733
+
+---
+
+## Page 356
+
+ARBRA RH PLAIN
+
+3:07 PM IMMEDIATE 12-17-71 EJM
+
+TO
+
+DIRECTOR (164-2111)
+
+SEATTLE (164-81)
+
+JACKSONVILLE (26-21742)
+
+MILWAUKES (26-17766)
+
+SPRINGFIELD 826-35357)
+
+PHOENIX
+
+MIAMI (26-36467)
+
+FROM RICHMOND (164-74)
+
+2P
+
+b7C
+
+NORJAK
+
+REBUAIRTEL TO ALBANY, DEC. SEVEN, LAST•
+
+RE, POSSIBLE SUSPECT,
+
+FUGITIVE, SSN
+
+DOB ;
+
+BEING CONSIDERED POSSIBLE SUSPECT IN VIEW OF THE
+
+FACT THAT HE IS
+
+HAS DARX SKIN, PHOTOGRAPHS GENERALLY FAVOR THAI OF
+
+END PAGE ONE
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+121, - 1904
+
+DEC 1C8 1971
+
+FUI - SEATTLE
+
+DB Cooper-4734
+
+---
+
+## Page 357
+
+RH 164-74
+
+PAGE IWO
+
+DRAWING OF UNSUB. HE IS A FUGITIVE FOR TWO YEARS IN THE CASE
+
+INVOLVING THE
+
+00, JACKSONVILLE.
+
+PHOTOGRAPH OF
+
+BEING FORWARDED TO SEATTLE BY AIRTEL
+
+IMMEDIATELY FOR SHOWING TO LOGICAL WITNESSES IN AN EFFORT TO
+
+TTECT MY IDENTIFICATION.
+
+OFFICES RECEIVING THIS COMMUNICATION REVIEW THEIR
+
+CLASSIFICATION SET FORTH ABOVE FOR BACKGROUND INFO AND FORWARD •
+
+SAME TO SEATTLE, ASCERTAIN IF I
+
+HAS HAD ANY PARACHUTE
+
+JUMPING EXPERIENCE.
+
+BUREAU IS REQUESIED TO COMPARE THE KNOWN FINGERPRINIS OF
+
+WITH THOSE OBTAINED IN CONNECTION WITH THIS CASE.
+
+EXPEDITE.
+
+.
+
+66
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+END
+
+JJT
+
+FBI SEATILE
+
+CK LR
+
+DB Cooper-4735
+
+---
+
+## Page 358
+
+wintertimes 1347545786
+
+OPTIONAL FORM NO TO
+
+MAY 1#SI COITION
+
+EXAFAMN (41 (7R) 101-118
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+DATE:
+
+FROM
+
+:SA
+
+SUBJECT: UNSUB; NORTHEST AIRLINES
+
+FLIGHT 305, 11/24/71
+
+CAA-HIJACKING; EXTORTION
+
+On
+
+12/17/71
+
+SA
+
+telephone tactell
+
+telephone
+
+12/17/71
+
+SAL
+
+exhibited tol
+
+including that of
+
+in the instant matter.
+
+a group of photo crapest
+
+eliminated this suspect, based upon his recollection of
+
+the hijacker in this case.
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+2-164-81
+
+1-164-81
+
+ONG
+
+(3)
+
+b6
+
+164-81-1355
+
+(SEARCHED.
+
+IMOSIED.
+
+FBI-STALLE
+
+дю-
+
+DB Cooper-4736
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 359
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+DẠTE:
+
+12/17/71
+
+FROM : SA
+
+b6
+
+b7C
+
+SUBJECT: UNSUB; NORTHWEST ATRIINES
+
+FLIGHT 305, 11/24/71
+
+CAA-HIJACKING; EXTORTION
+
+On
+
+12/17/71 SAT
+
+b6
+
+b7C
+
+Itot antonontactedl
+
+telephone
+
+SA
+
+including that of
+
+in the instant matter.
+
+that exhibited to
+
+a group of photographs,
+
+• a suspect
+
+b6
+
+b7C
+
+the hijacker in this caseated this suspect, based upon his recollection of be
+
+C5=864-81
+
+1-164-81
+
+.CNG
+
+(3)
+
+b6
+
+b7C
+
+164-81-1355
+
+SEARCHED..
+
+DES 203187
+
+DB Cooper-4737
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 360
+
+AROAD WA CODE 4:30PM
+
+4:07 PM URGENT 12-17-71 JMX
+
+TO DALLAS
+
+• DENVER
+
+EL PASO
+
+MINNEAPOLIS
+
+PORTLAND (164-44)
+
+SEATTLE (164-81)
+
+FROM CLEVELAND <164-88) 2P
+
+CALL OFFICES VIA WASHINGION DO
+
+Sump 200
+
+NORJACK; 00: SEATTLE
+
+RE PORTLAND TELETYPE TO CLEVELAND, DEC. SIXIEEN, LAST.
+
+RE: SUSPECI JAMES FUGATE
+
+CONTACI WITH US POSTAL INSPECIOR, TOLEDO, D., AND TOLEDO
+
+POST OF OHIO STATE HIGHWAY PATROL, INDICATES FUGATE RESIDENCE
+
+OF ELEVEN S. MARTIN RD., JAMESTOWN, WIS., PILOT FOR BUCKEYE
+
+AIR SERVICE, SIX ONE THREE OBERLIN RD., ELYRIA, O., WAS
+
+KILLED AT TWO FORTYSEVEN AM ON FEB. EIGHTEEN, SEVENTYONE DUR-
+
+ING THE CRASH OF A BEECHCRAFI AIRPLANE AT TOLEDO EXPRESS
+
+AIRPORI, TOLEDO, O.
+
+INSTANT PLANE WAS CARRYING MAIL UNDER CONTRACT WITH THE
+
+US POST OFFICE.
+
+END PAGE ONE
+
+ELIM,
+
+164-81 - 1356
+
+DEC D7 1971
+
+FBI - SEATTLE
+
+- DE
+
+Cooper -4738
+
+---
+
+## Page 361
+
+PAGE TWO
+
+CV 164-88
+
+ALL RECEIVING OFFICES DISCONTINUE INVESTIGATION
+
+CONCERNING FUGATE.
+
+P.
+
+END
+
+PLS GO TO TALK
+
+DB Cooper-4739
+
+---
+
+## Page 362
+
+3010-100
+
+OSA GEN
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC 164-81
+
+DATE: 12/17/71
+
+FROM : SA
+
+SUB -D
+
+SUBJECT: Unsub; NWA alt. 305,11/24/71
+
+CAA-Hi jacking
+
+ttached are the following itens obtained fror
+
+soéeng Co.:
+
+list of skydivers from from publication dated reb. 1,63.
+
+said Boeing has had no skydiving clubs since that
+
+time)
+
+Print-out, Boeing Seattle Soaring Club.
+
+Print-out, Seattle Boeing Flying Club.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+(1)
+
+VRM
+
+Put ce
+
+No minist actio roguil
+
+prive Scat interdere
+
+164-81 - 1357
+
+SHICHED.
+
+SESTATEO FLED.
+
+DEC@71971
+
++0O4HIN
+
+DB Cooper-4740
+
+---
+
+## Page 363
+
+1R812 NY PLAIN
+
+109 PM URGENT 12-17-71 JLW
+
+TO SEATTLE 164-81
+
+FROM NEW YORK 164-627 IP
+
+NORJAK.
+
+b6
+
+b7C
+
+NEM YORK, NEW YORX, TELEPHONICALLY CONTACTED
+
+NYO AND ADVISED THAT SHE READ NEWSPAPER ARTICLE PERTAINING
+
+TO LETTER FROM INDIVIDUAL. GLAIMINO TO BEHIJACKER. SHE STATED
+
+BASED ONLY ON FORMAT AND STYLE OF LETTER, SHE CONSIDRED
+
+POSSIBLE
+
+SUBJECT.
+
+SEATTLE WILL INTERVIEW
+
+APPROXIMATELY
+
+WHITE. MALE,
+
+LAST KNOWN TO BE RESIDING
+
+WASHINGTON, REGARDING HIS
+
+WHEREABOUTS DURING PERTINENI PERIOD OF HIJACKING.
+
+END
+
+DE FBI S
+
+IST
+
+FBI SEATTLE
+
+aLR
+
+b6 |
+
+b7C
+
+164-81-1358
+
+DEC LÃ 1971
+
+FBI - SEATTLE
+
+DB Cooper-4741
+
+---
+
+## Page 364
+
+IRB12 NY PLAIN
+
+189 PM URGENT 12-17-71 JLW
+
+10 SEATTLE 164-81
+
+FROM NEW YORK 164-627 1P
+
+b7C
+
+NORJAK.
+
+b6|
+
+b7C
+
+NEW YORK, NEW YORK, TELEPHONICALLY CONTACTED
+
+NO AND ADVISED THAT SHE READ NEWSPAPER ARTICLE PERTAINING
+
+TO LETTER FROM INDIVIDUAL CLAIMING TO BEHIJACKER. SHE STATED
+
+BASED ONLY ON FORMAI AND STYLE OF LETTER, SHE CONSIDRED
+
+_POSSIBLE SUBJECT.
+
+SEATTLE WILL INTERVIEW
+
+WHITE. MALE,
+
+APPROXIMATELY
+
+LAST KNOWN TO BE RESIDING
+
+SEATTLE, WASHINGTON, REGARDING HIS
+
+WHEREABOUTS DURING PERTINENT PERIOD OF HIJACKING.
+
+b6
+
+b7C
+
+END
+
+DE FBI S
+
+JJT
+
+FBI
+
+SEATTLE
+
+OLR
+
+Lead
+
+164-81-1358
+
+SEARCHED MURLE INDEXED.
+
+SERIALIZED, LILS-FILED.
+
+DEC 4 7 1971
+
+ATTLE
+
+b6
+
+b7C
+
+Сбов Cooper-4742
+
+---
+
+## Page 365
+
+IR B03 PD PLAIN
+
+2810 PM URGENT 12-17-71 LUR
+
+TO: SAC, SEATTLE (164-81)
+
+FROMS SAC, PORTLAND (164-41) (P)
+
+1P
+
+NORJAK
+
+ON 12/17/71, L
+
+67C
+
+b7D
+
+7 FURNISHED THE FOLLOWING INFORMATIONE
+
+SEATTLE.
+
+ADVISED
+
+WHO IS
+
+IN CONFIDENCE, WHO PASSED ALONG TO
+
+THAT
+
+b6
+
+b7C
+
+b7D
+
+WHO FREQUENTS
+
+ARE ACQUAINTED WITH
+
+(FNU)
+
+SEATTLE,_
+
+NIGHIS.
+
+TOLD
+
+THAT SHORTLY BEFORE INSTANT
+
+MENTIONED TO THEM THAT
+
+HIJACKING,
+
+WHOSE NAME IS EITHER
+
+WAS A
+
+J AND WAS PLANNING TO MAKE A LARGE
+
+AMOUNT OF MONEY SOON BY UTILIZING HIS PARACHUTING ABILITY.
+
+ADVISES NEITHER
+
+JHAVE ANY
+
+DESCRIPTIVE INFO RE SUSPECT
+
+AND REQUESTED THAT IF POSSIBLE
+
+CONTACT BE MADE DIRECILY WITH
+
+AND THAT
+
+IDENTITIES BE PROTECIED.
+
+SEATTLE ATTEMPT TO IDENTIFY SUSPECT
+
+APPROPRIATE INVESTIGATION TO INVOLVE OR ELIMINATE.
+
+b6
+
+b70
+
+b7D
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+AND CONDUCT
+
+164-81-1359
+
+SSARCHEF
+
+= INDEXED.
+
+SERIALZES.
+
+DEC 1 01971
+
+FBI • SEATTLE
+
+b6
+
+b7C
+
+DBycooper-4743
+
+---
+
+## Page 366
+
+b6
+
+b7C
+
+AR 083 PD PLAIN
+
+2:19 PM URGENT 12-17-71 LJQ
+
+10: SAC, SEATTLE (164-81)
+
+FROM: SAC, PORTLAND
+
+(164-41) (P) 1P
+
+NORJAK
+
+ON 12/17/71,
+
+YaOURCE
+
+FURNISHED THE FOLLOVING INFORMATION:
+
+SAULEI
+
+SEATTLE.
+
+b6
+
+b7C
+
+b7D
+
+ADVISED
+
+WHO
+
+JIN CONFIDENCE, WHO PASSED ALONG TO
+
+THAT
+
+ARE ACQUAINIED WITH
+
+(FNU)
+
+WHO FREQUENIS
+
+SEATILE,
+
+NIGHTS.'
+
+TOLD
+
+THAT SHORTLY BEFORE INSTANT
+
+MENTIONED TO THEM THAT
+
+HIJACKING,
+
+WHOSE NAME IS EITHER
+
+WAS A
+
+JAND WAS PLANNING TO MAKE A LARGE
+
+AMOUNT OF MONEY SOON BY UTILIZING HIS PARACHUTING ABILITY.
+
+ADVISES NEITHER
+
+HAVE ANY
+
+DESCRIPIIVE INFO RE SUSPECT
+
+AND REQUESTED THAT IF POSSIBLE
+
+CONTACI BE MADE DIRECILY WITH
+
+AND. THAT
+
+IDENTITIES BE PROTECTED.
+
+SEATTLE ATTEMPT TO IDENTIFY SUSPECT
+
+APPROPRIATE INVESTIGATION TO INVOLVE OR ELIMINAIE.
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+Lead
+
+AND CONDUCT
+
+164-81-1359
+
+SEARCHED.
+
+alivexed
+
+SERIALIZEd MA.
+
+"FILED.
+
+DEC 107 1971
+
+CULIAFATALE
+
+so Cooper-4744
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 367
+
+1RB5T WA PLAIN
+
+6:56PM URGENT 12-17-71 KPT
+
+TO SEATTLE (164-81)
+
+FROM DIRECTOR (164-2111)
+
+SuB O
+
+(2P)
+
+NORJAX
+
+REURTEL TWELVE SEVENTEEN INSTANT CAPTIONED DAILY TELETYPE.
+
+IN THE FUTURE, SUBMIT MORE INFORMATION IN YOUR DAILY
+
+TELETYPES REFLECTING DEPTH AND SCOPE OF INVESTIGATION BEING
+
+CONDUCTED, THIS MATTER MUST RECEIVE IMAGINATIVE AND VIGOROUS
+
+INVESTIGATION BY ALL OFFICES.
+
+PERTINENT OFFICES SHOULD BE INSTRUCTED TO CONTACI LOGICAL
+
+INFORMANTS• AS PREVIOUSLY, INSTRUCTED, PAST AND PRESENT BOEING
+
+AIRCRAFT COMPANY EMPLOYEES SHOULD BE CONSIDERED. IT IS
+
+SUGGESTED THAI ADDITIONAL PUBLICITY CONCERNING. THE RANSOM LISI
+
+BE SOLICITED. SEATTLE OFFICE SHOULD HAVE ALL WEST COAST
+
+OFFICES CONSIDER INDIVIDUALS IN THEIR BANK BOBREDY SUSDERTS
+
+PROGRAM AS POSSIBLE SUSPECIS IN CAPTIONED MATTER.
+
+IT IS EXPECTED THE SEATTLE OFFICE WILL CONTINUE TO GIVE
+
+THIS MATTER CLOSE SUPERVISORY ATTENTION AND INSURE INVESTIGATION
+
+END PAGE ONE
+
+164-81-1360
+
+SEALITO ME INDEED
+
+SERIALI
+
+DEC LY 1971
+
+FBI - SEATTLE
+
+DB Cooper-4745g
+
+-
+
+---
+
+## Page 368
+
+PAGE IWO
+
+IS CONDUCIED PROMPTLY AND THOROUGHLY, KEEP BUREAU ADVISED
+
+ON A DAILY BASIS. ENCOURAGE CONTINUED SEARCHES OF THE
+
+PERTINENT AREAS IN THE EVENT THE HIJACKER WAS KILLED OR
+
+INJURED.
+
+END
+
+VAB
+
+FBI SEATTLE CLR
+
+DB Cooper-4746
+
+---
+
+## Page 369
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+FROM : SA DONALD J. STEELE
+
+SUBJECT: NORJAK
+
+DATE: 12/17/71
+
+b6
+
+b7C
+
+RE: SUSPECT |
+
+On December 3, 1971,
+
+Seattle First National Bank,
+
+advised that he
+
+had been contacted by l
+
+Tot thel
+
+Branch of that bank,
+
+telephone
+
+Jand that
+
+considered the suspect as possibly being involved
+
+indicated that
+
+I seattle,
+
+Wash-
+
+ington, and he
+
+Is thel
+
+but he has
+
+indicated
+
+would be completely familiar with the
+
+area between seattle and portland.
+
+He indicated he knew
+
+needs noney and
+
+had asked for a loan fron the Small Business Administration
+
+He advised that
+
+for a loan turned down because
+
+suspect had had al
+
+l application
+
+Subject is a
+
+• Subject was born
+
+5'10", medium build, white nale and
+
+is sort spoken.
+
+On December 3, 1971, he appeared with his hand
+
+havng been bandaged stating he had
+
+believed that this individual had the background
+
+necessary to pull off subject hijacking but had no other
+
+reasons for suspecting this individual.
+
+LEADS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+3010-100
+
+SEATTLE
+
+At Seattle, Washington
+
+164-81-1361
+
+Seattle First National
+
+Bank, for more specific Intormation concerning suspect
+
+ind thereafter take steps necessary to identify suspect..iNDEX$
+
+or eliminate hiv.
+
+FRIAR IMPED...11
+
+ERIeSEATILE
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings.
+
+167.
+
+Do cooper-4747
+
+---
+
+## Page 370
+
+SAC, SEATTLE (184-81)
+
+SA DONALD J. STEELE
+
+NORJAK
+
+12/17/71
+
+b6
+
+RE: SUSPECT|
+
+On December 3, 1971,
+
+Seattle Flrst National Bank, advised that h
+
+had been contacted by l
+
+of the
+
+Branch of that bank, telephone
+
+and that
+
+considered the suspect as possibly ash Involyed
+
+Indicated that
+
+Seattle, Yash-
+
+Ington, and hel
+
+Ils thel
+
+but he has
+
+indicated
+
+would be completely saniliar with the
+
+area between seattle and Portland.
+
+He indicated he know
+
+needs money and
+
+had asked for a loan fron the Small Business Administration
+
+He adyised that
+
+suspect had had
+
+application
+
+for a loan turned down because
+
+• Subject is a
+
+Subject was born
+
+J5'10", medium build, whito male and
+
+Is soft spoken.
+
+On December 3, 1974, he appeared with his hand
+
+haring been bandaged stating he had
+
+_belleved that this individual had the background
+
+necessary to pull off subject hijacking but had no other
+
+reasons for suspecting this Individual.
+
+LEADS
+
+b6
+
+b7C
+
+'b6
+
+b70
+
+b6
+
+b7C
+
+SEATTLE
+
+At Seattle, Washington
+
+Will contact
+
+Seattle Firet Natlonal
+
+Bank, for nore specific intormation concerning suspect 164-81-136/670
+
+or eliminate hin.
+
+(3)
+
+Lal-SLATILE
+
+DB2ooper-4748
+
+---
+
+## Page 371
+
+*TIONAL FORM NO. 1
+
+MAY INE, EONTICA
+
+ESATEMA (4 (7N) 101-118
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+DATE:
+
+12/18/71
+
+FROM : SPC
+
+SUBJECT: UNKNOWN SUBJECT, aka DAN COOPER;
+
+N.W. AIRLINES FLIGHT $305,
+
+PORTLAND TO SEATTLE,
+
+11/24/71
+
+CAA - HIJACKING; EXTORTON
+
+00:
+
+Seattle
+
+At 31:42 PM, 12/17/71,
+
+Wash., no phone vet /advised he believes UNsus
+
+may be identical to one
+
+parachuting in California and reportedly wasI
+
+one parachuting group in California because
+
+He is described by l
+
+Iyears of age or a little
+
+younger, 5'11"
+
+, 170 pounds,
+
+sandy hair, receding hair-
+
+He possibly lives in
+
+has not seen him for
+
+years.
+
+His whereabouts may be known by onel
+
+California.
+
+had previously been contacted by SA
+
+but could not provide any clues to the hijacker's
+
+identity at that time.
+
+wishes his name to
+
+be kept confidential if
+
+any inquiries are made on
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+DCA/dca
+
+(2)
+
+8010-704
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+164-81-1362
+
+SEARCHED DE INDEXED..
+
+SERIALIZED_ FILED
+
+DEC 1 81971
+
+FBI - SEATTLE
+
+ghat
+
+DB Cooper-4749
+
+---
+
+## Page 372
+
+FD-38 (Ror, 5-22-84)
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+TO:
+
+FROM:
+
+NORJAK
+
+CAA. - HIJACKING
+
+00: SEATTLE
+
+FBI
+
+Date:
+
+12/15/71
+
+(Type in plainiext or code)
+
+(Priority)
+
+SAC, SEATTLE (164-81)
+
+SAC, MIAMI (164-552) (P)
+
+b7C
+
+RE:
+
+Re Alexandria nitel to the Bureau dated
+
+12/2/71.
+
+each of
+
+Enclosed for reciplent offices are two photographs
+
+Investigation. Hiams. disclosedl
+
+currently employed as
+
+was on leave on 11/24/71.
+
+He,
+
+b6 |
+
+b7C
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+For information of recipiont offices,
+
+generally answers physical description of Unsub.
+
+Soattle (Ence 2) red ser
+
+2
+
+• Portland
+
+(Encs
+
+2 - Minneapolis (164-73) (Ence 2)
+
+1 - Miami
+
+NEB/rgn
+
+(7)
+
+Armed and Dangerous
+
+164-81-1363
+
+SEARCHED,
+
+Approved:
+
+<
+
+- Sent
+
+FBI - SEATTLE
+
+_M Per
+
+S.U.S. GOVERNMENT PRINTING OTTCE 19DBrCooper-4750
+
+---
+
+## Page 373
+
+FD.Ü02 (REY, 11-27-70)
+
+-
+
+1
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription
+
+12/8/71
+
+sheraton
+
+Carlton Hotel, 16th and K Streets, N. W., Washington, D. C.
+
+(WDC), permitted a search of suite 400, and the following
+
+Items were seized in view of their possible evidentiary
+
+nature in connection with an official investigation:
+
+One empty bottle of Aloe Vera Gel.
+
+One cardboard box containing one empty bottle of
+
+Sal-Coh-Tone.
+
+Two empty bottles, one bearing label "Wheat Gerr
+
+011" and the other bearing what appears to be label "BIODENT."
+
+Torn pieces of a yellow personalized check bearing
+
+printed names
+
+One torn hotel envelope, gray in color.
+
+One miniature four of hearts playing card bearing
+
+picture of United States Capitol.
+
+Nine Winston cigarette butts and assorted paper and
+
+wooden matches.
+
+One empty Winston cigarette package.
+
+One tom fork entitled "Hotel Association of
+
+Washington, D. C." bearing names
+
+and number;
+
+along with other illegible handwriting in blue ink and green
+
+felt tip pen ink.
+
+One directory of Sheraton Hotels and Motor Inns.
+
+164-81-1364
+
+Washington, D. C.
+
+N70.164-169
+
+12/3/71
+
+interviewed on.
+
+ot
+
+SA C. EARI. SHAW: SCW
+
+DECTS
+
+12/6/71
+
+b6
+
+b7C
+
+b6 |
+
+66
+
+b7C
+
+__Dare disrain
+
+This document contoins neither
+
+recommendations nor conclusions of the F81. ll is the proporty
+
+it ond its contents are
+
+nol lo be distribulad butside your agency,
+
+b6
+
+b7C
+
+d'to your ogency,
+
+DB Cooper-4751
+
+---
+
+## Page 374
+
+WFO 164-169
+
+One pamphlet entitled "The Sheraton Register."
+
+One empty laundry package bearing numbers
+
+and
+
+Pleces of a note written with a green felt tipped
+
+pen which, when pleced together... read,
+
+The
+
+other side of the note reads,
+
+Miscellaneous items, including a 30 centime French
+
+postage stamp.
+
+2 American Alrline Baggage stubs bearing flight
+
+number 338.
+
+Numerous Washington, D. C. (WDC) newspapers, some
+
+of which had the headlines and larger print eut out.
+
+The above items were properly labeled and preserved
+
+for possible forwarding to the FBI laboratory for appropriate
+
+examination.
+
+Also seized were two Sheraton Carlton Hotel drink
+
+glasses.
+
+b6|
+
+b7C
+
+b6|
+
+b7C
+
+DB Cooper-4752
+
+---
+
+## Page 375
+
+F0-302 (REV, 11-27-70)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+1
+
+Dale ol kronscription
+
+12/7/71
+
+Sheraton Carlton
+
+Hotel, 16th and X Streets, N,He, Washington, D.C, (HDC), tele-
+
+phone number (area code
+
+furnished the following
+
+information relative to the eccupancy of Sultel
+
+& three
+
+roon suite including rooms
+
+Hotel records reflect that on Movember 27, 1971.
+
+Springfield, state not listed, was sent confirantion of reser-
+
+vations for a two nights stay beginning on that date.
+
+checked into the hotel and registered in Suite
+
+at 9:37 PM,
+
+November 21. 1971! and at that time Ilsted his home address as
+
+Evansyllle, Indians,
+
+He listed his employ-
+
+ment as
+
+no address listed.
+
+The hotel records further disclose that on November 28,
+
+1971,
+
+"Abliney,"
+
+Texas, registered in
+
+for a two nights staye
+
+listed his employnent as
+
+It
+
+appeared as though the aforenentioned
+
+was originally
+
+registered in Room
+
+but subsequently moved to Suite
+
+upon
+
+arrIval.
+
+The records further revealed that one (first name
+
+unknown) |
+
+joined
+
+lin Suite
+
+Jon December 2,
+
+1971, but that
+
+moved into suite
+
+from another room
+
+which he inftially occupied on an unknown date.
+
+further advised that suite
+
+was also
+
+occupied by another unknown white male American,
+
+whom
+
+he described
+
+as the "DEAN MARIIN" type, 6 feet in height'i, 180 pounds, white
+
+halI, who spoke with a Texas accent and who always wore a sweater
+
+and slacks and presented a suave appearance,
+
+provided the following descriptive infor-
+
+_'Washington, D.C,
+
+164-81-1365
+
++1: +350-764-169
+
+M.LEXED,....
+
+b6
+
+b7C
+
+b6!
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+66]
+
+b7C
+
+66
+
+b7C
+
+inserriewed on. 12/3/71
+
+by-
+
+SA G. TARI SHAHipja
+
+This document contains neither recommendations nor conclusions of the FBl. ll is the proped
+
+it and its conients are not to de distributed oviside your agency,
+
+LIFELE SHETT
+
+b6
+
+67C
+
+DB Cooper-4753
+
+---
+
+## Page 376
+
+WFO 164-169
+
+2
+
+mation concerning the other individuals in Suite
+
+but was
+
+unable to positively associat names with the following descrip-
+
+tions with the exception of
+
+to 5 feet 5 inches, 260 - hi polena e 50 50-5y 5 feet 2 inches
+
+Individual believed to be
+
+White male,
+
+American, 60 years old, 5 feet 10 inches in height, 165 pounds,
+
+no further description recalled.
+
+characterized both
+
+Jas "non-descript
+
+and plain looking" and believes that some of the
+
+other indivi
+
+duals may have referred toL
+
+(First name unknown)
+
+_- White male, American,
+
+5 feet 10 inches in height, 155 poinds, with grey halt, thin
+
+and balding, slight build.
+
+Last unknown male - White American, 6 feet 3 Inches
+
+tall, 250 pounds, heavy build, round face, wearing business suit
+
+but had appearance of "truck driver."
+
+The hotel registration records also reflected that all
+
+of the above individuals departed the hotel at 12:50 PM, Decem-
+
+ber 3, 1971, for undisclosed destinations,
+
+Their nethod of
+
+travel also remains unknown.
+
+colophone call records from sutrel
+
+permitted a revier of long distance.
+
+and the following two
+
+calls were noted:
+
+8:22 PM, November 28, 1971,l
+
+returned a previously
+
+received call to telephone number (area code
+
+the conversation was 10 minutes in duration,
+
+At 10:10 PM: November 28, 19711
+
+made a telephone
+
+call to farea code
+
+and talked for 21 minutes,
+
+b6
+
+67C
+
+b6
+
+b7C
+
+' b7c
+
+b61
+
+b70
+
+67C
+
+b6 |
+
+,b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4754
+
+---
+
+## Page 377
+
+WFO 164-169
+
+3
+
+additionally advised that upon checking
+
+out of the hotel,
+
+Ipaid by check in-the amount of $256,94
+
+drawn'
+
+on
+
+of Evansville. Indiana.
+
+personalized check reflected
+
+Evansville, Indiana, account number
+
+paid the reminder of the bill, which totaled
+
+$856,64, in cash consisting mainly of' 50 and 100 dollar bill's.
+
+total bill amounted to $298.10, which he paid
+
+in cash with 50 and 100 dollar bills.
+
+also advised that on December 1, 1971,
+
+Suite
+
+was
+
+aforementioned
+
+burglarized and $500 in cash was stolen from
+
+the
+
+He noted that the stolen cash consisted
+
+of 3 100 dollar bills and ten 20 dollar bills which were taken
+
+from a wallet belonging to
+
+made available the original registration
+
+card and photostatic copies of all bills and long distance tele-
+
+phone calls pertaining to Suitel
+
+when occupied by the afore-
+
+mentioned individuals. He also made avaflable photostatic coples
+
+off the above described personal check of
+
+noted that the above mentioned Individuals
+
+had departed the hotel approximately 20 minutes prior to this
+
+interview and stated that he interposed no objections to Suite
+
+being searched by a Special Agent of the Federal Bureau of
+
+Investigation.
+
+67C
+
+b6
+
+b70
+
+b6
+
+b70
+
+b6
+
+670
+
+B6
+
+b7C
+
+DB Cooper-4755
+
+---
+
+## Page 378
+
+60:302 (REV, 11-27-70)
+
+FEDERAL BUREAU OF INVESTIGATIONI.E.
+
+Dors of transcription 12/9/7.1
+
+Sheraton Carlton
+
+Hotel, 16th and K Streets, N.H., Washington,
+
+D. C. (WDC),
+
+permitted an examination of recently received $20 bills.
+
+This examination failed to disclose the presence
+
+of any $20 bills bearing the same serial numbers as any of
+
+the $20 bills which were Included in the ransom money paid
+
+to the hijacker of Northwest Alrlines Flight 305 on November 24,
+
+1971.
+
+b6
+
+b7C
+
+serviewed or 12/3/71
+
+bY SA Ga EARL SHAlLidag
+
+o Hashington. De Ge
+
+164-81-1366
+
+_ File * WFQ 164-169
+
+_ INDEXEO,
+
+SEARCHED..
+
+SERIALISED
+
+{9дengy1
+
+DB Cooper-4756
+
+b6
+
+---
+
+## Page 379
+
+OPTIONAL POFINE NO, 10
+
+MAY IPEZ EDITION
+
+OSA TAMA (0 077) 101-118
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-31)
+
+' i, H0 (164-265)(8)
+
+SUBjECT:
+
+NORJAK
+
+(00:SE)
+
+..."
+
+DATE: 12/16/71
+
+b6
+
+b7C
+
+Enclosed for Seattle are six and for Los Angeles and
+
+Phoenix one copy each of three separate FD 302s reflecting
+
+investigation conducted at Washington, D.G. (WDC).
+
+Re:
+
+Above enclosures are being furnished receiving
+
+offices for information purposes only inasmuch as L
+
+activities at WDC tended to cast suspicion on the nature of
+
+his dealings.
+
+WFO conducting no additional investigation re
+
+B6
+
+b7C
+
+b6]
+
+b7C
+
+b6|
+
+b7C
+
+- Seattle (Enc. 18)Llld alr
+
+1 - Los Angeles (164-497) (Enc. 3)
+
+1 - Phoenix (164-100) (Enc. 3)
+
+1 - WFO
+
+CHH: kmz
+
+(5)
+
+164-81 - 1367
+
+SEARCHED
+
+SERLIZED MERED SAIN
+
+DEC Y 81971
+
+b6 |
+
+b7C
+
+DB Cooper-4757'
+
+011-101
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 380
+
+TELETYPE
+
+12/15/71
+
+PLAIN
+
+NITEL
+
+b7C
+
+TO SAN ANTONIO
+
+FROM INDIANAPOLIS (164-62)
+
+NORJAK
+
+RE
+
+INSTANT DATE,
+
+IND., ADVISEDL
+
+SIMILAR IN APPEARANCE TO ARTIST CONCEPIION
+
+OF UNSUB.
+
+FOR APPROXIMATELY
+
+ADVISED
+
+SKYDIVING LESSONS
+
+AND LISTED HIS RESIDENCE AS
+
+TEXAS.
+
+b6|
+
+b7C
+
+b7c
+
+ADVISED
+
+INDIANAPOLIS.
+
+RECORDS AT|
+
+REFLECT
+
+SOCIAL SECURITY NO.
+
+b7C
+
+I- soattio (AM)
+
+1 - Indianapolla
+
+JFB/Kj1
+
+(2)
+
+144-81-1368
+
+SERICHED
+
+.... INDEXED),.....
+
+SERIALIZED....._ FILED_
+
+DEC 1 81971
+
+FBI = SEATTLE
+
+DB Cooper-4758
+
+---
+
+## Page 381
+
+IP 164-62
+
+PAGE TWO
+
+TEXAS.
+
+SAN ANTONIO AT
+
+TO PURITER IDENTIFY
+
+CONSIDER UNSUB ARMED AND DANGEROUS.
+
+AM COPY TO SEATTLE. P
+
+WILI, ATTEMPT
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4759
+
+---
+
+## Page 382
+
+TO
+
+OPTIONAL FORM NO 14
+
+MAY 148 EDITION
+
+GIA FAMA (416711) 501-114
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+• SAC, SBATTLE (164-81) (P)
+
+FROM
+
+: SA
+
+SUBJECT: NORJAK
+
+DATE:
+
+12/17/71
+
+b6
+
+b7C
+
+Elin
+
+Re Portland tel, 12/9/71.
+
+On 12/13/71,
+
+Operator's License
+
+b6
+
+regular le rundo contes or Rachina to beaver a Minaton, saa
+
+ingron.
+
+On 12/15/71,
+
+DMV, furnished two copies
+
+each of the above requested driver's licenses, which are attached, bic
+
+It should be noted thatl
+
+Washington, was born
+
+and his photograph does not
+
+resemble the sketch of the hijacker.
+
+The copy of the Hash. Driver's License for
+
+is furpished for the use of the Agents covering the
+
+lead per re
+
+b6
+
+b7C
+
+tel at
+
+Washington.
+
+PIS
+
+(2)
+
+164-81-1369
+
+SERIANIES ME FILED.
+
+DEC 081971:10
+
+DB Cooper-4760
+
+b6
+
+b70
+
+8010-108
+
+Buy U.S. Savings Bonds Regularly on the Payrott Savings Phan
+
+---
+
+## Page 383
+
+SAC, SBATTLE (164-81) (P)
+
+SA
+
+HORJAI
+
+12/17/71
+
+b6
+
+b7C
+
+Ro Portland tal, 12/9/71.
+
+Оn 12/13/71,
+
+Operator's Liconse
+
+Section, Department of Motor Yohicles, Olyapla, Hashington, was
+
+Toquestod te ferala cooles ol Hashidatan Irivar's license 198ugd
+
+ingron.
+
+Од 12/15/71,
+
+sach of the above requested driver's
+
+It should be soted that
+
+Hashington, was born
+
+and his photograph does
+
+resemble the sketch of the hijacker.
+
+The copy of the Hash. Driver*s Licenso for
+
+tol windshed for the use of the Agents covering the
+
+Teal per re
+
+Hashirg ton.
+
+b6
+
+b7C
+
+b6
+
+b70
+
+PTS
+
+(2)
+
+164-81-1369
+
+1 Ug
+
+DER 10107
+
+File a
+
+Looper-4761
+
+---
+
+## Page 384
+
+FD-I8 (Ror-3-22-51)
+
+Transmit the following in
+
+Via.
+
+AIRTEL
+
+FBI
+
+Dote: 12/15/71
+
+PLAIN
+
+(Type in plainiext or code)
+
+AIR MAIL
+
+(Priority)
+
+TO:
+
+SAC, SEATTLE (264-81)
+
+FROM:
+
+SAC, LOS ANGELES (164-497) (P)
+
+SUBJECT: NORJAK
+
+Re Los Angeles teletype to Seattle, 12/23/72.
+
+SUSPECTS:
+
+66
+
+b7C
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+Enclosed for Seattle are aken at tures se
+
+FBI Orfice, 12/13/71.
+
+Seattle (Encis. 4) (RM) recdals
+
+Los Angeles
+
+(3)
+
+164-81-1320
+
+SEARCHED,
+
+SERIALLEO I FLED_
+
+DEC X3 1971
+
+FBI - SEATTLE
+
+Special Agent in Charge
+
+Sent
+
+—M
+
+Per
+
+DB Cooper-4762
+
+#7, 5, 0OVIRNMINT SRINTINE OFFICI 1 1969 0 - 916-090 (11)
+
+---
+
+## Page 385
+
+TD-+8(304-5-22-947
+
+00l
+
+Transmit the following in -
+
+Via
+
+TELEPYPE
+
+FBI
+
+Date:
+
+12/19/71
+
+(Type in plainterz or code)
+
+NITEL
+
+(Priorisy)
+
+ST. LOUIS 9164-73)
+
+SEATTLE (164-81)
+
+NORJAK
+
+RE LOS ANGELES TELETYPE DECEMBER SEVENTEEN LAST.
+
+RE:
+
+DISCONTINUE LEAD SET OUT IN REFERENCED TELETYPE TO REVIEW
+
+MILITARY RECORDS CONCERNING
+
+JAS THIS HAS ALREADY BEEN
+
+DONE.
+
+JSE.
+
+164-81-1371
+
+Approved:
+
+- Son 3%
+
+_M Per
+
+Special Agent in Charge
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+b6
+
+---
+
+## Page 386
+
+Pert.' 1
+
+FD-75 (90V,3-22-64)
+
+Transmit the following in
+
+Via
+
+Teletyne
+
+FBI
+
+Date:
+
+12/19/71
+
+(Type in piciniezi or sodel
+
+NITEL
+
+(Priorisy)
+
+TO: PORTLAND (164-81)
+
+FROM: SEATTLE (164-81)
+
+NORJAK
+
+RE:
+
+DISCONTENUE RE
+
+SUSPECT
+
+b6
+
+b7c
+
+RE PORTLAND TELETYPE TWELVE SEVENTEEN LAST.
+
+AS HE HAS BEEN ELIMINATED AS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+JSD/
+
+164-81-1322
+
+Approved:
+
+- son to
+
+Per
+
+2. DB Cooper-4764
+
+---
+
+## Page 387
+
+FD-96 (ho+-5-27-84)
+
+Transmit the following in.
+
+Via
+
+• AIRTEL
+
+FBI
+
+Date:
+
+12/16/71
+
+(Type in plainiext or codel
+
+AIRMAIL - REGISTERED
+
+(Priority)
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+UoroM:
+
+SAC, SACRAMENTO (164-50) (P)
+
+NORJAK
+
+00: SE
+
+b6
+
+b7C
+
+ReSCairtel, 12/14/71.
+
+Re:
+
+Suspect
+
+On 12/15/71, SAL
+
+I determined
+
+that nost recent photograph of_
+
+available to
+
+Stockton PD or San Joaquin County SO, Stockton, California
+
+dated 10/23/69.
+
+Stockton City Directory, dated June, 1971.
+
+contains listing for onel
+
+occupation [
+
+CONSIDER UNSUB DANGEROUS.
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+164-81-1373
+
+Seattle (RM)
+
+Sacramento
+
+WAW: epg
+
+(3)
+
+Approved:
+
+Special Agent in Charge
+
+Sent
+
+дро-
+
+_M
+
+Per -
+
+I U.S. GOVERNMENT PRINTING OFFICE: DIE-GOOper-4765
+
+---
+
+## Page 388
+
+5D-38 (Ror. 3-22-841
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date: 12/17/71
+
+(Type in plainiext or code)
+
+(Priority)
+
+TO:
+
+FROM:
+
+NORJAK
+
+(00: SEATTLE)
+
+SAG, SEATTLE
+
+SAC, RICHMOND (164-74) RUC
+
+ReBuairtel to Albany dated 12/7/21
+
+POSSIBLE SUSPECI:
+
+FUGIUVE
+
+SSN L.
+
+Born
+
+Enclosed for Seattle are six photographs of suspect
+
+to be shown to logical witnesses in this case in an effort to
+
+effect an identification.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+- Richmond
+
+JAA/vIr
+
+(3)
+
+164-81-1374
+
+SENACKED.
+
+Approved:
+
+Nem
+
+Special Ager chargo
+
+Sent
+
+_M Per
+
+U.S. GOVERNMENT PRINTING OPTICE, OB. SEROpRI-4766
+
+---
+
+## Page 389
+
+FD-38 (1107,5-22-84)
+
+FBI
+
+Date:
+
+12/14/72
+
+Transmit the following in
+
+Via.
+
+AIRTEL
+
+(Type in plaintext or code)
+
+AIR MAIL, - REGISTERED
+
+(Priorily)
+
+TO:
+
+PROM:
+
+RE:
+
+DIRECTOR, FBI (164-2121)
+
+ATTN: FBI LABORATORY
+
+SAG, LOS ANGELES (264-497) (P)
+
+*NORJAK
+
+sub 130
+
+Re Seattle teletype to the Bureau dated 12/13/71.
+
+Enclosed for the Bureau are the original and one
+
+xerox copy each of an envelope addressed "Managing Editor
+
+LOS Angeles Times Los Angeles, California"
+
+, and a one-page
+
+of paper bearing the closing typewritten
+
+"D.B, COOPER". Also enclosed for New York, seattle
+
+and washingion Field is one xerox copy each of the above
+
+described items in view of current and passible future
+
+Investigative interest.
+
+LAVIE
+
+Referenced teletype set forth information concerning
+
+letters directed to the
+
+"Seattle Times"
+
+"New York IImes"
+
+, and "Los Angeles Times"
+
+"Washington Post"
+
+, with request to
+
+obtain originals received by the above newspapers fox
+
+delivery to the FBI Laboratory for appropriate examination.
+
+"Ios Angeles Times
+
+on 12/14/77202 West First Street, Los Angeles,
+
+california, gave to
+
+]the original of
+
+the
+
+enclosed letter and envelope received at his newspaper.
+
+3 - Bureau (Encls. 4)
+
+- New York
+
+(EncI. 1) AM - REGISTERED)
+
+(InIO) (AM)
+
+.- Seattle (Encl. 1)(164-81)
+
+'- Washington Field' (Enc2. 1) (164-169) (AM)
+
+2 - Los Angeles
+
+JFM: kah
+
+(9)
+
+164-81-1325
+
+date
+
+1071
+
+b7C
+
+Approved:
+
+- Sent -
+
+spegial Agent in Charge
+
+_M
+
+Per.
+
+40. 2 COVERNIENT FRONTING OTTEE 10500-30-8 Egoper -4767
+
+---
+
+## Page 390
+
+LA 164-497
+
+had no idea who was responsible for sending the letter
+
+to his newspaper and advised that his newspaper had developed
+
+no information which would assist in the identification of the
+
+individual involved in instant matter.
+
+The enclosed letter
+
+was received at the
+
+"Ios Angeles Times" mail room sometime
+
+auring the early moching of 12/13/11. It was eventually, route
+
+Tof the "Los
+
+Angeles Times". The letter was opened by
+
+at about 9:00 a.m., 12/13/71. After reading the lette
+
+she attached the envelope and immediately brought it to the
+
+attention of
+
+b6
+
+b7C
+
+advised that the enclosed originals
+
+have been
+
+touched and handled by many employees of the "Los
+
+Angeles Times" and other members of the-communications media
+
+in the los Angeles area who happened to be at the "Ios Angeles
+
+Times" editorial offices during the day of 12/13/71.
+
+said the number that appears on the last
+
+typed line oi the letter which is located opposite the name
+
+"Los Angeles Times"
+
+, does not have any particular significance
+
+to his organization.
+
+REQUEST OF THE BUREAU
+
+It is requested that the latent Fingerprint Section
+
+and the FBI Laboratory conduct appropriate examinations previously
+
+requested by the Seattle Division in referenced teletype.
+
+Consideration should be given for latent fingerprint examination
+
+of the originals with comparison to other letters received
+
+by previously described newspapers, and examination to determine
+
+the composition of paper and the origin of the typewriting.
+
+It is further requested that the originals be searched
+
+through the Anonymous Letter File.
+
+Upon conclusion of the above requested examinations,
+
+it is requested the originals be returned to Los Angeles.
+
+Results
+
+of the examinations should be furnished to seattle, New York,.
+
+Washington Field and Los Angeles.
+
+b6 |
+
+b7C
+
+b6!
+
+b7C
+
+- 2 -
+
+DB Cooper-4768
+
+---
+
+## Page 391
+
+LA 164-497
+
+this phase of instant case as
+
+of Angelet case as duct an surt engur concerning
+
+personnel
+
+have no idea who is responsible for preparing and sending the
+
+enclosed letter and they also have no idea as to why thei
+
+particular newspaper was selected to receive such a letter.
+
+Los Angeles will forward FD-302 regarding the interview
+
+of
+
+to Seattle.
+
+CONSIDER UNSUB DANGEROUS.
+
+b6
+
+;
+
+- =
+
+-3 -
+
+DB Cooper -4769
+
+---
+
+## Page 392
+
+12/15/71
+
+AIRTIL
+
+Sub 203
+
+70%
+
+THON!
+
+ПЕНТАСТ:
+
+MAC, PORTIAND
+
+ПАС, МІЛЛЯХ (161-198) (8)
+
+HORJAX
+
+JONK IMIL, LIST - SUSPECT
+
+No howark tolatypa to Barons, 18/13/71.
+
+maloned for the background intoration o
+
+PortlAnd and MInaNaToLLa In On COpy ol reforenond herar
+
+rolatypa.
+
+portland and Alaneapolis should diaplay photo
+
+ol hilt to appropriato altaine aron ambara.
+
+I-portiand (1101. 2)
+
+•И1авааро11в (120», 8)
+
+Icleattla (161-81) (1410)
+
+1-Kewark
+
+JJ:ood
+
+(8)
+
+і .
+
+0l 21-1316
+
+Uri 0171
+
+DB Cooper-4770
+
+---
+
+## Page 393
+
+FD-36 (Röv-3-22-88)
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date: 12/16/71
+
+(Type in plainsess or code)
+
+AIR MAIL
+
+(Priority)
+
+SAC, SEATILE (164-81)
+
+SAC, SACRAMENTO (164-50)(P)
+
+SUBJECT: NORJAK
+
+Re Suspect_
+
+Re Sacramento teletype to Seattle, dated
+
+12/15/71.
+
+Enclosed for Seattle, Kansas City, and Portland
+
+is one copy each of California driver's-licensel
+
+in the name
+
+The following investigation was conducted by
+
+IC
+
+AT SACRAMENTO, CALIFORNIA
+
+On 12/16/71,
+
+Driver's License
+
+Section, California DMV, advised the enclosed delver's
+
+license was issued on
+
+in the namel
+
+California.
+
+He was
+
+described as 5'8"
+
+, 160 pounds, brown hair,
+
+eyes,
+
+and DOB
+
+This license expired on his birthday
+
+• 1971 and has not been renewed to date.
+
+Seattle (Enc. 1) Mis
+
+- Kansas City (Enc. 1)
+
+2 - Portland (Enc. 1)
+
+164-81-1377
+
+2 - Sacramento
+
+FMF: jet
+
+(8)
+
+Lead
+
+b6
+
+b7C
+
+b6 ]
+
+b7C
+
+b6
+
+B7C
+
+"66"
+
+b7C
+
+b6
+
+B7C
+
+b6
+
+b7C
+
+Approved:
+
+Sent
+
+Special Agent in Charge
+
+_ M
+
+Per
+
+-DB-Gaoper -4771
+
+I U,S, GOVERNMENT TRINTING OSTICE, 1971 - 419-195
+
+---
+
+## Page 394
+
+SC 164-50
+
+Records indicated that he furnished a change
+
+of address on 8/2/69 reflecting his new address as
+
+California.
+
+advised that a check of his legal
+
+file indicates that his license was suspended effective
+
+In the State of Washington. The file indicated that as
+
+of that date, he listed an address of l
+
+advised that the file
+
+failed to reveal any additional information regarding
+
+Оп 12/16/71,
+
+I Wanted Persons
+
+Unit. CIl. advised that a check of the file for l
+
+CII
+
+revealed he was last
+
+arrested on
+
+by the
+
+So, theirL
+
+on charge of
+
+PD arrest), no disposition
+
+shown.
+
+The record indicated that be had Kansas driver's
+
+11cense
+
+was listed as
+
+Kansas.
+
+A copy of suspect's Identification Record under
+
+CII
+
+has been obtained and is being maintained
+
+in the Sacramento file along with his prison photograph
+
+which was taken on
+
+Two copies of the above
+
+described driver's license is being maintained in the file
+
+also.
+
+LEADS
+
+b6
+
+b7C
+
+b6]
+
+b7C
+
+b6
+
+b6|
+
+SEATTLE DIVISION
+
+AT
+
+WASHINGION
+
+Will at
+
+I conduct appropriate
+
+investigation to locate the suspect I
+
+b7C
+
+2
+
+DB Cooper-4772
+
+---
+
+## Page 395
+
+SC 164-50
+
+KANSAS CITY DIVISION
+
+AT
+
+KANSAS
+
+At DMV review driver's license
+
+for any information that would lead to the location of the
+
+suspect
+
+ARMED AND DANGEROUS
+
+b6 |
+
+b7C
+
+3*
+
+DB Cooper-4773
+
+---
+
+## Page 396
+
+12/16/71
+
+AIRTEL
+
+AIR MAIL.
+
+: SAC, SEATTLE (164-81)
+
+FROM , : SAC, SACRAMENTO (164-50)(R)
+
+SUBJECT: NORJAK
+
+Re Suspect
+
+Re Sacramento teletype to Seattle, dated
+
+12/15/71.
+
+1s one copy each of California delver' gicense
+
+Enclosed for Seattle, Kansas City, and Portland
+
+In the same
+
+The followine investigation was conducted by
+
+IC
+
+AT SACRAMENTO, CALIFORNIA
+
+On 12/16/71,
+
+Driver's License
+
+Section, California DMY
+
+e advised the enclosed driver's
+
+license Has dagued on
+
+In the nane l
+
+California.
+
+He was
+
+described as 5484, 160 pounds, brown hair,
+
+and DOB
+
+This lurense expired on is sirenday
+
+In 1971 and has not been renewed to date.
+
+- Seattle (Enc. 1)
+
+2 - Kansas City (Eng 1)
+
+2 - Portland (Enc. 1)
+
+2 - Sacramento
+
+FMF: jet
+
+(8)
+
+b61
+
+b7C
+
+b6 |
+
+b7C
+
+b6 |
+
+b7C
+
+b6
+
+1277
+
+b6
+
+b7C
+
+164-81-1377
+
+mg.
+
+815.
+
+DB Cooper-4774
+
+---
+
+## Page 397
+
+SC 164-50
+
+Records indicated that he furnished a change
+
+of address on 8/2/69 reflecting his new address as
+
+California.
+
+ladvised that a check of his legal
+
+file indicates that his license tas suspended effective
+
+in the state of hashington, the file indicated that as
+
+of that date, he listed an address. ef
+
+Washington.
+
+advised that the
+
+failed to reveal any additional information regarding
+
+file
+
+On 12/16/71,
+
+Wanted Persons
+
+Unit, CII, advised that a check of the file for
+
+revealed he was last
+
+arrested on
+
+by the
+
+SO, thelI
+
+on charge of
+
+PD arrest), no disposition
+
+The record indicated that he had Kansas driver's
+
+License
+
+Iras listed as
+
+Kansas..
+
+A copy of suspect's Identification Record under
+
+CII
+
+has been obtained and is being maintained
+
+in the sacramento file alona
+
+with his prison photograph
+
+which was taken on
+
+Two coples of the above
+
+descrlbed driver' y license is being maintained in the file
+
+also.
+
+LEADS
+
+b6 |
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+SEATTLE DIVISION
+
+AT
+
+HASHINGION
+
+W111 at
+
+Investigation to locate the suspectinduct appranslate
+
+b6 |
+
+b7C
+
+2
+
+DB Cooper-4775)
+
+---
+
+## Page 398
+
+SC 164-50
+
+KINSAS CITY DIVISION
+
+AT
+
+KANSAS
+
+At DMY review driver's license L
+
+for any information that would lead to the location of the
+
+suspect
+
+ARMED AND DANGEROUS
+
+b6 |
+
+b7C
+
+3*
+
+DB Cooper-4776
+
+---
+
+## Page 399
+
+SE 164-81
+
+PG 164-93
+
+I
+
+The following investigation was conducted by
+
+SA CYRIL J. LAFFEY:
+
+On Dacomber 10. 1922.
+
+a survey of the residens
+
+I Pao, disclosod
+
+repartment Store, with several apartments above, whic
+
+uilding occusies the site at the corner o.
+
+superintenden Deo ber 20, 2872a
+
+of Mails,
+
+United states rost office,
+
+Belen able with!
+
+advised that he could locate no infomation
+
+Par
+
+I former resident of
+
+on December 10
+
+Carrier,
+
+advised
+
+to,
+
+alse known asl
+
+Unt a enates Pest ordice,
+
+is celloved to be related
+
+possibly presentlyl
+
+On Decomber I0, 1971,
+
+Department store,
+
+corner of
+
+Pao, advined that
+
+presently residesi
+
+Pa,, and
+
+Iprevious
+
+Eis_ presentlyl
+
+Pad
+
+On Decenber 10, 1972,J
+
+Pare (talephona
+
+nunder
+
+while
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b70
+
+b6
+
+b7C
+
+b7C
+
+she net
+
+she
+
+for the pastI
+
+reside atl
+
+(telephone
+
+nunder
+
+adviged
+
+that
+
+and at one thine,
+
+however,
+
+164-81-1378
+
+said she has not heard anything of
+
+presently
+
+where
+
+166
+
+b7C
+
+•DB-Cooper-4777
+
+---
+
+## Page 400
+
+SE 164-81
+
+PG 264-93
+
+CJL/cbl
+
+present
+
+sbercabouta.
+
+through
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4778
+
+---
+
+## Page 401
+
+FD-36 (RO1-5-22-61)
+
+Transmit the following in -
+
+Via
+
+AIRTEL
+
+FBI
+
+Date:
+
+12/16/71
+
+(Type in plaintext or code)
+
+(Priorizy)
+
+TO :
+
+SEATTLE (164-81)
+
+FROX: MY/SAC, PITTSBURGH (261-93)
+
+SUBJECT: NORJAK
+
+Re Pittsburgh airtel to Seattle dated 12/14/71.
+
+RE: SUSPECT
+
+Enclosed for Seattle are nine coples of an insert
+
+reporting investigation regarding suspect,
+
+Pa.
+
+CONSIDER SUBJECT DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b61
+
+b7C
+
+Seattle (Encs.
+
+Pittsburgh
+
+9) g
+
+RHS :rmk
+
+(4)
+
+ZACHE
+
+164-81-1329
+
+ERIALIZES A PIED A
+
+DEC ZU 1971
+
+Approved:
+
+- Sent
+
+Special Agent in Charge
+
+_M
+
+Per .
+
+•I U.S, GOVERNMENT PRINTING OrPICE D)B-EDOREr-4779
+
+---
+
+## Page 402
+
+PERFECT
+
+GRe NY
+
+(Rime
+
+ME
+
+AMMIST.
+
+MONeY will
+
+BE
+
+RETUrNeD
+
+NO horm
+
+dONE
+
+ins wer
+
+By
+
+way
+
+of
+
+Pus Lic
+
+Am®ceMen T
+
+WITH in
+
+48
+
+hrs
+
+164-81-1380=
+
+mg lg
+
+DB-Cooper-4780
+
+---
+
+## Page 403
+
+rabba dabba
+
+doo!
+
+I"ve
+
+you' ve
+
+losir
+
+Sincerely,
+
+aLAiS.
+
+ACT
+
+NOW!
+
+DE COOPER
+
+STATTLE COpy
+
+DB Cooper-4781
+
+---
+
+## Page 404
+
+DB Cooper-4782. 1
+
+---
+
+## Page 405
+
+DB Cooper-4783
+
+---
+
+## Page 406
+
+I Dear Editor:
+
+To the Public:
+
+I must ask you, who in the hell do some of you people think you
+
+are, and what in the hell do you think you're doing.
+
+I have suceeded in pulling ofs one of the most successful, talked
+
+about crimes of today. Then some guy credits hinself with the masterpiece
+
+and thanks everbody, for their cooperation an hospitallty...üell Damn it,
+
+this is making me look very stupid. These prank letters must stop...
+
+No one was indangered, the caper was only connitted to show the
+
+unbelieving world that a PERFECI crime was possible.
+
+, I have notified the F.B.I. asking that they grant me Amnesty.
+
+The money vall be returned.
+
+• NO. HARM
+
+DONE.
+
+Sincerely,
+
+Wi
+
+s. 'W. i.
+
+David
+
+Alias, .
+
+Bartholonew
+
+Copperhead,
+
+164-81-1381
+
+DEC OU1971 0
+
+67C
+
+Received front
+
+"The
+
+Oregonian" 12/15/71
+
+LDT
+
+PDfIle 161-41
+
+DB Cooper-4784
+
+---
+
+## Page 407
+
+in dEC
+
+PoRTuND News PiTeR
+
+HEAD NEWS PAPER - OFFICe
+
+PORTIANO "OREGONiAN"
+
+320 sw. BROADWAY
+
+, OREGON
+
+DISS
+
+70NJNIA7
+
+SEARCHED,
+
+... INDEXED
+
+SERIALIZED
+
+FILED.
+
+DEC: 2 01971
+
+_FBI - SEATTLE
+
+OB Cooper-4785 JO NEI
+
+---
+
+## Page 408
+
+12/16/71
+
+AIRTE
+
+AIBRAIL - RBGISICHRD
+
+Sub 130
+
+TO:
+
+DICTOR, FBI (164-8111)
+
+"TINS INI LADONATON
+
+BAC, PORTLAND (164-47) (P)
+
+SUBJACT: HORTAT
+
+Iscloned for the laboratory to the orletral letter
+
+" dally
+
+ampaper publluted da Portland, Orazon.
+
+Ons saxen COpy of tha lattor and antalop
+
+Also onclound tor the laboratory de un octetoal
+
+Jottar and antalope recolyed 18/13/71 by tha portland
+
+Osson of the T9I, Ion lntter la crontrusted at lottera and
+
+"SIncera)y, 1.1.1., «2198 D. B, COOPSE.
+
+appears to bam boss countrusted by the name 1nalnleral
+
+no malled the aborandacribad letter to "he eneronian, "
+
+One ZaToN COpy of the lotter and unmalope ta balng
+
+fust bed seattie atno.
+
+INQUEST OF HIS LABORATONY
+
+tapsamalons.
+
+Also conduct typewriting examination to
+
+determine make and moded of typewriter used
+
+Rosalte of extention shoala ba torratabad
+
+santtle and portland and nuindtted itor ma bi
+
+16421-1382
+
+3 • ІНЕваЙ (іж. 4) САМ) (НІ)
+
+22 Beattlo (EDE. 4) (AR) (Hi)
+
+I - portland
+
+(7)
+
+DB Cooper-4786
+
+---
+
+## Page 409
+
+DL 164-191
+
+RE:
+
+b7C
+
+164-81-1383
+
+httrt
+
+H m mn m
+
+DEC 1301071
+
+—ĐB-Єboper-4787
+
+---
+
+## Page 410
+
+:
+
+DL 164-191
+
+HJM: gh
+
+1
+
+The following Investigation was conducted by
+
+SA HARRY S. MORGAN:
+
+AT DALLAS, TEXAS
+
+On December 6, 1971.
+
+Gillette Company
+
+Dallas, Texas, advised that l
+
+was employed with the
+
+a division
+
+o1 Gillette which is now disbanded. He resided at
+
+Dallas, Texas.
+
+She belleved he left Dallas about L
+
+years ago.
+
+She does not know where he went and the records
+
+were sent to the Boston, Massachusetts, home office.
+
+on December 6, 1971,
+
+U.s. Postal Service, Walnut Hill Banch, 9755
+
+Webbs chanel.
+
+Texas. advised hts records reveal that
+
+Angeles county, Calliornia.
+
+He then moved on
+
+cook County,
+
+Illinois.
+
+$6]
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-4788
+
+---
+
+## Page 411
+
+DL 164-191'
+
+16
+
+b7C
+
+164-81-1384
+
+---
+
+## Page 412
+
+DL 164-191
+
+HUM:gh
+
+1
+
+On November 29, 1971,
+
+telephoneically advised that he had received information
+
+from an indlvidual whose identity he does not desire to
+
+disclose at the present time that Unknown Subtect in instant
+
+matter night be identical to
+
+who has been using the following aliases
+
+a the past unrently belng sought tox valavul flight t
+
+Avoid Prosecution -
+
+in
+
+stated that his source had adulsed that
+
+allegedly has
+
+Jis soft-spoken and
+
+fits general
+
+description of Unknown
+
+Subject hijacker.
+
+is described as follows:
+
+White
+
+Male.
+
+Race
+
+Sex
+
+Age
+
+Birthda te
+
+Birthplace
+
+Height
+
+Weight
+
+• Build
+
+Hair
+
+Eyes
+
+Complexion
+
+Scar
+
+Tattoo
+
+FBI Number
+
+6'1"
+
+163 pounds
+
+Slender
+
+' Brown
+
+Brown
+
+DB Cooper-4790
+
+b6
+
+67C
+
+b7D
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+b7D
+
+66
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 413
+
+DL 164-191
+
+b6
+
+b7C
+
+101-81- 1386
+
+DEC @1071
+
+tho
+
+DB Cooper-4795
+
+---
+
+## Page 414
+
+:
+
+Is 164-191
+
+HUMigh
+
+The following Investigation was conducted by
+
+SA HARRY J. MORGAN:
+
+AL DALLAS, TEXAS
+
+66 |
+
+b7C
+
+but could not locate any former employment for
+
+She contacted
+
+Shakey's P1zza
+
+Parlor,
+
+Texas, and spoke with a
+
+who was emploved at this store.
+
+Is tated that
+
+he recalled em
+
+stated that an
+
+was employed by Shakey's Pizza Parlor but he Is no
+
+longer in this employ and he could not furnish any
+
+information concerning him having been employed at Shakey's
+
+Pizza Parlor.
+
+SA NORGAN intervlewed Texas, employed at shakey's
+
+Pizza Parlor, I
+
+stated there was an
+
+formerly worked there between the age of 30 to 35, white
+
+about 5'11"
+
+complexion and thought he weighed
+
+of the Shakey's Pizza
+
+Parlor,
+
+Texas, on December 4, 1971, advised
+
+that there was an
+
+emploved as l
+
+by Shakey's Pizza Parlor:
+
+and is supposed to be living in an apartment
+
+complex in
+
+come ex the complex but it sas located he
+
+He said he did not know the
+
+He said
+
+was staying with a
+
+and
+
+the manager of the apartments is supposed to know
+
+quite well
+
+and would be able to
+
+, advise what apartment he
+
+Iived in.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Coopér-4796
+
+---
+
+## Page 415
+
+DL 164-191
+
+On December 4, 1971,
+
+Shakey's
+
+Pizza Parlor,
+
+texas, stated that
+
+them for several
+
+months sometime ago, but he did not know his whereabouts.
+
+b6
+
+b7C
+
+DB Cooper-4797
+
+---
+
+## Page 416
+
+i 164191
+
+JCH: dah
+
+The following In estigation was conducted by SA
+
+on December 6, 1971;
+
+AT
+
+TEXAS
+
+The following persons were contacted with negativer
+
+results regarding a criminal record onl
+
+Officer
+
+Isherit's oldent rication Division,
+
+Officer
+
+Identification Division,
+
+Texas Police Department.
+
+b6!
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+164-81-1387
+
+THE SAID
+
+DB Cooper-4798
+
+---
+
+## Page 417
+
+F0-302 (REV, 11-27-70)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of Manseription.
+
+12/16/71
+
+b6
+
+b7C
+
+was contacted and questioned whether there
+
+as & residence at her apertment complex by the name of
+
+Alter a search of her records she advised That
+
+there was such an individual who residos in apertment
+
+and
+
+that he had been at this residence since
+
+excor tired day to out on 2a, anat
+
+that he seems to have a very modest Income and bre ano a no
+
+recent display of wealth.
+
+b6
+
+67C
+
+164-81-1388
+
+DEC DATE
+
+tierrioned on. 12/6/71.
+
+SA
+
+dah
+
+by-
+
+Texas
+
+-File* Dallas 161-191
+
+12/10/71
+
+b6
+
+b7C
+
+_Dole diktated.
+
+This document contains neither recommendations nos conclusions ot the FBL. D is the property of the FBl and is loaned to your agency,
+
+àl and its contents are nos to be distributed oulside your agensy.
+
+DB Cooper-4799
+
+---
+
+## Page 418
+
+FD-38, KREV, 11-27-70)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+1 Do@oltanscription 12/16/11
+
+contacted at his residence,
+
+and questioned regarding
+
+his knowledge of/or involvement in the hijacking of & Northwest
+
+Aixines 727 Jet on November 24, 1971, flying out of Seattle,
+
+Hashington.
+
+stated that he was no way involved in
+
+by hearing It fron news reports.
+
+I but that he has
+
+never made any parachute, Jumps nor has he been in or near the
+
+Seattle area as long as he can remember.
+
+area with
+
+stated that he rode at the by
+
+Texas, and
+
+that prior to this he was employed by!
+
+OKlahon,
+
+stated that in order to verify his whereabouts
+
+on the date of ovenber 24.
+
+of employment,
+
+1971, his managar at his place
+
+I could be contacted and that he
+
+could clear up any doubt about his attendance at nork for that
+
+day.
+
+The following description of
+
+Iron obsorvation and intervien:
+
+Name
+
+White
+
+Date of blith
+
+Place of birth
+
+Height
+
+Height
+
+Halr
+
+Буев
+
+Scars and marks
+
+Renarks
+
+was obtained
+
+Xale
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+67C
+
+b6
+
+b7C
+
+185 pounds
+
+Brown
+
+No easily identifiable
+
+SCRIS, marks or tattoos
+
+At timo of Interviow
+
+was tearing trifocal
+
+glasses which he states
+
+that he noods to mear at
+
+all times in order to be
+
+able to see
+
+Inierrioned 0112/6/71
+
+_01.
+
+Yada
+
+-TOYAS
+
+764-81-1389
+
+_Fil #-Da1125-161-191
+
+_17/10/72
+
+Data dictated
+
+b6
+
+37C
+
+on This dozuMenl contolas naicher recommendations noe conclusions of the FBl, il is the properiy of the fol and is Loneg ladout detacy
+
+il ond is consenis are not lo be distribuied outside your agansy,
+
+TEl-MRB Cooper-4800
+
+TAO.
+
+---
+
+## Page 419
+
+7z 164-192
+
+-==-
+
+Residence
+
+Telephone
+
+Occupation
+
+Employment
+
+Manager at place
+
+of employment
+
+Marital status
+
+#110
+
+Soclal Security
+
+Number
+
+number
+
+Texas
+
+b6
+
+b7C
+
+Texas,
+
+DB Cooper-4801
+
+---
+
+## Page 420
+
+FD-302 (REY. 11-27-701
+
+'..
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription
+
+12/16/72
+
+Manager
+
+Vexas, Mas contacted at the place of
+
+business onl
+
+Texas, and
+
+questioned regardine the
+
+presence and attendance at work
+
+on the date of November 24, 1971.
+
+After a royion of his personnel records
+
+advised that
+
+was at attendance for the full time
+
+on November 24,
+
+Iron the hours of 7:30 PX to 1:00 AM
+
+on November 25, 1971.
+
+also verified that
+
+at work on the date preceding and the date following the
+
+4th all Iron the hours of 7230 9
+
+to 1:00 AX.
+
+hat as far as he noug
+
+Mas never been involved in
+
+any criminal activity and that he could not have been in
+
+the seattle area on the date of November 24, 1971.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-1390
+
+COLD
+
+JEC 001071
+
+Interriered 00 12/6/7-1-
+
+SA
+
+_01.
+
+Jadt
+
+Тохая
+
+_Fiso # 2001128-164-191
+
+b6
+
+b7C
+
+12/10/71
+
+_Dato dictated.
+
+This document contoins agither recommendations nor sonclusions of the F81. Blls the properly of tha F8l and is tened to your agency;
+
+ond its conions are nol to do distributed ouiside your egancy,
+
+DB Cooper-4802
+
+---
+
+## Page 421
+
+DI 164-191
+
+RE:
+
+ALSO Knees As
+
+164•81-1391
+
+CHI-SHINE
+
+b6
+
+b70
+
+---
+
+## Page 422
+
+=
+
+÷ 104-19
+
+UJM:g
+
+1
+
+The following investigation was conducted by
+
+SA HARRY. J. MORGAN:
+
+AT DALLAS, IEXAS
+
+On December 7, 1971, Officer
+
+Dallas Police Department, telephonically advised the
+
+Dallas Office
+
+pate to have to run no, thus taked by to?
+
+11971,
+
+Dallas Police Department,
+
+should be considered as a suspect In captioned case.
+
+Istateithat
+
+was a
+
+white male,
+
+born
+
+5rg" tall, 175 pounds,
+
+brown hair, brown eyes. He is described in
+
+the "Traveling
+
+Criminals"
+
+as a pilot, skydiver, and motorcycle rider.
+
+The following investigation was conducted by Clerk
+
+On December 8, 1971, Lieutenant
+
+b6
+
+b7C
+
+66
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+ot Public safety
+
+He bes pot sumber
+
+Texas Department
+
+Houston,
+
+Texas, Police
+
+Department Number
+
+and Social Security Number
+
+a group of is considered!
+
+lis supposed to live in Houston, Texas, and
+
+Trives a 1971
+
+1971 Texas
+
+license
+
+a 19691
+
+Tand a 1971
+
+Jiscense number
+
+license number
+
+Coples of the photograph ofs photosraph was
+
+obtained a fu the series dice,
+
+Junder Number
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+DB Cooper-4804
+
+---
+
+## Page 423
+
+FD-36. (Rov-3-22-54)
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+FBI
+
+Date:
+
+12/17/71
+
+(Type in plaintext or code)
+
+(Priority)
+
+TO:
+
+FROM:
+
+SAC, SEATTLE (161-81)
+
+DALLAS (164-191) (P)
+
+SUBJECT: WORJAK
+
+Enclosed are inserts and FD-302 re investigation
+
+conducted concerning:
+
+1.
+
+2.
+
+3.
+
+4.
+
+5.
+
+ARMED AND DANGEROUS.
+
+66 1
+
+b7C
+
+2 - Dallas
+
+HJM: dah
+
+(1)
+
+164-81-1392
+
+REXED.
+
+DEC
+
+1971
+
+FBI - SEATTLE
+
+aproved:
+
+Special Agent in Charge
+
+Sent
+
+_M
+
+Per.-
+
+DB Cooper-4805
+
+---
+
+## Page 424
+
+12/17/71
+
+AIRTEL
+
+TO:
+
+BAC, SEATTLE (184-81)
+
+FROM:
+
+SAC, DALLAS (164-191) (P)
+
+SUBJECT: NORJAK
+
+Enclosed are inserts and FD-302 re Investigation
+
+conducted concerning:
+
+1.
+
+2.
+
+3.
+
+4.
+
+5.
+
+ARMED AND DANGEROUS,
+
+b6
+
+67C
+
+• '
+
+2) - seattle (Enc. 15)
+
+2 - Dallas
+
+HJH: ddh
+
+(4)
+
+164-81-1392
+
+Long
+
+-
+
+ов Coopér-4806
+
+---
+
+## Page 425
+
++76(f189-8-77-541}
+
+Transit the fallowing in -
+
+Via
+
+TELETYPE
+
+TO:
+
+* ROM:
+
+F B1
+
+Dote: 12/16/71
+
+PLAINTEXT
+
+(Type in planteer or codel
+
+NITEL
+
+SALS MINNEAPOLIS (164-73) AND SEATILE (164-81)
+
+SAC, WX 0 (164-169)
+
+206-
+
+b6
+
+b7C
+
+NORJAK
+
+RE• MINNEAPOLIS TELETYPE TO WIO AND SEATILE DATED
+
+DECENTER THIRTZEN, LAST.
+
+KE SUSPECT
+
+URKKOAN SUSPECT REXERRED TO IN RETERENCED TELETYPE IS
+
+KHO LAS ALREADY BEEN ELIHTRATED AS SUSPECT
+
+MROUSH DISPLAY O PHOTOGRAPH TO CREW MEMBERS. P
+
+UNSUB CONSIDERED DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164 - 8.1-1393
+
+DEC 1 6 1971
+
+B) - SEATT
+
+SEARCHED NEEDED.
+
+S7F11
+
+DEC 15 1 56 PM '71
+
+i Agraved: -
+
+Sant
+
+-.=.
+
+risk rests pree: 1871-463-538
+
+DB Cooper-4897
+
+---
+
+## Page 426
+
+TO
+
+CATAL LOON NO, 80
+
+65A FRMA (0 077) 101-11.8
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: SAC, SEATTLE (264-81)P
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+00: SE
+
+DATE: 12/15/72
+
+b6
+
+b7C
+
+RE: SUSPECT
+
+Serial /10846
+
+On 12/10/71
+
+their records,
+
+Hashinet 21p
+
+and moved toL
+
+The abave informati 20/99 telophonically furnished to sA
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+RAI
+
+(1)
+
+164-81-1393
+
+DEC 101071
+
+FBI LiLE
+
+DB Cooper-4808
+
+501Q-100
+
+Buy U.S. Savings Bonds Regularly on the Payroll-Savings Plan
+
+---
+
+## Page 427
+
+OFTIONAL FORM NO, 10
+
+LAY THE LOITION
+
+iSA FEMA (41 027) 101-511
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+DATE: 12/16/71
+
+FROM : SA
+
+SUBJECT: NORJAK
+
+Re meno of complaint clerk
+
+12/13/71.
+
+Mashington, telephone L
+
+Jadzised he is a bus driver
+
+for Greyhound bus lines and had on December 13, 1971,
+
+carried a passenger fron Portland who requested to get
+
+off the bus at Bridgeport Way on I-5. He advised that he
+
+and two women passengers aboard the bus belleve the
+
+unknonn passenger who departed at Bridgeport Hay looked
+
+_.Iike the Northwest Airlines hijacker.
+
+The two women passengers,
+
+1s staying with
+
+Hashington,
+
+telephone
+
+Seattle, were contacted
+
+and advised
+
+that they had not seen the face of the
+
+passenger,
+
+is speaking about and had only seen
+
+this individual from the rear.
+
+They advised they could
+
+not give a description for this individual and had no
+
+reason to belleve newas the hijacker.
+
+LEAD
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+SEATTLE
+
+At i
+
+Washington
+
+Will reintervier
+
+telephonel
+
+regarding the UNSUB aboard
+
+his bus on December 13, 1971, from Portland to Seattle.
+
+JHH: set
+
+, (83)
+
+b6
+
+b7C
+
+Leak
+
+164-81-1395
+
+SEARCH.......... INDEXED
+
+SERIAL TILED MM
+
+DEC1 6 1971
+
+FSL- SEATILS
+
+b6
+
+b7C
+
+8010-708
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-4809
+
+---
+
+## Page 428
+
+SAC, SEATTLE (164-81)
+
+12/16/71
+
+SA
+
+NORJAK
+
+12/13/71. Re memo of complaint clork L
+
+Hashington, telephone L
+
+Jadvised he is a bus driver
+
+for Greyhound bus lines and had on Decenber 13, 1971,
+
+carried a passenger from Portland who requested to get
+
+off the bus at Bridgeport May on I-5. He advised that he
+
+and two nowen passengers aboard the bus belleve the
+
+unknown passenger who departed at Bridgeport Hay looked
+
+11ke the Northwest Airlines hijacker.
+
+The two women passengers.
+
+1s staying with
+
+Mashington, andL
+
+THORP,
+
+telephone
+
+Seattle, were contacted
+
+and advised that ther
+
+had not seen the lace of the
+
+passenger,
+
+Is speaking about and had only seen
+
+this individual from
+
+the rear.
+
+They advised they could
+
+not give a description for this individual and had no
+
+reason to believe hewas the hijacker.
+
+LEAD
+
+67C
+
+b6
+
+b7C
+
+b6
+
+bIC
+
+b6
+
+b7C
+
+SEATTLE
+
+At
+
+Washington
+
+W1l1 reinterviewl
+
+telephone
+
+regarding the UNSUB aboard
+
+his bus on December 13, 1971, Iron Portland to Seattle.
+
+JHH: set
+
+(3)
+
+b6
+
+b7C
+
+164-81-
+
+1395
+
+WE tent this laininet
+
+DB Cooper-4810
+
+---
+

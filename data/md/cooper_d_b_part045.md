@@ -1,0 +1,43434 @@
+# cooper_d_b_part045
+
+## Page 1
+
+AR BI SC CODED
+
+11:04 AM URGENT 12-15-71
+
+TO
+
+SEATTLE
+
+(164-81)
+
+LXL
+
+FROM
+
+LAS VEGAS (164-68)
+
+PORTLAND (164-41)
+
+SACRAMENTO
+
+(164-59)
+
+1P
+
+Sob
+
+NORJAK. 00: SEATTLE.
+
+F
+
+E.
+
+RE SACRAMENTO TEL, DEC. TEN, LASI
+
+RE: SUSPECT
+
+RECEIVING OFFICES REQUESTED DISPLAY PHOTO OF
+
+TO WITNESSES
+
+SINCE
+
+MAY POSSIBLY BE
+
+ATTEMPT TO COVER HIMSELF AS SUSPECI IN THIS MATTER. ADVISE.
+
+SACRAMENTO RESULTS AS SOON AS POSSIBLE SO OSI, TRAVIS AFB, MAY BE
+
+ADVISED.
+
+CONTACI THIS DATE WITH BEALE AFB REVEALED SR-SEVEN OEN PHOTO-
+
+GRAPHIC FLIGHT NOT YET ACCOMPLISHED DUE TO ADVERSE VISIBILITY ALONG
+
+PORTIONS OF ENTIRE ROUTE; HOWEVER, FLIGHT WILL TAXE PLACE FIRST
+
+POSSIBLE OPPORTUNITY.
+
+END.
+
+AVAB
+
+FBI SEATILE CLR
+
+DB Cooper-4415
+
+164-81-1211
+
+- INDEXED.
+
+SERIALIZED..
+
+DEC 1 51971
+
+FBI - SEATTLE
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 2
+
+FD-36 (ROV5-22-64)
+
+cot
+
+FBI
+
+Date:
+
+12/15/71
+
+Transmit the following in
+
+Via
+
+TELETYPE
+
+(Type in plaintexi or code)
+
+NITEL
+
+(Priority)
+
+TO :
+
+DIRECTOR, FBI (164-2111)
+
+FROM:
+
+SAC, SEATTLE (164-81)
+
+DAILY TELETYPE
+
+NORJAK.
+
+SACRAMENTO ADVISED TODAY THAT BEALE AFB ADVISED
+
+ON DECEMBER FIFTEEN INSTANT, THAT THE SR SEVENTYONE PHOTOGRAPHIC
+
+FLIGHT NOT YET ACCOMPLISHED DUE TO ADVERSE VISIBILITY OVER
+
+PORTIONS OF THE ROUTE. HOWEVER, FLIGHT WILL TAKE PLACE AT
+
+FIRST POSSIBLE OPPORTUNITY.
+
+INVESTIGATION AT PORTLAND AND SEATTLE CONCERNING
+
+NUMEROUS SUSPECTS, NEGATIVE.
+
+CEF: kIb
+
+(2)
+
+pit
+
+Approved:
+
+164-81-1230
+
+- Sent -
+
+8:08 PM Per DcABCooper 1461
+
+Special Agen 1p Charge
+
+---
+
+## Page 3
+
+ROBA SE PLAIN
+
+8:08 PM NITEL 12/15/71 DCA
+
+TO
+
+DIRECTOR, FBI (164-2111)
+
+FROM SEATTLE (164-81)
+
+1P
+
+DAILY TELETYPE
+
+NORJAK.
+
+SACRAMENTO ADVISED TODAY THAT BEALE AFB ADVISED ON DECEMBER
+
+FIFTEEN INSTANI, THAI THE SR SEVENTYONE PHOTOGRAPHIC FLIGHT NOT
+
+YET ACCOMPLISHED-DUE TO ADVERSE VISIBILITY OVER PORTIONS OF THE
+
+ROUTE. HOWEVER, FLIGHT WILL TAKE PLACE AT FIRST POSSIBLE
+
+OPPORTUNITY.
+
+INVESTIGATION AT PORTLAND AND SEATTLE CONCERNING NUMEROUS
+
+SUSPECTS, NEGATIVE.
+
+EN D
+
+WDC HOLD (KAT)
+
+DB Cooper-4462
+
+164-81-1230
+
+---
+
+## Page 4
+
+12/11/71
+
+TELETYPE
+
+PLAINTEXT
+
+NITEL
+
+b6
+
+b7C
+
+TO:
+
+FROM:
+
+DALLAS (164-191)
+
+MILWAUKEE (164-37)
+
+UNSUB, AKA DAN COOPER; NORTHWEST AIRLINES FLIGHT THREE
+
+ZERO FIVE, PORTLAND TO SEATTLE, NOVEMBER TWENTYFOUR,
+
+SEVENTYONE; NORJAK •; EXTORIION, 00: SEATTLE.
+
+REURTEL DECEMBER TEN LAST.
+
+GENERAL OLIVER S. RYERSON, WING COMMANDER, TRUAX FIELD,
+
+MADISON, WIS., ADVISED INSTANT DATE THAT MAJOR BOB HEAGY,
+
+TWENTYTHIRD AIR DIVISION OF DULUTI, MINNESOTA, IS STATIONED
+
+AT TRUAX FIELD. GENERAI RYERSON STATED HEAGY WAS PRESENT
+
+WITH HIM AT A COMMANDERS CONFERENCE NOVEMBER SEVENTEEN THRU
+
+TWENTYONE LAST AT DENVER, COLORADO. HE SAID FLIGHT RECORDS
+
+SHOW NO FLIGHTS MADE BY HEAGY DURING FOLLOWING WEEK AND
+
+ATTENDANCE RECORDS SHOW HEAGY PRESENT FOR DUTY AT TRUAX
+
+FIELD NOVEMBER TWENTYIWO THRU TWENTYFOUR LAST.
+
+1 ~ Seattle (164-81) (Info) (AM)
+
+- Portland (164-41) (Info) (AM)
+
+- Minneapolis (164-73) (Inf0) (AM)
+
+1 - MiLwaukee
+
+DEF: rab'
+
+(4)
+
+164-81-1251
+
+DB Cooper-4513
+
+---
+
+## Page 5
+
+=='
+
+MI 164-37
+
+PAGE TWO
+
+GENERAL, RYERSON RECALLS HEAGY PRESENT WITH HIM IN
+
+ADMINISTRATIVE MATTER AT TRUAX FIELD APPROXIMATELY FOUR PM
+
+NOVEMBER TWENTYFOUR LAST. HE REPORTED HEAGY WAS OFF DUTY
+
+FOR THANKSGIVING DAY AND WENT DEER HUNTING WITH OTHER PILOTS
+
+FROM TRUAX FIELD, NOVEMBER TWENTYSIX AND TWENTYSEVEN LAST,
+
+GENERAL. RYERSON PERSONAILY ACQUAINTED WITH HEAGY AND
+
+ALTHOUGH HEAGY GENERALLY FIIS DESCRIPTION OF UNSUB, RYERSON
+
+DOES NOT BELIEVE HEAGY CAPABLE OF PULLING A HIJACKING.
+
+'RYERSON STATED HE HAS SEEN NEWSPAPER SKETCH OF UNSUB, AND :
+
+IT DID NOT REMIND HIM OF HEAGY.
+
+NO PHOTO OBTAINED IN VIEW OF ABOVE INVESTIGATION.
+
+AIR MAIL COPIES TO SEATTLE, PORTLAND AND MINNEAPOLIS.
+
+FOR INFO.
+
+DB Cooper-4514
+
+---
+
+## Page 6
+
+• #»
+
+NROS SL PLAIN
+
+843PM NITEL 12-16-71 WMB
+
+PITISBURGK (164-93)
+
+SEATTLE (164-81)
+
+FROM ST. LOUIS (164-63)
+
+b6
+
+b7C
+
+NORJAK
+
+RE SUSPECT
+
+RE PITTSBURGH TELETYPE TO BUREAU, DEC. FIFTEEN, LASI.
+
+MILITARY RECORDS ON FILE NPRO-M, SLMO, DISCLOSES FOLLOWING:
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+INDUCTED U.S. ARMY, GREENBURG, PA.,
+
+ENTERED ON ACTIVE DUTY
+
+DISCHARGED IN ABSENTEE STATUS
+
+AND DISHONORABLY
+
+AS PRIVATE
+
+BY REASON OF CONVICIION BY CIVIL AUTHORITIES. NO DISCIPLINARY
+
+ACTIONS INDICAIED BUT WAS AWOL
+
+ADMIITED TO HOSPITAL!
+
+FOR
+
+PSYCHIATRIC EXAMINATION, BUT WENT AWOL
+
+PRIOR TO EXAMINATION, AND PERSONAL AND FAMILY HISTORY NOT OBTAINED.
+
+END PAGE ONE
+
+164-8-1289
+
+BRARO
+
+DECY & 1971
+
+FBI - SEATTLE®
+
+DB Cooper-4574
+
+---
+
+## Page 7
+
+PAGE TWO
+
+DO TRAINING AS PARATROOPER OR PARACHUTIST INDICATED.
+
+DESCRIBED AS WHITE MALE, BORNL
+
+: FIVE FEET TEN AND THREE FOURINS INCHES: ONE FORTY-
+
+FOUR POVUNDS: BROWN HAIR AND EYES: HIGH SCHOOL EDUCATION: CIVILIAN
+
+OCCUPATION-STENOGRAPHER: MILITARY OCCUPATION-CLERK TYPIST:
+
+ADDRESS
+
+THE HOME OF HIS FATHER,
+
+ONE SISTER
+
+RECORD LISIS
+
+C/O MERCY SCHOOL OF NURSING, PITTS-
+
+BURGH, PA.: SOCIAL SECURITY NO.
+
+FBI
+
+CONSIDER UNSUB DANGEROUS:
+
+b6 per NPRC/ FBI
+
+b7C
+
+END
+
+DCẠ
+
+FBI SEATTLE CLR
+
+DB Cooper-4575
+
+---
+
+## Page 8
+
+HEADQUARTERS FIFTH UNITED STATES ARMY
+
+1660 EAST HYDE PARK BOULEVARD
+
+• CHICAGO 15, ILLINOIS
+
+ALFAG-ZA 201 LIST, Jokn lia
+
+0 878 253
+
+SUBJECI: Discharge as a Reserve Cormiedioned Officor of the Army
+
+в Apx11/1937
+
+THRU:
+
+Chlo?, U. Do Aray Halitary Diotrlot, Lilohigan
+
+TO:
+
+2ot lit Jolen Doll 21ot, O 970 255, 20, VUAR
+
+CAUTION: SPECIAL HANDLING REQUIRED
+
+This material copled Iron records of National
+
+Personnel Records Center, St. Louls, Missourt,
+
+to be used for reference only. Do not recopy
+
+or disseminate in 1ts original form outside
+
+the sura. No Photo in file
+
+1. The secrotary of the Army has aireoted that you be informed that,
+
+by diroction of the President, you are hereby honorably discharged fro
+
+your appointment as a Reserve commissioned officor of the Army,
+
+offeotivo this dato.
+
+2. This action i0 taken under the provisions of paragraph 6o (24)
+
+AR 110-375.
+
+FOR STIR C0:2510328
+
+b6 per NPRC
+
+b7C
+
+1 Inol
+
+DD Form 256A
+
+Copy furn:
+
+TAG, DA, Wash
+
+ATTN:
+
+AGG-
+
+000, liain, vals
+
+Aout AG
+
+so inte
+
+File in Officers Sectio
+
+Pers Records Br
+
+SAA
+
+FLI
+
+21 Jun 56 24
+
+PERMANENT
+
+Ince 3
+
+37822-114-81-1316
+
+Initials
+
+Status See,
+
+ALL A TILED
+
+DEC 107 1977
+
+FBI-StALILE
+
+DB Cooper 4631
+
+---
+
+## Page 9
+
+- 28 narch 1952
+
+(Date)
+
+b6 per NPRC
+
+.: b7C
+
+(Address)
+
+Chief, Michigan Military District
+
+Fort Wayne, Buildirg 50
+
+6301 W. Jefferson Avenue
+
+Detroit 17, Michigan
+
+ATTN:
+
+Reserve Disposition Unit
+
+In compliance with letter, your Headguarters, regerding
+
+my retention in en
+
+active status in the Army Reserve, it is
+
+requested that the following indicated action be taken:
+
+_ Request that I be discharged.
+
+John Lit
+
+(Signature)
+
+JOHN E. LIST
+
+(Name, typed or printed)
+
+ILT.
+
+0978253
+
+(Grade)
+
+(SN)
+
+!
+
+CAUTION: SPECIAL HANDLING REQUIRED
+
+This material copied from records of National
+
+Personnel Records Center, St. Louis, Missouri,
+
+to be used for reference only. Do not recopy
+
+or disseminate in 1ts original formoutside
+
+the Bureau.
+
+it'y."
+
+DB Cooper-4632
+
+---
+
+## Page 10
+
+b6 per NPRC
+
+b7C
+
+4 JAN.
+
+1956
+
+(Date),
+
+(Address)
+
+Chief, Michigan Military District
+
+Fort Wayne, Building 90
+
+6301 W. Jofferson Avenuo
+
+Dotrolt 17, Michigan
+
+Attn: Rosorve Disposition Unit
+
+in cospliance with lettor, your hoauguarters, regarding my retention
+
+In an active status in the Army Resurve, it is requosted that the following
+
+indicated action bo taken:
+
+Transfor to the inactive status liut of the Standby Reserve. I
+
+prosently hold primary MOS:
+
+Transfer to the inactive status list of the Standby Reserve upon
+
+recommendation of a Board of Officors.
+
+Transfor to Retired Reserve undor paragraph
+
+-, AR 140-160.
+
+Request that I be granted a waiver of the requirement for accruing
+
+the roquired rotirement points during my last rutirement year.
+
+Tho follow
+
+ing condition(s) of hardship preventod sy activo participation in Resorve
+
+activitios during that period. If waivor 1s grantod, I vill bo able and
+
+willing to actively participato in Rosorve activitios in ordor to maintain
+
+an active status:
+
+for the past thiee you since my sepuatión from active
+
+dity my work has prevented my attirdwig the necescary
+
+mehugs.
+
+Last spring I requested and received a trainfer of Mos from
+
+6301 t 6101 per special Order 90, your beadguarters, 9 ay
+
+1955, d expected to be notified which meeting, that I was
+
+supposed to attend, a never received such notification.
+
+However, I would like to beme active in this military Sovern -
+
+ment unit Due to my work as a Certified Duble Accouatrut
+
+I may not be able to attend meetings regulaidly with after march,
+
+However, aft that would he happy to attend regul
+
+CAUTION: SPECIAL HANDLING REQUIRED
+
+Incl #2
+
+(Over)
+
+This naterial copted from records of National
+
+Personnel Records Center, St. Louis, MissourI,
+
+to be used for reference only. Do not recopy
+
+or disseminate in its original for outside
+
+the Bureau. ": "'
+
+-DB-Cooper 4633
+
+---
+
+## Page 11
+
+PROCESSEn
+
+ORGANIZED
+
+KESERVE CORPS QUALIFICATION
+
+IMPORTANT: See lastructions on reverse side
+
+JUESTIONNAIRE
+
+ARM OR SERVICE (Seation)
+
+2Ne L
+
+GO DATE OF MOST RECENT
+
+0978253
+
+TO WHICH ASSIGNED
+
+applicablo)
+
+CODING
+
+ро мот
+
+USE
+
+b6 per NPRC
+
+b7C
+
+29 NUEY 1749
+
+ear luanzu lare WHITE
+
+Mich
+
+LTE
+
+IT
+
+ON PLANNINO FURTVOLS
+
+Слеск опор
+
+HUSTRE
+
+IDESIRE 9O DAY AD
+
+I DESIRE IU DAY AD
+
+IN YOUR OPINION ARE YOU NOW (Check one)
+
+SLENDED AUTIVE DUTT
+
+TOO NOS DESIRE AO
+
+vane nor botos
+
+IFIT FOR LIMITED SERVICE
+
+Check high-
+
+ATTENDED! DEGREE
+
+IPHYSICALLY UNFIT
+
+MAJOR SUBJECT (COLleGO)
+
+925
+
+HIGH
+
+SCHOOL
+
+GRAB,
+
+2 YRS COLLEGE OR
+
+V ABOVE
+
+TRADE
+
+2 XRS COLLEGE: 1949
+
+SCHOOL
+
+COURSE
+
+I3.
+
+MAIN CIVILIAN OCCUPATION
+
+TITLE
+
+NONE
+
+9-99,999
+
+¡YEARS EXPERIENCE
+
+FIRM NAME AND DEPARTMENT, SHOP OR BRANCH
+
+MASTER'S DEGREE
+
+DOCTOR'S DEGREE
+
+THOURS (Weekly)
+
+LENGTH (Months)
+
+1620
+
+110
+
+DESCRIPEION
+
+OF DUTIES
+
+17
+
+D
+
+1I2
+
+KIND OF BUSINESS FIRM ENGAGED IN
+
+01010
+
+2999 99
+
+:14.
+
+SPECIALIZED FIELDS
+
+IS - REGISTERED WITH NATIONAL ROSTER OI
+
+SCIENTIFIC
+
+AND SPE
+
+CIALIZED PERS.
+
+Tres DINo
+
+175
+
+PHOTO CRA PIS/AMATEUR) : STAMP STAMP (AMAT EUR)
+
+18- COUNTRIES OF
+
+FOREIGN LANGUAGE
+
+EXC GOOD FAIR EXC SOOD FAIR FOREIGN RESIDENCE
+
+MONTHS
+
+GERMAN
+
+SAT HOME
+
+AT ScHooL
+
+18
+
+19.
+
+DEGREE OF MOBILIZAZION AVAILABIZITY (Check one> 20.
+
+YEARS ACTIVE DUTY ON I APRIL 1949 AS 29
+
+R8
+
+00
+
+0010
+
+CHOICE
+
+FIRST
+
+SECOND
+
+22.
+
+MILITARY ASSIGNMENT FOR WHICH YOU FEEL MOST
+
+SUITED IN EYENT OF EMERGENCY
+
+TYPE OF UNIT
+
+AGCOUNTINGORAUDITING
+
+FINANCE
+
+MOTOR
+
+DEELLER
+
+TRUCK
+
+Co.
+
+WORLD WAR II PRIMARY MILITARY DUTIES
+
+MOS (If known)
+
+MORTARGURMER
+
+60 м1.
+
+122
+
+06600
+
+26225
+
+BIFLE COMPANK
+
+3/11/49-3/25/46-23
+
+006000
+
+TIME
+
+IN ARMY WAS SPENT IN TRAINING 24
+
+AND IN GETLING
+
+DISCHARGED
+
+$25
+
+$ 26
+
+23:
+
+SCHOOL
+
+SERVICE SCHOOL COURSES SATISFACTORILY COMPLETEO
+
+LENGTH
+
+• COMPRETEO
+
+EXACT COURSE TITLE
+
+IF KNOWN IN MONTHS MONTH YEAR
+
+OFFICER OR
+
+ENLISTED
+
+127
+
+128
+
+$29
+
+24.
+
+SPECIALTY RATINGS (Check applicablo itoms)
+
+LIAISON PILOT
+
+GLIDERMAN
+
+JPARAGHUTIST
+
+_OIVER
+
+LIGHT SURGEON
+
+в с. 1242
+
+JOTHER AERONAUTICAL RATING (SpOOllY)
+
+$ 353
+
+$G.P: 051948-815847
+
+30
+
+MINE PLANTER
+
+COMBAT INFANTRY
+
+EXPERT INFANIRY
+
+_COMBAT MEDICAL
+
+{37
+
+32
+
+Lut,
+
+20 It.
+
+,IC- Res.
+
+copy?
+
+DB. Cooper-4634
+
+---
+
+## Page 12
+
+APPLICATION FOR IDE: "FICATION CARD - NME FORM 2A (P
+
+LAST NAME - FIRST NAME - MIDOLE NAME (Print or type)
+
+LIST,
+
+JoHN
+
+GRADE
+
+2N0 LT.
+
+EXPIRATION DATE (Of commission) DATE OF BIRTH
+
+VULY 29, 1954
+
+WEIGHT
+
+175
+
+BROWN
+
+CARD SERIAL NUMBERI
+
+337829
+
+SERVICE NUMBER
+
+0978253
+
+COLOR OF EYES BLOOD TYPE
+
+BROWN
+
+REASON FOR ISSUING CARD
+
+d.
+
+REPLACE LOST CARO
+
+XJa. INITIAL APPOINTMENT ISSUE
+
+→ e. REPLACE MUTILATEO CARD
+
+= D. REAPPOINTMENT UPON EXPIRATION OF COMMISSION
+
+CORRECT AN ERROR
+
+b6 per NPRC
+
+b7C
+
+TRANSFER TO MONORARY RESERVE
+
+Eg. CHANGE OF IDENTIFICATION DATA
+
+ADDRESS (Preferably military
+
+inTENTATiON AT WHICH I MAY BE READILY CONTACTED
+
+TELEPHONE NUMBER
+
+8319
+
+CERTIFY THAT THE ABOVE INFORMATION IS CORRECT AND TRUE TO THE BEST OF MY KNOWLEDGE AND BELIEF.
+
+IN THE EVENT "a" ABOVE IS CHECKED, I CERTIFY THAT I MAVE NOT BEEN PREVIOUSLY ISSUED A NME FORM 2A (ReS).
+
+IN THE EVENT "'" ABOVE IS CHECKED, I CERTIFY THAT NME FORM 2A (REO) PREVIOUSLY ISSUED TO ME WAS LOST UNDER THE FOL-
+
+LOWING CIRCUMSTANCES:
+
+DATE OF APFLICATION
+
+MAR. 14,1950
+
+ITo be
+
+filled
+
+DA
+
+AGO
+
+• 1
+
+FORM
+
+SEP 49
+
+DATE OF
+
+ISSUEL
+
+(taken
+
+from
+
+card.
+
+APR U
+
+in by Issuin! Authority.
+
+428
+
+DATE
+
+22MAY 1950
+
+Nổ 1
+
+Colm C. Jiat
+
+SIGNATURE OF APPLICANT (both copies)
+
+RECEIPT OF THÉ ABOVE CARD IS ACKNOWLEOGED
+
+say in " List
+
+# U. S, GOVERNMENT PRINTING OFFICE: 1949-0-853534
+
+CAUTION: SPECIAL HANDLING REQUIRED
+
+Thismatorial copled frosrecords of.Natten.1
+
+Porsonnel Records Center, st, Louts Missour*
+
+to be used for reference only. Do not recopy
+
+or disseminate in Its original form outside
+
+the Bureau.
+
+DB Cooper-4635
+
+---
+
+## Page 13
+
+RESERVE OFFICER'S QU
+
+FICATION AND AVAILADILITY QUESTIONNALAT
+
+(51 140-195-2)
+
+SECTION I
+
+IMPORIANI, It is cosential that all items in Sertion I be completed each time this forna is submitted.
+
+1. LAST NAME-FIRST NAME-MIDDLE NAME
+
+2, SEX
+
+3, SERVICE NO.
+
+List , John Emil
+
+P MALE
+
+REMALE 0973253
+
+5. TEMPORARY MAILING ADDRESS FOR ORC PUR.
+
+6. PERMANENT HOME ADDRESS (NuTaber, strect, cily,
+
+REPORTS CONTROl,
+
+SYMBOL
+
+CSOP A -180 (RI)
+
+CODING
+
+DO NOT USE
+
+4. GRADE
+
+7. WAS ADDRESS ON
+
+THIS COMMUNICA
+
+TION CORRECT?
+
+IS YES
+
+O NO
+
+b6 per
+
+b7C
+
+NPRC
+
+9
+
+ACTIVE
+
+(Check one)
+
+RESERVE
+
+ORGANIZED
+
+VOLUNTEER
+
+10. ORGANIZATION TO WHICH ASSIGNED
+
+ORGANIZATION
+
+MILITARY DISTRICT
+
+5106
+
+Control
+
+GpP
+
+C INACTIVE
+
+9. 1O YOU BESE THANSSERTE
+
+DO YOU DESIRE TRANSFER
+
+RESERVE
+
+ACTIVE RESERVE, IF ELIGIBLE?
+
+11. PHYSICAL STATUSTIN YOUR OPINION
+
+ARE
+
+YOU
+
+NOW (Check one)
+
+FIT FOR
+
+FIT FOR
+
+LIMITED
+
+SERVICE
+
+GENERAL
+
+SERVICE
+
+O YES
+
+UNO
+
+12. DATE OF LAST
+
+3
+
+ARMY
+
+ARMY
+
+PHYSI
+
+CAL EXAM
+
+PHYSI
+
+CALLY
+
+UNFIT
+
+(Roinf) Ifich
+
+Mich
+
+5
+
+MONTH
+
+ADY
+
+001300
+
+IMPORTANT.
+
+If items in Serenime you have Biled out this form, enter a check mark in this aquare and complete
+
+It form is being submitted as a change questionnaire.
+
+enter a check mark is
+
+this square and complete
+
+stepas 37, 38,
+
+and 38 and baly those iteras numbered
+
+wader item 36.
+
+SECTION HI
+
+13, DATE OF BIRTH 14, MARITALSTATUS
+
+15. RACE
+
+DAY MONTH YEAR
+
+"arriod
+
+16. RELIGIOUS PREFERENCE
+
+17. DATE OF MOST
+
+18. SECTION (Branch)
+
+RECENT APPOINT.
+
+Jat Stated
+
+MENT IN ORE
+
+DAY
+
+MONTH YEA
+
+19. NUMEER OF DEPENDENTS (Specou child, wife, mother, Jather, or other and show ages of children undey21, See Instructions, dem 19.)
+
+LEVEL
+
+NAME AND LOCATION OF SCHOOL
+
+NUMBER OF
+
+GRADUATE
+
+MAJOR SUBJECTS
+
+YEARSCOM-
+
+PLETED
+
+YES
+
+NO
+
+DECREE
+
+DATE
+
+20. CIVILIAN EUCATION
+
+ELEMEN-
+
+TARY
+
+0000
+
+0000
+
+00
+
+b6 per NPRC
+
+b7C
+
+1U
+
+04 r
+
+07?
+
+HIGH
+
+SCHOOL
+
+Univ. of Michigan
+
+COLLEGE
+
+AnN ADOr,
+
+lich.
+
+univ. of michigan
+
+POST.
+
+GRADUATE
+
+Ann Arbor', Mich.
+
+Iccounting
+
+Finance
+
+Accounting
+
+Finance
+
+БВЛ
+
+June 50
+
+HIBA
+
+Aug 50
+
+OTHER
+
+00
+
+00
+
+02
+
+0
+
+1, PRESENT CIVILIAN EMPLOYMENT (I/ member of Regula
+
+Irmy. Naou, or 1ir Force, sce Instructions, dem 91
+
+PRINCIPAL DUTIES (Attach addiona page if reguired)
+
+PLACE (Cily and STOLE)
+
+Usual. work of a dunior Accountani
+
+Detroit, Mich.
+
+TROM-SOp-Nov 50 t juns 52 on
+
+NAME AND ADDRESS OF EMPLOYER
+
+ürnst & Ernst ; 2000 Buhl
+
+llag
+
+Detroit, Mich.
+
+KIND OF BUSINES
+
+holle sccouncanü.
+
+ACCAUNTANP
+
+OCCUPATIONAL SPECIALTY
+
+Junior Accountant
+
+TITLE OF POSITION
+
+Junior Accountant
+
+Public.
+
+0-61,300
+
+NAME AND TITLE OF IMMEDIATE SUPERVISOR
+
+NUMBER AND KIND OF EMPLOYEES SUPERVISED BY YOU
+
+Varies-
+
+0. to 3
+
+22: OTHER CIVILIAN OCCUPATIONAL SPECIALTY (Sel 118t126t1on8, ier 88)
+
+CAUTION.
+
+ESPECTAG HANDLES FROUNDER
+
+Intonatarial copied from records as nauleri
+
+Persome: Records Center, St Louls, Missour,
+
+to be used for reference only Donot sadoo
+
+or disseminate in its original form outald
+
+the Bureau.'
+
+DB Cooper 4636
+
++0-36-16602723
+
+---
+
+## Page 14
+
+23. HOBBIES (radicate profistency)
+
+24. FOREIGN LANGUAGE ABILITY (U Inore Chan PrO laRgNages.
+
+NUMBER OF MONTH
+
+• a Decily addulonal under dem 56)
+
+EXPERIENCE A
+
+COUNTRIES OF
+
+25. FORGIN RESIDENCE
+
+INCLU
+
+SIVE
+
+DATES
+
+BEST LANGUAGE
+
+ABILITY
+
+UNDERSTAND
+
+READ WRITE
+
+INTERPRETER TRANSLATOR
+
+FLUENT
+
+ChecK A Dared On Army
+
+Language Proficiency
+
+TESt
+
+SECOND BEST LANGUAGE
+
+FAIR
+
+POOR
+
+FLUENT
+
+Check it based on Array
+
+FAIR
+
+LADSUASE PIOILIGDCY
+
+Tost
+
+POOR
+
+26. DEGREE OF MOBILIZATION AVAILABILITY (Check One)
+
+M DAY THROUGH M 30 DAYS
+
+M A 31 DAYS THROUGH SO DAYS
+
+M + 91 DAYS THROUGH :80 DAYS
+
+M.+ 181 DAYS THROUGH 365 DAYS
+
+_ M DAY + MORE THAN I YEAR
+
+IS AVAILABILITY EXCEEDS M # 30 DAYS, INDICATE NUMBER OF DAYS AND REASON
+
+Dosiro 90 days.
+
+Want timc to got
+
+personal affairs in ori.i.
+
+HAS THIS STATEMENT OF AVAILABILITY, IF BASED ON OCCUPATIONAL REASONS, BEEN
+
+DISCUSSED WITH YOUR EMPLOYER LU YES, TE NO. IT "YES," DOES HIS OPINION DIFFER
+
+FROM YOURS ANO TO WHAT EXTENT?
+
+27. YEARS
+
+OF
+
+ACTIVE
+
+28. YEARS OF RESERVE
+
+FEDERAL
+
+SERVICE
+
+SERVICE ON I FEB
+
+ON I FEB 1952
+
+1952
+
+YEARS
+
+MONTHS
+
+YEARS I
+
+MONTHS O
+
+29, COMBAT AWARDS
+
+TYPE
+
+AUTHORITY (11 kROZOn)
+
+30, MILITARY ASSIGNMENT YOU FEEL MOST QUALIFIED FOR IN EMERGENCY
+
+CHOICE
+
+FIRST
+
+SECOND
+
+POSITION
+
+iss't Fiocal
+
+Officor
+
+Ninance
+
+Ufficon
+
+TYFE OF UNIT
+
+Fiscal
+
+Division
+
+Finanac
+
+31. ARMY SERVICE SCHOOL COURSES SATISFACTORILY COMPLETED
+
+MOS. (1JknOWR)
+
+030k
+
+NAME AND LOCATION OF SCHOOL
+
+TITLE OF COURSE
+
+BRANCH
+
+MOS.
+
+LENGTH
+
+IN
+
+MONTHS
+
+RANK
+
+HELD
+
+COMPLETED
+
+MONTH
+
+TEAR
+
+dinance
+
+Schoets
+
+Ina.
+
+Farrison,
+
+1301
+
+3
+
+12
+
+It Jun
+
+57
+
+32. SPECIALTY RATINGS ATTAINED
+
+(Check applicable items)
+
+LIAISON
+
+PILOT
+
+FLIGHT
+
+SURGEON
+
+DIVER
+
+MINE
+
+PLANTER
+
+EXPERT
+
+INFANTRY
+
+PAR
+
+J CHUTK
+
+GLIDER-
+
+MAN
+
+FLIGHT
+
+NURSE
+
+PRINCIPAL DUTIES
+
+COMBAT
+
+INFANTRY
+
+COMBAT
+
+MED CAL
+
+OTHER AERONAUTICAL
+
+RATING (Specifs)
+
+GRADE
+
+FOR QUALIFICATION ANALYST ONLY
+
+PRIMARY MOS,
+
+6301
+
+SECONDARY MOS
+
+o0u/
+
+D. 0. 7. 000E NUMBER
+
+0-01.300
+
+FACTORS DETERMINING MOBILIZATION AVAILABILITY CATEGORY
+
+5. OTHER
+
+S. OTHER
+
+3. PHYSICAL
+
+1. OCCUPA.
+
+TIONAL
+
+A. DEPEND.
+
+ENCY M
+
+PERSONAL
+
+AESARS
+
+MOGILIZATION AVARABILITY CATEGORY AL
+
+33. CHRONOLOGICAL RECORD OF ACTIVE MILITARY SERVICE
+
+DATES (ESOTT-TO)
+
+Vs cong
+
+CODE NO
+
+15 Doc 13.
+
+13 ARI10
+
+UNIT OR ORGANIZATION
+
+150 am lostar gunpar
+
+Pra
+
+Cati, 312 TrI, S6 DiV
+
+2t Nov 50-
+
+23 423 52
+
+0301
+
+Ass E fiscal Orricer
+
+Niscal & Budgot Div
+
+CBPL
+
+no hason,
+
+or disseminate 1n 1ts original form outside
+
+the Bureau.
+
+37. DATE OF LAST QUESTIONNAIRE
+
+38, DATE OF THIS QUESTIONNAIRE
+
+39. SIGNATURE
+
+June 1950
+
+0213
+
+july 1952
+
+Fist
+
+AGO FORM
+
+DA 1 DEC 30
+
+353
+
+FREVIOUS
+
+FRES DORM IS OBSOLETE , 8. GOVERNMENY PRINZINETY
+
++2-46-60026491
+
+DB Cooper-4637
+
+COPY 1
+
+---
+
+## Page 15
+
+IEADQUARIERS
+
+MICHIGAN MILITARY DISTRICT
+
+173 Fodoral Building
+
+Dotroit 26, Michigan
+
+:0%.39
+
+SUBISCI: Tracor
+
+1 August 1952
+
+I0:
+
+Rosorvist Concernod
+
+Records, this Iniquartors indicate that you have not fully com
+
+pliod
+
+with the provisiors of the Organizod Resorve Corps Sorvico avaluatior
+
+Progran which requires submission of an ORC Qualification Questionnaire ano
+
+accomplishment of a physical examination subsequent to 30 Juno 1950.
+
+2.
+
+Request this Headquarters to advisod as to the status of subject
+
+matter or your intentions rogarding compliance with the provisions of the
+
+ORC Evaluation
+
+Prograin.
+
+BY ORDOR OF COL
+
+CAUTION: SPECIAL HANDLING REQUEN URQUILARE:
+
+This material copied from records of National
+
+Personnel Records Center, St. Louls, Missours,
+
+to be used for reference only. Do not recopy
+
+or disseminate.in 1ts original form outside
+
+Specton
+
+MULLEN
+
+AUS
+
+Asst. Adjutant
+
+pst end
+
+the Bureau.
+
+5 Mug 52
+
+Form 353, 181650).
+
+playsiant integrit cages age..
+
+Active duty Pligical at It Mason, Cal, (3) depriation plusical
+
+'DB Cooper-4638
+
+---
+
+## Page 16
+
+SEPARATION DATA
+
+NA NOF APPLICABLE
+
+ACTER CE SEPARATION
+
+REPORT OF SEPARATION FROM THE
+
+RTMENT
+
+HONORABLE
+
+ARMED FORCES OF THE UNITED STATES
+
+1. LAST NAME-FIRST NAME- MIDDLE NAME
+
+2, SERVICE NUMBER
+
+3 GRADE-RATE- RANK AND DATE OF A COMPONENT AND BRANCH OR
+
+APPOINTMENT
+
+CLASS
+
+LIST JONN WIL
+
+0 978253
+
+IST IT
+
+283 UL51
+
+ORC
+
+IC
+
+: QUALISICATIONS
+
+ETECTIVE DATE OF SEPARATION 7, TYPE OF SEPARATION"
+
+SPECIALTY NUMBER OR SYMBOL
+
+¡RELATEO CIVILIAN OGCUPATION AND D.O,Y. NUMBER
+
+6301
+
+DAY
+
+29
+
+MONTH
+
+YEAR
+
+REASON AND AUTHORITY FOR SEPARATION
+
+I, RACE OF SCARITION APE
+
+152
+
+RELD ER 10
+
+515D OFF PURS
+
+TO. DATE OF BIRTH
+
+CT 47(804 18 110 47
+
+IT. PLACE OF BIRTH (CHy and Sier
+
+I1? DESCRIPTION
+
+PURS CEN CUP STONMAN, CALIE.
+
+SEX™
+
+PACE
+
+TROLOR MAIR
+
+IME SERVIE TOCA BA
+
+CAU
+
+"ICOLOR EYES
+
+TWEISMT
+
+BRONN
+
+BROWN
+
+134
+
+180
+
+AL BOARD NUMEER (CHY, COMRIy, SPACE)
+
+15. INDUCTED
+
+DAY MONTA
+
+YEAR
+
+NA
+
+SEI
+
+SERVICE DATA
+
+TI. REGISTEREO
+
+YES
+
+SELECTIVE SERVICE NUMBER
+
+UL ENLISTED IN OR TRANSFERRED TÔ A RESERVE COMPONEN
+
+COMPONENT AND BRANCH OR CLASS
+
+COGNIZANY DISTRICT OR AREA COMMANO
+
+NA
+
+17. MEANS OF ENTRY OMER THAN MY INDUCTION
+
+DENISTER
+
+REENLISTED
+
+COMMISSIONED
+
+DO CATE AND LACE OF ENTRY INTO ACTIVE SERVIC
+
+DAY
+
+MONTH
+
+YEAR
+
+PLACE (Cuy and Slate)
+
+24 NOY
+
+50
+
+DETROIT, MICH
+
+STATEMENT OF SERVICE FOR DAY PURPOSES
+
+21 NET T
+
+I SERVICE COMPLETED FOR PAY PURPOSES EXCLUDING THIS PERIOD
+
+22 NET SERVICE COMPLETEO FOR PAY PURPOSES THIS PERIOD
+
+23, OTHER SERVICE (Ace of 16 June 1942 es amended) COMPLETED FOR PAY PURPOSES
+
+24. TOTAL NET SERVICE COMPLETED FOR PAY PURPOSES
+
+5
+
+27. DECORATIONS, MEDALS, BADGES, COMMENDATIONS, CITATIONS AND CAMPAIGN RIBBONS AWARDED OR AUTHORIZED
+
+NONE
+
+IN. GRADE-RATE OR RANK AY TIME OF ENTRY
+
+INTO ACTIVE SERVICE
+
+CALLEO FROM MATIVE DUTY
+
+S2,20. HOME ADDRESS AT TIME OF ENTRY INTO AGTIVE SERVICE (S, R F.D.,
+
+County, Ciry and Siate)
+
+1771 BURNS DE
+
+MICH.
+
+25, ENLISTMENT ALLOWANCE PAID ON EXTENSION DI
+
+A YEARS B, MONTHS'S DAYSINLISTMENT. IF ANY
+
+DAY
+
+TEAR AMOUNT
+
+-5-
+
+.6
+
+126, FOREIGN AND/OR SEA SERVICE
+
+YEARS
+
+MONTHS
+
+"DAYS"
+
+0
+
+-7
+
+10
+
+b6 per NPRC
+
+b7C
+
+124. MOSY SIGNIFICANT DUTY ASSIGNMENT
+
+129, WOUNDS RÉCEIVED AS A RESÚLT OF ACTION WITH ENEMY FORCES (Place and dale, / known)
+
+ASST FISCAL OFF
+
+30.
+
+SERVICE SCHOOLS OR COLLEGES, COLLEGE TRAINING COURSES AND OR
+
+POST-GRAD COURSES SUCCESSFULLY COMPLETED
+
+NONG
+
+*DATES
+
+(From-To)
+
+MAJOR COURSE
+
+II, SERVICE TRAINING COURSES SUCCESSFULLY
+
+COMPLETE!
+
+NONE
+
+FINAICE SCH
+
+(FT BENSMIN IND)
+
+ERANSPORTATION SCHI
+
+FI ZUSTIS VA)
+
+FROM 10AFR51
+
+TO
+
+28JUN51
+
+FROM I7SEP5I
+
+10
+
+7DEC51
+
+BUDGET &
+
+FISCAL
+
+ANCT I CO O
+
+GOVERNMENT INSURANCE INFORMATION
+
+TEDSTATES
+
+SER TO COLLEC HOME
+
+KIND OF INSURANCE (e moual and premium
+
+N.S C.T.
+
+0, 5, 6. CT.
+
+IN TOTAL PAYMENT
+
+AUTHÉNTICATION
+
+5-47.43
+
+38.
+
+REMARKS (Continue on
+
+BLOOD GROUP (0)
+
+CERTIFICATE OF SVC DD FOR 21'7A ISSUED
+
+PAID LUIP SUI FOR 16 DIYS ICCRUED LEAVE
+
+10 VA
+
+BENEFITS PREVIOUSLY APPLIED FOR (Spe
+
+(y cypa)
+
+COMPENSATION, PENSION, INSURANCE BENEFITS, ETE,
+
+ÓF LAST CIVILIAN EMPLOYMENT TAZ. MAIN CIVILIAN OCCUPATION
+
+FROM
+
+-PUBLIC ICCOUNTANA
+
+YES
+
+I NO
+
+MARI
+
+DEGREE(S
+
+SCHOOL LEGE
+
+2199
+
+1,i00
+
+y wo wirl
+
+8M6151
+
+— BBA
+
+7. PERMANENT ADDRESS FOR'MAILING PURPOSES AFTER SEPARATION (SL., R.F.D, Coúniy, City and Stale),
+
+the Bureau.
+
+Audille
+
+AARDOIGITLIO CAPT IOU
+
+0.I.C. OFF SUP & RUSGIT
+
+LAIM NUMBER
+
+-C 10138858
+
+AS NAME AND ADORESS OF LAST CIVILIAN EMPLOYER
+
+HANST, & BANSI. DETROIT, MICH.
+
+MAJOR COURSE OR FIELD T
+
+ICCOUNTING
+
++9U7
+
+DD
+
+pd 2808
+
+9 SHONA BAY CITY
+
+FORM
+
+1 IAN 50
+
+214•
+
+1 1.99701
+
+HEADQUARTERS COPY
+
+NAVY:
+
+CARMY
+
+TO BUREAU OF NAVAL
+
+MARINE CORPS:
+
+PRIST
+
+AFFIXED
+
+70KL2921
+
+TACH TO SERVICE RECOND.
+
+ASHINGTON, D.C
+
+CORD
+
+BOOK.
+
+ASHINGTON. DC.)
+
+DB. Cooper-4639
+
+2
+
+---
+
+## Page 17
+
+Gandar form sa"
+
+• 1050)
+
+PHONUIGATED ST
+
+•SCHNAU OF THE BITERT
+
+del
+
+ORT OF MEDICAL EXAMINATIO
+
+prosed
+
+1, LAST NAME-FIAST NAME-MIDDLE NAME
+
+2. GRADE AND COMPONENT OR POSITION
+
+Ist LT. IC
+
+T. HUNE ADDRESS (Number, dred or RND, ey or lown, zone and State)
+
+5. PURPOSE OF EXAMINATION
+
+463. PRINCETON, SAN FRANCISCO,
+
+CALIF.
+
+SEPARATION
+
+3, IDENTIFICATION NO.
+
+0-978253
+
+6. DATE OF EXANANATION
+
+21° APRIL 52
+
+7. SEX
+
+D. TOTAL YRS. GOVT, SERVICE
+
+10. DEPARTMENT, AGENCY, OR SERVICE
+
+11. ORGANIZATION UNIT
+
+W
+
+MILITARY
+
+CIVILIAN
+
+ARMY
+
+6213, ASU
+
+12, DATE OF FIRTH
+
+13. FLACE OF BIRTH
+
+14. NAME, RELATIONSHiP. AND ADDRESS OF NEXT OF KIN
+
+MRS JOHN E. LIST, 463 PRINCETON, SAN FRANCISCO, CALIF
+
+15. OTHER INFORMATION
+
+TO ZAANINING FACION OR EXAMINGÃ, AND ANNAISS
+
+CAMP STONEMAN,.
+
+CALIFORNIA
+
+17. RATING OR SPECIALTY
+
+CLINICAL EVALVATION
+
+NORMAL ASIOR:
+
+MAL
+
+X
+
+Check each iter.
+
+match an i enor evaluate.
+
+i not evaluated
+
+18, HEAD, FACE, NECK, AND SCALP
+
+19. NOSE
+
+20. SINUSES
+
+"X
+
+21. MOUTH AND THROAT
+
+22. EARS GENERAL ME. MATO MA
+
+23, DRUMS (Perforation)
+
+TIME IN THIS CAPACITY: TOTAL
+
+LAST SIX MONTHS
+
+NOTES. -Doscribe every a 5 zurmality in detail. (Enter pertinent item number boloro each
+
+commenti continue in itera 73 and uso additional asceto il necessary)
+
+#39
+
+SCAR, RIGHT MASTOID, EPTS:
+
+b6 per NPRC
+
+b7C
+
+25. OPHTHALMOSCOPIC
+
+26, PUPILS (Equaliy and rcaction)
+
+27. OCULAR MOTILITY
+
+"rancis parallel mow.
+
+28. LUNGS AND CHEST (Include breasis)
+
+29, HEART (Thrus, size, rhythm, sounds)
+
+30, VASCULAR SYSTEM (Variosities, etc.)
+
+31, ABDOMEN AND VISCERA (Include hernia)
+
+CAUTION: SPECIAL HANDLING REQUIRED
+
+33, ENDOCRINE SYSTEM
+
+34. G-U SYSTEM
+
+35. UPPER EXTREMITIES (StrenGth, panDe of
+
+sho noth
+
+36. FEET
+
+Ihis material copied from records of National
+
+Personnel Records Center, St. Louis, Missours,
+
+to be used for referencé only. Do not recopy
+
+38, SPINE, OTHER MUSCULOSKELETAL
+
+or disseminate in its original form outside
+
+the Bureau.
+
+39. IDENTIFYING RODY MARKS, SCARS, TATTOOS
+
+40. SKIN, LYMPHATICS
+
+41, NEVROLOGIE (Equilibrium tdo undon ilom 72)
+
+"X"
+
+42, PSYCHIATRIC (SpeCUany DorsonaRiEn donation)
+
+Femalosonly
+
+(Check horo done)
+
+43. PELVIC
+
+LO VAGINAL
+
+I RECTAL
+
+A4a DENTAL (Place appropriate sumbols above or below mumber of upper and lower iceth, respectively)
+
+(Continue in item 75)
+
+REMARKS AND ADDITIONAL DENTAL RETICTS AND
+
+DISEASES
+
+0,m Nestoraole techn
+
+→ Muesino tee
+
+X8). - Fixed bridge, brackels
+
+t.→ Nontestorable teeth
+
+EX - Replaced bu dentur
+
+clude abutmer
+
+X
+
+'31
+
+3
+
+"30
+
+5
+
+28
+
+27
+
+7
+
+26
+
+25
+
+24
+
+23
+
+22
+
+23 " 1*
+
+21
+
+20
+
+19
+
+" X!
+
+CLASS I
+
+6S. WINALYSIS:
+
+ALBUMIN
+
+SUGAR
+
+NEG
+
+, NEG
+
+18. LXG
+
+Ad 1:N
+
+1.026
+
+MICROSCOPIE
+
+NOT DONE
+
+49, BLOOD TYTE AND RH
+
+FACTOR
+
+LASORATORY FINDINGS
+
+43. CHEST X-RAY (Place, date, film number, resus)
+
+147. SCROLOGY (Spectly lest used and result)
+
+258 NEG
+
+50. OTHER TESTS
+
+CARDIOLIPIN NEG.
+
+NOT DONE
+
+NONE
+
+18-82285-3
+
+DB Cooper-4640
+
+---
+
+## Page 18
+
+58, HEIGHT
+
+52, WEIGHT
+
+53, COLOR HAIR
+
+BROWN
+
+113-16
+
+180
+
+37, $L000 PRESSURE (MIM at heart luel)
+
+SITTING
+
+SYS,
+
+132
+
+SYS
+
+RECUM.
+
+1A5
+
+60
+
+BENT
+
+DIAS
+
+99.
+
+DISTANT VISION
+
+RIGHT 207
+
+200
+
+CORR. TO 201
+
+LEFT 201
+
+200
+
+COAX. TO 20/
+
+S2 HELEROPMORL:
+
+(Speedy dialance)
+
+EX'
+
+STANDING
+
+(з чітя.)
+
+SYS,
+
+DIAS,
+
+- 20
+
+20
+
+60.
+
+BY
+
+BY
+
+R. H,
+
+LH
+
+63, ACCOMMODATION
+
+RIGHT
+
+65. FIELD OF ISION
+
+64. COLOR VISION (Test Used and reSUll)
+
+LEFT
+
+67.
+
+NIGHT VISION (Tesi used and score)
+
+70.
+
+HEARING
+
+71.
+
+2.50
+
+е60
+
+1000
+
+1024
+
+AUDIOMETER
+
+2000
+
+9049
+
+3000
+
+2890
+
+100g
+
+RISHT WV
+
+15 155v
+
+15 11s
+
+RIGHT
+
+LET WY 15 ASSU 15115 LEFT
+
+73. NOTES (CONTINUES) AND SIGNIFICANT OR INTERVAL HISTORY
+
+MEASUREMENTS AND OTMER FINDINGS
+
+54, COLOR EYES
+
+155. GUILD
+
+SLENDER MEDIUM HEAVY OBESE
+
+BROWN
+
+58, PULSE (10M al heart level)
+
+SITTING
+
+AFTER EXERCISE" TE MIN. AFTER
+
+-TRECUMBENT
+
+80
+
+100
+
+80
+
+EX. TEMP
+
+NORMAL
+
+ANTÈR STANDING"
+
+3 MIN
+
+REFRACTION
+
+61.
+
+NEAR VISION
+
+cx
+
+CORR. TO
+
+COPR. TO
+
+DY
+
+PRISM DIV.
+
+PRiSM CONY
+
+PD
+
+G5.
+
+DEPTH PERCEPTIO
+
+L'est used and score
+
+UNCOFRESTED
+
+CORRECTED
+
+G8, RED LENS
+
+69, INTRAOCULAR TENSION
+
+172. FSYCHOLOGICAL AND PSYCHOMOTOR ('L'ERlS UncE and SCOrE)
+
+8193
+
+3X. SUMMARY OF DEFECTS AND DIAGNOSES (List diagnoses wuh dem numbers)
+
+(lie adduional alects of plain paper i1 necessaTy)
+
+75, RECOMMENDATIONS - FURTHER SPECIALIST EXAMINATIONS INDICATED (SPECUU)
+
+76.
+
+11
+
+PHYSICAL PROFILE
+
+PHYSICAL CATEGORY
+
+I IS NOT QUALIFIED FOR
+
+SEPARATION
+
+78. IF NOT QUALIFIED, LIST DISOUALFFYING DEFECTS BY ITEM NUMBER
+
+29, TYPED OR PRINTED NAME OF PHYSICIAN
+
+t/E. FONG IST IT. MC
+
+SO, TYPED OR PRINTED NAME OF PHYSICIAN
+
+salon
+
+81, TYPEO OR PRINTEO NAME OF DENTIST OR PHYSICIAN (Indicale Which)
+
+82. TYPED OR PRINTED NAME OF REVIEWING OFFICER ÖR APPROVING AUTHORITY
+
+SIGNATURE
+
+SIGNATS/ Fi. FONG
+
+_S/E. PEKELIS
+
+SIGNATURE
+
+I V. 8. GOVEANMENT PAINTINGORICE, +9-32288-949
+
+DB Cooper-4641•
+
+---
+
+## Page 19
+
+HES:
+
+OFFICER EFFICIENCY REPORT
+
+SECTION I
+
+LAST NAME - FIRST NAME -
+
+INITIAL
+
+2. SERVICE NUMBER
+
+3- GRADE
+
+4. CONTROL
+
+5- COMPONENT
+
+BRANCH
+
+LIST,
+
+John
+
+E.
+
+0 978 253
+
+Ist Lt
+
+TC
+
+ORC
+
+UNIT, ORGANIZATION AND STATION
+
+PERIOD OF REPORT
+
+•DAYS OF
+
+9206 TSU-IC, SFPE,
+
+FROM
+
+TO
+
+LOUTY
+
+LEAVE
+
+OTHER
+
+Fort Mason, Calif
+
+27 Dec
+
+• 51
+
+20 Apr 52
+
+116
+
+9. NAME,
+
+GRADE, SERVICE NUMBER AND ORGANIZATION OR UNIT OF
+
+RATING OFFICER
+
+JOHN D. BIRD, MAJOR TC, 0-157817200 SING DIFICER
+
+CLARENCE
+
+ORGANIZAT LON. 0E
+
+O1, ES,
+
+9206 ISU IC, SFPE, Ft Mason, Calif.
+
+040705, 9206 ISU TC, SFPE, Port Mason,
+
+California.
+
+22. REASON FOR REPORT
+
+PES RATEO OFFICER DE
+
+CHANGE DUTY RATED OFFICER
+
+OTHER (Specily)
+
+(SENT) ANNUAL C
+
+PES RATING OFFICERL
+
+CHANGE DUTY RATING OFFICER
+
+12.
+
+(Do not weite in this space)
+
+I3- DUTIES ACTUALLY PERFORMED ON
+
+Assistant Fiscal Officer,
+
+licer acau division, septime assistant sees,
+
+major ost
+
+Accounting Branch, supervises civilian personnel in compiling, analyzing, and reporting
+
+cost data of SFPE.
+
+14. ENTRIES ARE BASED ON
+
+Pa 8 Dec 57 - 26 Dec 5I NR
+
+OBSERVATION OF 30-59 DUTY DAYS T
+
+OSSERVATION OF 60 OUTY DAYS OR MORE %
+
+OFFICIAL REPORTSE
+
+15- DESCRIPTION OF OFFICER RATED AND COMMENTS (These paragraphs should cover physical, mental, moral qualities of rated officer,
+
+and any special strenaths of weaknesses affecting his ability to do certain assignments not covered elsewhere in the report)
+
+A. COMMENTS OF RATING OFFICER
+
+A well mannered, reliable, sincere officer who performs his assigned duty with
+
+diligence.
+
+He is mentally alert, physically sound, cheerful
+
+and cooperative in his
+
+relations with people. Neat and clean appearing with good military
+
+orals are above reproach.
+
+CAUTION: SPECIAL HANDLING REQUIkEgaring. His
+
+This material copled Iron records of National
+
+Personnel Records Center, St. Louls, Missour.,
+
+to be used for reference only. Do not recopy
+
+or disseminate in its original form putside
+
+the Bureau.
+
+8. COMMENTS OF INDORSING OFFICER
+
+I DO NOT KNOW THE RATEO OFFICER BUT I HAVE CONFIDENCE IN TME RATER'S JUDGMENT
+
+→ I DO NOT KNOW THE RATED OFFICER VERY WELL BUT I HAVE CONFIDENCE IN THE RATER'S JUDGMENT
+
+Concur. It list creates a good impression from the first by his appearance and
+
+bearing and strengthens that inpression by his continued excellent performance of
+
+duty.
+
+His background plus his devotion to the detail of duty nade him an asset to
+
+the Fiscal Office.
+
+Studious, progressive and alort, he exhibited a distinct
+
+interest
+
+in his assignment.
+
+53
+
+I6A.
+
+RATER'S CERTIFICATE
+
+I CERTIFY TMAT TO THE BEST OF MY KNOWLEOGE AND BELIEF
+
+ALL ENTRIES MADE MEREON BY ME ARE TRUE AND IMPARTIAL AND ARE
+
+IN ACCORDANGE WITH AR 600-185.
+
+DATE
+
+21 Apr 52
+
+SIGMATURE OF
+
+BATER
+
+Asin
+
+OFFICIAL RELATION TO RATED OFFICER
+
+Chief, Fiscal
+
+Division
+
+This seport das_l
+
+_IsclOsureS (In
+
+AGO FORM
+
+DAI SEP SO
+
+07-2
+
+INDORSER'S CERTIFICATE
+
+I CERTIFY THAT TO TME BEST OF MY KNOWLEDGE AND BELIEF
+
+ALL ENTRIES MADE MERÉON BY ME ARE TRUE AND IMPARTIAL AND ARE
+
+IN ACCORDANCE WITH AR 600=185-.
+
+SIGNATURE OF INDORSER
+
+DATE
+
+28 Apr 52
+
+OFFICIAL RELATION, TO RATEO OFFICER
+
+Port Comptroller
+
+8. Oil appropriato)
+
+18. ENTERED ON
+
+IDATE
+
+WD AGO FORM 66
+
+28 April 1952
+
+REPLACES DA AGO
+
+FORM
+
+67-1
+
+I'JUL 47.
+
+WHICH
+
+BECOMES OBSOLETE
+
+EFFECTIVE IS SEP 50.
+
+INITIALS 0F
+
+PERSONNEL ew
+
+OFFICER
+
+DB Cooper-4642
+
+MAY 1 4 1952
+
+---
+
+## Page 20
+
+SECTION
+
+ESTIMATED DESIRABILITY IN VARIOUS
+
+LITIES - INDICATE
+
+TO
+
+WHICH
+
+DESIRE
+
+THE RATEO OFFICER
+
+SERVE UNDER YOU IN EACH TYPE OF DUT
+
+DESCRIBED BELOW.
+
+PLACE AN X IN THE PROPER
+
+CONSIDER
+
+ITEM
+
+TERMS
+
+APPROPRIATE TO RATED GRADE AND BRANCH. USE THE "UNKNOWN"
+
+EACH
+
+IN
+
+COLUMN ONLY IF THE NATURE OF YOUR CONTACTS WITH
+
+THE
+
+RATED
+
+OFFICER MAKES IT IMPOSSIBLE FOR YOU TO MAKE AN ESTIMATE OF HIS PROBABLE USEFULNESS IN A PARTICULAR ASSIGNMENT.
+
+RATER
+
+INDORSER
+
+A. COMMANDO A UNIT
+
+B. SERVE AS A STAFF OFFICER
+
+SPECIFY:
+
+Fiscal Officer
+
+GO WORK AS A SPECIALIST, PROFESSIONAL PERSON, OR TECHNICIAN
+
+SPECIFY:
+
+DO TEACH IN A CLASSROOM SITUATION
+
+E. SERVE IN A CAPACITY INVOLVING MANY CONTACTS WITH CIVILIANS-
+
+F•9- CONTRACT NEGOTIATION, ROTE, NG, ORC, ETC.
+
+F. CARRY OUT AN ASSIENMENT INVOLVING MOSTLY ADMINISTRATIVE
+
+Go REPRESENT YOUR VIEWPOINT IN LIAISON ACTIVITIES
+
+M. MAKE DECISTONS AND TAKE ACTION IN YOUR " NAME DURING YOUR
+
+ABSENCE
+
+I. BE RESPONSIBLE IN AN EMERGENCY REQUIRING FORCEFUL
+
+LEADERSMIP
+
+J. OTHER
+
+SPECIFY:
+
+650080088
+
+Officer is
+
+AND/OR CLARIFY ABOVE RATINGS AS DEEMED NECESSARY.
+
+X]l
+
+000000
+
+INCLUDE ANY SPECIAL QUALIFICATIONS OF VALVE TO SERVICE.
+
+economy minded and demands fron his subordinates full utilization oi
+
+supplies and equipment and return of excesses to supply channels.
+
+Indorser: That esiscio has
+
+one sectively supported the Port's Conservation Progran and
+
+этака
+
+*For technical services,
+
+adminas
+
+D9 880.
+
+interpret this to mean managerial responsibilities commensurate
+
+with command.
+
+SECTION
+
+111
+
+OF HIS GRADE AND
+
+PERFORMANCE OF DUTY - CONSIDERING ONLY OFFICERS
+
+BRANCH WITH ASCUT THE SAME COM
+
+MISSIONED SERVICE, RATE THE OFFICER ON PERFORMANCE
+
+Of his duty assignment.
+
+READ ALL DESCRIPTIONS AND
+
+PLACE A HEAVY
+
+X IN THE BOX OPPOSITE BEST DESCRIP-
+
+TION.
+
+7. EXCELS ANY OTHER OFFICER I KNOW IN PERFORMANCE OF
+
+THIS DUTY
+
+16. OUTSTANDING PERFORMANCE OF THIS DUTY FOUND IN VERY
+
+FEW OFFICERS
+
+5- VERY' FINE PERFORMANCE OF DUTY OF SUCM A NATURE TMAT
+
+TMIS OFFICER WOULD DE MARD TO REPLACE
+
+4. PERFORMS TMIS DUTY IN SUCM A COMPETENT,
+
+DEPENDABLE
+
+MANNER TMAT TMIS OFFICER IS AN ASSET TO
+
+THE SERVICE
+
+3= USUALLY PERFORMS TMIS DUTY COMPETENTLY
+
+SECTION IV
+
+RATER
+
+INDORSER
+
+WHAT IS YOUR ESTIMATE OF THE RATED OFFICER'S OVER-
+
+ALL VALUE TO THE SERVICE? COMPARE HIM WITH OFFICERS
+
+OF THE SAME GRADE, BRANCH AND OF ABOUT THE SAME
+
+LENGTH OF COMMISSIONED SERVICE, PLACE A MEAVY X OP
+
+POSITE THE MOST APPROPRIATE DESCRIPTION.
+
+RATER
+
+INDORSER
+
+8. THE MOST OUTSTANDING. OFFIGER I KNOW
+
+7. ONE OF TME FEW MIGHLY OUTSTANDING OFFICERS I KNOW
+
+2- BARELY ADEQUATE IN PERFORMANCE OF TMIS DUTY
+
+1o INADEQUATE IN THE PERFORMANCE OF TMIS OUTY
+
+6. A VERY FINE OFFICER WHO IS A DISTINCT ASSET TO THE
+
+SERVICE
+
+[x)
+
+B. IN THE EVENT OF immediate mobilization, WHAT IS
+
+THE highest level of performance
+
+YOU WOULD EXPECT
+
+FROM THE RATED
+
+OFFICER? READ ALL DESCRIPTIONS
+
+AND
+
+PLACE A HEAVY X IN THE BOX OPPOSITE BEST DESCRIP-
+
+TION.
+
+RATER
+
+INDORSER
+
+A COMPETENT, DEPENDABLE OFFICER OF GREAT VALUE TO
+
+THE SERVICE
+
+4. A TYPICALLY EFFECTIVE OFFICER WHO IS A CREDIT TO
+
+THE ARMY
+
+Ta WOULD GIVE AN OUTSTANDING PERFORMANCE AT INO grade
+
+6.
+
+levels HIGHER
+
+WOULO GIVE A COMPETENT AND DEPENDABLE PERFORMANCE
+
+AT two grade Levels MIGMER
+
+5. WOULD GIVE A FAIRLY ADEQUATE PERFORMANCE AT INO
+
+Grade levels HiGHER
+
+4. WOULO GIVE AN OUISTANDING PERFORMANCE AT TME neXt
+
+'GRADE
+
+3. WOULD GIVE A COMPETENT ANO DEPENDABLE PERFORMANCE
+
+AT IME next. higher GRADE
+
+2. WOULO GIVE A FAIRLY ADEQUATE PERFORMANCE AT TME
+
+next higher GRADE
+
+• WOULD GIVE AN INADEQUATE PERFORMANCE AT TME nEXE
+
+higher GRADE
+
+3= AN
+
+ACCEPTABLE OFFICER WHOSE VALUE IS LIMITEO IN
+
+SOME RESPECTS
+
+2. AN OFFICER WHO PERFORMS ACCEPTABLY IN A LIMITÉO
+
+RANGE OF ASSIGNMENTS, BUT WHO COULO EASILY, BE
+
+REPLACED
+
+AN
+
+OFFICER WHO DOES NOT MAVE TME CALIBRE THAT ÓNE
+
+SHOULD REASONABLY
+
+EXPECT IN AN OFFICER
+
+# U. A COVEANMENT PALTINO OPPICE: 106O O - DONOM
+
+DB Cooper-4643
+
+---
+
+## Page 21
+
+ORGANIZATION COPY
+
+CHECK
+
+CHANGES,
+
+RECEIVED
+
+1. LAST NAMESHRST NAMES MIDDLE NAME
+
+2. ARMY SERIAL NUMBER
+
+3. GRADE
+
+'LIST, JON EMIL
+
+0 978 253
+
+B. EITIZONSHLASTATUS
+
+RELISION (VOLURIATY)
+
+8. HEIGHT
+
+18. WEIGHT
+
+(1481801
+
+"IC
+
+A. COMPONENT 5.
+
+ARM OR SERVICE
+
+ORC
+
+11, CATEGORY
+
+lative
+
+Lutheran
+
+6' 12"
+
+13, SOURCE OF COMMISSION
+
+14. DATE OF LAD (CrETeTt
+
+175
+
+sian
+
+15. CITY AND STATE FROM WHICH ORDERED TO EAS
+
+MOS (SSN)
+
+RIMARY
+
+P30l
+
+•LIE DATEDE BIRTH
+
+NOA
+
+119
+
+(ORC)
+
+22, Nov 1950
+
+Detroit,
+
+Michigan
+
+17.
+
+CHRONOLOGIEAL LIST OF ACTIVE DUTY MILITARY AND CIVILIAN SCHOOLING
+
+18.
+
+21
+
+22
+
+23
+
+24
+
+NAME OF SCHOOL
+
+TITLE OF COURSE (ENd SSN)
+
+LENGTH
+
+RATING
+
+YEAR
+
+45
+
+26
+
+27
+
+23
+
+Finance
+
+Budgot & Fiscal
+
+16Tks
+
+Стр
+
+1951
+
+GRADE
+
+2nd Lt
+
+DATE RANX
+
+32
+
+Transportation
+
+¡Asct T Co
+
+A2wks
+
+Cmp 1951
+
+2nd Lt
+
+4$
+
+GRÁDE STATUS
+
+TYPE
+
+EFFECTIVE DATE"
+
+ORC
+
+Apt 29Ju149
+
+IC) Acc 29Ju149
+
+AUS Apt 29Ju149
+
+ACC 30NOV50
+
+24 Nov50
+
+(Par 10,50 216,5tha, 250ct50)
+
+Ist Lt
+
+AUS
+
+28Ju151
+
+28Jw151
+
+(Par 3,50
+
+67, Ft MasonCal, 28J051)
+
+"b6 per NPRC**
+
+-b7C
+
+LIST,
+
+JOHN
+
+EMIL
+
+LAST NAME-FIRST NAME- MIDDLE NAME
+
+$3
+
+54
+
+55
+
+56
+
+157
+
+58/59
+
+60
+
+62/63
+
+68/67/63
+
+169 70 71 72
+
+73|717576
+
+7778|79
+
+80
+
+81(8283
+
+134
+
+19.
+
+MEDICAL
+
+CLASSIF
+
+177721
+
+RECORD OF PHYSICAL STATUS
+
+MEDICAL INSTALLATION
+
+NAME AND AUTHORITY
+
+DATE
+
+DATE STATUS
+
+HANGE DUE
+
+SSIGNMEAT
+
+LIMITATION
+
+0 978 253
+
+ARMY SERLAL NUMBER
+
+21.
+
+EFFICIENCY INDEX
+
+INDEX
+
+DATE FIS,
+
+22.
+
+CATEGORY
+
+TYPE
+
+17k1 3210952
+
+IV-17| 23Apr52
+
+15€
+
+GRACE
+
+20. RETIRED (Grade, Teason, die)
+
+23.
+
+YEAR
+
+SER
+
+AER
+
+24.
+
+GENERAL AND ANNUAL EFFICIENCY RATING (FOr IUD USE OnLy)
+
+ORC
+
+COMPONENT
+
+DESIGRATION
+
+„MILITARY OCCUPATIONAL SPECIALTIES
+
+25.
+
+DETAILS
+
+SSN
+
+DATE =
+
+ARM OR
+
+QUALIFYING AUTHORITY
+
+SERVICE
+
+DETAILED (DOlS SE AUlA)
+
+*6301
+
+13Aug52
+
+SFIE, FtMason, Cal
+
+CAUTION: SPECIAL HANDLING REQUIRE MINTO COME A ALAS
+
+LEASE L-TC jE DUTY TC
+
+ARM OR SERVICE
+
+"Ints material copied fromrecords of lationa
+
+Porsonnel Records Center, St. Louls, Missourt,
+
+To baused for reference only. Do not Tecopy
+
+FARMALL
+
+or disseminate in'its original form outside
+
+the Bureau.
+
+27.
+
+CAMPAIGNS
+
+DATE DPTO 2/1
+
+3 19Feb45
+
+21Aug45
+
+OVERSEAS COMMAND
+
+ETO
+
+SHIPA
+
+FOREIGN SERVICE DATA
+
+DATE ATD Z/1
+
+173un45
+
+16Apr 46
+
+PES
+
+MONTHS
+
+Tay
+
+CAMPAIGN
+
+TOTAL
+
+Central Furope
+
+4
+
+8
+
+AUTHORITY AND DATE
+
+GO 24, VID, 1947
+
+WD 190146628124419
+
+DB Cooper-4644
+
+OFFICER'S, WARRANT OFFICER'S, AND FLIGHT OFFICER'S QUALIFICATION RECORD
+
+---
+
+## Page 22
+
++r peater
+
+TOCT
+
+KONOLOGICAL RECORO OF MILITARY SERVICE
+
+BATES
+
+FROM
+
+14Ju043
+
+14Dec43
+
+MOS
+
+(890)
+
+1858
+
+UNIT OR ORGANIZATION AND
+
+STATION OR THEATER
+
+TYPE OF
+
+REPORT
+
+SUBMITTED
+
+ARC ~ Inactiva
+
+15Doch3
+
+224 pr/ 6
+
+Pfo - Ned Lab Tech
+
+3428 Inf Regt, 86thD17
+
+29J2149
+
+Commissioned Th-Rea freSh ROIC
+
+Univ. of Michigan
+
+2911249
+
+23N0x50
+
+USAR - Inactive.
+
+2410750
+
+1Ja051
+
+Fiscal 0, Fiscal Dir
+
+9206TSU-TC, SFPE, Calif
+
+None.
+
+Zan51
+
+31 Tan51.
+
+Co 0, DSm/3730TPBn(FiscalDix)
+
+9206TSU-TC, SERE;Calif
+
+Abov
+
+2Feb51
+
+9Apr51
+
+Fiscal 0, Elscal Dir
+
+9206ISU-TC, SFPF, Calif
+
+67÷214)
+
+104px 51
+
+28J20051
+
+9206TSU-AC ,SEPE, Calif
+
+Acad
+
+29 Jun51
+
+33Aug51
+
+Fiscal Div
+
+9206TSU-TC
+
+, SFPE, Calif
+
+150057
+
+16S0p51
+
+6302
+
+AbxI.
+
+Fiscal Oe
+
+37Sep51
+
+Fiscal Div
+
+9206ISU-IC, SFPE, Calie None
+
+7Dec51
+
+Student, I.Sch.
+
+9206T SU-TC; SFPF, Calif Acad
+
+8Deç51
+
+26D0c51
+
+Unasga
+
+27De052
+
+2040x52
+
+Asst Fisca? O Fiscal Div
+
+25/4.9206%5U TC S8PH CATT
+
+9206TSU TC SFPE CALIF
+
+67-2(5)
+
+121Apr52
+
+2940r52
+
+Casual
+
+Cp Stoneman, Galif
+
+Mone
+
+1 MOS Be EW NOT LiSt NO CATS IN AN AREA COMMAND,
+
+on Bellen
+
+4 April 1957
+
+HON DISCH HEN PAR 66(24), 2E 140-1'75, Chicago,
+
+TIlinois
+
+5Army
+
+PAGE 2
+
+thing
+
+;, DB. Cooper; 4645
+
++18081008774
+
+---
+
+## Page 23
+
+59, PERMANENT MARING ADDRESS (NO, Street, City end
+
+Sintell
+
+ORTH FLACE (Ciy, State,
+
+breton (024766981)
+
+31, EMERGENCY ADDRESSSE (Name Randonahin Number Stadt CHan STate)
+
+2. MARIAL STATUS
+
+DARRiED
+
+J. NO. OF DEPENDENTS
+
+FE
+
+CHILDREN
+
+OTHER
+
+34.
+
+PARENT
+
+PARENTS' BIRTHPLACE
+
+COUNTRY OF BIRTH
+
+95.
+
+CITIZENSHIP STATUS
+
+LANGUAGE
+
+FOREIGN LANGUAGES
+
+DIALECT
+
+Bavarian
+
+READ
+
+EL
+
+WRITE
+
+NTEI
+
+PRETI
+
+5. EDUCATION
+
+IGH SCHOOL
+
+COLLEGE
+
+OR
+
+UNIVERSITY
+
+OSTGRADUATE
+
+OTHER
+
+FATHER
+
+U.S.
+
+MOTHER
+
+U.S.
+
+NAME AND LOCATION
+
+Bay City, Michigan
+
+unita rachigan
+
+Doceased
+
+Gorman
+
+EL
+
+MAJOR SUBJECT
+
+Academic
+
+Accounting
+
+Univ of Michigan
+
+Accounting
+
+7.
+
+TITLE OF
+
+POSITION
+
+public Accountant
+
+NAME AND
+
+ADDRESS OF
+
+Ernst & Ernst
+
+EMPLOYER
+
+C DATES
+
+Dotroit,
+
+Michigan
+
+EMPLOYED
+
+FROM
+
+1950
+
+TO
+
+1950
+
+UTLES PERFORMED
+
+Torked as public accountant for two months
+
+thile attending school and two months upon
+
+graduation.
+
+CIVILIAN OCCUPATIONAL EXPERIENCE (MaI ONE SECONCATY)
+
+CODE
+
+0-01.300
+
+FROM
+
+DUTIES PERFORMED
+
+SPORTS
+
+PARTICI
+
+PATE
+
+EXCEL
+
+COACH (School, etc.)
+
+EMIRE
+
+DEGREE
+
+BBA
+
+DATE
+
+1943
+
+46-50
+
+MBA
+
+1950
+
+CODE
+
+TO
+
+b6 per NPRC
+
+b70
+
+WEAPON
+
+arbine
+
+ifla v-l
+
+Iste]
+
+zrbinoll-300al
+
+urbine
+
+30Cal
+
+QUALIFICATION IN ARM$
+
+COURSE
+
+QUALIFIED
+
+05000
+
+MM
+
+SS
+
+EX
+
+A
+
+MMI
+
+SS
+
+SCORE
+
+145
+
+174
+
+DATE
+
+Feb44k
+
+FebL4r
+
+2070b51
+
+27 NOv51
+
+39, AVOCATIONS
+
+41.
+
+TYPE
+
+Good Conduct
+
+EAMS
+
+Asiatic-Pac
+
+Angor Campaign
+
+Combat Infantsy
+
+O/S Bars (1)
+
+un II Victory
+
+AWARDS, DECORATIONS, AND CITATIONS
+
+AUTHORITY AND DATE
+
+AR 600-65
+
+AR 600-65
+
+AR 600-65
+
+AR 600-65
+
+Disch Cort,
+
+224 pr 46
+
+AR 600-40
+
+AR 600-65
+
+PRESANTEN
+
+(Yes or No)
+
+Yes
+
+Yes
+
+Yos
+
+Yes
+
+Yes
+
+Yes
+
+BEMARKS ROs Ordered AD In ET of 2nd It at SFPE, Ft Mason, Calif off 24Nov50;Rota AD 30Nov50./1
+
+ittla Indoctrination: Inf11 Grse (19Jan51) ;Arty Firo (22Jan51);Close Combat CIse Haived,
+
+II Vet, 2432151.//NAC per SR 380-2601 compl 22 Dec 51 - 6th A./L Inactive Wi II Vot/
+
+PAGES
+
+7 DB Cooper+4646
+
+---
+
+## Page 24
+
+19.
+
+FLYING STATUS
+
+DATE
+
+RESTRICTIONS
+
+44.
+
+PECIALTY
+
+OR DESIGNATION
+
+RATINGS, SPECLALTIES, AND DESIGNATIONS
+
+EFFECTIVE
+
+AUTHORITY
+
+NO. OF ENGINES
+
+AIRPLANE QUALITICATIONS (MULATY
+
+TYPE OF PLANE
+
+INVEN-
+
+LONAL
+
+OVERZ
+
+"JET"
+
+OVER 2
+
+THER
+
+S. COMBAT DATA (RAE ONLY)
+
+HOSPITAL (LOcation)
+
+HOSPITAL, (Locution)
+
+INSTITUTION
+
+ENSTITUTION
+
+48
+
+FLYING HOURS
+
+HONTH AND YEAR
+
+HOURS
+
+200
+
+500
+
+-750
+
+1000
+
+1500
+
+2000
+
+3000
+
+5000
+
+INTERNSHI
+
+TYPE
+
+RESIDENCIES AND FELLOWSHIPS
+
+SERVICE
+
+POSTGRADUATE INSTRUCTION
+
+COURSE
+
+HOSPITAL AND TEACHING APPOINTMENTS
+
+TYPE
+
+"HOURS
+
+WEEKLY
+
+47- CIVILIAN FLYINE EXPERIENCE (Nalure, tuDe equipment, no, tro, loot dale soron, dicenacs)
+
+50.
+
+TOTAL
+
+MONTMS
+
+MONTAS
+
+TOTAL
+
+MONTHS
+
+YEAR
+
+COMPLETED
+
+COMPLETED
+
+YEAR
+
+COMPLETED
+
+PRIVATE PRACTICE
+
+LOCATION AND TYPE
+
+% 01
+
+TIME
+
+, FROM
+
+TO
+
+53.
+
+CERTIFIED BY AMERICAN BOARD OF
+
+YEAR
+
+SUB SPECIALTY
+
+YEAR
+
+LICENSE (Type)
+
+STATE OR TERRITORY AND YEAR
+
+55.
+
+BOOKS AND TECHNICAL PAPERS PUBLISHED
+
+YEAR
+
+DATES (FrOm - 10)
+
+PROFESSIONAL AND EDUCATIONAL SOCIETIES (With degrce of memberShip)
+
+57. COLOR HAIR
+
+CO. COMPLEXION
+
+62.
+
+SPECTACLES DATA
+
+SO GRADE AND ARE OR SERVICE OF OFFICER AND DATE
+
+JOB, LiSt, let It, 3C
+
+53.
+
+COLOR EYES
+
+58- PHOTO
+
+61. BLOOD TYPE
+
+"0"
+
+No: 36463608-331
+
+LA. COVERENT PRINTINO OFFICE
+
+* DB.Cooper-4647 \
+
+---
+
+## Page 25
+
+13
+
+•**
+
+UCTIONS TO MAJOR COMMA
+
+1. Army Regulations governin
+
+vhich this report will be forwarded administration of the Organized, Rescrue
+
+ips prescribe the channels through
+
+2. Continuor: line endorsements, stamped or typed, including date, should be used in forwarding this report, -E"
+
+LAST NAME-FIRST NAME - MIDDLE NAME
+
+ARMY SERIAL NO.
+
+GRADE
+
+SECTION
+
+LIST
+
+•JOHN FMIL
+
+0978253°
+
+NEW PERMANENT HOME ADDRESS
+
+TC - 1:11
+
+OLD PERMANENT HOME ADDRESS
+
+TEMPORARY ADDRESS
+
+DURA
+
+1-163
+
+FOREIGN ADDRESS
+
+b6 per NPRC
+
+PURPOSE OF FOREIGN TRAVEL OR RESIDENCE
+
+b7C
+
+STATUS (SCe paragraphs & and s of indiruccions lo reseroists)
+
+DATE OF DEPARTURE
+
+DATE OF RETURN
+
+1.16.3
+
+WAT ROCESSED
+
+5t ARMY
+
+11-1
+
+DATE
+
+SIGNATURE
+
+NoV. 30, 1954
+
+IST IND HQ
+
+RESERVIST WILL NOT WRITE BELOW THIS LINTIE-IA-DEPiCerS SeCtIOn
+
+Pers Info Br
+
+Initials.
+
+VIE BE CHANGE CA
+
+ORGANIZED SEESERVE MORPS
+
+*GODRESS AND STATUS REPORT
+
+WD 160
+
+Complete and Return
+
+See Note Inside
+
+IN
+
+RUCTIONS TO MAJOR COMMAN
+
+1. Army Regulations governing
+
+administration of the Orgarized Reserve (
+
+is prescribe the channels through
+
+Aelwhich this report will be forwarded.
+
+2. Continuous line endorsements, stamped of typed, including date, should be used in forwarding this report.
+
+SECTION
+
+LAST NAME-FIRST NAME- MIDDLE NAME
+
+RMY SERIAL NO
+
+GRADI
+
+LIST, JOHN EMIL
+
+0978255
+
+1S627
+
+TC-USARI
+
+NEW
+
+OLD PE
+
+TEMPORARY ADDRESS
+
+FOREIGN ADDRESS
+
+POSE O FORREN TAVE A ESCRIC UNTON: SPARTAL, RANDLING REQUIRE
+
+6-017
+
+DATE OF RETURN
+
+Personnel
+
+Ост. 19,1953
+
+or dissentrate in its original Tomoutside, ipossi
+
+b6 per NPRC
+
+ā D80 167
+
+b7C
+
+the Bureau. SINATURE
+
+RESERVIST WILL NOT WRITE BELOW THIS LINE
+
+1ST IND HO
+
+•Rg Mich Mil Dist, 173 Federal Bldg, Detroit
+
+2ộ, Mich.
+
+9: Tie, Twin 70, dit, i 108 8o 5 9
+
+WD 19.
+
+FEB
+
+FORM 603
+
+EDITION OF 1 SES 46 MAY BE USED.
+
+DB Cooper-4648
+
+ORGANIZED RESERVE CORPS
+
+CHANGE OF ADDRESS AND STATUS REPORT
+
+---
+
+## Page 26
+
+b6 per NPRC
+
+b7C
+
+11Bt
+
+John Eu11
+
+1.
+
+DESAGNATOR'S LAST NAME-FIRST'NAME -MIDOL
+
+5.
+
+DATE OF
+
+BIRTH
+
+6.
+
+CHANGE
+
+I INITIAL DESTINATION
+
+8. FIRST NAME -MIDDLE NAME-LAST NAME OF PERSON TO DE
+
+Holon Patriola 110t
+
+ADDRESS (Number, street, city, counly, and Scare)
+
+37708M033/NOS. (11 ans) 25 Ferbet
+
+7, DESIGNATOR'S PERMANENT HOME ADDRESS (Number, atreet, city, county and Siale)
+
+JUN WIN T
+
+tures 1574015407
+
+KEENTIONSHIP (I friend,
+
+so slare)
+
+ME TEASONS NAMEO IN TEMS Y.
+
+BELOW, MAY ALSO BE NOTITIEUUY THE EMERGENCY, IF SUCH NOTIFICATION IS NOT DESIRABLE DUE TO
+
+HEALTH OR FOR OTHER PERTINENT REASONS. SO STATE
+
+8. SPOUSE (Fira' name, middle name, last nume) (Il none, or if deceased or divorced, so
+
+ADDRESS (Number, treet, cily, county, and Siace)
+
+male)
+
+holen Patrioia List
+
+10.
+
+CHILDREN (Firse name Midelle name- Lase name)
+
+ADDRESS (Number, street, cuy, and Seate)
+
+MARRIZ5
+
+OR SINGLE
+
+SEX
+
+AGE
+
+Brenda JOyCE TOy1OI
+
+(Step-dsuglitor)
+
+singlo
+
+Fon
+
+11, NAME OF FATHER (Or male guardian) (l'irse numo Middle name- Last name)
+
+ADDRESS (Number, street, cicy, and Stare)
+
+-b6 per NPRC-
+
+b7C
+
+Doccased
+
+12. NAME OF MOTHER (Or Jemale guardian) (Fursi namo- Middle name- Lase name)
+
+ADDRESS (Number, deer, city, and Suale)
+
+Alaa Serio Ilst
+
+Information Included on this form does not designate or chanze beneficiaries of life Insurance; direct communication to the Veterans Administration
+
+or Insurance company is necessary for that purpose.
+
+JAMESH
+
+Replaces DD Form 93, 1 Jul 50, which is obsolete,
+
+except for National Guard not on active duty.
+
+RECORD OF EMERGENCY DATA FOR THE UNITED STATES ARMY
+
+CAUTION: SPECIAL HANDLING REQUIRED
+
+This material copled Irom records of Nationai
+
+Personnel Records Center, St. Louis, Missours,
+
+to be used for reference only. Do not recopy
+
+or disseminate in'its original form outside
+
+the Bureau.
+
+b6 per NPRC
+
+b7C
+
+35-24
+
+DB Cooper-4649
+
+---
+
+## Page 27
+
+b6 per NPRC
+
+b7C
+
+MONTING AFNT. THEN NST SU RAYO ME SPOUSE OR TO TELE END REAVE SEE IS LATION OCCURS BEFORE PAYMENT OF SIX (6)
+
+13, FIRST NAME- MIDOLE NAME- LAST NAME
+
+ADDRESS (Number, street, city, und Sicke)
+
+RELATIONSHIP
+
+daa Norio List
+
+sother
+
+IN THE EVENT OF DEATH OR DISQUALIFICATION OF THE ABOVE-NAMED DEPENDENT RELATIVE. | THEN DESIGNATE THE ALTERNATE DEPENDENT RELATIVE
+
+SHOWN BELOW (Other chan spouse or chud):
+
+14. FIRST NAME-MIDDLE NAME- LAST NAME
+
+ADDRESS (Number, street, city, and Siule)
+
+RELATIONSHIP
+
+Filllan G. Lict
+
+15.
+
+Holt-Erothor
+
+VOLUNTARY ENTRIES
+
+| REQUEST THAT THE FOLLOWING COMMERCIAL LIFE INSURANCE COMPANIES BE OFFICIALLY NOTIFIED IN CASE OF MY DEATH IN ACTIVE SERVICE (The "Policy
+
+Number" ahould be entered if possible, since this informurion will assis in expedeung uction by the insurance company should a claim become paruble):
+
+FULL NAME OF COMPANY
+
+ADDRESS OF HOME OFFICE
+
+POLICY NO,
+
+IN THE EVENT THAT I AM LISTED AS MISSING, OR BY OTHER MILITARY CIRCUMSTANCE AM UNABLE TO TRANSMIY FUNDS TO MY DEPENDENTS, IT IS MY
+
+DESIRE THAT=
+
+16, FIRST NAME-MIDDLE NAME- LAST NAME
+
+Holen Patricia. List
+
+ADDRESS (Number street cier and Siate
+
+MILITARY ADDRESS
+
+9206th TSU TO - SFPE, It insu, Calif.
+
+RELATIONSHIP
+
+7180
+
+RECEIVE EACH MONTH
+
+100
+
+,% OF MY PAY.
+
+John d. Li
+
+DATE SIGNED
+
+7 Jan, 52
+
+P. U.S, GOVERNMENT PRINTING OFFICE : 1951 0-929211
+
+b6 per NPRC
+
+b7C
+
+DB Cooper-4650
+
+---
+
+## Page 28
+
+RECORD OF EMERGENCY DATA
+
+FOR THE ARMED FORCES OF THE UNITED STATES
+
+1, DESIGNATOR'S LAST NAME--FIRST NAME- MIDDLE NAME
+
+7. SERVICE NO.
+
+3 GRADE, RANK OR RATE
+
+LIST,
+
+John Ensl
+
+0978253
+
+2nd Lt
+
+5. PERSON TO BE NOTIFITO IN CASE OF EMERGENCY (First name- Middlo namembase namo)
+
+birs. Alma
+
+No List
+
+ADDRESS (Number, Street, City and Staro)
+
+020% 13t-IC
+
+Et Mason Collar
+
+Mother
+
+Miss Lugusta List
+
+AnDREss Numhor Street Ciry
+
+-Middlo namo- Last namo)
+
+— 06 per NPRC
+
+b7C
+
+FELATIONSMI (Il friend, do ataro)
+
+Aunt
+
+7, CUSTODIAN TO WHOM PERSONAL EXTECTS ARE TO BE SMEPPED (Firsi name-Middle initial Last ramo)
+
+Ars. Alma M. List
+
+AppRass (Number, Street, City and Stard)
+
+RELATIONSHIP
+
+Mother
+
+8. AS A GUIDE IN ADMINISTERING LEGISLATION GOVERNING THE WELL-BEING AND PROXACTION OF MY DEPENDENTS IN THE EVENY
+
+THAT I AM UNABLE TO MAKE PROVISION THEREFOR, IT IS MY DESIRE THAT
+
+FIRST NAME-MIDDLE INITIAL LAST NANT
+
+Mrs.
+
+Alra
+
+-M.
+
+List
+
+"ADERESS (Number, Streor, City and Stare)
+
+NECEIVE LACH MONTM
+
+A..
+
+100
+
+&,
+
+BELATIONSK:+
+
+Mather
+
+_PERCENT
+
+OF MY PAY
+
+* DOLLARS
+
+PERSON TO RECEIVE SIX MONTHS GRATUITY PAY
+
+I sendored, as as dradio incite Lage nama) l nano, or ildecodon" adinis Number, Sriner, City and Stars)
+
+b6 per NPRC
+
+b7C
+
+NONE
+
+10.
+
+CHILDREN
+
+NIRST NAME MIDDLE NAME LAST NAME
+
+«жить 2+ 70 75714
+
+(Nurnter, Sermal,
+
+DATE OF
+
+DiMTH
+
+ACTUAL RELA
+
+TIONSHIP
+
+FIRST NAME NICOLE NAME- LAST NAME
+
+to desegrate any person.
+
+Tones lion Pay city ara staros
+
+to recene
+
+thr
+
+RELATIONSHTP
+
+2. IN THE EVENT OF DEATH OR DISQUALIFICATION OF THE LAST NAMED DEFENDENT RELATIVE
+
+THEN DESIGRATE AN ALTERNATE UPENDENT KELATIVE (othor than spous
+
+(First aaron Middlo initial.
+
+name) SHOWN
+
+writing:
+
+BELOW
+
+(onsonly)
+
+Il designation of an altornate le declined, designator must etate in
+
+ternato
+
+a tire to roceivo
+
+FIRST NAME MIDOLE NANZ-LAST NAME
+
+TING REQUTRETIONSHIS
+
+FORESS (Number,
+
+decline to desjnate any. person as at
+
+child
+
+1a nd
+
+SIGNATUEL OF OFFICER A MINISTERING OATM Fir name-Madia initiallaseminata 1D 1tS orIginal
+
+the Bureau.
+
+DAY OF NaveMber.
+
+CRADE OR RANK
+
+. 1950
+
+SERVICE NO.
+
+ORGANIZATION:
+
+(First namor
+
+9206 TSUJEO, SPPE
+
+Elwood G. Penner
+
+_Ist It IC
+
+01 951 186
+
+Ft Mason, Callf.
+
+1 Must be attested by an officer on active duty in the United States Armed Faross authorized to administer oaths or by a Notary Publio.
+
+NME FORMINA 93 REPLACES WO AGO FORM 41, 1 NOV 45, WHICH IS OBSOLETE,
+
+- 1 ОСт. 1
+
+DB Cooper-4651
+
+S U.S, GOVERNMENT PRINTING OFFICE: 1942-0-800820
+
+---
+
+## Page 29
+
+Hut take
+
+**
+
+"ter
+
+RECOMMENDATIONL.
+
+FROM:
+
+PROMOTION OF OFFICER
+
+(See AR 605-12)
+
+BASIC DATA ON THIS FORM TO BE OBTAINED FROM NO AGO FORM 66
+
+T0:
+
+DATE
+
+23 July 1951
+
+Carmanding General
+
+San Prancisco Port of Embarkation
+
+Fort Hason, California
+
+LAST NAME - FIRST NAME - MIDOLE INITIAL
+
+ARMY SERTAL NUMBER ARM OR SERE
+
+BASIE COMPO
+
+VICE
+
+NENT
+
+LIST, JOHN E.
+
+0 978 253
+
+TC
+
+ORC
+
+THE ABOVE NAMED OFFICER IS WITHIN THE ZONE OF CONSIDERATION FOR PROMOTION PURSUANT
+
+TO DEPARTME
+
+ARMY ANNOUNCEMENT.
+
+AGE
+
+YEARS MONTHS
+
+2ND LT
+
+IST iT
+
+DATES OF RANK IN GRADE?
+
+CAPTAIN
+
+MAJOR
+
+DATE OF ENA-D.
+
+CURRENT TOUR
+
+LI COLONEL
+
+FROM
+
+GRADE
+
+ITO
+
+2141/0050
+
+PRESENT DUTY AND ASSIGNMENT
+
+UNIT OR STATION
+
+21110v50
+
+INCLUSIVE DATES
+
+FROM
+
+- 2ndLt
+
+Istit
+
+CATEGORY AND EX
+
+PIRATION DATE
+
+(when applicable)
+
+Student, Aruy Financo School
+
+(Fiscal Division)
+
+Assiotant Fiscal Oricor,
+
+Fiscal Division, SiTE
+
+9206 TSU TC, SFPE,
+
+California
+
+201pr51
+
+18 July 61
+
+IV 32Aug52
+
+19 July Sl to prosont
+
+b6 per NPRC
+
+b7C
+
+Conmanders will confine recommendations to briel statements.
+
+These statements should bephrased to bring
+
+out the
+
+lace that the
+
+recommending officer either does or does nos consider the ollicer lolly gualilied
+
+that
+
+be would be Lolly agreeable
+
+to keep
+
+the officer in his commaad il promosed to cle
+
+higher grade,
+
+and that there is do disciplinary action pendiag on tle ofticer.
+
+THE ABOVE NAMED OFFICER COXT IS IS NOT RECOMMENDEO FOR PROMOTION IN THE ARMY OF THE UNITED STATES FOR THE FOL-
+
+Ho is an outstanding young officor who has dononstratod to havo loaderchip and osocui
+
+tro ability. Ho
+
+1o constantly striving to improvo hinsolfs accomplishos his work
+
+mrith offioionoy, applios hinsolf enorgotically nna choorfully to his dutios and 16
+
+considorod to bo fully qualiflod for pronotion.
+
+i pocat i lo, Sired that the officor bo rotalnod in hia probot duty adolfont
+
+Thoro so no disciplinary aotion ponding on the officor.
+
+CAUTION: SPECIAL HANDLING REQUIRED
+
+This material copied frot records of National
+
+Personnel Records Center, St., Louts, Missourt,
+
+to be'used for refarance only. Do not recopy
+
+or disseminate in its origipal for outside
+
+the Bureau,
+
+YPEO NAME, GRADE AND ORGANIZATION OF RECOMMENDING OFFICER
+
+JOILI DO BIRD, MAJOR IC, 9206 ISUIC
+
+Chios, E%n0al Divialone
+
+SRPE
+
+I FOR RA Officero prefix dates
+
+by T.
+
+DA 155878
+
+SIGNATURE OF RECOMMENOING OFFICER
+
+REVERSE SIDE FOR INDORSEMENTS
+
+REPLACES NO AGO FORM 18, 3 AUG 44, WHICH IS OBSOLETE-'
+
+, DB Cooper 4652
+
+---
+
+## Page 30
+
+OATH OF OFFICE
+
+MILITARY PERSONNEL
+
+Use W. D., A. G. 0. Forms Nos. 0337-NG and
+
+for Service and Oath of Allegiance, United States Mili-
+
+0337-NG-1 for oath of office of commissioned and war-
+
+tary Academy). Uso W. D., A. G. O. Form No. 721 for
+
+rant officers, National Guard of the United States; oath
+
+enlisted women of the W. A. C. For civilian personnel
+
+of enlistment on W. D., A. G. 0. Form No. 22 (Enlist-
+
+use Standard Form No. 61 approyed by Civil Service
+
+ment Record) for enlisted men; and oath prescribed for
+
+Commission, Cir. No. 109.
+
+cadets United States Military Academy (Engagement
+
+(Indicate type of commission or appointment lu placing I in proper block)
+
+OFFICER, REGULAR ARMY
+
+FLIGHT OFFICER
+
+OFFICER, ARMY OF THE U.S.
+
+NURSE, REGULAR
+
+OFFICERS RESERVE CORPS
+
+NURSE. ARMY OF THE U. S.
+
+OFFICER®W. A. C.
+
+DIETITIAN, ARMY OF THE U. S.
+
+WARRANT OFFICER
+
+PHYSICAL THERAPIST, ARMY OF THE U.S.
+
+I,-
+
+list
+
+0978253
+
+(First narae)
+
+(Middle Dame)
+
+(Last nasse)
+
+(Serial awaber)
+
+having been appointed a Second licutenant.., Army of the United States, do solemnly swear
+
+(or affirm) that I will support and defend the Constitution of the United States against all enemies,
+
+foreign or domestic, that I will bear true faith and allegiance to the same; that I take this obligation
+
+freely, without any mental reservation or purpose of evasion; and that I will well and faithfully
+
+discharge the duties of the office upon which I am about to enter; SO HELP ME GOD.
+
+this
+
+discharged to accept commission, please attach separate +-
+
+statement showing permanent normilitary home address
+
+this is desired to protect your mileage palfter rents
+
+pon relief from actite duty)
+
+It you were
+
+a warrant officer, or enlisted man of the Regular Army,
+
+Memorandum for commanding officer.-t the oticer
+
+was ordered to active duty by other than War Depart-
+
+ment order, attach a copy or extract copy of the order.
+
+Noted -
+
+(Date)
+
+Date Sister 5 - 4/1
+
+(Signature ol adjatin ertstriation commander ReS. Bi.
+
+For adjutant or organization commander. -Execute
+
+the day the officer revorts for duty.
+
+It is essential that
+
+this form and mail it to the Adjutant General (Appoint-
+
+this information reach-thallar-Depaxterias soon do
+
+ment and Induction Branch), Washington 25, D. C., on
+
+WD AGO FORM 71
+
+1 MAY
+
+1944
+
+(See instructions for filling out Oath of Omce on Back of form
+
+Previous editions of this forma are absolato.
+
+RESERVE BRANCH
+
+DB Cooper-4653
+
+---
+
+## Page 31
+
+i sand
+
+wat 74071 9927805709
+
+"HOSANJION I TOES NO SATE SAGUTS OUT IN IN
+
+U0T38220NEUY.II, 10 JOSIE.
+
+ANLEY 47578 647)
+
+INSTRUCTIONS
+
+This form will be executed in full upon acceptance of a commission or appointment in the Army:
+
+Typewriter will be used, if available.
+
+. FOR THE EXECUTION OF THE OATH OF OFFICE
+
+1. Whenever any person is elected or appointed to an office of honor or trust under the Goy-
+
+ernment of the United States, he is required before entering upon the duties of his office, to take and
+
+subscribe the oath prescribed by section 1757, Revised Statutes.
+
+2. Public Law 746, 77th Congress (sec. 1, Bul, 52, W. D., 1942), eliminates the necessity of
+
+executing oath on promotion of officers.
+
+3. Oaths of office of Army officers, officers of Women's Army Corps, nurses, warrant officers,
+
+flight officers, dietitians, and physical therapy aides should be taken before some civil officer who is
+
+authorized by the laws of the United States or by the local municipal law to administer oaths, or
+
+before an officer of any component of the Army of the United States on active duty in Federal serv-
+
+ice commissioned in or assigned or detailed to duty with the Judge Advocate General's Department,
+
+a staff judge advocate or acting staff judge advocate, the president of a general or special court
+
+martial, a summary court martial, the trial judge advocate, or any assistant trial judge advocate of
+
+a general or special court martial, the president or the recorder of a court of inquiry or of a military
+
+board, any officer designated to take a deposition, any officer detailed to conduct an investigation, or
+
+the adjutant, assistant adjutant (including a warrant officer when so serving), or personnel adju-
+
+tant of a command. Officers of the Army other than those specified are not authorized by law to
+
+administer such oaths.
+
+official seal of the person administering the oath, or if he does not use a seal, his official capacity
+
+to administer oaths must be certified to under seal by a clerk of court or other proper local official.
+
+5. Immediately on receipt of a commission or notification of appointment the appointee will, in
+
+case of acceptance of the commission or appointment, return to The Adjutant General the oath of
+
+office on this form properly filled in, subscribed, and attested. In case of nonacceptance, the com-
+
+mission or notification of appointment will be returned to The Adjutant General by a letter indicat
+
+ing the fact of nonacceptance.
+
+38792-1
+
+b6 per NPRC
+
+b7C
+
+j12"
+
+RECENE?
+
+4 AUG 1019
+
+Aprat & Press Ses
+
+6767 A1NP: 62.
+
++ 44410110
+
+900.0T TU
+
+02
+
+•'DB Cooper-4654
+
+---
+
+## Page 32
+
+APPLICATION FOR APPOINTMENT
+
+AND STATEMENT OF PREFERENCES FOR RESERVE OFFICERS
+
+(See Instructions on Reverse Side)
+
+TO:
+
+DATE
+
+The Adjutant General, Washington, D.C.
+
+FROM: (Last 9a1n6-Firal name-Middlo nome)
+
+ARMY SERIAL NO.
+
+LIST, JOHN ENDL
+
+09159.
+
+FOR GRADE OF
+
+dad it
+
+JUN 3 1949
+
+APPLICATION FOR APPOINTMENT IN OFFICER'S RESERVE CORPS
+
+SECTION
+
+Irasportitiod Corpa
+
+I CERTIFY THE FOLLOWING INFORMATION, IN CONNECTION WITH MY APPLICATION, TO BE CORRECT TO THE BEST OF MY KNOWLEDGE
+
+1. PERMANENT HOME ADDRESS (Number, sircet, cils, counsy and Stale)
+
+b6 per NPRC
+
+-b7C
+
+2. DATE DE BIRTH (DoU month and ver)
+
+4. MARITAL STATUS (Check one)
+
+IS SINGLE
+
+5, DEPENDENTS (Number completely dependent on you other than wife)
+
+ES WHITE
+
+NEGRO
+
+I INDIAN
+
+7. ARE YOU A CITIZEN OF THE U, S.? 1F SO, DID YOU BECOME A CITIZEN BY 8, IF YOU ARE A U.S. CITIZEN BY OWN NATURALIZATION, STATE DATE, NUMBER OF CERTIFICATE AND COURT.
+
+BIRTH OR NATURALIZATIONT
+
+Yos - by birta
+
+9. NAME OF FATHER (Lost, firal, and midale initiat)
+
+10, ADDRESS
+
+List, Joha Fraderiot
+
+11, COUNTRY OF BIRTH
+
+Doccasod
+
+12. HE NATURALIZED U.S. CITIZEN, GIVE DATE, COURT. CITY AND STATE
+
+13, NAME OF MOTHER (Laal, firal, and midate initian)
+
+14. ADDRESS
+
+List, Alma Mor 20
+
+15, 0OUNTRY OF BIRTH
+
+36. 15 NATURALIZED U.S, CITIZEN, GIVE DATE, COURT, CITY AND STATE
+
+USA
+
+17, PERSON TO BE NOTIFIED IN CASE OF EMERGENCY
+
+(Laal name-Firal name- Middle initial)
+
+Alzza to list
+
+19. ADDRESS
+
+18. RELATIONSHIP
+
+b6 per NPRC
+
+b7C
+
+Mother
+
+20.
+
+EDUCATION (Inchides Military Service Schools)
+
+CIACLE HIGHEST GRADE COMPLETED, ELEMENTARY OR HIGH SCHOOLS
+
+8 7 8 8 10 11(12)
+
+COLLEGE
+
+Collero
+
+SCHOOL
+
+(Name of Institution)
+
+Sr Collego, BayCity, lich
+
+Univ of Fisconste
+
+Jair of Michigan
+
+YEARS
+
+ATTENDEC
+
+DID YOU GRADUATE?
+
+DO YES
+
+110
+
+"AGADUAT"
+
+'DEGREES
+
+§ 10s
+
+5 2103
+
+8 years
+
+SUBJECT
+
+MAJORED IN
+
+Lazinerial
+
+Eng 1n0 er ing
+
+Ascounting
+
+MILITARY SERVICE SCHOOLS
+
+21. OTHER SUBJECTS SPECIALIZED IN
+
+Chanistry
+
+st. louis, lissour
+
+22.
+
+LANGUAGE,
+
+(Specify)
+
+Gerran
+
+or disseminate in sorigina, Corn outside
+
+SOURCEL.
+
+GRADE
+
+SECTION
+
+DATE OF APPOINTMENT
+
+DATE OF ACCEPTANCE
+
+DAY,
+
+MONTH
+
+YEAR
+
+DAY
+
+MONTH
+
+"YEAR
+
+WD AGO
+
+ORI
+
+170
+
+PREVIOUS EDITIONS OF THIS FORM ARE OBSOLETE
+
+DB Cooper-4655
+
+26-91075-3
+
+---
+
+## Page 33
+
+23, CHRONOLOGICAL STATEMENT OF SERVICE AN-
+
+- RAINING IN THE ARMY, NAVY, MARINE CORPS, UNITED S..-- ES MILITARY OR NAVAL ACADEMY, NATIONAL
+
+GUARD, OFFICERS' RESERVE CORPS. UNITED STATES NAVAL RESERVE. MARINE CORPS RESERVE. COAST GUARD RESERVE. ENLISTED RESERVE CORPS, NAVAL
+
+MILITIA, NATIONAL NAVAL VOLUNTEERS, CITIZENS' MILITARY TRAINING CAMPS, OR RESERVE OFFICERS' TRAINING CORPS,
+
+DATES
+
+#ROM
+
+Dec13
+
+Ssp17
+
+TO
+
+10г46
+
+HIGHEST
+
+GRADE
+
+PFC
+
+Endot
+
+ORGANIZATION
+
+(7746406 07709 service)
+
+Amy of the Unstoa Statos.
+
+Adta POlE, Unires 410018a1
+
+DUTY
+
+ACTIVE OR
+
+INACTIVE
+
+korterhanor
+
+Seidon
+
+dotiza
+
+Inactite"
+
+24 15 A FORMER WARRANT OFFICER OR ENLISTED MAN OR BOTH, INDICATE SERIAL NUMBERS
+
+26377031
+
+25. WERE ALL DISCHARGES GRANTED UNDER HONORABLE
+
+26. WERE YOU EVER REJECTED FOR ANY BRANCH OF 27, EVER REJECTED FOR ROTCT
+
+CONDITIONSI
+
+MH ITARY SERVICE?
+
+YES
+
+YES
+
+28. EVER REJECTED FOR CMTC?
+
+NO
+
+K NO
+
+DI NO
+
+29. IF "YES"' TO 26, 27, OR 28, STATE WHEN AND WHERE REJECTED AND CAUSE
+
+SPECIAL HANDLING REQUIRED
+
+30, FAMPAIGNS AND BATTLES PARTICIPATED IN (Give dales)
+
+CAUTION:
+
+Contral Buropo
+
+31. THEATERS OF OPERATIONS IN WHICH SERVED (WOrLd War I Only)
+
+This material copied com records of National vo
+
+Personnel Records Center, St Louis, Missours,
+
+Europera Theter of oporatione
+
+to be used for reference only. Do not recopy
+
+asiaotlo-Pasiflo Thestor
+
+or disseminate in Its eriginal form outstia
+
+32, DECORATIONS AND CITATIONS RECEIVED
+
+-the Bureau. :
+
+Good Condust Hedal, BAlE Service Medal, Mortoun Insator Ingoon,
+
+asiastico noitle servico kodal, Combat Infantry Bedgo, Morld Tar Il Viotors
+
+33, HAVE YOU EVER BEEN CONVICTED BY A CIVIL OR MILITARY COURTI (IJ 80, give the dale and circumstances)
+
+YES.
+
+NO
+
+Undorsignod couploted first your advincod iransportation Coros ROIC in Juno 1948. Upora
+
+0nr011ing in tho BOTC ir. Septoaber 1548, I found that tho IC RONG wait had been doaoti-
+
+vatodo! In ton of this I olooted to pursuo tno soddad jea: adragged QUI ROTC courso
+
+uhich I'nill cosploto in Juno 1919.. Inasmuch so my Intorast 13 conterod primarily in
+
+tho Transportation Corps, It is roquestod that 1 bo comlusioned in the IC-Resoryo.
+
+I hate road paragraph 2, SR 600-220-1,.
+
+10 Horenibor 1948, and cortis; that 1 (bera)
+
+(hava nover) engagod in disloyal or subvorsivo notivitios as dolines threin.
+
+E. 2.
+
+SIGNATURE (Firal, middle, and last names)
+
+John Emil Fist
+
+PRINTED OR TYPED NAME (First, middle, and lout names)
+
+JOSH INTL MISI
+
+INSTRUCTIONS
+
+1. Fill out on typewriter, if practicable; if not, print proper names and write clearly. This form must be executed in triplicate ano
+
+forwarded to The Adjutant General.
+
+Each copy must be signed.
+
+2. Applications will be accompanied by a Report of Physical Examination (WD AGO Form 63), which may be obtained trom any military
+
+post or station.'
+
+'Physical examination should preferably be by a medical officer of the Regular Army, Officers' Reserve Corps, Nationa
+
+Guärd, or Public Health Service.
+
+If applicant so desires, the examination may be made by a reputable privato physician.
+
+3. If the applicant is in the military service, application will be forwarded through channels.
+
+4. Under "Remarks" make appropriate explanation, when other allotted spaces arm insüfficient.
+
+5. Under "Chronological Statement of Service.
+
+general terms, as "regimental duty," "taff duty,'
+
+." state duty, specifically, as "regimental adjutant," "company commander." etc., not in
+
+*6. Blank boxes on, the right side of sheenà for War Department use only. .
+
+•1:
+
+O 8. GOVERNMEN NOTIMO ORRIES
+
++671497558 ir
+
+‹ DB Cooper-4656
+
+---
+
+## Page 34
+
+ARMY RESERVE QUALIFICATION AND AVAILABILITY QUESTIUNNAIRE
+
+(51 140-25-1)
+
+(Read Instructions on Reverse Side Before Completing Form)
+
+1. NAME, GRADE, SERVICE NO, AND MAILING ADDRESS (Number, Str
+
+City, and St
+
+60.
+
+•••IST LŸ JOHN ELIST
+
+5/19/05
+
+0 0878253 FE ViSAR
+
+REPORTS CONTROL SYMBOL
+
+AG - 270
+
+2, UNIT TO WHICH ASSIGNED
+
+MICH. CONTROL
+
+GROUP :
+
+b6 per NPRC
+
+b7C
+
+3, MARITAL AND DEPENDENCY STATUS
+
+RELATIONSHIP
+
+WIFE
+
+DAUGHIER
+
+DAVEHTER
+
+AGE i
+
+COLLEGE
+
+3 0
+
+13
+
+2 mos
+
+A. CIVILIAN EDUÇATION (Circlo highest grade completed)
+
+ELEMENTARY
+
+HIGH SCHOOL
+
+1234567
+
+(3)
+
+9 10 11Ф
+
+DATES ATTENDED
+
+TYPE OF SCHOOL
+
+FROM(MO
+
+and Yr.)
+
+TO (Mo. and Yr.,)
+
+SEPT. 46
+
+POST GRADUATE
+
+JAN SO
+
+JAN 50
+
+AUG SO
+
+COLLEGE
+
+13 14 15
+
+2. X MARRIED
+
+b.
+
+3
+
+I SINGLE
+
+DEPENDENTS
+
+DEGREES
+
+748 19 2
+
+18 19 20
+
+MAJOR SUBJECT
+
+BBA_
+
+MBA
+
+ACCOUNTING
+
+FINANCE
+
+COMMERCIAL OR
+
+TRADE SCHOOL
+
+a, TITLE OF PRESENT JOB
+
+D. TOTAL MONTHS IN PRESENT JOB
+
+AUDITOR
+
+3SMOS
+
+È. PRINCIPAL DUTIES
+
+WORK ON AND SUPERVISE JUNIOR
+
+IN
+
+C.P.A. FiRM.
+
+SPECIAL HANDLINO REFUSE. TO RS (1-4)
+
+CAUTION:
+
+6. PRINCIPAL HOBBY
+
+7, FOREIGN LANGUAGES Personnel Records Center, St. Louis, MissourI,
+
+Ihis material copied from records of National
+
+tobeused for reference only. Do not recopy
+
+GERMAN
+
+or disseminate in Its original form outside
+
+8. COUNTRIES OF FOREIGN RESIDENCE
+
+COUNTRY
+
+NO. 0F MONTHS
+
+the Burea AIR
+
+a. INDICATE NUMBER OF DAYS NEEDED PRIOR TO REPORTING FOR ACTIVE DUTY UPON DECLARATION OF NATIONAL EMERGENCY OR DECLARATION OF WAR
+
+MOBILIZATION
+
+AVAILABILATY
+
+6.0
+
+DAYS
+
+D. BRIEFLY INDICATE REASONS FOR NONAVAILABILITY FOR PERIODS IN EXCESS OF 30 DAYS
+
+BUSINESS
+
+AND PERSONAL REQUIREMENTS
+
+10, REMARKS
+
+DATE OF LAST PHYSICAL
+
+MONTHS OVERSEAS SERVICE
+
+APRIL, 1952
+
+12 mo's.
+
+OLD
+
+NEW.
+
+MOS 6301 MOS 6101.
+
+МАС.
+
+All MAC
+
+AL
+
+b6 per NPRC
+
+b7C
+
+11, I CERTIFY THAT TO THE BEST OF MY KNOWLEDGE AND BELIEF
+
+HAVE NO PHYSICAL
+
+DEFECTS OR CONDITIONS,
+
+DECEPT RENOTED
+
+UNDER
+
+REMARKS ABOVE
+
+WHICH WOULD PREVENT MY PERFORM-
+
+ANCE OF FULL MILITARY SERVICE.
+
+DATE
+
+MAR, 14,'55
+
+DA, 101 so 1140
+
+I DEE 50. ANI
+
+shut. List
+
+DB Cooper-4657
+
+---
+
+## Page 35
+
+==
+
+ENLISTED
+
+1. LAST MAME = FIRST MAME • MIDDLE INITIAL
+
+LIST
+
+JOHN E
+
+ORQANIZATION
+
+CO X 3420 INF REGT 8GTH DIV
+
+AMENT ADDRESS TOR MI
+
+RECORD AND REPORT OF SEPARATION
+
+HONORABLE DISCHARGE
+
+2. AR
+
+RIAL NO.
+
+S. GRADE
+
+4, ARM OR SIXVICE
+
+16 177 034
+
+PFC
+
+INF
+
+J. COMPONENY
+
+ERC
+
+7, DATE OF SEPARATION
+
+D. PLACE OF SIPARATION
+
+22 APR 46
+
+SEP CENTER CP ME COY WIS
+
+10, DATE OF BIRTH
+
+14, PLACE OF BIRTH
+
+SEE
+
+12. ADDRESS FROM WHICH IMPLOYMINT WILL DI SOUGHT
+
+9
+
+1e.
+
+RACE
+
+WINE
+
+NEGRO OTHER SPECILYNSINGE
+
+1S, COLOR EYES 1A, COLOR MAIR
+
+15. MEIENT
+
+BROWN I BROWN
+
+6-t
+
+MARITAL STAYUS
+
+MARRIED
+
+OTHER (specily)
+
+30.
+
+U s.
+
+CITIZEN
+
+NO
+
+21, CIVILIAN OCCUPATION AND NO.
+
+STUDENT COLLEGE X-02
+
+MILITARY
+
+HISTORY
+
+22, DATE OF INDUCTION
+
+29, DATE OF ENLISTMENT
+
+24, DATE OF ENTRY INTO ACTIVESERVICE
+
+25, PLACE ON ENTRY INTO SARVICE
+
+14 JUN 43
+
+15 DEC 43
+
+DETROIT MICH
+
+REGISTERRO, 27, LOCALE.S, BOARDNO,
+
+28, COUNTY AND STATE
+
+20. MOME ADDRESS AT TIMI DE INTRY INTO SERVICE
+
+16. WAIGHT
+
+17. NO DEPEND.
+
+148
+
+_b6 per NPRC
+
+b7C -
+
+SELECTIVE
+
+SERVICE
+
+30. MILITARY OCCUPATIONAL SPECIALTY AND NO.
+
+MEDICAL LABORATORY TECHMICIANS
+
+J2. BATTLES AND CAMPAIGNS
+
+COMBAT INFANTRYMAN BADGE MAM CARBINE
+
+CENTRAL EUROPE
+
+99, DICORATIONS AND CITATIONS
+
+GOOD CONDUCT MEDAL 44
+
+EUROFEAN-AFRICAN-MIDDLE EASTERN THEATER SERVICE MEDAL
+
+AMERICAN THEATER SERVICE MEDAL
+
+34, WOUNDS RECEIVED IN ACTION
+
+ASIATIE-PACIEIE THEATER SERVICE MEDALI
+
+NONE
+
+LATEST
+
+MALLPOX
+
+TYPHOID
+
+DEC 44 DEC 44
+
+IZATION DATES
+
+ETANUS
+
+SEP. 44
+
+DATE OF DEPAI
+
+IRVICE OUTSIDE CONTIN
+
+NATION
+
+_AUG 45
+
+38. MIGNEST GRADE MELD
+
+SWPTO
+
+AND RETURN
+
+DATE OF ARRIVAL
+
+1 HAR
+
+17 JUN
+
+SEP 4
+
+16 SPR 16
+
+39, PRIOR SERVICE
+
+NONE
+
+Recuras conter, St. Louls, Missourt,
+
+only. Danot recopy
+
+outside
+
+HEeGOVTERRAA#- (DEMOBILIZATION) AR 615-30-
+
+15 DEG 44
+
+ar disseminate 1n 1tga
+
+he Bureaur
+
+PURPOSES
+
+44.
+
+RING OUT PAY
+
+5300
+
+PAY
+
+DATA
+
+AE-BOLDIERDEPOSITS
+
+46. TRAVEL PAY
+
+47, TOTAL AMOUNT, NAME OF DISBURSING OFFICER
+
+NONE
+
+IS
+
+26.45 /157.14 H L OLDENBURG MAJ FD
+
+INSURANCE NOTICE
+
+IMPORTANT TO THE AS NOT AT UNS
+
+KIND OF INSURANCE
+
+HOW PAID
+
+50.
+
+Effectivo
+
+Dato of Altota
+
+• U.3. Cove.
+
+None
+
+Direct to
+
+none Discontinuanc
+
+INSURANCH
+
+VITERANS
+
+ADMINISTRATION
+
+51, Data of
+
+Next promium Dua
+
+SZ, PREMIUM
+
+DUE
+
+MONTH
+
+31 MAY
+
+6.40
+
+INTENTION OF VETERÁN TO
+
+RIGHY THUMB PRINT
+
+$5, REMARKS
+
+(This space for completion ol above items or entry of other items specitied ia W. D. Directives)
+
+LAFEL BUTTON ISSUED
+
+ASE SCORE (2 SEP 45)
+
+OEMOBILIZATION
+
+ONE (1) OVERSEAS SERVICE
+
+BAR
+
+QUACTIVE SERVICE, (ERC) FROM 14 JUN 43 TO 14 DEC 43
+
+130-520
+
+SC190001 592)
+
+E. Tist
+
+1ST LEEWA
+
+supersedes 'all
+
+previous editions o
+
+AGO Forms
+
+sa and 55 tor enlasted person
+
+entitled
+
+Honorable
+
+Discharge,
+
+which
+
+will not be used atter receipt of
+
+tais ravision.
+
+name, grade dud organizonion - signarure)
+
+HEALY
+
+Wis
+
+mast
+
+2. FINAL INDORSEMENT COPY (Allixed lo tina) indorsement pago
+
+of Service Record)
+
+DB Coopei-4658
+
+---
+
+## Page 36
+
+2=5
+
+72>7
+
+b6 per NPRC
+
+(1) - NAME.
+
+LIST
+
+JOHN
+
+16/77034
+
+6
+
+(EASY NAME,
+
+1%
+
+LOS.
+
+130 Tre's
+
+(FIRST NAME)
+
+(MIDOLE NAME)
+
+ARMY SERIAL NUMBER
+
+148
+
+(PRINT CLEARLY)
+
+ONCE 30Г
+
+Patha
+
+RACE
+
+1943
+
+(2) BIRTHPLACE OF SOLDIER
+
+-HOW LONG — YEARS MAIN OCCUPATION STUPENT
+
+CoLLeGe
+
+(GIVE CITY AN
+
+(OCCUPATIONAL DICTIONARY CODE)
+
+(NeS)
+
+(3) DATE OF BIRTH OF SOLDIER
+
+INDICATED
+
+S-SK
+
+X-02
+
+YOU DOTA DICO MPLETED
+
+(4) CITIZENK
+
+TAKEN OUT FIRST PAPERS L
+
+YOU DO?_
+
+ACANEMIC (13) CINNAN
+
+NON-CITIZEN
+
+MAJOR IN High Schook IN College STUDIeD
+
+(5) -@ MARITAL STATUS.
+
+NUMBER OF DEPENDENTS E
+
+GEOGRARY, HISTORY, CHEMISTRY, ENGLISH
+
+5) BIRTHPLACE OF FATHER
+
+PHYSICS ANO MAThe
+
+AVeRAGe GRADe IN
+
+-M COUNTRY)
+
+High Schook B. ATTeNDeD SUMMeR SeESIONS
+
+A(7) BIRTHPLACE OF MOTHE
+
+PRIOR TO ASTR. EARNED 6 GREDITS (SEMESTER)
+
+YOUNTRY
+
+(8) •@ EDUCATION
+
+NON-E.
+
+I4-7
+
+ILLITERATE
+
+d6-11
+
+IN MATh, ANO Y CREDITS IN ENGLISL
+
+YEAR LEFT SCHOOL
+
+1943
+
+YEARS
+
+EMPLOYER KNIVERSITY DE LUISCONSIY EMPLOTHENT DEC 1943
+
+GRAD-
+
+NAME AND LOCATIONS
+
+SCHOOL
+
+COM-
+
+VATED
+
+MAJOR SUBJECT
+
+DEGREE
+
+ADDRESS OF
+
+OF INSTITUTIONS
+
+PLETED
+
+OR
+
+AND DATE
+
+EMPLOYER.
+
+YESH
+
+NO
+
+ATTENDED
+
+SPECIALIZATION
+
+RECEIVED
+
+(NUMBER)
+
+DEPT..
+
+SHOP
+
+(STREET)
+
+MADISON WISCOliSIN
+
+KIND OF
+
+(STA GRAMMAR SCHOOL
+
+8
+
+BAy C,I/-MIch
+
+4
+
+1939
+
+OR BRANCH
+
+BUSINESS EDUCIETIOA
+
+SRI HIGH SCHOOL
+
+7-70.100
+
+BALCITY MICh
+
+YEARS BE IT WARY
+
+WAS
+
+ACADEMIL
+
+(14) -@SECOND
+
+BEST OCCUPATION-SALeS CLeRK
+
+00
+
+COLLEGE OR
+
+117
+
+1510
+
+(8-2) UNIVERSITY
+
+V4
+
+1943
+
+"Bay city in cold.
+
+SPECIFIÇATION
+
+DEGREE OF SAILE
+
+BAY CITY-DICH ACADEMIC
+
+1943
+
+YOU DEAR DICE ERKED IN RETAIL
+
+YOU DOr
+
+SERIAL NO.
+
+SSK
+
+(4-1) P057 GRADUATE
+
+GROCERY CONCUKRENT WITh
+
+373
+
+"MADE TEST
+
+INDICATED
+
+High ScLook AND IN SUMMeR
+
+-
+
+(14) CIVILIAN O
+
+wNIveRSiTY.of
+
+1945
+
+(4-2) 2I97076
+
+LARISON, HISC
+
+WISCON ENGINeeRING
+
+ALSO HAD WORK IN STOCK ROOM OF GROCeRY
+
+(15) -O ADDITIONAL OCCUPATIONS, HOBBIES. ETC. RADIO (FI
+
+PHOTOGRAPHY 31.2
+
+9) - @LANGUAGES (CHECK APPROPRIATE, SPAGES), S-SPEAKS
+
+R-READS
+
+W-WRITES
+
+SPANISH
+
+(B-35)
+
+FRENCH
+
+(8-38)
+
+GERMAN E
+
+OTHER LANGUAGES (B-38)
+
+OTHER.
+
+(8-37)
+
+ARMY GENERAL
+
+(16) "© CLASSIFICATION TEST
+
+(17) - @ APTITUDE TESTS
+
+(18)-@OTHERTESTS
+
+FAIRLY WELL
+
+R
+
+W
+
+w
+
+FORM & DATE
+
+GRADE - SCORE
+
+AGRADE - SCORE
+
+TEST
+
+" GRADE
+
+SCORE
+
+FLUENTLY
+
+5
+
+12•11.43
+
+(8-39)
+
+I (150|
+
+TITT
+
+1I(3
+
+42
+
+1(10) - © SERVICE COMMAND
+
+aR
+
+VRI
+
+1s(90
+
+DERASARENI OF ENLISIMENY
+
+OR-THOTON.
+
+(19) - @ TRADE TEST RATINGS
+
+(11) - @ SPORIS IN WHICH
+
+SPIC SER NO.
+
+SOCAUTION: SPECIAL HANDGING REQUIRED
+
+QUALIFIED
+
+SIxTh
+
+TRACK
+
+BASE BALL STE
+
+SEHOOL
+
+TEAM
+
+FOOT BALLI
+
+(12) - @TALENT FOR FURNISHING PUBLIC
+
+VIOLLA
+
+MUSICAL INSTRUMENT | 127
+
+SINGING
+
+1-20
+
+BASKEY BALL EVE
+
+BOXING
+
+1 38.7
+
+SOFI DALL
+
+TENNIS
+
+volley i
+
+BALL
+
+ENTERTAINMENT
+
+THEATRICAL
+
+1-29
+
+whis material copled from récords of fattonal
+
+Personnel Records Center, Si. bouts, Missouri,
+
+(20) - 0
+
+to be used for reference only. Do not recopy
+
+Hi saseminate in its original form outside
+
+DB Cooper-4659
+
+DHEN 10Y
+
+(53)
+
+• C
+
+-C
+
+:0:C
+
+vOrC
+
+•0•9
+
+NO-C
+
+-0<
+
+•00C
+
+NOILSROMANO
+
+• (96)
+
+MINON
+
+SLIND
+
+8N36,
+
+.o.
+
+35
+
+10)
+
+is
+
+CHAO "NAY
+
+68
+
+---
+
+## Page 37
+
+LIFICATION
+
+NOTE: DO NOT ATTEMPT TO FILL OUT THIS CARD WITHOUT FIRST READING INSTRUCTIONS CONTAINED IN AR 615-25 VERY CAREFULLY
+
+ARMOR
+
+SERVICE
+
+YEARS
+
+IN
+
+EACH
+
+(22) -@SERVICE SCHOOLS. ARM
+
+OR SERVICE
+
+(21) - @PREVIOUS MILITARY EXPERIENCE -
+
+(29) RECORD OF CURRENT SERVICE
+
+CATEGORY
+
+LASY
+
+SPECIAL TRAINING RECEIVED
+
+DATE
+
+ORGANIZATION AND STATION
+
+GRADE PRINCIPAL DUTY
+
+HIGHEST
+
+GRADE
+
+R. A.
+
+pIS-
+
+SPEC
+
+SERMO
+
+N..G.
+
+CHARGE
+
+CEC ETC! (YEAR)
+
+SPECIFIC NATURE
+
+XEARS MO'S.
+
+KAST
+
+DATE
+
+(RES) / -3-44
+
+PUT 18 WKS BASK
+
+3/13/44 C0K- 342 INF
+
+PxI
+
+HESSENGER
+
+5/1/44. CoK- JY2 INF
+
+PVI
+
+MONTARGUNHGOT
+
+300T11 CoK, 3420 185, Cp. aBp, CHL. PFC MORTAR GUNNER, $07
+
+EJAN 46/CO COC, 342° INE
+
+МОРГЛЯСОММЕХ
+
+607
+
+NUMBER
+
+OF
+
+WEEKS
+
+COURSE
+
+YEAR GRADUATED
+
+AND
+
+RATING (IF ANY)
+
+15 Fanta
+
+COE 312D INE
+
+6 Fella GOE, 19420 INF
+
+22-3-7%
+
+Pte
+
+Ste
+
+pr:
+
+Rifleisan
+
+2451
+
+THE
+
+(23) - ASSIGNMENT LIMITATIONS
+
+#(24) SD
+
+(25)
+
+PREFERRED
+
+(26)
+
+BY RECHENON CONTENDED BASKE
+
+BY RECEPTION CENTER.
+
+521
+
+(27) - O CLASSURICATION LA MILITARY SPECIAETIES
+
+DESIGNATION
+
+REWMAN MIRA
+
+LORIAR GUNKERN
+
+SPEC
+
+SERIAL
+
+POTENTIAL!
+
+607
+
+SEMI-
+
+SKILLED
+
+SKIELED.
+
+5/4/44/8/31/48.
+
+ТУРЕ
+
+EQUIPMENT
+
+(30) -0
+
+DATE OF
+
+(CROSS 0420ME)
+
+MONCTION 6/4/43
+
+DATE DE
+
+FIRST INTERVIEW
+
+SECONDINTERVIEW
+
+INTERVIEW
+
+12/12/U13
+
+REWRITTEN: 50CTOBER, 1944
+
+STATION
+
+FORT SHeRIDAN 16h..
+
+CAMP SAN LUS OBISPR, CALLE
+
+WeLLenM H. 13YRN Perfichard OHant
+
+(28) REMARKS MALARIA CONTROL COMPLETED 2/25/504
+
+INELLIRATION COURsE (2M0KS) 4-12-44-
+
+INFLIRATION COURSE NILT -4-12-44- ChLoRINe
+
+E. List
+
+LEFI CONTLUSUZIAUG45
+
+_TON TRUCK→
+
+HOLDS MICHIGAN
+
+(32) QUALIFICATIONS IN ARMS
+
+COURSEL
+
+QUALIFIED
+
+SCORE
+
+1600
+
+140
+
+CAMIL
+
+817-1116
+
+191
+
+1-1
+
+MOTORCYCL L
+
+DATE
+
+3722
+
+ReSTOR - 45
+
+LEMMMORIAN
+
+TRANS
+
+Fate Mene
+
+TRANSI
+
+LOMAMORTAM
+
+SuRIES
+
+3/2844
+
+MUST ACCOMPANY THE SOLDIER UPON TRANSFER
+
+20GGAR
+
+LNICAGAR
+
+A 6.O, FORM AD, 10
+
+SEPTENDER 1BNS
+
+IMPORTANT - UNDER NO CIRCUMSTANCES WILL THIS CARD BE FOLDED, ROLLED. OR CREASED
+
+1 pect
+
+MCBEE KEYSONY
+
+0.9. PAT. MO.
+
+DB Cooper -4660
+
+C
+
+C
+
+C
+
+---
+
+## Page 38
+
+WAR DEPARTMENT /
+
+ARMY SERVICE FORCES
+
+ARMY SPECHALIZED TRAINING DIVISION
+
+CORDS
+
+TRANSCRIPT OF ACADEMIC RECORD
+
+ARMY SPECIALIZED TRAINING PROGRAM
+
+TRAINIE'& LAST NAME
+
+(FURST)
+
+John
+
+(MIDDLE)
+
+HONE ADULESS
+
+AIMY SERIAL NUMDIE
+
+16177034
+
+DATE ON BIRTH
+
+AGET
+
+INSTITU
+
+ADDRESS
+
+University of Wisconsin
+
+DATE
+
+TRAINES' INSTRUCTION BARTED AT TER ADOVE INSTITUTION ON -SER 13 1943
+
+IERM
+
+CURRICULUM
+
+INDING
+
+COURSE TITLE AND NUMBER
+
+DATE
+
+Madison, Wisconsin
+
+• AND CONTINUID THROUGH.
+
+DEC A'"*1943
+
+COURSE
+
+CONTACT
+
+GRADE*
+
+BOURS
+
+ASTP
+
+LOCAL
+
+Clusss
+
+JudD.
+
+BENI
+
+4 DoC
+
+1943
+
+Chemistry
+
+Geography
+
+Mathematics
+
+205
+
+111
+
+163
+
+133
+
+406
+
+304
+
+b6 per NPRC
+
+b7C
+
+3
+
+3
+
+3
+
+6
+
+2
+
+CAUTION: SPECIAL HANDLING REQUIRED
+
+Ints material copied from records of National
+
+Personnel Records Center, St. Louls, Missouri,
+
+tobeused for reference only.Do not recopy
+
+or disseminate 1n its original form outside
+
+the Bureau.
+
+INVERSE SUDE MAY BE USED IT THE ABOVE SPACE IS
+
+INSUFFICIENT
+
+BROISTA
+
+in terras of the fallowing symbole:
+
+but passed; Fufailed; Inc.-'incora-
+
+Wh-withdrawn, passing;
+
+grading system
+
+caferent from
+
+and will interpret such symbole in cho followins
+
+entitled
+
+врась:
+
+1 1:93
+
+Perrin
+
+DAT
+
+DEL 9
+
+1943
+
+reparation and Disposition The institution will prepare in triplicate a transers
+
+or each traines moon his separation. for any reason. from the tramiar wait at tha
+
+been separated from the wait,
+
+stitution
+
+Kit.
+
+FILE WITE ENLISIED RECORDS
+
+DB Cooper-466]
+
+16438890-1
+
+---
+
+## Page 39
+
+1194283 pete no
+
+To be prepared in DUPLICA
+
+to active duty
+
+Recalled to active duty D
+
+Sher.dan.Jl1.
+
+Do not
+
+enter
+
+anythine
+
+In this
+
+space
+
+OF MEMBERS OF RESERVE COMPONENTS
+
+List
+
+John
+
+(ael name)
+
+My de..
+
+(Grade)
+
+Permanent address
+
+Dail
+
+(Firet name
+
+16177034
+
+le nasse)
+
+Occupation. Student
+
+(Army serial No.)
+
+"(Unit)
+
+Bay.City.
+
+(LOWD,
+
+(Home.
+
+ston of unit,
+
+Bay.
+
+b6 per NPRC
+
+b7C
+
+Birthplace -
+
+"(County)
+
+Michigan
+
+(stace or country Mcll..
+
+Birth date +
+
+JrbanD
+
+English.
+
+Mother tongue
+
+EXAMINATION
+
+1. Eye abnormalities 01-1-10
+
+- None
+
+2. Ear, nose throat abnormalities Mastei dectony.
+
+:3. Mouth and gum abnormalities.
+
+none.
+
+Right
+
+(Examince's)
+
+Left
+
+76
+
+None Missing
+
+54321
+
+2:3
+
+45-678
+
+(Strike out those that are missing;
+
+4. Teeth
+
+16 15 14-13 12 11-10
+
+910 11 12 13 14 15 16
+
+circle those that may be restored)
+
+S. Skin
+
+Normal
+
+6. Varicose veins
+
+None
+
+3. Hernia
+
+Nono
+
+8. Hemorrhoids
+
+9. Cenitalia..
+
+10. Feet we
+
+None
+
+Noxnal
+
+Nornal
+
+11. Musculo-skeletal defects
+
+Nona...
+
+12. Abdominal riscera....
+
+Normal
+
+13. Cardiovascular system
+
+= Narmad.
+
+14. Lungs, including X-ray, if made--Normal-X-Ray-Chesu-HogatiVO.
+
+15. Nervous systema: reflexes, pupillary
+
+Normal
+
+-- patellar - Normal
+
+16. Endocrine disturbances.-,
+
+лonя.-
+
+17. Results of laboratory examisations, when made 12-16=13 Kahn tost-rogative.
+
+18. Remarks 'ón defocte not sufficiently described above in MONG...
+
+behind richt ear 2 701 healed Rightey 20/200/20/20
+
+Lefteye 201562015402540-544
+
+Hearing:
+
+Right ear
+
+Left car..
+
+20
+
+20
+
+Height -
+
+Weight
+
+754
+
+/20
+
+* in.
+
+_ 1b.
+
+Girth (at nipples):
+
+Inspiration.-
+
+-39. in.
+
+Expiration
+
+35. -
+
+in.
+
+Girth (at umbilicus) .. 22.
+
+ти іт.
+
+Posture are
+
+Frame.
+
+nade.
+
+Color of hair
+
+Calor of eyes..
+
+Complexion
+
+broym.
+
+fair
+
+Pulse: $
+
+Sitting -
+
+After exercise -
+
+2 min, after exercise
+
+Blood pressure: 1
+
+Systolic.*
+
+Diastolic car
+
+Urinalysis:
+
+5p. 5. 1.025
+
+Albumin --=,
+
+1208
+
+Sugar --
+
+19g:
+
+• Microscopic
+
+Other data f
+
+19. Summary of deícete in ordet of importance, impression of physical fitness. Qualified under
+
+MR-1-9•
+
+CAUTION -SPECTAT HINDLING REQUIRED
+
+20. Remarks -=
+
+This caterinaculad from racerds of National
+
+Persecret Roconds Center-St, Jous3, 118son
+
+disgestora in its or toscal, for outaida.
+
+fW/bea required
+
+•Check block yet opposite urban i conanaunity of 2500 populacion or prenter; otherwise place "X- ia be
+
+W:D.,A. G.O. FOrma NO, 183
+
+July 23, 1842
+
+DB Cooper-4662
+
+---
+
+## Page 40
+
+the i rely hat hare ey guy e oned he a the any days neely cos the ended he granite a he te he heed a venese cheer.
+
+Stores
+
+RECOMMSND: *Acceptance for active duty,
+
+Placo 1633nd • SU.Ft. Sheri dan, Ill & Signature
+
+Dase 16, Docombore 1943.
+
+Name typed or stamped undeD. Martman
+
+ISPACE BELOW FOR USE OF COMMANDING OFFICERI
+
+Ist Ind.
+
+Capt.
+
+tantuan dedical Corps.
+
+(Grade)
+
+1033 SU It, Sheriden
+
+(Headquarter»)
+
+To: The Adjutant General.
+
+, The person named above having reported for active duty under proper orders was
+
+*Accepted for active duty -
+
+NAC 1 5 1943
+
+"(Date)
+
+DEC 1 5 10A3
+
+т яні пе келе та р
+
+(Place)
+
+Discharged ..s....
+
+(Date)
+
+I acknowledge receipt of copy of this report this date.
+
+"(Number of monthe or days)
+
+unador, for the reason shown above..
+
+b6 per NPRC
+
+b7C
+
+--for the reasons shown above.
+
+R. E. WORZELLA, 1st
+
+AUS 1632 SU
+
+(Date
+
+(Signature of enlisted man)#
+
+NEAREST RELATIVE AND PERSON TO BE NOTIFIED IN CASE OF EMERGENCY
+
+- Alma Liste
+
+Adjutant.
+
+Nearest relativo ...
+
+(Other than wife or minor chud)
+
+Relationship - mather
+
+Address
+
+Person to be notified in case of emergency mother
+
+'Relationship
+
+Address .
+
+(Ni
+
+(Number and nureei or rural roule: If none, no state)
+
+Tony. town, or post dincey
+
+(if friend, 8o tate)
+
+(Name in full)
+
+(Number and strect or rural route, if none, so state)
+
+IG REQUIRES
+
+i den and in e air dis a cad doesia did ara sine Minter dal copied ou records oe day ones
+
+"I declane"
+
+3a unif designation of beachciary is dechne, enhated man must state in own hiatry sind imitaled by the enlisted man)
+
+a toy beneficiary,
+
+atement may be inserted with & rubber
+
+In the event of the death or disqualification of the last-named dependent relative before payment is made, I then designate, as 'may beneficiary the relative whose
+
+, name, relationship, and address are shown below:
+
+-(father) sano as
+
+mother's
+
+"I decline to desighate an alterne
+
+Signaturé of endisted man
+
+•Witzessed át
+
+они.
+
+(Firat nance)
+
+FORT SHERMAV. MIS.
+
+(Viddle initial)
+
+or the stal
+
+ent rody be
+
+List
+
+(Last nanoe)
+
+DSC 1 5 1313
+
+19-4-47
+
+Ma.....
+
+RE WORZELIA, It LE, AUS 1632.SU
+
+Recruiting Officer.
+
+(Grade and organization"
+
+"Under the heading "Remarks" will be noted any authorized waiver of defects, the nature of the authority being atated. Thia space will also be uned for continuation of a natement for which tax
+
+alottod sonce in insufficient and for any further statement that the examining officer nasy desire to tuake.
+
+Strike out word rot applicable.
+
+Signature required on original only.
+
+Ti do it ore in aire, Be in on in do formoded to To 2 12 Geeze and ho carbon cey fervanded lo iso car Cooper 46563
+
+in larze block overprint letters diagonally across the lace of too forsa
+
+V. B. GOVERNMENT PRINTING OFFICE
+
+184418787-2
+
+---
+
+## Page 41
+
+165177-134
+
+ENI
+
+STMENT RECORD
+
+ENLISTED RESERVE CORPS
+
+EMIL
+
+N617703₴
+
+LIST
+
+JOHN
+
+(Last name)
+
+Home address.
+
+(Soo Instr. 3)
+
+*† Enlisted at ..
+
+Datrolt, Michigan.
+
+orns, and Lt. Ma
+
+tby -
+
+- ДБ
+
+ENLISTED
+
+for service in (see lastr. 2) -..
+
+Deferred until September 17, 1943 For Underage.
+
+(Moath)
+
+None ar)
+
+*†Rejected (date) minoreno
+
+Last enlisted service in the Army (see Instr. 5):
+
+(Company, regiment, aad ars or service)
+
+Date of discharge o
+
+• on the a day of _dune
+
+Private
+
+"(Grade"
+
+"(Reasoa)
+
+at
+
+WHITE
+
+$o0 Lastr. 6)
+
+(State or country)
+
+-n, 1943
+
+b6 per NPRC---
+
+b7C
+
+Period of last enlistment.
+
+a years.
+
+the same as in oath.
+
+, DECHARATION OF APPLICANT
+
+(See Instruction 7)
+
+b6 per NPRC
+
+b7C
+
+1. When and where were you born
+
+What is your race?..ue
+
+whate
+
+2. Are you a citizen of the United States? ...
+
+Tely, cows, or yell
+
+100646 01 000
+
+(See Inste, 6)
+
+and where naturalized)
+
+3. What grade or year did you complete in: Grammar school _--n-
+
+ad dies, do some College or warty ni
+
+-min High school
+
+Educational specialty (if any) ---r-
+
+.none.r.
+
+4. What is your civilian trade or occupation? student
+
+How long did you work at it? - 20---=- Weekly wage?
+
+S. What special military qualification or occupation have you? -Mo..
+
+'or exaraple, cook, cozapady clerk, radia operator, motor macchanic, airplane cagine maechanic, supply sergeant)
+
+6. Are you single, married, witwer, or divorced Single Is anyone dependent on you for support?. nO... State number and relationship
+
+-- 10.
+
+7. Have you ever been convicted (a) of a felony? --sant-,1O uperr
+
+(b) of any offense? ...
+
+Have you ever been inaprisoned under sentence of a civil court?.-..
+
+„no If so, where and when? ..
+
+Have you ever been discharged other than honorably from the United States military or naval service, the Marine Corps, Coast Guard, or
+
+National Guard in an active, inactive, or reserve status? n
+
+----no.
+
+8. Have you ever served in the United States military or naval service, the Marine Corps, Coast Guard, or National Guard in an active, inactive,
+
+or reserve status?...
+
+- 10.,.
+
+If so, state last service, date, nature, and cause of separation therefrom
+
+%. Have you ever previously applied for enlistment and been rejected? - 100_- If so, give date, place, and cause of rejection, umm.
+
+12 To the bert of your komade and boli, are you or sound and will yas... ' rested n
+
+i wantzoros, and Lt. Nis
+
+(Grade and orcanization)
+
+W.D., A. G.O. ForIa No. 165 MAN FURNISHED WITH W.D.A.G.
+
+(1) :
+
+(First have)
+
+(Middle initial)
+
+FORM 166, 18920428
+
+DB Cooper-4664
+
+List
+
+(Last narge)
+
++1671332111
+
+(Do not write in
+
+chia coleran)
+
+Residence
+
+Slate
+
+1.2
+
+Courly
+
+017
+
+Place enlisted
+
+•.!.2.
+
+Date enlisted
+
+Day
+
+Month
+
+Year
+
+Grade
+
+Branch
+
+Education
+
+Specially
+
+Defermend
+
+0943
+
+Occupation
+
+Marital Stalus
+
+---
+
+## Page 42
+
+Height
+
+Vision: Right eye
+
+Hearing: Right ear.....
+
+Flat foot: ....
+
+Remerks:.
+
+-. inches: weisht..
+
+Left eye
+
+Leit ear
+
+PHYSICAL EXAMINATION AT PLACE OF ACCEPTANCE
+
+(Applicant strippod. Boo lastructions 8 aad 7)
+
+pounds.
+
+Girth of chest (a1, nipples): As expiration..
+
+Eye conditions
+
+Ear conditions
+
+.inches., At inspiration...
+
+iaches.
+
+I certify that I have personally examined the applicant, and that, to the best of ray knowledge and belief, he fullis the physical and legal requirements for calise-
+
+seat, and is accepted for calisturnt in.
+
+.. = for service in (if enlisted for service in any particular arm or service) (lasir. 2): -=
+
+Place.
+
+Signature: -n.
+
+Date.
+
+Name typed or stamped:
+
+PHYSICAL EXAMINATION AT PLACE OF ENLISTMENT
+
+MADE BY AN AUTHORIZED MEDICAL EXAMINER
+
+(Applicant stripped, See Instruction 3)
+
+Eyes...
+
+brown
+
+Hair ..
+
+brown
+
+fair
+
+Complexion...
+
+- Height Z2&
+
+Girth of chest (at nipples): At expiration.
+
+=_, inches.
+
+At inspiration...=
+
+General examination (physique, skin, head, chest, abdomen, extremities, etc.) .....
+
+normal
+
+(Grade and organization)
+
+Enlisting officer.
+
+. inches. Weight. 14,8
+
+138 pounds.
+
+=, inches.
+
+General surgical conditions (including hernia, hemorrhoids, varicose veins, and state of abdominal wall and viscera). nOrma?
+
+Organs of locarnation (including bones, joats, muscles; and tendons) . Pes planus bts 1
+
+dogree....
+
+bilateral
+
+- non symptomatic not disqualifying.
+
+Genito-urinary systena (including functioning of kidneys)....... norMal
+
+Vision: Right eye....
+
+20/200 Left cy20/200
+
+Eye conditions compound myopic astigmatien both eyes.
+
+Heariog: Right ear... 15/15 Left ear... 15/15.-
+
+Ear, nose, and throat conditions..
+
+Normal
+
+Right
+
+(Examinees)
+
+Left
+
+87654321
+
+3 4 6x
+
+NO 15 14 13 72 11 1079
+
+(Strike out those that are missing: circle those that may be restored)
+
+79 10 10 12 13 14 15 3
+
+Mouth and gums.
+
+normal
+
+Cardio-vascular system...a
+
+normal
+
+X-Ray of chest negative..
+
+normal
+
+tronartletes a 499904991
+
+Neuro psychiatric examination
+
+I Resiarks...
+
+I certify that I have carefully examined the applicant and have correctly recorded the results of the examinatio
+
+he is mentally and physically qualifed for service in the Army of the United States, +26X872Ky3721X28a27X2X8
+
+8 89567428820m
+
+Detroit, Michigan
+
+Place..
+
+Signature...
+
+Date
+
+June 14,7943
+
+" Strike put olsuse not applicable.
+
+VillisO Hao
+
+Name typed or stamped: WILLIS. A. HASTY, CAPTAINe MODe
+
++ Strike out word not applicable.
+
+$ 500 Tastruction {Grade)
+
+FINGERPRINTS-RIGHT HAND
+
+Fingerprint impressions will be made in this space in the case of every man enlisting and reenlisting in the Army of the United Staies.
+
+1. THUMB
+
+2. INDEXA
+
+3. MIDDLE
+
+4. RING
+
+:. Medical Corps.
+
+3. LITTLE
+
+ÖB Cooper 4665
+
+---
+
+## Page 43
+
+CH AND CERTIFICATE OF ENLISTMENT
+
+THE UNITED SIATES OF AMERICA
+
+Stale of ...
+
+Mistigan.
+
+b6 per NPRC
+
+b7C
+
+Detroit,
+
+City, Town or Mililary Post.
+
+John
+
+(PIS NATO)
+
+Em 11
+
+(Middle name)
+
+List
+
+(Last Dano)
+
+born in ...
+
+-. and now azed 11.
+
+do hereby acknowledge to have voluntarily enlisted thist
+
+19. 43as a soldier in the
+
+the President of the United States, and the orders of the officers appointed over me, according to the Rules and Articles of War.
+
+DURATION OF WAR
+
+PLUS SIX MONTHS
+
+Signature: &
+
+101
+
+(Last Desce)
+
+* see lastruction "
+
+I cerlify that the above oath was subscribed and duly sworn to before me thist 74
+
+- day of June A.D. 19 43 1 further certify that this enlisted
+
+mas was minutely inspected by me previous to his subscription to the oath; that i found him entirely sober and in full possession of all his mental faculties; that to tbe
+
+best of my judgment and belief he fulfilis all legal requirements, and that in enlisting him into the service of the United States I have strictly observed the regulations
+
+which govern enlistments for the Existed Resorve Corps.
+
+I further certify that the above oath, as filled in, was read to the applicant before his subscription thereto.
+
+vau
+
+AiR. Hantzoros, 2nd It. NMB
+
+Ні ТАЛО ЯрЕМППЕН.
+
+Enlisting officer.
+
+"(Grade and organization)
+
+*Carefully compare with same at top of page 1
+
+¡The dates in to oath and certiacate must be the same,
+
+*Tho signature must be identical with that subscribed to Declaration ol Applicant.
+
+INDORSEMENT OF COMMANDING OFFICER
+
+(See Instruction 1)
+
+To the Commanding General,
+
+(Corps area or department)
+
+This enlisted man failed to report for duty as directed by ..
+
+"Mutbority or order to
+
+This enlisted man reported, was examined, and found to have †permanent †temporary disqualitcation because of
+
+and was recommended to be deferred to ---
+
+tTo be discharged.
+
+"(Date)
+
+ve duty)
+
+(Place)
+
+mano Commanding.
+
+(Date)
+
+Istriko out words not applicablo.
+
+(Grado dad organization)
+
+INDORSEMENT OF COMMANDING OFFICER
+
+(Beo Lastruction 1)
+
+To The Adjuland General:
+
+This enlisted man now a...
+
+.. in this organization, was ordered to active duty on
+
+"(Grade)
+
+"(Dato)
+
+He started to comply with the order on
+
+wu and reported for duty on..
+
+(Dato)
+
+(Deto)
+
+(Orgasization)
+
+a Commanding.
+
+"(Placo)
+
+(Dato)
+
+(3)
+
+(Grade and organization)
+
+DB Cooper-4666
+
+73713327-7
+
+11
+
+---
+
+## Page 44
+
+St-17 (ReV- 4-17-70)
+
+OPTIONAL FORM NO, 1O
+
+5010 - 106
+
+AY 1962 EDITIO
+
+SA GEN. REG. NO. 1
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+SAC, SEATTLE (164-81)
+
+81812-Sic. Sr. 2OUs 164-63
+
+SUBJECT: NORJAK
+
+HANDIG AS
+
+AIRTEL
+
+DATE:
+
+12/14/71
+
+1 0000т?.
+
+b6
+
+b7C
+
+Reference: Newark Teletype to Bureau, 12/13/71.
+
+JOHN ANIL LISI
+
+X/File was located at the (exto) (Military) Personnel Records Branch, NPRC. St. Louis, Mo. and
+
+reviewed on -12/14/71by-
+
+— IC GEORGE. I. JENKINS
+
+_copies of (Fore FD-302) (investigative insert) (letterhead memorandum) reflecting
+
+pertinent information.
+
+of seattle, Newark and St. Louis
+
+00 Enclosed for information and reference, subject to restriction stamped thereon, are copies of self-
+
+explanatory documents from NPRC files.
+
+Personnel, NPRC (Civilian) (Military) Personnel Records Branch, Veterans Administration Record
+
+Processing Center, SLMO, advised on -
+
+-, no record an subject or
+
+_ could be located on basis of information furnished. In event ad-
+
+ditional identifying or descriptive data becomes available, another lead for review of the NPRC
+
+assignuent, and social Security number-
+
+_ File has not yet been located al NPRC. A special search is under way, and file will be reviewed
+
+prosaptly when located.
+
+[File was not located at (Civilian) (Military) Personnel Records Branch, NPRC, SLMO. and should be
+
+located at _
+
+Lead:
+
+_Office
+
+__record located your division. Handle review.
+
+For reference and assistance in handling lead, copies of pertinent serials are enclosed.
+
+Remorks: No specific training as a paratrooper or parachutist was indicated
+
+in the service records for LIST.
+
+Seattle (Enc) M
+
+164-81-1317
+
+2 - Newark (Enc) (164-196)
+
+1 - St. Louis (264-63) (Enc)
+
+SERIALI SHED 11
+
+(5)
+
+HANDI AS
+
+DEC D719710
+
+GTJ :
+
+AIRTEL
+
+FBL - SEATTLE
+
+DB Cooper-4668
+
+---
+
+## Page 45
+
+AR DOT SA CO DE
+
+11:29PM NITEL 12/17/71 JLK
+
+TO
+
+DENVER
+
+SEATTLE 8164-81)
+
+FROM SAN ANTONIO (164-111)
+
+NORJAX
+
+RE: SUSPECI,
+
+RE DALLAS AIRIEL TO SEATTEL DECEMBER SIB LART AND SI. LOUIS
+
+NITEL TO DENVER, SAN ANTONIO AND SEATTLE DECEMBER TEN LASI.
+
+OFFICERS RECORDS, MILITARY PERSONNEL CENTER, RANDOLPH AIR FORCE
+
+BASE, TEXAS, SHOW
+
+USAF SERIAL NUMBER
+
+SSAN
+
+PRESENTLY
+
+ASSIGNED TO AERO SPACE
+
+DEFENSE COMMAND, ENT AIR FORCE BASE, COLORADO. HE ENLOSTED IN b6
+
+b7C
+
+USAF
+
+COMMISSIONED
+
+HAS HAD CONTINUOUS SERVICE.
+
+RATED SUPERIOR.
+
+DESCRIBED IN RECORDS AS MALE, WHITE, BORN
+
+HAS SERVED FROM
+
+OF
+
+b6
+
+b7C
+
+SIX FEET THREE
+
+INCHES, ONE NDRED EIGHTY THREE POUNDS, HAIR AND EYES BROWN, MARRIED.
+
+DENVER
+
+COLORADO, ESTABLISH WREREABOUIS OF
+
+DURING PERIOD OF NORJAX AS PER INSTRUCTIONS IN SEATTLE AIRIEL TO
+
+ALBANY AND ALL FIELD OFFICES DECEMBER SEVEN LAST.
+
+UNSUB CONSIDERED ARMED AND SANGEROUS.
+
+END.
+
+DCA FBI SE CLR
+
+164-81-1332
+
+SEARCHED.
+
+ERIALITO MIL
+
+DEC L7 1971
+
+F81 • SEATTLE
+
+DB Cooper-4694
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 46
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI/PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790
+
+Total Deleted Page (s) = 3
+
+Page 1 ~ b6; b7C;
+
+Page 2 ~ b6; b7C;
+
+Page 3 ~ b6; b7C;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+X Deleted Page (s)
+
+No Duplication Fee X
+
+For this Page
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 47
+
+OFTIONAL FORM NO, 10
+
+MAY 1982 EDITION
+
+ESAFEMA (41 (572) 101-118
+
+SUNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+DATE:
+
+11/7/72
+
+FROM MILA
+
+SAC,
+
+SACRAMENTO
+
+SUBJECT: NORJAK
+
+00: Seattle
+
+(164-50) (P)
+
+Re St. Louls letter to Seattle, 9/22/72, and
+
+Los Angeles letter to Sacramento, 10/12/72.
+
+RE:
+
+= 48
+
+164-81-Such A
+
+Enclosed for Seattle is a photograph ofl
+
+biographical sketch on the back, as well as
+
+a
+
+sheet entitled Biographical Data
+
+I both published by National Aeronautics and Space
+
+Administration (NASA) for background purposes.
+
+A copy of
+
+the Biographical Data sheet is also enclosed for Los Angeles
+
+and St. Louis for information purposes.
+
+Flight Research 31/72, AN A Ki FoRce 1c (BArs, NASA
+
+California,
+
+presently assigned to the Manned
+
+Spacecraft Center, NASA, Houston, Texas, where he has been
+
+designated to
+
+JACKSON stated
+
+was assigned to Edwards AFB
+
+background available at bArs is a Biographical Data sheet
+
+and a biographic sketch which is compiled on all NASA
+
+164-81-4089
+
+1
+
+- Los Angeles
+
+Seattle (En° (164-497) (Enc. 1) (Info)
+
+1
+
+- St. Louis
+
+(164-63) (Enc. 1) (Info)
+
+1 - Sacramento
+
+JCW : smd
+
+(5)
+
+SANE LIED 01
+
+NOK 1 01972
+
+b6
+
+b7C
+
+66
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-9937
+
+Caland.
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 48
+
+0-9 (Rev. 2-14-74)
+
+sister
+
+Transmit in
+
+Via
+
+..=-
+
+(Type in plaintext or codel
+
+F BI
+
+Airtel
+
+(Precedence)
+
+--
+
+2/17/76
+
+(Date)
+
+b6 per DEA
+
+b7C
+
+b7F
+
+TO:
+
+SaC, Seattle
+
+(164-31)
+
+-TROl: Director, FBI
+
+(164-2111)
+
+"TORJAK
+
+OU: SEATILE
+
+Re Latent Fingerprint Section Form 1-336 dated
+
+12/18/75, and Seattle letter to the Bureau dated 2/3/76.
+
+Re Seattle communication requests information as
+
+to why four individuals were considered suspects in castioned
+
+matter.
+
+(This line for LEFT MARGIN.)
+
+For information of Seattle, on 11/28/75,
+
+Drug Inforcement Administration, "ashington,
+
+C...
+
+had telephonically contacted Associate Director I. P. Callahan
+
+and
+
+advised that there had been two recent plane crashes
+
+(one in the Georgia area and the other in Tennessee) in which
+
+drug trafficing as involved.
+
+felt there was the
+
+possibility that one of the individuals involved may be the
+
+unknown subject in captioned case, Also Known As Dan Cooper.
+
+Investigation conducted through FBTE! revealed
+
+that the four individuals stated in referenced Seattle
+
+communication were involved in these crashes.
+
+^ physical
+
+descriptive conparison, as vell as a fingerprint comparison
+
+Tere conducted with negative results.
+
+Further investigation concerning these suspects
+
+does not appear warranted at this time.
+
+PIED AND TRepairpa-below this line.)
+
+(Do not type BEYOND
+
+THIS MARGIN.)
+
+164-81-6861
+
+INDEXED i
+
+SERIAL KNED W
+
+FEB 191976
+
+EBL-SEATTLE
+
+DB Cooper-14299
+
+b6
+
+b7C
+
+---
+
+## Page 49
+
+Airtel
+
+2/17/76
+
+TO: SAC, Seattle (164-81)
+
+FROM: Director, FBI (164-2111)
+
+NORJAK
+
+00: SEATTLE
+
+Re Latent Fingerprint Section Form 1-336 dated
+
+12/18/75, and Seattle letter to the Bureau dated 2/3/76.
+
+Re Seattle communication requests information as
+
+to why four individuals were considered suspects in captioned
+
+matter.
+
+For information of Seattle, on 11/28/75,
+
+Drug Enforcement Administration, Washington, D. C.,
+
+had telephonically contacted Associate Director N. P. Callahan
+
+and advised that there had been two recent plane crashes
+
+(one in the Georgia area and the other in Tennessee) in which
+
+drug trafficing was involved.
+
+felt there was the
+
+possibility that one of the individuals involved may be the
+
+unknown subject in captioned case, Also Known As Dan Cooper.
+
+Investigation conducted through FBIHQ revealed
+
+that the four individuals stated in referenced Seattle
+
+communication were involved in these crashes. A physical
+
+descriptive comparison, as well as a fingerprint comparison
+
+were conducted with negative results.
+
+Further investigation concerning these suspects
+
+does not appear warranted at this time.
+
+ARMED AND DANGEROUS.
+
+b6 per DEA
+
+b7C
+
+b7F
+
+164-81-686/
+
+FEB 191975
+
+FBI-SEATTLE
+
+DB Cooper-14300
+
+---
+
+## Page 50
+
+TO
+
+SUBJECT:
+
+OPTIÓNAL FORM NO, 10
+
+JULY 1973
+
+EDITION
+
+GSA FPMR (41 CFR) 101-11,6
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)
+
+DATE:
+
+4/16/76
+
+SAC, KANSAS CITY (164-80)
+
+-P-
+
+NORJAK
+
+00 SE
+
+Re Kansas City letter to Seattle, 2/26/76, and L
+
+Oklahoma City airtel to Kansas City, 4/13/76.
+
+164-81-10544
+
+prato
+
+Enclosed for Seattle and Oklahoma City are two
+
+copies each of an insert reflecting investigation at the
+
+Federal Records Center
+
+Kansas City, Missouri; one photo
+
+_two copies of a letter
+
+from the U.s.
+
+Probation Office, Phoenix, to U.S. Board of Parole, lashington,
+
+D.C.; two copies
+
+of a letter from
+
+the Louisiana State Peniten-
+
+tiary to FCI, Los Angeles, California; and two copies of an
+
+insert reflecting investigation at Higginsville, Missouri.
+
+Leads regarding_
+
+left to the
+
+discretion of office of origin.
+
+LEAD
+
+KANSAS CITY
+
+AT
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+KANSAS
+
+Conduct investidation
+
+to eliminate
+
+as previously set forth.
+
+1b6
+
+b7C
+
+Ellin itis.
+
+Sottle no en
+
+1 Oklahoma City (164-56) (Encs.
+
+9) (Info)
+
+3 Kansas City
+
+JEC : SSS
+
+(6)
+
+RETURS'
+
+164-81-6913
+
+SEARCHED
+
+GEARED FALLEN
+
+APr 19 107A
+
+FBI-SEATTLE
+
+5010-110
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-14429
+
+---
+
+## Page 51
+
+KC. 164-80
+
+BJC:ksp
+
+On March 26, 1976,
+
+Federal Records
+
+Center, Kansas CItr. Missouri, made available for review file
+
+pertaining to
+
+b6
+
+= 67C
+
+b6 i
+
+b7C
+
+Northern District of Georgia, Atlanta. Georgia.
+
+• He was
+
+Georgia, same date; transferred
+
+californial
+
+Atlanta,
+
+LArizona
+
+Arizona,
+
+was committed tol
+
+California,
+
+and
+
+In regard to letter from U. S, Probation Office,
+
+Phoenix, Arizona, fIle disclosed
+
+Phoenix, Arizona,
+
+visited
+
+one and three-quarters hour and listed
+
+himself as an employer.
+
+File indicatedl
+
+worked in the
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+File disclosed
+
+Long Beach. California. L
+
+would bel
+
+U, S. Courthouse, 31z Spring
+
+Street, Los Angeles, California,
+
+The following is a physical description and back-
+
+ground information on
+
+Name
+
+Aliases
+
+b6|
+
+b7C
+
+b6|
+
+DB Cooper-14430
+
+---
+
+## Page 52
+
+KC 164-80
+
+2
+
+Race
+
+Sex
+
+Date of Birth
+
+Place of Birth
+
+Height
+
+Height
+
+Complexion
+
+Eyes
+
+Hair
+
+Build
+
+SSAN
+
+FBI No.
+
+Marital Status
+
+Religion
+
+Occupation
+
+Scars and Marks
+
+Education
+
+Military
+
+Characteristics
+
+Remarks
+
+Father
+
+Mother
+
+Friend
+
+Friend
+
+Friend
+
+White
+
+Male
+
+•73 Inches
+
+195 pounds
+
+Ruddy
+
+Green
+
+Black
+
+Stocky
+
+b6
+
+6'1
+
+None
+
+Sales, guard,
+
+lArizona
+
+High School Graduate,
+
+two years college at
+
+University of Naryland
+
+U.S. Air Force,
+
+honorable discharge,
+
+Proficient In use of both
+
+English and Spanish languages
+
+Long Beach, California
+
+Inglewood. California
+
+Lona Beach. California
+
+Lakeside, California (1969)
+
+Long Beach, California (1969)
+
+Los Angeles, California (1969)
+
+DB Cooper-14431
+
+---
+
+## Page 53
+
+KC 164-80
+
+Friend
+
+Friend•
+
+Friend
+
+Friend
+
+Friend
+
+Friend
+
+Friend
+
+Previous Address
+
+Employments
+
+b6
+
+b7C
+
+Southeast Atlanta, Georgia (196÷)
+
+Los Angeles, California (1964)
+
+Long Beach, California (1969)
+
+San Diene, California (1969)
+
+Long Beach, California (1964)
+
+Long Beach, California (1960)
+
+Lona Beach, California (1970)
+
+Seal Beach, California (1968)
+
+Blue Ribbon Meat Company,
+
+El Monte, California,
+
+. •as a salesman (1969);
+
+Dootson Driving Schools as
+
+¿state approved driving instruc-
+
+tor for 6 months,
+
+9417 East Las Tunas Drive,
+
+Temple City, California (1969)
+
+DB Cooper-14432
+
+---
+
+## Page 54
+
+KC 164-80
+
+BHH/ jb
+
+1
+
+SA
+
+The following investigation was conducted by
+
+on March 4, 1976:
+
+AT HIGGINSVILLE, MISSOURI:
+
+home address -
+
+was interviewed at his place of business,
+
+Higginsville
+
+and furnished the following
+
+information:
+
+advised he is not identical with an individual
+
+known as D. B. COOPER, who highjacked an airliner during 1971
+
+and bailed out over the state of Washington. He further stated
+
+that he has never been in nor flown over the state of Washington.
+
+The following description was obtained from observation
+
+and interview:
+
+Name:
+
+Sex:
+
+Male
+
+Date of Birth:
+
+Height:
+
+Weight:
+
+Hair:
+
+Eyes:
+
+220
+
+Brown, partially balding
+
+Grey
+
+After observing an artist conception photograph of
+
+D. B. COOPER,
+
+remarked that he had not had as much hair
+
+as the individual in the photograph since he was in high
+
+school.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+"b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-14433
+
+---
+
+## Page 55
+
+U.S. PROBATION OFFICE
+
+6443 U. S. CONRTSSIEE
+
+PHOENIX, ARMORA 05025
+
+Proanis
+
+25 May 1971
+
+So Board of Jerola
+
+101 Indiana Avenue 1N
+
+Hasbiagion; D"C." 20537
+
+Mary 25,
+
+, a?!
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Retland
+
+Report of violation
+
+was given suthority to
+
+relocata fion long Beaci, Caliloria to Febel, Arizona, Where
+
+he was promised a jos with ai-land,. Inc.. operated byl
+
+b6
+
+b7
+
+Subject: reported in as diracted and advised be was the
+
+for the mentioned company,
+
+He wish to report the
+
+Folloring violatióna of bie releasas
+
+b6
+
+b7C
+
+3.
+
+DETRIIS
+
+three year i-type sentence on
+
+Be is also up for sentence in panver, colorado on
+
+b6
+
+b7C
+
+Eras conviated sy the
+
+Stata of Calizornia on
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+on of about
+
+in GIcelen, colorado and El Bonte, Calliomia. These
+
+have been Exaced to
+
+Jacove cass pending pdgi-
+
+tive identicication. ma three subjects all lot the Phoenis:
+
+area on or about lay l and their present whereacouts are thizow.
+
+socatina
+
+DB Cooper-14434
+
+- +144944495
+
+---
+
+## Page 56
+
+SEARCHED
+
+_INDEXED.
+
+SERIALIZED.
+
+_ FILED
+
+ARE 19 107A
+
+FBI -SEATTLE
+
+DB Cooper-14435
+
+---
+
+## Page 57
+
+Page
+
+Its
+
+to
+
+25 May 71
+
+- Nash.
+
+RES
+
+b6
+
+b7C
+
+ReMand
+
+According to the polica department an all-polats bullatin bas
+
+been placed throughout the vestem states.
+
+a Dolice
+
+informant at Albuquergus, Her Hexico stated that on
+
+believed so za a
+
+Albuqueroue i
+
+were
+
+10
+
+b6
+
+b7C
+
+b7D
+
+advised she had seen
+
+b6
+
+b7C
+
+She
+
+atl
+
+further advised that
+
+in 51 Monta, Califomia
+
+The police luncher advised that oz
+
+per the
+
+visitor's regisise as
+
+visited
+
+E05 1-3/4 hours, signing in as employer.
+
+The above
+
+information was furnished by tha Fhaanix Polica
+
+Deparinent
+
+of the
+
+El Monta Police Deparcent, El ionte, California.
+
+It is respectíally racumended that a, Parole Violator's Warrant
+
+be issued imediately.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+.U.
+
+S. Probation Officer
+
+CE: USPO
+
+USPO
+
+US?
+
+Long Beach, California
+
+- Zanzer,
+
+colo.
+
+DB Cooper-14436
+
+---
+
+## Page 58
+
+LOUISIANA STATE PENITEYTIARY
+
+UNIT OF THE DEPARTMENT OF COR
+
+ACTION'S
+
+Angola, Louisiana 70712
+
+LOUTS M. 'SOWERS
+
+Director of Corrections
+
+C. MURRAY HENDES
+
+Warden
+
+Records Office
+
+Federal Corredtional Institute
+
+Terminal Island
+
+Los Angeles, Galif.
+
+90000
+
+JOHN J. McKEITHEN
+
+Governor
+
+April 6, 1972
+
+NO
+
+RECIRD
+
+b6
+
+b7C
+
+RE:
+
+ISP
+
+RACE: White Male
+
+YOUR
+
+YOUR
+
+. NO
+
+::..
+
+Lear Sir;
+
+serve a term o
+
+b6
+
+The above naned man was received at this institution onbc
+
+for the crime
+
+of
+
+to
+
+We have information that he was confined at your institution fron
+
+So that we
+
+b6
+
+may ertectively plan
+
+for this inmate from the standpoint of custodybo
+
+discipline, work, and all other phases of training and treatment, we ivill appreciate
+
+your sending us copies of any classification, social history, medical conduct, or.
+
+any other reports available to yau, which will reflect his past history and adjust-
+
+ment at your institution.
+
+If complete reports are not available, please furnish
+
+information regarding the itens specified on the reverse of this letter.
+
+To be of maximum value to us, we need this information at the earliest possible
+
+date.
+
+We appreciate your cooperation and will be glad to reciprocate upon request.
+
+Sincerely yours,
+
+b6
+
+b7C
+
+by
+
+C1-3:1
+
+Clas mut
+
+: Frid Apr. 14,1972
+
+SEAMED
+
+SERIALIZED.
+
+_FILED -
+
+APe 191022
+
+FBI-SEMiTLE
+
+IN
+
+• DB Cooper-14437
+
+---
+
+## Page 59
+
+PIrat iting, 50ü2-04)
+
+FB!
+
+Dale:
+
+7/29/76
+
+Transmit the following in
+
+Via
+
+AIRTEL
+
+(Iype in picintext or code)
+
+AIR MAIL
+
+(Priority)
+
+TO:
+
+PROM:
+
+DIRECTOR,
+
+FBI (164-211)
+
+(Attn:
+
+Identification Division,
+
+Latent Fingerprint Section)
+
+ADIC, LOS ANGELES (167-497) (P)
+
+SUBJECT:
+
+NORJAK
+
+00: Seattle
+
+RE:
+
+1437-81-16555
+
+photographs each of
+
+inclosed for seattle and Portland are three
+
+and his partner
+
+For information of the Bureau, Seattle and Port-
+
+land, L
+
+was previously suggested us
+
+a suspect in this matter and
+
+a photograph off
+
+taken in 1966 while he was a
+
+I fos
+
+Western Airlines was äisplayec
+
+to all witnesses and none
+
+noted any similarities between
+
+and unsub in
+
+this matter.
+
+In April, 1976, a source of the Los Angeles Office,
+
+whose identity must be concealed and who furnishes informa-
+
+tion
+
+ing
+
+to the Los Angeles Division concern-
+
+was of the opinion
+
+3 - Bureau
+
+2
+
+- Portland (164-41)
+
+Los Angeles
+
+(Enc.
+
+(Enc.
+
+3)
+
+16-4-21-2027
+
+ors/enm
+
+(9)
+
+LEST GENILE
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+Approved:
+
+Seat
+
+Secial Agent in Charge
+
+_M Por
+
+DB Cooper-14707
+
+*LS. CONSINMENT INTTEN OSTICE: 1:09 D-49-011
+
+---
+
+## Page 60
+
+LA 164-497
+
+similarities exist between artist's conception of the
+
+nighjacker and most recent photographs oi
+
+of the source.
+
+revIew of the Los Angeles files concerning
+
+and a summary of additional investigation at
+
+Los Angeles
+
+reveals the following information:
+
+Special Agent (SA) |
+
+_Drug Enforcement
+
+Agency (DE), Terminal Island, California, describedL
+
+as a skilled pilot who would be completely familiar
+
+with the Boeing 727 aircraft, as he was terminated
+
+commercial pilot (fliaht enoineer) byl
+
+Airlines in
+
+Thereafter
+
+became one of the most daring and intelligent
+
+criminals encountered by DEA and was believed
+
+until his imprisonment
+
+by Mexican authorities onl
+
+when he was arrested
+
+in Mexico using the name of
+
+and flying
+
+a cane to be restral or munesen in Sinaloa, Mexico,
+
+was
+
+However,
+
+is of the opinion
+
+has recently bought his way. out of prison.
+
+Agent
+
+advised this has not been confirmed.
+
+DEA closely followed
+
+and his activities during
+
+and
+
+they were known to regularly fly
+
+to Portland and Oregon,
+
+where they were associated with
+
+made available logs and notes concerning the coverage
+
+activities by DEA in
+
+A
+
+review of this data revealed
+
+_ name was on a gas
+
+slip at a Qualitron
+
+dated L
+
+aircraft numberl
+
+ing [
+
+California, Airport, at
+
+SaEt number indicated he was observed aty
+
+The next recorded notation concern-
+
+indicated he was observed at Santa Monica,
+
+I where he
+
+arrived in a rental car bearing California Licensel
+
+He reportedly indicated he was waiting for a plane to arrive
+
+b7D
+
+b6
+
+b7C
+
+b7C per DEA
+
+b7E
+
+b7C per DEA
+
+b7F
+
+DB Cooper-14708
+
+---
+
+## Page 61
+
+LA 164-497
+
+and had departed in another rental car when the plane
+
+he was waiting for did not arrive.
+
+Thas been described by SA
+
+and b7c per DEA
+
+as having b7E
+
+I in appearance and was
+
+not know to have any parachutino or straying exerience.
+
+midl
+
+land later became a cooperative witness for DEA
+
+againstl
+
+associates,
+
+b7C per DEA
+
+b7D
+
+In addition to the above data it is noted
+
+His partner in this
+
+venture, which was apparently used
+
+as a front for narcotic
+
+machina activities, cos an
+
+citizen using the name
+
+b7C per DEA
+
+According to
+
+7 b7D
+
+---
+
+3
+
+DB Cooper-14709
+
+---
+
+## Page 62
+
+LA 164-497
+
+A review of INS records. Los Andeles, 6/23/76
+
+revealed
+
+with aka of l
+
+Iwas born I
+
+lin
+
+5'11"
+
+, Social Security Account Number I
+
+California Drivers License
+
+FBI Number
+
+This recoro reveals al
+
+on xgs Apeles sunicipal court vith bäil set aj 922, 500,
+
+indicating he would be extradited anywhere in the United
+
+States. This file indicated that the Metropolitan Toronto
+
+Police, Toronto, Canada, had related that [
+
+Iwas
+
+convicted in toronto oé
+
+hreakina and enterina
+
+1963, as
+
+also noted thatl
+
+_had
+
+It is
+
+rented a car from Hertz in
+
+oronto on 12/18/71, and that in December, 1971, hi
+
+belongings in Los Angeles were
+
+nipped to al
+
+telephone number l
+
+Set forth below is available descriptive data
+
+concernina
+
+and his close criminal associate,
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+Name
+
+aka
+
+Race
+
+Sex
+
+Date of Birth
+
+Height
+
+Weight
+
+Complexion
+
+Hair
+
+Eyes
+
+Education
+
+White
+
+Male
+
+6'1"
+
+180 pounds
+
+Ruddy-reddish, freckles
+
+Brown
+
+Hazel
+
+Studied law and math
+
+sics at
+
+Santa Monica City Co
+
+je
+
+Santa Monica, Califo La
+
+DB Cooper-14710
+
+---
+
+## Page 63
+
+LA 164-497
+
+Occupation
+
+Previous
+
+Employment
+
+Pilot
+
+Western Airlines pilot
+
+b6
+
+b7C
+
+FBI Number
+
+Name
+
+aka
+
+Race
+
+Sex
+
+Date
+
+of Birth
+
+Place of Birth
+
+Citizenship
+
+Occupation
+
+Height
+
+Complexion
+
+Weight
+
+Eyes
+
+FBI Number
+
+Criminal Associate
+
+Marital
+
+Status
+
+b6
+
+b7C
+
+White
+
+Male
+
+Photographer
+
+5'9" to 5'10"
+
+Dark
+
+160 pounds
+
+Brown
+
+REQUEST OF THE BUREAU
+
+Although there is considerable age discrepancy
+
+descrip tve actual anised by the witnesses of unsub this
+
+natter in riao the extensive criminal activities of L
+
+the Identification Division is requested to
+
+compare the known fingerprints off
+
+JEBI
+
+Number
+
+Twith the unidentified latent prints locatedeon
+
+victim aircraft in this matter.
+
+-
+
+b6
+
+b7C
+
+5
+
+DB Cooper-14711
+
+---
+
+## Page 64
+
+LA 164-497
+
+LEADS
+
+TO SEATTLE,
+
+WASHINGTON AND PORTLAND, OREGON:
+
+additional investigation concerning_
+
+will be left to the discretion of Seattle and
+
+Portland and the above is being furnished by the Los
+
+Angeles Division
+
+for their information and evaluation.
+
+ARMED AND DALIGEROUS.
+
+b6
+
+b7C
+
+DB Cooper-14712
+
+---
+
+## Page 65
+
+PERAL BUREAU OF INVESTIGATION
+
+Q
+
+sut
+
+b7C
+
+(1)
+
+Dole of transcription.
+
+tanuary 18, 1977
+
+was contacted at the Fairbanks Districtbic
+
+Office,
+
+Bureau of Land Management (BLM), telephone number
+
+452-4725.
+
+informed due to the fact that he has been
+
+employed for years as a smokejumper by the BLM, he has haà a
+
+lot of curiousity type interest in the famous aircraft hijacking
+
+pulled off by D. B. COOPER.
+
+His interest has been magnified from
+
+time to time due to the newspaper publicity put out on this case.
+
+His interest has been profounded even more inasmuch as he has
+
+jumped into the area where D. B. COOPER allegedly jumped with the ›
+
+hijack loot and the fact that the news media reports this jump
+
+would have been very hazardous and most likely D. B. COOPER was
+
+killed during the jump.
+
+stated
+
+this latter statement by
+
+the press is total
+
+hogwash. He informed that any experienced
+
+jumper could have jumped into the area involved without suffering
+
+any injury at all.
+
+He stated during his years of experience as a
+
+smokejumper,
+
+he has jumped with hundreds of guys who could have
+
+performed this jump.
+
+informed that during the latel
+
+and early. b6
+
+he worked with a smokejumper employed by BLM by the name
+
+He ipformed they worked together in
+
+b7C
+
+Washington State during the late
+
+and were both assigned to
+
+ste Fa reads Mask district Offend the early
+
+stated he lost track of
+
+Iduring the latel
+
+He last
+
+party at the smokejumper base in washington State. [
+
+_in 1971 at a retirement
+
+drove
+
+up in a brand new car, dressed very well, and looking quite
+
+prominent.
+
+He spoke briefly with
+
+talked a little bit
+
+•about old times, and
+
+commented that he was doing quite
+
+well and was working at the Tacoma Navy Shipyards.
+
+stated that
+
+who was
+
+of
+
+BIM at the Fairbanks District Office, and is now with bic
+
+BIM in
+
+washington,
+
+D.C., had once told him that he heard
+
+1/11/77
+
+Interviewed on,
+
+at.
+
+Fairbanks, Alaska
+
+AN 164-59
+
+_File #
+
+SA
+
+by
+
+_Date dictated,
+
+1/17/77
+
+b6
+
+b7C
+
+•This document contains neither recommendations nor conclusions of the FBl. It is the próperty of the FBI and is loaned lo your agency;
+
+il and ils contents are nol to be distributed oviside your agency.
+
+164-81-7302
+
+DB Cooper-15250
+
+---
+
+## Page 66
+
+ÃN 164-59
+
+(2)
+
+He and.L
+
+discussed this
+
+and the D. B. COOPER hijacking case
+
+and between them derived
+
+that gone he do that of an are a a chi act chat
+
+to D. B. COOPER. They
+
+•was involved in such a caper, he would
+
+be just the one to thin
+
+is the daredevil type and
+
+just to prove a point of his
+
+daring to the other men.
+
+b6
+
+b7C
+
+stated that he did not go to the FBI with this
+
+b6
+
+information
+
+inasmuch as
+
+stated he had discussed this , blo
+
+with the FBI and had furnished all information regarding his
+
+knowledge of
+
+further related to him that
+
+he had furnished
+
+Iname as a possible suspect in this
+
+matter when he was interviewed by the FBI.
+
+Both he and _
+
+agreed that if there was such a thing as a statute of
+
+Limitations on the crime, and l
+
+had been involved, he would
+
+brag publicly about it upon expiration of the statute of limita-
+
+tions.
+
+He was just that type of individual. Further, the artist
+
+conception of D. B. COOPER that was circulated just after the
+
+crime was very, very similar.to
+
+appearance.
+
+informed that in the event
+
+Thas. not been b6
+
+checked out by the FBI and additional information might be sought b7c
+
+regarding him, he would be able to furnish the names of other
+
+individuals who were acquainted with and had knowledge of l
+
+One
+
+such individual who comes immediately to his mind
+
+15
+
+who is now employed by BIM at
+
+Winthrop,
+
+Washington.
+
+reiterated that his reason for not coming forth
+
+b6
+
+b7C
+
+with this information was as he had related; merely that it was
+
+discussed openly between himself and other people, and he was
+
+told
+
+that it had been reported to the FBI.
+
+DB Cooper-15251
+
+---
+
+## Page 67
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI/ PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790
+
+Total Deleted Page (s) = 2
+
+Page 12 ~ b6 - per USCRC; b7C;
+
+Page 13 ~ b6 - per USCRC; b7C;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+Deleted Page (s)
+
+No Duplication Fee X
+
+For this Page
+
+X
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 68
+
+INTERVIEW WORKSHEET
+
+CID Regulation 195-1
+
+SECTION A - PERSONAL DATA ON PERSON INTERVIEWED
+
+1. NAME (Lost, Firs, Middlo)
+
+2. ROI/SEQ NO. (Include Primary Offense Code)
+
+b6 per USCRC
+
+b7C
+
+3. ALIASES/NICKNAMES
+
+4. ORGANIZATION/ADDRESS
+
+3. MCAC
+
+6. SEX
+
+None
+
+нн0, 4/73d Armor, APO NY 09046
+
+El
+
+7. RACE 8, GRADE 9. DOB (Yr, Mo, Day) |10. POB (City, Stato)
+
+I1. SSN
+
+12. FORMER SERVICE NO.
+
+13. HT
+
+Cauc
+
+14.WT
+
+SSG
+
+15. HAIR
+
+16. EYES 17. IDENTIFYING MARKS
+
+72
+
+185
+
+21. ACTION TAKEN
+
+YES
+
+NO
+
+Brn
+
+Blue
+
+NA
+
+None
+
+22. INTERVIEWEE RELATIONSHIP TO CASE
+
+SUSPECT SUBJECT VICTIM WITNESS
+
+L.
+
+18. SECURITY
+
+19. MOS
+
+CLEARANCE
+
+"S"
+
+20. DUTY ASb6 per USCRO
+
+b70
+
+11E-30
+
+Tank Section/
+
+23. OFFENSE CODES RELATING TO INDIVIDUAL ONLY
+
+SECTION B - OPTIONAL
+
+124, PERMANENT HOME ADDRESS
+
+_b6 per USCRC
+
+b7C -
+
+125. TELEPHONE
+
+126. ETS
+
+127. DEROS/PCS
+
+28. CITIZENSHIP (Req No.)| 29. MARITAL STATUS
+
+M
+
+30. PASSPORT NUMBER
+
+131 . EDUCATION LEVEL
+
+32. KNOWN FRIENDS/ACQUAINTANCES
+
+33. VEHICLE DATA
+
+34. OFFENSE(S) UNDER INVESTIGATION
+
+Aircraft Skyjacking
+
+236; RIGHTS READ AND EXPLAINED BY
+
+N/A
+
+30. LINEUP USED
+
+_YES
+
+XXNO
+
+42. CO NOTIFIED (Date and Name)
+
+N/A
+
+44. INTERVIEW CONDUCTED BY
+
+SA
+
+PREMARKS
+
+35. DATE, PLACE, TIME INTERVIEW BEGAN
+
+26 May 77/CID Stuttgart/0820
+
+37. COUNSEL REQ/PRESENT (Full Nome)
+
+38. WRITTEN STATEMENT TAKEN
+
+N/A
+
+XX! YES
+
+INO
+
+40. POLYGRAPH REQUESTED
+
+41. PERSON FINGERPRINTED
+
+_ YES
+
+XXNO
+
+DYES
+
+IX XNO
+
+43. CRD CHECK (If Yes, give Date)
+
+[YES
+
+XI NO
+
+145. TIME AND DATE TERMINATED
+
+46. DISPOSITION OF INTERVIEWEE
+
+0439 / 26 May 77
+
+Released
+
+b6 per USCRC
+
+b7C
+
+b6 per FBI
+
+b7C
+
+164-81-7590
+
+CID FOKM 44
+
+1 FEB 76
+
+PREVIOUS EDITIONS OF THIS FORM ANE OBSOLETE.
+
+DB Cooper-15790
+
+---
+
+## Page 69
+
+STON 51714975077
+
+For uso of this fon .00 AR 190-30; tha proponont agoncy la Offico of Tha, rovort Marshal Gonaral.
+
+LOCATION
+
+Stuitzarte
+
+Germany
+
+LAST NAME, FIRST NAME, MIDDLE NAME
+
+DATE
+
+TIME
+
+26. May 77
+
+SOCIAL SECURITY
+
+8
+
+ars
+
+BER.
+
+ORGANIZATTON OR AUDRESS
+
+HHC. 1/73 ArMOr. APO NY 090k6
+
+FILE NUMBER
+
+097-17-0356
+
+GRADE/STATUS.
+
+SSG
+
+b6 per USCRO
+
+WANT TO MAKE THE FOLLOWING STATEMENT UNDER OATH
+
+this office is presently in possession of a Request for
+
+Assistance from
+
+the Legal Attache assigned to the US Embassy regarding
+
+possible information which you might posses regarding the Hijacking of
+
+Flight 305, on 24 November 1971. Do you infact have any information
+
+regarding the above incident?
+
+b6 per USCRO
+
+A: As far as positive information, I do not know. A SSGl
+
+who was assigned to the Iverett Recruiting Station, Washington
+
+State, at the same time as myself, is a master jumper and posseses the
+
+nowledge of leaving an aireraft in the man place and returned a few
+
+-the incident took place.
+
+e was on leave at the time the inciden
+
+days after the incident. I thought nothing about it, until the des-
+
+cription of the hijacker was placed on television.
+
+The description of
+
+the hijacker met that ofl
+
+to enclude the age. I approached
+
+and in a joking manner asked him where he was on leave and what
+
+he did with the money.
+
+He told me that he had gone alone into Canada to
+
+look at some land and
+
+that he knew nothing about the incident.
+
+Where is
+
+at this time and is he still on active duty?
+
+Yes, he still is on active duty.
+
+He is now an SFC and is assigned
+
+for duty in USAREUR Headquarters, located in Heidelberg, Germany. His
+
+telephone numbers are Heidelberg
+
+Military
+
+I know
+
+and do not think that he did it, but it was
+
+just a
+
+joke between him and
+
+me since he was on leave alone at the time and met the description of th
+
+person shown on television.
+
+Q: Did you ever tell a
+
+had talked about sky-
+
+jacking an aircraft in such a manner as
+
+flight 305?
+
+USCRC
+
+did tell
+
+that I wor ked with a pebic n
+
+and had the knowledge and was on leave at the
+
+time of the incident by himself.
+
+That is all
+
+I toldl
+
+in fact
+
+over mentioned to you the possibility of
+
+skyjacking an aircraft?
+
+A :
+
+No, never.
+
+Q:
+
+Do you think
+
+A :
+
+No I do not.
+
+Do you
+
+wich to add
+
+is in fact the person responsible?
+
+b6 per USCRO
+
+b7C
+
+delete anything to or from this statement?
+
+(x/8/X/x/x/5/4/x/8/x/x/x/x/x/5/x/S/END OF STATEMENT ///x/x/x/3/x/x/x/x/3
+
+b6 per FBI
+
+1077
+
+EXHIBIT
+
+INIT
+
+AGE 1 OF 2
+
+PAGES
+
+ADDITIONAL PAGES MUST CONTAIN THE HEADING "STATEMENT OF
+
+_CONTINUED."
+
+THE BOTTOM OF EACH ADDITIONAL PAGE MUST BEAR THE INITIALS OF THE PERSON MAKING THE STATEMENT AND
+
+BE INITIALED AS "PAGE
+
+_OF_. PAGES." WHEN ADDITIONAL PAGES ARE UTILIZED, THE BACK OF PAGE 1 WILL
+
+BE LINED OUT, AND THE STATEMENT WILL BE CONCLUDED ON THE REVERSE SIDE OF ANOTHER COPY OF THIS FORM.
+
+DA, ME
+
+FRE * 2823
+
+SUPERSEDES DA FORM 2829, 1 JAN 08, WHICH WILL BE USED.
+
+Tart ?
+
+DB Cooper-15791
+
+---
+
+## Page 70
+
+STATEMENT (Continuod)
+
+NOT
+
+b6 per USCRC
+
+b7C
+
+b6 per USCRC
+
+b7C
+
+AFFIDAVIT
+
+HAVE READ OR HAVE HAD READ TO ME THIS STATE-
+
+ENT WHICH BEGINS ON PAGE 1 AND ENDS ON PAGE !
+
+• I FULLY UNDERSTAND THE CONTENTS OF THE ENTIRE STATEMENT
+
+ADE BY ME. THE STATEMENT IS TRUE, I HAVE INITIALED ALL CORPECTIONS AND HAVE INITIALED THE BOTTOM OF EACH PAi
+
+CONTAINING THE STATEMENT. I HAVE MADE THIS STATEMENT FREELY WITHOUT HOPE OF BENEFIT OR REWARD WITHOUT THREAT.
+
+OF PUNISHMENT, AND WITHOUT COERCION, UNLAWFUL INFLUENCE,
+
+WITNESSES:
+
+Subscribad and sworn to bofore mo, a porson authorizod by law
+
+.1977
+
+-b6 per USCRC
+
+b7C
+
+ORGANIZATION OR ADDRESS
+
+Oath)
+
+ORGANIZATIUN OR ADDRESS,
+
+INITIALS OF PERSON MAKING STATE
+
+"(Typod Namo of Porson Administoring Oath)
+
+ART 136 (b) (4), MGM 69
+
+(Authority To Adminiator Oatho)
+
+b6 per USCRC
+
+-b7C
+
+PAGE 2 OF 2 PAGES
+
+DB Cooper-15792
+
+---
+
+## Page 71
+
+CIRB-OPF-0
+
+SUBJECT: Transmittal of Information (164-23)
+
+8 June 1977
+
+Legal Attache
+
+Embassy of the USA
+
+P.O. Box 310
+
+APO 09080
+
+b6 per USCRC
+
+b7C
+
+1.
+
+Reference to your Request for Assistance dated 13 May 77,
+
+pertaining to SSG
+
+On 26 May ??,
+
+was interviewed and rendered a written
+
+statement in which
+
+stated that SFCL
+
+HQ, USAREUR,
+
+Heidelberg Germany, met the description of the hijacker and fur-
+
+ther had the opportunity to commit the crime:
+
+Efforts are being made to interview
+
+Jin Heidelberg.
+
+The results of the interview of
+
+will be provided by
+
+• separate correspondence.
+
+FOR THE COMMANDER:
+
+b6 per USCRC
+
+b7C
+
+b6 per USCRC
+
+b7C
+
+2 Incls
+
+1: Stmnt of
+
+dtd, 26 May 77
+
+2. Interview Worksheet
+
+of
+
+dtd, 26 May 7/
+
+LTC. MPC
+
+Chief, Operations Division
+
+b6 per FBI
+
+b7C
+
+11-81-7592
+
+FON JERICIAL USE INLY
+
+Irom Autornail Terrination?
+
+(PARA 13. AP. 340-16)
+
+DB Cooper-15793
+
+---
+
+## Page 72
+
+DIRECTOR, FBI (164-2111)
+
+LEGAT, BONN (164-23)
+
+(P)
+
+NORJAR
+
+(00: Seattle)
+
+6/15/77
+
+Enclosed for Seattle is copy of letter fron
+
+Department of the Army, Headquarters, Second Region,
+
+J. S. Army Criminal Investigation Command, dated 6/8/77;
+
+original Sworn Statement, dated 5/26/77; and original
+
+Intervier worksheet, dated 5/26/17.
+
+5 - Bureau
+
+1 - Foreign Liaison Unit
+
+(2 - Seattle (164-31) (Enc. 3)
+
+1 - Bonn
+
+TUH: pas
+
+(6)
+
+164-51-7593
+
+SPECIED
+
+DB Cooper-15794
+
+---
+
+## Page 73
+
+CIRB-OPF-0
+
+SUBJECT: Transmittal of Indormation (164-23)
+
+10 June 1977
+
+Office of Legal Attache
+
+US Embassy
+
+P.O. Box 310
+
+APO 09080
+
+b6 per USCRC
+
+b7C
+
+1. Reference to your request 164-23 and our interim reply of
+
+Jun 77.
+
+2. On 9 Jun 77, SFC
+
+USAREUR and 7th
+
+Army
+
+ODCSOPS, HQ,
+
+was interviewed regarding his alleged hi-
+
+Jacking of flight 305.
+
+hijacking.
+
+A sworn statement and photographs of l
+
+Ind nied partis pation in this
+
+inclosed for your information.
+
+Our office was unable to verify the leave status ofl
+
+in 1971 as the records of such leave are maintained at the us
+
+Army Finance Center, Ft Ben Harrison, Indiana.
+
+b6 per USCRC
+
+FOR THE COMMANDER:
+
+6 Incls
+
+1. Waiver. Certificate &
+
+Stmt ofl
+
+2.
+
+Interview Worksheet of
+
+3. Photographs (3) of
+
+LTC, MPC
+
+Chief, Operations Division
+
+b6 per USCRC
+
+b7C
+
+FOR OFFICIAL USE ONLY
+
+Prötective Marking is Excluded
+
+from Aulomatic Termination
+
+(PARA 13, AR 340-15)
+
+DB Cooper-15795
+
+164-81-71594
+
+---
+
+## Page 74
+
+DEPARTMENT OF THE ACY
+
+HEIDELDERG RESIDENT AGENCY, SECOND REGION
+
+US ARMY CRIMINAL INVESTIGATION COMMAND
+
+APO NEW YORK 09102
+
+CIRBW -RHB
+
+SUBJECT: Ist Information Report 567-77-0151
+
+9 Jun 77
+
+Commander
+
+Second Region, USACIDC
+
+ATTN: CIRB-OP
+
+APO 09403
+
+b6 per USCRC
+
+b7C
+
+Reference US Embassy Legal Attache Request for assistance
+
+(#164-23) ; dated 13 May 77.
+
+2. On 9 Jun 77, SFCL
+
+ODCSOPS, HQ,
+
+you we a eate on statement on us us l Accachad
+
+44, and one color and two black and white photographs of [
+
+I CID Form
+
+finance records at the US Army Central b6 per USCRO
+
+finance and Accounting Office, APO NY 09403, to determine if he bic
+
+took a leave in Nov 11, the month in which the aircrait was hi-
+
+Jacked met with negative results. All leave records are retired
+
+after eighteen months, and would be on file at the US Army Finance
+
+Center, Ft Benjamin Harrison, IN.
+
+b6 per USCRC
+
+67C
+
+CW2, USA
+
+Special Agent in Charge
+
+5 incl
+
+as
+
+CF: Car Wuerzburg District
+
+PON OFFICIAL USE ONLY
+
+•Illy Protective Marking is Excluded
+
+From Automatic Termination,
+
+(Para 18, AR 340-10)
+
+DB Cooper-15796
+
+---
+
+## Page 75
+
+RIGHTS
+
+RNING PROCEDURE/WAIVER CERTIFI
+
+For uso of this form, sea lor 190-30; tha proponont agancy is the Office of the P
+
+LOCATION
+
+Heidelberg, Germany
+
+LAST NAME, FIRST NAME, MIDDLE NAME
+
+DATE
+
+TIME•
+
+9 Jun 77 1325
+
+SOCIAL SECURITY
+
+MBER
+
+ORGANIZATION OR ADDRESS
+
+ODGSOPS, HQ, USAREUR & 7th Army, APO NY 09403
+
+RIGHTS WAIVER CERTIFICATE
+
+TE
+
+Ost Marshol Gonoral.
+
+FILE NUMBER
+
+567-77-0151
+
+GRADE/STATUS
+
+SFC
+
+b6 per USCRC
+
+b7C
+
+RIGHTS
+
+The investigator whose name appears below told me that he is with the United States. Army Criminal
+
+Investigation Command
+
+and wanted to question
+
+me about the following offense(s) of which I am suspected/accused:
+
+Aircraft Hijacking /
+
+Unlawful Detention
+
+Before he asked me any questions about the offense(s), however, he made it clear to me that I have the following rights:
+
+1. I do not have to answer any questions or say anything.
+
+2. Anything I say or do can be used as evidence against me in a criminal trial.
+
+3. (For personnel subject to the UCM]) I have a right to talk to a lawyer before or after questioning or have a lawyer
+
+present with me during questioning. This lawyer can be a civilian lawyer of my own choice at my own expense or
+
+a military lawyer detailed for me at no expense to me. Also, I may ask for a military lawyer of my choice by name
+
+3. (For civilians not subject to the UCM]) I have a right to talk to a lawyer before or after questioning or have a
+
+lawyer present with me during questioning. If I cannot afford a lawyer and want one, arrangements will be made to
+
+obtain a lawyer for me.
+
+WAIVER
+
+b6 per USCRC
+
+b7C
+
+Liantia
+
+without a
+
+Understanding my rights as stated above, I am now willing
+
+lawyer being present.
+
+WITNESSES (1{ available):
+
+Organization or address and phone
+
+Organization or address and phone
+
+Typed name of investigator
+
+Heidelberg Resident Agency
+
+USACIDA, APO NY 09102
+
+Investigator's organization
+
+NON-WAIVER
+
+I do not want to give up my rights:
+
+_ I want a lawyer.
+
+- I do not want to be questioned or say anything.
+
+Signature of intorvicwee
+
+TACH THIS WAIVER CERTIFICATE POR'OFPICIAL USE ONLORM 2823) SUBSEQUENTLY EXECUTED BY THI
+
+UBJECT SUSPECT/ACCUSEI
+
+DA, F0R72 3881 NCL IL
+
+REPLACES DA FORM 2620, 1 OCT 87. WHICH IS OBSOLETE.
+
+DB Cooper-15797
+
+---
+
+## Page 76
+
+LOCATION
+
+Heidelberg, Germany
+
+LAST NAME, EIRST NAME, MIDDLE NAME
+
+SWORN STATEMENT
+
+For uso of this form, soo AR 190-30; tho proponont agoncy Is Offico of The Provost Marshal Gonoral.
+
+DATE
+
+TIME
+
+9 Jun 77
+
+1340
+
+SOCIAL SECURITY NUMBER.
+
+FILE NUMBER
+
+567-77-0151
+
+GRADE/STATUS
+
+SFC E-7
+
+ORGANIZATION OR ADDRESS
+
+ODCSOPS, HQ, USAREUR & 7th Army, APO NY 09403
+
+b6 per USCRC
+
+b7C
+
+_ WANT TO MAKE THE FOLLOWING STATEMENT UNDER OATH:
+
+I have been advised that I am being questioned concerning the hi-
+
+jacking of a Northwest Orient Airlines aircraft, Flight #305 from
+
+Portland, Or to Seattle, Washington, which occurred on 24 Nov 71.
+
+Q: Would you relate all
+
+assignments you have had from 1970 to the
+
+present?
+
+A: In 1970 I was assigned to the 3/8th Cav at Coleman Barracks in
+
+Mannheim, Germany, until Apr 71. From May 71 until Jul 74 I was
+
+assigned to the US Army Recruiting Station in Everett, Washington.
+
+mastered to
+
+I was the Station Commander.
+
+Q: Did you take a leave in November 1971: while assigned in Everett?
+
+A: No.
+
+Q: Were you away from your station on Temporary Duty in Nov 71?
+
+Q: Did you ever take a leave to Canada?
+
+A: Yes. During the summer of 1973, I took a leave to Canada. I think
+
+it was for 18 days. My mother and
+
+father-in-law were visiting from
+
+Germany, therefore I took a leave to Canada. We only stayed there
+
+about three or four days.
+
+Q: Are you a qualified parachutist?
+
+A: Yes.
+
+Q: To what degree are you a parachutist?
+
+A: I am a novice parachutist. Military only. I have not practiced
+
+sports parachute jumping.
+
+am• also jumpmaster qualified. That means
+
+I have had additional extensive training, but I am not a senior or.
+
+master parachutist.
+
+Q: Have you ever flown from Seattle, Washington to Portland, Oregon
+
+or vice versa.
+
+4: No...
+
+Q: Earlier when you were first intormed that you were to be questioned
+
+about the hijacking between Portland and Seattle in 71, you commented
+
+something about "my friend D.B. COOPER"
+
+, will you explain
+
+A: DoB. COOPER is not my friend. I don't even know him. I made the
+
+comment because I was in Wahst Washington when the hijacking occurred
+
+and read the newspapers reports about it. Another Sergeant who was
+
+assigned to the same station, had seen a sketch or a composite picture
+
+of the hijacker in the newspaper, the one which depicted D.B. COOPER,
+
+and told me that I looked exactly like the man portraved
+
+in the sketch,
+
+to include the height and weight. I don't know if
+
+told someone
+
+about it or not. Someone else I mean.
+
+Q: Do you have any knowledge of the hijacking other that what was
+
+—b6 per USCRC.
+
+EXHIBIT
+
+INITIALS OF
+
+NG STATEMENT
+
+b7C
+
+TrAGE 1 OF_
+
+2
+
+PAGES
+
+ADDITIONAL PAGES MUST CONTAIN THE HEADING "STATEMENT OF
+
+TAKEN AT
+
+_CONTINUED."
+
+THE BOTTOM OF EACH ADDITIONAL PAGE MUST BEAR THE INITIALS OF THE PERSON MAKING THE STATEMENT AND
+
+BE INITIALED AS "PAGE
+
+PAGES." WHEN ADDITIONAL, PAGES ARE UTILIZED, THE BACK OF PAGE 1 WILL
+
+BE LINED OUT, AND THE STATEMENT WILL BE CONCLUDED ON TUE REVERSE SIDE OF ANOTHER COPY OF THIS FORM
+
+FORM
+
+DA, F0RZ 2823
+
+SUPERSE GOR OFFICPAL'USE KLY DE USED.
+
+DB Cooper-15798
+
+---
+
+## Page 77
+
+STATEMENT (Continuod)
+
+inted in newspapers accounts?
+
+A: No.
+
+b6 per USCRC
+
+b7C
+
+--END OF STATEMENT-
+
+b6 per USCRC
+
+.b7C
+
+AFFIDAVIT
+
+HAVE READ OR HAVE HAD READ TO ME THIS STATE-
+
+MENT WHICH BEGINS ON PAGE 1 AND ENDS ON PAGE
+
+• I FULLY UNDERSTAND THE CONTENTS OF THE ENTIRE STATEMENT
+
+MADE BY ME.
+
+THE STATEMENT IS TRUE.
+
+I HAVE INTIALED ALL COFRECTIONS AND HAVE MATIALED THE ROTTON OF EACH PAGE
+
+CONTAINING THE STATEMENT. I HAVE MADE THIS STATEMENT FREELY WITUALT MADE AS DENIELE DO DEMADE MLUONT THREAT!
+
+OF PUNISHMENT, AND WITHOUT COERCION, UNLAWFUL INFLUENCE, OR U
+
+WITNESSES:
+
+b6 per USCRC
+
+b7C
+
+Subscribad aho sworn to botoro mo, a person aurorizod by law
+
+to administos oaths, this Ithday of June
+
+.19_77
+
+at Heidelbers. Germanv
+
+ORGANIZATION OR ADDRESS
+
+b6 per USCRC
+
+b7C
+
+Oath)
+
+SA
+
+ORGANIZATION OR ADDRESS
+
+INITIALS OF PERSON MAKING STATEMENT
+
+(Typod Namo of Poreon Adminiatoring Oath)
+
+Art 136 (b) (4) UCMJ 1969
+
+(Authority To Adminiotos Oatho)
+
+DB Cooper-15799
+
+PAGE 2 Or 2 PAGES
+
+---
+
+## Page 78
+
+T. NAME (Last, First, Middle)
+
+3. ALIASES/NICKNAMES
+
+None
+
+6. SEX
+
+7. RACE 8. GRADE
+
+19. DoB (Yr, Mo, Day)
+
+SECTION A - PERSONAL DATA ON PERSON INTERVIEWED
+
+2. ROI/SEQ NO. (Include Primary Offense Code)
+
+b6 per USCRC
+
+b7C
+
+567-
+
+71-0151
+
+14. ORGANIZATION/ ADDRESS
+
+ODCSOPS, HQ USAREUR & 7th Army
+
+S. MCAC
+
+El
+
+APO NY 09403
+
+10. pOB (City, State)
+
+11. SSN
+
+12. FORMER SERVICE NO.
+
+M
+
+13. HT
+
+Cauc
+
+14. WT
+
+SFC
+
+15. HAIR
+
+68"'
+
+160
+
+21. ACTION TAKEN
+
+YES
+
+NO
+
+Brn
+
+TIG. EYES 17. IDENTIFYING MARKS
+
+TS. SECURITY
+
+1T9. MOS
+
+CLEARANCE
+
+TS
+
+Blue
+
+None
+
+22. INTERVIEWEE RELATIONSHIP TO CASE
+
+NA
+
+SUSPECT SUBJECT
+
+VICTIM WITNESS
+
+20. DUTY ASSIGNMENT
+
+Spec Asst to
+
+11B40
+
+ODCSOPS
+
+23. OFFENSE CODES RELATING TO INDIVIDUAL ONLY
+
+NA
+
+SECTION B - OPTIONAL
+
+26 PERMANENT HOME ANDERCE
+
+25. ETS
+
+TE. DEROS/ PCS
+
+b6 per USCRC
+
+b7C
+
+1|28. CITIZENSHIP (Reg No.) 29. MARITAL STATUS
+
+M.w/1 chila
+
+25. TELEPHONE NO.
+
+730. PASSPORT NUMBER
+
+31. EDUCATION LEVEL
+
+32. KNOWN FRIENDS/ AQUAINTANCES
+
+13 yrs
+
+Na
+
+34. OFFENSE(S) UNDER INVESTIGATION
+
+Hijacking
+
+36. RIGHTS READ AND EXPLAINED BY
+
+39. LINEUP USED
+
+XI NO
+
+42. CO NOTIFIED (Date and Nome)
+
+33. VEHICLE DATA
+
+NA
+
+35. DATE, PLACE, TIME INTERVIEW BEGAN
+
+9 Jun 77, 1320, Heidelberg RA
+
+37. COUNSEL REQ/PRESENT (Full Name)
+
+38. WRITTEN STATEMENT TAKEN
+
+None/None
+
+CINO
+
+40. POLYGRAPH REQUESTED
+
+41. PERSON FINGERPRINTED
+
+D YES
+
+XINO
+
+NA
+
+144. INTERVIEW CONDUCTED BY
+
+43. CRD CHECK (if Yes, give Date)
+
+_YES
+
+XI NO
+
+T45. TIME AND DATE TERMINATED
+
+46. DISPOSITION OF INTERVIEWEE
+
+1500, 9 Jun 77
+
+Rel to own custody
+
+REMARKS
+
+Relatives live a$ same address as in item 24 above.
+
+Has no relatives in Canada.
+
+b6 per USCRC
+
+b7C
+
+No property, estate or business interests in US or Canada.
+
+CI) FORM 44
+
+1 FEB 76
+
+INCe 3
+
+FOR OFFIGAL USE ONLYE OBSOLETE
+
+DB Cooper-15800
+
+---
+
+## Page 79
+
+b6
+
+b7C
+
+0/10/77
+
+Dircetor, FBI (104-2111)
+
+Legat, Bona (161-23) (P)
+
+NOZJAK
+
+CO: Seattle
+
+Inclosed for Seattle is copy of letter irch Deport-
+
+cont of the ArDy, lozaquariora, becond Logion, D. 2. Arty
+
+Criminal Invostigation Cormand, catca 6/10/77 and copy of
+
+lotter dated 6/0/77; original Rights larning Procedure/laivor
+
+Certificate; original ovorn staterent: oniriml Interview
+
+b6 per USCRC
+
+b7C
+
+5 - Bureau
+
+Forciga Liaicon Unit
+
+- Tore (101-0 (te. 8)
+
+I - Bonu
+
+IMI: bS
+
+164-81-7595
+
+- - DB-Cooper-15803
+
+---
+
+## Page 80
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI/PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790
+
+Total Deleted Page (s) = 8
+
+Page 5 ~ Duplicate;
+
+Page 70 ~ Duplicate;
+
+Page 71 ~ Duplicate;
+
+Page 151 ~ Duplicate;
+
+Page 152 ~ Duplicate;
+
+Page 176 ~ Duplicate;
+
+Page 178 ~ Duplicate;
+
+Page 201 ~ Duplicate;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+Deleted Page (s)
+
+No Duplication Fee X
+
+For this Page
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 81
+
+DATE:
+
+RETEN OF:
+
+SUBJECT:
+
+TO:
+
+-
+
+UNITED STATES GOVERNMENT -
+
+6/28/78
+
+memorandum
+
+SA
+
+NORJAK (A)
+
+b6
+
+b7C
+
+00: SEATTLE
+
+BUFile 164-2111
+
+SAC, SEATTLE (164-81) (P)
+
+RE:
+
+WASHINGTON
+
+b6
+
+b7C
+
+Re Seattle letter to Omaha dated 5/16/78.
+
+Attached hereto is an insert reflecting investigation
+
+conducted in the Seattle Division.
+
+LEAD:
+
+SEATTLE DIVISION
+
+At Vancouver, Washington
+
+Will maintain contact with Special Agent_
+
+Intelligence Division, Internal Revenue Service,
+
+Vancouver, for information of
+
+value concerning this matter.
+
+ARMED AND DANGEROUS.
+
+(3)
+
+Seattle (164-81)
+
+JTG/ jh
+
+b6 per IRS
+
+164-81-7966
+
+78
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-16731
+
+OPTIONAL FORM NO. 10
+
+GSA FPMR (41 CFR) 101-11.6
+
+---
+
+## Page 82
+
+SE 164-81
+
+JTG/ jh
+
+The following investigation was conducted by
+
+SA
+
+At Vancouver, Washington
+
+On May 26, 1978,
+
+contact was attempted with
+
+Special Agent [
+
+• Intelligence Division, Internal
+
+Revenue Service, Vancouver, with negative results as he
+
+was not available.
+
+On June 16, 1978, Special Agent L
+
+advised that he would attempt to obtain the Income Tax
+
+Return forl
+
+date of birth
+
+I and determine if this return
+
+justified the FBI obtaining
+
+the necessary
+
+authority to look
+
+the return.
+
+At
+
+Washington
+
+On June 20. 1978.
+
+advised she had learned that
+
+was not moving to Portland, but, instead,
+
+was moving in a short while to Vancouver, Washington. She
+
+stated_
+
+very frequently in order tol
+
+in Portland
+
+Oregon, at his place of business,
+
+called
+
+She said she does not know why l
+
+In addition, she said that the
+
+She stated she did not
+
+b6
+
+b7C
+
+b6 per IRS
+
+supra, b3 per IRs
+
+b6
+
+b7C
+
+b7E
+
+know the outcome
+
+DB Cooper-16/32
+
+---
+
+## Page 83
+
+DATE:
+
+PETEY OF:
+
+SUBJECT:
+
+6/28/78
+
+SA
+
+NORJAK (A)
+
+00:
+
+SEATTLE
+
+BUFile 164-2111
+
+UNITED STATES GOVERNMENT.
+
+memorandum
+
+b6
+
+b7C
+
+TO:
+
+To:
+
+SAC, SEATTLE (164-81) (P)
+
+RE:
+
+WASHINGTON
+
+Re Seattle letter to Omaha dated 5/16/78.
+
+Attached hereto is an insert reflecting investigation
+
+conducted in the Seattle Division.
+
+b6
+
+b7C
+
+LEAD:
+
+• SEATTLE DIVISION
+
+At Vancouver, Washington
+
+Will maintain contact with Special Agent L
+
+Intelligence Division, Internal Revenue Service,
+
+Vancouver, for information of value concerning this matter.
+
+b6 per IRS
+
+ARMED AND DANGEROUS
+
+3 - Seattle (164-81)
+
+JTG/ jh
+
+(3)
+
+164-81-7966
+
+SEARCHED,
+
+JUN2 9 1929
+
+FBI -SEATILE
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+OPTIONAL FORM NO. 10
+
+(REV. 7-76)
+
+GSAFPMR (41 CFR) 101-11.6
+
+5010-112
+
+DB Cooper-16733,
+
+---
+
+## Page 84
+
+TO
+
+FROM
+
+:
+
+SUBJECT:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81) (P)
+
+SA
+
+NORJAK (A)
+
+00: SEATTLE
+
+BuFile 164-2111
+
+Re:
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE: 8/22/78
+
+b6
+
+b7C
+
+WASHINGTON
+
+Re Seattle memo of SA
+
+6/28/78.
+
+Attached hereto are two inserts reflecting investi-
+
+gation conducted in the Seattle Division:
+
+LEADS:
+
+SEATTLE DIVISION
+
+At Vancouver, Washington
+
+Will maintain contact with Special Agent
+
+Intelligence Detail,
+
+Internal Revenue Service,
+
+Vancouver, for information of value concerning this matter.
+
+ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6 per IRS
+
+114-41-8002
+
+SEARCHED. INDEXED.
+
+SERIALIZED,....
+
+AUD 2l2 1978
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-16795
+
+FB1/DOJ
+
+---
+
+## Page 85
+
+..."
+
+SE 164-81
+
+JTG/dIb
+
+1
+
+The following investigation was conducted by SA
+
+At Vancouver, Washington
+
+ADMINISTRATIVE
+
+On 7/17/78,
+
+Special Agent, Intelli-
+
+gence Division, Internal Revenue Service, Vancouver,
+
+confi-
+
+dentially advised thatl
+
+b6
+
+b7C
+
+b3 per IRS
+
+b6
+
+but when he did, he would contact the Vancouver
+
+Resident Agency Office of the FBI.
+
+b6 per IRS
+
+On 8/18/78,L
+
+supra, advised he had
+
+Ne voud conte the fit men de receve anorain ormation,
+
+b3 per IRS
+
+b6
+
+DB Cooper-16796
+
+---
+
+## Page 86
+
+SE 164-81
+
+JTG/ dib
+
+The following investigation was conducted by SA
+
+At
+
+Washington
+
+On 7/26/78
+
+advised he had learned thatl
+
+as new ed ducting a business known at
+
+_ Portland, Oregon.
+
+He said he had also learned thatL
+
+was banking at
+
+the United States National Bank of Oregon,
+
+Century Tower
+
+Branch, Portland, Oregon.
+
+b6]
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-16797
+
+---
+
+## Page 87
+
+TO
+
+:
+
+FROM
+
+SUBJECT:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF ASTICE
+
+FEDERAL BEREAU OF INVESTIATION
+
+SAC, SEATTLE (164-81) (P)
+
+DATE: 8/22/78
+
+SA
+
+NORJAK (A)
+
+00: SEATTLE
+
+BuFile 164-2111
+
+Re :
+
+WASHINGTON
+
+Re Seattle memo of SA
+
+6/28/78.
+
+Attached hereto are two inserts reflecting investi-
+
+gation conducted in the
+
+Seattle Division.
+
+LEADS :
+
+SEATTLE DIVISION
+
+At Vancouver, Washington
+
+Will maintain contact with Special Agent|
+
+Intelligence Detail, Internal Revenue Service,
+
+Vancouver, for information of value concerning this matter.
+
+ARMED AND DANGEROUS.
+
+JTG/ dlb
+
+(3)
+
+were
+
+12/2
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6 per IRs •
+
+memo
+
+dic
+
+1dl9
+
+1421-41-8002
+
+SEARCHEDI.
+
+AUE 242 1978
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+b6
+
+b7C
+
+80314896-1
+
+DB Cooper-16798
+
+---
+
+## Page 88
+
+TO
+
+:
+
+FROM
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, SEATTLE (164-81)
+
+(P)
+
+SA
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE: 10/17/78
+
+b6
+
+b7C
+
+SUBJECT: NORJAK (A)
+
+00: SEATTLE
+
+BUfile 164-2111
+
+RE:
+
+b6
+
+b7C
+
+Washington
+
+Re Seattle memo of SA
+
+8/22/78.
+
+Will recontact SAI
+
+_ Intelligence
+
+Division, Internal Revenue Service,
+
+Vancouver, for infor-
+
+mation of value concerning
+
+subject.
+
+b6
+
+b7C
+
+b6 per IRS
+
+ARMED & DANGEROUS
+
+- Seattle
+
+1b2-81-8035
+
+SEARCHED,
+
+INDEXED _
+
+SERIALIZED
+
+AFILED_
+
+OCT 87 1978
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savinas Plan
+
+DB Cooper-16874 Ra /1
+
+b7C
+
+FBI/DOI
+
+b6
+
+b7C
+
+---
+
+## Page 89
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: SAC, SEATTLE (164-81) (P)
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+• TO
+
+FROM
+
+DATE: 10/17/78
+
+SA
+
+b7C
+
+SUBJECT:
+
+NORJAK (A)
+
+00: SEATTLE
+
+BUfile 164-2111
+
+RE:
+
+b6
+
+b7C
+
+Washington
+
+Re Seattle memo of SA
+
+8/22/78.
+
+Will recontact SAL
+
+Intelligence
+
+Division, Internal Revenue Service, Vancouver, for infor-
+
+mation of value concerning subject.
+
+b7C
+
+b6 per IRS
+
+ARMED & DANGEROUS
+
+MRM/1jt
+
+Seattle
+
+(3)
+
+161-81-8035
+
+SEARCHED_
+
+SERIALIZED
+
+LINDEXED S
+
+PA PLE -
+
+OCT 87 1978
+
+EATTLE
+
+Raft.
+
+Buy U.S. Savings Bonds Regularly on the Payröll Savings Plan
+
+b6 per FBI
+
+b7C
+
+FBI/DOS
+
+DB Cooper-16875
+
+---
+
+## Page 90
+
+DATE:
+
+RATIN OF:
+
+SUBJECT:
+
+TO:
+
+10/25/78
+
+SA
+
+NORJAK (A)
+
+00: SEATTLE
+
+BUFILE 164-2111
+
+SAC, SEATTLE (164-81) (P)
+
+RE:
+
+UNITED STATES GOVERNMENT.
+
+memorandum
+
+b6
+
+b7C
+
+WASHINGTON
+
+b6
+
+b7C
+
+Re Seattle memo of SA
+
+dated 8/22/78.
+
+Attached hereto are two inserts reflecting investi-
+
+gation conducted in the Seattle Division.
+
+b6
+
+b7C
+
+LEADS:
+
+SEATTLE DIVISION
+
+At Vancouver, Washington
+
+Will maintain contact with Special Agentl
+
+Intelligence Detail, Internal Revenue Service,
+
+Vancouver, for information of value concerning this
+
+matter.
+
+b6 per IRS
+
+ARMED AND DANGEROUS
+
+JTG : arm
+
+1641-81-8036
+
+SEARCHED.
+
+L INDEXED
+
+LENNALILED
+
+_FILED
+
+OCT 3 5 1978
+
+TTLE
+
+Buy U.S. Savings Bonds Regularly on the Payol salist an
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+OPTIONAL FORM NO. 10
+
+(REV. 7-76)
+
+GSA FPMR (41 CFR) 101-11.6
+
+5010-112 DB Cooper-16876
+
+---
+
+## Page 91
+
+SE 164-81
+
+JTG: arm
+
+1
+
+The following investigation was conducted by
+
+SA
+
+At Vancouver, Washington
+
+ADMINISTRATIVE
+
+On 9/18/78, contact was attempted with
+
+Revenue
+
+Special Agent, Intelligence Division, Internal
+
+service,
+
+Vancouver, with negative results as he
+
+not available.
+
+On 10/18/78,
+
+I supra, advised he
+
+ad not received any additional intormation concerning
+
+le said when he received thi:
+
+information, he would contact the Vancouver Resident
+
+Agency Office of the FBI.
+
+b6
+
+b7C
+
+b6 per IRS
+
+b3 per IRS
+
+DB Cooper-16877
+
+---
+
+## Page 92
+
+d...d
+
+SE 164-81
+
+JTG: arm
+
+The following investigation was conducted by
+
+SA
+
+Atl
+
+Washington
+
+en 10/16/78, advised I
+
+live in thel
+
+•area although he runs al
+
+Jin Portland. He stated that
+
+located somewhere in[
+
+continues to
+
+He said that he had learned I
+
+mately
+
+profit from
+
+the general area of|
+
+made approxi-
+
+located in
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-1687$
+
+---
+
+## Page 93
+
+DATE:
+
+REFLY OF:
+
+SUBJECT:
+
+10/25/78
+
+SA
+
+NORJAK (A)
+
+00: SEATTLE
+
+BUFILE 164÷2111
+
+SAC, SEATTLE (164-81) (P)
+
+RE:
+
+WASHINGTON
+
+UNITED STATES GOVERNMENT
+
+memorandum
+
+b6
+
+b7C
+
+. b6
+
+b7C
+
+-
+
+Re Seattle memo of SA
+
+dated 8/22/78.
+
+Attached hereto are two
+
+inserts reflecting investi-
+
+gation conducted in the Seattle Division.
+
+LEADS:
+
+SEATTLE DIVISION
+
+At Vancouver, Washington
+
+Will maintain contact with Special Agentl
+
+Intelligence Detail, Internal Revenue Service,
+
+Vancouver, for information of value concerning this
+
+matter.
+
+ARMED AND DANGEROUS
+
+b6
+
+b7C
+
+b6 per IRS
+
+JTG: arm
+
+(3)
+
+164-81-8036
+
+I SEARCHED
+
+LINDEXED_
+
+ALIUHLILLD
+
+OCT 2 5 1978
+
+TTLE
+
+-
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+OPTIONAL FORM NO. 10
+
+(REV. 7-76)
+
+GSAFPMR IS CFR/101-11.6
+
+5010-112DB Cooper-16879
+
+---
+
+## Page 94
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE
+
+(164-81)
+
+FROM : SA
+
+SUBJECT: NORJAK (A)
+
+00:
+
+Seattle
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+(P)
+
+DATE:
+
+1/8/79
+
+D6
+
+b7C
+
+RE :
+
+b6
+
+b7C
+
+washington
+
+Re Seattle memo of SAl
+
+October,
+
+1978.
+
+Attached hereto is an insert reflecting investiga-
+
+tion conducted in the Seattle Division.
+
+LEAD:
+
+SEATTLE DIVISION
+
+At
+
+Washington
+
+Will recontact
+
+for. further information of
+
+value concerning this matter.
+
+ARMED & DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-8044
+
+SEARCHED.vemC INDEXED..
+
+SERIALIZED... o-
+
+JAN 2 1979
+
+TLE
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+FBI/DOJ
+
+DB Cooper-16902
+
+---
+
+## Page 95
+
+SE 164-81
+
+JTG: jsb
+
+1
+
+The following investigation was conducted by SA
+
+at Vancouver, Washington:
+
+ADMINISTRATIVE:
+
+On 11/13/78, contact was attempted with L
+
+Special Agent, Intelligence Division, Internal
+
+Revenue Service, Vancouver, with negative results as he was
+
+not available.
+
+On 12/12/78, SAT
+
+supra, advised he had
+
+received no morel
+
+_and
+
+therefore he surmised there was nothing unusual concerning
+
+He said that should he receive
+
+and note anything unusual or interesting in them, he would
+
+contact the Vancouver Resident Agency Office of the FBI.
+
+b6
+
+b7C
+
+b6 per IRs
+
+b3 per IRS
+
+1b6
+
+•
+
+DB Cooper-16903
+
+---
+
+## Page 96
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE
+
+(164-81)
+
+(P)
+
+FROM
+
+: SA-
+
+SUBJECT: NORJAK (A)
+
+00:
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE:
+
+1/8/79
+
+b6
+
+b7C
+
+Seattle
+
+RE:
+
+washington
+
+Re Seattle memo of SA
+
+Octöber,
+
+1978.
+
+Attached hereto is an insert reflecting investiga-
+
+tion conducted in the Seattle Division.
+
+LEAD:
+
+SEATTLE DIVISION
+
+At_
+
+Washington
+
+Will recontact|
+
+Jfor further information of
+
+value concerning this matter.
+
+ARMED & DANGEROUS.
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+JTG: j sb
+
+(2)
+
+Lett
+
+162-41- E02K1
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+FBI/DOJ
+
+DB Cooper-16904
+
+---
+
+## Page 97
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE
+
+(164-81)
+
+FROM : SA
+
+SUBJECT: NORJAK (A)
+
+00: Seattle
+
+RE:
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU
+
+INVESTIGATION
+
+(P)
+
+DATE:
+
+1/8/79
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+• I
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Washington
+
+Re Seattle memo of SA
+
+October,
+
+1978.
+
+Attached hereto is an insert reflecting investiga-
+
+tion conducted in the Seattle Division.
+
+LEAD:
+
+SEATTLE DIVISION
+
+At
+
+Washington
+
+Will recontact |
+
+for further information of
+
+value concerning this matter.
+
+ARMED & DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+JTG: isb
+
+(2) -7
+
+164-81-8044
+
+SERIALIZED,
+
+JAN SU
+
+1979
+
+TLE
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+FBI/DOS
+
+DB Cooper-16906
+
+---
+
+## Page 98
+
+TO
+
+FROM :
+
+SUBJECT:
+
+, UNITED STATES GOVERNMENT
+
+Memorandum
+
+:
+
+SAC, PORTLAND (164-11)
+
+SAC, SEATTLE (164-81)
+
+NORJAK (A)
+
+00: SEATTLE
+
+BUfile 164-2111
+
+RE:
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE:
+
+3/6/79
+
+b6|
+
+b7C
+
+Re Portland letter to Seattle dated 8/16/77.
+
+For the information of Portland Division, since
+
+date of referenced communication, the Seattle Division
+
+has conducted an investigation in an attempt to determine
+
+the source of
+
+This investigation
+
+has revealed that l
+
+by the name of
+
+Washington. In addition, investigation has
+
+revealed
+
+has been seen with large amounts of
+
+money which,
+
+according tol
+
+come from Omaha,
+
+Nebraska, and an unknown location
+
+in Canada.
+
+Investigation
+
+by the Omaha Division has failed to reveal any information
+
+of value concerning
+
+in
+
+that area.
+
+It has been recently learned thatl
+
+is
+
+noW
+
+which is located at thel
+
+Portland. Oregon. This business
+
+is across the street from
+
+which, apparently,
+
+of
+
+Recent contact with an individual knowledgeable
+
+has revealed that
+
+lis apparently going
+
+to an
+
+unknown location
+
+in California to
+
+It is anticipated that
+
+in Portland.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+- Portland
+
+JTG
+
+# Seattle
+
+(4)
+
+pr
+
+2120.405
+
+m.so
+
+164-81-8050
+
+I2."
+
+b6
+
+.b7C
+
+DB Cooper-16927
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 99
+
+SE 164-81
+
+b3 per IRS
+
+b6
+
+ADMINISTRATIVE:
+
+Confidential information provided by the Intélligence
+
+Detail, Internal Revenue Service, Vancouver, Washington,
+
+has revealed nol
+
+It has also been learned that L
+
+apparently
+
+banks at the United States National Bank of Oregon, Century
+
+Tower Branch, Portland, Oregon.
+
+The Seattle Division has conducted all investigation
+
+deemed feasible in an attempt to learn the source of
+
+This investigation has not determined
+
+this
+
+source.
+
+It therefore appears, in order to resolve
+
+this matter, that
+
+should
+
+be interviewed concerning
+
+LEADS :
+
+PORTLAND DIVISION
+
+At Portland, Oregon
+
+Will, if deemed feasible. interview
+
+Portland, for information concerning
+
+ARMED AND DANGEROUS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-16928
+
+2*
+
+---
+
+## Page 100
+
+T..
+
+TO
+
+FROM
+
+SUBJECT:
+
+hand.
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+:
+
+SAC, PORTLAND (164-41)
+
+SAC, SEATTLE
+
+(164-81) (P)
+
+NORJAK (A)
+
+00: SEATTLE
+
+BUfile 164-2111
+
+RE :
+
+NITED STATES DEPARTMENT OF JUSTICI
+
+'EDERAL BUREAU OF INVESTIGATIOI
+
+DATE:
+
+3/6/79
+
+b6|
+
+b7C
+
+Re Portland letter to Seattle dated 8/16/77.
+
+For the information of Portland Division, since
+
+date of referenced communication, the Seattle Division
+
+has conducted
+
+an investigation in an attempt to determine
+
+the source of
+
+This investigation
+
+has revealed that
+
+by the name of
+
+Washington. In addition, investigation has
+
+revealed
+
+has been seen with large amounts of
+
+money which,
+
+according toL
+
+• come Irom Omaha,
+
+Nebraska, and an unknown location in Canada. Investigation
+
+by the Omaha Division has failed to reveal any information
+
+of value concerning
+
+in that area.
+
+It has been recently learned that
+
+is
+
+now
+
+which is located at the
+
+Portland, Oregon. This business
+
+is across the street from
+
+which, apparently,
+
+Be has contact with an individual kuowledseable
+
+revealed thatl
+
+is apparently going
+
+to an unknown location in California to
+
+It is anticipated that_
+
+in Portland.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6'
+
+b7C
+
+Portland
+
+Seattle
+
+JTG : skh
+
+(4)
+
+164-81-8050
+
+b6
+
+b7C
+
+DB Cooper-16929
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 101
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI/ PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790
+
+Total Deleted Page (s) = 1
+
+Page 4 ~ Duplicate;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+Deleted Page (s)
+
+X
+
+No Duplication Fee X
+
+X
+
+For this Page
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 102
+
+PX 164-571
+
+JCK: bgb
+
+1
+
+The following investigatin was conducted by SA
+
+at Phoenix, Arizona:
+
+On November 21, 1979,L
+
+Probation and Parole Office, Phoenix, Arizona, furnished the
+
+following information concerning the possible identity of
+
+"D. B. COOPER," the person who hijacked a Portland to Seattle
+
+Northwest Airlines jet in 1971.
+
+has been supervising a parolee named WARREN
+
+DAVID SMITH, a white male, date of birth December 2, 1916,
+
+FBI Number 977-833.
+
+SMITH is an old-time bank robber whose
+
+criminal career began in 1935.
+
+WARREN DAVID SMITH
+
+was paroled on May 10, 1978, fron
+
+his latest bank robbery conviction from the Federal
+
+Detention
+
+Center at Florence, Arizona.
+
+SMITH absconded from his parole
+
+on or about September 15, 1979, while living in Mesa, Arizona.
+
+In November, 1979,
+
+'ead a recent newspaper article recallin
+
+nniversary of the Northwest Airline hijacking in the State o
+
+Washington.
+
+b6
+
+b7C
+
+b6
+
+b70
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b6
+
+b70
+
+b7D
+
+b7F
+
+recalled after reading the article,
+
+"which she had reac
+
+and remembered the name
+
+"D. B. COOPER."
+
+The
+
+Tare dated April 3rd and April 17th
+
+respectively and were apparently received by WARREN DAVID SMITH
+
+in April, 1978, prior to his parole from the Federal Detention
+
+Center at Florence.
+
+told
+
+and were
+
+written by
+
+another
+
+HUBBEL (phonetic),
+
+who uses
+
+were signed "JACK"
+
+were found in an
+
+envelope bearing the return address and name of a third prisoner,
+
+who at the time was incarcerated at Folsom Prison in California.
+
+The envelope bore the namel
+
+and also located
+
+in the same envelope was a Xerox copy of an earlier newspaper
+
+item detailing the events of the hijacking.
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b6
+
+b70
+
+b7D
+
+b7E
+
+DB Cooper-17278
+
+i! 1:1.8191
+
+---
+
+## Page 103
+
+=
+
+..
+
+PX 164-571
+
+JCK: bgb
+
+|was told bul
+
+Dayton,
+
+washington, onl
+
+J thatl
+
+whom he married in
+
+and L
+
+area.
+
+and L
+
+were raised in the Walla Walla, Washington,
+
+According to HUBBEL'S
+
+told
+
+HUBBEL that|
+
+pulled off the hijacking.
+
+further indicate
+
+used the alias D. B. COOPER a number of times when registering
+
+at motels.
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+On November 21, 1979,
+
+was tele-
+
+phonically contacted by SA JOSEPH C. KELLY in an effort to
+
+obtain
+
+later turned the documents over
+
+to the FBI on November 28, 1979.
+
+has indicated to
+
+she is extremely
+
+fearful
+
+DAVID SMITH had I
+
+the time he absconded from supervision in September,
+
+and the FBI that
+
+She advised WARREN
+
+1979.
+
+n December 5, 1979
+
+advised that
+
+told him that
+
+is believed to be accompanied
+
+who escaped from the Folsom Prison approxi-
+
+mately three months ago and is belleved to be in the southern
+
+California area.
+
+On December 6, 1979,l
+
+telephonically advised
+
+ne beLIeves HUBbaL wa
+
+incarcerated at a minimum security
+
+acility at Fort Worth, Texas, whei
+
+Isaid shel
+
+past accompanied by
+
+Jin the
+
+and is
+
+now believed to be living in the Portland, Oregon,
+
+does not recall everl
+
+mention
+
+the
+
+hijacking incident and does not know whether or not HUBBEL's
+
+contain
+
+I the information
+
+or a hoax.
+
+1
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b7C
+
+b7D
+
+b7F
+
+DB Cooper-17279
+
+---
+
+## Page 104
+
+PX 164-571
+
+JCK: bgb
+
+I
+
+The following investigatin was conducted by SA
+
+at Phoenix, Arizona:
+
+U. S.
+
+Probation and Parole Office, Phoenix, Arizona, furnished the
+
+following information concerning the possible identity of
+
+"D. B. COOPER," the person who hijacked a Portland to Seattle
+
+Northwest Airlines jet in 1971.
+
+has been supervising a parolee named WARREN
+
+DAVID SMITH, a
+
+white male, date of birth December 2, 1916,
+
+FBI Number 977-833.
+
+SMITH is an old-time bank robber whose
+
+criminal career began in 1935.
+
+WARREN DAVID SMITH
+
+was paroled on May 10, 1978, From
+
+his latest bank robbery conviction from the Federal Detention
+
+Center at Florence, Arizona.
+
+SMITH absconded from his parole
+
+on or about September 15, 1979, while living in Mesa, Arizona.
+
+In November, 1979,
+
+recent newspaper article recalling the
+
+anniversary of the Northwest Airline hijacking in the State of
+
+Washington.
+
+recalled after reading the article,
+
+which she had read
+
+and remembered the name
+
+"D. B. COOPER."
+
+are dated April 3rd and April 17th
+
+respectively and were apparently received by WARREN DAVID SMITH
+
+in April, 1978, prior to his parole from the Federal Detention
+
+Center at Florence.
+
+told
+
+were signed "JACK"
+
+and were written by another
+
+convict whose
+
+true name is HOWARD
+
+HUBBEL (phonetic), who uses
+
+the alias, "JACK HUBBEL."
+
+stated
+
+were found in an
+
+envelope bearing the
+
+return
+
+address and
+
+name of a third prisoner,
+
+who at the time was incarcerated at Folsom Prison in Calliornia.
+
+The envelope bore the namel
+
+and also located
+
+in the same envelope was a Xerox copy of an
+
+item detailing the events of the hijacking.
+
+earlier, newspaper!
+
+Г:..
+
+i/9.
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b6
+
+b7C
+
+b7D
+
+b7F
+
+b6
+
+b6
+
+b7C
+
+DB Cooper-17280
+
+---
+
+## Page 105
+
+TO
+
+FROM
+
+SUBJECT:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC,
+
+SEATTLE (164-81)
+
+SA
+
+NORJAK
+
+UNITED STATES DEPARIMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE:
+
+2/25/80
+
+b6
+
+On 2/19/80 SAI
+
+ATF, advised me he
+
+b6 per ATF
+
+SAL
+
+photograph,
+
+obtained Washington driver's license
+
+which is attached.
+
+The driver's license re-
+
+veals the following information:
+
+Height
+
+Weight
+
+Eyes
+
+DOB
+
+Address
+
+If it becomes necessarv in conducting investi-
+
+gation regardingl
+
+LEAD:
+
+b6 per ATF
+
+b7C
+
+b6 per ATF
+
+b7C
+
+it|
+
+-
+
+DR/bib
+
+(2)
+
+AT RICHFIELD, WASHINGTON
+
+Will conduct appropriate investigation to
+
+• determine
+
+is identical with D.B. Cooper.
+
+12:1-8255
+
+SERIALIZED_
+
+17E AS VIED
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-17511
+
+---
+
+## Page 106
+
+SAC, SEATTLE (164-81)
+
+SA
+
+NORJAK
+
+2/35/80
+
+b6
+
+b7C
+
+On 2/19/80 SAL
+
+ATE. advised me he
+
+b6 per ATF
+
+67C.
+
+obtained Washington driver's license
+
+photograph, which is attached. The driver's license re-
+
+veals the following information:
+
+Height
+
+Weight
+
+Eyes
+
+DOB
+
+Address
+
+If it becones necessary in conducting investi-
+
+ration regarding
+
+LEAD:
+
+b6 per ATF
+
+b7C
+
+b6 per ATF
+
+b7C
+
+if
+
+DR/bjb
+
+(2)
+
+AT RICHFIELD, FASHINGION
+
+Will conduct appropriate investigation to determine
+
+is identical with D.B. Cooper.
+
+1k-1-11-5015
+
+_FILED -
+
+Focal 1503
+
+FBI -SEATTLE
+
+b6
+
+b7C
+
+DB Cooper-17512
+
+---
+
+## Page 107
+
+TO
+
+FROM :
+
+SUBJECT:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: SAC, SEATTLE (164-81)
+
+SA
+
+NORJAK
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE:
+
+2/25/80
+
+66 |
+
+b7C
+
+On 2/19/80 SAl
+
+TATE, advised me he
+
+b6 per ATF
+
+b7C
+
+SA
+
+obtained Washington driver's license
+
+photograph,
+
+which is attached.
+
+The driver's license re-
+
+veals the following information:
+
+Height
+
+Weight
+
+Eyes
+
+DOB
+
+Address
+
+sation rea it becomes necessary in conductine investi-
+
+LEAD:
+
+b6 per ATF
+
+b7C
+
+b6 per ATF
+
+b7C
+
+if
+
+/ DR/bib
+
+/ (2)
+
+AT RICHFIELD, WASHINGTON
+
+Will conduct appropriate investigation to determine
+
+is identical with D.B. Cooper.
+
+161-81-8365
+
+SEARCHED.
+
+INDEXEDS
+
+SERIALIZED. /LL.FILED.
+
+:6A2 41021
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-17513
+
+---
+
+## Page 108
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI/PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790
+
+Total Deleted Page (s) = 118
+
+Page 16 ~ Duplicate;
+
+Page 17 ~ Duplicate;
+
+Page 18 ~ Duplicate;
+
+Page 19 ~ Duplicate;
+
+Page 20 ~ Duplicate;
+
+Page 47 ~ Duplicate;
+
+Page 48 ~ Duplicate;
+
+Page 49 ~ Duplicate;
+
+Page 50 ~ Duplicate;
+
+Page 51 ~ Duplicate;
+
+Page 52 ~ Duplicate;
+
+Page 53 ~ Duplicate;
+
+Page 54 ~ Duplicate;
+
+Page 55 ~ Duplicate;
+
+Page 56 ~ Duplicate;
+
+Page 57 ~ Duplicate;
+
+Page 58 ~ Duplicate;
+
+Page 59 ~ Duplicate;
+
+Page 60 ~ Duplicate;
+
+Page 61 ~ Duplicate;
+
+Page 67 ~ Duplicate;
+
+Page 68 ~ Duplicate;
+
+Page 72 ~ Duplicate;
+
+Page
+
+74 ~ Duplicate;
+
+Page 78 ~ Duplicate;
+
+Page 80 ~ Duplicate;
+
+Page 84 ~ Duplicate;
+
+Page 86 ~ Duplicate;
+
+Page 93 ~ Duplicate;
+
+Page 94 ~ Duplicate;
+
+Page 95 ~ Duplicate;
+
+Page 96 ~ Duplicate;
+
+Page 100 ~ Duplicate;
+
+Page 101 ~ Referral/Consult - NPRC;
+
+Page 102 ~ Referral/Consult - NPRC;
+
+Page 103 ~ Referral/Consult - NPRC;
+
+Page 104 ~ Referral/Consult - NPRC;
+
+Page
+
+105 ~ Referral/Consult - NPRC;
+
+Page 106 ~ Referral/Consult - NPRC;
+
+Page 107 ~ Referral/Consult - NPRC;
+
+Page 108 ~ Referral/Consult - NPRC;
+
+Page 109 ~ Referral/Consult - NPRC;
+
+Page 110 ~ Referral/Consult - NPRC;
+
+Page 111 ~ Referral/Consult - NPRC;
+
+Page 112 ~ Referral/Consult - NPRC;
+
+Page 113 ~ Referral/Consult - NPRC;
+
+Page 114 ~ Referral/Consult - NPRC;
+
+Page 115 ~ Referral/Consult - NPRC;
+
+---
+
+## Page 109
+
+Page 116 ~ Referral/Consult - NPRC;
+
+Page 117 ~ Referral/Consult - NPRC;
+
+Page 118 ~ Referral/Consult - NPRC;
+
+Page 119 ~ Referral/Consult - NPRC;
+
+Page 120 ~ Referral/Consult - NPRC;
+
+Page 121 ~ Referral/Consult - NPRC;
+
+Page 122 ~ Referral/Consult;
+
+Page 123 ~ Duplicate;
+
+Page 124 ~ Duplicate;
+
+Page 125 ~ Duplicate;
+
+Page 126 ~ Duplicate;
+
+Page 127 ~ Duplicate;
+
+Page 128 ~ Duplicate;
+
+Page 129 ~ Duplicate;
+
+Page 130 ~ Duplicate;
+
+Page 131 ~ Duplicate;
+
+Page 132 ~ Duplicate;
+
+Page 133 ~ Duplicate;
+
+Page 134 ~ Duplicate;
+
+Page 135 ~ Duplicate;
+
+Page 136 ~ Duplicate;
+
+Page 137 ~ Duplicate;
+
+Page 138 ~ Duplicate;
+
+Page 139 ~ Duplicate;
+
+Page 140 ~ Duplicate;
+
+Page 141 ~ Duplicate;
+
+Page 142 ~ Duplicate;
+
+Page 143 ~ Referral/Consult - NPRC;
+
+Page 144 ~ Referral/Consult - NPRC;
+
+Page 161 ~ Duplicate;
+
+Page 162 ~ Duplicate;
+
+Page 163 ~ Duplicate;
+
+Page 169 ~ Duplicate;
+
+Page 175 ~ b6; b7C; b7E;
+
+Page 176 ~ b6; b7C; b7E;
+
+Page 177 ~ b6; b7C; b7E;
+
+Page 179 ~ b6; b7C; b7E;
+
+Page 181 ~ b6; b7C; b7E;
+
+Page 183 ~ b6; b7C; b7E;
+
+Page 202 ~ Duplicate;
+
+Page 214 ~ Duplicate;
+
+Page 215 ~ Duplicate;
+
+Page 216 ~ Duplicate;
+
+Page 226 ~ Duplicate;
+
+Page 232 ~ Duplicate;
+
+Page 236 ~ Duplicate;
+
+Page 242 ~ Duplicate;
+
+Page 251 ~ Duplicate;
+
+Page 252 ~ Duplicate;
+
+Page 253 ~ Duplicate;
+
+Page 254 ~ Duplicate;
+
+Page 255 ~ Duplicate;
+
+Page 256 ~ Duplicate;
+
+Page 261 ~ Duplicate;
+
+---
+
+## Page 110
+
+Page 262 ~ Duplicate;
+
+Page 275 ~ Duplicate;
+
+Page 277 ~ Duplicate;
+
+Page 290 ~ Duplicate;
+
+Page 291 ~ Duplicate;
+
+Page 299 ~ Duplicate;
+
+Page 331 ~ Duplicate;
+
+Page 332 ~ Duplicate;
+
+Page 338 ~ Duplicate;
+
+Page 339 ~ Duplicate;
+
+Page 340 ~ Duplicate;
+
+Page 347 ~ Duplicate;
+
+Page 348 ~ Duplicate;
+
+Page 355 ~ Duplicate;
+
+Page 356 ~ Duplicate;
+
+Page 357 ~ b6; b7C; b7D;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+Deleted Page (s)
+
+X No Duplication Fee X
+
+For this Page
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 111
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+XXXTeletype
+
+Facsimile
+
+PRECEDENCE:
+
+→ Immediate
+
+Priority
+
+*X Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+7 SECRET
+
+I CONFIDENTIAL
+
+O UNCLAS EF TO
+
+XX UNCLAS
+
+Date
+
+6/27/80
+
+004
+
+FM SEATTLE (164-81) (P)
+
+TO DIRECTOR (164-2111) ROUTINE 02267
+
+LAS VEGAS ROUTINE 23292
+
+SACRAMENTO ROUTINE 2245Z
+
+SuB 98610
+
+SAN FRANCISCO (164~220) (SQ 10) ROUTINE 2301z
+
+BT
+
+new hit for Jack beat 7 armer
+
+b6|
+
+UNCLAS
+
+Space
+
+b7C
+
+NORJAR; CAA - HIJACKING (A); 00: SEATTLE.
+
+RE SEATTLE TELETYPE TO THE BUREAU JUNE 14, 1980, AND
+
+SAN FRANCISCO TELETYPE TO THE BUREAU DATED JUNE 26, 1980.
+
+FOR THE INFORMATION OF LAS VEGAS AND SACRAMENTO, THE
+
+ABOVE REFERENCES REFLECT THE FOLLOWING INFORMATION. SEATTLE
+
+HAS BEEN NEGOTIATING WITH A WRITER,
+
+b6
+
+b7C
+
+MOUNTAIN VIEW, CALIFORNIA, FOR THE PAST
+
+THREE WEEKS REGARDING A POTENTIAL SUBJECT OF CAPTIONED CASE.
+
+BELIEVES HIS RESEARCH REGARDING "D.B. COOPER" HAS UNCOVERED
+
+RETURM TO MAG.
+
+JKMA
+
+CARD UPCRATOR
+
+b6
+
+b7C
+
+Approved:
+
+Transmitted
+
+(Number)
+
+see abore port
+
+DB Cooper-18215
+
+# U.S. GOVERNMENT
+
+PRINTING OFFICE
+
+1604-81-842330302
+
+---
+
+## Page 112
+
+-
+
+FD-36 (Rev, 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+Teletype
+
+Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+[ Roûtine
+
+CLASSIFICATION:
+
+I TOP SECRET
+
+D SECRET
+
+[ CONFIDENTIAL
+
+UNCLAS EF TO
+
+• UNCLAS
+
+Date
+
+PAGE TWO SE 164-81 UNCLAS
+
+THE. REAL FIJACRER.
+
+PLAUS TO WRITE & BOCK MY THIS CASE.
+
+LED THF SEATTLE AND SIN FRANCISCO DIVISIONS TO BLJEVE THAT HE
+
+HAD OBTAINED A COPY DE ONE POTENTIAL SULJFCI'S FINGERPRINTS FROM
+
+MICROFILM FIPLOYMENT RECORDS. L
+
+BAG IN PROVIDE THESE
+
+FINGERPPINHE TO THE SAN FRANCISCO DIVICIO DE JUNE 24, 1980.
+
+THE SEATTLE DIVISION IN COIJUNCTINN WITH THE BUPFAN LEGAL SECTION
+
+HAS GREED TO NOTIFY
+
+IT THE PRINTS DO MOT MATCH, WITHIN
+
+FIVE NOPKING DAYS FOLLOWING THE COMPLITINN OF TIF FINGEPPRINT
+
+COMPARISON. IF TUE PRINTS ARE IDENTICAL, TITE, FRI WITI, MAKE
+
+ADDITIONAL CONTACTS WITH
+
+AND HP. HAS AGREED TO PROVIDE TIE
+
+FRI WITIT ALL OF HIS RESEARCE DATA.
+
+PECAUSE CE THE ABOVE INTOMATION, THE SFATTTE DIVISION
+
+REQUISTED TILAT TIT LATENT FINGERPRIN" SEOTION OF MET IDEUTIFICATION
+
+DIVISION EXFEDITINUSLY COMPARE THE FINGERPRINTE THAT THE SAN
+
+EPANCISCO DIVISION WAS TO RECFIVE.
+
+APPFARED AT THE SAN FPANCISCO OFFICE ON THE
+
+AFTERNOON DE JUNE 24, 1980. HE EXPLAINED TITE HE DID HOT HAVE
+
+THE FINGERPPINT CARD FOR THE FOTENTIFI, CUPOICT. IF SAID HE
+
+DFTERMINEN TITO THIS INDIVIDUAL HAD PORTED FOP A GAMBLING
+
+ECTAPLISUNENT IN THE LAKF TAWCE - STETTLINE, NEVADA, AREA AND THAT
+
+b7C
+
+b6|
+
+b7C
+
+Approved:
+
+Transmitted -
+
+(Number)
+
+I U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18216
+
+---
+
+## Page 113
+
+son
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+• Teletype
+
+• Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+D Priority
+
+• Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+• SECRET
+
+• CONFIDENTIAL
+
+D UNCLAS EF TO
+
+• UNCLAS
+
+Date
+
+PAGE TIRTE ST IGA-RI INCLAS
+
+THE ACTUAL, CARD OF MICROFILI OF THIS CAPD WERF I' THP FOSSESSINN
+
+OF THE CLUB AND/OR THE SHERIFF'S OFFICT. HE STID THAT AS A
+
+PRIVATE CITIRD! HE MAS UNADLE TO ORTETA THIS CARD AND WAS
+
+TIERFFOPE POUFSTING THE FRI TO ORTAIN THIS CARD FOR TPANSHITTAL
+
+TO TIE IDERIFICATINN DIVISIN. DEERS ADVISTO TEAT IT HAS
+
+THT: UNDERSTANDING OF MIE CIN FRANCISCO OFFICE TITAT
+
+HAD THT
+
+CARD IN HIS POSSESSIN AND WAS SO SUPPEDEP THE CARD TO THE FBI.
+
+CONTINDS THET HE EVER SAID IF EYD THE CARD, DUT USED THE
+
+TEP "E LNCATED" THE CARD.
+
+ON TUT 25, 1990, FIT SEATALE DIVISION PETFPIONICALTY
+
+I'TERVIEUTD
+
+REGARDING THIS MINTER AD IN PROVIDED THE
+
+FOLLOWING INFOR ITIOT. HE STARED TIAT HIS PECTICE FOR HIS
+
+ICO HE REUTALED TINT D. P. COOPER IS POITATIN I INDIVIDUI
+
+BY T M O The CROUTE, DITE ME RINGE MaY 22, 1944, AT
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+EMPLOYED AT TIT NEVADE LODGE, & GARLING PATERITSTRTNN OT LAKE
+
+TAINE, "EV"ON. FARMER REPORIIDLM VE FINATRPRINATD IT ORDER TR
+
+OTTo ? GORLING CORE CARD DUATE CUP FeRInA Or 1003-1969.
+
+STITY DI
+
+Approved:
+
+Transmitted
+
+(Number)
+
+(Time)
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18217
+
+---
+
+## Page 114
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+• Teletype
+
+• Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+[ Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+• SECRET
+
+CONFIDENTIAL
+
+UNCLAS EF TO
+
+UNCLAS
+
+Date
+
+PACE FOUR SE 104-91 CLAC
+
+ET TITTIES SITATTO TITT TIFPE
+
+HITF MUTI IINCFPPPIIT CARDS FILLED ME FOO FETTE AD THET TIE
+
+FINGERPRINTS HERE TAKEI! MY
+
+WASHOF
+
+COUNCY, NEVADA, AND THET TIT THREE SIRE DE FINGERPRINDS ARE FEING
+
+MIRATED RY TIF NEVADE IODSE, THE MACHE COTINY SUPRIFF'S OFFICE,
+
+AND C. I. I., SACRAMENTO, CALIFORNIA.
+
+PION PILATED THET ONF
+
+SET OF TITE PRINTS IS CURRENTLY DOING IFTO RY
+
+DOUGLAS COUNTY, NEVADE, TELEPIONE MIRER
+
+BELATFD THAT SOME ME THE AFORTMENETONED FINGERORIUTC ARF ON
+
+MICROFIIM.
+
+STATED THAT JACK FADED IS AM ACCONTLISHED
+
+SKYDIVEP IN HAS COMPLETED OVER 200 JUDS, AM ACCO"PLISHED SKII!
+
+DIVER AND A MOTORCICIE ENTHUSIIST. FAPPER APPARITIY IAS SPENT
+
+THE MATORIMY OF HIS LIFE IN YUPS CITY, CALIFORNIA.
+
+BELIEVES
+
+TIAT FARMER DOES MOT TAVE A LILITARY RECORD IN THAT AT AGE 18
+
+FARMP. ATTEMPTED TO GET INTO THE UNITED CRATES AIP FOPCE, PUT
+
+WAC REJFCTED DUT TO A DISEASE IN HIS IRES.
+
+ANY ARREST RECORD FOR FARMFR.
+
+IS UNAWARE OF
+
+STATED TIAT FARTER IAD AN ACCOMPLICT BY TIT NAME OF
+
+GARTI! DUNNING, HIN WAS APPROXIXATELY 44 YARE OLD IN 1971 AT THE
+
+TIP OF THE HIJACKING. TIT IXACT DATE AND PLACE OF BIRTH FOR
+
+b6 |
+
+b7C
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+Approved:
+
+Transmitted
+
+(Number)
+
+Per
+
+(Time)
+
+#U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18218
+
+---
+
+## Page 115
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+[ Teletype
+
+7 Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+[ Priority
+
+• Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+SECRET
+
+CONFIDENTIAL
+
+UNCLAS EF TO
+
+UNCLAS
+
+Date
+
+PAGE FIVE SP 164-81 UNCLES
+
+DUTHING APE UNION TO
+
+RESFARCH HIS PIUTALED THAT
+
+DUNTING WAS IN THE UNITED SITED ARMY DURING TIE LATE 1950'S AND
+
+AT ONE POINT HE MAS STATIONED IN GREENLAND. FURTIEPMORE, DUNNING
+
+HAS SPENT AFPROXIIATELY 15 YEERE IN YURA CITY, CALIFORNIA, AND
+
+THAT DUNNING PREVIOUSLY HORKED EOR PARMIN'S CLUT, SOUTH LAKE
+
+b6
+
+b7C
+
+RELATED THAT HIS RESEARCH HAS REVFALEN TITAT THERE IS
+
+A STRONG POSSIBILITY THAT TACK FARMER AND GARTI DUNHING WERE
+
+INVOLVED IN A RIP OFF OF FUNDS FROM THE NEVANA LODGE ALID THUS
+
+WANTED TO DISAPPEAR. HIS RESEARCE REVE?LE THAT DI ANGUST 5, 1969,
+
+AT CRYPTAL POINT NEAR THE NEVADA LODGI, UFVADA, TINT FARIER AND
+
+DUNING DICAPPFARED IN A SKIN DIVING ACCIDENT AND TIFIR BODIES
+
+HERE NEVER RECOVERED. FARMER AND DUNNING WETE REPORTENLY
+
+DECLARED LEGALLY DEAD AND
+
+b6
+
+b7C
+
+COMTECTURES THAT FOLLOWING THEIR CONVEMIFNT DICAPPEARANCE
+
+THAT FAR'ER AND DUNNING CARRIED OUT CAPTIONED HITACHING DUPING
+
+b6|
+
+b7C
+
+1971.
+
+THE FOLLOFING LFADS ARE BEING SET OUT IN AN ATTFMI TO
+
+ORTAIN POSSIPLE FINGERPRINTS FOR FARIES AND DENNING SO THAT THEY
+
+Approved:
+
+Transmitted
+
+(Number)
+
+(Time)
+
+Per
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18219
+
+---
+
+## Page 116
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+[ Teletype
+
+Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+I Rottine
+
+CLASSIFICATION:
+
+I TOP SECRET
+
+7 SECRET
+
+CONFIDENTIAL
+
+I UNCLAS EF TO
+
+I UNCLAS
+
+Date
+
+PAGE SIX SE 164-31
+
+UNCLAS
+
+CAN IF COMPARED WITH THE LATINT FINGERPRINTS IN CAPTIONED CASE.
+
+THE RUREAU IS PEQUESTED TO SPARCH ALL AVAILARLT CRIMINAL AND
+
+MILITARY RECORDS REGAPDING JACK: FARMER AND GARTH DUNNING.
+
+SACRAMENTO AP
+
+SACRAMENTO, CALIFOTHIE: SEARCH D'Y RECORDS
+
+FOR FAPMER AND DUMING.
+
+SEARCH CII RECORDS FOP. FARNER AND DUNNING.
+
+LAS VEGAS AT LAKE
+
+TAHOE, NEVADA: CONTACT APDROPRIATE LAW
+
+ENFORCIUTIT AGENCIES MID/OR MANAGE"ENT OF TIF MEMADE LODGE IN
+
+AN ATTFMPT TO LOCATE FINGERPRINTS FOR JACY. FARMER INP INFORMATION
+
+OF THE ALLEGED ACCIDENT BY FARMER AND DUNNING ON AUGUST 5,
+
+1969.
+
+ALL LOCATED FINGERPRINTS ENR PARMAP AND/OR DURING SHOULD
+
+BE INNFDIATELY POPMARDED TO SE
+
+DIVISION, LATENT FINGFRERINT SECTION.
+
+ET
+
+IDEUPIFICATINNI
+
+b6l
+
+b7C
+
+Approved:
+
+Transmitted (Number)
+
+(Time)
+
+#U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18220
+
+---
+
+## Page 117
+
+SE0084 1792245Z
+
+RR HQ LV SC SF
+
+DE SE
+
+R 272245Z JUN 80
+
+M SEATTLE (164-81) (P)
+
+TO DIRECTOR (164-2111) ROUTINE
+
+LAS VEGAS ROUTINE
+
+SACRAMENTO ROUTINE
+
+SAN FRANCISCO (164-220) (SQ 10) ROUTINE
+
+Sue 16,0
+
+BT
+
+UNCLAS
+
+NORJAK; CAA - HIJACKING (A); 00: SEATTLE.
+
+RE SEATTLE TELETYPE TO THE BUREAU JUNE 14, 198D, AND
+
+SAN FRANCISCO TELETYPE TO THE BUREAU DATED JUNE 26, 1980•
+
+• FOR THE INFORMATION OF LAS VEGAS AND SACRAMENTO, THE
+
+ABOVE REFERENCES REFLECT THE FOLLOWING INFORMATION. SEATTLE
+
+•HAS BEEN NEGOTIATING WITH A WRITER,
+
+MOUNTAIN VIEW, CALIFORNIA, FOR THE PAST
+
+THREE WEEKS REGARDING A POTENTIAL SUBJECT OF CAPTIONED CASE.
+
+BELIEVES HIS RESEARCH REGARDING "D.B. COOPER" HAS UNCOVERED
+
+b6
+
+67C
+
+DB Cooper-18221
+
+164-81-8423
+
+---
+
+## Page 118
+
+PAGE TWO SE 164-81 UNCLAS
+
+THE REAL HIJACKER.
+
+PLANS TO WRITE A BOOK ON THIS CASE.
+
+LED THE SEATTLE AND SAN FRANCISCO DIVISIONS TO BELIEVE THAT HE
+
+HAD OBTAINED A COPY OF THE POTENTIAL SUBJECT'S FINGERPRINTS FROM
+
+MICROFILM EMPLOYMENT RECORDS.
+
+WAS TO PROVIDE THESE
+
+FINGERPRINTS TO THE SAN FRANCISCO
+
+DIVISION ON JUNE 24, 1980•
+
+THE SEATTLE DIVISION IN CONJUNCTION WITH THE BUREAU LEGAL SECTION
+
+HAS AGREED TO NOTIFYI
+
+IF THE PRINTS DO NOT MATCH, WITHIN
+
+FIVE WORKING DAYS FOLLOWING THE COMPLETION OF THE FINGERPRINT
+
+COMPARISON. IF THE PRINTS ARE IDENTICAL, THE FBI WILL MAKE
+
+ADDITIONAL CONTACTS WITH
+
+AND HE HAS AGREED TO PROVIDE THE
+
+FBI WITH ALL OF HIS RESEARCH DATA.
+
+BECAUSE OF THE ABOVE INFORMATION, THE SEATTLE DIVISION
+
+REQUESTED THAT THE LATENI FINGERPRINI SECTION OF THE IDENIIFICATION
+
+DIVISION EXPEDITIOUSLY COMPARE THE FINGERPRINTS THAI THE SAN
+
+FRANCISCO DIVISION WAS TO RECEIVE.
+
+APPEARED AT THE SAN FRANCISCO OFFICE ON THE
+
+AFTERNOON OF JUNE 24, 1980. HE EXPLAINED THAT HE DID NOT HAVE
+
+THE FINGERPRINT CARD FOR THE POTENTIAL SUBJECI. HE SAID HE
+
+DETERMINED THAT THIS INDIVIDUAL HAD WORKED FOR A GAMBLING
+
+ESTABLISHMENT IN THE LAKE TAHOE - STATELINE, NEVADA, AREA AND THAT
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18222
+
+---
+
+## Page 119
+
+PAGE THREE SE 164-81 UNCLAS
+
+THE ACTUAL CARD OR MICROFILM OF THIS CARD WERE IN THE POSSESSION
+
+OF THE CLUB AND/OR THE SHERIFF'S OFFICE. HE SAID THAT AS A
+
+PRIVATE CITIZEN HE WAS UNABLE TO OBTAIN THIS CARD AND WAS
+
+THEREFORE REQUESTING THE FBI TO OBTAIN THIS CARD FOR TRANSMITTAL
+
+TO THE IDENTIFICATION DIVISION.
+
+WAS ADVISED THAT IT WAS
+
+THE UNDERSTANDING OF THE SAN FRANCISCO OFFICE THAT HAD THE
+
+CARD IN HIS POSSESSION AND WAS TO SURRENDER THE CARD TO THE FBI.
+
+CONTENDS THAT HE NEVER SAID HE HAD THE CARD, BUT USED THE
+
+TERM "HE LOCATED" THE CARD.
+
+ON JUNE 25, 198D, THE SEATTLE DIVISION TELEPHONICALLY
+
+INTERVIEWED
+
+REGARDING THIS MATTER AND HE PROVIDED THE
+
+FOLLOWING INFORMATION. HE STATED THAT HIS RESEARCH FOR HIS
+
+BOOK HAS REVEALED THAT D. B. COOPER IS ACTUALLY AN INDIVIDUAL
+
+BY THE NAME OF JACK FARMER, DATE OF BIRTH MAY 22, 1944, AT
+
+YUBA CITY, CALIFORNIA. FURTHERMORE, JACK FARMER WAS FORMERLY
+
+EMPLOYED AT THE NEVADA LODGE, A GAMBLING ESTABLISHMENI AT LAKE
+
+TÁHOE, NEVADA. FARMER REPORIEDLY WAS FINGERPRINTED IN ORDER TO
+
+OBTAIN A GAMBLING WORK CARD DURING THE PERIOD OF 1968-1969.
+
+STATED THAT
+
+OF THE NEVADA CLUB IS A
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18220
+
+---
+
+## Page 120
+
+PAGE FOUR SE 164-81 UNCLAS
+
+TELEPHONE NUMBER
+
+HE FURTHER RELATED THAT THERE
+
+WERE THREE FINGERPRINT CARDS FILLED OUT FOR FARMER AND THAT THE .
+
+FINGERPRINTS WERE TAKEN BY
+
+WASHOE
+
+COUNTY, NEVADA, AND THAI THE THREE SETS OF FINGERPRINIS ARE BEING
+
+MAINTAINED BY THE NEVADA LODGE, THE WASHOE COUNTY SHERIFF'S OFFICE,
+
+AND C. I. I., SACRAMENTO, CALIFORNIA.
+
+JALSO RELATED THAI ONE
+
+SET OF THE PRINTS IS CURRENTLY BEING HELD BY
+
+DOUGLAS COUNTY, NEVADA, TELEPHONE NUMBER
+
+RELATED THAT SOME OF THE AFOREMENTIONED FINGERPRINTS ARE ON
+
+MICROFILM.
+
+STATED THAI JACK, FARMER IS AN ACCOMPLISHED
+
+SKYDIVER WHO HAS COMPLETED OVER 20D JUMPS, AN ACCOMPLISHED SKIN
+
+DIVER AND A MOTORCYCLE ENTHUSIAST. FARMER APPARENTLY HAS SPENT
+
+THE MAJORITY OF HIS LIFE IN YUBA CITY, CALIFORNIA.
+
+BELIEVES
+
+THAT FARMER DOES NOT HAVE A MILITARY RECORD IN THAT AT AGE 18
+
+FARMER ATTEMPTED TO GET INTO THE UNITED STATES AIR FORCE, BUT
+
+WAS REJECTED DUE TO A DISEASE IN HIS KNEES.
+
+IS UNAWARE OF
+
+ANY ARREST RECORD FOR FARMER. .
+
+STATED THAT FARMER HAD AN ACCOMPLICE BY THE NAME OF
+
+GARTH DUNNING, WHO WAS APPROXIMATELY 44 YEARS OLD IN 1971 AT THE
+
+TIME OF THE HIJACKING. THE EXACT DATE AND PLACE OF BIRTH FOR
+
+'b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18224
+
+---
+
+## Page 121
+
+PAGE FIVE SE 164-81 UNCLAS
+
+DUNNING ARE UNKNOWN TOI
+
+RESEARCH HAS REVEALED THAT
+
+DUNNING WAS IN THE UNITED STATED ARMY DURING THE LATE 1950'S AND
+
+AT ONE POINT HE WAS STATIONED IN GREENLAND. FURTHERMORE, DUNNING
+
+HAS SPENT APPROXIMATELY 15 YEARS IN YUBA CITY, CALIFORNIA, AND
+
+THAI DUNNING PREVIOUSLY WORKED FOR BARNIE'S CLUB, SOUTH LAKE
+
+TAHOE .
+
+RELATED THAT HIS RESEARCH HAS REVEALED THAT THERE IS
+
+A STRONG POSSIBILITY THAT JACK FARMER AND GARTH DUNNING WERE
+
+INVOLVED IN A RIP OFF OF FUNDS FROM THE NEVADA LODGE AND THUS
+
+• WANTED TO DISAPPEAR. HIS RESEARCH REVEALS THAT ON AUGUST 5, 1969,
+
+AT CRYSTAL POINI NEAR THE NEVADA LODGE, NEVADA, THAT FARMER AND
+
+DUNNING DISAPPEARED IN A SKIN DIVING ACCIDENT AND THEIR BODIES
+
+WERE NEVER RECOVERED. FARMER AND DUNNING WERE REPORTEDLY
+
+DECLARED LEGALLY DEAD AND
+
+CONJECTURES THAI FOLLOWING THEIR CONVENIENI DISAPPEARANCE
+
+THAT FARMER AND DUNNING CARRIED OUT CAPTIONED HIJACKING DURING
+
+1971.
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+b6
+
+b7c
+
+THE FOLLOWING LEADS ARE BEING SET OUT IN AN ATTEMPT TO
+
+OBTAIN POSSIBLE FINGERPRINIS FOR FARMER AND DUNNING SO THAT THEY
+
+DB Cooper-18225
+
+---
+
+## Page 122
+
+... *
+
+PAGE SIX SE 164-81 UNCLAS
+
+CAN BE COMPARED WITH THE LATENI FINGERPRINIS IN CAPTIONED CASE.
+
+THE BUREAU IS REQUESTED TO SEARCH ALL AVAILABLE CRIMINAL AND
+
+MILITARY RECORDS REGARDING JACK FARMER AND GARTH DUNNING.
+
+SACRAMENTO AT SACRAMENTO, CALIFORNIA: SEARCH DIV RECORDS
+
+FOR FARMER AND DUNNING.
+
+SEARCH CII RECORDS FOR FARMER AND DUNNING.
+
+LAS VEGAS AI LAKE TAHOE, NEVADA: CONTACI APPROPRIATE LAW
+
+ENFORCEMENI AGENCIES AND/OR MANAGEMENT OF THE NEVADA LODGE IN
+
+AN ATTEMPT TO LOCATE FINGERPRINIS FOR JACK FARMER AND INFORMATION
+
+OF THE ALLEGED ACCIDENT BY FARMER AND DUNNING ON AUGUST 5,
+
+1969.
+
+ALL LOCATED FINGERPRINIS FOR FARMER AND/OR DUNNING SHOULD
+
+BE IMMEDIATELY FORWARDED TO SAL
+
+IDENTIFICATION
+
+DIVISION, LATENT FINGERPRINI SECTION.
+
+BT
+
+b6
+
+b7c
+
+DB Cooper-18226
+
+---
+
+## Page 123
+
+SE00D4 17922457
+
+RR HQ LV SC SF
+
+DE SE
+
+R 272245Z JUN 88
+
+M SEATTLE (164-31) (P)
+
+JUB. 951, i
+
+TO DIRECTOR (164-2111) ROUTINE•
+
+LAS VEGAS ROUTINE
+
+SACRAMENTO ROUTINE
+
+SAN FRANCISCO (164-220) (SQ 1D) ROUTINE
+
+BT.
+
+UNCLAS.
+
+NORJAK; CAA - HIJACKING (A); 00: SEAIILE.
+
+RE SEATTLE TELETYPE TO THE BUREAU JUNE 14, 198D, AND
+
+SAN FRANCISCO TELETYPE TO THE BUREAU DATED JUNE 26, 1985.
+
+FOR THE INFORMATION OF LAS VEGAS AND SACRAMENTO, THE
+
+ABOVE REFERENCES REFLECT THE FOLLOWING INFORMATION. SEATTLE
+
+HAS BEEN NEGOTIATING WITH A WRITER,
+
+MOUNTAIN VIEW, CALIFORNIA, FOR THE PAST
+
+THREE WEEKS REGARDING A POTENTIAL SUBJECI OF CAPTIONED CASE.
+
+BELIEVES HIS RESEARCH REGARDING "D.B. COOPER" HAS UNCOVERED
+
+• 66
+
+b7C
+
+DB Cooper-18227
+
+101-51-4735
+
+---
+
+## Page 124
+
+Routing Slip
+
+0-7 (Rev. 5-8-78)
+
+TO: SAC: Seattle
+
+Albany
+
+Houston
+
+Albuquerque
+
+Indianapolis
+
+Alexandria
+
+Jackson
+
+Anchorage
+
+Jacksonville
+
+Atlanta
+
+Kansas City
+
+Baltimore
+
+Knoxville
+
+Birmingham
+
+Las Vegas
+
+Boston
+
+Buffalo
+
+Little Rock
+
+Los Angeles
+
+Butte
+
+Louisville
+
+Charlotte
+
+Memphis
+
+Chicago
+
+Miami
+
+Cincinnati
+
+Mil waukee
+
+Cleveland
+
+Minneapolis
+
+Columbia
+
+Mobile
+
+Dallas
+
+Newark
+
+Denver
+
+New Haven
+
+Detroit
+
+New Orleans
+
+El Paso
+
+New York City
+
+Honolulu
+
+Norfolk
+
+3
+
+SAC, New Rochelle (MRA)
+
+SAC, Brooklyn-Queens (MRA)
+
+RE:
+
+NORJAK
+
+(Copies to Offices (
+
+red)
+
+[J Oklahoma City
+
+Omaha
+
+Philadelphia
+
+Phoenix
+
+Pittsburgh
+
+Portl and
+
+Richmond
+
+Sacramento
+
+St. Louis
+
+Salt Lake City
+
+San Antonio
+
+San Diego
+
+San Francisco
+
+San Juan
+
+Savannah
+
+• Seattle
+
+7 Springfield
+
+Tamp a
+
+I Washington Field
+
+Quantico
+
+ASAC, Rapid City (""Mini")
+
+TO LEGAT:
+
+1 Bern
+
+Bonn
+
+Buenos Aires
+
+saracas
+
+Hong Kong
+
+London
+
+¡ Madrid
+
+S Manild
+
+• Mexico City
+
+Ottawa
+
+¡ Paris
+
+¡ Rome
+
+Tokyo
+
+6-27-80
+
+(Date)
+
+Retention
+
+For appropriate
+
+• For information = optional
+
+action
+
+• Surep, by
+
+The enclosed is for your information. If used in a future report, ( conceal all
+
+sources, < paraphrase contents.
+
+Enclosed are corrected pages from report of SA.
+
+Remarks:
+
+Enclosed is a copy of the LFPS report
+
+of 3-14-80 to Portland, which set out result
+
+of latent print examination of U.S. currency
+
+recovered in this case.
+
+164-81 - 84 102
+
+SEARCHED. NEED
+
+SERIALIZED.
+
+WUN 6: 0 1980
+
+Enc.
+
+(1)
+
+Bufile
+
+164-2111
+
+Urfile 164-81
+
+b6
+
+b7C
+
+DB Cooper-18233
+
+FBI/DOJ
+
+---
+
+## Page 125
+
+1-236 (Rev. 10-26-79)
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+164-41
+
+164-2111'
+
+A-45410
+
+TO: SAC, Portland
+
+COPY
+
+March 14, 1980
+
+RE: NORJAK
+
+REFERENCE:
+
+Airtel 2-13-80
+
+EXAMINATION REQUESTED BY: Portland
+
+Approximately so, 800.00 in U.s. currency, Q58
+
+The Q specimen is further described in a separate Laboratory
+
+report.
+
+No latent prints are present or were developed on the U.S.
+
+currency.
+
+The currency is being returned under separate cover.
+
+COPY
+
+DB Copper-18234
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+164-81-8424
+
+FBI/DOJ
+
+---
+
+## Page 126
+
+===-
+
+Routing Slip
+
+0-7 (Rev. 5-8-78)
+
+TO: SAC: Seattle
+
+Albany
+
+Albuquerque
+
+→ Houston
+
+l Indianapolis
+
+Alexandria
+
+Jackson
+
+Anchorage
+
+Jacksonville
+
+Atlanta
+
+Kansas City
+
+Baltimore
+
+Knoxville
+
+Birmingham
+
+Las Vegas
+
+Boston
+
+Little Rock
+
+Buffalo
+
+Butte
+
+Los Angeles
+
+Louisville
+
+Charlotte
+
+Memphis
+
+Chicago
+
+Miami
+
+Cincinnati
+
+Milwaukee
+
+Cleveland
+
+Minneapolis
+
+Columbia
+
+Mobile
+
+Dallas
+
+Newark
+
+Denver
+
+New Haven
+
+Detroit
+
+New Orleans
+
+El Paso
+
+New York City
+
+Honolulu
+
+Norfolk
+
+00
+
+SAC, New Rochelle (MRA)
+
+SAC, Brooklvn -Queens (MRA
+
+RE:
+
+NORJAK
+
+(Copies to Offices Checked)
+
+• Oklahoma City
+
+Omaha
+
+Philadelphia
+
+Phoenix
+
+Pittsburgh
+
+Portland
+
+TO LEGAT:
+
+B Bern
+
+Buenos Aires
+
+] Hong Kong
+
+Richmond
+
+St. Lamento
+
+Salt Lake City
+
+San Antonio
+
+San Diego
+
+San Francisco
+
+San Juan
+
+] Mexico City
+
+¡ Ottawa
+
+I Paris
+
+Rome
+
+Tokyo
+
+Savannah
+
+Seattle
+
+Springfield
+
+Tamp a
+
+Washington Field
+
+Quantico
+
+ASAC, Rapid City (""Mini")
+
+6-27-80
+
+(Date)
+
+Sat E, 11
+
+For appropriate
+
+• For information → optional
+
+• Surep, by
+
+• The enclosed is for your information. If used in a future report, [ conceal all
+
+sources, Ly paraphrase contents.
+
+• Enclosed are corrected pages from report of SA
+
+dated
+
+Remarks:
+
+enclosed is a copy of the Lets report
+
+of 3-14-80 to Portland, which set out result
+
+of latent print examination of U.s. currency
+
+recovered in this case.
+
+64-81 - 14221*1
+
+SEARCHED... INDEXED.
+
+SERIALIZED.
+
+- FILED
+
+JUN 3 O 1980
+
+FBI - SEATTLE
+
+Enc.
+
+(1)
+
+Bufile 164-2111
+
+Urfile 164-81
+
+FBI/DOJ
+
+..
+
+DB Cooper-18235
+
+---
+
+## Page 127
+
+•1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+164-41
+
+FBI FILE NO.
+
+164-211₽)
+
+LATENT CASE NO. A -45410
+
+TO: SAC, Portland
+
+COPY
+
+March 1z, 1980
+
+RE: NORJAK
+
+REFERENCE:
+
+Airtel 2-13-80
+
+EXAMINATION REQUESTED BY:
+
+Portland
+
+SPECIMENS:
+
+Approximately $5, 800. 00 in U.S. currency, 258
+
+The Q specimen is further described in a separate Laboratory
+
+report.
+
+No latent prints are present or were developed on the U.S.
+
+currency.
+
+The currency is being returned under separate cover.
+
+COPY
+
+DB Cooper-18236
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY 641-81-54-241 Faroos
+
+---
+
+## Page 128
+
+Routing Slip
+
+(Copies to Offices Checked)
+
+0-7 (Rev. 5-8-78)
+
+TO: SAC: Seattle
+
+• Albany
+
+3 Houston
+
+Oklahoma City
+
+¡ Albuquerque
+
+Indianapolis
+
+)mah:
+
+• Alexandria
+
+Jackson
+
+Philadelphie
+
+Anchorage
+
+Atlanta
+
+Jacksonville
+
+Phoenix
+
+Kansas City
+
+Pittsburgh
+
+Baltimore
+
+Knoxville
+
+Portland
+
+Birmingham
+
+Las Vegas
+
+Richmond
+
+Boston
+
+Little Rock
+
+Sacrament
+
+Buffalo
+
+Los Angeles
+
+Sto Louis
+
+Butte
+
+Louisville
+
+Salt Lake City
+
+Charlotte
+
+Memphis
+
+San Antonio
+
+Chicago
+
+Miami
+
+San Diego
+
+Cincinnati
+
+Milwaukee
+
+San Francisco
+
+Cleveland
+
+Minneapolis
+
+San Juan
+
+Columbia
+
+Mobile
+
+Savannah
+
+Dallas
+
+Newark
+
+Seattle
+
+Denver
+
+New Haven
+
+Springfield
+
+Detroit
+
+New Orleans
+
+Tamp a
+
+El Paso
+
+New York City
+
+Washington Field
+
+Honolulu
+
+Norfolk
+
+Quantico
+
+SAC, New Rochelle (MRA)
+
+[J ASAC, Rapid City ("Mini"')
+
+SAC, Brooklvn-Queens (MRA)
+
+RE:
+
+NORJAK
+
+TO LEGAT:
+
+Born
+
+Bonn
+
+~ Buenos Aires
+
+Caracas
+
+6-27-80
+
+(Date)
+
+Retention
+
+For appropriate
+
+= For information → optional
+
+→ action
+
+• Surep, by
+
+The enclosed is for your information. If used in a future report, [ conceal all
+
+sources, [ paraphrase contents.
+
+• Enclosed are corrected pages from report of SA
+
+dated
+
+Remarks:
+
+Enclosed is a copy of the LFPS report
+
+of 3-14-80 to Portland, which set out result
+
+of latent print examination of U.S. currency
+
+recovered in this case.
+
+164-81-8421
+
+SEARCHE
+
+Enc. (1)
+
+Bufile 164-2111
+
+Urfle 164-81
+
+JUN SJO 1980/
+
+FBI - SEATTLE
+
+FBI/DOJ
+
+DB Cooper-18237
+
+---
+
+## Page 129
+
+1-330 (iRey. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+164-41
+
+164211)
+
+A -45410
+
+TO: SAC, Portland
+
+COPY
+
+March 11, 1980
+
+RE: NORJAK
+
+REFCRENCE:
+
+Airtel 2-13-80
+
+EXAMINATION REQUESTED BY:
+
+Portland
+
+SPECIMENS:
+
+Approximately 55, 800. 00 in U.S. currency, Q58
+
+The Q specimen is further described in a separate Laboratory
+
+report.
+
+No latent prints are present or were developed on the U.S.
+
+currency.
+
+The currency is being returned under separate cover.
+
+COPY
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY 1641-51-8134
+
+DB Cooper-18238
+
+FBI/DOS
+
+---
+
+## Page 130
+
+SF0&13 1840455Z
+
+RR SE LV SC
+
+DE SF 813
+
+R 0624Z JULY 8
+
+FM SAN FRANCISCO (164-220) (P) (SQ. 10)
+
+TO SEATTLE (164-81) (ROUTINE)
+
+LAS VEGAS (ROUTINE)
+
+SACRAMENTO (ROUTINE)
+
+Ented let tormen
+
+SuB 954,6
+
+UNCLAS
+
+NORJAK; CAA - HIJACKING (A), 00: SEATTLE.
+
+RE SEATTLE TELETYPE TO BUREAU, JUNE 27, 1980.
+
+FOR THE INFORMATION OF ALL OFFICES SAN FRANCISCO INDICES
+
+SHOW THREE REFERENCES TO A
+
+REFERENCE WAS IN NOVEMBER,
+
+THE FILE NUMBER IS THE SAME.
+
+ONE
+
+AND THE OTHER TWO ARE IN
+
+AS IS THE BIRTHDATA,
+
+THIS INDIVIDUAL DES-
+
+b6
+
+b7C
+
+CRIBED AS WHITE MALE WITH ASN
+
+IT APPEARS THAT UNDER THE FILE DESTRUCTION PROGRAM THIS
+
+HAS BEEN DESTROYED AT SAN FRANCISCO •
+
+FILE
+
+BT
+
+b6
+
+b7C
+
+164-81-8425
+
+SERIALLED
+
+b6
+
+b7C
+
+DB Cooper-18239
+
+---
+
+## Page 131
+
+300613 18494552
+
+iN SE LV SC
+
+DE SF 0 13
+
+R 0. 47 JULY 8
+
+FU SAN FRANCISCO (164-E25) (P) (30016)
+
+TO SEATTLE (164-01) CROUTINE)
+
+SUE 951,1
+
+LAS VEGAS (ROUTINE)
+
+SACRANELTO (ROUTINE)
+
+BI
+
+UNCLAS
+
+NORJAI; CAA - HIJACKING (A), 00: SEATTLE.
+
+RE SEATTLE TELETYPE TO BUALAU, JUNE 27, I9ÓNO
+
+FOR THE INFORMATION OF ALL OFFICEO EAU FRANCISCO INDICES
+
+SHOW THREE REFERENCES TO
+
+REFERENCE JAS IN NOVENDER,
+
+THE FILE NUMBER IS THE SANE,
+
+ONE
+
+AUL THE OTHER TWO ARE IN
+
+JAS IS INE BIRTHDATA, •
+
+THIS IRDIVIDUAL VEN-
+
+• GRIBED AS WHITE MALE WITH ASC
+
+IT APPEARS THAT ULDER THE FILE DESTAUCTION PROGRAM THIS
+
+HAS BEEN DESTROYED AT SAN FRANCISCO
+
+b6
+
+b7C
+
+FILE
+
+ĐT
+
+b6
+
+67C
+
+1641-51.54
+
+DB Cooper-18240
+
+---
+
+## Page 132
+
+SF0813 1840455Z
+
+RR SE LV SC
+
+DE SF '$ 13
+
+R GUCAZ JULY 8.
+
+EM SAN FRANCISCO (164-DCE) (P) (SA •I)
+
+TO, SEATTLE (164-81) (ROUTINE)
+
+• LAS VEGAS. (HOUTINE)
+
+SAGRAMENTO (ROUTINE)
+
+SuB 986, 0.
+
+BI
+
+UNCLAS
+
+HORJAK: CAA - HIJACKING (A), 00:
+
+SEATTLE.
+
+RE SEATTLE TELETYPE TO BUREAU, JUVE E7, 1900.
+
+FER THE INFO MATION OF ALL OFFICES SAN FRANGISCO
+
+INDICES
+
+SHO! THREE REFERENCES
+
+TD
+
+REFERENCE MAS IN NOVENGERS
+
+THE FILE NUMBER IS THE
+
+SAME,
+
+ONC
+
+_AID THE OTHER THO ARE
+
+In
+
+AS IS THE BIRTHDATA,•
+
+THIS INDIVIDUAL DES-
+
+b6
+
+b7C
+
+CRIBED AS WHITE MALE WITH ASHT
+
+IT APPEARS THAT UNDER THE FILE DESTRUCTION PROGRAM THIS.
+
+HAS BEEN DESTROYED AT SAN FRANCISÇO.
+
+FILE
+
+BT
+
+b6
+
+b7C
+
+1641-81-8425
+
+SLAKENED.
+
+MolNDEXSD......
+
+SERIALIZED
+
+....SILED..
+
+0 1 1980
+
+FBI-SEATTLE
+
+DB Cooper-18241
+
+---
+
+## Page 133
+
+SELECTIVE SERVICE SYSTEM
+
+NOTICE OF- CLASSIFICATION.
+
+Jack S.
+
+Farmer
+
+First name) (Middie initial) (Last name)
+
+Selective Service No.
+
+4 14|44
+
+84
+
+is classified in Class -
+
+until
+
+by Local Board unless otherwise
+
+checked below:
+
+• by Appeal Board
+
+vore of.
+
+• by Presidens
+
+2m July 1966
+
+(Date of mailing)
+
+Z+Z8T
+
+sadoos ao 91 478-18-191
+
+Fluenda
+
+perryor clerk of local board)
+
+IC.C
+
+(Registrant's signature
+
+ISSS Form 110 (Revised 11-10-65)
+
+(Approval nor required)
+
+0L9
+
+90
+
+LOCAL BOARD NO:
+
+14
+
+Sutter County-
+
+413 Center
+
+Street:
+
+ist:
+
+Yuba city, call
+
+Callforta
+
+COLOR EYES,
+
+Blue
+
+COLOR HAIR
+
+: Blond.
+
+WEIGHT FEL
+
+*175÷
+
+ANY PERSON WHO ALTERS, FORGES, OR IN ANY MANNER CHANGES THIS CERTIFICATE
+
+YEARS, OR BOTH.-.
+
+MẠY BE FINED NOT-TO EXCEED $10,000 OR IMPRISONED FOR NOT MORE THAN, FIVE
+
+THE LAW REQUIRES YOU TO HAVE JHIS CERTIFICATE IN YOUR'PERSONAL POSSESSION
+
+AT ALL TIMES AND, TO NOTIFY YOUR LOCAL BOARD IN WRITING (IL OF EVERY "CHANGE
+
+IN YOUR ADDRESS,, PHYSICAL CONDITION, AND OCCUPATIONAL MARITAL, FAMILY, DE
+
+PENANA SHEATONEY STAUS AND 2/ OF BY OTHES FAT WINCH AGHT CHANGE
+
+YOUR CLASSIFICATION:
+
+1960 0Y-560534
+
+5990.
+
+THo 99/8727
+
+• 4721
+
+1X1 MOOSEO
+
+NO SHE TEASE
+
+33
+
+191391. 1H9131
+
++ 92696
+
+X3S
+
+7S TOZUE STE i
+
+SAIT IN ORIVE
+
+0 L'6
+
+NYUHINIS NO SIaIdI
+
+L7
+
+!:
+
+98b eng
+
+82÷2
+
+960998-4
+
+JYH!
+
+SISS SIMI
+
+NOISIAId
+
+8-779135
+
+-
+
+---
+
+## Page 134
+
+JAN19•67
+
+NO
+
+FEE
+
+CORRECTION.
+
+•eppe ratiola or tres.
+
+1.
+
+SELECTIVE SERVICE SYSTEM
+
+555 Fom No. 2.
+
+REGISTRATION CERTIFICATE
+
+Approval nos raquirax
+
+THIS IS TO CERTIFY THAT IN ACCORDANCE WITH THE SELECTIVE SERVICE LAW
+
+Jack
+
+Scott
+
+Farmer
+
+(FIRST NAME)
+
+(LAST NIALLE)
+
+SELECTIVE SERVICE NO.
+
+RESIDENCE AT REGISTRATION 591 Cassidy Ave
+
+(NUMBER AND STREET OR R F.D. NUMBER)
+
+Yuba City,
+
+(CHY, TOWN, OR VILLAGE)
+
+Sutter COUNTI
+
+California
+
+(SYATE)
+
+(DATE OF BIRTH)
+
+nIce, la. 110xnlE
+
+ACE OF BI
+
+WAS DULY REGISTERED ON THE ..
+
+25 DAY OF MaY
+
+_162
+
+(SIGMATURE OF LOCHI BOND CLERKY
+
+Local Board No. 14.
+
+Sutter County
+
+1015 - 5th Street
+
+Marysville: California 95901
+
+(Local Board Stamp)
+
+You
+
+are requirec
+
+to have this notice,
+
+Registration Certificate,
+
+all times
+
+addition
+
+Tender it upon
+
+fate advent the Armed Forces.
+
+physical condition,
+
+YOu
+
+!.
+
+sidn
+
+this form
+
+Any person who let do wing destroys, knowingly
+
+nutilates or la any mannes changes this notice may be fined sor e
+
+excred $10,000 os imprisoned for nos more than fre yeass, oi
+
+DB Cooper-18243
+
+---
+
+## Page 135
+
+SOMETHING
+
+10
+
+900!! SOMETHINGTODE
+
+"NOW! LAY ME DOWN tO
+
+SLEEP.
+
+-IN CASE: OF MALFUNCTION
+
+PULL VIGOTCOUSIY
+
+WHEN IN DOUBT PUNTOR
+
+EAT YOUR HEART OUT!!
+
+DB Cooper-18244
+
+---
+
+## Page 136
+
+Log Book No,
+
+it 2
+
+" Period,
+
+4196)
+
+vane armer, lack
+
+Sco
+
+Address 3/8/AzE
+
+"CHI CO
+
+sut CALFOrNiA Phone No 4342-
+
+342-97957
+
+LICENSE INFORMATION CAN 8222
+
+Class A License Number
+
+Issued"
+
+1967
+
+Class B, License Number
+
+i Issued,
+
+1910714
+
+Class O License Number
+
+Issued, a
+
+619 441
+
+Class D, License Number
+
+,Issued,
+
+19.,
+
+Instructor Rating Number
+
+•Issued:
+
+Date of Burch 22
+
+DAY,
+
+5
+
+MONTH TH
+
+1944 rest do no o ini
+
+Weisht :1.80
+
+30 Color Hair BLO Color ye Bie
+
+Parachutist Log
+
+This is the record of your parachuting experience.
+
+jump immediately. after,landing. Only, properly. auther
+
+books will be accepted as evidence; for issuance of lices
+
+"Parachute Club of America. Unlicensed parachutists are
+
+to participate in meets sanctioned by the Parachute Club
+
+or by the Federation Aeronautique Internationale,
+
+The jump procedures, safety regulations and recom
+
+in the Parachutist Log have been promulgated by the Para
+
+"of America."
+
+DB Cooper-18245
+
+---
+
+## Page 137
+
+JUMP
+
+NO.
+
+5. d
+
+DATE*
+
+LOCATION;
+
+•HIC
+
+10-8.66 FABLE M7
+
+10-15766
+
+CHICO: 02
+
+10-22-60 CHICa. 02
+
+• TYPE
+
+AIRCRAFT
+
+187
+
+18.2
+
+183
+
+LICENSED PARACHUTIST
+
+PILOT SIGNATURE AND
+
+LICENSE NOR
+
+PARACHUTES
+
+BACK,
+
+CHEST
+
+DL
+
+CLUB. RI
+
+321:28
+
+3
+
+4
+
+5=
+
+8
+
+V
+
+CHICO.
+
+Е8ч
+
+тиде
+
+32/28
+
+1.76
+
+3905
+
+Typo Parachutos Jumped
+
+TYPE
+
+TYPE
+
+TYPE
+
+CANOPY, MODIFICATION
+
+CANOPY MODIFICATION
+
+CANOPY MODIFICATION
+
+'SERIAL NO;
+
+SERIAL, NO.
+
+SERIAL NO.
+
+,ALT.,
+
+Delay..
+
+• Im
+
+JUMP. Seconds
+
+MANEUVERS:
+
+DISTANCE SURFACE
+
+WIND
+
+•TARGET
+
+30
+
+3500.51
+
+*4.500.
+
+'Shi
+
+3:0.
+
+110-1.5?
+
+450078 29 0 1 8г
+
+5200
+
+33
+
+SD
+
+4000
+
+IP
+
+SDRTHLT
+
+5.500
+
+ZSDLT
+
+FTIZ
+
+7000
+
+40+
+
+5D. FILIBL
+
+8500|53
+
+4204e
+
+30124 3р
+
+$D 127
+
+TRE
+
+720045
+
+5'0°
+
+TURNS
+
+17200
+
+40+
+
+BufFiNg
+
+PAGE TOTAL
+
+PRIOR TOTAL:
+
+„TOTAL" TIME
+
+TOE:
+
+TOE
+
+TOF
+
+REMA
+
+From: momoriys
+
+LICE DEE. BEE
+
+16
+
+b7C
+
+ROLERITAL
+
+STABLE
+
+THIS
+
+NIGHt JUMP
+
+8:00 pm
+
+TOTAL DISTANCE THIS PAG
+
+AVERAGE DISTANCE THIS P
+
+PRIOR AVERAGE TO DATE
+
+DB Cooper-18246
+
+---
+
+## Page 138
+
+PCATION
+
+1co /oz
+
+VIta
+
+PE
+
+PE
+
+LICENSED PARACHUTIST OR
+
+PILOT
+
+SIGNATURE AND
+
+AIRCRAFT
+
+CЕ33,
+
+187
+
+6,8₴
+
+PARACHUTES
+
+BACK
+
+CHEST
+
+DL
+
+CLUB RIg
+
+321281
+
+V
+
+Е82
+
+C210
+
+CAMOT
+
+CANOPY MODIFICATION
+
+CANOPY MODIFICATION'
+
+Тиар 32/28
+
+774
+
+SERIAL NO:
+
+SERIAL.NO.
+
+"SERIAL NO.
+
+ALT.
+
+JUMP.
+
+Delay
+
+Seconde
+
+MANEUVERS
+
+3500: 5L
+
+30
+
+3•D.
+
+*4580
+
+4500FP
+
+33
+
+4.000
+
+IP
+
+SDi
+
+SD RTLT
+
+5500
+
+zot
+
+7600
+
+40 ti
+
+SD. ELBL
+
+шой
+
+8.50055
+
+"SD M-
+
+30tr. 32.
+
+7200
+
+45
+
+5D
+
+1200
+
+40t
+
+BuERING
+
+PAGE TOTAL
+
+PRIOR TOTAL..,,
+
+TOTAL' TIMÉ
+
+anton
+
+DISTANCE
+
+SURFACE
+
+,,WIND
+
+TARGET
+
+REMARKS®
+
+From mEnions tOTHER Logs
+
+HEE DEE BEE
+
+знатий
+
+b7C
+
+TOỆ!
+
+ST.RI3LE
+
+STABLE
+
+THIS IS A WILLS SPORT
+
+NaHZ. Jump.
+
+8:00pm
+
+FIELOS
+
+MöRE
+
+b6
+
+"b7C
+
+TOF.
+
+TOF
+
+TOF
+
+TOTAL 'DISTANCE THIS PAGE:
+
+AVERAGE DISTANCE THIS PAGE
+
+PRIOR AVERAGE TO DATE.
+
+DB Cooper-18247
+
+---
+
+## Page 139
+
+LOCATION
+
+NICO
+
+IDZ
+
+TYPE
+
+AIRCRAFT
+
+LICENSED PARACHUTIST
+
+"PENSE SIPARA CRET STOR,
+
+98
+
+905 A 220pu 485
+
+PARACHUTES
+
+BACK
+
+CHEST
+
+Тиді:
+
+CLUB RIG
+
+3ETZ
+
+TA.
+
+32128
+
+108
+
+sco oz:
+
+CO0Z
+
+BLE MA
+
+TYPE
+
+TYPE .
+
+TYPE *
+
+57822
+
+57522
+
+CES:
+
+182
+
+CANOPY MODIFICATION
+
+CANOPY MODIFICATION
+
+CANOPY MODIFICATIONi
+
+ти?Р
+
+SERIAL NO:
+
+SERIAL' NO.
+
+SERIAL NO..
+
+ALT.
+
+Delay
+
+JUMP Seconds
+
+MANEUVERS.
+
+DISTANCE SURFACE
+
+TO
+
+-TARGET
+
+WIND
+
+8500
+
+I5P+JST S023
+
+ToF
+
+Пизту
+
+TOL
+
+DO WHaT THE HE TDF O
+
+REMARKS
+
+67C
+
+ENCOUNS
+
+HEE DELI
+
+ато 2н;м
+
+8200
+
+12500
+
++=..
+
+т.ак
+
+Pa/.
+
+SEB.R GL. Z.SO TRA
+
+191
+
+HUR WE?
+
+1 5трА
+
+PAGE TOTAL
+
+TOF
+
+PRIOR TOTAL
+
+TOF.
+
+'TOTAL TIME
+
+TDF
+
+ONE FOOT
+
+3Jumes
+
+P-GRAVER
+
+VORTIE 5105,
+
+12 125
+
+ME H-UP tos Log iod
+
+TOTAL DISTANCE THIS PAGE
+
+AVERAGE DISTANCE THIS PAGE
+
+b6
+
+.b7C
+
+PRIOR AVERAGE TO DATE
+
+DB Cooper 18248
+
+---
+
+## Page 140
+
+LOCATION
+
+TICO
+
+REYPORT
+
+VILLE
+
+TYPE
+
+TYPE.
+
+TYPE
+
+• TYPE
+
+AIRCRAFT
+
+LICENSED PARACHUTIST OR
+
+PILOT SIGNATURE AND:
+
+• LICENSE
+
+NO.
+
+t33
+
+11
+
+C.18
+
+2478
+
+C182
+
+"CA
+
+"CANOPY MODIFICATION:
+
+*CANOPY MODIFICATION
+
+PARACHUTES:
+
+BACK::
+
+CHEST.
+
+32128
+
+P.c.
+
+R•Hi.
+
+- 16.
+
+Тигр 2.
+
+тиге
+
+5782,2
+
+7A24
+
+Tige 3ZA
+
+5. 7.%
+
+131822
+
+TIAN
+
+T 90 122822
+
+Tu. 9P
+
+57822
+
+118.0
+
+121
+
+SERIAL NO.
+
+SERIAL NO.
+
+SERIAL NO.
+
+ALT.
+
+Delay.
+
+„JUMP" Seconds
+
+MANEUVERS:
+
+DISTANCE
+
+'SURFACE
+
+TARGET
+
+WIND,
+
+8500,
+
+"REMARKS
+
+15MPH
+
+COLD
+
+INCONTES 11801024.iBI
+
+preg
+
+g000 110
+
+500 5 10125 Z
+
+TDF
+
+TOF
+
+320T
+
+8000
+
+208
+
+DESS
+
+gusTY
+
+8600
+
+, b7c
+
+GROUND RU.
+
+FACi
+
+35581
+
+SDFL EL BL
+
+8.000 52 8N VINES FACE I XEt.
+
+JUSTE
+
+1-057.
+
+SPOTTS
+
+VEL
+
+4000
+
+5610
+
+50: 2. 15.30
+
+8500
+
+TDE
+
+20
+
+0 FLELSE
+
+50302 15 30
+
+TOF
+
+20
+
+11400d des
+
+701
+
+10
+
+LAU
+
+PUCC
+
+HOL MORE DETAIE
+
+TENANT
+
+(STAMO +UP)
+
+9000 Vume
+
+802844281
+
+47.9 XAGE TOTAL
+
+PRIOR TOTAL
+
+TOTAI TIME
+
+1D4
+
+TOTAL DISTANCE THIS PAGE
+
+AVERAGE DISTANCE THIS, PAGE
+
+"PRIOR"AVERACE TO DATE
+
+DB Cooper-18249
+
+---
+
+## Page 141
+
+LOCATION®
+
+4ICO
+
+DE
+
+TYPE
+
+AIRCRAFT
+
+LICENSED PARACHUTIST OR
+
+PILOT SIGNATURE AND
+
+LICENSE NO.
+
+D2)
+
+18882
+
+AT6
+
+TRAINER
+
+ATTA HE
+
+618.25
+
+PARACHUTES
+
+BACK:
+
+CHEST
+
+651423 578,273
+
+0740059 FAMIS
+
+- 23 B:
+
+r.
+
+Vi.
+
+INVA
+
+REE WAY
+
+120
+
+TYPE
+
+TYPE
+
+TYPE
+
+CHETORE
+
+CANOR
+
+CANOPY, MODIFICATION
+
+CANOPY MODIFICATION
+
+PC.
+
+SERIAL'NO. "
+
+SERIAL NO."
+
+SERIAL NO.:
+
+FARTSO
+
+Z3B
+
+ALT.
+
+•Delay
+
+→ in
+
+JUMP, Seconds
+
+2500
+
+35
+
+MANEUVERS*
+
+2 EXT OF
+
+HOOK UP :08L
+
+Z6x17-
+
+10000
+
+575
+
+19000
+
+5:0
+
+HUBKIUP
+
+100.00
+
+ZEXIT
+
+50
+
+E: RIDE
+
+8000.
+
+35 tri
+
+ZEXIT
+
+10.000
+
+PIE TUTE
+
+50%
+
+THIE
+
+85001
+
+35.t.
+
+6000
+
+25
+
+good 35t
+
+5000
+
+DISTANCE
+
+TO
+
+SURFACE i
+
+TARGET.
+
+WIND
+
+9057%
+
+REMARKS
+
+100T MELATIVE
+
+WORK
+
+2 HDU - AC
+
+0K 4000 wil
+
+TO'F
+
+CTURES, THESE TER BE OK
+
+HAND
+
+3AT. FLATSPIN
+
+TZFL
+
+TOE. PITA
+
+TR BE OK
+
+TLOW PULL
+
+MISES SOON PATE KAT
+
+F29IN
+
+Jump
+
+GUSTY
+
+SEMITE PHUSUNCTIO
+
+35+ K54 E
+
+11.0
+
++ PESTER
+
+TARTET
+
+HOOTED 4500G TECHTE
+
+20
+
+meal
+
+CAR'S
+
+PAGE TOTAL:
+
+• PRIOR TOTAL
+
+TOTAÏ-TIME
+
+TOTAL DISTANCE THIS PAGE
+
+AVERAGE-DISTANCE THIS PAGE
+
+PRIOR AVERAGE TO" DATE
+
+-At 2,
+
+DB Cooper-18250
+
+---
+
+## Page 142
+
+TYPE
+
+TE
+
+LOCATION
+
+AIRCRAFT
+
+THCO DE
+
+c17z
+
+CHICO DECENT
+
+17Z
+
+CHICO DE
+
+CITT
+
+16 PARDISE AIRPORT
+
+TO CHITONE
+
+Cizz
+
+3/68
+
+0D7 red.
+
+CHICO
+
+DZ
+
+c,7z
+
+PENT, RAL.
+
+CHICO
+
+CHEN 33 d
+
+coNTz Ra
+
+PENT RODRA
+
+Penti, ad. 0z
+
+TYPE
+
+as Jumped
+
+TYPE
+
+LICENSED PARACHUTIST OR
+
+PILOT SIGNATURE AND
+
+•LICENSE NO.
+
+" PARACHUTES
+
+•BACK
+
+CHEST
+
+P065+123
+
+FAATSO.
+
+<2.38
+
+P651 423
+
+PC
+
+65423
+
+PE5,423
+
+PC 651423
+
+PC 451423
+
+ALT.
+
+"Dolays
+
+DUMP: Seconds
+
+MANEUVERS"
+
+DISTANCE SURFACE fat
+
+YALLIS WEL THAT ENDS WELL
+
+21NEK
+
+TARGET
+
+WIND.
+
+TANGLED
+
+REMARKS
+
+13 0)
+
+45000 208
+
+2 BAOLE FLINTOF
+
+PuSTA
+
+220. 30+
+
+INTU
+
+HO SACRUE TOP
+
+quit am
+
+ADIANES CHARED UP I TIÙ
+
+SOMPANT
+
+p2ao 247.
+
+7iio
+
+45+
+
+3 200
+
+175,00
+
+COLLEN OU
+
+1/D4-94
+
+been
+
+AWTSDETOL
+
+SHOT ATE
+
+DORE BY ALL TOUGEE LOON CANOPI
+
+b6
+
+CANOPY MODIFICATION
+
+CANOPY, MODIFICATION
+
+CANOPY MODIFICATION
+
+FAATSON
+
+вс 51423 2 23810
+
+•SERIAL NO
+
+SERIAL NO.
+
+"SERIAL"NO.
+
+PAGE, TOTAL
+
+PRIOR TOTAL
+
+TOTAL TIME
+
+TOTAL DISTANCE THIS PAGE -
+
+AVERAGE DISTANCE THIS PAGE
+
+PRIOR AVERAGE TO DATE'
+
+DB Cooper-18251
+
+---
+
+## Page 143
+
+LOCATION:
+
+MIRN DEE
+
+CHICO DI
+
+-11'
+
+TYPE
+
+AIRCRAFT
+
+CESSN
+
+18г
+
+ATL
+
+TRENING
+
+• LICENSED PARACHUTIST OR
+
+PILOT,
+
+SIGNATURE
+
+AND
+
+LICENSE NO.
+
+PARACHUTES
+
+•BACK.
+
+651423÷
+
+CHEST.
+
+FARTSO
+
+223 B
+
+BLACK BUSTE FENNE
+
+DIRTSUL
+
+FIELO
+
+ТріС/
+
+DATGU
+
+TELO
+
+R PORT
+
+TYPE
+
+d
+
+TYPE -
+
+TYPE
+
+Iв0 .
+
+CANOPY MODIFICATION: MU
+
+CANOPY MODIFICATION
+
+CANOPY MODIFICATION
+
+252236
+
+FRATSO
+
+651433 791730
+
+SERIAL 'NO.
+
+SERIAL NO.
+
+'SERIAL NO;
+
+"ALT: "
+
+"Delay
+
+JUMP
+
+Seconds
+
+300o
+
+10
+
+MANEUVERS
+
+2. 03/2 F30
+
+DISTANCE SURFACE
+
+TARGET,A
+
+WIND
+
+20
+
+mea
+
+75.00
+
+30t
+
+DE 19457Y
+
+8500
+
+35÷
+
+DIVING. ME
+
+nt. Top
+
+8500 35+
+
+EXIT
+
+MAS: A-P.q.
+
+BUT PLAYED
+
+7500 30t
+
+1500 30t: Bant nat
+
+MPH:
+
+8000
+
+357
+
+HEATER TREE
+
+1125:
+
+1251€
+
+PARaini
+
+PRIZA
+
+15:5:00:
+
+* SHERUCIN
+
+PAGE TOTAL
+
+PRIOR TOTAL
+
+TOTAL TIME
+
+TDFIO
+
+tests pril Wes
+
+REMARKS
+
+NANTASIE
+
+STAND ILP
+
+-106
+
+wow bre
+
+BEE XI iVI
+
+POT
+
+Scalen
+
+we are same witH i
+
++974418
+
+524QD977
+
+Dant64.00. 0000.
+
++P.CH TREE
+
+ВИК ТЕ СВО ВО
+
+"FRACTUREO
+
+CARSON CITY SKYDIVERS CE
+
+ALT. 6594"
+
+Lumpt it.
+
+..TOTAL DISTANCE THIS PAGE
+
+AVERAGE DISTANCE THIS. PAGE.
+
+PRIOR AVERAGE TO DATE:
+
+DB Çooper-18252
+
+---
+
+## Page 144
+
+LOCATION
+
+TYPE
+
+AIRCRAFT
+
+LICENSED PARACHUTIST OR
+
+PILOT
+
+SIGNATURE AND
+
+LICENSE NO.
+
+0,72
+
+BLACK
+
+L BUTERES
+
+942
+
+CAN E
+
+CHICO
+
+C172
+
+ALMiesT
+
+9172
+
+HICO OZ
+
+NICO Oxi
+
+TYPE
+
+d
+
+TYPE
+
+92z.
+
+6172:
+
+CANOPY MODIFICATION
+
+CANOPY MODIFICATION
+
+TYPE
+
+• CANOPY MODIFICATION
+
+PARACHUTES.
+
+. BACK
+
+CHEST
+
+1!1
+
+NOPEN
+
+RESETLUG
+
+551423
+
+81423
+
+SERIAL "NO.
+
+SERIAL' NO.
+
+SERIAL' NO.
+
+ALT,
+
+Dalay
+
+JUMP.
+
+in
+
+Seconds
+
+MANEUVERS
+
+5000
+
+157 SO EL, 50
+
+7500
+
+30+
+
+WES
+
+8000
+
+35+
+
+3000 214
+
+Z PLANED
+
+3000
+
+2H
+
+9500
+
+From 9000
+
+" TDF.
+
+9U5TY
+
+4000
+
+27
+
+> ПО ОРЕМОМУРХУ
+
+3500
+
+1.000
+
+27
+
+Ezrumperts
+
+-HEA
+
+MISSED RUSTY
+
+missed
+
+27
+
+THEN Z
+
+P.9.0
+
+ZEXITZ
+
+3000Moс 272523232
+
+ТОБ дИЗТЯ
+
+:
+
+PAGE TOTAL
+
+•PRIOR TOTAL
+
+TOTAL "TIME
+
+TITANCE SUARE 4
+
+TARGET
+
+WHat
+
+IT X
+
+REMARKS
+
+2215551
+
++ 9000 spe
+
+2OO0 YARE
+
+4000-00
+
+RIP COR».
+
+TOTE ANOTARE STUDE
+
+BUTH
+
+-COLONS DURING Z UNREAL
+
+66
+
+b7C
+
+1s,
+
+TOTAL DISTANCE THIS PAGE
+
+AVERAGE 'DISTANCE THIS 'PAGE-
+
+PRIOR AVERAGE TO DATE
+
+DB Cooper-18253,
+
+---
+
+## Page 145
+
+LOCATION
+
+AliZ PORT
+
+Ken P42T
+
+TALIAN J-3
+
+J-.3
+
+3 к.
+
+"LANETS
+
+CNICO DE
+
+C, 81
+
+HICO DZI
+
+982
+
+TYPE
+
+AIRCRAFT
+
+LICENSED PARACHUTIST OR:
+
+PILOT SIGNATURE AND
+
+LICENSE NO.
+
+PARACHUTES:
+
+'BACK '
+
+i CHEST,
+
+57822
+
+ALT.
+
+Delay!
+
+JUMP: seconds
+
+MANEUVERS DISTANCE SPACE
+
+„TARGET"
+
+2 схір
+
+8500•53 HOOKE SP-ISF
+
+9000
+
+5
+
+5t10E-20TK
+
+3 ноок-ор. е ним
+
+72001
+
+EEP 28204000775 rel
+
+:" KICE
+
+FIEL
+
+578₴2
+
+24, 52001
+
+MELON
+
+JEEDLES VING
+
+TURN
+
+57822
+
+051328
+
+578.22
+
+- 8000.
+
+110,000
+
+1457)
+
+3 M STAR
+
+271 = 3=2
+
+10500
+
+50
+
+2 BLBK
+
+PI SEE
+
+40s
+
+TOF
+
+POWER SUSTA
+
+75-00
+
+TD F
+
+REMARKS
+
+TINE
+
+"z"
+
+3 STAIRS
+
+EMY.
+
+NIGHT
+
+31NLES FROM, RANCH
+
+Eme
+
+wou
+
+TO PLiFET
+
+b6
+
+b7C
+
+TYPE
+
+TYPE
+
+TYPE
+
+CANT
+
+CANOPY "MODIFICATION...
+
+CANOPY MODIFICATION..
+
+VERIAL NO.
+
+SERIAL' NO.
+
+SERIAL NO.
+
+"PAGE TOTAL
+
+• PRIOR TOTAL
+
+•TOTAL TIME
+
+UNDERSTAN
+
+TOTAL DISTANCE THIS PAGE
+
+AVERAGE DISTANCE THIS PAGE
+
+PRIOR AVERAGE TO DATE
+
+OPENING ALT.
+
+DB• Cooper-18254
+
+---
+
+## Page 146
+
+LOCATION
+
+CONTEEE DAM
+
+TYPE
+
+AIRCRAFT
+
+C17z
+
+LICENSE NO.
+
+PARACHUTES
+
+BACK
+
+CHEST
+
+FARISO
+
+65142}
+
+ALT.
+
+JUMP
+
+Delay"
+
+MANEUVERS
+
+OL 5D SETETES
+
+DISTANCE SURFACE
+
+CHICOSPOrT PARACHUTE ILUB JUMPS
+
+INAKED
+
+TARGET
+
+WIND
+
+REMARKS
+
+DEIRIT
+
+H20
+
+BETATE ABSNALED AND JüMP
+
+• b6
+
+b7C
+
+TYPE
+
+TYPE
+
+TYPE
+
+CANOPY- MODIFICATION
+
+•" CANOPY MODIFICATION
+
+CANOPY MODIFICATION
+
+SERIAL NO.
+
+SERIAL NO.
+
+SERIAL' NO.,
+
+PAGE TOTAL
+
+PRIOR TOTAL
+
+TOTAL TIME
+
+TOTAL DISTANCE THIS PAGE
+
+AVERAGE DISTANCE THIS PAGE
+
+PRIOR AVERAGE TO DATE
+
+106- 19779
+
+DB Cooper-18255
+
+---
+
+## Page 147
+
+ID # im 55
+
+Lit.
+
+Date
+
+Empl
+
+Occ:.
+
+El 16: 1000 00:20 1 105-
+
+18086
+
+DoB: 5/22/44..
+
+Ht. 6'
+
+- Wt. 185
+
+_ Sex_M -=
+
+Hair_11: d
+
+Eyes..
+
+Bl?e
+
+ScarsS tiff I/Iittle
+
+firger; sos Ivrist, R/lage, a 3ra Finger, Lower
+
+—THIS PERNT EYPIRES ONE YEAR FROM ISSUE DATE Chin
+
+Lessin an mant?
+
+DB Cooper-18256
+
+---
+
+## Page 148
+
+OFFICE OF THE SHERIFF
+
+WASHOE COUNTY
+
+NEVADA
+
+Right Thumb
+
+IDENTIFICATION CARD
+
+..;*
+
+- I sherri
+
+Left Thumb
+
+DB Cooper-18257
+
+---
+
+## Page 149
+
+SELECTIVE SERVICE SYSTEM
+
+NOTICE OF CLASSIFICATION.
+
+(Last name)
+
+Farmer
+
+JackS.
+
+First name) (Middle instal)
+
+Selective Service No.
+
+84
+
+is classified in Class.
+
+until.
+
+by Local Board unless otherwise
+
+checked below:
+
+D by Appes! Board
+
+vore of -
+
+JUIs 1966
+
+D by President
+
+Sena
+
+(Dare of mailing)
+
+Desser de
+
+iberbeder clerk of local board)
+
+i?r.
+
+COLOR EYES
+
+LOCAL BOARD
+
+NO: 14
+
+Blue
+
+Sutter county me se
+
++ Blond
+
+413 Coater
+
+Stréet.
+
+'Juba City?.
+
+California
+
+„П."
+
+WEIGHT
+
+:775.
+
+ANY PERSON WHO ALTERS, FORGES, OR IN ANY MANNER CHANGES MIS CERTIFICATE
+
+YEARS, OR BOTH.-.
+
+MAY BE FINED NOT-TO EXCEED $10,000 OR IMPRISONED FOR NOT MORE THAN FIVE
+
+THE LAW REQUIRÉS YOU TO HAVE JHIS CERTIFICATE IN YOUR PERSONAL POSSESSION
+
+AT ALL TIMES AND-TO NOTIFY YOUR LOCAL BOARD IN WRITING (1), OF EVERY CHANGE
+
+IN YOUR ADDRESS, PHYSICAL CONDITION, AND OCCUPATIONAL, MARITAL, FAMILY, DE
+
+YOUR CLASSIFICATION.::
+
+Gro 1960 08.
+
+5970.
+
+99/8727
+
+3705
+
+XI SHANT
+
+si.s
+
+407 108 31983
+
+о-я пта ита я
+
+2620 19190 019.
+
+7S TOZEN STE :
+
+5605588. H910
+
+ESNEDIT VINAOATIVO
+
+0L6
+
+AYAHINIS NO Sa81d
+
+/(Regissrant's signature)
+
+ISSS Form
+
+110 (Revised 11-10-65)
+
+(Approval nor required)
+
+1ZO 1O HOISIAIO
+
+INYnSEnd
+
+29-82731
+
+n÷960558-1
+
+Tato cana.
+
+0L9
+
+99
+
+NOISIAIG
+
+MINORITYO
+
+3LV4S
+
+(12)
+
+956 EnG
+
+i polin
+
+8-79135
+
+---
+
+## Page 150
+
+•DEssemination
+
+Rosting Ship
+
+FD-417 (9-12-69)
+
+To:
+
+→ Director, Att.:
+
+SAC,
+
+Albany
+
+Albuquerque
+
+Alexandria
+
+Anchorage
+
+Atlanta
+
+Baltimore
+
+Birmingham
+
+Boston
+
+Buffalo
+
+Butte
+
+Charlotte
+
+Chicago
+
+Cincinnati
+
+levelanc
+
+Columbi:
+
+Dallas
+
+Denver
+
+Detroit
+
+El Paso
+
+Honolulu
+
+RE: UNSUB, aka
+
+D.B. Cooper
+
+AIRCRAFT PIRACY
+
+00: Portland
+
+(Copies to Offices Checked)
+
+Houston
+
+Indianapolis
+
+Jackson
+
+Jacksonville
+
+Kansas City
+
+Knoxville
+
+Las Vegas
+
+Little Rock
+
+Los Angeles
+
+Louisville
+
+Memphis
+
+Miami
+
+Milwaukee
+
+Minneapolis
+
+Mobile
+
+Newark
+
+New Haven
+
+New Orleans
+
+New York City
+
+Norfolk
+
+Date
+
+→ Oklahoma City
+
+→ Omaha
+
+Philadelphia
+
+7 Phoenix
+
+j Pittsburgh
+
+Portland
+
+Richmond
+
+Sacramento
+
+St. Louis
+
+Salt Lake City
+
+San Antonio
+
+San Diego
+
+San Francisco
+
+San Juan
+
+Savannah
+
+8X Seattle
+
+• Springfield
+
+| Tampa
+
+] Washington Field
+
+7/1/80
+
+REMARKS:
+
+164-848427
+
+Enclosed for Seattle is Mobile
+
+letter to Detroit dated 6/25/80, which is
+
+being forwarded as Seattle is
+
+00
+
+this
+
+matter.
+
+SEARCHE
+
+SEALAN
+
+•IUL
+
+02 1980
+
+FILE #:
+
+OFFICE
+
+ROBERT S. GAST, II
+
+PORTLAND
+
+DB Cooper-18274
+
+---
+
+## Page 151
+
+SAC, DETROIT (164-115)
+
+SAC, LOLITE (164-125) (RUC)
+
+UNSUB, alta
+
+D. B. Cooper
+
+AIPCRAFT PIRICI
+
+00: FORILAID
+
+6/25/30
+
+Ro Detroit letter to Mobile, 1/14/50.
+
+On 5/29/30,
+
+Alabama
+
+Loard of Corrections, Route 5, doz: 125, Lontgorory, Alabama,
+
+36117, telephone
+
+I was contacted at the Miloy State
+
+Prison. |
+
+advisca that all records for lajama State
+
+Prisoners are maintainod at ti Contral Records Office,
+
+3371 Atlanta llighway, Montgonery, Alabana. L
+
+I Further
+
+aävised that he haà nade inguiry of thia recoru section and
+
+doternined that a record in the name of
+
+was on file.
+
+on 6/5/80,
+
+Contral Records,
+
+Alabana Board of Corrections, 3371 Atlanta Highway,
+
+Monigomery, Alabana, was contacted and shu made availablo
+
+Alabana Board of Corrections File funber
+
+in the name
+
+_ A review of this
+
+file disclosed the following infornation:
+
+was commitiod to the State
+
+Department of Corructions and
+
+Institutions, Hontgomen,
+
+_ OnL
+
+was paroled and
+
+assignod to the Pacole Office at Decatur, Alabana. I
+
+incarceration with the Alabana State Depariment of
+
+corrections and Institution vas the result of his having
+
+and having bec
+
+rad been charred inf
+
+tor havingl
+
+Jin Alertvillo, Alabana.
+
+is doscribed as follows:
+
+111-51-8427
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+2 - Dotroit
+
+. — Portland (Info)
+
+] - Mobile
+
+(4)
+
+.".
+
+1:90
+
+b6
+
+b7C
+
+DB Cooper-18275
+
+---
+
+## Page 152
+
+NO 164-125
+
+Race
+
+Sex
+
+DOB
+
+POD
+
+Height
+
+eight
+
+Complexion
+
+Eyes
+
+Hair
+
+Build
+
+Occupation
+
+Wife
+
+Mother
+
+FDI #
+
+Military
+
+White
+
+kale
+
+5'84
+
+131 1bs.
+
+Medium
+
+Drown
+
+Eroin
+
+slender
+
+Abortville, Ala.
+
+Albertville, Ala.
+
+Claimed to have served
+
+in the U.S, Marine Corps
+
+Reportedly at time oi
+
+incarceration
+
+b6
+
+b7C
+
+[ducation
+
+An FDI Identification Record enclosed vi th
+
+prison file disclosed that he had been fingerprinted as follows:
+
+- U.S. Marine Corps, enlistment
+
+- U.s. Iarshal, Detroit, Michigan
+
+charged withi
+
+- Police Department, Gadsden, Ala.,
+
+b6
+
+b7C
+
+2
+
+DB Cooper-18276
+
+---
+
+## Page 153
+
+..=
+
+MO 161-125
+
+• State Department of Corrections and
+
+Institutions, toniconars, Ala.,
+
+In addition to the above, a further review of the
+
+file indicated that he had been arrested on l
+
+on the
+
+with no disposition shown and
+
+disposition - discharged.
+
+his possible ve santo information in
+
+file indicating
+
+LEAD:
+
+b6
+
+b7C
+
+DEFROIT
+
+AT FLINE, MICHIGAN
+
+Will recontactl
+
+'lint, Michigan, telephone
+
+J and determine where he
+
+knew
+
+during 1963
+
+Fill thereafter attempt to locate
+
+utilizing descriptive information set forth above.
+
+b6
+
+b7C
+
+DB Cooper-18277
+
+---
+
+## Page 154
+
+SAC, DETROIT (164-115)
+
+SAC, MOBILE
+
+(164-125) (RUC)
+
+UNSUB, aka
+
+D. B. Cooper
+
+AIRCRAFT PIRACY
+
+00: PORTLAND
+
+6/25/80
+
+Sub I
+
+Re Detroit letter to Mobile, 4/14/80.
+
+On 5/29/80,
+
+Alabama
+
+Board of Corrections, Route 3, Box 125, Montgomery, Alabama,
+
+36117, telephone
+
+I was contacted at the kilby State
+
+Prison.
+
+advised that all records for Alabama State
+
+Prisoners
+
+are maintained at the Central Records Office,
+
+3371 Atlanta Highway, Montgomery, Alabana.
+
+further
+
+advised that he had made inquiry of this record section and
+
+determined that a record in the name of
+
+was on file.
+
+On 6/5/80:
+
+Central Records,
+
+Alabama Boarâ of Corrections, 3371 Atlanta Highway,
+
+Montgomery, Alabama, was contacted and she made avallable
+
+Alabama Board of Corrections File Number
+
+_in the name
+
+A review of this
+
+file disclosed the following information:
+
+was committed to the State
+
+Department of Corrections and Institutions, Montgomery,
+
+OnL
+
+assigned to the Parole Office at Decatur, Alabama.
+
+incarceration with the Alabana State Department 01
+
+Corrections and Institutions was the result of his having
+
+and having been
+
+had been charged inl
+
+along with
+
+for having l
+
+Jin Albertville, Alabama.
+
+is described as follows:
+
+164-81-84274
+
+2 - Detroit
+
+1~ Portland Info
+
+1 - Mobil
+
+EJH/Irb
+
+(4)
+
+SERACE TY
+
+INGENIC!
+
+FILED
+
+JUL d'2 1980
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18278
+
+---
+
+## Page 155
+
+TO \
+
+ROM.
+
+SUBJECT:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+SAC, SEATTLE (164-81)
+
+DATE: 6/27/80
+
+SAC, SAN FRANCISCO (164-220) (P) (SQ. 10)
+
+NORJAK (A) ;
+
+00:
+
+SEATTLE
+
+Subt
+
+Being forwarded to the Minneapolis Office is one
+
+colored photograph depicting two white males, standing in
+
+front of a snowmobile, with the notation of D.B. Cooper
+
+for the individual in the brown or maroon trousers.
+
+For the information of Seattle and Minneapolis,
+
+a letter dated 6/17/80, was received at the San Francisco
+
+Office from
+
+from San Francisco.
+
+In this letter,
+
+_states that recently, while he
+
+was in Minneapolis to attend a high school reunion, he met
+
+a high school classmate who furnished him the above mentioned
+
+photograph. He said this individual is_
+
+Minneapolis, Minnesota,
+
+telephone number
+
+• said this individual believed
+
+that the photograph was
+
+that of D.B. Cooper. He continued
+
+that the social
+
+occasion did not lend itself to questioning
+
+_ but
+
+Jindicated that this individual was
+
+now in Canada.
+
+I pointed out that|
+
+was in a
+
+very serious accident several months ago and walks with con-
+
+siderable difficulty with the aid of crutches. He seemed a
+
+little incoherent at times, and his wife mentioned that he
+
+had had considerable damage
+
+to his neck and head at the time
+
+of the accident.
+
+tola_
+
+that an Agent of
+
+the FBI would probably call on him at a later date regarding
+
+this matter.
+
+2 - Seattle
+
+Minneapolis
+
+2 - San Francisco
+
+DJB/k1b
+
+(6)
+
+(Enc. 1)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-8428
+
+SANCHEL.
+
+SERIAUZER V
+
+JUL dl2 1980
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-18281
+
+---
+
+## Page 156
+
+SE 164-220
+
+DJB/k1b
+
+LEAD:
+
+MINNEAPOLIS:
+
+AT MINNEAPOLIS, MINNESOTA: Will contact_
+
+concerning this
+
+b6 |
+
+matter.
+
+ARMED AND DANGEROUS
+
+2%.
+
+DB Cooper-18282
+
+---
+
+## Page 157
+
+SAC, SEATTLE
+
+(164-91)
+
+6/27/30
+
+SAC, SAI FRANCISCO (164-220) (P) (SQ. 10)
+
+MORTAR (1) ;
+
+00: SEATILE
+
+Being forvarded to the Minneapolis Office is one
+
+colored photograph depicting two white males,
+
+standing in
+
+front of a snowmobile, with the notation of D.B. Cooper
+
+for the individual in the brown or maroon trousers.
+
+Por the information of Seactle and linneapolis,
+
+a letter dated 6/17/30, was received at the San Irancisco
+
+Office from
+
+from San Francisco.
+
+In this latter,
+
+_states that recently, wile he
+
+was in Minneapolis to attend a high school reunion, he net
+
+a high school classnate who furnished hin the above mentioned
+
+photograph. He said this individual is
+
+Minneapolis, 'linnesota,
+
+telephone number
+
+He said this individual believed
+
+that the photograph was that of D.B. Cooper. He continued
+
+that the
+
+occasion did not lend itself to questioning
+
+indicated that this individual was
+
+nor in Canada.
+
+pointed out that
+
+was in a
+
+very serious accident several nonths ago and vallis with con-
+
+siderable difficulty with the aid of crutches.
+
+ile seomerl a
+
+little incoherent at times, and his wife mentioned that he
+
+had had considerable danage
+
+to his neck and head at the time
+
+of the accident.
+
+that an igent of
+
+the FBI would probably call on him at a later date ragarding
+
+this matter.
+
+@ - Seattle
+
+• ¡linneapolis (Enc. 1)
+
+2 - San Francisco
+
+DJB/klb
+
+(6)
+
+1621-11-
+
+16
+
+b7C
+
+b6
+
+b7C
+
+we: 1930
+
+DB Cooper-18283
+
+---
+
+## Page 158
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+AMAN ANU
+
+PROM
+
+SAC,
+
+SEATTLE (164-81)
+
+DATE: 6/27/80
+
+SAC, SAN FRANCISCO (164-220) (P) (SQ. 10)
+
+SUBJECT: NORJAK (A) ;
+
+00:
+
+SEATTLE
+
+Subt
+
+Being forwarded to the Minneapolis Office is one
+
+colored photograph depicting two white males, standing in
+
+front of
+
+a snowmobile, with the notation of D.B. Cooper
+
+for the individual in
+
+the brown or maroon trousers.
+
+For the information of Seattle and Minneapolis,
+
+a letter dated 6/17/80, was received at the San Francisco
+
+Office from
+
+7 from San Francisco.
+
+In this letter,
+
+states that recently, while he
+
+was in Minneapolis to attend a high school reunion, he met
+
+a high school classmate who furnished him the above mentioned
+
+photoaraph. He said this individual is
+
+Minneapolis, Minnesota,
+
+telephone number
+
+He said this individual believed
+
+that the photograph was that of D.B. Cooper. He continued
+
+that the social
+
+|but!
+
+occasion did not lend itself to questioning
+
+indicated that this individual was
+
+nOW
+
+in Canada.
+
+_pointed out that
+
+was in a
+
+very serious accident several months ago and walks with con-
+
+siderable difficulty with the aid of crutches. He seemed a
+
+little incoherent at times, and his wife mentioned that he
+
+had had considerable damage
+
+to his neck and head at the time
+
+of the accident.
+
+told
+
+that an Agent of
+
+the FBI would probably call on him at a later date regarding
+
+this matter.
+
+2 - Seattle
+
+- Minneapolis (Enc. 1)
+
+2 - San Francisco
+
+DJB/k1b
+
+(6)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+16481-5428
+
+SEARCHED
+
+INCENT LE
+
+SERIAUIZES
+
+* FiLED.
+
+JUL 042, 1980
+
+FBi. SFAT
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-18285
+
+---
+
+## Page 159
+
+SL0004 1842108Z
+
+RR HQ PG PD SE
+
+DE SL
+
+R 021630Z JUL 80
+
+FM ST. LOUIS (164-M) P
+
+TO DIRECTOR (164-2111) ROUTINE
+
+PITTSBURGH (164-93) ROUTINE
+
+PORTLAND ROUTINE
+
+SEATTLE (164-61) ROUTINE
+
+BT
+
+Salgect
+
+UNCLAS
+
+ATIN: LATENI FINGERPRINI SECTION, IDENIIFICATION DIVISION.
+
+NORJAK (A). 00: SEAITLE
+
+RE PITTSBURGH TELETYPE IO THE BUREAU, JUNE 26, 1986.
+
+RE SUSPECT
+
+MILITARY SERVICE RECORDS ON FILE AT SI. LOUIS, MISSOURI,
+
+DISCLOSED
+
+SERVED ON ACTIVE DUTY IN U. S. ARMY (USA) FROM
+
+-
+
+- TO
+
+HONORABLY RELEASED.FROM ACTIVE DUTY AS
+
+DUE TO EXPIRATION OF TERM OF SERVICE. DISCHARGED FROM USA
+
+b61
+
+b7C
+
+1b6
+
+b7C
+
+RESERVE
+
+164-81-8429
+
+Heat let
+
+b7C
+
+DB Cooper-18287
+
+---
+
+## Page 160
+
+PAGE TWO < 164-11) UNGLAS
+
+ATTENDED AIRBORNE SCHOOL INI
+
+JUMP
+
+RECORD LISTS 15 PARACHUTE JUMPS.
+
+BORN
+
+NO.
+
+PHOTOGRAPH NOT AVAILABLE.
+
+COPIES OF PERTINENT ARMY RECORDS BEING FURNISHED SEATTLE BY
+
+b6
+
+b7C
+
+FBI
+
+MAIL.
+
+IDENTIFICATION DIVISION, COMPARE FINGERPRINIS OF
+
+FBI NO.
+
+WITH LATENT FINGERPRINIS PREVIOUSLY SUBMITTED
+
+IN THIS MATTER, IF NOT ALREADY DONE.
+
+BT
+
+b6
+
+b7C
+
+1842112Z SE 1
+
+DB Cooper-18288
+
+---
+
+## Page 161
+
+3L0 14 1342100Z
+
+RR MO PO PD SE
+
+DE L
+
+& ME 1630? JUL 8C
+
+FA ST. LOUIS (164-1) P
+
+TO DIRECTON (164-2111) ROUTINE
+
+PITTSDURGH (164-23) ROUTINE
+
+POXTLAND ROUTINE
+
+SEATTLE (164-C1) ROUTINE
+
+3T
+
+UNCLAS
+
+ATIN: LATSUT FINGERPRINT
+
+SECTIO:, IDSGIIFIGATION DIVISION.
+
+HORJAK (A).
+
+00: SEATTLE
+
+RE PITISBURGH TELETYME TO THE BUNGAU, JUNE 26, 19Ub.
+
+RE SUSPECT
+
+MILITARY SERVICE RECOROS O& FILE AI SI. LOUIS, HIJSOUNT, .
+
+DISCLOSED
+
+SERVED ON ACTIVE DUTY IN U. S. ARMY (USA) #.0w
+
+IO
+
+HOORABLY RELEASED FROM ACIIVE DUTY AS
+
+DUE TO EXPIRATION OF TERM OF SERVICE• DISCHALGED FROM GOA
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+RESERVE
+
+11116191
+
+DB Cooper-18289
+
+---
+
+## Page 162
+
+SL0364 1342108Z
+
+RR HQ PE PD SE
+
+• DE SL
+
+R EE 163D? JUL SD.
+
+FA ST. LOUIS (164-M) P
+
+TO DIRECTOR <164-2111): ROUTINE
+
+PITISBURGH (164-93) ROUTINE
+
+PORTLAND ROUTINE
+
+SEATTLE (164-61). ROUTINE
+
+BT
+
+UNCLAS
+
+ATTN: LATENT FINGERPRINT
+
+SECTION, IDENIIFICATION DIVISION
+
+NOKJAK (A). 00: SEAITLE
+
+RF. PITTSBURGH TELETYPE TO THE BUREAU, JUNE 26; 1936.
+
+RE SUSPECT
+
+MILITARY SERVICE RECORDS ON FILE AI SI. LOUIS, MISSOURI,
+
+DISCLOSED
+
+SERVED ON ACTIVE DUTY IN U. SO ARMY CUSA> FION
+
+IO
+
+HONORABLY
+
+RELEASED FROM ACIIVE DUTY. AS
+
+DUE TO EXPIRATION
+
+TERM OF SERVICE. DISCHARGED FROM USA
+
+66
+
+b7C
+
+16
+
+b7C
+
+b6
+
+•b7C
+
+RESERVE
+
+16481-8434
+
+FONLIZED.
+
+21980
+
+1131-0
+
+DenTILt
+
+DB Cooper-18291
+
+---
+
+## Page 163
+
+LVO008 1850416Z
+
+RR SE
+
+DE LV
+
+R 030230Z JUL 80
+
+FM LAS VEGAS (164-60) (P)
+
+TO DIRECTOR (164-2111) ROUTINE
+
+SAN FRANCISCO (164-220) (SQ. 1D) ROUTINE
+
+SACRAMENTO ROUTINE
+
+SEATTLE ROUTINE
+
+BT
+
+JuB 95k,1
+
+Dunning
+
+UNCLAS
+
+NORJAK; CAA - HIJACKING (A), 00: SEATTLE.
+
+RE SEATTLE TELETYPE TO BUREAU DATED JUNE 27, 1980. 7 croe
+
+INVESTIGATION CONDUCTED AT THE NEVADA LODGE, CRYSTAL
+
+BAY, NEVADA, HAS IDENTIFIED GARTH HUDSON DYNING AS FOLLOWS:
+
+WMA, DOB DECEMBER 18, 1927, 5'9", 165 POUND, BROWN AND
+
+BROWN, SSAN 553-32-8519, DOUGLAS COUNTY, NEVADA SHERIFF'S
+
+OFFICE NUMBER C30382, NO KNOWN ARRESTS, LAST KNOWN ADDRESSES
+
+OF 55 ST. FRANCIS DRIVE AND 1293 MARION AVENUE, BOTH IN
+
+CHICO, CALIFORNIA, REPORTED MISSING AND PRESUMED DROWNED AT
+
+CRYSTAL BAY, AUGUST 5, 1969.
+
+164-81-8430
+
+SLANCHED.
+
+1 2 1980
+
+4b 6
+
+Mb7C
+
+DB Cooper-18293
+
+---
+
+## Page 164
+
+PAGE TWO LV (164-60) UNCLAS
+
+JACK SCOTT FARMER DESCRIBED AS NMA, DOB. MAY 22, 1944,
+
+185 POUNDS, BLOND AND BLUE, SSAN 563-58-43w6, WASHOE
+
+COUNTY, NEVADA SHERIFF'S OFFICE NUMBER A18825, NO KNOWN
+
+ARRESTS, LAST KNOWN ADDRESS 591 CASSIDY, YUBA CITY,
+
+CALIFORNIA, REPORTED MISSING AND PRESUMED DROWNED AT CRYSIAL
+
+BAY, AUGUST 5, 1969.
+
+ON JULY 1, 1980, FINGERPRINT CARD FOR DUNNING OBTAINED
+
+FROM DOUGLAS COUNTY, NEVADA SHERIFF'S OFFICE AT MINDEN.
+
+ATTEMPTS TO LOCATE FINGERPRINT CARD FOR FARMER AT WASHOE
+
+COUNTY, NEVADA SHERIFF'S OFFICE, RENO, NEVADA, TO DATE, HAS
+
+BEEN NEGATIVE. THIS CARD APPEARS TO HAVE BEEN LOST OR
+
+MISPLACED, HOWEVER, FINGERPRINI CLASSIFICATION IS AVAILABLE.
+
+SACRAMENTO DIVISION SHOULD CONTINUE EFFORIS TO SECURE
+
+FINGERPRINI CARD FOR FARMER THROUGH CII, DMV OR POSSIBLY
+
+THROUGH LOGICAL AGENCY IN XUBA CITY, CALIFORNIA.
+
+LAS VEGAS DIVISION WILL FORWARD TO THE BUREAU THE
+
+FINGERPRINT CARD OF DUNNING AND THE CLASSIFICATION OF FARMER.
+
+WILL FORWARD TO OTHER OFFICES THE WASHOE COUNTY, NEVADA
+
+SHERIFF'S OFFICE REPORT RE DROWNING AND RESULTS OF
+
+INTERVIEWS AT NEVADA LODGE, CRYSTAL BAY, NEVADA.
+
+BT
+
+DB Cooper-18294
+
+---
+
+## Page 165
+
+LVO 350 19584162
+
+DE LI
+
+N 8562382 SUL S0
+
+JUB 456,6
+
+FM LAS VEGAS
+
+(164 60) (P)
+
+TO DIRECTOR (164-2111) ROUIIDE
+
+SAN FRANGISCO (164 220) (SO• 16) ROUTINE
+
+SAGRASENTO ROUTINE
+
+SEATTLE ROUTINE
+
+ST
+
+UNCLAS
+
+MORGARE CAA • HOSACHING CAY, 00% SLATILE.
+
+RE SEATILE TELETYPE TO BUREAU DATED JUDE 27Y 1SÜE.
+
+INVESTICATION CONDUCTED AT THE NEVADA LODGE, CRYSTAL
+
+BAY, NEVADA, MAS IDEHTIFIED GARTH HUDSON DISANG AS FOLLOWS:
+
+"NA, DOB DECONSER 18, 1027, 590" 165 POUND, BROWN AND
+
+BROWN, SSAN 353-32-8512, DOUGLAS COUVIX, NEVADA SHENIFF"S
+
+OFFICE NUMDER GOOGE, DO KNOWN ARIESTS, LAST KNOWN ADDRESDES
+
+OF 55 ST. FRANCIS DRIVE AND 1293 MARION AVENUE, BOTH IN
+
+CHICO, CALITORIA, REPONTED MISSING AUD PREGUMED DROWNED AI
+
+GRYSTAL DAY, AUGUST 5y 1962•
+
+1: 81-5436
+
+---
+
+## Page 166
+
+LV0703 18534162
+
+RR
+
+SE.
+
+DE LaV
+
+R 9302302 JUL 88
+
+FM LAS VEEAS (164-50) (P)
+
+BuB 986, 4
+
+TO DIRECIOR CIER ZILI ROUTINE
+
+SAN FRANGISCO. (164-220) (SQ. 12) ROUTINE
+
+SACRAMEUTO ROUTINE
+
+SPATTLE ROUTIME
+
+ST.
+
+UNCLAS
+
+•HORCAKE CAA • MICACHING CA>; 00• SEATILE.
+
+12 SLATTLE TELETYPE TO SUREAU DATED JUNE: 27g. 1900.
+
+INVESTICATION CONDUCIED AT THE NEVADA LODEL, CRYSTAL
+
+ENY, NEVADA, MAS IDENTIFIED GARTA KUDSON DUMING AS FOLLOWS:
+
+WMA, DOB DECEMBER 18, 1927, 5°9, 165 POUND, BROWN AND
+
+BROWN, SSAM: 553-32-3519 DOUGLAS COUNTY, NEVADA SHERIFF"S
+
+OFFICE NUMDER 030382, RO KNOWN ARRESTS, LAST KNOWN ADDRESSES
+
+0F 55 SI. FRANCIS DRIVE ANO 1292 MARION AVENUE, BOTH LU
+
+CHICO, CALIFORRIA, REPORTED MISSING AND PRESUMED DROWNED AT
+
+CRYSTAL DAY,
+
+AUGUST S, 1969,
+
+1621-81-52136
+
+SEATA 1M
+
+15-0 4 1980
+
+DB Cooper-18297
+
+---
+
+## Page 167
+
+VZCZCWFOE75
+
+RR SE
+
+DE VF 6075 1366550
+
+ZNR UUUUU
+
+R 031347Z JUL S0
+
+FM:
+
+FBI WASHINGTOW FIELD
+
+TO :
+
+FBI SEATILE ROUTINE
+
+BI
+
+(164-301)
+
+Subper
+
+UNCLAS
+
+ENGUS, AHA, DO EE COOPERS GRIME ABOARD AIRCRAFT. (NORJAK)
+
+ON JUNE 26, 1980, AN INDIVIDUAL KNOWN ASL
+
+OFFICERS SERVICE CLUB,
+
+WASHINGTON, D.C. (HDC), TELEPHONICALLY CONTACTED THE WASH-
+
+INGTON FIELD OFFICE, (WFO) REGARDING AN INDIVIDUAL
+
+KNOWN AS
+
+WHO CURRENTLY RESIDES AT
+
+THE CLUB.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DESCRIBED
+
+AS 45-50 YEANS OLD; 5'!!"
+
+IO 6° TALL, MEDIUM BUILD, EXCELLENT PHYSICAL CONDITION
+
+AND UNTIL RECENTLY WEARING A BEARD.
+
+ADVISED
+
+THAT
+
+IS AN AVID WOODSMAN AND PURPORTED PARATROOPER.
+
+KEEPS TO HIMSELF AND IT IS UNKNOWN WHERE HE GOES
+
+EACH DAY, MOWEVER, IT IS BELIEVED HE IS UNEMPLOYED.
+
+A PHOTOGRAPH OF SEVERAL COMPOSITE DRAWINGS WERE
+
+SHOWN TO
+
+AND REVEALED THAT THE BASIC FACIAL
+
+CHARACTERISTICS AND HAIR LINE OF I
+
+ARE SIMILAR TO
+
+164-81-8431
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18299
+
+---
+
+## Page 168
+
+PAGE TWO DE WE 0975 UNCLAS
+
+THE PHOTOGRAPHS.
+
+ADVISED THAT
+
+GREY HAIR AND WEARS IT RATHER LONG.
+
+HAS PREMATURE
+
+HAS THREATENED
+
+TWO OF THE TENANTS AT THE OFFICERS SERVICE CLUB AND IS
+
+CONSIDERED BY
+
+TO HAVE A PERSONALITY CONDUCIVE TO
+
+A POSSIBLE HIJACKING ATTEMPT.
+
+ADVISED THAT
+
+THAS $900 PER MONTH WIRED
+
+TO THE DISTRICI OF COLUMBIA NATIONAL BANK, WDC, OF WHICH
+
+$250 IS DEDUCTED FOR HIS RENT. THE REMAINING $650 IS
+
+CASHED BY
+
+AND GIVEN IO
+
+ADVISED THAT THE BOARD OF DIRECIORS IS
+
+• PRESSURING HIM TO ASK
+
+ITO GIVE UP HIS APARIMENT AS
+
+SOON AS POSSIBLE, HOWEVER, WFO HAS REQUESTED HIM TO
+
+DELAY THIS ACTION..
+
+IS KNOWN TO HAVE A PLEASANT VOICE AND ALWAYS
+
+WEARS "OUTDOOR CLOTHING" AS. IF HE WERE GOING HIKING IN
+
+IHE MOUNTAINS.
+
+IS NEVER SEEN WITHOUT A BACK
+
+PACK. HIS SKIN IS DESCRIBED AS FAIR AND HIS EYES ARE
+
+BLUE.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18300
+
+---
+
+## Page 169
+
+PAGE THREE DE WE 0075 UNCLAS
+
+PRODUCED THE RENTAL REGISTRATION FORM
+
+ON WHICH
+
+INDICATED HIS PAST ADDRESS AS
+
+JUNEAU, ALASKA. HIS PRIOR MILITARY WAS LISTED AS
+
+UNITED STATES ARMY.
+
+ADVISED THAT
+
+HAD HEARD FROM ANOTHER
+
+TENANT'S COUVERSATION THAI A FEDERAL BUREAU OF IN-
+
+VESTIGATION AGENT HAD RENTED A ROOM AT THE OFFICERS
+
+CLUB WHILE HE WAS IN THE WASHINGTON, D.C• AREA. AT
+
+1:36 A.M. THAT EVENING
+
+WAS AWAKENED BY
+
+WHO WANTED TO STAY IN HIS APARTMENT THAT NIGHT.
+
+WAS AFRAID THAT THE FEDERAL BUREAU OF INVESTIGATION
+
+WAS WAITING FOR HIM AT HIS APARTMENT. WHEN
+
+REFUSED HIM ENTRY,
+
+DEPARTED THE VICINITY AND
+
+DID NOT RETURN UNTIL THE NEXT EVENING.
+
+INVESTIGATION AI WASHINGION, D.C., REVEALED THAT
+
+DOES IN FACT WIRE $960 MONTHLY FROM THE RAINIER
+
+• NATIONAL BANK, 1 RAINIER SQUARE, SEAITLE, WASHINGTON.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18301
+
+---
+
+## Page 170
+
+PAGE FOUR DE WE BO75 UNCLAS
+
+ADVISED THAT|
+
+WAS GREATLY INTERESTED
+
+IN THE NEWSPAPER ARTICLE DESCRIBING THE $3, DUE THAI
+
+WAS FOUND BY CHILDREN DURING A RECENI FAMILY PICNIC IN
+
+THE PORTLAND AREA.
+
+BELIEVES THAT
+
+IS POSSIBLY CAPTIONED
+
+D. B. COOPER. HIS BELIEF IS BASED UPON 1)
+
+INTEREST IN THE RECOVERED MONEY; 2) THE $90 THAT IS
+
+WIRED FROM A WASHINGTON BANK; 3) HIS FEAR OF FEDERAL
+
+BUREAU OF INVESTIGATION AGENIS; 4) HIS "OUTDOOR" EXPERTISE;
+
+5) HIS PARATROOPER EXPERIENCE AND 6) HIS PHYSICAL AGE
+
+AND FACIAL CHARACTERISTICS THAT COINCIDE WITH COMPOSITE
+
+DRAWINGS OF D. B. COOPER.
+
+SEATILE IS REQUESTED TO EXPEDITIOUSLY SUBPOENA THE
+
+BANK RECORDS OF
+
+AT RAINIER NATIONAL BANK,
+
+SEATTLE, WASHINGTON, AND ASCERTAIN 1) THE AMOUNT OF
+
+MONEY IN THAT ACCOUNT; 2) THE AMOUNT OF MONEY IM ANY
+
+OTHER ACCOUNT HELD BY OR FOR
+
+→391
+
+SOCIAL SECURITY NUMBER AND DATE OF BIRTH;
+
+4) ANY INFORMATION CONCERNING MILITARY SERVICE.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18302
+
+---
+
+## Page 171
+
+PAGE FIVE DE VE 0675 UNCLAS
+
+SEATTLE WILL ALSO EXPEDITIOUSLY HANDLE CREDIT
+
+AND CRIMINAL CHECKS CONCERNING
+
+IN ADDITION
+
+TO CHECKING NGIC AND CCH FOR OUISTANDING WARRANTS.
+
+INASMUCH AS TIME IS OF THE ESSENCE, SEATTLE WILL
+
+TELEPHONICALLY CONTACT WASHINGTON FIELD OFFICE SPECIAL
+
+AGENT
+
+CONCERNING THE ABOVE FOR
+
+APPROPRIATE ACIION.
+
+BT
+
+#0075
+
+NNNN
+
+b6|
+
+b7C
+
+b6|
+
+b7C
+
+DB Cooper-18308
+
+---
+
+## Page 172
+
+DE XF 4075 1860550
+
+ZIA DEULU
+
+N :313472 JUL 05
+
+FiTE
+
+FOI WASHENGION FIELD
+
+TO :
+
+FEZ SEATILE ROUTIRE
+
+BT
+
+b7C
+
+(164-301)
+
+(P)
+
+WISUS; AKA, D. B, COOPER; CRIME ABOAND AIRCRAFT,
+
+ON JURE B6, 19SUY AN INDIVEDUAL KNOWN AS
+
+OFFICENS SERVICE GLUB,
+
+WASHINGTON, DACA CUDOS, TELEPHONICALLY CONTAGIED THE WASH
+
+INGTON FIELD OFFICE, (UFO> RECARDINE AR INDIVIDUAL
+
+KNOWN AS
+
+WHO GURIGNTLY RESIDES AT
+
+THE CLUB*
+
+b6
+
+DESCRISED
+
+AS 45mS6 VEARS OLD; 5°11*
+
+TO 6' TALL, MESIUM SUILD, EXCELLEYT PHYSICAL CONDITION
+
+ANC UNTIL REGENTLY SCARING A BEALDA
+
+ADVISED
+
+THAT
+
+I7 AY AVID WOODSHAS AUD PURPORTED PARATROOPENA
+
+KEEPS TO HINGELF AND IT IS UNIONN UNERE AS GOES
+
+EACH DAY, NOVEVE, IT IS BELIEVED ME IS UNENPLOYED.
+
+A PROTOGRAPH OF SEVERAL COMPOSIIE DRAIGO VERE
+
+SHOWB TO
+
+AND REVALED INAT THE WASIO FACIAL
+
+CHANAGTERISTICS AND HAIR LINE OF
+
+ARE SAULAR TO LIST S4E1
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18304
+
+---
+
+## Page 173
+
+VLULUAQUENS
+
+RRLV SO SF SE
+
+"DE HQ
+
+0005 186
+
+VZ CZ CHQO DO5
+
+RR LV SC SF SE
+
+DE HQ DDD5 1871923
+
+ZNR VUUUU®
+
+R 8518527 JUL 80
+
+FM DIRECTOR FBI (164-2111)
+
+TO FBI SEATTLE (164-81) (P) ROUTINE
+
+FBI LAS VEGAS ROUTINE
+
+FBI SACRAMENTO ROUTINE
+
+'Subject
+
+FBI SAN FRANCISCO <164-220) ROUTINE
+
+BI
+
+Jack beatt Farmer
+
+SUR 954,0.
+
+UNCLAS
+
+NORJAK; CAA - HIJACKING.
+
+RE SEATTLE TELETYPES JUNE 24, 1980 AND JUNE 28, 1980.
+
+PREVIOUSLY REPORTED UNIDENTIFIED LATENT FINGERPRINTS AND
+
+LATENT IMPRESSION, (FINGERPRINT OR PALM PRINT)
+
+NOT FINGERPRINTS
+
+UNITED STATES ARMY SERVICE NUMBER
+
+BORN
+
+UNITED STATES MARINE CORPS SERVICE NUMBER
+
+BORN
+
+OR GARTH HUDSON DUNNING UNITED STATES ARMY
+
+SERVICE NUMBER 19213544, BORN DECEMBER 18, 1927 IN CHICO,
+
+CALIFORNIA. NO PALM PRINTS CONTAINED IDENTIFICATION DIVISION..
+
+b6
+
+b7C
+
+- 8432
+
+Аyb6
+
+b7C
+
+DB Cooper-18309
+
+---
+
+## Page 174
+
+PAGE TWO DE HQ DODS UNCLAS
+
+FILES THESE INDIVIDUALS.
+
+CONFIRMING •
+
+BT
+
+D005
+
+NNNN
+
+ALL OFFICES PLS RETURN TO TALK
+
+', 858: NF
+
+DB Cooper-1831Q
+
+---
+
+## Page 175
+
+VZCZ CHAD 195
+
+- RRLY SO ST SE
+
+DE En 29r5 196
+
+UZCZ CHCD 035
+
+RR LV SC SF SE
+
+DE HP 00r5 1571923
+
+ZHR UUUUU
+
+R 0513527 dUL B2
+
+FM DIRECTOR FBI (164-0111)
+
+TO FRI SEATTLE (1,64-51) (P) FOUTINE.
+
+FBI LAS VEGAS ROUTINE
+
+•FBI SACRAMENTO ROUTINE
+
+FBI SAM FRANCISCO (164-320) FOUTINE
+
+JuB 956, 4
+
+UICLAS
+
+IDEJAN; CAN - HIJACKINS a
+
+RE SEMITLE TELETYPES JUNE A4, 1970 AND JUNE 2', 199".
+
+• PREVIOUSLY REPORTED UNIDEITIFIED LATENT FINGEFORINTS A'D
+
+LATEXT IMPRESSION, (FIGERPRIIT OR PALM PRINT) COT FICERPRINTS
+
+UNITED STATES ATMY TERVICE RUNS EN
+
+16
+
+b70
+
+BORI:
+
+• UNITED STATES MARIE CORPS SERVICE "UMBET
+
+BOF"
+
+OR GARTH HUDSO: DUCTING UNITED STATIL Y
+
+SERVICE NUMBER 19913544, BORE DECEMBES DE, 1997 IN CHICO, IN
+
+CALIFORMIA. NO PILM PRINIS
+
+GONTAILED IDENTIFICATIO: DIVISION
+
+...4
+
+DB Cooper-18311
+
+1-11259
+
+---
+
+## Page 176
+
+1927 YEAR OF BIRTH
+
+NAME
+
+illas accompanied your request, this
+
+Burcen connoi guarantee in ony man-
+
+nex ther this material concerns the
+
+individual in whom you are interested.
+
+PERSONAL IDENTIFICATION
+
+Dunning,
+
+Garth
+
+Hudson
+
+SURNAME
+
+FIRST
+
+MIDDLE
+
+SuB 986
+
+000
+
+0:0
+
+7
+
+CLASS
+
+RACE
+
+W
+
+No..
+
+114475-
+
+3
+
+HAIR
+
+Dark Brown
+
+BUILD
+
+Med
+
+MARKS, SCARS, TATTOOS, ETC.
+
+COMPLEXION
+
+Med
+
+Appendicitis scar
+
+EYES
+
+Brown
+
+DESCENT
+
+French
+
+HEIGHT
+
+5'8%"
+
+WEIGHT
+
+160
+
+AGI
+
+23
+
+NATIVITY
+
+Chico, California
+
+KENA Chico Police
+
+rept., Chico, Cal.
+
+DATE 11-13-57
+
+CLASSED.
+
+SEARCHED.
+
+FILED.
+
+IGNATURE (IN
+
+Last it. Lening
+
+b7C
+
+!..
+
+FAL IDENTIFICATION AND INVES
+
+«ВАМЕНТЫ
+
+AALIFOORMIA
+
+1644-81-8435
+
+De coper -18357
+
+---
+
+## Page 177
+
+STATE OF CALIFORNIA
+
+DEPARTMENT OF JUSTICE
+
+BUREAU OF CRIMINAL IDENTIFICATION AND INVESTIGATION
+
+P. O. BOX 1859, SACRAMENTO 9, CALIFORNIA
+
+These fingerprints taken
+
+Ea For Personal Identification
+
+In connection with an application for
+
+Public Employment
+
+Coniealed Weapon License
+
+Other License or Permit
+
+Residence Address....
+
+1716 Akbutus
+
+Hue
+
+_City.
+
+Chico, CaliC
+
+Business Address.
+
+Jame
+
+_ City.
+
+Occupation.
+
+Teacher
+
+In Emergency Notify.
+
+Mrs. RE. Vunneg
+
+Relationship.:
+
+Mother
+
+Address..
+
+1716 Arbutus Aue
+
+ChIco
+
+Even though spaces below apply, is is advisable do fill out all information indicated above, for permanent personal identification record.
+
+9-5-50,1
+
+5.51
+
+TERS: BD. SAUTO.AU: Garth Hudson DUNNING, APP(P) Im
+
+If application for Public Employment:
+
+Teacher, CSC, IlId, Dept. of
+
+Education
+
+Title of Position..
+
+Teacher
+
+Department or Agency State Repartment of Education
+
+Political Subdivision
+
+2*25; 251
+
+Stare, County or Ciey
+
+If application for Concealed Weapon License:
+
+Make.
+
+Type.
+
+-Caliber
+
+Serial Number.
+
+If application for othor Licenso or Pormit:
+
+License
+
+application for (Permit
+
+to
+
+Issuing. Agency.
+
+Political Subdivision
+
+Staro, Counsy or Cliy
+
+DB Cooper-1835p
+
+---
+
+## Page 178
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+• Teletype
+
+• Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+• Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+• SECRET
+
+I CONFIDENTIAL
+
+UNCLAS EE TO
+
+0 UNCLAS
+
+Date _
+
+7/2/80
+
+SAC, SEATTLE (164-81)
+
+SAC, SACRAMENTO (164-50)
+
+(P)
+
+NORJAK
+
+CAA - HIJACKING (A)
+
+stupiet. Jacks geck Farmer and
+
+00: SE
+
+Harth Huskson Dunning
+
+Bufile: 164-2111
+
+RE: SE teletype to Bureau, 6/27/80.
+
+Enclosed for SE is one trox copy of fingerprint card
+
+for Garth Hudson Dunning.
+
+The following investigation was conducted by SC
+
+Earline M. Charles.
+
+At Sacramento, Ca.
+
+A check of Ca. motor vehicle registration and driver's
+
+license records, on June 30, 1980, through the Ca. Law
+
+Enforcement Telecommunication System (CLETS), failed to locate
+
+a license for Jack Farmer born 5/22/44. Records were also
+
+negative under the name Garth Dunning.
+
+It is to be noted that records reveal numerous licenses
+
+issued to individuals by the name of Jack Farmer, however none
+
+of these individuals reside in Yuba City.
+
+On 7/1/80,
+
+Ca. State
+
+Bureau of Criminal Identification and Information
+
+(CII), advised
+
+that a check of their files failed to locate any record for a
+
+Jack Farmer.
+
+Imade available a copy of a fingerprint
+
+card showing
+
+a Garth
+
+Hudson Dunning, age 23, applying for a
+
+teacher's license in 1951.
+
+Seattle (enc. 1)
+
+Sacramento
+
+Reddinb
+
+far:
+
+164-81-8436
+
+1b61
+
+b7C
+
+2
+
+-
+
+EMC
+
+(4)
+
+.Ill!
+
+V7 1980
+
+b6
+
+b7C
+
+Approved:
+
+Transmitted
+
+Per
+
+(Number)
+
+(Time)
+
+FBI/DOJ
+
+DB Cooper-18359
+
+---
+
+## Page 179
+
+7/2/80
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+FROM!
+
+RE 8
+
+BAC, BACKAMENTO (166-50) 18) S113 986
+
+NORJAK
+
+CAA - HIJACKING (A)
+
+001 8E
+
+Bufila: 164-2111
+
+RE: SE teletype to Bureau, 6/27/80.
+
+Encloned for. SE is one Jarox copy of fingerprint card
+
+for Garth Hudson Dunning.
+
+The following Investigation was conducted by SC
+
+Earline M. Charles. :
+
+At Sacramento, Ca.
+
+A check of la, motor vehicle registration and driver's
+
+Iicense records, on June 30, 1980, through the Ca. Law
+
+intorcement telecommunication systen (chits)
+
+failed to locate
+
+@Ardense tot vack larmeI born 5/42/44. recorda were 8180
+
+negative under the name Garth Dunning.
+
+It is to be noted that records reveal numerous licenses
+
+issued to individuals by the name of Jack Farmer, however none
+
+of these individuals reside in Yuba City.
+
+оп 7/1/80,
+
+Ca. State
+
+Bureau of Criminal Identification and Infarmation
+
+(CII) , advised
+
+that a check of their files falled to locate any record for a
+
+Jack Farmer.
+
+made available a copy of a fingerprint
+
+card showing a Garth Hudson Dunning, age 23, applying for a
+
+teacher's license in 1951.
+
+164-81-8436
+
+Seattle (enc. 1)
+
+Sacramento
+
+SEANCHED.
+
+INDF:
+
+SERLALIZET
+
+EMC
+
+(4)
+
+JUL
+
+1 1980
+
+FBi. S
+
+b6
+
+b7C
+
+DEY
+
+Cooper-18360
+
+---
+
+## Page 180
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+164-497 (7) (P)
+
+FBI FILE NO.
+
+164-2111
+
+LATENI CASE NO. A-45410
+
+TO:SAC, Los Angeles
+
+July 3, 1980
+
+RE: NORJAK;
+
+Sat G. 5.
+
+suspect
+
+b6
+
+b7C
+
+REFERENCE: Teletype 6/12/80
+
+EXAMINATION REQUESTED BY: LoS Angeles
+
+SPECIMENS:
+
+The previously reported unidentified latent finger-
+
+rints in this case are not the fingerprints ofl
+
+No palm prints forl
+
+are contained in
+
+the Identification Division files.
+
+b6
+
+b7C
+
+- Seattle (164-81)
+
+Portland (164-41)
+
+164-81-8437
+
+SEARCHED
+
+INDEED..
+
+1b6
+
+b7C
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+FBI/DOJ
+
+DB Cooper-18361
+
+---
+
+## Page 181
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+164-497 (7) (P)
+
+FBI FILE NO.
+
+164-2111
+
+LATENT CASE NO. A-45410
+
+TO: SAC, Los Angeles
+
+July 3, 1980
+
+RE: NORJAK;
+
+REFERENCE: Teletype 6/12/80
+
+EXAMINATION REQUESTED BY: Los Angeles
+
+SPECIMENS:
+
+The previously reported unidentified latent finger-
+
+To one a on Bit don to rosing no 00
+
+Jare contained in
+
+b6
+
+b7C
+
+? - Seattle 1664-41
+
+- Portland (164-41)
+
+164-81-84137
+
+JUL | 1987
+
+-BI— SEATTLE
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+FBI/DOJ
+
+DB Cooper-18362
+
+---
+
+## Page 182
+
+In Reply, Please Refer 20
+
+File No.
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+915 Second Avenue
+
+Seattle, Washington
+
+98174
+
+July 8, 1980
+
+Saly
+
+Director of Security
+
+Rainier National Bank
+
+Second and Marion
+
+Seattle, Washington
+
+Dear Sir:
+
+b6|
+
+b7C
+
+98104
+
+•Pursuant to a telephone call from Special Agent L
+
+_, to your department on July 8, 1980, and incident to an
+
+official investigation by this agency, it is requested that you
+
+furnish identifying data (Social Security Number and Date of Birth)
+
+b7C
+
+Very truly yours,
+
+Paul L. Mack
+
+Special Agent in Charge
+
+By:
+
+613Z
+
+106
+
+• b7C
+
+supervisory Special
+
+Agent
+
+2 - Addressee
+
+1 - Seattle (164-81)
+
+JKM/ job
+
+(3)
+
+164-81
+
+1*
+
+1644-81-84380B Cooper-18363
+
+---
+
+## Page 183
+
+In Reply, Ploase Refer 10
+
+File No.
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+915 Second Avenue
+
+seattle, Washington
+
+98174.
+
+July 8, 1980
+
+Saly
+
+Director of Security
+
+Rainier National Bank
+
+Second and Marion
+
+Seattle, Washington
+
+Dear Sir:
+
+b6
+
+b7C
+
+98104
+
+Pursuant to a telephone call from Special AgentL
+
+, to your department on July 8, 1980, ana incident to an
+
+official investigation by this agency, it is requested that you
+
+Furnish identifying data (Social Securitv Number and Date of Birth
+
+From your records regardingl
+
+b6
+
+b7C
+
+Very truly yours,
+
+Paul I. Mack
+
+Special Agent in Charge
+
+By:
+
+637.
+
+b6
+
+Supervisory Special Agent
+
+2 - Addressee
+
+1 - Seattle
+
+(164-81)
+
+JKM/ jCb
+
+(3)
+
+164-81
+
+1*
+
+164-51-5-438 coper 18369
+
+---
+
+## Page 184
+
+Dissemination
+
+Routing Slip .
+
+FD-417 (9-12-6
+
+To: D] Director, Att.:
+
+EX SAC,
+
+Albany
+
+Albuquerque
+
+Alexandria
+
+Anchorage
+
+Atlanta
+
+Baltimore
+
+Birmingham
+
+Boston
+
+Buffalo
+
+Butte
+
+Charlotte
+
+Chicago
+
+Cincinnati
+
+Cleveland
+
+Columbia
+
+Dallas
+
+Denver
+
+Detroit
+
+El Paso
+
+Honolulu
+
+RE:
+
+UNSUB, aka
+
+D.B. Cooper
+
+CAA-HIJACKING (A)
+
+00: Seattle
+
+(Copies to Offices Checked)
+
+Houston
+
+Indianapolis
+
+Jackson
+
+Jacksonville
+
+Kansas City
+
+Knoxville
+
+Las Vegas
+
+Little Rock
+
+Los Angeles
+
+Louisville
+
+Memphis
+
+Miami
+
+Milwaukee®
+
+Minneapolis
+
+Mobile
+
+Newark
+
+New Haven
+
+New Orleans
+
+New York City
+
+] Norfolk
+
+Date
+
+a nina cly
+
+Phoenix
+
+Pittsburgh
+
+§ Portland®
+
+Richmond
+
+Sacramento
+
+St. Louis
+
+Salt Lake City
+
+San Antonio
+
+E Malinton Friedal
+
+7/7/80
+
+REMARKS:
+
+Enclosed is Anchorage letter to
+
+Portland dated 7/1/80 which was sent inadvertantly
+
+to Portland as office of origin; however, since
+
+Seattle is 00, letter is being forwarded.
+
+SEARCHED
+
+SERIAL!??
+
+JUL 1 0 1980
+
+106
+
+b7C
+
+II
+
+FILE #:
+
+SAC LAUDENT O. JAST,
+
+PORTLAND
+
+OFFICE
+
+DB Cooper 18365 64-81-8439
+
+---
+
+## Page 185
+
+TO
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+SAC, PORTLAND
+
+DATE:
+
+7/1/80
+
+FROM
+
+:
+
+SUBJECT:
+
+UNSUB, aka
+
+D.B. Cooper
+
+CAA-HIJACKING (A)
+
+(00: PD)
+
+Subs
+
+Enclosed for Portland are three rental receipts in
+
+the name
+
+On 6/19/80.
+
+and currently
+
+residing at
+
+Fairbanks, Alaska, telephone
+
+contacted SAL
+
+• at the Fairbanks Resident
+
+Agency:
+
+advised that he had information which he believed
+
+pertains to captioned matter. He advised that approximately one
+
+year after instant hijacking, he sent a letter to the Portland
+
+Office of the FBI suggesting that he may have positive information
+
+in this matter. He advised he was never contacted regarding this
+
+letter and he subsequently wrote a second letter during 1980,
+
+shortly after money, believed to be ransom money in this case,
+
+was found in the Columbia River near Portland, Oregon.
+
+advised that he has also not received an answer
+
+to the above
+
+• letter.
+
+then explained that during 1971, he was a newspaper
+
+carrier for the Daily News-Miner at Fairbanks, Alaska.
+
+on his paper route was the
+
+Fairbanks,
+
+Apartment building located
+
+Alaska.
+
+that apartment building was occupied by al
+
+who he
+
+I knew as the
+
+at the F. W. Woolworth store
+
+in Fairbanks.
+
+Idescribed L
+
+as follows:
+
+Sex
+
+Male
+
+Race
+
+Caucasian
+
+Age
+
+Approximately 31 - 32
+
+Height
+
+Approximately 5'10"
+
+Build
+
+Slender
+
+Hair
+
+Dark and cut short
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Anchorage
+
++1 1641-81-8439
+
+DLM: dml
+
+(3)
+
+11is
+
+b6
+
+DB Cooper-18366
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings
+
+---
+
+## Page 186
+
+AN 164-227
+
+Miscellaneous
+
+Vehicle
+
+Did not wear glasses; clean-
+
+shaven.
+
+Late model (approximately|
+
+_ white or light yellow
+
+b6|
+
+b7C
+
+b6|
+
+b7C
+
+avid interest in flying and parachuting. I
+
+Vietnam as though he had been involved in that conflict. L
+
+never mentioned a family and resided alone.
+
+generally kept to himself and had few, if any, visitors.
+
+recalled thatl
+
+was a subscriber to the
+
+newspaper from approximately
+
+5/2/71 - approximately 11/20/71.
+
+He further recalled thatl
+
+moved from his apartment on
+
+approximately 11/24/71, indicating that he was traveling to the
+
+Los Angeles, California, area to become the
+
+of the
+
+Woolworth store there.
+
+recalled that approximately one or two days after
+
+left Fairbanks, Alaska, he recalled seeing the news accounts
+
+concerning captioned
+
+a hijacking. He recalled a strong resemblance
+
+between the composite drawings of captioned Unsub and
+
+He advised that he immediately formed the opinion that L
+
+could
+
+have been D.B. Cooper; however, as a juvenile, he was so intrigued
+
+by the possibility that this crime could be conducted successfully
+
+that he chose not to contact anyone about his suspicions.
+
+Approximately one year after the crime he decided that
+
+he should make known his beliefs and he wrote his first letter to
+
+the FBI. When he did not receive an answer to this letter he
+
+assumed that the matter was resolved without needing to contact
+
+him and did not consider the matter further. His interest was
+
+again aroused when he saw news accounts regarding the recovery of
+
+money connected to this case.
+
+At that time, he wrote a second
+
+letter to the FBI concerning his suspicions.
+
+advised that he also became concerned that records
+
+might be destroyed with age
+
+Based on this
+
+concern he contacted
+
+who own and operate
+
+the apartment building atl
+
+which was known
+
+owned the building at
+
+apartments during 1971.
+
+that time also;
+
+however, have since changed
+
+the name of the building. E
+
+advised he was allowed to search
+
+rental receipts for the building and was successful in locating
+
+the three enclosed
+
+receipts for May, July, and October, 1971, in the
+
+-2-
+
+16
+
+b70
+
+1b6
+
+b70
+
+b6
+
+b7C
+
+DB Cooper-18367
+
+---
+
+## Page 187
+
+AN 164-227
+
+name of l
+
+Two of these receipts show a middle initial
+
+which appears
+
+to be
+
+advised he was unable to locate the
+
+other rental receipts
+
+forl
+
+receipt dated 11/22/71 in the name of
+
+overer, did locate anountal
+
+showing that
+
+a deposit was made on
+
+He explained that this would
+
+indicate that
+
+after 11/22/71.
+
+actually leave
+
+the apartment until approximately one or two days
+
+before Thanksgiving
+
+1971.0
+
+receipt dated 4/5/71, in the
+
+name ovised he also found a catal
+
+indicating
+
+that
+
+was the occupant of
+
+during April, 1971.
+
+advised that l
+
+told him he
+
+could keep these rental receipts and he was, therefore, furnishing
+
+them to the FBI, without any desire to receive them back.
+
+information regardingl
+
+advised he could furnish no additional descriptive
+
+and was only furnishing this
+
+information
+
+to relieve his own mind.
+
+On 6/20/80, teletype inquiry with the Alaska Department
+
+of Motor Vehicles determined that there is no record for a
+
+with an address of
+
+Fairbanks, Alaska.
+
+It was determined that drivers' license
+
+records are routinely purged every five years.
+
+On 6/20/80, the records of the Fairbanks Police
+
+Department and the Alaska State Troopers, Fairbanks, Alaska.
+
+were negative for
+
+Fairbanks,
+
+Alaska.
+
+On 6/20/80, the records of the Interior Credit Bureau,
+
+910 College Road,
+
+Fairbanks. Alaska, failed to reflect a reference
+
+identifiable with
+
+_ Fairbanks,
+
+Alaska.
+
+It was determined that the records
+
+are
+
+routinely destroyed after five years of inactivity.
+
+On 6/20/80,
+
+F.W. Woolworth
+
+Company
+
+302 Cushman
+
+Street,
+
+Fairbanks,
+
+Alaska, telephone
+
+advised that a review of store records back to 1970
+
+(records have been destroyed prior to that) fails to reflect any
+
+reference to al
+
+Thaving been employed at the store as
+
+or in any other capacity.
+
+further
+
+advised that he came to the Fairbanks store during
+
+1977 from the
+
+Los Angeles area where he served as the
+
+the Panorama
+
+City, California, Woolworth store forl
+
+He advised
+
+he was never familiar with a
+
+who served as an
+
+-3-
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+DB Cooper-18368
+
+---
+
+## Page 188
+
+AN 164-227
+
+of any of the Los Angeles area Woolworth
+
+stores while he was at the Panorama City store.
+
+further advised that the national headquarters
+
+for F.W. Woolworth Company are located in the Woolworth Building
+
+on Broadway, New York, New York.
+
+He emphasized, however, that
+
+the company headquarters would not have any personnel records
+
+as these are maintained in the individual store where the
+
+employee is assigned.
+
+further advised thatl
+
+resident, had also made recent inquiry regarding
+
+te recent inquiry regarding Fairbanks area
+
+At that time, one of the sentor store employees believed that she
+
+recalled someone by the name of
+
+at the store. The
+
+employee was not certain whether or not the name she was thinking
+
+about was actuallyl
+
+or a similar name. She recalled
+
+that the person she was
+
+referring to was also associated in some
+
+way with the University of Alaska.
+
+On 6/23/80,
+
+University of Alaska, Fairbanks, telephonel
+
+advised that
+
+a review of University of Alaska
+
+employee and student records
+
+failed to reflect any reference identifiable with
+
+Fairbanks, Alaska.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Administrative
+
+Inasmuch as logical investigation at Fairbanks, Alaska,
+
+fails to further identify thel
+
+_described by l
+
+the above information is being furnished Portland for
+
+whatever action deemed appropriate and Anchorage is considering
+
+this matter RUC.
+
+b6
+
+b7C
+
+-4-
+
+DB Cooper-18369
+
+---
+
+## Page 189
+
+SAC, PORTLAND
+
+7/1/80
+
+SAC, ANCHORAGE (164-227) (RUC)
+
+UNSUB, ara
+
+D.B. Cooper
+
+CAA-HIJACKING (A)
+
+(00: PD)
+
+duBT
+
+Enclosed for Portland are three rental receipts in
+
+the name
+
+On 6/19/80
+
+and currently
+
+residing
+
+_at
+
+Fairbanks, Alaska, telephone
+
+contacted SAL
+
+at the Fairbanks Resident
+
+Agency.
+
+advised that he had information which he believed
+
+pertains to
+
+captioned matter. He advised that approximately one
+
+year after instant hijacking, he sent a letter to the Portland
+
+Office of the FBI suggesting that he may have positive information
+
+in this matter. He advised he was never contacted regarding this
+
+letter and he subsequently wrote a second letter during 1980,
+
+shortly after money, believed to be ransom money in this case,
+
+vas found in the Columbia River near Portland, Oregon.
+
+advised that he has also not received an answer
+
+to the above letter.
+
+then explained that during 1971, he was a newspaper
+
+carrier for the Daily News-Miner at Fairbanks, Alaska. Included
+
+on his paper route was the
+
+apartment building located
+
+Fairbanks,
+
+Alaska.
+
+Jof
+
+that apartment building was occupied
+
+by a
+
+who he
+
+I knew as the
+
+at the F. W. Woolworth store
+
+in Fairbanks.
+
+described|
+
+as follows:
+
+Sex
+
+Race
+
+Age
+
+Height
+
+Build
+
+Hair
+
+Male
+
+Caucasian
+
+Approximately 31 - 32
+
+Approximately 5'10"
+
+Slender
+
+Dark and cut short
+
+J Portland (Enc. 3) MC'W-M
+
+11-641
+
+1
+
+- Anchorage
+
+DLMI: dm1
+
+(3)
+
+DB Cöoper-18370
+
+b6
+
+b7C
+
+b6
+
+b70
+
+b6
+
+b7C
+
+---
+
+## Page 190
+
+FD-36 (Rev. 5-22-78)
+
+TRANSMIT VIA:
+
+[ Teletype
+
+• Facsimile
+
+AIRTEL
+
+FBI
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+• Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+• SECRET
+
+• CONFIDENTIAL
+
+• UNCLAS EFT O
+
+D UNCLAS
+
+Date 7/8/80
+
+TO:
+
+FROM:
+
+SAC, SEATTLE (164-81)
+
+SAC, SAN FRANCISCO (164-220) (P) (SQ. 10)
+
+SUBJECT: NORJAK (A) ;
+
+00: SEATTLE
+
+b6
+
+b7C
+
+fonts
+
+Re: Miami airtel to Seattle, 5/1/80.
+
+The following investigation was conducted by SA
+
+AT SAN MATEO, CALIFORNIA:
+
+I (protect identity), upon being re-
+
+contacted, advised that he could furnish no additional informa-
+
+tion concerning this matter.
+
+ARMED AND DANGEROUS
+
+106
+
+b7C
+
+b6
+
+b7C
+
+b7D
+
+2
+
+- Seattle
+
+- Miami (Info.)
+
+1 - San Francisco
+
+DJB/klb
+
+(4)
+
+1651-51-8440
+
+b6
+
+b7C
+
+Approved:
+
+Transmitted Number)
+
+(T
+
+DB Cooper-18374
+
+---
+
+## Page 191
+
+* AIRTEL
+
+7/8/80
+
+TO:
+
+FROM:
+
+SUBJECT:
+
+SAC, SEATTLE (164-81)
+
+SAC, SAN FRANCISCO (164-220)
+
+(P)
+
+(SQ. 10)
+
+NORJAK (A) ;
+
+00: SEATTLE
+
+b6
+
+b7C
+
+Re:
+
+Miami airtel to Seattle, 5/1/80.
+
+The following investigation was conducted by SA
+
+AT SAN MATEO, CALIPORNIA:
+
+(protect identity), upon being re-
+
+he
+
+could furnish no additional informa-
+
+contacted,
+
+advised that
+
+tion concerning this matter.
+
+ARMED AND DANGEROUS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7D
+
+2
+
+- Seattle
+
+1 - Miami (Info.)
+
+1 - San Francisco
+
+DJB/kIb
+
+• (4)
+
+164-81-84411
+
+SEAD!
+
+DB Cooper-18375
+
+---
+
+## Page 192
+
+SC0002 1932040Z
+
+RR SE
+
+DE SC
+
+R 112040Z JUL 8D
+
+best ith, Jit Farnes
+
+b7C
+
+FM SACRAMENTO.
+
+(164-50) (P)
+
+TO SEATTLE (164-81) ROUTINE
+
+BT
+
+SUB. 486,0
+
+UNCLAS
+
+NORJAK; CAA - HIJACKING (A); 00: SEATILE
+
+RE LAS VEGAS TELETYPE TO THE BUREAU, DATED JULY 3, 198D,
+
+AND SEATTLE TELCAL TO SACRAMENTO, DATED JULY 10, 19800.
+
+FOR INFORMATION OF SEATTLE, RECORD CHECKS AT THE YUBA
+
+COUNTY SHERIFF'S OFFICE, YUBA CITY POLICE DEPARIMENI, MARYSVILLE
+
+POLICE DEPARIMENT AND THE SUTTER COUNTY SHERIFF'S OFFICE WERE
+
+NEGATIVE REGARDING ANY ARREST RECORD FOR JACK SCOTT FARMER•
+
+REFERENCED SEATILE TELCAL INQUIRED REGARDING DMV AND CI&I
+
+CHECKS, WHICH WERE FORWARDED TO SEATTLE ON JULY 2, 1980, BY
+
+SACRAMENTO AIRTEL, WERE ALL NEGATIVE REGARDING FARMER.
+
+• THERE ARE INDIVIDUALS IN THE YUBA CITY AREA WHO ARE FAMILIAR
+
+WITH FARMER AND
+
+YUBA CITY,
+
+CALIFORNIA.
+
+b6
+
+b7C
+
+1104-81-8441
+
+DACHER
+
+MALIZER DY
+
+...FILED..
+
+1141
+
+11 1980
+
+b6
+
+DB Cooper-18376
+
+---
+
+## Page 193
+
+PAGE TWO SC 164-56 UNCLAS
+
+SACRAMENTO INTEMDS TO CONDUCT LOGICAL INVESTIGATIOU
+
+AT YUBA CITY, INCLUDING DISPLAY OF COMPOSITE OF D. B. COOPER
+
+IN AN EFFORT TO DETERMINE ON ELIMINATE FARMER.
+
+19326457
+
+SE 1
+
+DB Cooper-18377
+
+---
+
+## Page 194
+
+SC0902
+
+19520402
+
+RR SE.
+
+DE SC
+
+R 1120402 JUL 80
+
+SuB 156,0
+
+FM SAGRAMENIO
+
+6164-50> (P)
+
+TO SEATTLE (164-31) ROUTING
+
+BI
+
+UNCLAS
+
+NORJAKE CAA - HIJACKING SAS: DO: SEATILE
+
+RE LAS VEGAS TELETYPE TO THE BUREAU, DATED JULY 3, 1986,
+
+AND SEATILE TELGAL TO SACRAMENTO, DATED JULY 10, 1980.
+
+FOR INFORMATION OF SEATTLE, RECORD CHECKS AT THE YUBA
+
+COUNTY SMERIFF'S OFFICE, YUBA CITY POLICE DEPARIMENT, MARYSVILLE
+
+POLICE DEPARTMENT. AND THE SUTTER COUNTY SHERIFF'S OFFICE WERE
+
+NEGATIVE REGANDING ANY AKREST NECORD FOR JACK SCOTT FANNER.
+
+REFERENCED SEATILE TELCAL INQUIRED REGARDING DUV AND CISI
+
+CHECKS, WHICH WERE FORWARDED TO SEATTLE OU JULY 2, 1980 BY
+
+SACRAMEWIO AIRTEL, WERE ALL NEGATIVE REGARDING FARMER.
+
+THERE ARE INDIVIDUALS IN THE YUBA CITY AREA WHO ARE FAMILIAR
+
+WITH FARMER
+
+ARD
+
+YUBA CITY,
+
+CALIFORNIA.
+
+1b6
+
+b7C
+
+114-81-82411
+
+SLAPEWER
+
+*ILED
+
+1 1 1980
+
+DB Cooper-18378
+
+---
+
+## Page 195
+
+3L0314 1952310
+
+RR HO SE
+
+DE SL
+
+N 112220Z JUL 85
+
+Fl ST. LOUIS (164-M) (RUC)
+
+TO DIRECTOR (164-2111) (ROUTINE)
+
+et suljest:
+
+SEATTLE (164-61) (ROUTINE)
+
+ST
+
+UNCLAS
+
+NORJAK, (A) 00: SEATTLE
+
+RE PITTSBURGH TELETYPE TO BUREAU, JUNE 26, 1980.
+
+ST. LOUIS TELETYPE AND AIRTEL TO BUREAU JULY 29 19Ux.
+
+PERSONNEL, FEDERAL RECORDS CENTER (CIVILIAN PERSONNEL RECORDE)
+
+111 WINNEBAGO, ST. LOUIS, MISSOURI, ADVISED THAI NO RECORDS OF
+
+EMPLOYMENT COULD BE LOCATED AT THIS CEMTER FOR L
+
+BORN
+
+UAC, NO FURTHER INVESTIGATION BEING CONDUCTED AI ST. LOUIS.
+
+BT
+
+11641-41-8442
+
+DB Cooper-18380
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 196
+
+3L9914
+
+1932315
+
+RA HO SE
+
+Die h
+
+N 1122202 JUL 86
+
+SI. LOUIS (164-60 (RIC)
+
+TO
+
+DIRECTOR
+
+(164-2111) CROUTINE)
+
+SEATTLE
+
+(154-6 1) (ROUTINE)
+
+BT
+
+VECLAS
+
+MOROAK, CÃ> 00% SEATTLE
+
+RE PITISBUROH TELETYPE TO BUNGAU, JUNE 26, 1900.
+
+ST, LOUIS TELETYPE AND AIRIEL TO BUREAU JULY DY 19644
+
+PERSOAVEL, FEDERAL RECORDS GENIER (CIVILIAN PERSOCHEL RECORDS)
+
+111 WIREBAGO, ST. LOUIS, MISSOURIS ADVISED THAT NO RECONDS OF
+
+EMPLOYUENT COULD BE LOCAIED AT INIC CENTER FORL
+
+BORN
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+UAG, NO FURTHER INVESTIGATION BEING CONDUGIED AT SIA LOUIE
+
+BT
+
+164-51-55413
+
+wy
+
+Doller- 18381
+
+---
+
+## Page 197
+
+LE5-7 TREv. 96-78)
+
+UNITED STATES GOVERIMENT
+
+"Memorandum
+
+TO
+
+: Director, FBI ( 164-2111
+
+FROM : Legal Attache, OTTAWA
+
+SUBJECT: NORJAK
+
+(A)
+
+00:
+
+Seattle
+
+UNITED STATES DEF-RTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION •
+
+)
+
+DATE: 6/30/80
+
+(164-47
+
+Subc,
+
+Reference:
+
+Butel, 6/27/80.
+
+Dissemination, as outlined below, was made on dates indicated.
+
+_ copies of
+
+[X Pertinent information from Butel, 6/27/80.
+
+Name and Location of Agency
+
+Date Furnished
+
+b7D
+
+* Burea
+
+2-Ottawa
+
+(1- 66-135)
+
+RLM: d]b
+
+(4)
+
+Ne 4-81-8443-
+
+"'I111980 (,
+
+b6
+
+b7C
+
+FBI/DOJ
+
+DB Cooper-18382
+
+---
+
+## Page 198
+
+-
+
+Routing Slip
+
+0-7 (Rev. 1-31-80)
+
+TO: SAC:
+
+Albuquerque
+
+Alexandria
+
+Anchorage
+
+Baltimore
+
+Birmingham
+
+(Copies to Offices Checked)
+
+RE:
+
+Indianapolis
+
+Jackson
+
+Jacksonville
+
+Kansas City
+
+Knoxville
+
+Las Vegas
+
+Little Rock
+
+Los Angeles
+
+Louisville
+
+Charlotte
+
+Memphis
+
+Cincinnati
+
+Milwaukee
+
+Cleveland
+
+Minneapolis
+
+Columbia
+
+Mobile
+
+Denver
+
+New Haven
+
+I Detroit
+
+] New Orleans
+
+El Paso
+
+New OrleaDity
+
+Honolulu
+
+1 SAC, New Rochelle (MRA)
+
+1 SAC, Brooklyn-Queens (MRA)
+
+NORJAK (A)
+
+00: SEATTLE
+
+1 Oklahoma City
+
+Omaha
+
+Philadelphia
+
+Phoenix
+
+/ Pittsburgh
+
+Portland
+
+Richmond
+
+Sacramento
+
+St. Louis
+
+Salt Lake City
+
+San Antonio
+
+San Diego
+
+San Francisco
+
+San Juan
+
+Seatien
+
+Springfield
+
+Tampa
+
+Washington Field
+
+Quantico
+
+TO: LEGAT:
+
+• Bern
+
+Bogota
+
+Bonn
+
+Buenos Aires
+
+Hong Kong
+
+London
+
+Manila
+
+Mexico City
+
+Ottawa
+
+Paris
+
+Rome
+
+Tokyo.
+
+7/9/80
+
+(Date)
+
+Retention
+
+For appropriate
+
+[X For information • optional
+
+D action
+
+• Surep, by.
+
+• The enclosed is for your information. If used in a future report, [ conceal all
+
+sources, • paraphrase contents.
+
+Enclosed are corrected pages from report of SA
+
+dated
+
+Remarks:
+
+SEE ATTACHED
+
+Enc. 1
+
+Bufile
+
+Urfile
+
+FBI/DOJ
+
+DB Cooper-18383
+
+---
+
+## Page 199
+
+LEX-7 (ROV, 96-78)
+
+UNITED STATES GOVERNE
+
+"Memorandum
+
+TO
+
+: Director, FBI ( 164-2111
+
+FROM : Legal Attache, OTTAWA
+
+SUBJECT: NORJAK
+
+(A)
+
+00: Seattle
+
+...
+
+UNITED STATES DEF ..M
+
+LENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE: 6/30/80
+
+1164-47
+
+I(P)
+
+Subc,
+
+Reference: Butel,
+
+6/27/80.
+
+Dissemination, as outlined below, was made on dates indicated.
+
+- copies of
+
+[X Pertinent information from Butel, 6/27/80.
+
+Name and Location of Agency
+
+Date Furnished
+
+b7D
+
+• Bureau
+
+2-Ottawa
+
+(1- 66-135)
+
+RLM: dib
+
+(4)
+
+164-81-8543
+
+..FILED.....
+
+i'" 1 1 1980
+
+FBI-SEATTLE
+
+FBI/DOS
+
+DB Cooper-18384
+
+---
+
+## Page 200
+
+4 DA ámn
+
+IV 164-60
+
+The following investigation was conducted
+
+bY SC DENISE NELSON-NALL On JUlY 2, 1980.
+
+AT RENO, NEVADA
+
+Washoe County Sheriff's Department, Reno, Nevada,
+
+furnished the following information:
+
+She stated GARTH DUNNING applied with that
+
+department for a work card in 1969 to work at the
+
+Tahoe Nugget as a dealer, listing an address of
+
+Ridgeway
+
+Street, CarnelianBay, California. She stated
+
+the file is on microfilm.
+
+She turnished a copy of his
+
+fingerprint card but stated his original application
+
+for a work card has been lost.
+
+She stated JACK SCOTT FARMER applied with
+
+that department for a work card in 1969 to work at
+
+the Nevada Lodge as a dealer listinga address of
+
+Ridgeway Street, CarneliaBay, California. She stated
+
+the file is on microfilm also
+
+and his fingerprint card
+
+has been lost but did furnish a copy of his original
+
+work card application.
+
+She stated both DUNNING and FARMER WErE
+
+photographed by that department and furnished copies
+
+of those photographs.
+
+b6
+
+b7C
+
+DB Cooper-18391
+
+---
+
+## Page 201
+
+7/7/50
+
+ais.
+
+fa.a
+
+' DIVISION,
+
+F 101:
+
+SEC, IÃS NEGAO (264-00) (P)
+
+10202K:
+
+0O :
+
+Baattle
+
+Re Scattlo ccietype to the Baseau cated 6/27/80.
+
+Incloscd for tha Buzcau, Atch: Identification
+
+Division, are the followins iters:
+
+Le Lingorarine card soc Carto Hulson Dunning
+
+obtairod Eron the Douglas County Sheriff's
+
+Offico, Minden, Nevada.
+
+200
+
+One copy of reporto dated 8/6/69 fron the
+
+Washoe County Shorifi', Office, Reno, Nevada,
+
+which reflect the diravpcarance
+
+and possible
+
+drouning of Carth Hudson Dunning and Jack Scott
+
+Ferrer.
+
+Enciossd for San Francisco, Sacramonto, and Seattle
+
+Divisions are to copies each of iton lumber 2, as well as one
+
+phoco erch où Carth Medson Enning and Jack Scott Farmer. Also
+
+encloood ior thise afficos aue
+
+copies each of an insert
+
+cocluctan; anvestigncion comiucted at Rano, Nevada.
+
+•3120011 (lesCo 6)
+
+• Lion Frincisco (154-220) (Ino, 14)
+
+2. - SECEarCNCO (Enc, 14)
+
+@scatile (104-02) (13506 16)
+
+(J0)
+
+1641-81-8445
+
+3F.*,
+
+Serts
+
+JUL 1 3 1980
+
+DB Cooper-18392
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 202
+
+IV 164-60
+
+For the information of the Bureau and receiving
+
+offices, the original fingerprint card for Jack Scott
+
+Farmer could not be located in the Records Division oi
+
+the Washoe County Sheriff's Office, Reno, Nevada. Investi-
+
+gation conducted at. Crystal Day, Incline
+
+Village, Reno, and
+
+Carson City, Nevaña, has failed
+
+to locate any other finger
+
+srInt carc
+
+for Farmer.
+
+is ag
+
+follows:
+
+Farmer's fingerprint classification
+
+0 311 IOO 19.
+
+I 28W MiT
+
+The Identification Division, Attn: Latent
+
+Fingerprint Section, is requested to photograph the enclosed
+
+Dunning fingerprint card, make appropriate comparisons as
+
+suggested in referenced 6/27/80 teletype, and therealter
+
+return the original card to the Las Vegas Division,
+
+Atti:
+
+Carson City Resident Agency, whereupon it will be
+
+returned to the Douglas County Sheriff's Office.
+
+LEAD:
+
+LAS VEGAS DIVISION
+
+At Carson City, Nevada
+
+will forwasd appropriate FD-302s reflecting
+
+investigation at Crystal Bay, Incline Village, and Carson
+
+City, Nevada.
+
+• 2% =
+
+DB Cooper-18393
+
+---
+
+## Page 203
+
+1dxi:
+
+7/7/80
+
+1J.
+
+DIT CON, FBE (161-2133)
+
+IDESTIZICANTET DIVISION,
+
+LEET FINGSITNIST SLOTTON,
+
+SAL
+
+Susplet's
+
+SAC, L'S VECAS (264-60) (P)
+
+mach Seat Fall,
+
+CA/, • ALTACKING iN)
+
+CD: Scatile
+
+garth Hudson Dussing
+
+SUB. 986
+
+Ro Costtle teletie to the Bureau
+
+dated 6/27/30.
+
+Encloood fos the jusou, Actni Identification
+
+DiVISIOn,
+
+are the follo.ing itc.s:
+
+ringemoint cord for Carti. Hudson Dunning
+
+obtaincd from the Douglas County Sheriff's
+
+offico, lindon, Nevis.
+
+One copy of toporis cateá 8/6/69 from the
+
+Warloo County chariff'e Office, leno, Nevada,
+
+mach coflect th aisappearance and rossible
+
+drowning of Garch Hudsen Dunning and Jack Soott
+
+Farnero
+
+Enclosed for san Francisco, Sacranento, and Seattle
+
+pivicions are to copios each of icon Number 2, as well as one
+
+Dhots erch of Carth Ludoos Duing and jack Scote l'atmei.
+
+AISO
+
+unclocod for those officer are sin cories cach of an insert
+
+rodrcting investigation conducted at fono, Nevada.
+
+2 • Encean (Lice 6)
+
+• Call ExonCiscO (161-720) (SiC- 14)
+
+2- socrancato (enc. l1)
+
+2 • Ino vega:
+
+104-81-52415
+
+1207
+
+5675
+
+b6
+
+b7C
+
+JUL 1 & 1980
+
+03 Cooper-18394
+
+---
+
+## Page 204
+
+TO
+
+:
+
+FROM :
+
+SUBJECT:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+SAC, PORTLAND (164-41)
+
+SAC, SACRAMENTO (164-50) (P)
+
+NORJAK
+
+00: Seattle
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE:
+
+7/11/80
+
+Sats, m.
+
+For the information of Portland on 7/9/80,
+
+Deputy
+
+siskiyou county sheriffs office,
+
+treka,
+
+California, advised that he
+
+had receivec
+
+Information from an individual who wished to have
+
+her identity protected regarding captioned matter.
+
+This individual's name is
+
+California,
+
+telephone number
+
+advised
+
+that approximately two years
+
+ago
+
+who now resides at
+
+Phoenix, Arizona, telephone
+
+I told her that while working on a ranch
+
+naiviL namefornia, on the oregon burder with alhad
+
+individual namedI
+
+gotten drunk and toldl
+
+that he was D. B. Cooper.
+
+went on to telll
+
+that he had buried
+
+the money after the sky-jacking and was waiting to dig
+
+it up. He advised that he had moved to the Hilt,
+
+California, area due to the fact that there were
+
+many policeman aware of the situation in Washington
+
+and Oregon.
+
+Subsequent to receiving the above information
+
+was telephonically contacted on 7/9/80,
+
+and advised that again she wished to have her identity
+
+remain anonymous but that she had received the above
+
+information from
+
+three years ago and thatl
+
+approximately two or
+
+it approximately two or three months ago.
+
+had again mentioned
+
+advised that she had seen
+
+or twice
+
+but that
+
+had worked and lived with
+
+and therefore would be extremely familiar with him. lo
+
+ladvised that to the best of her recollection
+
+was a white male, between the
+
+SEARCHED..
+
+2-Portland
+
+1-Seattle (Info.) (164-81)
+
+2-Sacramento
+
+JWR:js
+
+(5)
+
+SERIALSO D
+
+JUL 124 1980
+
+--12
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+151-8440
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll
+
+DB Cooper-18396
+
+---
+
+## Page 205
+
+SC 164-50
+
+40, small, thin build, dark brown hippie type hair
+
+advised that l
+
+arrested by the Oregon State Police for
+
+near Callahan's Restaurant, near Ashland,
+
+Oregon,
+
+approximately two or three years ago, and therefore
+
+would have a record in the
+
+state of Oregon.
+
+The above information is being furnished to
+
+Portland for its evaluation. Any logical leads, suc
+
+is an attempt to locate a record on
+
+or a composite photograph being showed tol
+
+in Phoenix, Arizona, is being left up to the discretion
+
+of office of origin.
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+2*
+
+DB Cooper-18397
+
+---
+
+## Page 206
+
+BA 164-223
+
+FAS:bja
+
+b6
+
+b7C
+
+The following investigation was conducted in Anne
+
+Arundel County, Maryland by Special Agent
+
+n duly It, 1980, the recoras of the annapolis city ?
+
+napolis, Maryland, were checked concerning
+
+and they revealed that
+
+was not arrested by that
+
+department in the early 1970's.
+
+follous:
+
+He did have three arrests as
+
+Charge
+
+Disposition
+
+Date
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1b6
+
+b7C
+
+Annapolis PD records further reflect
+
+his address at that time as
+
+Richmond, Virginia.
+
+In addition, subject had FBI record #L
+
+This record
+
+reflected an additional arrest by Anne Arundel County PD in
+
+On July 8, 1980, records of Anne Arundel County PD
+
+were checked and revealed that
+
+Iwas arrested on
+
+for the same charg
+
+he complatant in both of these matter
+
+with the
+
+MilLersville,
+
+occupation was listed as
+
+larrest
+
+the record reflects that the complainant
+
+left for home on an airplane.
+
+oriense,
+
+placed for collateral and the disposition listed was
+
+1b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-8447
+
+SEARCHED D
+
+INDEXEL 14
+
+FILEC..
+
+JUL 1 & 1980
+
+b6]
+
+b7C
+
+DB Cooper-18398
+
+---
+
+## Page 207
+
+b6|
+
+b7C
+
+BA 164-223
+
+FAS: bja
+
+The following investigation was conducted in Anne
+
+Arundel County, Maryland by Special Agent
+
+On July 11, 1980, the records of the Annapolis City PD
+
+Annapolis, Maryland, were checked concerning|
+
+and they revealed that|
+
+was not arrested by that
+
+department in the early 1970's.
+
+He did have three arrests as
+
+follows:
+
+Charge
+
+Disposition
+
+Date
+
+b6|
+
+b7C
+
+b61
+
+b7C
+
+his address at that time as
+
+Annapolis PD records further reflect Richmond,
+
+listed
+
+Virginia.
+
+In addition, subject had fBi recora #
+
+reflected an additional arrest by Anne Arundel County PD c0l
+
+were checked and revealed records of Anne Arundel County PI
+
+was arrested on
+
+and on I
+
+for the same charge
+
+The complainant in both of these matters
+
+with the
+
+_ Millersville, Ma.
+
+occupation was listed as
+
+and in the
+
+arrest.
+
+the record reflects that the complainant
+
+left for home on an airplane.
+
+In the L
+
+Toffense, I
+
+was
+
+placed for collateral and the disposition listed was
+
+b6 |
+
+b7C
+
+b6 |
+
+b7C
+
+Db Cooper-18399
+
+- 162-81-84417
+
+---
+
+## Page 208
+
+b6|
+
+b7C
+
+AIRTEL
+
+Suspect
+
+7/15/80
+
+SAC, PITTSBURGH (164-93)
+
+NORJAK (A)
+
+Seattle
+
+Re Pittsburgh tel to Bureau, 6/25/80.
+
+Enclosed for Pittsburgh and Seattle are two opples
+
+of investigative insert.
+
+Baltimore, at Silver Spring, Maryland, Investigation
+
+continues.
+
+- Seattle (Enc. 2)
+
+2 - Baltimore
+
+FAS: bja
+
+(6)
+
+144-21-8448
+
+JUL 1l8 1980
+
+b6
+
+b7C
+
+DB Cooper-18400
+
+---
+
+## Page 209
+
+b6 |
+
+b7C
+
+& AIRTEL
+
+7/15/80
+
+TO:
+
+FROM!
+
+SUBJECTS
+
+SAC, PITTSBURGE (164-93)
+
+SAC, BALTIMORE (164-223) (59 8) (2)
+
+NORJAR (A)
+
+00%
+
+Seattle
+
+Re Pittsburgh tel to Bureau, 6/25/80.
+
+Enclosed for Pittsburgh and Seattle are two copies
+
+of investigative insert.
+
+Baltimore, at Silver Spring, Maryland, Investigation
+
+continues.
+
+2- Blttsburgh (ine. z)
+
+2 Seattle (Enc. 2)
+
+2 • Baltinore
+
+FAS: bja
+
+(6)
+
+1 651-81-584415
+
+JUL 1kg 1980
+
+DB Cooper-1840j
+
+---
+
+## Page 210
+
+110:1: 8: :3332
+
+# 182333Z JUL 32X
+
+FM BUFFALO (164-146)
+
+(RUC)
+
+I0 DIRECTOR
+
+SEATTLE (164-51)
+
+GT
+
+(164-2111) ROUTINE
+
+ROUTINE
+
+Recond Floyd Me loy
+
+Sub 386, 1
+
+UNCLAS
+
+LONJAK, CAA - HIJACK (A), (00: SLAITLE)
+
+• ¡E BUFFALO TELCAL TO BUREAU, JULY 1O, 1980.
+
+FOR INFO OF BUREAU, ASAC
+
+BUFFALO WAS
+
+ASSIGNED TO SALI LAKE CITY DIVISION AT TIME OF CAPTIONED HIJACKING.
+
+DURING COURSE OF INVESTIGATION OF KIJACKING CASE COMMIITED BY
+
+• SUBJ RICHARD FLOYD MC COY, JR., APRIL 9, 1972, SIMILARITIES WERE
+
+NOTED BETWEEN SUBJECT OF NORJAK CASE AND MC COY. INTENSIVE
+
+INVESTIGATION WAS CONDUCTED BY SU DIVISION AND OTHER DIVISIONS
+
+TO ESTABLISH WHETHER, IN FACT, ME COY MAS THE PERPETRAIOR OF THE
+
+HIJACKING IN NORJAK• BUREAU FILES WILL CONTAIN ALSULIS OF THAI
+
+INVESTIGATION DURING PERIOD APRIL, 197& THAU SUbMEN, 1972.
+
+AS BURSAU ALID SEATILE ANE AVANE, THERE WAS. LITILE PHYSICAL
+
+b6|
+
+b7C
+
+11:11-51-8449
+
+b6 |
+
+b7C
+
+B Cooper-18402
+
+---
+
+## Page 211
+
+PAGE T':
+
+BU 104-140
+
+UNCLAS
+
+I: HORUNK AND 1O FINGERPAINTS VENE DUTAINED.
+
+ASAC, BUFFALO WAS RECENTLY CONTACID SYL
+
+SU. PURPOSE OF THIS CALLINO ID ALFALGI
+
+HIS RECOLLECTION RE MO COY HIJACKING.
+
+STATED HE HAU DEDi
+
+ASKED TO MAKE SPEECH RO THIS HIJACKING.
+
+DURING COURSE OF CO.-
+
+VERSATION
+
+ADVISED HE HAD TAKE: SIGUED STATEMENI FNO:1
+
+MC COY WHEREIL MO COY DESCRIBED SCELARIO OF HIJACKING IN CHICA YE
+
+HAS ARRESTED.
+
+WAS ASKED WHETHER HE RECALLED THAT AT TING
+
+OF MC COY HIJACKING, BC COY HAD BEEN CONSIDERED SUSPICI L MOAN.
+
+STATED HE DID NOT RECALL THAI, HOWEVER, HE POLE ICALL
+
+THAT AT TIME NO TOOK SIGNED STATENENT FROM MC COY WHICH CONSUILD
+
+SEVERAL HOURS, AI CONCLUSIOW OF SIGHED SIATENGUT ME COY IJAEL 10
+
+HIM AND ASKED HIM, "NO! DON' I YOU WANT ME TO TELL YOU ALOUI TIL
+
+OTHER ONE?"
+
+STATED THAI HE DID NOT REALIZE HAI NO COX
+
+MAY HAVE BEEN REFERRING TO AND BECAUSE HE WAS PASSED FOR ILU
+
+ON MIS PRE-SENTENCING REPORI, NE SAID, "DO, "OT NOW. I'LL INY
+
+IO GET BACK TO YOU." AFTER OBTAINING SIGWED SINTENdNI,
+
+WENT TO FEDEKAL JUDGE WILLIS!. RITTEN AND TOLD TIL JUDGE IRAI h
+
+HAD TALKED TO MC COY AND MC COY HAD PROVIDED HIM WITH ALL OF
+
+DETAILS OF HIJACKIUG FOR WHICH HE VAS ARAISIED. JUDGE RILEN
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+DB Cooper-18403
+
+---
+
+## Page 212
+
+PAGE THIRS
+
+3U 104-143
+
+EXPRESSED CONCERT AT PROPRISTY OF OFFICIA
+
+SIGIOD STATINENT AND ORDERED SIGHED STATEMENT SCALID IN COUNT
+
+NICONDS. OFFICER
+
+STATED HE DID DI GUI SACN TO TALI IU
+
+IO COY ABOUI ANY FURINER MATTERS. HE COY WAS SUSJAQUEWTLY
+
+SENTENCED IO FORTY YEARS IN PRISON AND DAS INCARCERAIED AI
+
+LEWISSURE FEDERAL PENITENTIARY, LEWISBURG, PA.
+
+FOLLOTING HIS INCARCERATION MO COY ESCAPED FROM PRISON All dia
+
+AUD ANOTHER PRISONER PERPETRATED SEVERAL BAIR ROBBERIDS IN
+
+INDIANAPOLIS, KENTUCKY AUD NORTH CAROLIGA AREAS. SUBSEGUELT IN-
+
+VESTIGATION LOCATED MC COY AT VIRGINIA BEACH, VA. AND ME COY
+
+WAS SHOT AND KILLED AT TIME OF RIS ARRESI BY FBI AGELIS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+AT TIME OF MO COY'S TRIAL IN 1978
+
+NAVE UNRECALLED, COOPERATED AND TESTIFIED AGAINSI NC COY.
+
+FEARFUL OF MC COY AND WAS PROVIDED PROTECIION BY FBI AGENTS DUNIU
+
+COURSE OF TRIAL. AT TINE OF MORJAK CONTINUING THRU TINE OF HIS
+
+ARREST,
+
+b6
+
+b7C
+
+b7D
+
+IT IS NOT KNOWN AT PRESENT TIME WHAT ATTITUDE OF
+
+b6
+
+b7C
+
+DB. Cooper-18404
+
+---
+
+## Page 213
+
+anitatinan
+
+PAGE FOUR
+
+ĐU 164-145
+
+• UNCLAS
+
+IN VIEW OF STATEMENT MADE BY OFFICER
+
+NO COY'5 COMMENTS ABOUT TALKING ABOUT "THE OTHER ONE," SEATTLE
+
+AND BUREAU MAY WISH TO REVIEW INVESTIGATION CONDUCTED TO
+
+ESTABLISH MC COY AS SUBJECI OF NOÄJAK AND PUSSIBLY CONSIDER THE
+
+ROINTERVIEN OF
+
+b6
+
+b7C
+
+II SHOULD BE POINTED OUT, SHOKILY AFTER TIME OF NO COY'
+
+ARREST
+
+HERE INTENVINUED MEGANDING
+
+MC COY'S UMERZABOUTS AT TIME OF NONJAK AND INEY INDICATED THAI
+
+MC COY WAS IN PROVO, UTAH DURING PENTINENI PERIOD. SUDSCUULIVI
+
+INVESTIGATION, HOUEVER, ESTABLISHED IHAI ¡C COY AS NOI, IN FACI,
+
+IN PROVO BUT WAS IN LAS VEGAS, NEVADÀ HI LEAST PART OF THAT IIIC.
+
+PEITHER
+
+WOULD FURLISH CAPLAIHIIOI
+
+WHY THEY WERE UUTSUTHFUL REGARDING HIC COY'S EXACI "HERENDOUIS.
+
+b6
+
+b7C
+
+DB Cooper-18405
+
+---
+
+## Page 214
+
+/810010 210s3332
+
+KR HQ SE
+
+DE BU
+
+R 132333Z JUL 80X
+
+FM BUFFALO 6164-1468
+
+(RUC)
+
+TO DIRECTOR (164-2111) ROUTINE
+
+SEATTLE (164-81> ROUTINE
+
+SuB 3N,!
+
+UNCLAS
+
+NONUAK, CAA - NIJACK (A), 100: SEATLE)
+
+RE BUFFALO TELGAL TO BUREAU, JULY 18, 1980.
+
+FOR INFO OF BUREAU, ASAC
+
+BUFFALO WAS
+
+'ASSIGNEO TO
+
+SALT LAKE CITY DIVISION AT TINE OF CAPTIONED HIJACKING.
+
+" DURING COURSE OF INVESIIGATION OF HIJACKING CASE COMMITTED BY
+
+SUBS RICHARD FLOYO MC COX, JROY APRIL S, 1972, SIMILARITIES WERE
+
+NOTED BETWEEN SUBJECT OF NORJAK CASE AND MC COY. INTENSIVE
+
+INVESTIGATION WAS CONDUCIED BY SU DIVISION AND OTHER DIVISIONS
+
+TO ESTABLISH VMETKER, IN FAGI, MC COY WAS THE PERPETRATOR OF THE
+
+HIJAGKING IN NORJAK. BUREAU FILES WILL CONTAIN RESULTS OF. INAT
+
+INVESTIGATION DURING PERIOD APRIL, 1372 THRU SUMMER, 1972.
+
+AS BUREAU AND SEATTLE ARE AWARE, THERE WAS LITTLE PHYSICAL
+
+-b6
+
+.b7C
+
+1641-81-84419
+
+DB Cooper-18406
+
+---
+
+## Page 215
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+7/3/80
+
+Date of transcription -
+
+Nevada Lodge Hotel and Casino,
+
+furnished the following information:
+
+advised that he was employed as al
+
+during the time
+
+that Jack Scott Farmer was employed by the
+
+Nevada Lodge as a craps dealer, during the years 1968 and
+
+1969. He was aware that in August, 1969, Farmer was reported
+
+reason to believe that this report and presumption was not
+
+correct.
+
+discussed
+
+stated that he recalled Farmer having
+
+diving with him in Lake Tahoe several days
+
+prior to the disappearance,
+
+Farmer relating the precautions
+
+necessary to dive in Lake Tahoe.
+
+He recalled that Farmer
+
+had served as a skin diving instructor on a part-time basis
+
+during his employment.
+
+stated that he was not aware
+
+of any skydiving abilities possessed by Farmer, and could
+
+not recall any discussions relating to skydiving with Farmer.
+
+advised that Farmer rode a motorcycle and
+
+frequently carried with him on the motorcycle a small dog.
+
+Farmer was known for his unorthodox actions at times, however,
+
+was considered a reliable employee who rarely missed work.
+
+Farmer was considered honest and was not suspected of having
+
+stolen or otherwise deprived the Nevada Lodge of any funds
+
+or money.
+
+recalled that Farmer had been attending
+
+school at an unknown location. He did not recognize the
+
+name Garth Dunning, either as an employee or a friend of
+
+Farmer's.
+
+advised that he could vaguely recall having
+
+discussed Farmer approximately three months ago with an
+
+unknown person and could not recall if this person was
+
+another Nevada Lodge employee or someone from outside. He
+
+added that he would not have stated that Farmer was suspected
+
+of stealing money.
+
+b6|
+
+b7C
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+Investigation on —
+
+7/2/80
+
+-at Crystal Bay, Nevada
+
+SA
+
+by
+
+Fart
+
+Iv161-60
+
+12t-81-8450
+
+FEARONED
+
+17/2780
+
+_Date dictated SECuRes
+
+Tris doscont contains neither recommendations nor conctusions of the Fl. It Is the property of the FBI and td Loate o! to as agency:
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18410
+
+b6
+
+b7C
+
+---
+
+## Page 216
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+BuB 956, 4
+
+7/3/80
+
+Date of transcription -
+
+Nevada Lodge Hotel and Casino,
+
+furnished
+
+the following information:
+
+Jadvised that he was employed as a
+
+during the time that Jack Scott Farmer was employed by the
+
+Nevada Lodge as a craps dealer, during the years 1968 and
+
+1969: He was aware that in August, 1969, Farmer was reported
+
+missing and presumed drowned. L
+
+_stated that he had no
+
+reason to believe that this report and presumption was not
+
+correct.
+
+stated that he recalled Farmer having
+
+discussed skin
+
+diving with him in Lake Tahoe several days
+
+prior to the disappearance, Farmer relating the precautions
+
+necessary to dive in Lake Tahoe.
+
+He recalled that rarmer
+
+had
+
+served as a skin diving instructor on a part-time basis
+
+during his employment. I
+
+stated that he was not aware
+
+of any skydiving abilities possessed by Farmer, and could
+
+not recall
+
+any discussions relating to skydiving with Farmer.
+
+advised that Farmer rode a motorcycle and
+
+frequently
+
+carried with him on the motorcycle a small dog.
+
+Farmer was
+
+known for his unorthodox actions at times, however,
+
+was considered a reliable employee who rarely missed work.
+
+Farmer was considered honest and was not suspected of having
+
+stolen or otherwise deprived the Nevada Lodge of any funds
+
+ot money.
+
+recalled that Farmer had been attending
+
+school at an unknown location. He did not recognize the
+
+name Garth Dunning, either as an employee or a friend of
+
+Farmer's.
+
+advised that he could vaguely recall having
+
+discussed Farmer approximately three months ago with an
+
+unknown person and could not recall if this person was
+
+another Nevada Lodge employee or someone from outside. He
+
+added that he would not have stated that Farmer was suspected
+
+of stealing money.
+
+b6 1
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+Investigation on
+
+7/2/80
+
+Crystal Bay, Nevada
+
+-5V-161-60
+
+- File #-
+
+SA
+
+arW
+
+7/2/80
+
+by
+
+_Date dictated.
+
+b6|
+
+b7C
+
+This document contains nether recommendations nor conclusions of the FEl. It Is 1ho property of tho Fal and is oaned to your agent Cooper -18411
+
+it and its contents are not to be distributed outside your agency.
+
+1 641-81-84150
+
+---
+
+## Page 217
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Jub 986,4
+
+7/3/80
+
+Date of transcription
+
+Nevada Lodge Hotel
+
+and Casino, furnished the following information:
+
+advised that he recalled Jack Scott Farmer
+
+as a craps dealer who was employed at the casino from May 31,
+
+1968 through August 9, 1969.
+
+During, or prior to his employment,
+
+Farmer had been a student at Chico State College in Chico,
+
+California. L
+
+Istated that during Farmer's employment,
+
+he was never suspected of cheating or otherwise stealing money
+
+from the Nevada Lodge.
+
+Jadvised that during that
+
+time period, hel
+
+was employed as a
+
+and would have been aware of any accusations against Farmer.
+
+recalled that Farmer shared a very close
+
+relationship with
+
+identified as
+
+Attempts to locate an employment application
+
+was negative, however.
+
+recalled that
+
+married another person and probably worked under her
+
+married name.
+
+I produced a 3X5 card reflecting
+
+Farmer's employment dates and physical description from the
+
+employment files, whereupon it was noted the name
+
+and a telephone number of L
+
+This number may have been the telephone number of|
+
+advised that he was aware Farmer had
+
+been reported drowned with another person, and was not
+
+familiar with the name Garth Dunning.
+
+stated that no fingerprint cards are
+
+maintained
+
+at the
+
+Nevada Lodge for any reason whatsoever.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1641-81-8451
+
+Investigation on 7/1/80
+
+-at Crystal Bay, Nevada
+
+- File #.
+
+57164-60
+
+EARCHED
+
+SA
+
+arW
+
+by -
+
+ERICHES VME0/80}
+
+_Date dictated -
+
+JUL 21 1980
+
+.. This document contains neither recommendations nor conclusions of the FBI. It is the propertylot the FBl and is loaned to your agency;
+
+it and its.contents are not to be distributed outside your agency.
+
+DB Cooper-18412
+
+b6
+
+b7C
+
+---
+
+## Page 218
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Tub ist, 4
+
+7/3/80
+
+Date of transcription.
+
+Nevada Lodge Hotel
+
+and Casino,
+
+furnished the following information:
+
+advised that he recalled Jack Scott Farmer
+
+as a craps dealer who was employed at the casino from May 31,
+
+1968 through August 9, 1969.
+
+During, or prior to his employment,
+
+Farmer had been a student at Chico State College in Chico,
+
+California. L
+
+stated that during Farmer's employment,
+
+he was never suspected of cheating or otherwise stealing money
+
+from the Nevada Lodge.
+
+time period, he
+
+was employed as a
+
+and would have been aware of any accusations against Farmer.
+
+recalled that Farmer shared a very close
+
+relationship with
+
+identified as
+
+Attempts to locate an employment application
+
+was negative, however,l
+
+recalled that
+
+married another person and probably worked under her
+
+married name.
+
+produced a 3X5 card reflecting
+
+Farmer's employment dates and physical description from the
+
+employment files, whereupon it was noted the name
+
+and a telephone number of
+
+This number may have been the telephone number of
+
+advised that he was aware Farmer had
+
+been reported drowned with another person, and was not
+
+familiar with the name Garth Dunning.
+
+stated that no fingerprint cards are
+
+maintained
+
+at the Nevada Lodge for any reason whatsoever.
+
+=
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6!
+
+b7C
+
+b6|
+
+b7C
+
+Investigation on —
+
+7/1/80
+
+SA
+
+-at-
+
+Crystal Bay, Nevada
+
+sarw
+
+1V- 164-600
+
+- File #
+
+7/2/80
+
+by -
+
+_Date dictated -
+
+This document contains nelther recommendations nor conclusions of the FBl. It is the property of the FBI and is loaned to your agency;
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18413 164-81-54151
+
+b6
+
+b7c
+
+---
+
+## Page 219
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+JUB 956,6
+
+Date of transcription
+
+7/3/80
+
+Douglas County
+
+Sheriff's Office, advised that she had located a fingerprint
+
+card for Garth Hudson Dunning, dated July 25, 1966. Also
+
+located were Applications for Work Permit pertaining to
+
+Dunning dated July 25, 1966, July 11, 1968 and July 30, 1969.
+
+The original fingerprint card and copies of the
+
+work applications were furnished to Special Agent
+
+Investigation on.
+
+7/1/80
+
+_ at —
+
+Minden, Nevada
+
+164-51-8452
+
+File #-
+
+1V 164-60
+
+SA
+
+Tsarw
+
+SEARCHED_
+
+by
+
+This document contains neither recommendations nor conclusions of the l. I is the property orkne FBi all ahea 198ur rager
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18414
+
+b6
+
+b7C
+
+b6.
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 220
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+SuB: 951; 6
+
+Date of transcription.
+
+7/3/80
+
+] Douglas County
+
+Sheriff's Office, advised that she had locatea a fingerprint
+
+card for Garth Hudson Dunning, dated July 25, 1966. Also
+
+located were Applications for Work Permit pertaining to
+
+Dunning dated July 25, 1966, July 11, 1968 and July 30, 1969.
+
+The original fingerprint card and copies of the
+
+work applications were furnished to Special Agentl
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+7/1/80
+
+Investigation on
+
+SA
+
+Minden, Nevada
+
+- at
+
+arw
+
+_ File #
+
+IN 164-60
+
+7/2/80
+
+b6|
+
+b7C
+
+by-
+
+_Date dictated -
+
+This document contains neither recommendations nor conclusions of the FBl. It is the property of the FBI and is loaned to your agency:
+
+it and its contents are not to be distributed outside your agency.
+
++n+45+=
+
+DB Cooper-18415
+
+164-81-8452
+
+---
+
+## Page 221
+
+IV 164-60
+
+WJ: art
+
+1
+
+Agent
+
+the following investigation was conducted by Special
+
+on July 1, 1980
+
+At Incline Village, Nevada
+
+Records of the Washoe County Sheriff's Office (WCSO) ,
+
+Incline Village Substation, reflected that Garth Hudson Dunning
+
+applied for a work permit on August 28, 1963, stating his
+
+employment as a dealer at the Tahoe Nugget, located in Crystal
+
+Bay, Nevada. Dunning furnished a residence address of 1293
+
+Marion Avenue, Chico, California, and Ridgeway Street, Carnelia
+
+Bay, California. He was assigned WCSO #A07970: On August 8,
+
+1969, Dunning was reported as a possible drowning victim, #CSO
+
+number 51423.
+
+Records located at WCSO, Incline Village Substation,
+
+reflected that Jack Scott Farmer applied for a work permit on
+
+May 31, 1968, listing his employment as a "change person" at
+
+the Nevada Lodge.
+
+He was assigned WCSO number A18825.
+
+furnished addresses of General Delivery, Tahoe City, 591
+
+Cassidy, Yuba City, California, and Ridgeway Street, Carnelia
+
+Bay, California.
+
+The record reflects that on June 9, 1969,
+
+he re-applied for a permit as a dealer at the Nevada
+
+Lodge,
+
+and on August 6, 1969, was listed as a drowning victim, WCSO
+
+case number 51423.
+
+A review of these records for the name of
+
+proved negative.
+
+Detective
+
+WCs, advised that all
+
+further records concerning the drowning would be available
+
+at the WCSO, Reno, Nevada.
+
+At Carson City, Nevada
+
+Records available at the Nevada State Gaming Control
+
+Board, as furnished by Agent L
+
+reflect that
+
+Garth Hudson Dunning, 55 St. Francis Drive, Chico, California,
+
+applied for work as a dealer at the Sahara Tahoe Hotel and
+
+Casino on July 25, 1966.
+
+125, tatel ane,
+
+He was later employed as a dealer
+
+at Barney's Club, Stateline, Nevada from July 11, 1968 through
+
+July 30, 1969.
+
+He was described as a male white adult, date
+
+of birth December 18, 1927, Social Security Account Number
+
+1141-51-8453-
+
+SEARNSFO
+
+SMORNED.
+
+Steal
+
+JUL d1 1980
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+b6|
+
+b7C
+
+b6|
+
+b7C
+
+DB Cooper-18416
+
+---
+
+## Page 222
+
+-
+
+IV 161-60
+
+553-32-8519.
+
+These same records reflected that Jack Scott
+
+Farmer was
+
+employed as a change person on May 31, 1968 at
+
+the Nevada Lodge, Crystal Bay, Nevada. He was described as
+
+a male white adult, date of birth May 22, 1944, Social Security
+
+Account Number 568-58-4306.
+
+No other information was
+
+available concerning Farmer.
+
+Agent L
+
+advised that fingerprint cards for
+
+gaming persons are not maintained by the Gaming Control Board,
+
+except for key employee positions.
+
+He advised that neither
+
+Farmer nor Dunning were considered key employees.
+
+At Minden, Nevada
+
+I Douglas County
+
+Sheriff's Office, advised that no record could be located
+
+identifiable with Jack Scott Farmer.
+
+b6l
+
+b7C
+
+b6|
+
+bTC
+
+DB Cooper-18417
+
+---
+
+## Page 223
+
+LV
+
+164-60
+
+ww :arw
+
+SuB 984
+
+Agent
+
+The following investigation
+
+a was conducted by Special
+
+on July 1, 1980:
+
+At Incline Village, Nevada
+
+Records of the Washoe County Sheriff's Office (WCSO),
+
+Incline Village Substation, reflected that Garth Hudson Dunning
+
+applied for a work permit on August 28, 1963, stating his.
+
+employment as a dealer at the Tahoe Nugget, located in Crystal
+
+BaY; Nevada. Dunning furnished a residence address of 1293
+
+Marion Avenue, Chico, California, and Ridgeway Street, Carnelia
+
+Bay, California. He was assigned WCSO #A07970. On August 8,
+
+1969,
+
+1969, Dunning was reported as a possible drowning victim, WCSO
+
+case
+
+number 51423.
+
+Records located at WCSO, Incline Village Substation,
+
+reflected that Jack Scott Farmer applied for a work permit on
+
+MaY
+
+31, 1968, listing his employment as a "change person" at
+
+the Nevada Lodge. He was assigned WCSO number A18825.
+
+furnished addresses of General Delivery, Tahoe City, 591
+
+Cassidy,
+
+Yuba City, California, and Ridgeway Street, Carnelia
+
+Bay, California..:
+
+The record reflects that on June 9, 1969,
+
+he re-applied for a permit as a dealer at the Nevada Lodge,
+
+and on August 6, 1969, was listed as a drowning victim, WCSO
+
+case number 51423.
+
+A review of these records for the name of
+
+proved negative.
+
+Detective
+
+WCSO, advised that all
+
+further records concerning the drowning would be available
+
+at the WCSO, Reno, Nevada.
+
+At Carson City, Nevada
+
+Records available at the Nevada State Gaming Control
+
+Board, as furnished by Agent
+
+reflect that
+
+Garth
+
+Hudson Dunning, 55 St. Francis Drive, Chico, California,
+
+applied for work as a dealer at the Sahara Tahoe Hotel and
+
+Casino on July 25, 1966.
+
+He was later employed as a dealer
+
+at Barney's Club,
+
+Stateline, Nevada from July 1l, 1968 through
+
+July 30, 1969.
+
+He was described as a male white adult, date
+
+of birth December 18, 1927, Social Security Account Number
+
+106
+
+b7C
+
+b7C
+
+b6
+
+67C
+
+DB Cooper-18418
+
+1621-81-8453
+
+---
+
+## Page 224
+
+SuR
+
+454
+
+IV 164-60
+
+-DNN/ ann
+
+The following investigation was conducted by
+
+SC DENISE NELSON-NALI On June 30, 1980.
+
+AT RENO, NEVADA
+
+Washoe County Sheriff's Department, furnished copies
+
+of her department's reports concerning a drowning
+
+incident involving one JACK SCOTT FARMER, and one
+
+GARTH DUNNING On
+
+She also
+
+furnished the fingerprint card
+
+of GARTH DUNNING.
+
+- .....
+
+164-81-8454
+
+---.
+
+JUL 21 1980
+
+DB Cooper-18420
+
+7 3-4
+
+b6 |
+
+b7C
+
+i
+
+b6'
+
+b7C
+
+---
+
+## Page 225
+
+SuB 156
+
+EV 164-60
+
+LONN/ đnn
+
+The following investigation was conducted by
+
+SC DENISE NELSON-NALI On June 30, 1980.
+
+AT RENO, NEVADA
+
+Washoe County sheriff's Department, furnished copies
+
+of her department's reports concerning a drowning
+
+incident involving one JACK SCOTT FARMER, and one
+
+GARTH DUNNING on
+
+She also furnished the fingerprint card
+
+of GARTH DUNNING•
+
+16
+
+b7C
+
+DB Cooper-18421
+
+1421-81-1454
+
+---
+
+## Page 226
+
+Airtol
+
+Suspect Jack Scott Zarmer
+
+gaith'
+
+Hudson Dunning.
+
+JUB
+
+7/15/60
+
+986
+
+10:
+
+Director, FBI. (164-2111)
+
+Attn: Identification Division
+
+Latent Fingerprint Section
+
+SA
+
+SAC, Las Vegas (164-50) (P)
+
+SUBJECT:
+
+NORJAK:
+
+CAAIJACKING (A)
+
+00: Seattle
+
+Re Las Vegas airtel to Director dated 7/7/80.
+
+Enclosed for the Soattle Division aro the original
+
+and one copy ench of the following:
+
+ED 302 dated 7/2/80 reflecting the interview of
+
+FOR
+
+dasca 7/1/00 reflecting the intorview of
+
+FD
+
+302
+
+dated 1/1/00 roflecting tho interviet of
+
+Iusort reflecting investigation at Incline Village
+
+and Carson City,
+
+Nevada.
+
+Insert reflecting investigation at Reno, Nevada,
+
+Enclosed for Sacramento and San Francisco Divisions
+
+are two copios each of these iD 302's and insorts.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+2 - Buroan
+
+2 - San Francisco (104-220) (Ene. 10)
+
+2- Sacramento (Ene, 10)
+
+a 20 469-51 0-107 leel
+
+2 - Las Vegas
+
+WJided
+
+(10)
+
+1621-81-8455
+
+SEARCHED.
+
+1NU53.0
+
+SERIALIZAA
+
+F):
+
+$ 11020
+
+b6
+
+b7C
+
+DB Cooper-18422.
+
+---
+
+## Page 227
+
+IN 164000
+
+jad too incoalion of the Bureau and receiving
+
+olficin, thr Appliuntion for Host Card filled out by Jack
+
+Scott larr
+
+at Reno, Jovada, on 5/31/69, reflects that
+
+Farnor apparonlly utilized an alias of jack Scoll Ponticelli,
+
+He, al50, listed as arrnat in 1905 for "Possion" by the bl
+
+Dorado County Sheriff's Office, apparently at Tahoe City,
+
+• California.
+
+This arrest may have
+
+been for possession of
+
+an illogal substance, as Farmer received probation and a
+
+Line which he listed
+
+as a disposition. Due to the illegible
+
+copy received, further information concerning this arrest
+
+and use of the akn could not be determined.
+
+The Bureau is requested to search the Identification
+
+Division files for a fingerprint card of Jack Scott Ponticelli
+
+which may be identical to Farmer.
+
+LEAD:
+
+SACRANINTO DIVISION
+
+At Tahoe City, California.
+
+Will attempt to locate a fingerprint card for
+
+Farmer under the alias of Jack Scott Ponticelli, and if
+
+located, forward this card to the latent Fingerprint Section,
+
+Attention: SA|
+
+b6
+
+b7C
+
++ 2% 0
+
+DB Cooper-18423
+
+---
+
+## Page 228
+
+7/15/80
+
+Ditorios
+
+, 1:1. 1101001143.
+
+Acon: In ircification Division
+
+tone Pincopaint Fection
+
+SIC, Jas Vogus (101-S0) (P)
+
+b6|
+
+b7C
+
+TRO!I:
+
+SURINCT:
+
+00: wonttic
+
+Ro Los Vogas airio! to Director dated 3/7/80.
+
+incle or for the
+
+Contile Divicion aro the original
+
+and pie copy orch al the jolloils:
+
+Bu, 302 Grted 7/2/00 roilecting tho interview of
+
+intal 4/1/20 reflooting the intervion of
+
+aid arted 7/1/i0 reflecting the incorvier or
+
+Incere colloctine invescigation at incline Village
+
+and Carson City,
+
+insert rodlocting investigation at hono, Nevade.
+
+Enclosod for Sacrauonto and
+
+are
+
+San Francisco Divisions
+
+two copios oach of these
+
+ND 302's and inserts.
+
+b6|
+
+b7C
+
+2 = Biront
+
+2 • See Lenncisco (104-320) (Bnc.%0)
+
+Saccarento Cac.
+
+Z - Lar Vegar
+
+(20)
+
+1 641-51-50155
+
+SERAITO LY
+
+DB Cooper-18424
+
+---
+
+## Page 229
+
+AIRTEL
+
+Auspic
+
+b6
+
+b7C
+
+7/18/80
+
+TOs
+
+FROMS
+
+NORJAK'
+
+(00% SEATILE)
+
+DIRECIOR, FBI (164-2111)
+
+SAG, CHARLOTTE (164-222) (RUC)
+
+Re Pittsburgh teletype to Bureau, 6/25/80.
+
+and reflected
+
+0n 7/17/80,
+
+montere pen man te nor size of anente
+
+was contacted
+
+dates that
+
+She stated that in
+
+resided in Ruffsdale. Pe. ar
+
+She stated that she
+
+and hex husband noved to lake Milton,
+
+Onto in October,
+
+intll she returned to High Polit
+
+Node 1n
+
+following the
+
+death of her hugband,
+
+She stated in
+
+• 9he purchased i
+
+house onl
+
+und follown
+
+from Rufindale, Pa.,
+
+Herever.
+
+Temid not recall
+
+the exact dates thatl
+
+stated that she was not sure whether
+
+was working whitel
+
+but he could
+
+have been working with
+
+w1th
+
+the job aite being Sears liarehouse, Greensboro, Noc.
+
+2-Bureau (164-2121)
+
+1-Pittaburgh (164-93) (Info)
+
+164-51-8454
+
+1=Portland (Info)
+
+lySeattle (Info)
+
+-121
+
+LEnarlotta (1640222)
+
+DIC/ 1mg
+
+(6)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18426
+
+---
+
+## Page 230
+
+CE 164-222
+
+stated that she was not trying to be
+
+deceptive with the fBI in her comments. but she just could
+
+not remember the exact dates of
+
+advised that to her knowledge,
+
+had never been on the West coast.
+
+stated that|
+
+had been in the military serving a hitch
+
+She added that she could not recall
+
+him ever parachuting since his leaving the Army.
+
+stated that upon his departure from
+
+Greensboro and High Point, N.C. al
+
+Iwent to
+
+live in the Parkersburg, West Va. area and continues to reside
+
+unsure as to what yaletically stated again that she was
+
+departed for Parkersburg, West
+
+concluded by stating that she does I
+
+that she could
+
+b6
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+furnish to the FBI.
+
+2%
+
+DB Cooper-18427
+
+---
+
+## Page 231
+
+AIRTEL
+
+Auspect
+
+b6
+
+b7C
+
+7/18/80
+
+TO:
+
+FROM;
+
+DIRECTOR, FBI (164-2111)
+
+SAG, CHARLOTTE (164-222) (RUC)
+
+NORJAK
+
+(A)
+
+(00: SEATTLE)
+
+Re Pittsburgh teletype to Bureau, 6/25/80.
+
+Azrest checks were conducted at Greensboro. Hich Point,
+
+Thomasville, and Guilford County. NoG. regarding
+
+and reflected
+
+occurring on
+
+On 7/17/80,
+
+Thomasville, N.C., telephone number
+
+was contacted
+
+and interriered and advised that she is not sure of the exact
+
+dates that
+
+She stated that in
+
+she, along with her husband.
+
+resided in Ruffsdale, Pa. and
+
+and her husband moved to Lake
+
+MILLOR:
+
+one steera she
+
+until she returned to High Point, N.C, in
+
+death of der husband. She stated inl
+
+she purchased a
+
+house on
+
+, High Point, M.c, and following
+
+from Ruffsdale. Pa.,
+
+I However.
+
+Teonld not recall
+
+the exact dates that
+
+stated that she was not sure whetherl
+
+was working while
+
+but he could
+
+have been working withl
+
+with
+
+the job site being
+
+¡ Sears Warehouse, Greensboro, N.C.
+
+2-Bureau (164-2111)
+
+I-Plttsburgh (164-93) (Info)
+
+164-81-82156
+
+*-Portiend (Into)
+
+I Seattle (Into
+
+r'..
+
+I-Charlotte (164-222)
+
+JULa 41550
+
+DWC/jmg
+
+(6)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+16
+
+b7C
+
+DB Cooper+ 18428
+
+---
+
+## Page 232
+
+1-336 (Rev. 10-26-79)
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+TO: SÀC, Seattle
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+164-81 (P)
+
+July 18, 1980
+
+164-2111
+
+A-45410
+
+Sapped Jade best Farnes
+
+Sub G, 986
+
+RE: NORJAK;
+
+CAA - HIJACKING
+
+REFERENCE:
+
+Teletypes 6/24/80 and 6/28/80
+
+EXAMINATION REQUESTED BY:
+
+Seattle
+
+SPECIMENS:
+
+This report confirms and supplements the informa-
+
+tion furnished in Butel of 7/5/80.
+
+The previously reported unidentified latent finger-
+
+prints and the latent impression, which is either a fingerprint
+
+er pain printe in this case are not the fingerprints o
+
+in
+
+service
+
+born L
+
+u.S. M cant coups
+
+or Garth Hudson
+
+Dunning, U.
+
+S. Army service #19213544, born 12/18/27 in Chico,
+
+California.
+
+1 - Las Vegas
+
+1 - Sacramento
+
+1 - San Francisco (164-220) (SQ 10)
+
+b6
+
+b7C
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+DB Cooper-18430
+
++4641-81-8459400
+
+---
+
+## Page 233
+
+1-336 (Rev. 10-26-79)
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+TO:
+
+SAC, Seattle
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+164-81 (P)
+
+164-2111
+
+#-45410
+
+July 18, 1980
+
+SuB G, 986
+
+RE: NORJAR:
+
+CAA - HIJACKING
+
+REFERENCE:
+
+EXAMINATTON REQUEST 1etypes 6/24/80 and 6/28/80
+
+SPECIMENS:
+
+• Seattle
+
+This report confirms and supplements the informa-
+
+tion furnished in Butel of 7/5/80.
+
+The previously reported unidentified latent finger-
+
+prints and the latent impression, which is elther a fingerprint
+
+or palm print, in this case are not the fingerprints of
+
+LU. S. Army service
+
+• born
+
+in
+
+U. S. Marine Corps
+
+service
+
+Dunning, U.
+
+S.
+
+I born
+
+or Gaith Hudson
+
+Army service #19213544, born 12/18/27 in Chico,
+
+California.
+
+I - Las Vegas
+
+1 - Sacramento
+
+1 - San Francisco (164-220) (Se 10)
+
+b6
+
+b7C
+
+1641-81-5457
+
+SEARCHED. A INDEXED
+
+SERIALIZED.......
+
+... FILED....
+
+JUH/2 3 1980
+
+b6
+
+b7C
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+FBI/DOJ
+
+DB Cooper-18431
+
+---
+
+## Page 234
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+TO
+
+SAT, SAY PHOENIX
+
+ATTN: SA
+
+DATE: 7/24/30
+
+FROM : SAC, SEATTLE (164-81)
+
+SUBJECT:
+
+NORJAK
+
+CAA-HIJACK (A)
+
+00: Seattle
+
+Bufile 164-2111
+
+SuB C
+
+Enclosed are four (4) artists composites,
+
+two black and white,
+
+and two color, depicting the
+
+NORUAK unsub, aka DAN COOPER, D.B. COOPER, with and
+
+without glasses.
+
+THE CRIME
+
+On November 24, 1971, a lone white male
+
+Flight #305 at Portland.
+
+Oregon. At approximately 3:22 P.M., while the flight
+
+en route to Seattle, Washington, he indicated to
+
+the stewardess that his brief case contained a bomb
+
+which would blow up the plane unless his demands were
+
+met.
+
+The hijacker demanded $200,000 and four
+
+parachutes in exchange for the safety of the 36
+
+passengers aboard the plane. When the aircraft landed
+
+at seattle, Washington, Northwest Orient Airlines
+
+complied with his instructions. After he received the
+
+parachutes and the money, the hijacker allowed all
+
+passengers and two airline stewardesses to deplane.
+
+He then ordered the remaining crew members
+
+into the first-class section of the aircraft and
+
+informed them he desired to fly to Mexico City. The
+
+hijacker instructed that the plane proceed in a
+
+southerly direction and fly at a low altitude and slow
+
+speed which would enable the rear door of the plane
+
+(Boeing 727) to be opened during the flight.
+
+- PX
+
+D- SE
+
+JRM
+
+b6 |
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-18432
+
+1 641-81-8458
+
+---
+
+## Page 235
+
+SE 164-81
+
+The hijacker apparently bailed out somewhere
+
+Between see te Washingto a defer devade where the
+
+plane landed to
+
+two parachutes, and the ransom money had disappeared when
+
+the plane was
+
+inspected at Reno, Nevada.
+
+Artist conception drawings of the aircraft hijacker
+
+were prepared by the FBI Exhibit Section and are considered
+
+a reasonable likeness.
+
+The black and white composites were
+
+prepared initially and sometime later the color composites
+
+were prepared to épict the hijacker's complexion and age
+
+more graphically.
+
+The hijacker is described as follows:
+
+Race
+
+Sex
+
+Age
+
+Height
+
+Weight
+
+Complexion
+
+Hair
+
+Eyes
+
+Voice
+
+Characteristics
+
+Wearing Apparel
+
+White
+
+Male
+
+Mid 40's
+
+5'10" to 6'
+
+170 to 180 lbs.
+
+Olive, Latin appearance,
+
+medium smooth
+
+Dark brown or black,
+
+parted on the left
+
+combed back
+
+Possibly brown, during
+
+later part of flight the
+
+hijacker put on dark
+
+wrap-around sunglasses with
+
+dark rims
+
+Low, spoke intelligently,
+
+no particular accent
+
+Smoked Raleigh filters
+
+type cigarettes
+
+Black or brown suit;
+
+narrow black tie (clip on type);
+
+black rain type overcoat or
+
+dark top coat; dark briefcase or .
+
+attache case; carried a paper bag -
+
+4 x 12 × 14
+
+inches; brown shoes
+
+Very polite at all
+
+times
+
+Remarks
+
+_ARMED AND DANGEROUS
+
+- 2 -
+
+•DB Cooper-1843p
+
+---
+
+## Page 236
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+TO
+
+SAT SAY PHOENIE
+
+ATTN: SA
+
+. DATE: 7/24/80
+
+FROM : SAC, SEATTLE (164-81)
+
+SUBJECT:
+
+NORJAK
+
+CAA-HIJACK (A)
+
+00: Seattle
+
+Bufile 164-2111
+
+•SuB C
+
+Enclosed are four (4) artists composites,
+
+two black and white, and two color, depicting the
+
+NORJAK unsub, aka DAN COOPER, D.B. COOPER, with and
+
+without glasses.
+
+THE CRIME
+
+On November 24, 1971, a lone white male
+
+boarded Northwest Orient
+
+Flight #305 at Portland
+
+Oregon. At approximately 3:22 P.M., while the flight
+
+was en route to Seattle, Washington, he indicated to
+
+the stewardess that his
+
+brief case contained a bomb
+
+which
+
+would blow up the plane unless his demands were
+
+met.
+
+The hijacker demanded $200,000 and four
+
+parachutes in exchange for the safety of the 36
+
+passengers aboard the plane. When the aircraft landed '
+
+at seattle, Washington, Northwest Orient Airlines
+
+complied with his instructions.
+
+After he received the
+
+parachutes and the money, the hijacker allowed all
+
+passengers and two airline stewardesses to deplane.
+
+He then ordered the remaining crew members
+
+into the first-class section of the aircraft and
+
+informed them he desired to fly to Mexico City. The
+
+hijacker instructed that the plane proceed in a
+
+southerly direction and fly at a low altitude and slow
+
+speed which would enable the rear door of the plane
+
+(Boeing 727) to be opened during the flight.
+
+- PX
+
+D-SE
+
+JKM
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan DB Cooper-18434
+
+1 641-81-8458
+
+---
+
+## Page 237
+
+Salt Lake City
+
+May 23, 1973
+
+JuB 386
+
+RICHARD FLOYD MC COY, JR.
+
+CRIME ABOARD AIRCRAFT -- HIJACKING;
+
+INTERFERENCE WITH FLIGHT CREW MEMBERS
+
+Synopsis:
+
+to Los Angeles, callIornia, at Denver, Colorado.
+
+1s to 20 minutes after take off, the individual was observed to
+
+i take de, the indee:
+
+Approximately
+
+De holding a hand grenade and a gun. The stewardess delivered
+
+messages of instruction to the pilot. Instructions included
+
+averting airplane to san francisco, Calliornia, where UAL was
+
+suppose to have $500,000 in cash and four parachutes available.
+
+Instruction envelope
+
+contained one hand grenade pin and a
+
+bullet.
+
+Aircraft landed at San Francisco where the hijacker's
+
+demands were met.
+
+to deplane.
+
+• The pilot hao then
+
+All passengers and part of crew were permitted
+
+The pilot was then ordered to take off imnediately.
+
+The pilot felt a slight surge of the airplane in the vicinity of
+
+the Provo, Utah, Airport and thought the hijacker must nave
+
+jumped out. Information was received that a possible suspect
+
+in the case might be Richard Floyd Me Coy, Jr.
+
+positively identified as the hijacker through handwriting
+
+comparisons and fingerprints located on UAL "Mainliner Magazine"
+
+Mo Coy was arrested on
+
+ApriL 9, 1912, after being charged in a complaint with vioLation
+
+of Section 1472(1)(1), Title 49, U. S. Code, Aircraft Piracy.
+
+in 14225211210
+
+and Section 1472(j), Title 49, U. S. Code, Interfering With
+
+Flight Attendant.
+
+District Court and was sentenced to a period of 45 years in
+
+257325
+
+the custody of the Attorney General.
+
++64731-64-81-84159
+
+ENCLOSURE A CIOSURE
+
+" SEARCHED TE TEE
+
+LULHUNLIRLE
+
+JUL 2,5 1980
+
+b6
+
+b7C
+
+DB Cooper-18436
+
+---
+
+## Page 238
+
+Salt Lake City
+
+May 23, 1973
+
+RICHARD FLOID MC COY, JR.
+
+CRIME ABOARD AIRCRAFT - HIJACKING:
+
+INTERFERENCE WITH FLIGHT CREW MEMBERS
+
+On April T, 1972, United Air Lines Flight 855,
+
+a Boeing 727 en route from Newark, New
+
+Jersey, to Los Angeles,
+
+California, via Denver, Colorado, had just completed a routine
+
+stop at Denver and was once again in flight.
+
+Approximately 20 minutes after take off, an
+
+unidentified man was observed to be holding a hand grenade
+
+and a gun. He sent the grenade pin and a bullet to the pilot
+
+with instructions that the plane be diverted to San Francisco,
+
+California. The stewardess was the messenger, and on numerous
+
+occasions instructions were sent from the hijacker to the pilot.
+
+The pilot was instructed to land at the San Francisco
+
+International Airport and to park at Runway 19-Left, along with
+
+specific instructions as to refueling the aircraft and distance
+
+that all vehicles should be kept from the aircraft. The
+
+instructions also demanded $500,000 and four parachutes and
+
+that all notes be returned to the hijacker.
+
+After considering the safety of the passengers,
+
+crew and airplane, United Air Lines decided to meet the hijacker's
+
+demands. Two flight. bags were filled with cash and were delivered
+
+to the hijacker, along with the parachutes he had demanded.
+
+DB Cooper-18437
+
+---
+
+## Page 239
+
+After the hijacker had determined the money and other itens
+
+had been properly prepared, he permitted the passengers and
+
+• part of the crew to deplane.
+
+The pilot was then instructed to taxi to the active
+
+runway and take off. They were to head east and climb to
+
+14,000 feet. The cabin was to be depressurized and the pilot
+
+was to fly to predesignated locations. The instructions from
+
+the hijacker began to take on the appearance of flight plans
+
+and they were delivered with increasing frequency, still using
+
+• the stewardess as the messenger.
+
+The hijacker covered the peephole from the cockpit
+
+into the cabin and then began to change clothes into a jump-
+
+suit, helmet, boots and parachute, which he did with the ease
+
+that comes with long hours of practice. Following these
+
+preparations, instructions were given that he be kept advised
+
+as to ground speed, flight speeds, wind speeds, altimeter
+
+settings and sky conditions. His last instructions were to go
+
+to Fairfield, Utah, Price and Grand Junction, after that he
+
+was not seen again. The pilot felt a slight surge of the
+
+airplane in the vicinity of the Provo, Utah, Airport, and
+
+thought the hijacker had jumped, so he sent the stewardess
+
+into the passenger compartment to verify his departure.
+
+2-
+
+DB Cooper-18438
+
+---
+
+## Page 240
+
+-
+
+Liter I. After häving determined the hijacker. had actually
+
+left-the airplane,: the pilot. then returned to: the Salt Lake
+
+• Eity International Airport, where the airplane was examined
+
+and searched. for-evidence. The evidence: located contained some
+
+Items that would later be very important. in the positive
+
+identification of the hijacker. Included in the: evidence. was
+
+ia- copy of United- Air Lines "Mainliner Magazine"; which was
+
+Located in the seat occupied by the hijacker; and also found
+
+was a hand printed note from the hijacker which read as ::
+
+Follows:: "Everybody off now except the stewardesses. They
+
+stay put. -Get the hell.off the GD.: Be quick about it --
+
+wise this runway."
+
+==...
+
+" The above itens, along with all of the items of
+
+evidence, were submitted to the FBI Laboratory in Washington,
+
+D.C.; for examination........c..1 mi111
+
+===:: •A séarch of -the vicinity: of the Provo, Utah, Airport
+
+was instituted because it was felt the hijacker had bailed
+
+out in that area: It was there that .the only casualty of the
+
+rease occurred:
+
+-
+
+==-=..:IE was -approximately 2:00 a.m. on April 8, 1972, and
+
+•Special Agents of the FBI, working together with Provo City
+
+-Police, Utah County 'Sheriff's Office and Sheriff's Possee
+
+lined up approximately 20 to 30 yards apart and began combing
+
+. DB Cooper-18439
+
+---
+
+## Page 241
+
+the area.
+
+airport area was badly overgrown with weeds
+
+đná made a
+
+Perfect hiding place for pheasants and other small
+
+animais. One of the FBi Agents, after having had severai
+
+pheasants fly up from under his feet, heard the brush in front
+
+of him rustiing. He turned his flashlight on just in time to
+
+see the back end of a skunk. " The skunk, being a good shot,
+
+made a direct hit, putting the Agent out of commission.
+
+-cate After an aif night search, neither the hijacker, his
+
+parachute nor the extortion money had been located. it was
+
+then that a telephone cali came into the Salt Lake City Office
+
+of the FBI. The caller advised he had an acquaintance who on
+
+several occasions had talked of the perfect plan for hijacking
+
+an airplane. This caller advised that his friend was Richard
+
+floyd Mc Coy, Jn., who was a Vietnam veteran, a helicopter
+
+pilot and an avia!
+
+"sky diver. Mc Coy was reportedly a member
+
+of the Utah Air National Guard and a student at the Brigham
+
+Young University, where he was studying police science.
+
+coincidentally, the "erfect hajacking plan" discussed by Mc Coy
+
+was almost identical to the plan implemented by the hijacker
+
+in this instance. .:
+
+:.
+
+:=:.=
+
+Föllowing the suggestion of the name Richard Floyd
+
+Mc Coy, Jr'', as a suspect in this matter, the St. Louis Division
+
+of the FBI i
+
+was telephonically contacted and was requested to
+
+4
+
+• DB Cooper-18440
+
+---
+
+## Page 242
+
+cause an immediate search of any Army records under Ma Coy's
+
+name in an effort to locate any hand printing and handwriting
+
+of Mg.Coy. This was done and the writing samples were forwarded
+
+to the FBI Laboratory in Washington, D. C.
+
+nia. At this point. it was felt an interview of Mc Coy
+
+might prove beneficial.!
+
+Mc Coy was located and interviewed
+
+at the Army Operations Center at the Salt lake City Airport
+
+and during the interview he denied any participation in or
+
+knowledges the hijacking: He did, however, furnish the
+
+interviewing Agents with a sample of his hand printing. The
+
+message: "Everybody. off now except the stewardesses. They
+
+stay. put.ceGet the hell off the GD: Be quick about it --
+
+use this runway" was dictated to him and he printed it. This
+
+message was sent to the FBI. Laboratory in Washington for
+
+comparison with the message found on the airplane. Me Coy
+
+continued to claim innocence as was released.
+
+Meanwhile, the Laboratory in Washington had been
+
+busy with the evidence they had already received. An expert
+
+in handwriting had compared the note found on the airplane
+
+with Me Coy's known writing samples which had been obtained
+
+from military service records.
+
+It was determined that Mc Coy
+
+had written the note. Fingerprint experts had compared latent
+
+prints with Me Coy's fingerprints
+
+and it was determined that
+
+a print on the "Mainliner Magazine" in the seat occupied by
+
+the hijacker was made by Mc Coy.
+
+5
+
+• DB Cooper-18441
+
+---
+
+## Page 243
+
+On April 9, 1972, a complaint was filed charging
+
+Richard Floyd Mc Coy, Jr. with violation of Section 1472(1) (1) ,.
+
+Title 49, United States Code, Aircraft Piracy, and Section
+
+1472(j), Title 49, United States Code, Interference With
+
+Flight Attendant.
+
+Mc Coy was arrested on April 9, 1972, but he refused
+
+to discuss the hijacking. Following his arrest, a search
+
+warrant was issued and his house was searched. The following
+
+are some of the items found during the search:
+
+1. One parachute, blue and white with red trim.
+
+2. One black helmet, crash type, with white strap
+
+snap on back.
+
+3. One large cardboard box containing various items
+
+of clothing, a pistol, holster and a black glove.
+
+5. United States currency totaling $499,970.
+
+On July 10, 1972, Richard Floyd Mc Coy, Jr. appeared
+
+in United States District Court and was sentenced to a period
+
+of 45 years in the custody of the Attorney General.
+
+- 6*
+
+...
+
+: DB Cooper-18442
+
+---
+
+## Page 244
+
+Salt Lake City
+
+May 23, 1973
+
+SUB.
+
+RICHARD FLOID ME COY, JR.
+
+CRIME ABOARD AIRCRAFT - HIJACKING;
+
+INTERFERENCE WITH FLIGHT CREW MEMBERS
+
+Synopsis:
+
+On April l, 1972, an individual boarded United AIX
+
+Lines (UAL) Flight 855, a Boeing 727 from Newark, New Jersey,
+
+to Los Angeles, California, at Denver, Colorado.
+
+Approximately
+
+15 to 20 minutes after take off, the individual was observed to
+
+be holding a hand grenade and a gun. Ine stewardess delivered
+
+messages of instruction to the pilot. Instructions included
+
+diverting airplane to San Francisco, California, where UAL was
+
+suppose to have $500,000 in cash and four parachutes available.
+
+Instruction envelope contained one hand grenade pin and a
+
+bullet.
+
+Aircraft landed at San Francisco where the hijacker's
+
+demands were met. All passengers and part of crew were permitted
+
+to deplane.
+
+The pilot was then ordered to take off innediately.
+
+The pilot felt a slight surge of the airplane in the vicinity of
+
+the Provo, Utah, Airport and thought the hijacker must have
+
+jumped out. Information was received that a possible suspect
+
+in the case might be Richard Floyd Mc Coy, ur. Mc Coy was
+
+positively identified as
+
+the hijacker through handwriting
+
+comparisons and fingerprints located on UAl. "Mainliner Magazine"
+
+found in seat occupied by hijacker.
+
+Mc Coy was arrested on
+
+April 9, 1972, alter being charged in a complaint with violation
+
+of Section 1472(1)(1), Title 49, U. S. Code, Aircraft PIracy,
+
+and Section 1472(j), Title 49, U. S. Code, Interfering With
+
+Flight Attendant.
+
+On July 10, 1972, Mc Coy appeared in U.S.
+
+District Court and was sentenced to a period of 45 years in
+
+the custody of the Attorney General.
+
+164.7313,
+
+164-81-8159
+
+ENGLUSE CLOSURE
+
+SEARCHED
+
+_INDEXED.
+
+SERIALIZEOS
+
+_FILED.
+
+JUL 25.1980
+
+DB Cooper-18443
+
+FBI-SEATTLE -
+
+---
+
+## Page 245
+
+IJ-350 (Rev. 7-16-53)
+
+(Mount Clipping in Space Below) &
+
+Skyjacker Killed at Beach
+
+SUB. 356;3-
+
+Assoc.
+
+Dir.
+
+Dep.-A.D.-Adm
+
+D=z.-A.D.-Inx
+
+Asst. Dir!:
+
+Admin.
+
+Comp.
+
+Syst.
+
+Insur tion
+
+Ist.l'.
+
+I-varatory
+
+Дрес. I9v..
+
+Training
+
+Legal Coun
+
+Telephone Rm. -
+
+Director Sec'y
+
+(Indicate page, name of
+
+newspaper, city and state.)
+
+PAGE
+
+4
+
+RICHMOND NEWS LEADER
+
+RICHMOND, VA.
+
+• By DAVE RILEY
+
+VIRGINIA BEACH (AP) -
+
+Richard Floyd McCoy and
+
+Melvin Dale: Walker kept to
+
+themselves
+
+when they were.
+
+staying in the ranch-stylehouse
+
+they rented in a peaceful sub-
+
+division here.
+
+Neighbors had little contact
+
+with the two, except for an oc-
+
+casional passing greeting or a
+
+friendly wave as McCoy jogged
+
+through the neighborhood. One
+
+of the men once offered to help
+
+fix a neighbor's car.
+
+Then late
+
+Saturday night,
+
+& FBI agents swooped down on
+
+the rented house after three
+
+days of. surveillance. Shots
+
+were fired. McCoy was killed
+
+and Walker arrested.
+
+'THEY SEEMED SO NICE*
+
+"I just can't believe it. They
+
+seemed
+
+so nice,!' said one
+
+neighbor after discovering that
+
+McCoy was a convicted sky-
+
+jacker who once bailed out of a
+
+jetliner with $500,000 ransom
+
+and that Walker wasa bank rob-
+
+Derontner Bl's10 mostwanted
+
+list.
+
+MELVIN WALKER •
+
+In Custody
+
+Federal agents say the men
+
+were using the house in the
+
+quiet
+
+middle
+
+class
+
+neighborhood a few miles from
+
+the oceanfront as an occasional
+
+hideout:
+
+.. Both had been the objects of a
+
+Pe..
+
+AP Wirephotos
+
+RICHARD F. MCCOY :
+
+Dead in Incident
+
+nationwide manhunt since they
+
+fled from a federal prison in a
+
+rain of gunfire three months
+
+ago.
+
+/ FBI agents were staked out
+
+inside the rented huise" and
+
+TOT MELO
+
+1E0ULÜ 23 1979
+
+Kiki
+
+Date: 11-11-74
+
+Edition: EVENING
+
+Author: DAVE RILEY
+
+Editor: JOHN E. LEARD
+
+Title: RICHARD MC COY
+
+Character:
+
+- or
+
+Classification:
+
+Submitting Office: RICHMOND
+
+• Being Investigated
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+F388
+
+164-81-8460
+
+SEARCHED_
+
+SERIALIZED
+
+I HOERED.
+
+_FILED
+
+--JUL &5 1980
+
+b6!
+
+-b7C
+
+DB Cooper-18450
+
+---
+
+## Page 246
+
+gress, the, street onthesecon
+
+loor of a two-story home whe
+
+McCoy and Walker came home
+
+about 11:30 p.m. Saturday.
+
+EX-GREEN BERET
+
+McCoy, 31, a former Sunday
+
+school teacher and Green Beret
+
+who flew a helicopter in Viet-
+
+nam, went to the front door of
+
+le house. Walker drove awas
+
+parently to survey th
+
+neighborhood.
+
+"McCoy opened the front
+
+door and at that point an agent
+
+inside identified himself and
+
+told him to hold it and then to
+
+¿ come in," said FBI spokesman
+
+John Coneys.
+
+"After about a split second,
+
+he pulled his revolver,"' Coneys
+
+said. "He got one shot off, and
+
+the agent returned fire. It
+
+blasted him right out the front
+
+door."
+
+McCoy's single shot missed
+
+the agent and imbedded itself in
+
+a wall. Coneys said McCoy was
+
+hit once by a shotgun blast.
+
+WEAPONS IN CAR
+
+Outside, Walker was just
+
+returning to the house when the
+
+shooting started, Coneys said.
+
+Walker, who had been added to
+
+the 10-most-wanted list less:
+
+than a month ago, sped away,!
+
+arraignment today.
+
+McCoy had been a Mormon
+
+'Sunday school teacher and had
+
+attended Brigham Young
+
+University as a law enforce-
+
+ment major before becoming a
+
+Green Beret: ..
+
+45-YEAR SENTENCE
+
+Batt'April 1972"armea With
+
+a grenade, McCoy took over a
+
+United Air Lines T27 shortly af-
+
+ter the plane had left Denver for
+
+Los Angeles. The flight was
+
+diverted to San Francisco,
+
+Where passengers sere allow-
+
+ed to leave and $500,000 in ran-
+
+som and parachutes were plac
+
+ed aboard.
+
+DB Cooper:18451
+
+---
+
+## Page 247
+
+trade
+
+AP Wiraphato
+
+CONVICTED SKYJACKER RICHARD MCCOY DIED IN A SHOOT-OUT IN THIS RENTED HOUSE i"
+
+-------
+
+D Cooper-1845%
+
+---
+
+## Page 248
+
+I'3-350 (Rev. 7-16-63)
+
+(Mount Clipping in Space Below) *
+
+Skyjacker Killed at Beach
+
+SuB 354, B
+
+Assoc.
+
+• Dir.
+
+Dep.-A.D.-Adm
+
+Dr=-A.D.-Inv
+
+Asst. Dir.;
+
+Admin.
+
+Comp. Sys
+
+Ir=ua tion
+
+_1.
+
+i s. ratory
+
+Fian. & Ersl
+
+Spec. Inv.
+
+Training
+
+Legral Coun
+
+Telephone Km. -
+
+Director Sec'y
+
+(Indicate page, name of
+
+newspaper, city and state.)
+
+PAGE 4
+
+RICHMOND NEWS LEADER
+
+RICHMOND, VAC
+
+"DY D'AVE RILEY
+
+VIRGINIA BEACH (AP) -
+
+Richard Floyd McCoy and
+
+Melvin Dale Walker_kept to
+
+themselves
+
+when they were
+
+staying in the ranch-stylehouse
+
+they rented in a peaceful sub-
+
+division here.
+
+Neighbors had little contact
+
+with the two, except for an oc
+
+casional passing greeting or a
+
+friendly wave as McCoy jogged
+
+through the neighborhood. One
+
+of the men once offered to help
+
+fix a neighbor's car.
+
+Then late Saturday night,
+
+& FBI agents swooped down on
+
+the rented house after three
+
+days of.. surveillance. Shots
+
+were fired. McCoy was killed
+
+and Walker arrested.
+
+"THEY SEEMED SO NICE"
+
+• MELVIN WALKER •
+
+"I just can't believe it. They
+
+seemed so nice,''
+
+In Custody
+
+said
+
+one
+
+neighbor after discovering that
+
+Federal agents say the men
+
+McCoy was a convicted sky-
+
+were using the house in the
+
+jacker who once bailed out of a
+
+quiet
+
+middle
+
+jetliner with $500,000 ransom
+
+class
+
+neighborhood a few miles from
+
+and that Walker was a bank rob-
+
+the oceanfront as an occasional
+
+I ber on the FBI's I0-mostwanted hideout.
+
+list.
+
+Both had been the objects of a,
+
+AP Wirephotos
+
+RICHARD F. MCCOY •
+
+Dead in Incident
+
+nationwide manhunt since they
+
+fled from a federal prison in a
+
+rain of gunfire three months
+
+ago.
+
+1 FBI agents were staked out
+
+inside the rented nutse" and
+
+HOT RECORDED
+
+18W:: 23 107°
+
+Date:
+
+11-11-74
+
+Edition EVENING
+
+Author: DAVE RILEY
+
+Editor: JOHN E. LEARD
+
+Title: RICHARD MC COY
+
+Character:
+
+or
+
+Classification:
+
+Submitting Office: RICHMOND
+
+Being Investigated
+
+b61
+
+b7C
+
+..
+
+b6
+
+b7C
+
+F188
+
+-
+
+DB Cooper-18453
+
+1 6641-81-54160
+
+---
+
+## Page 249
+
+SuB 386, B
+
+CooPEn
+
+Nccoy sHow
+
+411/12
+
+WORN
+
+BY
+
+b6
+
+b7C
+
+1621-81-8461
+
+SEARCHED
+
+SERIALIZENA E
+
+HEFLEDIRS
+
+JUL 25 1980
+
+b6
+
+b7C
+
+DB Cooper-18456
+
+---
+
+## Page 250
+
+SuB 386, B
+
+THes NEWSpApEn prore
+
+of
+
+RETOUCItED
+
+filly
+
+Mccoy Stow Suuylasses
+
+weand
+
+(& PoronocO
+
+copies orr)
+
+b6
+
+b7C
+
+DB Cooper-18457
+
+1 691-81-84161
+
+---
+
+## Page 251
+
+Routing Slip
+
+0-7 (Rev. 1-31-80)
+
+TO: SAC:
+
+(Copies to Offices Checked)
+
+TO: LEGAT:
+
+E
+
+RE:
+
+NORJAK
+
+00: SEATTLE
+
+E Omahoma City
+
+1 Omaha
+
+Philadelphia
+
+Phoenix
+
+Portburh
+
+Richmond
+
+Sacramento
+
+St. Louis
+
+→ Ottaws
+
+Salt Lake City
+
+San Antonio
+
+San Diego
+
+San Francisco
+
+San Juan
+
+J-Savannah
+
+X Seattle
+
+Springfield
+
+Tampa
+
+Washington Field
+
+Quantico
+
+but
+
+386
+
+7/23/80
+
+(Date)
+
+Sek 13,
+
+Retention
+
+For appropriate
+
+→ For information E optiona
+
+xl action
+
+# Surep, by
+
+The ended are you contemation. JE used in a future report, I conceal all
+
+-Entlosed are corected pages from report of SA
+
+Remarks:
+
+ATTACHED NEWSPAPER CLIPPINGS AND
+
+PHOTOGRAPHS FOR YOUR INFORMATION
+
+PER OUR CONVERSATION JULY 23, 1980
+
+b6
+
+b7C
+
++2cw0
+
+2201
+
+Enc. 6
+
+Bufile
+
+Urfile
+
+1641-81-8462
+
+DB Cooper-18458
+
+---
+
+## Page 252
+
+SuB 386, B
+
+1641481-84631
+
+SEARCHED
+
+*_INDEXED.
+
+SERIALIZED
+
+FILED
+
+JUL 25 1980
+
+b7C
+
+DB Cooper-18459
+
+---
+
+## Page 253
+
+JUB 386, B
+
+PHOTOGRAPH OF MO COY
+
+IN ARMY SHIRT
+
+DB Cooper-18460
+
+162-81-8462
+
+---
+
+## Page 254
+
+83934-41
+
+VZCZCWFO&D1
+
+RR HQ CE PD SE SL BA PG
+
+DE WF #ODD1 2101301
+
+ZNR UUUUU
+
+R 281400Z JUL 84
+
+FM WASHINGION FIELD (164- 169) (RUC)
+
+TO DIRECTOR FBI (164-2111) ROUTINE
+
+FBI
+
+CHARLOTTE ROUTINE
+
+FBI PORTLAND ROUTINE
+
+FBI SEATTLE ROUTINE
+
+FBI ST: LOUIS ROUTINE
+
+FBI BALTIMORE ROUTINE
+
+FBI PITISBURGH (164-93) ROUTINE
+
+ST
+
+suspect
+
+UNCLAS
+
+164-81
+
+NORJAK
+
+(A); (00:SEAIILE)
+
+RE PITTSBURGH TELETYPE DATED JUNE 26, 1980.
+
+ON JULY 22, 1980; SC SADIE L. DYE CAUSED A SEARCH TO BE
+
+MADE OF THE CURRENI AND RETIRED FILES OF THE PASSPORT OFFICE,
+
+DEPARIMENT OF STATE, AND WAS ADVISED NO RECORD WAS LOCATED
+
+CONCERNING
+
+30RN
+
+b7C
+
+b6
+
+b7C
+
+BT.
+
+#0001
+
+NNNN
+
+164-81 - 8463
+
+128 9so
+
+b6
+
+b7C
+
+DB Cooper-18461
+
+---
+
+## Page 255
+
+VZCZCWF0001
+
+RR. HQ CE PD SE SL BA PG
+
+ĐE F #0001 2101801
+
+ZNR UUUUU
+
+R 281400Z JUL 80
+
+FM WASHINGTON FIELD (164- 169) (RUC)
+
+TO DIRECTOR FBI (164-2111) ROUTINE
+
+FBI CHARLOTTE ROUTINE
+
+FBI PORTLAND ROUTINE
+
+FBI SEATTLE ROUTINE
+
+• FBI ST. LOUIS ROUTINE
+
+FBI BALTIMORE ROUTINE
+
+FBI PITISBURGH (164-93) ROUTINE
+
+BT
+
+UNCLAS
+
+NORJAK (A); (00 :SEATTLE)
+
+•RE PITTSBURGH TELETYPE DATED JUNE 26, 1980.
+
+ON JULY 22, 1930, SC SADIE L. DYE CAUSED A SEARCH TO 3E
+
+MADE OF THE CURRENT AND RETIRED FILES OF THE PÁSSPORI OFFICE,
+
+DEPARIMENT OF STATE, AND WAS ADVISED NO RECORD WAS LOCATED
+
+CONCERNING
+
+JOKI
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+BT
+
+#6001
+
+NWNN
+
+161-51-8463
+
+. -DB-Cooper-18464
+
+---
+
+## Page 256
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+TO
+
+: SAC, SEATTLE (164-81) (P)
+
+FROM:
+
+SA
+
+SUBJECT:
+
+NORJAK
+
+00: SEATTLE
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE: 7/30/80
+
+b6
+
+b7C
+
+RE:
+
+WOODLAND, WASHINGTON
+
+Re Portland letter to Seattle, dated January 30, 1980.
+
+For information, a review of the current Woodland.
+
+Washington, telephone directory, reveals no listing for
+
+However, this telephone directory does contain the
+
+listing for a
+
+who resides atl
+
+Woodland, Washington, telephone number
+
+Seattle indices were reviewed concerning
+
+with no references having been found.
+
+Washington Department of Motor Vehicles record reveal
+
+that
+
+is a male, Date of Birth
+
+blue
+
+eyes, 6'1", 175 pounds, and resides at
+
+Woodland,
+
+Washington. There are no vehicles registered to
+
+in the State of Washington.
+
+On July 10. 1980. this matter was discussed with the
+
+Case Agent,
+
+, and in this discussion it
+
+was determined that
+
+_of Woodland, Washington,
+
+does not meet the physical characteristics of the subject.
+
+Therefore, it is recommended that no further investigation
+
+be undertaken concerningl
+
+ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+MES/ job
+
+(2)
+
+1641-51-8464
+
+"ty
+
+,..)
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-1846$
+
+---
+
+## Page 257
+
+TO
+
+FROM :
+
+SUBJECT:
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+: SAC, SEATTLE (164-81) (P)
+
+SA
+
+NORJAK
+
+00:
+
+SEATTLE
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+DATE: 7/30/80
+
+b6
+
+b7C
+
+RE:
+
+WOODLAND, WASHINGTON
+
+Re Portland letter to Seattle, dated January 30, 1980.
+
+For information, a review of the current Woodland
+
+Washington, telephone directory, reveals no listing for
+
+However, this telephone directory does contain the
+
+listing for a
+
+who resides at
+
+Woodland, Washington, telephone number
+
+Seattle indices were reviewed concerning
+
+with no references having been found.
+
+washington Department of Motor Vehicles record reveal
+
+Jis a male, Date of Birth
+
+blue eyes,
+
+6'1",
+
+, 175 pounds, and resides at
+
+Woodland,
+
+Washington.
+
+There are no vehicles registered to
+
+in the
+
+State of Washington.
+
+Saco sentin er 10, 1030, ehe mater
+
+On July 10, 1980, this matter was discussed with the
+
+was determint te physical characteristics of the , washt.
+
+of Woodland, Washington,
+
+theretore, it is recommended that no further investigation
+
+be undertaken concerning
+
+ARMED AND DANGEROUS.
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1641-81-54162
+
+MES/ jcb
+
+(2)
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-18464
+
+---
+
+## Page 258
+
+FI)-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+[J Teletype
+
+• Facsimile
+
+Airtel
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+• Routine
+
+TO
+
+:
+
+DIRECTOR
+
+Attn :
+
+FBI (164-2111)
+
+Identification Division
+
+Latent Fingerprint Section
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+• SECRET
+
+CONFIDENTIAL
+
+UNCLAS EF TO
+
+I UNCLAS
+
+Date 7/30/80
+
+BILL OF LADING #
+
+REGISTRY # 176833
+
+DATE SENT
+
+7/31/80
+
+EMPLOYEE'S INITIALS PIL
+
+FROM : SAC, SEATTLE (164-81) (P)
+
+NORJAK
+
+CAA - HIJACKING (A)
+
+00: SEATTLE
+
+Suspect: Jack Lestt Farnes
+
+SUB. 986.
+
+Enclosed for the Identification Division, Latent
+
+Fingerprint Section,
+
+is one Washoe County, Nevada, Identification
+
+Card in the name of Jack Scott Farmer, ID No. A-18825, Card No.
+
+18086. The card bears an original left thumb and right thumb
+
+fingerprint for farmer.
+
+On 7/28/80,
+
+writer des-
+
+cribed in previous communications,
+
+telephonically
+
+contacted the
+
+Seattle Division to advise that additional research on his part
+
+has culminated in the obtaining of fingerprints (right and left
+
+thumbprint) of
+
+Birth 5/22/41.
+
+р. в.
+
+Cooper suspect Jack Scott Farmer, Date of
+
+advised that he obtained the fingerprints
+
+and other identifying data regarding Farmer from_
+
+who resides in Yuba. City, California. The aforementioned enclo-
+
+sure is a dealer's permit for Jack Scott Farmer, who was employed
+
+during June of 1969 at the Nevada Lodge at Lake Tahoe, Nevada, and
+
+was issued by the office of the Sheriff, Washoe County, Nevada.
+
+also provided the Seattle Division with Farmer's California
+
+driver's license number J855095, which expired in 1970, and lists
+
+a California address of 318 Hazel Street, Chico,
+
+California.
+
+Seattle notes that the photograph on the driver's license bears a
+
+resemblance to the artist's conceptions of the hijacker, D. B.
+
+2 - Bureau (Encl - 1)
+
+2
+
+- Las Vegas (164-60)
+
+2
+
+- Sacramento
+
+- San Francisco (164-220) (Sq. 10)
+
+- Seattle
+
+(10),
+
+4/ral1sed.
+
+Indosar
+
+F11ed
+
+Approved:
+
+Transmitted
+
+b7C
+
+b6l
+
+b7C
+
+b6|
+
+b7C
+
+(Number)
+
+(Time)
+
+Per -
+
+DB Cooper-18465
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+1641-51-88465
+
+---
+
+## Page 259
+
+SE 164-81
+
+Cooper.
+
+An additional piece of identification reflected that Jack
+
+City, California.
+
+In addition,_
+
+a photograph of Farmer in full
+
+parachute gear and a copy of Farmer's
+
+parachute log, which was dated
+
+May, 196%.
+
+REQUEST OF THE BUREAU
+
+The Latent Fingerprint Section is requested to compare
+
+the enclosed fingerprints with latent fingerprints from captioned
+
+case.
+
+Furthermore, the Latent Section is requested to expeditiously
+
+contact Case Agent SAL
+
+_, regarding that compari-
+
+son
+
+inasmuch as a prior arrangement with the writer,L
+
+has
+
+been made regarding the comparison of these prints.
+
+The Bureau
+
+has been advised of that arrangement.
+
+Furthermore, the Latent
+
+Section is requested to photograph the enclosed fingerprints for
+
+possible future comparisons and return the dealer's card to Seattle
+
+inasmuch as it has been loaned to the Seattle Division by the
+
+writer,
+
+The below listed offices are being furnished this commu-
+
+nication for informational purposes:
+
+San Francisco
+
+Las Vegas
+
+Sacramento
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+DB Cooper-18460
+
+---
+
+## Page 260
+
+01-36 (Rev
+
+si?
+
+75-22-781
+
+FBI.
+
+TRANSMIT VIA:
+
+[J Teletype
+
+D Facsimile
+
+I Airtel
+
+PRECEDENCE:
+
+• Immediate
+
+I Priority
+
+• Routine
+
+CLASSIFICATION:
+
+DJ TOP SECRET
+
+SECRET.
+
+CONFIDENTIAL
+
+UNCLAS EE TO
+
+• UNCLAS
+
+Date_ 7/30/80
+
+TO
+
+DIRECTOR
+
+Attn :
+
+FBI (164-2111)
+
+Identification Division
+
+Latent
+
+Fingerprint Section
+
+FROM : SAC, SEATTLE (164-81) (P)
+
+SuB 986
+
+NORJAK
+
+CAA - HIJACKING (A)
+
+•00: SEATTLE
+
+b6
+
+b7C
+
+Enclosed for the Identification Division, Latent
+
+Fingerprint Section, is one Washoe County, Nevada,
+
+Identification
+
+Card in the name of
+
+Jack Scott Farmer, ID No. A-18825, Card No.
+
+18086. The card bears an original left thumb and right thumb
+
+fingerprint for farmer.
+
+On 7/28/80,
+
+writer des-
+
+cribed in previous communications, telephonically contacted the
+
+Seattle Division to advise that additional research on his part
+
+has culminated in the obtaining of fingerprints (right and left
+
+thumbprint) at p. B.
+
+Cooper suspect Jack Scott Farmer, Date of
+
+Birth 5/22/44.
+
+aavised that he obtained the fingerprints
+
+and other identifying data regarding Farmer from
+
+who resides in Yuba City,
+
+California.
+
+The aforementioned enclo-
+
+sure is a dealer's permit for Jack Scott Farmer, who was employed
+
+during June of 1969 at the Nevada Lodge at Lake Tahoe, Nevada, and
+
+was
+
+issued by the office of the Sheriff, Washoe County, Nevada.
+
+also provided the Seattle Division with Farmer's California
+
+driver's license number J855095, which expired in 1970, and lists
+
+• California address of 318 Hazel Street, Chico,
+
+California.
+
+seattle notes that the photograph on the driver's license bears a
+
+resemblance to the artist's conceptions of the hijacker, D. B.
+
+2 - Bureau (Encl - 1)
+
+2
+
+- Las Vegas (164-60)
+
+2 - Sacramento
+
+2- San Francisco (164-220) (Sq. 10)
+
+Seattle
+
+-JKM/ tes
+
+(10)
+
+b6
+
+b7C
+
+Approved:
+
+Transmitted
+
+Per
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18467
+
+164-81-8462
+
+---
+
+## Page 261
+
+VECICH00 23 2131:44
+
+PP UF PD SE
+
+DE AN
+
+P 30055Z JUL 36
+
+No ANCHONAGE 6104-327) (306)
+
+144-81
+
+TO WFO PRIORITY VIA HQ
+
+PORTLAND PRIORITY VIA HO
+
+SEATTLE PRIORITY VIA HQ
+
+BT
+
+UNCLAS
+
+UNSUB, AKA D. B. COOPER, ÜNA - AdHUKING (A), 00: POSILHI.
+
+RE VIJ TELCALL TO ANCHORAGE, JULY 3Ü, 193%.
+
+WO INFORMED AN UNSUE HAD APPLIED FON PASSPORT AT
+
+WASHINGION, DOC. VILL PIC UN PASSPORI ENIDAY AM, AUGUST 1, 1902,
+
+AND HE MAY BE SUBJECT OF THIS INVESTIGATIO. LiOUS MPPLICE TON
+
+PASSPORT ASI
+
+soir
+
+16
+
+b7C
+
+b6]
+
+b7C
+
+b6 |
+
+b7C
+
+ALÁSKA MAS U. SO IMITSY PAIU. TO 1USS. TRAITO LAL
+
+ALAS A, CO.FINEDI
+
+hitt tini,
+
+b6|
+
+b7C
+
+164-81-84466
+
+DB Cooper-18469
+
+---
+
+## Page 262
+
+VS02CH:0023 2131044
+
+PPEN PO SE
+
+TEAM
+
+b6
+
+b7C
+
+FO ENCHORAGE (104-207) (NUG)
+
+TO WO PRICKITY VIA HO
+
+FORTLAND PRIORITY VIA MO
+
+SEATTLE PRIORITY VIA HA
+
+UNCLAS
+
+VISUS, AKA D. E. GOOPER, CAA • HEJACHINE END, 00: PORILAND.
+
+•NE WO TELCALL TO ANCHORAGE, AULY 30, 19309
+
+NFO INFORMED AM UNSUS. HAD APFLIED FON PASSPORI AT
+
+• WASHINGTON, DOC. WILL PICH UP PASSPORI FRIDAY AMS AUGUST Iy 182Ng
+
+AUD HE MAY DE SUBJECT OF THIS INVESTIGATIONA UNSUB APPLIED FOR
+
+PASSPORT AG
+
+30A83
+
+b6
+
+b7C
+
+ALASKA WAS WO &. TERRITORY PRION TO 1959, TERRETORIAL
+
+PIRIN GECONCS AT SLASKA STATE SUNDAU DE VITAL SIALISTIUS, JUNEAUS
+
+MADHA, COLFIRMED
+
+WHITE MALES WAS
+
+b6
+
+b7c
+
+TO
+
+UNITE
+
+DB Cooper-18471 |6<-81-S4l:t
+
+---
+
+## Page 263
+
+PACT TUO AN 164-227 UNCLAS
+
+DORN
+
+WHITE FEMALE,
+
+AND TO
+
+$
+
+b6
+
+b7C
+
+BOTK
+
+NC OIMEA INFORMATION AVAILABLE
+
+AT VITAL STATISTICE•
+
+ALADRA JUSTICE IOFORMATION SYSTEM CAULS) SIRTE COMPUTEN NAU
+
+NO RECORO IN CHININAL FILES OR DRIVEN'S LICESSE FILEN ONC
+
+ANCHORAOS FOLICE DEPT HAD NO RECORD OF
+
+MACHOSIGE CITY DIRECTORIES OF 1953, 1954, 1955, 1969s 1970s 1975,
+
+1879, AGD 1956 HAD NO MECORD 05
+
+ARCHONGGE
+
+INDICES MECNTIVE ON
+
+BT
+
+b6
+
+b7C
+
+U2 102244 SE P
+
+5
+
+DB Cooper-18472
+
+---
+
+## Page 264
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+164-93 (P)
+
+164-2111
+
+A-45410
+
+July 29, 1980
+
+TO: SAC, Pittsburgh
+
+RE: NORJAK
+
+Suspect
+
+b6
+
+b7C
+
+REFERENCE:
+
+Pittsburgh teletype 6/26/80 and St. Louis teletype 7/2/80
+
+EXAMINATION REQUESTED BY:
+
+SPECIMENS:
+
+Pittsburgh and St. Louis
+
+The previously reported latent fingerprints and latent
+
+Impressions (fingerprints or palm prints)
+
+In this case are not
+
+the fingerprints of
+
+Identification Division files foxo palm prints
+
+are contained in
+
+1
+
+- Seattle (164-81)
+
+St. Louis
+
+164-81-8467
+
+SEARCHED..
+
+SERIALIZEDS 'L ELLED
+
+NORED
+
+HUL 3 1 1980
+
+b7C
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+FBI/DOJ
+
+DB Cooper-18473
+
+---
+
+## Page 265
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+104-03 (P)
+
+July 29, 1900
+
+104-2211
+
+2-15420
+
+TO: SAC, Pitcaburgh
+
+b6
+
+b7C
+
+RE: FORJAI:
+
+REFERENCE:
+
+Pittaburn talatyro G/20/00 and Eü. Iouis tolacipa 7/2/00
+
+EXAMINATION REQUESTED BY:
+
+SPECMENS:
+
+pictsburga and st. Louis
+
+The provioualy roported latons fingerprints and latont
+
+I born
+
+No pain prints ara containad in
+
+1270 b7C
+
+Identiaication Divicion tilos for
+
+2 - Joactlo (104-01)
+
+1 - St. Louis
+
+161-81-8467
+
+FILED man
+
+JUL $ 1 1963
+
+FS!- SEATTLE
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+FBI/DOS
+
+DB Cooper-18474
+
+---
+
+## Page 266
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+164-50 (P)
+
+July 30, 1900
+
+101-2111
+
+Д-15410
+
+TO: SAC, Las Vagas
+
+JuB 184,41
+
+RE:
+
+HORJAR;
+
+CAN-ITJACHILIG
+
+REFERENCE:
+
+Airtols 7/7/30 and 7/15/00
+
+EXAMINATION REQUESTED BY:
+
+SPECIMENS:
+
+Las Voyas
+
+ringarprints of Carth Hudoon Dunning
+
+the proviously roportod unidentifiod latont singor-
+
+prints and latont irgroosion (ingozprint or paln print) in
+
+chis case and nod the singasprints o1 Carth Hudson Dunning,
+
+as soù forth in INPO Ioport of 7/10/00 to Scastle, tith copico
+
+Furniahed to Ina Vagas, Sacraranto and Dan Franciaco Divisions.
+
+No palm prints ara contained in tho Idontification Division
+
+11l03 fos Dunning.
+
+0s the basio of the infornation furnishod, no finger-
+
+print record vas locatoû in the Iûontification Divinion 11103
+
+for Jacl: ScotE Farror,
+
+Tuo fingerprinto aro cnolocod, along vith copies of
+
+roports fron the laahos County Shoriif's Offico, rono, ravada.
+
+Ino. (2)
+
+16-11-8468
+
+2 - Scatclo (I01-01)
+
+LUG
+
+A FILED
+
+195)
+
+b6
+
+b7C
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+FBI/DOS
+
+DB Cooper-18475
+
+---
+
+## Page 267
+
+UNITED STATES GOVERNMENT
+
+memorandum
+
+DATE:
+
+7/28/80
+
+REPAN OF
+
+R SAd,§ SACRAMENTO (264-50) (RUC)
+
+SUBJECT:
+
+NORJAK (A)
+
+00:
+
+SE
+
+Bufile 164-2111
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+Re Albuquerque airtel to Seattle, 6/6/80.
+
+Enclosed for the Seattle Division are three
+
+photographs ofl
+
+from the Mariposa County
+
+Sheriff's Office.
+
+On 7/15/80 L
+
+Mariposa County Sheriff's Office, Mariposa, California,
+
+advised that a review of the
+
+disclosed that
+
+I cats his etice
+
+was arrested by'his department
+
+for violation of
+
+At that time,l
+
+I turned over three
+
+photographs ofL
+
+which
+
+are being forwarded to
+
+Seattle as enclosures.
+
+b6|
+
+b7C
+
+b6 |
+
+b7C
+
+b6 |
+
+b7C
+
+Seattle (Enc. 3)
+
+Sacramento
+
+TAH: aly
+
+(3)
+
+164-81-8469
+
+SEARCHED INDEXEDT
+
+OSRIALIZED..
+
+AUG V 4 1980
+
+-
+
+b6
+
+b7C
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-18476
+
+OPTIONAL FORM NO. 10
+
+(REV. 7-76)
+
+GSA FPMR (41 CFR) 101-11.6
+
+2190÷99
+
+---
+
+## Page 268
+
+DATE:
+
+UNITED STATES GOVERNMENT
+
+memorandum
+
+SUBJECT:
+
+TO:
+
+7/28/80
+
+SACRAMENTO (164-50) (RUC)
+
+NORJAK (A)
+
+00:
+
+SE
+
+Bufile 164-2111
+
+SAC, SEATTLE (164-81)
+
+Re Albuquerque airtel to Seattle, 6/6/80.
+
+photoeraphs flesed fer the Seattle Division are three
+
+from the Mariposa County
+
+Sheriff's Office.
+
+On 7/15/80
+
+Mariposa County Sheriff's Office, Mariposa, California,
+
+advised that a review of the records of his office,
+
+disclosed that
+
+date of birthE
+
+was arrested by his departmentl
+
+I for violation of
+
+At that time,
+
+I turned over three
+
+photographs ofl
+
+I which
+
+are being forwarded to
+
+Seattle
+
+as enclosures.
+
+b6 |
+
+b7C
+
+b6|
+
+b7C
+
+@- seattle (Enc. sed
+
+1
+
+Sacramento
+
+TAH: aly
+
+(3)
+
+-
+
+164 - 81-54161
+
+CAITO LT INDEED
+
+-FLEDLi
+
+AUG $ 4 1980
+
+FSI - SEATTLE
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-18477
+
+OPTIONAL FORM NO. 10
+
+(REV. 7-76)
+
+GSA FPMR (41 CFF) 101-11-6
+
+13012-112
+
+---
+
+## Page 269
+
+VZCZCWF0031
+
+RR SE
+
+DE VF H0031 2170117
+
+Salject-
+
+ZNR VUUUU
+
+R D42258Z AUG 80
+
+FM FBI WASHINGTON FIELD (164-301)
+
+TO FBI, SEATTLE
+
+• ROUTINE
+
+BT
+
+UNCLAS
+
+UNSUB; AKA D.B. COOPER, CRIME ABOARD AIRCRAFI; INFORMATION
+
+CONCERNING
+
+RE WO TELCALL TO SEATTLE AUGUST 4, 198%..
+
+WASHINGION FIELD OFFICE (WFO) INVESTICATION INDICHILS
+
+DATE AND PLACE OF BIRTH
+
+IS PRESENILY SUSPECTED OF POSSIBLY
+
+BEING IDENTICAL IO CAPTIONED UNSUB.
+
+ACCORDING TO A UFO SOURCE
+
+IS CURRENTLY PLANNING
+
+LIQUIDATION OF HIS BANK ACCOUNT FROM RANIER NATIONAL BANK •
+
+(VANCOUVER WASHINGION BRANCH) BY HAVING MONEY WIRED TO ANOTHER
+
+ACCOUNT FOR CONFIDENTIAL LIQUIDATION IN WASHINGTON, D.C. (WDO) .
+
+OPENED A SAVINGS ACCOUNI AT DOC. NATIONAL BANK ON AUGUSI 4,
+
+1986 BY WIRE FROM HIS ACCOUNI IN VANCOUVER, WASHINGTON.
+
+b6
+
+b7C
+
+b6
+
+: b7C
+
+b6
+
+b7C
+
+8470
+
+164-81-1
+
+SEAPCHED...
+
+SERIALIZEDA
+
+1980
+
+b7C
+
+DB Cooper-1847
+
+---
+
+## Page 270
+
+PAGE TWO DE WE #0031 UNCLAS
+
+IN ADDITION IO THE ABOVE, I
+
+IS SEEKING A PASSPORT,
+
+USING A FRAUDULENI AFFADAVII, FOR IMMEDIATE DEPARTURE IO THE
+
+1b6
+
+b7C
+
+IT IS NOTED BY UFO THAI THE RECOVERED MONEY OF APPROXIMATELY
+
+$30D8 WAS FOUND NEAR VANCOUVER, WASHINGTON. IN ADDITION,
+
+HAS APPARENTLY USED MAXE-UP AND OR OTHER DISGUISES IN PASI BANK
+
+ROBBERIES TO MAKE HIMSELF LOOK AS THOUGH HE HAD DARK/SWARIKY
+
+SKIN®
+
+ALSO WAS KNOWN TO WEAN SUNGLASSES DURING A BANK
+
+ROBBERY AS PART OF HIS DISGUISE AND. IS A HEAVY SMOKER.
+
+IS A GRADUATE OF THE
+
+AND
+
+WORKED ON A CONTRACT BASIS FOR BOEING AIRCRAFT UNTIL
+
+HE WAS AL
+
+IN THE U.S. ARMY.
+
+FACIAL CHARACTERISTICS AND PHYSICAL SIZE ARE
+
+EXTREMELY CLOSE TO THOSE OF THE DESCRIBED D.B. COOPER AND THE
+
+PHYSICAL DESCRIPTION GIVEN BY THE
+
+VICIIMS OF THE HIJACKING.
+
+HAS BEEN RECEIVING SOLO PER MONTH BY WIRE FROM THE
+
+RANIER NATIONAL BANK, VANCOUVEII BRANCH, SUL MAIN STREET, VANCOUVER,
+
+WASHINGTON. THE MONEY HAS BEEN DEPOSITED INTO AN ACCOUNT MALAGED
+
+BY HIS RESIDENI MANAGER. THE RESIDENT MANAGER DEDUCIS HIS RENT
+
+AND GIVES
+
+THE REMAINING $650 IN CASH. •
+
+OPENED A SAVINGS ACCOUNI AT DOC. NATIONAL ON AUGUST 4,
+
+198& TO PRECLUDE FURTHER INVOLVEMENI BY HIS RESIDENI MANAGEN,
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+DB Cooper-18479
+
+---
+
+## Page 271
+
+PAGE THREE DE WF. #@E3I UNCLAS
+
+JHAS BEEN KNOWN TO USE SOCIAL SECURITY ACCOUNT NUMBERS
+
+FOR OPENING ACCOUNTS
+
+b6
+
+b7C
+
+AND FOR IDENTIFYING DATA.
+
+LEADS:
+
+SEATTLE AI VANCOUVER, WASHINGION. WILL EXPEDIIIOUSLY
+
+CONTACT U.S. ATIORNEY AND ACQUIRE A COURI ORDER FOR THE
+
+ACCOUNT OF
+
+PLACE OF BIRIH
+
+DATE OF BIRTH
+
+FOR
+
+HIS ACCOUNT AT RANIER
+
+NATIONAL BANK ABOVE.
+
+WILL. DETERMINE WHAI KINDES) OF ACCOUNI(S) ARE OPEN, WHERE
+
+DEPOSITS ORIGINATE; CI•E. OVERSEAS, OTHER BANKS ETO.) HOW MUCH
+
+MONEY WAS ORIGINALLY DEPOSITED INTO THE ACCOUNI; THE AVERAGE
+
+BALANCE; AND ANY OTHER IDENIIFYING INFORMATION CONCERVING
+
+OR ANY DIHER PERSON WHO MAY BE HELPING
+
+WITH HIS ACCOUNT(S).
+
+IN AS MUCH AS
+
+IS PLANNING DEPARTURE FROM THE LOS.
+
+EXPEDITIOUS HANDLING OF THIS MATIER IS. REQUESTED.
+
+1b6
+
+b7C
+
+166
+
+b7C
+
+BT
+
+# 203 1
+
+NNNN
+
+DB Cooper 18480
+
+---
+
+## Page 272
+
+VZCZCUFO: 31
+
+DI F 1.031 2170117
+
+ZAR UUUUU
+
+1 14223CZ AUG 30
+
+FM FRI LASHINGION FIELD (104-361)
+
+TO FOI, SEATTLE
+
+ROUTINE
+
+DT.
+
+UNCLAS
+
+UNSUS; AKA D.B. COOPER, CRIME AGOARD ALiCHAFI; INFONMATION
+
+CONCERNING
+
+RE UFO TELCALL IO SEATILE AUGUST 4, IYO:.
+
+WASHINGION FIELD OFFICE CUFO) INVESTIGATION LEDICHILE
+
+DATE AND PLACE OF BIRIT
+
+IS PRESENILY SUSPECTED OF POSSIBLY
+
+DEIIC IDENTICAL TO CAPTIONED WISUB•
+
+ACCORDING TO A WEO SOURCE
+
+IS CURRENTLY PLANNING
+
+LIQUIDATION OF HIS BANK ACCOUNT FROM NAVIER RATIONAL BAIS
+
+(VANCOUVER LASHIRCION BRANCH) JY HAVING NOLEY WIXED TO MOTHER
+
+ACCOUNT FOR CORFIDENTIAL LIQUIDATION IN CASHINGTON, DOC. (HIC).
+
+OPENED A SAVITOS ACCOUNT AI DOC. MATIONAL DUNK ON AUGUST 4,
+
+1986 BY WIRE FROM HIS ACCOUNT IN VANCOUVER, VASHISCION.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1b6
+
+b7C
+
+§141
+
+b6
+
+b7C
+
+c/AL
+
+1641-41-
+
+b6
+
+b7C
+
+DB Cooper-18481
+
+---
+
+## Page 273
+
+oply, Please Refer to
+
+iNo.
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+915 Second Avenue
+
+Seattle, Was.:ington
+
+9817.4
+
+August 6, 1980
+
+buB. 986,9
+
+b6
+
+b7C
+
+Mountain View, California
+
+Dear
+
+This letter will copfirm in writing a telephone conversation
+
+between you and Special Agentl
+
+I on August 6, 1980.
+
+Furthermore, this letter is in regards to a letter from the Seattle
+
+Division of the Federal Bureau of Investigation to you, dated June 18,
+
+1980, which concerned the "D. B. Cooper" hijacking case.
+
+On July 29, 1980, the Seattle FBI Office received from you
+
+a set of inked fingerprints (right and left thumb) of one Jack Scott
+
+arme, dent Pication Division of the ne washington, ere For warded
+
+were compared with the latent fingerprints located
+
+on the skyjacked
+
+aircraft.
+
+On August 6, 1980, the Identification Division telephonically
+
+contacted the Seattle Division to advise that the comparison had been
+
+completed and that the prints of Farmer do not match the latent
+
+fingerprints from the aircraft.
+
+The original fingerprints which you provided the FBI will
+
+be returned to you by separate communication. Your assistance in
+
+this investigation is greatly appreciated.
+
+Very truly yours,
+
+Paul I. Mack
+
+Special Agent in Charge
+
+By:
+
+b6
+
+b7C
+
+Supervisory Special Agent
+
+. b6
+
+b7C
+
+b6
+
+•b7C
+
+1 - Addressee
+
+1
+
+Attorney at Law
+
+525 University Avenue
+
+Suite 1100
+
+Palo Alto, California
+
+(2)
+
+- seattle (164-81)
+
+JKM/ job
+
+(4)
+
+94301
+
+jeerched.
+
+Filed.
+
+b6
+
+-b7C
+
+DB Cooper-18484
+
+164-81-8441
+
+---
+
+## Page 274
+
+Reply, Please Refer z0
+
+No.
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEVERAL BUREAU OF INVESTIGATION
+
+915. Second Avenue
+
+Seattle, Washington 98174
+
+August 6, 1980
+
+986,6
+
+b6
+
+b7C
+
+Mountain View, California
+
+Dear
+
+This letter will confirm in writing a telephone conversation
+
+between you and Special Agentl
+
+on August 6, 1980.
+
+Furthermore, this letter is in regards to a letter from the Seattle
+
+Division of the Federal Bureau of Investigation to you, dated June 18,
+
+1980, which concerned the "D. B. Cooper" hijacking case.
+
+On July 29, 1980, the Seattle FBI Office received from you
+
+. a set of inked fingerprints (right and left thumb) of one Jack Scott
+
+Farmer, Date of Birth May 22, 1944. These fingerprints were forwarded
+
+to the
+
+Identification Division of the FBI at Washington, D. C., and
+
+were compared with the latent fingerprints located on the skyjacked
+
+aircraft.
+
+On August 6, 1980, the Identification Division telephonically
+
+contacted the Seattle Division to advise that the comparison had been
+
+completed and that the prints of Farmer do not match the latent
+
+fingerprints from the aircraft.
+
+The original fingerprints which you provided the FBI will
+
+be returned to you by separate communication. Your assistance in
+
+this investigation is greatly appreciated.
+
+Very truly yours;
+
+Paul L. Mack
+
+Special Agent in Charge
+
+By:
+
+b6
+
+b7C
+
+Supervisory Special Agent
+
+b6
+
+b7C
+
+1 - Addressee
+
+1
+
+Attorney at Law
+
+525 University Avenue
+
+Suite 1100
+
+Palo Alto,
+
+California
+
+(21- Seattle (164-81)
+
+JKM/ jcb
+
+(4)
+
+b6
+
+b7C
+
+94301
+
+DB Cooper-18485
+
+164-81-8471
+
+---
+
+## Page 275
+
+AIRTEL
+
+8/5/80
+
+TO:
+
+SAC, NEO
+
+(ATTN: SA
+
+FROM:
+
+SUBJECT:
+
+SAC, SACRAMENTO (164-50) (P)
+
+NORJAK
+
+CAA - HIJACKING(A)
+
+00: SEATTLE
+
+ent
+
+Re WrO telcall to sacramento on
+
+1731780.
+
+Enclosed for WO are eighteen (18) copies of a
+
+photograph of|
+
+taken on
+
+by the
+
+sacram hed sherlete Department,
+
+Sacramento, California,
+
+under their number_
+
+Enclosed for Seattle 1s one (1) copy of the above
+
+photograph.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+2 - WFO (Enc. 18)
+
+@- seattle
+
+2 - Sacramento
+
+RPC: mm1
+
+(6)
+
+164-81-8442
+
+D*: 1980
+
+DB Cooper-18486
+
+b6
+
+b7C
+
+---
+
+## Page 276
+
+AIRTAL
+
+8/5/80
+
+TOS
+
+FROM.
+
+SUBJECT:
+
+SAC, WFO
+
+(ATEN: SA
+
+SAC, SACRANENTO (164-50) (P)
+
+NORJAR
+
+CAA - HIJACKING (A)
+
+00: SEATTLE
+
+b6
+
+b7C
+
+Re NO telcall to Sacramento on 7/31/80.
+
+inCLOSEd LOI LO are eighteen 18) copjes of a
+
+photograph of
+
+taken onl
+
+_by the
+
+sader ento Sherberys Department, Sacramento, California,
+
+under their number
+
+Enclosed for Seattle is one (l) copy of the above
+
+photograph.
+
+b6
+
+b7C
+
+— WEO
+
+(Enc. 18)
+
+• Sacramento
+
+RPC: am1
+
+(6)
+
+164-81-8472
+
+SEARCHED
+
+51060
+
+DB Cooper-184871
+
+---
+
+## Page 277
+
+TO
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+: SAC, SEATTLE
+
+DATE:
+
+8/5/80
+
+Sufg.
+
+SUBJECT: NORJAK
+
+CCA - HIJACK (A)
+
+00:
+
+SEATTLE
+
+Re Baltimore memo of
+
+dated 5/9/80.
+
+On 4/24/80,
+
+Columbia,
+
+TISITInO
+
+the Alert an Instrument Company, Sars aS ring,
+
+Maryland, he met a man known as
+
+who was
+
+working as al
+
+for this firm,
+
+and that
+
+had also worked for Automated Handling Systems,
+
+Division of
+
+taton, Baltimore, Maryland, twelve years ago.
+
+• advised
+
+that he recently observed a television program concerning
+
+De Be Cooper and noted the close similarity between the two.
+
+further advised that l
+
+parachuting and sailplaning and reportedly was a member of
+
+a sailplane club in Bethesda, Maryland.
+
+a bothere, ampared was a member e
+
+Liaison with
+
+America Instrument Company, 8030 Georgia Avenue, Silver
+
+Spring, Maryland, revealed that a review of personnel
+
+_ failed to locate anyone identifiable with
+
+Xeroxed copies of the D. B. Cooper drawing were
+
+displayed to various American Instrument Company employees
+
+Maryland directories, which cover the Bethesda, Maryland
+
+area,
+
+failed to locate any references to a parachute or
+
+Review of directories and Department of
+
+Motor Vehicle Administration in attempt to identify
+
+unproductive.
+
+25 Seattle
+
+2-Baltimore
+
+HLG: pk
+
+(4)
+
+164-81-8493
+
+SEARCHED DIT INDEXED
+
+SERIALIZ25m
+
+AUG 9'
+
+1980
+
+Buy U.S. Savings Bonds Regularly on the Payroll
+
+DB Cooper-18488
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 278
+
+ĐL 164-223
+
+LEADS:
+
+BALTI ORE DIVISION
+
+AT BALTILORE, ARYLAND
+
+1. nill conduct logical investigation at
+
+Autotated Handling System, Division of baton.
+
+Baltimore,
+
+maryland, in attempt to identify
+
+?. Will recontactl
+
+Columbia, cryland, for any additional infornation
+
+b6]
+
+-2%-
+
+DB Cooper-18489
+
+---
+
+## Page 279
+
+SAC, SEATTLE
+
+8/5/80
+
+SAG, BALTIMORE (164-223) 85-8) (P)
+
+dues
+
+NORJAR
+
+CCA - HIJACK (A)
+
+00: SEATTLE
+
+Re Baltimore meno of
+
+dated 5/9/80.
+
+On 4/24/80,
+
+CoLUnDia,
+
+visiting the American Instrument compent, Silver Springe
+
+Maryland, he wet a man KnOwn as
+
+for this firm,
+
+and that
+
+had also worked for Autouated Handling Systeus,
+
+Division of
+
+D. B. Cooper and noted the close similarity between the two.
+
+I further advised that
+
+was interested in
+
+salpine and a lening, i typeredy was a member of
+
+Ilaison with
+
+America Instrument Coupany, 8030 Georgia Avenue, Silver
+
+Spring,
+
+Maryland, revealed that a review of personael
+
+records failed to locate anyone identifiable with
+
+Xeroxed copies of the D. B. Cooper drawing were
+
+displayed to various American Instrument Calpany employee.
+
+without identification.
+
+A review of Montgomery Counby.
+
+Maryland directories, which cover the Bethesda, Marylam
+
+failed to locate auy references to a parachute or
+
+sailplaning club.
+
+Motor
+
+• Vehicle Administration in atteupt to identify
+
+unproductive.
+
+-Seattle
+
+*Baltimore
+
+HLGipk
+
+(4)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1641-81-89173
+
+SEARCHED....
+
+INDEXE
+
+SERIALIZEO
+
+ALED
+
+AUG 9$ 1980
+
+FEI-SEATTLE
+
+DB Cooper-18490
+
+---
+
+## Page 280
+
+AIRTEL
+
+TO:
+
+8/11/80
+
+FROM:
+
+SUBJECT:
+
+DIRECTOR, FBI
+
+ATIN:
+
+IDENTIFICATION DIVISION,
+
+LATENT FINGERPRINT SECTION
+
+SAC, SACRAMENTO (264-501 18) Arpent
+
+NORJACK
+
+00: SEATTIR
+
+SUE, 986
+
+Re Las Vegas airtel to Bureau, 1/15/80.
+
+Enclosed for Bureau are two xerox copies of
+
+fingerprints for Jack Scott Farmer.
+
+On 7/31/80,
+
+copy of fingerprints for Jack Scott Parner,
+
+provided a xerox
+
+aka Jack scott
+
+Ponticelll, arrest report number 4753.
+
+The following description was obtained from
+
+the arrest report number 4753:
+
+Name
+
+Race
+
+Sex
+
+DOB
+
+SSANZ
+
+Height
+
+Weight
+
+Hair
+
+Eyes
+
+Jack Scott Farmer
+
+White
+
+Male
+
+5/22/44
+
+568-58-4306
+
+6°
+
+175 pounds
+
+Blond
+
+Blue
+
+California driver's
+
+license
+
+Miscellaneous
+
+CII number
+
+2 - Bureau (Enc.
+
+2)
+
+(D Seattle (164-81) (Info)
+
+2 - Sacramento
+
+RES : um]
+
+(5)
+
+J855095
+
+Address at time of arrest
+
+was 591 Cassidy Avenue,
+
+Yuba City, California
+
+2-827-440
+
+61-81-84941
+
+SEARCHEN
+
+SERIALIKE 14
+
+400/1 3 1980
+
+DB Cooper-18492
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 281
+
+Li
+
+:
+
+AIRTEL
+
+TO:
+
+8/11/80
+
+DIRECTOR. FBI
+
+IDENTIFICATION DIVISION,
+
+LATENT FINGERPRINT SECTION
+
+FROM:
+
+AC, SACRAMENTO (164-50) (P)
+
+Suspect
+
+SUBJECT:
+
+NORJACK
+
+CAA - HIJACKING(A)
+
+00: SEATTLE
+
+Jack heart tarma
+
+SuR 166
+
+Re Las Vegas airtel to Bureau, 7/15/80.
+
+Enclosed for Bureau are two xerox copies of
+
+fingerprints for Jack Scott Farmer.
+
+on 7/31/80,
+
+provided a xerox
+
+copy of fingerprints for Jack Scott Farmer,
+
+aka Jack Scott
+
+Ponticelli, arrest report number 4753.
+
+The following description was obtained from
+
+the arrest report number 4753:
+
+Name
+
+Race
+
+Sex
+
+DOB
+
+SSAN?
+
+Height
+
+Weight
+
+Hair
+
+Eyes
+
+Jack Scott Farmer
+
+White
+
+Male
+
+5/22/44
+
+568-58-4306
+
+6'
+
+175 pounds
+
+Blond
+
+Blue
+
+California driver's
+
+license
+
+Miscellaneous
+
+J855095
+
+Address at time of arrest
+
+was 591 Cassidy Avenue,
+
+Yuba City, California
+
+CII number
+
+2 - Bureau (Enc. 2)
+
+2-327-449 641-81-841741
+
+I Seattle (164-81) (Info)
+
+2 - Sacramento
+
+RES : mml
+
+SERIALIZFB
+
+AVe 1 3 1980
+
+(5)
+
+DB Cooper-18493
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 282
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+TO: SAC, WEO
+
+164-301
+
+164-2111
+
+A-45410
+
+August 12, 1980
+
+RE: UNSUB,, ARA
+
+D. B. COOPER;
+
+CRIME ABOARD AIRCRAFT
+
+b6
+
+b7C
+
+REFERENCE:
+
+SPECIMENS:
+
+WFO
+
+Four sections of newspapers
+
+Copy of fingerprints ofl
+
+b6
+
+b7C
+
+This report confirms and supplements the information telephonically
+
+furnished on 7-18-80,
+
+No latent prints of value were developed on the newspapers:
+
+The previously reported unidentified latent fingerprints and
+
+latent impression (fingerprint or palm print) are not the fingerprints of
+
+FBI AL
+
+U. S. Army
+
+service L
+
+] born|
+
+U, S. Army service L
+
+born
+
+U. S. Army service #
+
+Identication Division files for these indiyaduals.
+
+No palm prints are contained in the
+
+164-81 - 8445
+
+The specimens are being returned under separate cover.
+
+Seattle (164-81)
+
+SERIALIZED..
+
+SEAGED.
+
+.... INDEXED...
+
+AUG) 1 3 1980
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+DB Cooper-18494
+
+Everdos
+
+b6
+
+b7C
+
+b7C
+
+---
+
+## Page 283
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+TO: SAC, WrO
+
+104-301
+
+164-2111
+
+Д-45410
+
+August 12, 1980
+
+RE: UNSUB,, ABA
+
+D. B. COOPDR;
+
+CRIME ABOARD AIRCRAFT
+
+REFERENCE:
+
+Alrtel 7-15-80
+
+EXAMENATION REQUESTED BY FO
+
+SPECIMENS:
+
+Four sections of newspapers
+
+Copy of fingerprints of
+
+This report contirms and supplements the information telephonically
+
+furnished on 7-18-80,
+
+No latent printe of value were developed on the newspapers.
+
+The previously reported unidentified latent fingerprints and
+
+latent impression (ingerprint or palm print) are not the fingerprints of
+
+U. S. Army
+
+sezvice il
+
+] borl
+
+D. S. Army service Al
+
+born
+
+U. S. Army service 1
+
+tonitication Elvision iles for these incycurls.
+
+No palm prints are contained in the
+
+1621-81-84175
+
+The specimens are boing returned under separate cover.
+
+2 - Seattle (104-81),
+
+SERIALED A ND....
+
+AUd 13 1980
+
+FBI-SEATTLEFBI
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+DB Cooper-18495
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 284
+
+÷ FD-302.1REV. 3-8-771
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription August 13, 1980
+
+Rainier National
+
+Bank, 801 Main Street, Vancouver, Washington, advised that she
+
+has handled most of the wire transfers for
+
+recognizes his voice when
+
+he calls on the phone. The first trans-
+
+fers in 1976 from_
+
+savings
+
+account were to a bank in
+
+and then later to the D. C. National
+
+Bank, 1801 K Street Northwest, Washington D. C., attention
+
+, for deposit to the
+
+account of
+
+number
+
+Lsaid the last transfer was for $666 on 8/4/80, and
+
+siad he wanted his savings reduced to a $5 balance.
+
+requested the money be wired to the D.C
+
+• National Bank.
+
+Ior him to pick up upon presentation of proper identification.
+
+further advised that
+
+Jover the phone as being
+
+had provided his ad-
+
+Washington D. C.
+
+b6
+
+b7C
+
+b6,
+
+b7C
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+1641-81-8476
+
+Investigation on August 13, 1980
+
+MINt
+
+by -
+
+SA
+
+Vancouver, Washington
+
+SEARGED
+
+SERIALIZED
+
+5 181-31
+
+GMS : csg
+
+- Date dictated Augusth
+
+AUG
+
+13007980
+
+This document contains neither recommendations nor conclusions of the FBI. It is the property of
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18496
+
+b6
+
+b7C
+
+---
+
+## Page 285
+
+F0.302.HEV. 3-8771
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription August 13, 1980
+
+Rainier National
+
+Bank, 801 Main Street, Vancouver, Washington, advised that she
+
+has handled most of the wire transfers for
+
+recognizes his voice when he calls on the phone.
+
+The first trans-
+
+fers in 1976 from
+
+savings account were to a bank in
+
+Bank, 1801 K Street Northwest, Washington D. C., attention
+
+for deposit to the
+
+account of
+
+number
+
+said the last transfer was for $666 on 8/4/80, and
+
+this timel
+
+_siad he wanted his savings reduced to a $5 balance.
+
+requested the money be wired to the D.C
+
+for him to pick up upon presentation of proper identification.
+
+further advised that|
+
+Thad provided his ad-
+
+dress to
+
+Jover the phone as being
+
+Washington D. C.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Investigation on August 13
+
+2 1980
+
+- at -
+
+Vancouver, Washington
+
+MINE
+
+_ File # -
+
+SE 184-81 - 84476
+
+by -
+
+SA
+
+GMS : csg
+
+- Date dictated August 13, 1980
+
+b6
+
+b7C
+
+This document contains neither recommendations nor conclusions of the FBI. It is the property of the FBI and is loaned to your agency:
+
+it and its contents are not to be distributed outside your agency.
+
+• DB Cooper-18497
+
+---
+
+## Page 286
+
+F051
+
+50-302 (REV. 3-8-771
+
+FEDERAL BUREAU OF INVESTIGATION
+
+06
+
+b7C
+
+Date of transcription August 18, 1980
+
+Rainier
+
+National Bank, 810 Main Street, Vancouver, Washington, was pro-
+
+vided with a
+
+• "Certificate of Compliance with the right to Finan-
+
+cial Privacy Act of 1978" dated 8/8/80; "Formal written request
+
+for financial records" dated 8/8/80; and a court order dated
+
+8/8/80 from
+
+U. S: Magistrate Gilbert H. Kleweno, Vancouver..
+
+Washinston, authorizing a 90 day delay in notification ofL
+
+and prohibiting the Rainier National Bank from dis-
+
+_for 90 days. The above three documents all
+
+I then provided records which indicated that
+
+Vancouver,
+
+Washington, opened checking account number
+
+on 4/6/73 by depositing a government check in the amount
+
+of $542. His Social Security Number was listed asl
+
+and occupation as
+
+The account was placed in the
+
+inactive files on 12/11/75 due to inactivity with a balance of
+
+$42.31.
+
+advised that 10/13/76,
+
+started a savings
+
+account numberl
+
+Iby transferring the balance of $34.81
+
+from the inactive checking account.
+
+His address given at that
+
+time was, in care ofl
+
+_ Juneau,
+
+Alaska.
+
+Date of birth was listed as
+
+mother's
+
+maiden name as
+
+occupation,
+
+local address at
+
+the
+
+Records indicate regular monthly deposits by govern-
+
+ment checks starting in November 8, 1976, with 9730 ana In-
+
+creasing to $945 as 5/30/80.
+
+Withdrawals of one or more per
+
+month have been made by wire transfer ranging from $14 to $1,003.
+
+advised that she opened both the checking and
+
+savings accounts for
+
+but could only recall him as being a
+
+white male.
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+161-81-84077
+
+Investigation on August 13, 1980 a Vancouver, Washington
+
+_SENECAED
+
+SE, N64 81
+
+SERIALIZED
+
+FILED
+
+by -
+
+SA
+
+GMS: CS
+
+DB Cooper-18498
+
+This document contains neither recommendations nor conclusions of the FBI. It is the property of t
+
+it and its contents are not to be distributed outside your agency.
+
+_ Date dictated!
+
+August.
+
+1/3, 10/3980
+
+b6
+
+b7C
+
+---
+
+## Page 287
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+b6
+
+b7C
+
+Date of transctiption August 18, 1980
+
+Rainier
+
+National
+
+Bank, 810 Main
+
+Street, Vancouver, Washington, was pro-
+
+vided with a "Certificate of Compliance with the right to Finan-
+
+cial Privacy Act of 1978" dated 8/8/80; "Formal written request
+
+for financial records" dated 8/8/80; and a court order dated
+
+8/8/80 from U.S. Magistrate Gilbert I. Kleweno, Vancouver.
+
+washington, authorizing a 90 day delay in notification of
+
+and prohibiting the Rainier National Bank from ais-
+
+closer to
+
+pertain to
+
+for 9o days. The above three documents all
+
+accounts of
+
+then provided records which indicated that
+
+Vancouver, Washington, opened checking account number
+
+Jon 4/6/73 by depositing a government check in.
+
+the amount
+
+Of $542.
+
+His Social Security Number was listed as
+
+and occupation as
+
+The account was placed in the
+
+inactive files on 12/11/75 due to inactivity with a balance of
+
+$42.31.
+
+advised that 10/13/76
+
+started a savings
+
+account number l
+
+by transferring the balance of $34.81
+
+from
+
+the inactive
+
+checking account.
+
+His address given at that
+
+time was, in care ofL
+
+Juneau,
+
+Alaska.
+
+Date of birth
+
+was listed as
+
+I mother's
+
+maiden name as
+
+occupation,
+
+local address at
+
+the
+
+Records indicate regular
+
+monthly deposits by govern-
+
+ment checks starting in November 8, 1976, with $730 and in-
+
+creasing to $945 as 5/30/80.
+
+Withdrawals of one or more per
+
+month have been made by wire transfer ranging from $14 to $1,003.
+
+Jadvised that she opened both the checking and
+
+savings accounts for
+
+but could only recall him as being a
+
+white male.
+
+b6
+
+bIC
+
+b6
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Investigation on AUgUSt 13, 1980 at -
+
+Vancouver, Washington
+
+- File # -
+
+SE 161-81-8477
+
+by -
+
+SA
+
+GMS : CSg
+
+- Date dictated August 13, 1980
+
+b6
+
+b7C
+
+This document contains neither recommendations nor conclusions of the FBI. It is the property of the FBI and is loaned to your agency:
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18499
+
+---
+
+## Page 288
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+[ Teletype
+
+Facsimile
+
+AIRTEL
+
+PRECEDENCE:
+
+[ Immediate
+
+[ Priority
+
+Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+7 SECRET
+
+J CONFIDENTIAL
+
+D UNCLAS EF TO
+
+• UNCLAS
+
+3/12/÷6
+
+Date
+
+TO :
+
+FROM1:
+
+SAC, SEATTLE (164-31)
+
+SAC, LAS VEGAS (161-50) (RUC)
+
+SUBJECT: WORJAK;
+
+CAI - HIJACKING (A)
+
+00 :
+
+S==tt.14
+
+Lingen Ye de et Fainc
+
+95!, G
+
+Ri S=sttl: Eirt-l tO Dur EU, lE=:à 7/30/00.
+
+On 3/1/50, Durrirg's firo rarint carû vas I turn-a
+
+to Eh Dougles county Su ritê's Offic. et dinar, ivila.
+
+io furth:r inv=stigation is birg corduct u r gerüing Jick
+
+Scott Fernur er vunning unliss so r-guist-ù by s-attl.
+
+vivision.
+
+LES VIJES
+
+WJ: SIC
+
+(3)
+
+Approved:
+
+164-81-8448
+
+AUG 1'6 1380
+
+Pen -
+
+(Number)
+
+(Time)
+
+# U.S. GOVERNENT PRINTING OFFICE: 7980-305-750/ 5402
+
+Cooper-18500
+
+---
+
+## Page 289
+
+AIRTEL
+
+8/12/80
+
+SuB 986,9
+
+TO:
+
+FROM:
+
+SUBJECT:
+
+SAC, SEATTLE (164-81)
+
+SAC, LAS VEGAS (164-60) (RUC)
+
+NORiJAR;
+
+CAA - HIJACKING (A)
+
+00: Seattle
+
+Ro Seattle airtel to Bureau, dated 7/30/80.
+
+on 8/8/80, Daming's fingerprint card was returned
+
+to tha Douglas County Shorlff's Office at Mindon, Nevada.
+
+No furthes investigation. is baing conducted regarding Jack
+
+Scott farmer or Dunning unless so requested by seattle
+
+Division.
+
+- Seattle
+
+~ Lad Vegas
+
+(3)
+
+1641-81-84178
+
+EARCHED....
+
+рідіта у
+
+AUG 1'G 1980
+
+Fbi -CE
+
+DB Cooper-18501
+
+---
+
+## Page 290
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+X*Teletype
+
+] Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+8X) Routine
+
+CLASSIFICATION:
+
+[ TOP SECRET
+
+• SECRET
+
+I CONFIDENTIAL
+
+D UNCLAS EF TO
+
+XX UNCLAS
+
+Date 8/14/80
+
+005
+
+FM SEATTLE
+
+(164-81) (P)
+
+TO WASHINGTON FIELD
+
+(164-301) ROUTINE
+
+b6 |
+
+b7C
+
+UNCLAS
+
+UNSUB, AKA D. B. COOPER. CRIME ABOARD AIRCRAFT.
+
+RE WEO TELETYPE TO SEATTLE, AUGUST 4, 1980.
+
+ON AUGUST 13, 1980,
+
+RAINIER NATIONAL BANK, 801 MAIN STREET, VANCOUVER,
+
+WASHINGTON, WAS PROVIDED WITH A "CERTIFICATE OF COMPLIANCE WITH
+
+THE RIGHT TO FINANCIAL PRIVACY ACT OF 1978", DATED AUGUST 8,
+
+1980; "FORMER WRITTEN REQUEST FOR FINANCIAL RECORDS", DATED
+
+AUGUST 8, 1980; AND A COURT ORDER, DATED AUGUST 8, 1980, FROM
+
+U. S. MAGISTRATE GILBERT KLEWENO, VANCOUVER, WASHINGTON,
+
+AUTHORIZING 90-DAY DELAY IN NOTIFICATION OF
+
+AND PROHIBITING THE BANK FROM DISCLOSURE TOL
+
+FOR 90 DAYS.
+
+THESE DOCUMENTS PERTAINED TO ACCOUNTS OF
+
+PROVIDED RECORDS INDICATING
+
+GMS/ jcb
+
+(1)
+
+RETUDA
+
+CARD
+
+BAG.
+
+Transmitted
+
+0226z
+
+(Number)
+
+(Time)
+
+Per
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18502
+
+164-81-8479
+
+FBI/DOJ
+
+---
+
+## Page 291
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+• Teletype
+
+Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+[ Routine
+
+CLASSIFICATION:
+
+O TOP SECRET
+
+• SECRET
+
+CONFIDENTIAL
+
+1 UNCLAS EF TO
+
+D UNCLAS
+
+Date
+
+PAGE TWO
+
+SE 164-81
+
+UNCLAS
+
+VANCOUVER,
+
+WASHINGTON, OPENED CHECKING ACCOUNT NUMBER
+
+ON
+
+APRIL 6, 1973, BY DEPOSITING A GOVERNMENT CHECK IN THE AMOUNT
+
+OF $542.00. SOCIAL SECURITY NUMBER WAS LISTED AS
+
+AND OCCUPATION AS
+
+THE ACCOUNT WAS PLACED IN
+
+INACTIVE FILES ON DECEMBER 11, 1975, DUE TO INACTIVITY, WITH
+
+A BALANCE OF $42.31.
+
+JADVISED THAT ON OCTOBER 13, 1976 ,L
+
+STARTED
+
+SAVINGS ACCOUNT NUMBER
+
+BY TRANSFERRING THE BALANCE
+
+OF $34.81 FROM THE INACTIVE CHECKING ACCOUNT. ADDRESS WAS
+
+LISTED AS C/O
+
+JUNEAU,
+
+ALASKA. DOB WAS LISTED AS
+
+MOTHER'S MAIDEN NAME AS
+
+OCCUPATION ASI
+
+AND
+
+LOCAL ADDRESS AS
+
+RECORDS INDICATE REGULAR MONTHLY DEPOSITS BY GOVERNMENT
+
+CHECKS, STARTING NOVEMBER 8, 1976, WITH $730.00, AND INCREASING
+
+TO $945.00, AS OF MAY 30, 1980. WITHDRAWALS OF ONE OR MORE PER
+
+MONTH HAVE BEEN MADE BY WIRE TRANSFER, RANGING FROM $14.00 TO
+
+$1,003.00.
+
+IS CHECKING. MICROFILM RECORDS IN ATTEMPT
+
+TO IDENTIFY GOVERNMENT CHECKS RECEIVED FOR DEPOSIT.
+
+b6|
+
+b7C
+
+b6 |
+
+b7C
+
+b6 |
+
+b7C
+
+Approved:
+
+Transmitted
+
+Per -
+
+(Number)
+
+(Time)
+
+FBI/DOJ
+
+DB Cooper-18503
+
+---
+
+## Page 292
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+• Teletype
+
+Facsimile
+
+PRECEDENCE:
+
+• Immediate
+
+Priority
+
+J Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+SECRET
+
+CONFIDENTIAL
+
+• UNCLAS EFT O
+
+• UNCLAS
+
+Date
+
+PAGE THREE SE 164-81 UNCLAS
+
+RAINIER BANK, VANCOUVER,
+
+WASHINGTON, ADVISED SHE HAS HANDLED MOST OF THE WIRE TRANSFERS FOR
+
+_ AND RECOGNIZES HIS VOICE WHEN HE CALLS ON THE PHONE. THE
+
+FIRST TRANSFERS IN 1976, WERE TO A BANK IN ALASKA (NAME UNRECALLED) i
+
+AND THEN LATER, TO THE D. C. NATIONAL, BANK, 1801 K STREET NORTHWEST,
+
+WASHINGTON, D. C., ATTENTION I
+
+AND DEPOSITED TO THE ACCOUNT OF
+
+NUMBER
+
+b6
+
+b7C
+
+SAID THE LAST TRANSFER WAS FOR $666.00 ON AUGUST 4,
+
+SAID HE WANTED HIS SAVINGS ACCOUNT
+
+1980, AND THIS TIME
+
+REDUCED TO A $5.00 BALANCE AND THE MONEY WIRED TO THE D. C.
+
+NATIONAL BANK FOR HIM TO PICK UP UPON PRESENTATION OF PROPER
+
+IDENTIFICATION.
+
+SEATTLE AT VANCOUVER:
+
+WILL ATTEMPT TO IDENTIFY THE GOVERNMENT
+
+CHECKS USED FOR DEPOSIT.
+
+ARMED AND DANGEROUS.
+
+b6
+
+b7C
+
+BT
+
+Approved:
+
+Transmitted
+
+Per
+
+(Number)
+
+(Time)
+
+FBI/DOJ
+
+DB Cooper-18504
+
+---
+
+## Page 293
+
+S2UB05 2280226Z
+
+RR WF
+
+DE SE
+
+R 142350Z AUG 88
+
+FM SEATTLE (164-81) (P)
+
+TO WASHINGTON FIELD (164-301) ROUTINE
+
+BT
+
+UNCLAS
+
+UNSUB, AKA D: B. COOPER. CRIME ABOARD AIRCRAFT:
+
+RE WO TELETYPE TO SEATTLE, AUGUST 4, 1980.
+
+ON AUGUST 13, 1980,
+
+RAINTER NATIONAL BANK, 881 MAIN STREET, VANCOUVER,
+
+WASHINGTON, WAS PROVIDED WITH A "CERTIFICATE OF COMPLIANCE WITH
+
+THE RIGHT TO FINANCIAL PRIVACY ACI OF 1978", DATED AUGUSI 8,
+
+1980; "FORMER WRITTEN REQUESI FOR FINANCIAL RECORDS", DATED
+
+AUGUSI 8, 1988; AND A COURT ORDER, DATED AUGUST 8, 1980, FROM
+
+U. S. MAGISTRATE GILBERT KLEWENO, VANCOUVER, WASHINGTON,
+
+AUTHORIZING 9D-DAY DELAY IN NOTIFICATION OF
+
+AND PROHIBITING THE BANK FROM DISCLOSURE
+
+TO
+
+FOR 9O DAYS.
+
+THESE DOCUMENTS PERTAINED TO ACCOUNTS OF
+
+PROVIDED RECORDS INDICATING
+
+b6
+
+b7C
+
+•36
+
+b7C
+
+DB Cooper-18505
+
+164-81-8179
+
+---
+
+## Page 294
+
+----==
+
+PAGE TWO SE 164-81 UNCLAS
+
+ROOM 216, VANCOUVER,
+
+WASHINGTON, OPENED CHECKING ACCOUNT NUMBER
+
+ON
+
+APRIL 6, 1973, BY DEPOSITING A GOVERNMENT CHECK IN THE AMOUNT
+
+OF $542.0D. SOCIAL SECURITY NUMBER WAS LISTED AS
+
+AND OCCUPATION AS
+
+THE ACCOUNT WAS PLACED IN
+
+INACTIVE FILES ON DECEMBER 11, 1975, DUE TO INACTIVITY, WITH
+
+A BALANCE OF $42.31.
+
+ADVISED THAI ON OCTOBER 13, 1976,
+
+STARTED
+
+SAVINGS ACCOUNT NUMBER
+
+BY TRANSFERRING THE BALANCE
+
+OF $34.81 FROM THE INACTIVE CHECKING ACCOUNT. ADDRESS WAS
+
+LISTED AS C/0
+
+JUNEAU;
+
+ALASKA. DOB WAS LISTED AS
+
+MOTHER'S MAIDEN NAME AS
+
+OCCUPATION AS
+
+AND
+
+LOCAL ADDRESS AS
+
+RECORDS
+
+INDICATE REGULAR MONTHLY DEPOSITS BY GOVERNMENT
+
+CHECKS, STARTING NOVEMBER 8, 1976, WITH $73D.00, AND INCREASING
+
+TO 5945.DD, AS OF MAY 3D, 1980. WITHDRAWALS OF ONE OR MORE PER
+
+MONTH HAVE BEEN MADE BY WIRE TRANSFER, RANGING FROM $14 DO TO
+
+51, 003. ДД.
+
+JIS CHECKING MICROFILM RECORDS IN ATTEMPT
+
+TO IDENTIFY GOVERNMENT CHECKS RECEIVED FOR DEPOSIT.
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+DB Cooper-18506
+
+---
+
+## Page 295
+
+magni
+
+PAGE THREE SE 164-81 UNCLAS
+
+RAINIER BANK, VANCOUVER,
+
+WASHINGTON, ADVISED SHE HAS HANDLED MOST OF THE WIRE TRANSFERS FOR
+
+AND RECOGNIZES HIS VOICE WHEN HE CALLS ON THE PHONE. THE
+
+FIRST TRANSFERS IN 1976, WERE TO A BANK IN ALASKA (NAME UNRECALLED>;
+
+AND THEN LATER, TO THE D. C. NATIONAL BANK, 1891 K STREET NORTHWEST,
+
+WASHINGION, D. C., ATTENTION
+
+AND DEPOSITED IO THE ACCOUNT OF [
+
+NUMBER
+
+SAID THE LAST TRANSFER WAS FOR $666 DO ON AUGUST 4,
+
+198D, AND THIS TIMEL
+
+SAID HE WANTED HIS SAVINGS ACCOUNT
+
+REDUCED TO A $5. DO BALANCE AND THE MONEY WIRED TO THE D. C.
+
+NATIONAL BANK FOR HIM IO PICK UP UPON PRESENIATION OF PROPER
+
+IDENTIFICATION.
+
+SEATTLE AT VANCOUVER: WILL ATTEMPT TO IDENTIFY THE GOVERNMENT
+
+CHECKS USED FOR DEPOSIT.
+
+ARMED AND DANGEROUS.
+
+BT
+
+b6 |
+
+b7C
+
+b7c
+
+DB Cooper-18507
+
+---
+
+## Page 296
+
+FD-36, (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+• Teletype
+
+J Facsimile
+
+airtel
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+• Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+O SECRET
+
+CONFIDENTIAL
+
+• UNCLAS EF TO
+
+I UNCLAS
+
+Date
+
+8/12/80
+
+SAC, SEATTLE (164-81)
+
+b6
+
+b7C
+
+SUBJECT: UNSUB, aka
+
+D. B. Cooper
+
+CAA - HIJACKING
+
+00: SEATTLE
+
+Re Dallas airtel to Seattle, 6/6/80.
+
+In view of no response having been received to
+
+reairtel, Dallas is considering case RUC'd.
+
+ARMED AND DANGEROUS.
+
+(2-Sseattle
+
+1-Dallas
+
+JKH: tjd
+
+(3)
+
+164-81-8480
+
+AUG 165 1980
+
+Approved:
+
+Transmitted
+
+-. = -
+
+(Number)
+
+(Time)
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18508
+
+---
+
+## Page 297
+
+alrtel
+
+8/12/80
+
+b6 |
+
+b7C
+
+TO:
+
+SAC, SEATTLE (164-81)
+
+FROM:
+
+SAC, DALLAS (164-1928) (RUC)
+
+SUBJECT: UNSUB, aka
+
+D. B. COOper
+
+CAA - HIJACKING
+
+00: SEATTLE
+
+Ro Dallas alrtel to Seattle, 6/6/80.
+
+In vow of no response having been received to
+
+renirtal, Dallas is considering case RUc'd.
+
+ARMED AND DANGEROUS.
+
+2+Seattle
+
+1-Dallas
+
+JKH: Ejd
+
+(3)
+
+1641-81-8480
+
+AUG 1 5 1980
+
+DB Cooper-18509
+
+---
+
+## Page 298
+
+- -=
+
+AIRTEL
+
+8/12/80
+
+TO:
+
+DIRECTOR, FBI (164-2111)
+
+(ATTN: IDENTIFICATION DIVISION)
+
+FROM: SAG, DETROIT (164-115) (P) (SQD. C-4)
+
+NORJAK (A)
+
+00: PORTLAND
+
+Southfield, Michigan Police
+
+Department advised that he has a source who associates with one
+
+I Source indicated to
+
+that on one occasion
+
+regarding captioned case,
+
+and advised the source that he,!
+
+• IS D. B. COOPER. SOUrCE
+
+advised
+
+there
+
+of D. B. COOPERI
+
+and that
+
+strongly resembled the
+
+the contents another occasion,
+
+to the source,
+
+Source stated that kis!
+
+b6 |
+
+b70
+
+b7D
+
+b6 |
+
+b70
+
+b7D
+
+Jallegedly told source that he, L
+
+ex-military paratrooper, and a licensed airplane pilot.
+
+Jis an
+
+current Michigan license
+
+and resides at
+
+Garden City, Michigan. He
+
+is described as a white male,
+
+612" tall. 200 pounds, brown
+
+black hair, born
+
+full name
+
+has no known criminal record.
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b70
+
+b7D
+
+Ihe Identitication Division 1s requested to search military
+
+fingerprint records regarding
+
+in an attempt
+
+b6
+
+to determine if he was in the
+
+military service and which branch.
+
+b70
+
+UNSUB ARMED AND DANGEROUS
+
+11•4-51-8481
+
+heatre
+
+- Portland (Info)
+
+2 - Detroit
+
+ODL/dIc
+
+AUG 1 / 1980
+
+11) -5241
+
+DB Cooper-18510
+
+---
+
+## Page 299
+
+=---
+
+¿'s'
+
+Dissemination
+
+Routing Slip
+
+FD-417 (9-12-69)
+
+To:
+
+• Director, Att.: —
+
+IXI SAC, SEATTLE
+
+Albany
+
+Albuquerque
+
+Alexandria
+
+Anchorage
+
+Atlanta
+
+Baltimore
+
+Birmingham
+
+Boston
+
+Buffalo
+
+Butte
+
+Charlotte
+
+Chicago
+
+Cincinnati
+
+Cleveland
+
+Columbia
+
+Dallas
+
+] Denver
+
+1 Detroit
+
+J El Paso
+
+7 Honolul
+
+RE:
+
+(Copies to Offices Checked)
+
+(164-81)
+
+Houston
+
+Indianapolis
+
+ackson
+
+Jacksonvill
+
+Kansas Citi
+
+Knoxville
+
+Las Vegas
+
+Little Rock
+
+Lousyles
+
+Memphis
+
+Miami
+
+7 Milwaukee
+
+Minneapolis
+
+7 Mobile
+
+7 Newark
+
+] New Haven
+
+1 New Orleans
+
+] New York City
+
+7 Norfolk
+
+NORJAK
+
+100:
+
+Date
+
+164-81
+
+Seattle)
+
+1 Oklahoma City
+
+1 Omaha
+
+Philadelphia
+
+Phoenix
+
+Pittsburgh
+
+Portland
+
+Richmond
+
+Sacramento
+
+St. Louis
+
+Salt Lake City
+
+San Antonio
+
+San Diego
+
+I San Francisco
+
+→ Tampa
+
+5 Washington Field
+
+8/15/80
+
+REMARKS: Attached airtel inadvertently sent
+
+to Portland.
+
+GAST
+
+FILE P:
+
+164-41
+
+SAC
+
+OFFICE
+
+PORTLAND
+
+DB Cooper-1851|1
+
+---
+
+## Page 300
+
+r..
+
+AIRTEL,
+
+8/12/80
+
+TO:
+
+DIRECTOR, FBI (164-2111)
+
+(ATTN:
+
+IDENLIFIGATION
+
+• DIVISION
+
+FROM: SAC, DETROIT (164-115) (P) (SQD. C-4)
+
+NORJAK (A)
+
+00: PORTLAND
+
+Southfield, Michigan Police
+
+Denartment
+
+advised that he has a
+
+source who associates with one
+
+Source indicated to
+
+that on one occasion
+
+regarding captioned case,
+
+and advised the source that he,
+
+iS D. B. COOPER. Source
+
+advised
+
+there L
+
+of D. B. COOPER
+
+and thatl
+
+strongly resembled the
+
+On another occasion, l
+
+to the source,
+
+the contents
+
+Source stated that his.
+
+b6|
+
+b7C
+
+b7D
+
+b6|
+
+b7C
+
+b7D
+
+allegedly told source that he,
+
+is an
+
+ex-military paratzooper, and a licensed airplane pilot.
+
+has
+
+current Michigan license
+
+and
+
+resides at
+
+Garden City, Michigan. He
+
+biade hate as a white palet name
+
+tall. 200 pounds. brosm eyes,
+
+and
+
+has no known criminal record.
+
+The Identification
+
+Division is requested to search military
+
+fingerprint records regardingl
+
+in an attempt.
+
+to determine if he was in the military service and which branch.
+
+UNSUB ARMED AND DANGEROUS
+
+164-81-8481
+
+[SEARCHED CIA
+
+INDEXED.
+
+• Bureau
+
+• Portland (Info)
+
+ODL/d1c
+
+SERIALIZED..
+
+FiLED.
+
+AUG 1 6 1980
+
+FEL - SEATTLE
+
+i Stin
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+DB Cooper-18512
+
+---
+
+## Page 301
+
+TO
+
+FROM
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+• UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+: SAC, SEATTLE (64-81) (P)
+
+SA
+
+DATE:
+
+August 18, 1980
+
+Sub Dif
+
+b6
+
+b7C
+
+SUBJECT:
+
+NORJAK
+
+00:
+
+SEATTLE
+
+Reference Seattle Memo of Sa
+
+dated 2/26/80.
+
+SAT
+
+It has been determined through conversation with
+
+at the Vancouver RA that sometime during
+
+February or March 1980,
+
+of Washougal,
+
+Washington, had come into the RA Office at Vancouver wherein
+
+he had described the parachute referred to in referenced
+
+memo as being a green military
+
+type parachute and that it was
+
+presently being used as an awning by a neighbor.
+
+Since it
+
+is apparent that this parachute has no connection with cap-
+
+tioned matter, no further investigation is being conducted at
+
+Vancouver.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1 64-81-8482
+
+INDEXED..
+
+• FILED......
+
+AUG 18 1980
+
+GMS : csg
+
+(1)
+
+b6
+
+b7C
+
+DB Cooper-18513
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 302
+
+TO
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+: SAC, SEATTLE (164-81) (P)
+
+DATE:
+
+August 18, 1980
+
+b6
+
+b7C
+
+FROM : SA
+
+SUBJECT:
+
+NORJAK
+
+00:
+
+SEATTLE
+
+Reference Seattle Memo of S
+
+dated 2/26/80.
+
+-It has peen determined through conversation with
+
+at the Vancouver RA that sometime during
+
+February or March 1980,L
+
+J, of Washougal,
+
+Washington, had come into the RA Office at Vancouver wherein
+
+he had described the parachute referred to in referenced
+
+memo as being a green
+
+military type parachute and that it was
+
+presently being used as an
+
+awning by a neighbor.
+
+Since it
+
+is apparent that this parachute has no connection with cap-
+
+tioned matter, no further investigation is being conducted at
+
+Vancouver.
+
+b7C
+
+b6
+
+b7C
+
+164-81-8<182
+
+SERIALITO DI
+
+INDEXED D
+
+... FILED..
+
+AUG 1 8 1980
+
+GMS : csg
+
+(1)
+
+b6
+
+b7C
+
+DB Cooper-18514
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+---
+
+## Page 303
+
+1-336 (Rev. 10-26-79)
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+TO:
+
+SAC, Seattle
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+164-81 (P)
+
+164-2111
+
+A-45410
+
+August 15, 1980
+
+RE:
+
+NORJAK;
+
+CAA - HIJACKING
+
+SuB
+
+- 986,77
+
+REFERENCE:
+
+Airtel. 7-30-80
+
+EXAMINATION REQUESTED BY: Seattle
+
+SPECIMENS:
+
+Identification card bearing two fingerprints
+
+This report confirms and supplements the informa-
+
+tion telephonically furnished on 8-6-80.
+
+The previously reported unidentified laten't finger-
+
+prints and latent impression (fingerprint or palm print) are
+
+She the ee ate esent on a ra a cos the Memada,
+
+Jack Scott Farmer, identification #A-18825 and card #18086.
+
+No fingerprint record was located in the Identifi
+
+cation Division files for Jack Scott Farmer.
+
+The specimen is enclosed.
+
+Enc.
+
+1 64-81-8483
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+FBI/DOJ
+
+DB Cooper-18515
+
+---
+
+## Page 304
+
+1-336 (Rev. 10-26-79)
+
+YOUR FILE NO.
+
+FBI FILE NO.
+
+LATENT CASE NO.
+
+TO:
+
+SAC, Seatile
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+164-81 (P)
+
+164-2111.
+
+A-45410
+
+August 15, 1980
+
+SuB 986,4
+
+RE:
+
+NORTAK;
+
+CAA - HIJACKING
+
+REFERENCE:
+
+EXAMRATON BEQUESTED BXixte1 7-30-30
+
+SPECIMENS:
+
+Seattle
+
+Identification card bearing to fingerprints
+
+This report confirms and supplements the incorma-
+
+tion telephonically furnished on 8-6-30.
+
+The proviously roportod unidentified latent Linger-
+
+prints and latent impression (fingerprint or palm print) are
+
+not the fingerprints present on a Washoe County, Nevada,
+
+Sheriff's Office identification card bearing the name
+
+Jack Scott Farmer, identification #A-18825 and card $18036.
+
+No fingerprint record was located in the Identifi-
+
+cation Division files for Jack Scott Farmer.
+
+The specimen is enclosed.
+
+Enc.
+
+164-81-84183
+
+SEARCHED...
+
+SERIALIZE M
+
+INDEXED t
+
+AUd/1 & 1080/
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+b6 |
+
+b7C
+
+FBI/DOJ
+
+DB Cooper-18516
+
+---
+
+## Page 305
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+104-29.9
+
+FBI FILE NO.
+
+164-2121
+
+LATENT CASE NO.
+
+1-15710
+
+TO: SEC, Sacrarento
+
+Soptenbor 10, 1980
+
+RE: FORJACI
+
+CAn - HIJACKING
+
+REFERENCE:
+
+Airtol 8/11/80
+
+EXAMINATION REQUESTED BY: Sacranente
+
+SPECIMENS:
+
+To copies of fingerprints of
+
+Jack Scott Farmer
+
+tho proviously reportod unidontifica latent
+
+fingerprints in this case were comparad with the submitted
+
+copics of fingorprints of larmor, but no identification was
+
+effected.
+
+No inked fingerprints or paln prints veze located in
+
+the Idontification Division files for Farmer-
+
+jajor case prints ara neciod for conclusive
+
+comparisons.
+
+Tha specinens are enclosad.
+
+Inc. (2)
+
+@- Scattia (1G1-81)
+
+164-81-8484
+
+SERIALIZEDE
+
+SEASCHED 23, EILED
+
+BINDERED A
+
+AUG 1 8 1980 |
+
+b6
+
+b7C
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLI
+
+FBI/DOJ
+
+DB Cooper-18517
+
+---
+
+## Page 306
+
+1-336 (Rev. 10-26-79)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Washington, D. C. 20537
+
+REPORT
+
+of the
+
+LATENT FINGERPRINT SECTION
+
+IDENTIFICATION DIVISION
+
+YOUR FILE NO.
+
+164-50
+
+FBI FILE NO.
+
+181-11
+
+LATENT CASE NO.
+
+AMASAIO
+
+TO: SPC, DadsazentO
+
+Saptorbar I5, 1080
+
+Sua
+
+484,9
+
+RE: MORJACI
+
+CAN - HIJACHING
+
+REFERENCE:
+
+Artel 8/11/80
+
+EXAMINATION REQUESTED BY: Dadrasento
+
+SPECIMENS:
+
+two condos of fingorprints of
+
+Jaci Scott Farmos
+
+Tho praviously roportoú unidontitiod latont
+
+fingerprinto in this casa voro compazod vin the subnitted
+
+copios of lingorprints of ramor, but no identisication vas
+
+Major casa prints ara nooded for conclusive
+
+co-parisons.
+
+sha apocinons are enclosed.
+
+Sac. (2)
+
+2 - Soattlo (104-32)
+
+162-51-5017
+
+SEARCHED.....
+
+INDEXED.
+
+SERIALIZED. EILED....
+
+AUG 118 1980
+
+FBI - SEATTLE
+
+THIS REPORT IS FURNISHED FOR OFFICIAL USE ONLY
+
+FBI/DOJ
+
+DB Cooper-18518
+
+---
+
+## Page 307
+
+Sit 8
+
+suspe
+
+Vib6
+
+b7C
+
+VZCZCHQO 063
+
+00 SE WF
+
+DE HQ #0063 2351815
+
+ZNR UUUUU
+
+0 221657Z AUG 80
+
+FM DIRECTOR FBI
+
+TO FBI SEATTLE IMMEDIATE
+
+FBI WASHINGION FIELD IMMEDIATE
+
+Telal to CF0, 1
+
+BT
+
+UNCLAS
+
+NORJAK; CAA. 00: SEATILE
+
+BY TELETYPE DATED AUGUSI 22, 1988, LEGAT LONDON ADVISED:
+
+RETELCALL OF SA
+
+]TO LEGAT, LONDON AUGUST 20, 1980.
+
+ON AUGUST 22, 1980
+
+NISHED COPY OF
+
+FUR
+
+"66
+
+1b7C
+
+b7C
+
+17b6
+
+1 b7C
+
+: 67D
+
+b7E
+
+ALIAS D.B. COOPER
+
+BORN
+
+IS THE BELIEVED HIJACKER OF A NORTH
+
+WEST AIRLINE JET ON 24/11/71. HIJACKER PARACHUTED OUT OF THE PLANE
+
+WITH $20D, DDD OVER MOUNTAINOUS TERRITORY. HIJACKER HAS MANAGED TO
+
+AVOID ARREST TO THIS TIME. BECAUSE OF LACK OF HIS FINGERPRINIS AT
+
+16481-8485
+
+#5-
+
+1980
+
+b6
+
+1b7C
+
+DB Cooper-18519
+
+---
+
+## Page 308
+
+JEST.
+
+4,1980
+
+PAGE TWO DE HQ DO63 UNCLAS
+
+TIME OF THE HIJACKING IT IS ESSENTIAL TO APPREHEND HIJACKER WITH
+
+MONEY RETRIVED
+
+AS,A
+
+RESULT OF ACIS OF AIR PIRACY. WE RECEIVED INFOR-
+
+MATION FROM
+
+THE FBI THAT THE SUSPECIED HIJACKER PLANS TO ARRIVE AT
+
+LONDON HEATHROW AIRPORT AT 7:25A.M. ON PANAM FLIGHI NO. 106 ON
+
+4/9/80 THE FBI BELIEVES THAT THE PURPOSE OF THIS TRIP IS TO RETRIVE
+
+MONEY OBTAINED IN HIJACKING OF 24/11/71. FBI IN WASHINGTON D.C.
+
+NOTIFIED FBI'S LEGAL ATTACHE IN LONDON CONCERNING THIS MAN. PLEAS
+
+CONDUCT DISCRETE SURVEILLANCE OF SUBJECT TO DETERMINE HIS MOVEMENTS.
+
+INCLUDING WHICH FINANCIAL INSTITUTION OR BANKS HE CONTACIS, IF HE
+
+WITHDRAWS LARGE SUMS OF MONEY, AND ADVISE THIS OFFICE OF TIME,
+
+DATE AND PLACE HE WILL RETURN TO U.S.A. FBI BELIEVES SUBJECT MAY
+
+TRAVEL TO NETHERLANDS OR PORTUGAL PRIOR TO HIS RETURN TO U.S.A.
+
+DESCRIPTION WHITE MALE 6 FT TALL 200 PONDS. BLUE EYES EXCELLENT
+
+PHYSICAL SHAPE, LONG WHITE HAIR. THE PHOTOGRAPHS AND FINGERPRINIS
+
+WILL BE SENT BY DISPATCH LETTER IMMEDIATELY. DO NOT ARRESI BASED
+
+ON THIS NOTICE."
+
+IN RETELCALL, SA
+
+] ADVISED COMMUNICATION WOULD BE SENT TO
+
+LEGAT, LONDON WITH BACKGROUND AND REQUESTED INVESTIGATION. TO DATE,
+
+LONDON HAS NOT RECEIVED ANY COMMUNICATION THROUGH BUREAU CHANNELS.
+
+AT THIS JUNCTURE
+
+b6
+
+b7C
+
+b7E
+
+DB Cooper-18520
+
+---
+
+## Page 309
+
+9949947-7
+
+PAGE THREE DE HQ D063 UNCLAS
+
+IF BUREAU AND WASHINGION FIELD DESIRE LEGAI, LONDON TO PARIICI-
+
+PATE IN THIS INVESTIGATION, AN APPROPRIATE COMMUNICATION SHOULD
+
+BE SENT ADVISING OF HOW
+
+SUSPECTED TO BE D.B. COOPER, SOURCE
+
+OF INFORMATION THAT
+
+COMING TO LONDON TO RETRIEVE MONEY
+
+OBTAINED IN NOVEMBER 24, 1971 HIJACKING, SOURCE OF INFORMATION AND
+
+REASON FOR CONTINUING ON TO
+
+WHETHER FISUR
+
+WILL BE REQUESTED OF
+
+PHOTO oF EXTREME
+
+IMPORTANCE ESPECIALLY IN LIGHT OF REQUESTED FISUR. LEGAI, LONDON
+
+SUGGESTS FORWARDING WITH CREW OF DULLES-LONDON AIRLINE.
+
+BT
+
+#0063
+
+b6]
+
+b7C
+
+b7D
+
+NNNN
+
+2351819Z SE 2
+
+DB Cooper-18521
+
+---
+
+## Page 310
+
+VICECHCO1U3
+
+00 35 VIF
+
+DR HP. 90063 8351815
+
+0 EE1657Z AUS 84
+
+FM DIRECTON FEI
+
+TO FBI SEATTLE IMMEDIATE
+
+FEI VASKINGTON FIELD IMMEDIATE
+
+b6
+
+b7C
+
+UECLAS
+
+NORDAXE GAA.
+
+00: SCATTLE
+
+EY TELETYPE DATED AUGUST 22, 1983, LEGAT LONDO: AWIGED:
+
+RCTELCALL OF SA
+
+_TO LECATS LONDON AUGUST BO, 1950.
+
+ON AUGUST 20, 1980
+
+MIS!CO COPY 0R
+
+FUR-
+
+b6
+
+b7C
+
+b7D
+
+b7E
+
+JALIAS DIE. COOPER
+
+BORS
+
+IS THE BELIEVED HIJACKEN OF A NORTH
+
+WEST AINLINE JET 0U 24/11/710 HIJACKER PARACHUTED OUT OF INE PLANE
+
+WITH S20S,700 OVER MOUNTAINOUS TERRITORY. HIJACKEE KAS MANAGED TO
+
+AVOID ARREST TO THIS TIME. BECAUSE OF LACK OF HIS FINGERPRINTS AT
+
+154-81-8155
+
+DB Cooper-18522
+
+---
+
+## Page 311
+
+VZCZCWF0024
+
+00 HQ SE
+
+DE WF#DD24 2352105
+
+ZNR UUUUU
+
+0 2221027 AAUG 80.
+
+FM FBI WASHINGION FIELD (164-301) (P)
+
+(SQ
+
+C- 4)
+
+TO DIRECTOR FBI IMMEDIATE
+
+ATTENTION PERSONAL CRIMES UNIT
+
+FBI SEATTLE IMMEDIATEPUY
+
+• UNCLAS
+
+NORJAK, CAA, (00 :SEATTLE)
+
+RE BUREAU TEL AUGUST 22, 1980.
+
+WASHINGTON FIELD INVESTIGATION INTO THIS MATTER ON
+
+JUNE 26, 1980 BASED ON TELEPHONE CALL FROML
+
+OF A TRANSIENT TYPE TEMPORARY HOUSING FACILITY
+
+IN WASHINGTON, D. C. (WDC). ACCORDING TOL
+
+A RESIDENT.
+
+IDENTIFIED AS
+
+COULD POSSIBLY BE D. B. COOPER,
+
+THE UNSUB IN CAPTIONED HIJACKING.
+
+VIEWED COMPOSITE
+
+DRAWING OF UNSUB, D. B. COOPER, AND STATED BASIC FACIAL
+
+CHARACIERISTICS ARE SIMILAR.
+
+SUBSEQUENI INVESTIGATION DETERMINED
+
+IS
+
+IDENIICAL TO HOLDER OF FBI
+
+5. NUMBER
+
+A WHITE MALE
+
+b7C
+
+1 66
+
+,b7C
+
+b6
+
+b7C
+
+164-81-8486
+
+A FILED.
+
+b6
+
+1b7C
+
+DB Cooper-18525
+
+---
+
+## Page 312
+
+PAGE TWO DE WF BD24 UNCLAS
+
+BORNL
+
+WAS ARRESTED IN
+
+AT
+
+SAN FRANCISCO, CALIFORNIA FOR BANK ROBBERY AND RECEIVED|
+
+AGAIN ARRESTED IN SACRAMENTO,
+
+CALIFORNIA,
+
+CHARGE OF L
+
+PRIOR TO CAPTIONED HIJACKING, ON
+
+THIS CHARGE
+
+b6
+
+b7C
+
+EFFECTIVELY VANISHED AFTER HIS ARREST
+
+WHEREABOUTS UNKNOWN UNTIL
+
+ON
+
+AND
+
+WHEN HE WAS ARRESTED
+
+WDC.
+
+SUPRA, BELIEF THAT
+
+AND UNSUB,
+
+D. B. COOPER ARE ONE IN THE SAME BASED ON THE FOLLOWING:
+
+1.
+
+CAUSES $900. DO TO BE WIRED FROM A VANCOUVER,
+
+WASHINGTON BANK TO A WDC BANK, MONTHLY.
+
+2.
+
+HAS EXPRESSED TO HIM A FEAR OF THE FBI SINCE
+
+RECENT MEDIA REPORTS THAT MONEY CONNECTED TO THIS HIJACKING
+
+WAS RECOVERED IN THE MOUNTAINS IN WASHINGION STATE.
+
+3.l
+
+_BELIEVED TO BE FORMER ARMY PILOT, PARATROOPER
+
+WITH PURPORTED "OUTDOOR" EXPERTISE.
+
+4.1
+
+AGE AND PHYSICAL CHARACTERISTICS COMPATIBLE
+
+WITH ARTIST CONCEPTION DRAWING.
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+DB Cooper-18526
+
+---
+
+## Page 313
+
+PAGE THREE DE WE 0024 UNCLAS
+
+FINGERPRINTS OF
+
+NOT IDENTICAL TO THE UNIDENTIFIED
+
+LATENT FINGERPRINTS ON FILE IN THIS CASE.
+
+INVESTIGATION BY THE SEATTLE FBI OFFICE HAS DETERMINED
+
+MONEY WIRED BY
+
+TO WDC ORIGINATES FROM A SAVINGS ACCOUNT
+
+WITH REGULAR MONTHLY DEPOSITS BY U.S. GOVERNMENT CHECKS
+
+STARTING NOVEMBER, 1976 AT $730.D0 AND INCREASING TO $945.00
+
+AS OF MAY 30, 1980. ON AUGUSI 4, 1980,
+
+ORDERED HIS
+
+SAVINGS ACCOUNT BALANCE REDUCED TO $5.00 BY WIRING $666.0D
+
+TO A WDC BANK. INVESTIGATION CONTINUES TO FURTHER IDENTIFY
+
+THE GOVERNMENI CHECKS USED FOR DEPOSIT.
+
+IT IS NOTED INVESTIGATION HAS DETERMINED
+
+WAS A
+
+COMMISSIONED
+
+IN U.S. ARMY WITH TEN MONTHS
+
+OVERSEAS EXPERIENCE AS A PILOI. L
+
+DISCHARGED IN FEBRUARY,
+
+AND GRADUATED FROM THE
+
+ON
+
+RECEIVED A U.S. PASSPORT FOR
+
+REPORTED TRAVEL TO THE NETHERLANDS.
+
+JHAS TOLDL
+
+HE WILL BE TRAVELING ON SEPTEMBER 4, 1980 TO LONDON.
+
+IN ADDITION,
+
+HAS TOLD ANOTHER ASSOCIATE HE INTENDS
+
+TRAVEL TO PORTUGUAL.
+
+b6|
+
+b7C
+
+b6|
+
+DB Cooper-18527
+
+---
+
+## Page 314
+
+PAGE FOUR DE WF DD24 UNCLAS
+
+INFORMATION CONTAINED IN REFERENCE TELETYPE, AS REPORTED
+
+BY INTERPOL, IS FACTUALLY INCORRECI. AS A COURTESY GESTURE,
+
+WASHINGTON FIELD REPORTED IN SUBSTANCE THE ABOVE INFORMATION
+
+TO A INTERPOL REPRESENIATIVE. FOLLOWING THIS, WASHINGION
+
+FIELD CONTACTED LEGAT, LONDON FOR ADVICE AND
+
+FORWARDING
+
+PHOTO AND BACKGROUND INFORMATION VIA AIRTEL
+
+TO FBIHQ FOR DISSEMINATION TO LEGAT, LONDON•
+
+THE BUREAU IS REQUESTED TO FURNISH ABOVE TO LEGAT, LONDON•
+
+NO INVESTIGATION OR SURVEILLANCE REQUESTED AT THIS TIME.
+
+SHOULD SUBSEQUENT INVESTIGATION REQUIRE OVERSEAS INVESTIGATION,
+
+SAME WILL BE REQUESTED THROUGH FBIHQ ONLY.
+
+BT
+
+# 002.4
+
+b6
+
+b7C
+
+NNNN
+
+23521127 SE 1
+
+DB Cooper-18528
+
+---
+
+## Page 315
+
+VECZC:F02g4
+
+00 NO SE
+
+DE VFAR024 2352195
+
+ZUR VUUUU
+
+0 2221627 AAUG 80.
+
+FU FSI WASHINGION FIELD (164-3518 (P) (SQ C-4)
+
+TO DIRECTOR FBI IMMEDIATE
+
+ATTENTION PERSONAL CRIMES UMIT
+
+FBI SEATTLE IMMEDIATE
+
+b6
+
+b7C
+
+UNGLAS
+
+NORJAK, CAA, (00 :SEATTLE)
+
+RE BUREAU TEL AUGUST 22, 1980.
+
+WASHINGION FIELD INVESIIGATION INTO THIS MATTER ON
+
+JUNE 26, 1980 BASED ON TELEPHONE CALL FROM
+
+OF A TRANSIENT TYPE TEMPORARY HOUSING FACILITY
+
+IN WASHINGTON, D. C. CUDO) ACCORDING TO
+
+A RESIDENT
+
+IDENTIFIED AS
+
+COULD POSSIOLY BE D. E. COOPER,
+
+THE UNSUS IN CAPTIONED HIJACKING,
+
+I VIELEN COMPOJITE
+
+DRAWING OF UNSUB, DO E. COOPER, AND STATED BASIC FACIAL
+
+CHARACIERISTICS ARE SIMILAR.
+
+SUESEQUENI INVESTIGATION DETERMINED
+
+IDENTICAL TO HOLDER OF FBI NUMBER
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+A WHITE MALE
+
+161-81-50119
+
+DB Cooper-18529
+
+---
+
+## Page 316
+
+FD-302 (REV, 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription
+
+8/13/80
+
+Parkersburg, W. Va., telephonel
+
+Iwas
+
+intervieved at the home of her parents.
+
+liarys Pike,
+
+, telephoneL
+
+was made aware of the identity of the interviewing Agent and the
+
+nature of the inquiry. She was advised that the interviewing
+
+Agent had received an anonymous telephone call from a woman on
+
+June 23, 1980, who said that I
+
+]resembles D. B.
+
+advised she did not make the telephone call.
+
+She did, however, provide the following information:
+
+Ladvised she
+
+She said
+
+whom she
+
+had not L
+
+was relatively new
+
+to Parkersburge
+
+She said when she met him he was al
+
+She said she
+
+said
+
+Inever said or did anything
+
+that would cause her to
+
+She sae he ha had soremitted a criminal act in the past.
+
+said she had never heard of the D. B
+
+Cooper skyjacking incident. She said that
+
+admittedly an ex-paratrooper, would not have been capable oí
+
+such a crime as that committed by Cooper.
+
+#1 1641-811-8487
+
+- File #-2Q-164-93
+
+Investigation on - 8/11/80
+
+-at Williamstown, W. Var
+
+by _ SA
+
+Yair
+
+This document cantains neither recommendations nor concusions at the FBl, it is the property pr the Felli edeo your agency
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18533
+
+b6
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 317
+
+FD-302 (REV, 3-8-77)
+
+::::
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription.
+
+8/13/80
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Partersburg, l. Va, telephonel
+
+interriewed at
+
+the home of her parents.
+
+Marys Pike, telephonel
+
+was made aware of the identity of the interviewing Agent and the
+
+nature of the inquiry. She was advised that the interviewing
+
+Agent had received an anonymous telephone call from a woman on
+
+June 23,
+
+1980. Who said that
+
+resembles D. B.
+
+Coe did, however, prove the dad no mom tans
+
+advised she did not make the telephone call.
+
+had notl
+
+advised da she said!
+
+I whom she
+
+was relatively new
+
+to Parkersburg She said when she met him he was a
+
+She said she
+
+Isaial
+
+never said of did anything
+
+Ithat would cause her to
+
+believe that he had ever connitted a criminal act in the past.
+
+She said he is a hard worker.
+
+said she had never heard of the D. B.
+
+Cooper skyjacking incident. She said that l
+
+admittedly an ex-paratrooper, would not have been capable of
+
+such a crime as that committed by Gooper.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+S416-1-81-8187
+
+Investigation on - 8/11/80
+
+-a-yalllanstown, H. Va.
+
+DY-SA
+
+_Date dictated -
+
+8/12/80
+
+b6|
+
+b7C
+
+This document contains neither recommendations nor conclusions of the FBI. It is the property of the FBI and is loaned to your agency;
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18534
+
+---
+
+## Page 318
+
+**D-302 (REV. 3-8-77)
+
+• :.
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription.
+
+5/30/80
+
+b6
+
+b7C
+
+tho
+
+being tade aware of the identity of the intervicing
+
+and the nature of the interview, advised as follows:
+
+stated that he has had a continuing
+
+Interest in the D. D. Cooper affair since its occurrence
+
+because of the netsmedia conjecture that Coopor possibily
+
+resemblance to the artis concention of Cooper has brought
+
+cuch asg
+
+are you
+
+sure you are not Cooger?
+
+when the intervieving agent
+
+advised
+
+I that he was there as a result of an anonynous
+
+phone catten
+
+said, "oh, the caller sas probably
+
+commented about a recont articlo in tho
+
+Farkersbure
+
+Newspansr which told of picces of the extortion
+
+noney being found.
+
+He said it vas probably placed there as a
+
+"decoy"
+
+He asked the interviewing agent ii the Federal Bureau
+
+of Investigation (FBI) had obtained fingerprints of Cooper
+
+and if the FBI were certain that Cooper had actually parachuted,
+
+inctead of hiding hinsols on the plane. Also, when the nechanics
+
+of the alleged jump vere discussed,
+
+stated that the
+
+jup was cortainly possible, that the spead of the plane and the
+
+altitude of it rould be no icetor. He said that he, as a
+
+United States Army Paratrooper, had made 30 Jumps, one jung,
+
+according to hin, was made iron a plane flying at 300 miles
+
+por hour.
+
+advised, when he vas told by the interviewing
+
+agent of nis siritarity to Cooper,
+
+that he io not Cooper and
+
+that he had boon no farther lest than Iowa.
+
+He did admit, however,
+
+to conciderable travel,
+
+including flying to various places, but
+
+costly, ho caid, Dost of the Micoicsiopi.
+
+lie said that he
+
+once had a rasacort t
+
+Newfoundland, and; pore rocently, he
+
+salo no nede an application sor a pacoport to Saudi Arabia.
+
+1641-81-8488
+
+Investigation on
+
+6/24/80
+
+File #Pu Ish-ys
+
+SEARCHER,
+
+by -
+
+jaz
+
+_Date victatux.
+
+6/24/80
+
+The doer on an ete cane a no onesion of a 5 the properly or to End AS 4 19801 ,
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18535
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+06
+
+b7C
+
+---
+
+## Page 319
+
+PG I6l-93
+
+2
+
+provided the following background
+
+information concerning hinself:
+
+Name
+
+Sex
+
+Race
+
+White
+
+Date of birth
+
+Place of birth
+
+Residence
+
+Former residence
+
+Height
+
+Weight
+
+Eyes
+
+Build
+
+Hair
+
+Voice
+
+Complexion
+
+Parkersturg,
+
+Hest Vicinia (2 weeks)
+
+Parkersburg, West Virginia
+
+51711
+
+165
+
+Gray with glasses
+
+Hodium
+
+Dark brown, thin, with receding
+
+hair line
+
+Intelligent, slight southern accent
+
+Olive
+
+Tattoos
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+Occupation
+
+Employnent
+
+DB Cooper-18536
+
+---
+
+## Page 320
+
+PG 164-93
+
+3
+
+Passport
+
+Father
+
+Hother
+
+Brothers
+
+Sisters
+
+Marital status
+
+Ex-trives
+
+Children
+
+Social Security #
+
+Automobile
+
+Aust Virginia
+
+drivers license #
+
+Health
+
+Habits
+
+Arrest
+
+Illitary
+
+b6
+
+- b7C
+
+Saudi Arabia
+
+deceased)
+
+Thomasville,
+
+North Carolina
+
+Warren, ohio
+
+_ Lake Milton, Ohio;
+
+rini tr. North
+
+Carolina;
+
+Trinity, North Carolina;
+
+Point, North carolina;!
+
+Greensbora, North Carolina
+
+maiden name
+
+I Pennsylvania.
+
+marden
+
+nand
+
+Virginial
+
+Parkersburg. West
+
+(LNU) , age
+
+unknown
+
+(last name unknown)
+
+whereabouts
+
+2 door hardtop
+
+b6'
+
+b7C
+
+Snokes one - and one-half packs of
+
+cigarettes.. day
+
+Admits toL
+
+Arnapoliss.
+
+Maryland
+
+Argy corial number U, 3.
+
+position so tilimeter Gunner (tank),
+
+jungs 30.
+
+DB Cooper-18537
+
+---
+
+## Page 321
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription.
+
+6/30/80
+
+b6
+
+b7C
+
+1
+
+tino
+
+near aaron devity die territoing agent
+
+stated that he has had a continuing
+
+interest in the D. B. Cooper affair since its occurrence
+
+because of the neusnedia conjecture that Cooper possibily
+
+vas a parachutist and that he had becn a paratrooper. He said
+
+that the fact of his boing a former paratrooper and his
+
+resemblance to the artict conception of Cooper has
+
+brought
+
+comments fron fellow
+
+such as
+
+are you sure you are not Cooper?".
+
+When the interviewing agent
+
+advised
+
+that he was there as a result of an anonymous
+
+phone caller,
+
+said, "oh, the caller vas probably
+
+b7c
+
+b6
+
+b7C
+
+connented about a recent article in the
+
+Parkersbure
+
+Newspaper which tole of pieces oi the extortion
+
+noney being found.
+
+He said it was probably placed there as
+
+"decoy",
+
+He asked the intervieving agent if the Federal Pureaù
+
+of Investigation (FBI) had obtaince fingerprints of Cooper
+
+and it the FBI vere certain that Cooper had actually parachuted,
+
+instead of hiding hinself on the plana. Aleo, when the nechanics
+
+of the alloged jump vere discussed,
+
+stated that the
+
+jump vas certainly possible, that the speed of the plane and the
+
+altitudo of it rould be no factor.
+
+He said that be, as a
+
+United States Arny Paratrooper, had made 30 jumps; one jump,
+
+according to hin, las nade fron a plane flying at 300 niles
+
+por hour.
+
+b6
+
+b7C
+
+advised, when he was told by the intervieving
+
+agent oi his sinkarity to cooper,
+
+that he is not Cooper and
+
+that he had been no farther West than Iowa,
+
+He did adnit, hovever,
+
+to considerable travel, including flying to various places, but
+
+mostly, he said, East of the lussicalopi.
+
+He said that he
+
+once had a pascport is Newfoundland, and, core recently, he
+
+said he nade an application for a passport to Saudi Arabia.
+
+b7C
+
+Investigation on
+
+6/21/00
+
+-at Partseraburg, WY
+
+162-51-94160
+
+- File #=5
+
+7 15L-93
+
+by —
+
+SA
+
+(joa
+
+_Date dictated -
+
+6/24/80
+
+b6
+
+b7C
+
+This document contains neither recommendations nor conclusions of the FBi. It is the property of the FBI and is loaned to your agency;
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18538
+
+---
+
+## Page 322
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+[ Teletype
+
+Facsimile
+
+AIRTEL
+
+PRECEDENCE:
+
+• Immediate
+
+I Priority
+
+Roatine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+• SECRET
+
+• CONFIDENTIAL
+
+D UNCLAS EF TO
+
+[J UNCLAS
+
+Date -8/18/80
+
+TO ;
+
+FROM:
+
+SUBJECT:
+
+SAC, SEATTLE, (164-81)
+
+WAl
+
+SAC, PITTSBURGH (164-93) (RUC)
+
+NORJAK (A)
+
+(00: SEATTLE)
+
+Surped
+
+Re Pittsburgh teletype to Bureau dated 6/25/80. Sub Q
+
+Enclosed for Seattle are the following items:
+
+1. Original and two copies of an FD-302 regarding
+
+interview of
+
+on 6/24/80.
+
+2. Original and two copies of an FD-302 regarding
+
+interview of
+
+I on 8/11/80.
+
+3. orfainal interview notes of l
+
+No. further investigation remains in Pittsburgh Division.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+ARMED AND DANGEROUS
+
+seattlo (EnGs. 8) Nee'd lu
+
+- Pittsburgh
+
+JHB/ Jpw
+
+(3)
+
+Approved:
+
+Transmitted
+
+164-81-8489
+
+INDEXEL
+
+FILEDS
+
+ẠUG 2 $ 1980
+
+(Number)
+
+(Time)
+
+# U.S. GOVERNMENT PRI
+
+DB Cooper-18541
+
+b6
+
+b7C
+
+---
+
+## Page 323
+
+AIRTEL
+
+16
+
+b7C
+
+8/18/80
+
+TO :
+
+FROM:
+
+SUBJECT:
+
+SAC, SEATTLE, (164-81)
+
+SAC, PITTSBURGH (164-93) (RUC)
+
+NORJAK (A)
+
+(00$ SEATTLE)
+
+Re Pittsburgh teletype to Bureau dated 6/25/80.
+
+Enclosed for Seattle are the following items:
+
+1. Original and two: copies of an FD-302 regarding
+
+interview of
+
+on 6/24/80.
+
+2. Original and two copies of an FD-302 regarding
+
+interview of
+
+оп 8/11/80.
+
+3. Original interview notes of
+
+and
+
+No further investigation remains in Pittsburgh Division.
+
+ARMED AND DANGEROUS
+
+2
+
+Seattle (Encs. 8)
+
+- Pittsburgh
+
+JHB/jpw
+
+(3)
+
+b6
+
+b7C
+
+1641-81-8489
+
+SEARCHER
+
+SERIALIZE
+
+INDEXEL
+
+AUG & $ 1980
+
+FBI - SEATTLE TE
+
+DB Cooper-18542
+
+---
+
+## Page 324
+
+SL0084 2382328
+
+PP WF SF SE
+
+DE SL
+
+P 252116Z AUG 88
+
+FM ST. LOUIS (164-M) (RUC)
+
+TO WASHINGTON FIELD (164-301) PRIORITY
+
+SAN FRANCISCO PRIORITY
+
+SEATTLE (164-81) ROUTINE
+
+BT
+
+UNCLAS
+
+NORJAK, 00: SEATTLE CRE SUSPECT _
+
+UNSUB; AKA D. B. COOPER, CRIME ABOARD AIRCRAFT; INFORMATION
+
+CONCERNING (00: WASHINGION FIELD).
+
+RE WASHINGION FIELD TEL TO ST. LOUIS, AUGUST 15, 1988, NO COPY
+
+TO SEATTLE.
+
+AVAILABLE RECORDS AT FEDERAL RECORDS CENTER, MILITARY BRANCH,
+
+ST. LOUIS, MO., DISCLOSED
+
+ENLISTED
+
+U.S. ARMY AIR CORPS AND SERVED
+
+ACTIVE
+
+HONORABLY DISCHARGED AS
+
+TO ACCEPT APPOINTMENT•
+
+UNDER SERVICE NUMBER|
+
+ACCEPTED APPOINTMENT AS
+
+SSAN
+
+U.S. ARMY AIR CORPS AT
+
+1b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18543
+
+164-81-8490
+
+BRANCHED K
+
+NDEX!
+
+FILED. en
+
+AUG 25 1980
+
+PLE
+
+1b6
+
+1b7C
+
+---
+
+## Page 325
+
+PAGE TWO SL 164-M UNCLAS
+
+LA JUNTA ARMY AIR FIELD, LA JUNIA, COLO., AND SERVED ACTIVE
+
+HONORABLY RELEASED FROM ACTIVE DUTY
+
+AS A
+
+AT SANTA ANA, CALIF. ON TERMINAL LEAVE
+
+SERVED FOREIGN SERVICE
+
+TEN AND ONE-HALF
+
+MONTHS AS COMBAT PILOT ON
+
+JAIRCRAFT WITH FIVE COMBAT MISSIONS
+
+TOTALING 30 COMBAT HOURS AND HAD APPROXIMATELY FIVE HUNDRED HOURS
+
+MILITARY FLYING TIME.
+
+• NO DISCIPLINARY ACTION CONTAINED IN AVAILABLE RECORDS, HOWEVER
+
+EFFICIENCY REPORT INDICATED
+
+WAS STRICTLY A "LONE-WOLF".
+
+SELDOM SEEN IN COMPANY OF OTHER MEN OF SQUADRON AND WAS GENERALLY
+
+BLUNT OR INDIFFERENT TOWARD THEM.
+
+PARENTS LISTED AS
+
+I BORN I
+
+AND
+
+DECEASED. BROTHER,
+
+LISTED RESIDING
+
+BORN IN
+
+BOTH LISTED AS
+
+AND UNCLE,
+
+SEATTLE, WASHINGION, IN SEPTEMBER,
+
+1946.
+
+DESCRIBED AS WHITE/MALE, BORN
+
+5'11", 175 LBS., BLUE EYES AND BROWN HAIR.
+
+PHOTO IN FILE. LAST KNOWN ADDRESS SHOWN AS
+
+NO
+
+b6
+
+b7C
+
+106
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+DB Cooper-18544
+
+---
+
+## Page 326
+
+PAGE THREE SL 164-M UNCLAS
+
+SEATTLE, WASHINGION, IN OCTOBER, 1949. PRIOR EMPLOY-
+
+MENT INDICATED AS U.S. MARITIME SERVICE, PUGET SOUND, WASHINGION,
+
+b6
+
+b7C
+
+RECORDS INDICATED
+
+HAD VETERANS ADMINISTRATION (VA)
+
+DISABILITY CLAIM WITH VA REGIONAL OFFICE, TEXTILE TOWER, SEATTLE,
+
+WASHINGTON, UNDER VA CLAIM NUMBER
+
+DATED
+
+RECORDS FURTHER INDICATED HE WAS RECEIVING
+
+DISABILITY
+
+FROM VA FOR
+
+AND A HISTORY OF
+
+b6
+
+b7C
+
+VA COMPUTER LOCATION SYSTEM DISCLOSED
+
+VA CLAIM FOLDER
+
+LAST ON FILE VA REGIONAL OFFICE, SAN FRANCISCO, CALIF., UNDER VA
+
+CLAIM NUMBER
+
+SAN FRANCISCO, EXPEDITIOUSLY REVIEW
+
+VA CLAIM FOLDER,
+
+DETERMINE AMOUNT OF VA COMPENSATION, ANY PERTINENI MEDICAL HISTORY
+
+AND FURNISH RESULIS IO WASHINGION FIELD AND SEATTLE. WASHINGION
+
+FIELD ADVISEDL
+
+IS ATTEMPTING TO DEPART THE UNITED STATES AS
+
+SOON AS POSSIBLE.
+
+COPY OF
+
+SERVICE RECORD FORWARDED TO SEATTLE VIA AIRTEL.
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+BT
+
+b6 |
+
+b7C
+
+#
+
+SE 1
+
+DB Cooper-18545
+
+---
+
+## Page 327
+
++5475 7-7539919165
+
+SLO: 44 2382373
+
+PPUF Si SE
+
+DO SL
+
+P 259116Z AUG 8.1
+
+FM ST. LOUIS (164-M)
+
+TO JASHINATON FIELD (16A-301) PRIONITY
+
+SAD FRANCISCO PRIQUITY
+
+ERATILE (164-11) NOUTIAL
+
+ST
+
+UNCLAS
+
+1OiJAk, Or': SATTLE GiE SUSPECI
+
+UNSUB; AK, D. B. COOPER, CRINE AGOAND MIGNEI; IrONiATION
+
+CONCENHING 100: MASHINGTON FIELD) •
+
+HE WASHINCION FIELU TEL TO ST. LOUIS, ALGUST 159 19oig N0 COPY
+
+TO SEATTLE®
+
+AVAILASLE RECORDS AI FEDERAL RECOLOS SENTEN, MILITARY SINNGA,
+
+SI. LCUIS, 110., DISCLOSED
+
+GELISTEL
+
+LOS. ANNY AIN CORPS ALD SENVED ACTIVE
+
+HOVORABLY DISCHARGED AS
+
+TO ACCENT APPORLINONT.
+
+b6
+
+b7C
+
+b6|
+
+b70
+
+b6
+
+b7C
+
+35A1
+
+07C
+
+ACCEPTEN APPOININE!T AS
+
+164-81-8.191.
+
+DB Cooper-18546
+
+---
+
+## Page 328
+
+DIRECTOR, FBI
+
+(164-2111)
+
+LEGAT, OTTAWA (164-47) (RUC)
+
+NORJAK (A)
+
+00: Seattle
+
+8/13/80
+
+ReButel, 6/27/80.
+
+Enclosed for BIHO and Seattle is one copy each of
+
+Please note infornation furnished may noth
+
+This matter considered RUC at Ottawa.
+
+ARMED AND DANGEROUS.
+
+b7E
+
+4- Buroàu (Enc. 2)
+
+(2-Seattle) (164-81)
+
+1-Ottawa
+
+RIM: dlb
+
+(5)
+
+14d-S = 8492
+
+AUG d's 1980
+
+r..
+
+DB Cooper-18550
+
+---
+
+## Page 329
+
+routing Slip
+
+0-7 (Rev. 1-31-
+
+TO: SAC:
+
+Albany
+
+Houston
+
+Albuquerque
+
+Indianapolis
+
+Alexandria
+
+Jackson
+
+Anchorage
+
+Jacksonville
+
+Atlanta
+
+Kansas City
+
+Baltimore
+
+Knoxville
+
+Birmingham
+
+Las Vegas
+
+Boston
+
+Little Rock
+
+Buffalo
+
+Los Angeles
+
+Butte
+
+Charlotte
+
+Louisville
+
+Memphis
+
+Chicago
+
+Miami
+
+Cincinnati
+
+Milwaukee
+
+Cleveland
+
+Minneapolis
+
+Columbia
+
+Dallas
+
+Newark
+
+Denver
+
+New Haven
+
+] Detroit
+
+] New Orleans
+
+El Paso
+
+- Honolalu
+
+] New York City
+
+7 Norfolk
+
+| SAC, New Rochelle (MRA)
+
+(Copies to Offices Checked)
+
+Oklahoma City
+
+Philadelphia
+
+Phoenix
+
+Pittsburgh
+
+Portland
+
+Richmond
+
+Sacramento
+
+St. Louis
+
+Salt Lake City
+
+San Antonio
+
+San Diego
+
+San Francisco
+
+San Juan
+
+I Springfield®
+
+TO: LEGAT:
+
+Bern
+
+Bogota
+
+Buenos Aires
+
+Hong Kong
+
+London
+
+Manila
+
+Mexico City
+
+Ottawa
+
+Paris
+
+¡ Rome
+
+¡ Tokyo.
+
+8/21/80
+
+(Date)
+
+RE:
+
+NORJAK (A)
+
+00: SEATTLE
+
+R
+
+Sitti
+
+Retention
+
+For appropriate
+
+• For information [ optional 8] action
+
+[ Surep, by -
+
+• The enclosed is for your information. If used in a future report, [ conceal all
+
+sources, [ paraphrase contents.
+
+Entlosed are corrected pages from report of SA
+
+Remarks:
+
+Enc. 2
+
+Bufile 164-2111
+
+Urfile 164-81
+
+FBI/DOJ
+
+DB Cooper-18551
+
+---
+
+## Page 330
+
+FEDERAL BUREAU OF INVESTIGATION
+
+FOI/PA
+
+DELETED PAGE INFORMATION SHEET
+
+Civil Action# 1:16-cv-01790
+
+Total Deleted Page (s) = 116
+
+Page 3 ~ Referral/Consult - NPRC;
+
+Page 4 ~ Referral/Consult - NPRC;
+
+Page 5 ~ Referral/Consult - NPRC;
+
+Page 6 ~ Referral/Consult - NPRC;
+
+Page 7 ~ Referral/Consult - NPRC;
+
+Page 8 ~ Referral/Consult - NPRC;
+
+Page 9 ~ Referral/Consult - NPRC;
+
+Page 10 ~ Referral/Consult - NPRC;
+
+Page 11 ~ Referral/Consult - NPRC;
+
+Page 12 ~ Referral/Consult - NPRC;
+
+Page 13 ~ Referral/Consult - NPRC;
+
+Page 14 ~ Referral/Consult - NPRC;
+
+Page 15 ~ Referral/Consult - NPRC;
+
+Page 16 ~ Referral/Consult - NPRC;
+
+Page 17 ~ Referral/Consult - NPRC;
+
+Page 18 ~ Referral/Consult - NPRC;
+
+Page 19 ~ Referral/Consult - NPRC;
+
+Page 20 ~ Referral/Consult - NPRC;
+
+Page 21 ~ Referral/Consult - NPRC;
+
+Page 22 ~ Referral/Consult - NPRC;
+
+Page 23 ~ Referral/Consult - NPRC;
+
+Page 24 ~ Referral/Consult - NPRC;
+
+Page 25 ~ Referral/Consult - NPRC;
+
+Page 26 ~ Referral/Consult - NPRC;
+
+Page 27 ~ Referral/Consult - NPRC;
+
+Page 28 ~ Referral/Consult - NPRC;
+
+Page 29 ~ Referral/Consult - NPRC;
+
+Page 30 ~ Referral/Consult - NPRC;
+
+Page 31 ~ Referral/Consult - NPRC;
+
+Page 32 ~ Referral/Consult - NPRC;
+
+Page 33 ~ Referral/Consult - NPRC;
+
+Page 34 ~ Referral/Consult - NPRC;
+
+Page 35 ~ Referral/Consult - NPRC;
+
+Page 36 ~ Referral/Consult - NPRC;
+
+Page 37 ~ Referral/Consult - NPRC;
+
+Page 38 ~ Referral/Consult - NPRC;
+
+Page 39 ~ Referral/Consult - NPRC;
+
+Page 40 ~ Referral/Consult - NPRC;
+
+Page 41 ~ Referral/Consult - NPRC;
+
+Page 42 ~ Referral/Consult - NPRC;
+
+Page 43 ~ Referral/Consult - NPRC;
+
+Page 44 ~ Referral/Consult - NPRC;
+
+Page 45 ~ Referral/Consult - NPRC;
+
+Page 46 ~ Referral/Consult - NPRC;
+
+Page 47 ~ Referral/Consult - NPRC;
+
+Page 48 ~ Referral/Consult - NPRC;
+
+Page 49 ~ Referral/Consult - NPRC;
+
+Page 53 ~ Referral/Consult - NPRC;
+
+---
+
+## Page 331
+
+Page 54 ~ Duplicate;
+
+Page 55 ~ Duplicate;
+
+Page 56 ~ Duplicate;
+
+Page 57 ~ Duplicate;
+
+Page 58 ~ Duplicate;
+
+Page 59 ~ Duplicate;
+
+Page 60 ~ Duplicate;
+
+Page 61 ~ Duplicate;
+
+Page 62 ~ Duplicate;
+
+Page 63 ~ Duplicate;
+
+Page 64 ~ Duplicate;
+
+Page 65 ~ Duplicate;
+
+Page 66 ~ Duplicate;
+
+Page 67 ~ Duplicate;
+
+Page 68 ~ Duplicate;
+
+Page 69 ~ Duplicate;
+
+Page 70 ~ Duplicate;
+
+Page 71 ~ Duplicate;
+
+Page 72 ~ Duplicate;
+
+Page 73 ~ Duplicate;
+
+Page 74 ~ Duplicate;
+
+Page 75 ~ Duplicate;
+
+Page 76 ~ Duplicate;
+
+Page 77 ~ Duplicate;
+
+Page 78 ~ Duplicate;
+
+Page 79 ~ Duplicate;
+
+Page 80 ~ Duplicate;
+
+Page 81 ~ Duplicate;
+
+Page 82 ~ Duplicate;
+
+Page 83 ~ Duplicate;
+
+Page 84 ~ Duplicate;
+
+Page 85 ~ Duplicate;
+
+Page 86 ~ Duplicate;
+
+Page 87 ~ Duplicate;
+
+Page 88 ~ Duplicate;
+
+Page 89 ~ Duplicate;
+
+Page 90 ~ Duplicate;
+
+Page 91 ~ Duplicate;
+
+Page 92 ~ Duplicate;
+
+Page 93 ~ Duplicate;
+
+Page 94 ~ Duplicate;
+
+Page 95 ~ Duplicate;
+
+Page 96 ~ Duplicate;
+
+Page 97 ~ Duplicate;
+
+Page 98 ~ Duplicate;
+
+Page 99 ~ Duplicate;
+
+Page 101 ~ Duplicate;
+
+Page 102 ~ Duplicate;
+
+Page 103 ~ Referral/Consult - NPRC;
+
+Page 104 ~ Referral/Consult - NPRC;
+
+Page 122 ~ Duplicate;
+
+Page 123 ~ Duplicate;
+
+Page 124 ~ Duplicate;
+
+Page 138 ~ Duplicate;
+
+---
+
+## Page 332
+
+Page 142 ~ Duplicate;
+
+Page 146 ~ Duplicate;
+
+Page 153 ~ Duplicate;
+
+Page 154 ~ Duplicate;
+
+Page 162 ~ Duplicate;
+
+Page 171 ~ Duplicate;
+
+Page 172 ~ Duplicate;
+
+Page 173 ~ Duplicate;
+
+Page 174 ~ Duplicate;
+
+Page 180 ~ Duplicate;
+
+Page 184 ~ Duplicate;
+
+Page 188 ~ Duplicate;
+
+Page 193 ~ Duplicate;
+
+Page 194 ~ Duplicate;
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+Deleted Page (s)
+
+No Duplication Fee X
+
+For this Page
+
+X
+
+XXXXXXXXXXXXXXXXXXXXXXXX
+
+---
+
+## Page 333
+
+KNCZCHFC : 15
+
+PP. 3L
+
+0E 47 8:15 2282153
+
+ZAR JUJJU
+
+P 1521847. AUG. SP
+
+FM: WASHINGTON FIOLD OFFICE (154-391>
+
+TO: S4C, Si. LOUIS
+
+PRIORITY
+
+(P:)
+
+UNCLES
+
+UNSUE ! ALSO KICUN AS DOB: COOPER, GUINE ARGARE ALECHAF"
+
+• INFORYATIO& CONCERNINE ODGASHINGION FIEL: GFFICES.
+
+SINO COLGALL TO ST-LOUIS, AUCUS. 14, 1937.
+
+MASHINCTON FI LO OFFICE INVESTIGACION INDICATES A.
+
+, DATE OF BIRTH
+
+PLACE
+
+MAY BE IDENTICAL TO CAPIONT
+
+b6
+
+b7C
+
+CF SIFTH
+
+UNSU3 .
+
+IS PRECENTLY LIVIC I ASHINGTOM, DOC. HE HAS
+
+"ESUS OR MORE WIRES TO HIM TACH. MONTH FROM A VANCUVER, WA54-
+
+INCICN TANK.
+
+INVESTIGATION AT
+
+VANCOUVES IN CONCES MAT
+
+THE SOUPOR OF
+
+INCOME IS MILITARY SETINEMENT • FEDERAL
+
+#USFAU OF IRVESTIGATION RECOROS INDICATE
+
+ENLISTED IN
+
+THE UMITED SIATES ARMY AS A
+
+IN
+
+H: WAS.
+
+36
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18599
+
+---
+
+## Page 334
+
+04170.
+
+at innin
+
+PAGT. THO DE WE GOIS URGLAS:
+
+COMMISSIO SO
+
+•IN .. I"
+
+AFTER COSFLETINC PILOT TRAIN-
+
+b7C
+
+WAS DISCHARGED.
+
+RECORDS INDICATE
+
+ANJ AVS NUMBER AS
+
+ARCY SERIAL NUMPER AS
+
+-
+
+SI SSCON. INS
+
+WAS ARRESTED I"
+
+CALIFORNIA AND WAS SENTENCED TO
+
+WAS AGAIN ARRESTED
+
+TIGNED HIJACKING IN SACRAMENTO, CALIFORNIA FOR|
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+TO THE CAP-
+
+b6
+
+b7C
+
+EFFECTIVELY VANISHED AFTER HIS ARREST
+
+AND DID MOE SURFACE AGAIN UNTIL
+
+HE WAS APPOSIOD. FGH
+
+CASUINGTON, 9 .
+
+IS ATTEMFTING TO SECURE. A PASSPORI VIA
+
+TO DEPART THE UNILEO S A-ES. FOR BUFOP:
+
+THEN
+
+b6
+
+b7C
+
+DB Cooper-18600
+
+---
+
+## Page 335
+
+PAGE THRES DE UF POIS UNCLAS
+
+LEAD; ST LOUIS • .
+
+AI FEDERAL RECORD CENTER • WILL LOCATE
+
+MILITARY RECORDS FOR
+
+AND DETERMINE IF
+
+RECRIVES ANY INCOME FROM ANY UNITED STATES MILITAPY
+
+SERVICE •
+
+IN AE FUCH AS
+
+IS AFTEMPTING
+
+b6
+
+b7C
+
+ives sth; do
+
+: IN CHi 19V130 01
+
+b6
+
+b7C
+
+IS R5QUTS:25
+
+2015
+
+NNNA
+
+DB Cooper-18601
+
+---
+
+## Page 336
+
+KNCT CUFCE IF
+
+FP SL
+
+03 6413 3282153
+
+7&R. UJUJU:
+
+P. 1521947 AUG 36
+
+AM: WASHINGTON FIELD OFFICE (154-301)
+
+(P.)
+
+TO :. SeC, SI. LOUIS
+
+PRIORITY
+
+UNCLAS
+
+JESUE : ALSO KNOWS AS D. B, COOPES, CHIME ASGARR ATACHAF"
+
+INFORYATION CONCERNING
+
+@OWASHINGTON FIELD OFFICES.
+
+FO TEO MELCALL TO ET. LOUIS, AUCUS: 14, 1957.
+
+MASHITGTON FILE OFFICE INVOSHIGACION INDICATES A
+
+DAIR OF CISTY
+
+PLACE
+
+HY BE IOETICAL TO CAPION?"
+
+b7C
+
+CE. RIFTH
+
+UNFU3
+
+JIS PRESENTLY LIVIE IT ASHINGTON, DOC. HE MeS
+
+ISMO OR MORE WIRCU TO HIM TACH MONTH FROM A VANCGUVER, ASH -
+
+INGICN ZARK.
+
+INVESTIGATION AT VANCOUVER, LASHINGTON CONJECIUTES THAT
+
+THE SOUPCY OF
+
+INCOME IS ILITARY RETIREMENT • FETERAL
+
+BUREAU OF INVESTICATION RECORDS INDICATE
+
+ENLISTOO IN.
+
+THE UNIISD SITATES ARMY AS A
+
+• If
+
+HE WAS
+
+.b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18649
+
+---
+
+## Page 337
+
+=59r9
+
+VZCZCHQO 05 3
+
+PP SE
+
+DE HQ #0053 2410306
+
+P 271594Z AUG 80
+
+FM DIRECTOR FBI
+
+TO FBI SEATILE PRIORITY
+
+LEGAL ATTACHE
+
+LEGAL ATTACHE
+
+LEGAL ATTACHE
+
+BT
+
+UNCLAS
+
+NOR JAK.
+
+BY TELETYPE DATED AUGUST 26, 198D, SAC, WASHINGION FIELD OFFICE
+
+FURNISHED THE FOLLOWING INFORMATION:
+
+INVESTIGATION TO DATE HAS FAILED TO LOCATE ANY AIRLINE
+
+RESERVATION FOR TRAVEL BY
+
+JIO LONDON.
+
+TRAVEL ON SEPTEMBER 3, 1980, MERELY COMMENIS MADE BY L
+
+WASHINGION, D.C. (UDG) ACQUAINIANCE AND HAS NOT BEEN CONFIRMED.
+
+ON AUGUST 26 1980,
+
+TO A
+
+WDC ,
+
+ADVISED OF ABOVE AND REQUESTED TO DISCONIINUE ANY EFFORIS OR
+
+PLANS REGARDING SURVEILLANCE OF|
+
+BT.
+
+#0053
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+164-81-8495
+
+AUỆ?
+
+' € 1980
+
+b6
+
+b7C
+
+DB Cooper-18654
+
+---
+
+## Page 338
+
+VZCZCHQ0053
+
+PP SE
+
+• DE HQ #0053 2410306
+
+P. 271504Z AUG 88
+
+FM DIRECTOR FBI
+
+. S
+
+TO FBI SEATTLE PRIORITY:
+
+LEGAL ATTACHE
+
+LEGAL' ATTACHE
+
+•LEGAL ATTACHE
+
+BT.
+
+• UNOLAS
+
+NORJAK.
+
+BY TELETYPE DATED AUGUST 26, 1980, SAC, WASHINGTON FIELD OFFICE
+
+FURNISHED THE FOLLOWING INFORMATION:
+
+' INVESTIGATION TO DATE HAS FAILED TO LOCATE ANY AIRLINE
+
+RESERVATION. FOR TRAVEL BY
+
+TO LONDON.
+
+TRAVEL ON SEPTEMBER. 3, 198D, MERELY COMMENTS MADE BY.
+
+WASHINGTON, DOC: (WDC ACQUAINTANCE AND HAS NOT BEEW CONFIRMED.
+
+ON AUGUST 26. 1980,l
+
+TO A
+
+WDC,
+
+ADVISED OF 'ABOVE AND REQUESTED TO DISCONTINUS ANY EFFORTS OR
+
+PLANS REGARDING SURVEILLANCE OFL
+
+b6
+
+"b7C
+
+b7C
+
+• b6
+
+b7C
+
+b6
+
+b7C
+
+: 40053
+
+16181-8293
+
+ANG 2 7 1980
+
+FBI-
+
+ĐB Cooper-18655
+
+---
+
+## Page 339
+
+In Reply, Please Refer to
+
+File No.
+
+NITED STATES DEPARTMENT
+
+JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+915 Second Avenue
+
+Seattle, Washington
+
+98174
+
+September 19, 1980
+
+Suspect fick heath Ferna
+
+Sub986
+
+Mountain View, California
+
+Dear
+
+b6
+
+b7C
+
+Enclosed with this letter is the original Dealer
+
+Permit for Jack Scott Farmer, which you previously made
+
+available to the Seattle Division of the FBI.
+
+Thank you again for your assistance in the D. B.
+
+Cooper hijacking investigation.
+
+Very truly yours,
+
+Allen P. Whitaker
+
+Special Agent in Charge
+
+BY:
+
+b6|
+
+b7C
+
+Supervisory Special Agent
+
+Enclosure - 1
+
+- Addressee
+
+-
+
+Seattle
+
+1KN: 35-
+
+(164-81)
+
+NOTE:
+
+The FBI Identification Division has taken
+
+a one on one photograph of the above dealer's
+
+permit, including the right and left thumb prints con-
+
+tained on the permit.
+
+Reference Bureau Identification
+
+Repo-t, dated 8/15/80; Latent #A-45410, Bufile 164-2111.
+
+1604-81-844960
+
+DB Cooper-18656
+
+---
+
+## Page 340
+
+In Keply, Please Rofer to
+
+File No.
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION •
+
+915 Second Avenue
+
+Seattle, Washington
+
+98174
+
+September 19, 1980
+
+Suspent Jese death Freen
+
+b6
+
+b7C
+
+Mountain View, California
+
+Dean
+
+Enclosed with this letter is the original Dealer
+
+Permit for Jack Scott Farmer, which you previously made
+
+available to the Seattle Division of the FBI.
+
+Thank you again for your assistance in the D. B.
+
+Cooper hijacking
+
+investigation.
+
+very truly yours,
+
+Allen P. Whitaker
+
+Special Agent in Charge
+
+BY:
+
+supervisory special Agent
+
+b6
+
+b7C
+
+Enclosure - 1
+
+- Addressee
+
+- Seattle
+
+(164-81)
+
+NOTE:
+
+The FBI Identification Division has taken
+
+a one on one photograph of the above dealer's
+
+permit, including the right and left thumb prints con-
+
+tained on the permit.
+
+Reference Bureau Identification
+
+Repo-t, dated 8/15/80; Latent #A-45410, Bufile 164-2111.
+
+164-81-8496
+
+DB Cooper-18657
+
+---
+
+## Page 341
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription
+
+9/9/80
+
+Rainier
+
+National Bank, 810 Main Street, Vancouver, Washington,
+
+advised
+
+that she had determined that the checks deposited to the savings
+
+account of
+
+were Veterans Administration checks.
+
+b6
+
+b7C
+
+Sab
+
+66
+
+b7C
+
+Investigation on
+
+8/28/80
+
+at
+
+Vancouver,
+
+Washington
+
+SA
+
+by
+
+Ites
+
+This document contains neither recommendations nor conclusions of the FBI. It is the property of the
+
+it and its contents are not to be distributed outside your agency. D8 Cooper-18658
+
+_ File #
+
+SE 164-81-849
+
+INDEXED...
+
+Date dieted SEMES PIGLED JU
+
+JAN 2 1 1981
+
+agency:
+
+b6
+
+b7C
+
+---
+
+## Page 342
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+Date of transcription
+
+9/9/80
+
+Rainier
+
+National Bank, 810 Main Street, Vancouver, Washington,
+
+advised
+
+that she had determined that the checks deposited to the savings
+
+account of
+
+were Veterans Administration checks.
+
+b7C
+
+Investigation on.
+
+8/28/80
+
+Vancouver,
+
+Washington
+
+_ File #
+
+SE 164-81-8497
+
+SA
+
+by -
+
+Ites
+
+_ Date dictated.
+
+8/28/80
+
+b6
+
+b7C
+
+This document contains neither recommendations nor conclusions of the FBl. It is the property of the FBi and is loaned to your agency:
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18659
+
+---
+
+## Page 343
+
+Memorandum
+
+To
+
+:
+
+From
+
+Subject
+
+SAC, SEATTLE (164-81)
+
+Date
+
+8/27/80
+
+SAC, INDIANAPOLIS (164-177) (RUC)
+
+NORJAK (A)
+
+00: SE
+
+BUFILE 164-2111
+
+ReIPlet to Seattle, 3/27/80.
+
+In view
+
+of the fact that all outstanding
+
+investigation has been
+
+completed in the Indianapolis
+
+Division, this matter is being placed in an RUC status.
+
+2 - Seattle
+
+- Indianapolis
+
+WB--pdb
+
+(3)
+
+164-81-8498
+
+'She
+
+She
+
+557 0% 1950
+
+FBI/DOJ
+
+DB Cooper-18660
+
+---
+
+## Page 344
+
+SAC, SEATTLE (161-81)
+
+8/27/80
+
+SAC, INDIANAPOLIS (164-177) (RUC)
+
+NORJAK (A)
+
+00: SE
+
+BUFILF 164-2111
+
+ReIPlet to Seattle, 3/27/80.
+
+In view of the fact that all outstanding
+
+investigation has been completed in the Indiznapolis
+
+Division,
+
+this matter is being placed in an RUC status.
+
+G_ Seattle
+
+1 - Indianapolis
+
+We-pdb
+
+(3)
+
+164-81-8498
+
+Sio
+
+side
+
+DB Cooper-18661
+
+---
+
+## Page 345
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+AIRTEL
+
+DATE: 9/3/8
+
+b6
+
+b7C
+
+-
+
+TO
+
+8 SAC, SEATTLE (164-81)
+
+SoM
+
+FROM
+
+8) SAe,
+
+RICHMOND (164-167) -P-
+
+Sub g.
+
+scott maze
+
+SUBJECT: NORJAK
+
+CAA-HIJACK (A)
+
+(00: SEATTLE)
+
+gohn
+
+BUF ILE 164-2111
+
+Re Richmond airtel to Seattle, 4/23/80.
+
+Enclosed
+
+for Seattle is the original of an FD-302
+
+reflecting interview of
+
+Lat charlottesville,
+
+Va., on 4/11/80 by SA
+
+Tand the original of an
+
+FD-302 reflecting her re-interview on 4/14/80. Also enclosed are
+
+the original investigative notes made during above stated
+
+interviews.
+
+For the information of Seattle, periodic recontacts with
+
+during May, 1980 through August, 1980, up to
+
+and including August 25, 1980, were unproductive in obtaining any
+
+additional information other than to identify Phoenix, Oregon as
+
+the town in which
+
+Jhad owned and operated
+
+the hotel described
+
+in the enclosed FD-302 reflecting her
+
+interview on 4/11/80.
+
+ARMED AND DANGEROUS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+2-Richmond
+
+FRW:bge
+
+(4)
+
+1604-81-8449
+
+SEALE STONED UN
+
+SEP 8 1980
+
+b6
+
+b7C
+
+DB Cooper-18662
+
+---
+
+## Page 346
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+AIRTEL
+
+DATE: 9/3/80
+
+TO
+
+: SAC,
+
+SEATTLE (164-81)
+
+FROM
+
+: SAC, RICHMOND
+
+(164-167) -P
+
+SUBJECT: NORJAK
+
+CAA-HIJACK (A)
+
+(00: SEATTLE)
+
+BUFILE 164-2111
+
+Re Richmond airtel to Seattle, 4/23/80.
+
+Enclosed for Seattle is the original of an FD-302
+
+reflecting interview of
+
+at Charlottesville,
+
+Va., on 4/11/80 by SA
+
+Jand the original of an
+
+FD-302 reflecting her re-interview on 4/14/80.
+
+Also enclosed are
+
+the original investigative notes made during
+
+above stated
+
+interviews.
+
+For the information of Seattle, periodic recontacts with
+
+I during May, 1980 through August, 1980, up to
+
+and including August 25, 1980, were unproductive in obtaining any
+
+additional information other than to identify Phoenix, Oregon as
+
+the town in which
+
+had owned and operated
+
+the hotel described in the enclosed FD-302 reflecting her
+
+interview on 4/11/80.
+
+ARMED AND DANGEROUS
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+(2-Seattle (Enc. 3)
+
+2-Richmond
+
+FRW : bgc
+
+(4)
+
+1104-81-8499
+
+EARCHED.
+
+ERALERS FIXECO
+
+SEP 8 1980
+
+FBI - SEATTLE V
+
+DB Cooper-18663
+
+---
+
+## Page 347
+
+FD-302(rev.3-8-77)
+
+Sick Q
+
+FEDERAL BUREAU OF INVESTIGATION
+
+1
+
+Date of transcription
+
+4/23/80
+
+charlottesville, Virginia,
+
+was
+
+shown four artists' composites, two black and white and two
+
+colored, depicting the individual known as D. B. Cooper who
+
+skyiacked Northwest Orient Flight Number 305 on November 24, 1971.
+
+viewed the four artists' composites and stated in her
+
+judgment, the black and white artist's composite without the
+
+sunglasses looks just likel
+
+John Scott
+
+Maze, who died of a heart attack in November... 1974, in Scottsdale,
+
+Arizona, at the age of 59.
+
+She noted in addition to the information she furnished
+
+to the Federal Bureau of Investigation, Charlottesville, Virginia,
+
+on April 11, 1980, John Scott Maze did smoke cigarettes of the
+
+filter type but she could not recall the brand.
+
+She also noted he was always extremely polite, even to
+
+her whom he did not care for at all.
+
+She noted the composite she identified as looking just
+
+like John Scott Maze, looked like him without the "David Niven"
+
+type mustache he always wore.
+
+She also recalled he alwa's talked at a low modulation as
+
+he had
+
+adversity towards loud noise.
+
+She added, she talks loud
+
+and that was one of the things Maze did not like about her.
+
+and it she locates anything which would be of further value to the
+
+Federal Bureau of Investigation concerning Maze, she will contact
+
+the interviewing Agent and furnish it to him.
+
+In conclusion she stated in her juagment, the composite
+
+picture she identified is a picture of John Scott Maze, and Maze's
+
+complexion was even more tan than the complexion depicted in the
+
+colored composites when she last saw Maze in person in 1972.
+
+Interviewed on 4/14/30
+
+at Charlottesville, Virginia
+
+File # RH 164-167
+
+SE 164-81
+
+Date Dictated 4/16/80
+
+This document contains neither desommendations nor conclusion me he e
+
+It is the property of the FBI and is loaned to your agency semarett
+
+contents are not to be distributed outside your agency.
+
+JAN & 1 1981
+
+DB Cooper-18664
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 348
+
+FD-302 (rev.3-8-77)
+
+Sick Q
+
+FEDERAL BUREAU OF INVESTIGATION
+
+1
+
+Date of transcription
+
+4/23/80
+
+b6
+
+b7C
+
+Charlottesville, Virginia,
+
+was
+
+shown four artists' composites, two black and white and two
+
+colored, depicting the individual known as D. B. Cooper who
+
+skyjacked Northwest Orient Flight Number 305 on November 24, 1971.
+
+_viewed the four artists' composites and stated in her
+
+juagment,
+
+junglesses he sat dinite artist's composite without the
+
+_ John Scott
+
+Maze, who died of a heart attack in November. 1974, in Scottsdale,
+
+• Arizona, at the age of 59.
+
+She noted in addition to the information she furnished
+
+to the Federal Bureau of Investigation, Charlottesville, Virginia,
+
+on April 11, 1980, John Scott Maze did smoke cigarettes of the
+
+filter type but she could not recall the brand.
+
+She also noted he was always extremely polite, even to
+
+her whom he did not care for at all.
+
+She noted the composite she identified as looking just
+
+like John Scott Maze, looked like him without the "David Niven"
+
+type mustache he always wore.
+
+She also recalled he alwas talked at a low modulation as
+
+he had
+
+adversity towards loud noise.
+
+She added, she talks loud
+
+and that was one of the things Maze did not like about her.
+
+advised she has papers and photographs stored away
+
+and it she locates anything which would be of further value to the
+
+Federal Bureau of Investigation concerning Maze, she will contact
+
+the interviewing Agent and furnish it to him.
+
+In conclusion she stated in her juagment, the composite
+
+picture she identified is a picture of John Scott Maze, and Maze's
+
+complexion was even more tan than the complexion depicted in the
+
+colored composites when she last saw Maze in person in 1972.
+
+1104-0-8000
+
+Interviewed on 4/14/80
+
+at Charlottesville, Virginia
+
+File # RH 164-167
+
+SE 154-81
+
+BY SA
+
+vlr
+
+Date Dictated 4/16/80
+
+This document contains neither recommendations nor conclusions of the FBI.
+
+It is the property of the FBI and is loaned to your agency; it and its
+
+contents are not to be distributed outside your agency.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18665
+
+---
+
+## Page 349
+
+to an eate
+
+*FD-302 (rev.3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+1
+
+Set Q
+
+Date of transcription
+
+4/23/80
+
+Charlotteville, Virginia,
+
+telephone numberl
+
+turnished the following information
+
+relating to the D. B. Cooper Skyjacking case under investigation
+
+by the Federal Bureau of Investigation (FBI).
+
+viewed a television program entitled "In Search Of"
+
+which is broadcast weekly on sunday nights. She noted one of the
+
+recent broadcasts reviewed the D.B. Cooper Skyjacking case and in
+
+the presentation a composite picture of Cooper, made from
+
+information furnished by witnesses was displayed.
+
+dorer ate a tied heart ture of those auge n
+
+November, 19740
+
+related she was
+
+and whom
+
+she believes is currently residing withl
+
+Tempe, Arizona,
+
+John Scott Maze.
+
+related John Scott Maze, at the time of his death,
+
+resided in a trailer home at 1149 North 92nd Street, Scottsdale,
+
+Arizona.
+
+She noted that John Scott Maze had been employed by
+
+AlResearch, Phoenix, Arizona, as an engineer for twenty years
+
+prior to being fired in the middle 1960's for being an alcoholic.
+
+She continued after he was fired, he never held any
+
+meaningful employment to her knowledge up to his death. She
+
+added after he was fired, he used to disappear for two or three
+
+months at a time and just go out into the wilderness of Oregon ano
+
+the state of Washington to be by himself.
+
+She noted he was a "real loner" and had as little to do
+
+with other people as he could.
+
+Interviewed on 4/11/30
+
+at charlottesville,
+
+Virginia
+
+File *RE 164-167
+
+SE 164-81
+
+*is document containe neilvar recommendations nor Date Dictated a
+
+contents are not to be distributed outside your agency.
+
+JAN 2 1 1981
+
+DB Cooper-18666
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 350
+
+RH 164-167
+
+SE
+
+164-81
+
+2
+
+further stated he knew airplanes inside and out and
+
+could fly. She advised he did fly various kinds of aircraft
+
+although
+
+she did not know if he had a flying license of any kind.
+
+She added he could fly a helicopter, and on one occasion when he
+
+read about a bank robber being arrested for a robbery, he
+
+explained what the robber did wrong and how he would have done it.
+
+She noted he stated he would have used a helicopter to
+
+make his escape after the robbbery.
+
+also stated in 1967 or 1968,
+
+Maze spent a year in
+
+San Diego during which time he took sky diving lessons. She was
+
+unable to furnish the address where Maze resided during that year,
+
+she noted
+
+who currently
+
+resides in Phoenix, Arizona, visited Maze in San Diego during that
+
+time and she would
+
+know.
+
+continued, Maze had received a less than honorable
+
+discharge
+
+from the United States Army during World War II for
+
+being
+
+a "neurotic"
+
+related that in 1970, Maze made a down payment on a
+
+hotel in the southern section of the state of Washington, near the
+
+state border.
+
+She could not recall the name of the town
+
+where the
+
+hotel was located but did recall it was a
+
+small town and the town
+
+had the
+
+same name
+
+as a city located in Arizona.
+
+She continued, in 1972, Maze paid off the debt owed on
+
+the hotel and he later sold it prior to his death. She noted the
+
+person or persons who bought the hotel are currently making
+
+payments on the debt to Maze's estate for whichl
+
+I who resides in Phoenix,
+
+Arizona, collects the payments and distributes the payments among
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+added, Maze did not have any savings or means of
+
+income and it puzzled members of the
+
+family as to how Maze could
+
+purchase the hotel and live so well.
+
+b6
+
+b7C
+
+DB Cooper-18667
+
+---
+
+## Page 351
+
+RH 164-167
+
+SE 164-81
+
+3
+
+She noted he bought expensive clothes, jewelry, etc.,
+
+and always had new vehicles, including campers, which he used when
+
+he went off into the wilderness of oregon and Washington. L
+
+noted Maze also owned some property in Florida and Arizona.
+
+She added when he was
+
+fired from AiResearch in the early
+
+1.960's, he did not have any savings or assets and there was not
+
+any family wealth.
+
+further related that in 1972, Maze visited
+
+in Charlottesville, Virginia, at which time he had a new
+
+Chevrolet Elcamino pickup
+
+truck with a sleeping camper on the
+
+back.
+
+She emphasized Maze was an avid camper at home and in the
+
+wilderness by himself.
+
+She also related Maze exercised and took care of his
+
+health, having quit drinking for approximately eight years. She
+
+noted in 1972, although approximately 57 years of age, he looked
+
+about 35 years
+
+old in appearance.
+
+She added, he did
+
+not have any
+
+age wrinkles but did have some small
+
+"laugh wrinkles at the corner
+
+of his eyes" which were not real prominent.
+
+She described him as follows:
+
+Complexion
+
+Height
+
+Weight
+
+Hair
+
+Eyes
+
+Tan
+
+Approximately 5 feet 10 inches
+
+to 5 feet 11 inches
+
+Approximately 165 pounds
+
+Full head of dark brown hair
+
+which was fine in texture
+
+Blue
+
+_continued in appearance Maze looked like "a young
+
+Davia
+
+Niven"
+
+• the
+
+movie star,
+
+and wore a mustache like Niven.
+
+She
+
+added, Maze
+
+did
+
+a vehicle, he took
+
+a to door month,
+
+secretive and very methodical person who never
+
+anything impulsively. She explained if Maze was going to buy
+
+several months to decide on which vehicle to
+
+buy and he would even go so far as to study the vehicle on
+
+blueprint, test run it, and check it over completely before
+
+deciding.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18668
+
+---
+
+## Page 352
+
+waiters'
+
+RH 164-167
+
+SE 164-81
+
+4
+
+She added he always thought things out completely before
+
+acting.
+
+In her judgment Maze was
+
+extremely intelligent and could
+
+do anything he set his mind to do.
+
+also related when Mazel
+
+and he slept on the floor in the bedroom made available to him.
+
+She added, Maze was born in Kane, Pennsylvania, in
+
+September, 1915, where he was raised by a mother and a grandmöther
+
+after the death of his father when he was very young.
+
+further related, Maze had stipulated in his will
+
+that upon his death, he was not to be embalmed, he was to be put
+
+in a pine box and buried as soon as possible so that he could rot
+
+soon as he could.
+
+She added, to her knowledge, Maze's wishes were carried
+
+out and he was buried in the
+
+East-Resthaven
+
+Cemetery
+
+Scottsdale, Arizona, by Carr Mortuary, 26 East Fifth Street,
+
+Tempe, Arizona.
+
+reiterated, the composite she observed on the
+
+television program "In search af" for D. B. Cooper is identical. to
+
+_ John Scott Maze, minus his mustache.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18669
+
+---
+
+## Page 353
+
+*FD-302(rev.3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+1
+
+Date of transcription
+
+4/23/80
+
+Charlotteville,
+
+Virginia,
+
+telephone number
+
+I furnished the following informatior
+
+relating to the D. B. Cooper Skyjacking case under investigation
+
+by the federal Bureau of Investigation (FBI) •
+
+viewed a television program entitled "In Search Of"
+
+which is broadcast weekly on sunday nights. She noted one of the
+
+recent broadcasts reviewed the D.B. Cooper Skyjacking case and in
+
+the presentation a composite picture of Cooper, made from
+
+• information furnished by witnesses was displayed.
+
+in her mind a picture ofl
+
+itated the composite picture was without augstion
+
+Scott Maze, who died in scottsdale, Arizona, of a heart attack, in
+
+November,
+
+1974.
+
+relates she was
+
+and whom
+
+she believes is currentlv residing withl
+
+Tempe, Arizona,
+
+John Scott Maze.
+
+resided
+
+in
+
+_related John Scott Maze, at the time of his death,
+
+a trailer home at 1149 North 92nd Street, Scottsdale,
+
+Arizona.
+
+She noted that John Scott Maze had been employed by
+
+AiResearch, Phoenix, Arizona, as an engineer for twenty years
+
+prior to being fired in the middle 1960's for being an alcoholic.
+
+She continued after he was fired, he never held any
+
+meaningful employment to her knowledge up to his death. She
+
+added after he was fired, he used to disappear for two or three
+
+months at a time and just go out into the wilderness of Oregon ano
+
+the state of washington to be by himself.
+
+She noted he was a "real loner" and had as little to do
+
+with other people as he could.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Interviewed on 4/11/30
+
+at Charlottesville,
+
+Virginia
+
+File " RiI 161=167
+
+SE 164-81-8501
+
+< 14
+
+BY SA
+
+v11
+
+Date Dictated 4/14/80
+
+This document contains neither recommendations nor conclusions of the FBI.
+
+It is the property of the FBI and is
+
+loaned to your agency; it and it:
+
+• contents are not to be distributed outside your agency.
+
+b6
+
+b7C
+
+DB Cooper-18670
+
+---
+
+## Page 354
+
+BT #164-26
+
+SE #164-81
+
+KPH/đđp
+
+Page 1
+
+The following investigation was conducted by sA
+
+Jand SAL
+
+on July 11, 1980:
+
+AT BUTTE, MONTANA
+
+ad-
+
+vised that he recalls a few months ago when he was watching
+
+television when a composite photograph of the individual
+
+known as D. B. COOPER appeared on the screen.
+
+He recalled
+
+at the time that the picture "jumped out", and he said to
+
+his children at the time_
+
+advised that at the time there was
+
+little doubt in his mind
+
+that the photograph appeared to be
+
+A composite photograph of D. B. COOPER was shown
+
+to
+
+and he advised that that photograph did not
+
+give him the same impression that the photograph on tele-
+
+vision had, although the composite photograph does have
+
+the same general facial characteristics asl
+
+Twas also shown a photograph of
+
+which had been taken on April 28, 1978, andl
+
+stated that is definitelyl
+
+stated that he had worked in several
+
+places withl
+
+such as New Mexico, Utah, and Colorado,
+
+but he recalls that in each instance
+
+Idid not last
+
+very long.
+
+described
+
+and
+
+therefore
+
+did not last very long
+
+on any one job.
+
+also advised that
+
+]was
+
+but he had a good personality and was a
+
+very likeable individual who could talk people out of
+
+just about anything.
+
+advised that he was not aware of any
+
+experience on the part of
+
+relative to flying or
+
+using parachutes; however, he did feel that
+
+be capable of attempting such an act as hijacking an air-
+
+plane and subsequently bailing out of it.
+
+vised that
+
+Twas the kind of a person that would do
+
+b6.
+
+b7C
+
+b61
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7c
+
+104-81-8502
+
+DB Cooper-18674
+
+---
+
+## Page 355
+
+BT #164-26
+
+SE #164-81
+
+KPH/ dap
+
+Page 2
+
+just about anything that the
+
+average person would not
+
+consider doing.
+
+Based on a comparison of the photograph of
+
+land the composite photograph of D. B.
+
+COOPER, L
+
+could not see that much similarity;
+
+however, he reiterated that when he saw the composite
+
+on television, his immediate impression was that the
+
+composite photograph was in fact
+
+utilized.
+
+advised that in a week or two he
+
+plans to take a trip to New Mexico and other areas
+
+where he has previously worked. He advised that while
+
+making this trip he would make some inquiries with old
+
+friends as he meets them to see if anyone knows of the
+
+location ofl
+
+I and if he determines the loca-
+
+tion, he will advise the FBI.
+
+b6
+
+b7C
+
+b6 /
+
+b7C
+
+DB Cooper-18675
+
+---
+
+## Page 356
+
+BT #164-26
+
+SE #164-81
+
+RKP/ dep
+
+1
+
+The following investigation was conducted by
+
+SAI
+
+AT HELENA, MONTANA
+
+On August 1, 1980 ,L
+
+residing at
+
+Helena, Montana, was contacted at his place
+
+of employment as a
+
+for FRONTIER AIRLINES,
+
+Helena Air Terminal.
+
+the bar at the cOLoNyAl iN, telena, Montana, drinking in
+
+relaxing when he began talking with
+
+a man, who identified
+
+himself asl
+
+claimed to be al
+
+who was just passing through Helena.
+
+advised that
+
+I that he was working
+
+airline hijacking.
+
+in MIN, and that the been discussing
+
+I stated that
+
+claimed
+
+to have heard from some waitress
+
+in a town in the State
+
+of Washington,
+
+that D. B. COOPER, the individual who
+
+hijacked the plane seven or so years ago in the State of
+
+Washington, was still alive and might be living in Europe.
+
+stated thatl
+
+Idid not mention the
+
+name of the waitress, the town in the State of Washington
+
+where the waitress worked or
+
+did he provide any specifics
+
+as to the real identity of D. B. COOPER or location where
+
+he "might" be living in Europe.
+
+name, which
+
+stated that he does not recall the man's
+
+after this incident. he, L
+
+I checked with the COLONIAL
+
+INN, and
+
+was not registered at the COLONIAL
+
+INN on May 31, 1980.
+
+stated additionally that he recalls that
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1980, he leftL
+
+the lounge at the COLONIAL INN, and since this incident,
+
+164-31-8503
+
+DB Cooper-18676,
+
+---
+
+## Page 357
+
+BT #164-26
+
+SE #164-81
+
+RKP / dep
+
+2
+
+he has not seen
+
+nor has he seen
+
+Montana.
+
+in the COLONIAL INN LOUNGE
+
+It any other location in Helena
+
+stated that if he was going to guess,
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18677
+
+---
+
+## Page 358
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+• Teletype
+
+• Facsimile
+
+AIRTEL
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority.
+
+• Routine
+
+CLASSIFICATION:
+
+D TOP SECRET
+
+• SECRET
+
+• CONFIDENTIAL
+
+O UNCLAS EF TO
+
+O UNCLAS
+
+Date _9/3/80
+
+b6
+
+b7C
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+FROM : SAC, BUTTE (164-26) (RUC)
+
+SUBJECT: NORJAK (A)
+
+00: Seattle
+
+Bufile #164-2111
+
+fust
+
+Re Salt Lake City airtel to Butte, 6/5/80.
+
+Enclosed for Seattle are the original and one
+
+copy each of two investigative inserts setting forth
+
+investigation conducted at Butte, Montana, on 7/11/80,
+
+and at helena, montana, on 8/1/80.
+
+It is noted that
+
+tele-
+
+phonically contacted the Butte Office on 5/31/80, stating
+
+that he had been talking to an individual by the name
+
+of_
+
+at the COLONIAL INN in Helena, Montana.
+
+The results of that conversation are set forth in the
+
+enclosed insert at Helena, Montana.
+
+ARMED AND DANGEROUS.
+
+- Seattle (Enc. 4) MAO
+
+- Butte
+
+KPH/ dep
+
+(3)
+
+b6
+
+b7C
+
+104-81-0
+
+SEARCHED..
+
+500-
+
+INDEXES
+
+SERIALIZIR ALRI En
+
+SEP 1 0 1980
+
+FBI - SEATTLE
+
+Transmitted
+
+DB Cooper-18678
+
+Per
+
+(Number)
+
+(Time)
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402 .
+
+---
+
+## Page 359
+
+and des
+
+AIRTEL
+
+9/3/80
+
+TO
+
+SAC, SEATTLE (164-81)
+
+FROM : SAC, BUTTE (164-26) (RUC)
+
+SUBJECT:
+
+NORJAK (A)
+
+00: Seattle
+
+Bufile $164-2111
+
+Re Salt Lake City airtel to Butte, 6/5/80.
+
+Enclosed for Seattle
+
+are the original and one
+
+copy each of two investipative inserts setting forth
+
+Investigation conducted at Butte
+
+Montana, on 7/11/80,
+
+and at Helena, Montana, on 8/1/80.
+
+It is noted thatl
+
+phonically contacted the Butte Office on 5/31/80, stating
+
+b6
+
+b7C
+
+enclosed insert at Helena, Montana.
+
+ARMED AND DANGEROUS.
+
+Q) - Seattle (Enc. 4) (AM)
+
+1 - Butte
+
+KPH/ dep
+
+(3)
+
+14-51-2201
+
+12C080
+
+SEP 1 0 1980
+
+DB Cooper-18679
+
+---
+
+## Page 360
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+TO
+
+: SAC, SEATTLE (164-81),
+
+FROM : SC, RUBY TOMASEK
+
+NOR JACK
+
+SUBJECT:
+
+D. B. COOPER
+
+LOOK ALIKE
+
+CAA
+
+DATE: 9/3/80
+
+b6
+
+b7C
+
+On 8/39/80,
+
+Republic, Wash.
+
+tel#:1
+
+telephonically contacted
+
+the Seattle office reflecting the following information:
+
+was observed by the name of
+
+advised thati a look alike ofD. B. COOPER,
+
+same sun glasses, ese around 39 vears of are. Lives in
+
+Republic, Wash. with his_
+
+at one time. He is a dead ringer
+
+from the composite sketches of D. B. COOPER.
+
+was retired from the service and is familier in KC135's
+
+and B 52's and has some knowledge in jumping in Vietnam.
+
+has moved from Denver, Colorado to Republic,
+
+and now plans on moving from Republic, Wash. on
+
+9/3/80, to unknown destention.
+
+This is being filed for information purposes.
+
+b6
+
+b6
+
+b7C
+
+(1)
+
+rt
+
+161-81-8
+
+SEARCHED_
+
+INDEXED _
+
+SERIALIZEDA
+
+MOKFILED
+
+$ 1980
+
+b6
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Pran
+
+DB Cooper-18680
+
+---
+
+## Page 361
+
+UNITED STATES GOVERNMENT
+
+Memorandum
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+TO
+
+: SAC, SEATTLE (164-81),
+
+FROM
+
+: SO, RUBY TOMASEK
+
+NOR JACK
+
+SUBJECT:
+
+D. B. COOPER
+
+LOK ALIKE
+
+CAA
+
+DATE: 9/3/80
+
+b6
+
+b7C
+
+On 8/39/80
+
+Republic, Wash.
+
+telephonically contacted
+
+ne seattle office reflecting the tollowins Intormation
+
+_B. COOPER,
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Republic, Wash., with hisL
+
+was retired from the service and is familier in iCl35's
+
+and B 52's and has some knowledge in jumping in Vietnam.
+
+has moved from Denver, Colorado to Republic,
+
+Wash.
+
+and now plans on moving from Republic, Wash. on
+
+9/3/80, to unknown destention.
+
+This is being filed for infornation purposes.
+
+(1)
+
+164-81-8505
+
+SEARCHED
+
+SEN & 1980
+
+FBI-SEATTLE
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+DB Cooper-18681
+
+---
+
+## Page 362
+
+DATE: 9/8/80
+
+UNITED STATES GOVERNMENT
+
+memorandum
+
+00: SEATTLE
+
+TO: SAC, SEATTLE (164-81)
+
+Re Minneapolis airtel to Director dated 6/18/80.
+
+Review of this matter at Minneapolis reflects that no further
+
+information has been furnished regarding possibility of interviewing
+
+b6
+
+b7C
+
+In Rue status until ten tenge turner, teads are fortncoming regarding
+
+in RUc status until
+
+b6
+
+b7C
+
+@ Seattle
+
+1 - Minneapolis
+
+WMP / amh
+
+(3)
+
+164-81-8506
+
+INDEX!
+
+SEALED SAND SALl
+
+SEP 1 2 1980
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings Plan
+
+#U.S.Government Printing Office:1976-241-530/3018
+
+DB Cooper-18682
+
+OPTIONAL FORM NO. 10
+
+(REV. 7-76)
+
+GSA FPMR (41 CFR) 101-11.6
+
+---
+
+## Page 363
+
+9/8/80
+
+SAC, MINNEAPOLIS (164-73) (RUC)
+
+NORJACK
+
+00: SEATTLE
+
+SAC, SEATTLE (164-81)
+
+Re Minneapolis airtel to Director dated 6/18/80.
+
+review of this matter at Minneapolis reflects that no furthe
+
+nformation has been furnished regarding possibility of interviewin
+
+In view of the above, Minneapolis Division is placing this case
+
+in RUC status until such time as further leads are forthcoming regarding
+
+the possibility of interviewing
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+@ Seattle
+
+1 - Minneapolis
+
+WMP / amh
+
+(3)
+
+164-81-55060
+
+SEP 1 2 1980
+
+DB Cooper- 18683
+
+---
+
+## Page 364
+
+ED-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+1.
+
+Date of transcription - 6/17,80
+
+Billings, Montana,
+
+furnished the following information during
+
+a telephone call
+
+from Billings to Los Angeles, California:
+
+advised that approximately one
+
+year ago
+
+(1979),
+
+also known as
+
+an American
+
+Indian now
+
+residing in
+
+Kyle, south Dakota, confided he was
+
+planning to eventually publish a book regarding his past
+
+activities and adventures and
+
+excerpt from what was purported to be al
+
+of his
+
+forthcoming book. The excerpt was an account ofl
+
+hi jacking
+
+of a commercial airliner in the early 1970's using
+
+the name "Cooper."
+
+According tol
+
+, this document
+
+contained
+
+many details of the crime and were represented
+
+byL
+
+to be in account of his own accomplishment of the
+
+hijacking
+
+stated
+
+Lis a heavv drinker and
+
+shortly thereafter,
+
+made additional
+
+references to the hijacking and cautioned
+
+_that no one
+
+else was aware of his proposed book and his accomplishment
+
+of this crime.
+
+was unable to recall all of the details
+
+of the
+
+of the hijacking, but remembered there
+
+was an
+
+explanation of the planning of the crime, Including
+
+use of
+
+the name "Cooper" and a reference to the
+
+perpetrator
+
+parachuting from the aircraft.
+
+explained she did not questionl
+
+in any detail concerning this matter in 1979 as she was
+
+unaware at that time of a hijacking of a commerical airliner
+
+in Seattle involving a suspect using the name "Cooper" who
+
+parachuted from the plane while in flight.
+
+According to
+
+served in the United
+
+States Marine Corp from approximately
+
+and was
+
+a combat veteran of two or more tours in Vietnam.
+
+He claims
+
+to have been parachute trained in the Marine Corp and is
+
+believed to have been active in "skydiving" subsequent to his
+
+discharge from the military service.
+
+Investigation on_
+
+6/9/80
+
+by SA
+
+1104-81-851
+
+at.
+
+Los Angeles, California
+
+- File SERTALIZED A FILED
+
+JAN 2 1 1981
+
+BAR
+
+_ Date dictated.
+
+DB Cooper-18684
+
+This document contains neither recommendations nor conclusions of the FBl. It is the property of the FBli and is loaned to your auency:
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+1019
+
+7
+
+.b6
+
+b7C
+
+---
+
+## Page 365
+
+LA
+
+164-497
+
+further stated she has learned through
+
+casual conversations with several unidentified Americar
+
+Indians in South Dakota, thatL
+
+reportedly gave Large
+
+sums of money to the American Indian Movement (AIM) in
+
+South Dakota in the
+
+early 1970's. It was reported that
+
+Amiotte's donations
+
+b6
+
+b7C
+
+b7D
+
+was described as follows:
+
+b6
+
+b7C
+
+b7D
+
+Name
+
+Alias
+
+Race
+
+Date of birth
+
+Parents
+
+Amercian Indian
+
+Residence
+
+Employment
+
+father (deceased)
+
+mother; possibly
+
+residing at Rosebud, South Dakota
+
+withl
+
+Kyle,
+
+South Dakota
+
+Little Would School
+
+explained that this matter has been on
+
+her mind for several months and after considerable deliberation
+
+has elected to furnish this information to the FBI.
+
+During the above interview
+
+requested that
+
+her identity be protected.
+
+b6
+
+b7C
+
+b7D
+
+2
+
+DB Cooper-18685
+
+---
+
+## Page 366
+
+i ED-30,7 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+1.
+
+Date of transcription - 6/17/80
+
+_ Billings, Montana,
+
+furnished the following information during a telephone call
+
+from Billings to Los Angeles, California:
+
+advised that approximately one year ago
+
+(1979)
+
+an American
+
+Indian now residing in Kyle, south Dakota, confided he was
+
+planning to eventually publish a book regarding his past
+
+activities and adventures and
+
+excerpt from what was purported to be aL
+
+forthcoming book.
+
+The excerpt was an account ofl
+
+hacking of a commercial airliner in the carly 1970's using
+
+the name "Cooper."
+
+According tol
+
+this document
+
+contained many details of the crime and were represented
+
+Dyl
+
+hijacking.
+
+icking to be in acount of his on comput amenter to
+
+shortly thereafter,
+
+made additional
+
+references to the hijacking and cautioned
+
+_ that no one
+
+else was aware of his proposed book and his accomplishment
+
+of this crime.
+
+_was unable to recall all of the details
+
+of the
+
+of the hijacking, but remembered there
+
+explanation of the planning of the crime, including
+
+use of the name "Cooper" and a reference to the
+
+perpetrator
+
+parachuting from the aircraft.
+
+explained she did not question_
+
+in any detail concerning this matter in 1979 as she was
+
+unaware at that time of a hijacking of a commerical airliner
+
+in Seattle involving a suspect using the name "Cooper" who
+
+parachuted from the plane while in flight:
+
+According to
+
+served in the United
+
+States Marine Corp from
+
+approximately
+
+and was
+
+a combat veteran of two or more tours in Vietnam.
+
+He claims
+
+to have been parachute trained in the Marine Corp and is
+
+believed to have been active in
+
+"skydiving" subsequent to his
+
+discharge from the military service.
+
+b6
+
+b7C
+
+b7D
+
+1b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+bTD.
+
+Investigation on -
+
+6/9/80
+
+1104-81-8507,01?
+
+at_Los Angeles, California
+
+_File # Ios Angeles 164-497
+
+bY SA
+
+/BAR
+
+_ Date dictated_
+
+6/11/80
+
+DB Cooper-18686
+
+This document contains neither recommendations nor conclusions of the FBl. It is the uroperty of the FBi and is loaned to vour agency:
+
+b7C
+
+---
+
+## Page 367
+
+FD-36 (Rov. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+[J Teletype
+
+Facsimile
+
+• AIRIEL
+
+PRECEDENCE:
+
+Immediate
+
+Priority
+
+• Routine:
+
+CLASSIFICATION:
+
+O TOP SECRET
+
+• SECRET
+
+• CONFIDENTIAL
+
+• UNCLAS EF TO
+
+• UNCLAS
+
+Date
+
+9/9/80
+
+TO:
+
+FROM:
+
+SUBJECT:
+
+SAC, SEATTLE (164-81)
+
+SAC, LOS ANGELES (164-497) (7) (RUC)
+
+•NORJAK
+
+(A)
+
+00: Seattle
+
+Re Los Angeles teletype to the Bureau, 6/11/80.
+
+Enclosed for Seattle are agent interview notes
+
+and the original FD-302 setting forth information reported
+
+to Los Angeles byl
+
+on 6/9/80: Enclosed for
+
+Minneapolis is one copy of this FD-302 for assistance in
+
+conducting additional leads that might be requested by the
+
+office of origin.
+
+AS
+
+set forth in referenced Los Angeles teletype.
+
+is concerned
+
+that any interview of
+
+aka,. confrontingl
+
+with
+
+allegations
+
+reported by
+
+will immediately identify the source
+
+of this information.
+
+Accordingly,
+
+has requested her identity be protected.
+
+• LOS
+
+Angeles, again suggests that any follow-up
+
+interview: of
+
+be coordinated through the Los Angeles
+
+case agent. in this matter who will be able to arrange for
+
+her interview in Montana via telephone from Los Angeles.
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+•2
+
+- Seattle (Enc. 2)204
+
+Minneapolis (Enc.
+
+1)
+
+Los Angeles
+
+jeh/rmt
+
+(5)
+
+164-
+
+8 - 85
+
+SEARCHED.
+
+INDEXED
+
+SERIALIZED
+
+SEP 2 2 1980
+
+FBI. SEATTLE
+
+Approved:
+
+Transmitted
+
+(Number)
+
+Per
+
+(Time)
+
+# U.S.
+
+GOVERNMENT PRINTING OFFICE: 1980-305-DB/&00per-18688
+
+---
+
+## Page 368
+
+LA 164-497
+
+For further information of Seattle, on 8/28/80,
+
+with federal express,
+
+Memphis, Tennessee, telephone number |
+
+porarily staying at a Los Angeles motel prior to his returr
+
+to Memphis, telephonically furnished the following information
+
+to Los Angeles:
+
+advised that on the evening of 8/28/80,
+
+he viewed an NBC news special concerning captioned matter
+
+that the artists conception of D.B. Cooper closely
+
+esembles an individual known to him as
+
+According
+
+was once al
+
+for American Flyers Charter Airlines
+
+and during that time period lived in Manquin, Virginia.
+
+Upon termination of employment with this company,
+
+reportedly moved to Richmond, Virginia, tol
+
+He was an Air-Force officer
+
+and Vietnam veteran familiar
+
+with weather, parachutes, survival techniques, and all systems
+
+on the 727 aircraft, according to
+
+believes that
+
+through
+
+California.
+
+Ican now be reached
+
+Pleasanton,
+
+LoS Angeles indices contain no information identifiable
+
+with
+
+based on
+
+information developed to date.
+
+Leads to interview
+
+are being left to
+
+the discretion of the office
+
+of origin.
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+b6
+
+b7C
+
+- 2*-
+
+DB Cooper-18689
+
+---
+
+## Page 369
+
+FD-36 (Rov. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+[I Teletype
+
+[ Facsimile
+
+AIRTEL
+
+PRECEDENCE:
+
+• Immediate
+
+• Priority
+
+• Routine
+
+CLASSIFICATION:
+
+TOP SECRET
+
+SECRET
+
+CONFIDENTIAL
+
+UNCLAS EFTO
+
+UNCLAS
+
+Date
+
+9/9/80
+
+-
+
+TO:
+
+FROM:
+
+SUBJECT:
+
+SAC, SEATTLE
+
+(164-81)
+
+SAC, LOS ANGELES (164-497) (7) (RUC)
+
+NORJAK
+
+(A)
+
+00:
+
+Seattle
+
+Re LoS Angeles teletype to the Bureau, 6/11/80.
+
+Enclosed for Seattle are agent interview notes
+
+and the original FD-302 setting forth information reported
+
+to Los Angeles byl
+
+on 6/9/80. Enclosed for
+
+Minneapolis is one copy of this FD-302 for assistance in
+
+conducting additional leads that might be requested by the
+
+office of origin.
+
+As set forth in referenced Los Angeles teletype,
+
+is concerned that any interview ofl
+
+confronting
+
+with allegations reported byl
+
+will immediately identify the source of this information.
+
+Accordingly,
+
+has requested her identity be protected.
+
+Los Angeles again suggests that any follow-up
+
+interview of
+
+be coordinated through the Los Angeles
+
+case agent in this matter who will be able to arrange for
+
+her interview in Montana via telephone from Los Angeles.
+
+no ten i
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+b6
+
+b7C
+
+b7D
+
+2- Seattle (enc. 2)
+
+Minneapolis
+
+1
+
+(Enc.
+
+1)
+
+- Los Angeles
+
+jeh/rmt
+
+(5)
+
+1104-81-850
+
+SEP 2 2 1980
+
+• FBI - SEATTLE
+
+Aproned: JUC
+
+Transmitted
+
+(Number)
+
+# U.S. GOVERNMENT PRINTING OFICE: 1980-315-750 5402
+
+DB Cooper-18690
+
+---
+
+## Page 370
+
+SF0015 •253D401Z
+
+PP SE WF
+
+DE SF 015
+
+P 080200Z. SEPT 80
+
+FM SAN FRANCISCO (164-220) (P) (SQ:10)
+
+•Suspic
+
+TO SEATTLE (164-81) (PRIORIIY?
+
+WASHINGION FIELD OFFICE (164-301) (PRIORITY).
+
+BT
+
+UNCLAS
+
+NORJAK; CAA - HIJACKING, 00: SEATTLE.
+
+RE SI. LOUIS TELETYPE TO SAN FRANCISCO, AUGUST 25, 1980:
+
+ON SEPTEMBER 8, 1980,
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+VETERANS ADMINISIRATION (VA), SAN
+
+FRANCISCO, CALIFORNIA, ADVISED THAT
+
+ACCOUNT
+
+NUMBERI
+
+IS CURRENTLY RECEIVING 1DD PERCENI DISA-
+
+BILITY IN THE AMOUNT OF $950 PER MONTH.
+
+DISABILITY
+
+INCLUDES
+
+VA RECORDS INDICATE
+
+PENSION IS SENT IN CARE OF
+
+RAINIER BANK, 801 MAIN STREET, VANCOUVER, WASHINGTON.
+
+LEADS: SEATTLE AT VANCOUVER, WASHINGION. CONTACI SECURITY
+
+b6
+
+b7C
+
+164-81-8509
+
+b7C
+
+DB Cooper-18692
+
+---
+
+## Page 371
+
+PAGE TWO
+
+SF 164-220
+
+UNCLAS
+
+OFFICE, RAINIER BANK TO DETERMINE ADDRESS OR WHEREABOUTS OF
+
+SUTEL RESULTS TO WASHINGTON FIELD.
+
+b61
+
+b7C
+
+BI
+
+DB Cooper-18693
+
+---
+
+## Page 372
+
+SF0@15 2530401Z
+
+PP'SE UF
+
+DE SF 0,15
+
+P 08020CZ. SEPT 80
+
+FM SAN FRANCISCO (164-220) (P) (SQ-10)
+
+IO SEATTLE (1G4-81) (PRIORITY)
+
+WASKINGION FIELD OFFICE (164-301) (PRIORITY)
+
+BT
+
+UNCLAS
+
+NORJAK; CAA - HIJACKING, 00: SEATTLE.
+
+RE SI. LOUIS TELETYPE TO SAN FRANCISCO, AUGUST 25, 1980.
+
+ON SEPTEMBER 8, 1980,
+
+b6
+
+b7C
+
+VETERANS ADMINISIRATION (VA); SAN
+
+FRANCISCO, CALIFORNIA, ADVISED THAT
+
+ACCOUNT
+
+NUMBER
+
+IS CURRENTLY RECEIVING IOO PERCENT DISA-
+
+BILITY IN THE AMOUNT OF $950 PER MONTH.
+
+DISABILITY
+
+INCLUDES
+
+VA RECORDS INDICATE
+
+PENSION IS SENT IN CARE OF
+
+RAINIER BANK, 801 MAIN STREET, VANCOUVER, WASHINGTON.
+
+LEADS: SEATLE ÄT VANCOUVER, WASHINGION. CONTACT SECURITY
+
+b7C
+
+1104:81-8609
+
+ERIALZEN de Sal
+
+1980
+
+ĐB Cooper-18694
+
+---
+
+## Page 373
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+Teletype
+
+Facsimile
+
+Alrtel
+
+PRECEDENCE:
+
+• Immediate
+
+I Priority
+
+@ Routine
+
+CLASSIFICATION:
+
+I TOP SECRET
+
+I SECRET
+
+I CONFIDENTIAL
+
+O UNCLAS EF TO
+
+• UNCLAS
+
+Date
+
+9/12/80
+
+IO:
+
+SAC, SEATTLE (164-81)
+
+FROM: N/WUSAC, MIAMI (164-552) (RUC)
+
+SUBJECT: NORJAK (A)
+
+00: SEATTLE
+
+b6 1
+
+b7C
+
+Re
+
+Re San Francisco airtel to Miami 4/15/80; and Miami
+
+airtel to Seattle, 5/1/80.
+
+Miami Investigation developed no additional information
+
+regarding
+
+b6
+
+b7C
+
+b6
+
+(2) - Seattle
+
+- Miami
+
+JJĐ: les
+
+(3.)
+
+161-51-85110
+
+Approved:
+
+Transmitted
+
+Per
+
+(Number)
+
+(Time)
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305 BE E8ổper-18696
+
+---
+
+## Page 374
+
+Airtel
+
+9/12/80
+
+TO:
+
+FROM:
+
+SAC, SEATILE (164-81)
+
+SAC, MIAMI (164-552) (RUC)
+
+SUBJECT: NORJAK (A)
+
+00: SEATILE
+
+Re
+
+-==
+
+Re San Francisco airtel to Miami 4/15/80; and Miami
+
+airtel to Seattle, 5/1/80.
+
+Miami Investigation developed no additional information
+
+regarding
+
+b7C
+
+b6
+
+b7C
+
+2 = Seattle
+
+1 - Miami
+
+JUD:leS
+
+(3)
+
+164-81-9510
+
+DB Cooper-18697
+
+---
+
+## Page 375
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+MEMORANDUM
+
+DATE: 9/17/80
+
+TO
+
+FROM
+
+: SAC, SEATTLE
+
+(164-81)
+
+Richne
+
+SAC,
+
+RICHMOND (164-167) - RUC -
+
+SUBJECT: UNSUB, aka
+
+D. B. Cooper;
+
+ET AL;
+
+NORJAK
+
+00: SEATTLE
+
+fat?
+
+Re Seattle letter to Richmond dated 5/2/80, and Richmond
+
+airtel to Seattle dated 9/3/80.
+
+Enclosed for seattle are two color candid photographs
+
+depicting
+
+one photograph is of_
+
+alone,
+
+and the other photograph is
+
+a group photograph depicting
+
+in viewer's extreme right.
+
+on 5/16/80,
+
+Sutherlin, Virginia, who is
+
+TSambo's Restaurant,
+
+Riverside Drive, Danville, Virginia,
+
+advised that she had
+
+recently seen a TV program depicting D. B. Cooper, and after
+
+giving it considerable thought, it came to her mind that a person
+
+she knows as
+
+closely resembles D. B. Cooper.
+
+said she first metL
+
+about 9/79, when he visited her
+
+restaurant as a customer.
+
+continued to frequent
+
+Sambo's Restaurant, and during this time she had many
+
+conversations with
+
+him,
+
+and in some of these conversations he
+
+said that he was a
+
+U.S. Forest Service employee employed at White
+
+Oak Mountain, near Danville, Virginia.
+
+She said he has since
+
+left the Danville area and is believed to have gone to Charlotte,
+
+North Carolina, and then to Columbia, South Carolina.
+
+She said
+
+she also heard recently that he might be in Atlanta,
+
+Georgia,
+
+first name only known to her as
+
+b6 !
+
+b7C
+
+66 |
+
+b7C
+
+2-Seattle (ENCE 2NLCA
+
+-Richmond
+
+DOD/ads
+
+(3)
+
+16481-8511
+
+SEP 2 2 1980
+
+FBI - SEATTLE
+
+DB Cooper-18698
+
+---
+
+## Page 376
+
+RH 164-167
+
+is also in the business of
+
+and has furnished her a card showingl
+
+"Commercial and Private Accounts"
+
+The card had the name
+
+Charlotte, North Carolina
+
+telephonel
+
+company is known asl
+
+She said shel
+
+from him giving
+
+down payment but never received thel
+
+She described
+
+as being a White male, age approximately 35-40 well
+
+reserved)e 5'
+
+I1", 180 lbs.,
+
+light brown hair with blondish
+
+tint, blue eyes, and very smooth skin tones.
+
+said
+
+land frequently
+
+associated with
+
+an employer of hers.
+
+She said that
+
+On 5/16/80,
+
+and furnished the same
+
+information as didl
+
+described
+
+is beino in his late 40'.
+
+9' 10", 140-145 Ibs..
+
+complexion.
+
+said thatl
+
+stated that he had photographs of
+
+furnish them on
+
+a later date.
+
+Both
+
+smoked Marlboro cigarettes.
+
+on 5/19/80, two photographs were received from
+
+which are enclosed.
+
+was interviewed
+
+and would
+
+Subsequent to above interviews,
+
+furnished the
+
+following information concerning the above mentionedl
+
+She
+
+said she did not know his first name but found a slip of paper
+
+containing his telephone number as being Atlanta, Georgia,
+
+and lives at|
+
+Clarkstown.
+
+Subsequent contacts with
+
+_revealed no
+
+further information concerning
+
+Jand both advised that
+
+they have not seen him since recently being interviewed.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6!
+
+b7C
+
+b6!
+
+b7C
+
+DB Cooper-18699
+
+---
+
+## Page 377
+
+RH 164-167
+
+Because of age discrepancy of L
+
+present age
+
+and D. B. Cooper's age in 1971, the setting forth of leads from
+
+information received from
+
+is being left to
+
+the discretion of the office of origin.
+
+b6
+
+b7C
+
+3
+
+DB Cooper-18700
+
+---
+
+## Page 378
+
+UNITED STATES DEPARTMENT OF JUSTICE
+
+FEDERAL BUREAU OF INVESTIGATION
+
+MEMORANDUM
+
+DATE: 9/17/80
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+FROM
+
+: SAC, RICHMOND (164-167) - RUC -
+
+SUBJECT: UNSUB, aka
+
+D. B. Cooper;
+
+ET AL;
+
+NORJAK
+
+00: SEATTLE
+
+Re Seattle letter to Richmond dated 5/2/80, and Richmond
+
+airtel to Seattle dated 9/3/80.
+
+Enclosed for Seattle are two color candid photographs
+
+depicting
+
+I One photograph is of
+
+alone,
+
+and the other photograph
+
+is a group photograph depicting
+
+in viewer's
+
+extreme right.
+
+on 5/16/80,
+
+Sutherlin, Virginia, who isL
+
+Sambo's Restaurant,
+
+Riverside Drive, Danville, Virginia, advised that she had
+
+recently seen a TV program depicting D. B. Cooper, and after
+
+giving it considerable thought, it came to her mind that a person
+
+she knows asl
+
+closely resembles D. B. Cooper.
+
+said she first metl
+
+about 9/79, when he visited her
+
+restaurant as a customer.
+
+continued to frequent
+
+Sambo's Restaurant, and during this time she had many
+
+conversations with him, and in some of these conversations he
+
+said that he was a U.S. Forest Service employee employed at White
+
+Oak Mountain, near Danville, Virginia. She said he has since
+
+left the Danville area and is believed to have gone to Charlotte,
+
+North Carolina, and then to Columbia, South Carolina.
+
+She said
+
+she also heard recently that he might be in Atlanta,.
+
+with a
+
+first name only known to her as
+
+Georgia.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Z Seattle (ENCI 2
+
+- Richmon
+
+DOD/das
+
+(3)
+
+1124-81-8511
+
+SEARCHER DO NO
+
+NEA BETT
+
+SEP 2 2 1980
+
+FBI - SEATTLE
+
+DB Cooper-18701
+
+---
+
+## Page 379
+
+FD-302 (REV. 3-8-77)
+
+FEDERAL BUREAU OF INVESTIGATION
+
+9/26/80
+
+Date of transcription.
+
+b6
+
+b7C
+
+Investigation on-
+
+was contacted at his residenco,L
+
+which time he provided the following information:
+
+at
+
+Sometime during the last week of August, 1980 or
+
+the first week of September, 1980 ho observed a telovision
+
+propram entitled "In Search Of" and it probably was on a
+
+weekend whon the program was broadcast on local television.
+
+The program consisted of a roview of an airplane hijacking
+
+that occurred botween Portland, Oraron and Seattle, Washington
+
+in approximately November, 1971. The name of the individual
+
+involved in the hijacking
+
+; was D. B. COOPER and during, the
+
+prorram a composite drawing of D. B. COOPER was shown.
+
+Immediatoly upon viowing the composite drawing of
+
+D. B. COOPER it ruminded him of an Individual he had sorvod
+
+with on activa duty in the United States Marine Corps. In
+
+the past he had seon numerous newspapur articles and
+
+television proprams concerning the hijacking case but had
+
+never seen a composite drawing of D. B. COOPER.
+
+Inmediately upon secing the composite drawing of
+
+D. B. COOPER, he boran looking through a photo album of the
+
+25lst Marine Fighter Squadron that he had served with.
+
+On
+
+page
+
+of the photo album he located a photorraph
+
+of al
+
+who is very similar in appearances to the
+
+composite drawinr, of D. B. COOPER shown on the television
+
+program. He subsequently obtainca a copy of a paperback
+
+book entitled "Great Unsolved Crimas" from the public library
+
+In Sidney, Montana. The book is published by Scholastic Book
+
+Services, New York City, and was written by LOUIS SOLOMON.
+
+Page four of the book contains a composite drawinn of D. B.
+
+COOPER with sun glasses and Is also vory similar in appearances
+
+with the
+
+who served with the 25lst Marine Fighter
+
+SE 164-81-5512
+
+9/24/80
+
+Sidney, Montana
+
+BT 164-26
+
+_at.
+
+_ File #_
+
+SAL
+
+/eft
+
+9/26/80
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+by_
+
+_Date dictated
+
+This document contains neither recommendations nor conclusions of the FBI. It is the property of the FBI and is loaned to your agency;
+
+it and its contents are not to be distributed outside your agency.
+
+DB Cooper-18704
+
+---
+
+## Page 380
+
+SE 164-81
+
+BT 164-26
+
+2
+
+sooner an the her ananation of the compostio draving e Dosea
+
+COOPER and the photorraph of L
+
+disclosed
+
+that they are very similar in appearances.
+
+explained that although he vividly recalls
+
+he is unable to recall his first name or any
+
+specifle backaround infornation concerning him. He only racalls
+
+was from a larre city, appeared to be a very
+
+Intolligent person, and was always vory
+
+calm and confident in
+
+his work. The only raally close contact he had withl
+
+was on one occassion in long, Kong when they and sevoral others
+
+from the squadron went to a bar.
+
+There wora several British
+
+soldiers and sailors in the bar whon
+
+When sovoral of the British
+
+soldiers and sailors appared ready
+
+to fightl
+
+because of
+
+his remark,l
+
+and no
+
+fight resulted.
+
+66|
+
+b7C
+
+b6
+
+b7C
+
+furthor explained that he was on active duty
+
+with
+
+. the
+
+United States Marinc Corps from
+
+He does not recalll
+
+ares raine Coxps Phavant, boon In his basie
+
+training unit but does rocall that
+
+was assigned to the
+
+251st Marine Fighter Squadron about the same time that he was in
+
+the latter part of
+
+The 251st Marine Fighter Squadron was origionally
+
+stationed at the Marine Alr Base, El Toro, California, prior to
+
+being transferrad to Hawall In about Oetober, 1959.
+
+In November,
+
+1959 thoy were stationed at Atsugi, Japan for several months
+
+before being stationed at the Cubi
+
+Point Naval Air Station,
+
+Luzon, Phillipines.
+
+They subsequently served on board the
+
+aircraft carriers USS Midway, USS Oriskany, and USS Ranger bofore
+
+returning to the United States in January, 1961.
+
+b6
+
+b7C
+
+DB Cooper-18705
+
+---
+
+## Page 381
+
+=
+
+SE 164-81
+
+BT 164-26
+
+3
+
+the photo album of the 251st Marine Fightor Squadron
+
+containing a photorraph ofl
+
+was published in
+
+approximately
+
+Joy the DAITO ART
+
+PRINTING COMPANY, Lta., 19.2 Chrome, Shintomi-cho, Chuo-ku,
+
+Tokyo, Japon, and it is
+
+bellef that the number of
+
+copios in existence is very limited.
+
+noted that the photo album Indicates and it
+
+1s his recollection that_
+
+Jwas assimned to the
+
+Para-Loft (Safety and Survival Section) of the 251st Marine
+
+Firhtor Squadron. Mombers of this section were experts on
+
+maintonance of fightor plane ejections systens, parachute
+
+packing, survival equipment and training. As he recalls, all
+
+of them were experts in sky diving and rescue operations at
+
+sea and on land.
+
+Necording to
+
+ho is unable to racall the
+
+namos and backrround of the nombers of the Para-Loft Section
+
+or identify any close associates ofl
+
+I however, the
+
+photo album contains photographs of the following listed
+
+individuals who served in the Para-loft Soction with
+
+1.
+
+2.
+
+3.
+
+4.
+
+5.
+
+7.
+
+8.
+
+9 .
+
+10.
+
+stated that ho recalls that LEE HARVEY OSWALD,
+
+who assassinated President JOHN F. KENNEDY, was stationed at
+
+the Naval Air Station, Atsurt, Japan, In L
+
+25lst Warine Fighter Squadron was stationed there but he has no
+
+Jand OSWALD may have known
+
+each other.
+
+b6
+
+b7C
+
+b7C
+
+b6 |
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+DB Cooper-18706
+
+---
+
+## Page 382
+
+SE 164-81
+
+BI 164-26
+
+4
+
+Copies were made of the photograph of
+
+as it appears on page
+
+of the 251st Marine Fighter
+
+squadron photo album and the albun was left in the possession
+
+stated he is sure that
+
+and
+
+other members of the 25lst Marine Fighter Squadron can be
+
+further identified through U. S. Marine Corps records, however,
+
+he will male the photo album available to the Foderal Burzau of
+
+Investigation at any time it is folt that it is needed.
+
+He is
+
+nlso aware that some of the individuals assigned to the 251st
+
+Marine Firhter Squadron at the same time he was, are now
+
+deceased and he
+
+could possibly assist in idontifying these
+
+Individuals.
+
+b6
+
+b7C
+
+DB Cooper-18707
+
+---
+
+## Page 383
+
+FD-36 (Rev. 5-22-78)
+
+FBI
+
+TRANSMIT VIA:
+
+I Teletype
+
+D Facsimile
+
+00 AIRTEL
+
+PRECEDENCE:
+
+[J Immediate
+
+I Priority
+
+• Routine
+
+CLASSIFICATION:
+
+• TOP SECRET
+
+I SECRET
+
+I CONFIDENTIAL
+
+• UNCLAS EFT O
+
+• UNCLAS
+
+Date
+
+10/2/80
+
+b6
+
+b7C
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+FROM : SAC, BUTTE (164A-26) (RUC)
+
+SUBJECT:
+
+NORJAK
+
+00:
+
+Seattle
+
+Enclosed for Seattle are the following:
+
+riginal and one copy of an FD-302
+
+interview setting forth the result:
+
+of the interview with
+
+Sidney, Montana;
+
+Agen is envervier notes concernie
+
+of a photograph of
+
+member of the 251st Marine Fighter
+
+Squadron.
+
+Since the Butte Division is not in possession of
+
+ufficient information to properly evaluate and eliminate
+
+as a suspect in the captioned matter, Seattle
+
+Division is requested
+
+to
+
+review photographs of
+
+seattle (ENC. SS-(AN)
+
+1
+
+-Butte
+
+16i
+
+EFT/dep
+
+(3)
+
+-71-8513
+
+it.
+
+OCT 7 1980
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6|
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Approved:
+
+Transmitted
+
+Per
+
+(Number)
+
+(Time)
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18708
+
+---
+
+## Page 384
+
+BT #164A-2б
+
+and the information provided by
+
+dvise the Butte Division of the results
+
+and
+
+b6
+
+b7C
+
+- 2% -
+
+DB Cooper-18709
+
+---
+
+## Page 385
+
+* AIRTEL
+
+10/2/80
+
+TO
+
+: SAC, SEATTLE (164-81)
+
+FROM : SAC, BUTTE (164A-26) (RUC)
+
+SUBJECT:
+
+NORJAK
+
+00: Seattle
+
+Enclosed for Seattle are the following:
+
+Original and one copy of an FD-302
+
+interview setting forth the results
+
+of the interview with
+
+Sidney, Montana;
+
+Agent's interview notes concerning
+
+the interview ofl
+
+b7C
+
+I former
+
+b6|
+
+b7C
+
+b6
+
+b70
+
+Since the Butte Division is not in possession oi
+
+jutticient intormation to properly evaluate and eliminat
+
+Division is requested to review photographs of
+
+Tas a suspect even contin ee Seattle
+
+2) - Seattle (Enc. 5) (AM)
+
+- Butte
+
+EFT/ dep
+
+(3)
+
+164-81-5513
+
+b6
+
+b7C
+
+OCT Y
+
+1980
+
+S. 5в Cooper-18710
+
+---
+
+## Page 386
+
+TO
+
+SAC, WrO ( 164-0)
+
+DAIT:
+
+6/26/80
+
+PROM : SC STEPHEN F. FOYE
+
+SUBJEGI: D.B. COOPER; CRIME ABOARD AIRCRAFT:
+
+INFORMATION CONCERNING.
+
+On 6/26/80, at approximately 2:05 v.M.
+
+an individual
+
+• identified as
+
+Officers
+
+Service Club,
+
+located at 21St & R St. N.W., telephone num-
+
+ber:
+
+which is a private club, telephonically
+
+Telephotolay
+
+contacted the Washington Field Office (WFO), regarding
+
+an individual known as
+
+who is currently residing
+
+at the club.
+
+stated that
+
+who is described as being
+
+45-50 years old, 5'11" to
+
+recently wore a
+
+6 ft tall, medium build, and until
+
+beard, has become very suspicious to him.
+
+fact that
+
+stated further, that his suspicions stem from the
+
+while appears to be a " bum "
+
+, withdraws
+
+substantial amounts of money. from a bank in Vancover, Wash-
+
+ington. Further, that since the recent recovery of some
+
+money from the mountains
+
+in Washington,
+
+has been
+
+afraid of the FBI and the
+
+The writer advised the caller that if this information
+
+was deternined to be of any significance that a representa-
+
+tive of the FBI would contact him at the above mentioned
+
+private telephone number.
+
+Above is being submitted for further discretion.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b3
+
+b7E
+
+b6
+
+b7C
+
+SFF: sfF
+
+164-301-
+
+1104-81-
+
+SEARCHED.
+
+INDEXED
+
+SERIALIZED US FILED....
+
+1C, 1 6, 1980
+
+Buy U.S. Savings Bonds Regularly on the Payroll
+
+b6
+
+b7C
+
+" DB Cooper 18712
+
+---
+
+## Page 387
+
+1'O
+
+: SAG, WRO ( 164-0 )
+
+DATE:
+
+6/26/80
+
+PROM : SC STEPHEN E. FOYE
+
+SUBJACT:
+
+D.B.COOPER; CRIME ABOARD AIRCRAFT:
+
+INFORMATION CONCERNING.
+
+• On 6/26/80, at approximately 2:05 °p.m.,
+
+an individual
+
+identified as
+
+Officers
+
+Service Club.
+
+located at 21St & R St. N.W., teleshone num-
+
+ber:
+
+which is a private club: telephonically
+
+contacted the
+
+Washington Field Office (WFO), regarding
+
+an individual known as
+
+who is currently residing
+
+at the club.
+
+b6
+
+b7C
+
+stated that
+
+I who is described as being
+
+45-50 years old, 5'11" to 6 ft tall, medium build, and until
+
+recently wore a
+
+beard, has become very suspicious
+
+to him.
+
+stated further, that his suspicions sten from the
+
+fact that
+
+while appears to be a " bum "
+
+, withdraws
+
+substantial amounts of money fron a bark in Vancover, Wash-
+
+ington. Further, that since the recent recovery of some
+
+money from the mountains in Washington,
+
+has been
+
+afraid of the FBI and the
+
+The writer advised the caller that if this information
+
+deternined to be of any significance that a representa-
+
+tive of the FBI would contact him at the above mentioned
+
+private telephone number.
+
+Above is being submitted for further discretion.
+
+b6
+
+b7C
+
+b3
+
+b7E
+
+b6
+
+b7C
+
+SFF: sff
+
+164-301-
+
+.27
+
+Buy U.S. Savings Bonds Regularly on the Payroll Savings
+
+DB Cooper-18713
+
+164-81-8514
+
+b6
+
+b7C
+
+---
+
+## Page 388
+
+EM:
+
+TO:
+
+Cy Priority
+
+LY. Rodtine
+
+LN SECRET
+
+[ CONFIDENTIAL
+
+D UNCLAS EF TO
+
+LT UNCLAS
+
+Date
+
+7/3/80
+
+FBI WASHINGTON FIELD
+
+_(164-301)
+
+(P)
+
+FBI SEATTLE ROUTINE
+
+0025
+
+UNCLAS
+
+UNSUB; AKA, D. B, COOPER; CRIME ABOARD AIRCRAFT.
+
+ON JUNE 26, 1980, AN INDIVIDUAL KNOWN ASL
+
+OFFICERS SERVICE CLUB,
+
+WASHINGTON, D,C. (WDC), TELEPHONICALLY CONTACTED THE WASH-
+
+INGTON FIELD OFFICE, (WFO) REGARDING AN INDIVIDUAL.
+
+KNOWN AS
+
+WHO CURRENTLY RESIDES AT
+
+THE CLUB.
+
+b6
+
+b7C
+
+DESCRIBED
+
+AS 45-50 YEARS OLD; 5'II"
+
+TO 6' TALL, MEDIUM BUILD, EXCELLENT PHYSICAL CONDITION
+
+AND UNTIL RECENTLY WEARING A BEARD.
+
+THAT
+
+ADVISED
+
+IS AN AVID WOODSMAN AND PURPORTED PARATROOPER.
+
+KEEPS TO HIMSELE AND IT IS UNKNOWN WHERE HE GOES
+
+EACH DAY, HOWEVER, IT IS BELIEVED HE IS UNEMPLOYED.
+
+A PHOTOGRAPH OF SEVERAL COMPOSITE DRAWINGS WERE
+
+SHOWN TO
+
+AND REVEALED THAT THE BASIC
+
+CHARACTERISTICS AND HAIR LINE OF
+
+IMIFO
+
+FACIAL
+
+SEARCHED-
+
+ARE
+
+SENTIAR
+
+TO,
+
+2LH E0 08700%
+
+JUL
+
+Approved:
+
+RO: neh
+
+(2)
+
+M/RS
+
+Transmitted
+
+SEARCRED...
+
+SINA
+
+-SERIALIZE:
+
+(Number)
+
+(Time)
+
+* U.S. GOVERNMENT PRINTING
+
+DB Cooper-18714
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+4-3012
+
+1-8515
+
+INDEEED..
+
+1084
+
+b6
+
+b7C
+
+113
+
+---
+
+## Page 389
+
+12 Facsimile
+
+Lant 34
+
+Priority
+
+I Routine
+
+SECRET?
+
+CONFICENTIAL
+
+UNCLAS GÈTO
+
+UNCLAS
+
+Date
+
+PAGE TWO DE WE 0075 UNCIAS
+
+THE PHOTOGRAPHS,
+
+ADVISED THAT
+
+GREY HAIR AND WEARS IT RATHER LONG.
+
+HAS PREMATURE
+
+HAS THREATENED
+
+TWO OF THE TENANTS AT THE OFFICERS SERVICE CLUB AND IS
+
+CONSIDERED BYT
+
+TO HAVE A PERSONALITY CONDUCIVE TO
+
+A POSSIBLE HIJACKING APTEMET.
+
+ADVISED THAT|
+
+HAS $900 PER MONTH WIRED
+
+TO THE DISTRICT OF COLUMBIA NATIONAL BANK, VDC, OF WHICH
+
+$250 IS DEDUCTED FOR HIS RENT. THE REMAINING $650 IS
+
+CASHED 3Y
+
+AND GIVEN TO
+
+ADVISED THAT THE BOARD OF DIRECIORS IS
+
+PRESSURING HIM TO ASK
+
+TO GIVE UP HIS APARIMENT AS
+
+SOON AS POSSIBLE, HOWEVER, WEO HAS REQUESTED HIM TO
+
+DELAY THIS ACTION.
+
+JIS KNOWN TO HAVE A PLEASANT VOICE AND ALWAYS
+
+WEARS "OUTDOOR CLOTHING" AS IE HE WERE GOING HIKING IN
+
+THE MOUNTAINS.
+
+IS NEVER SEEN WITHOUT A BACK
+
+PACK, HIS SKIN IS DESCRIBED AS FAIR AND HIS EYES ARE
+
+BLUE.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b7C
+
+Approved:
+
+Transmitted
+
+(Number)
+
+Per
+
+(Time)
+
+# U.S. GOVFRNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18715
+
+---
+
+## Page 390
+
+Lacsimila
+
+a Priority
+
+_ Roatine
+
+CJ SECRET
+
+L CONFIDENTIAL
+
+DO UNCLAS EF TO
+
+L UNCLAS
+
+Date
+
+PACE THREE DE WE 0075 U N
+
+CLAS
+
+ON WHICH
+
+PRODUCED THE RENTAL REGISTRATION FORM
+
+INDICAPED HIS PAST ADDRESS AS
+
+JUNEAU, ALASKA,
+
+HIS PRIOR MILITARY WAS LISTED AS
+
+UNITED STATES ARMY,
+
+JHAD HEARD FROM ANOTHER
+
+ADVISED THAT
+
+TENANT'S CONVERSATION THAT A FEDERAL BUREAU OF IN
+
+VESTIGATION AGENI HAD RENTED A ROOM AT THE OFFICERS
+
+CLUB WHILE HE WAS IN THE WASHINGTON, D.C, AREA, AT
+
+1:30 A.M, THAT EVENING
+
+WAS AWAKENED BY
+
+WHO WANIED TO STAY IN HIS APARIMENT THAT NIGHT.
+
+WAS AFRAID THAT THE FEDERAL BUREAU OF INVESTIGATION
+
+WAS WAITING FOR HIM AN HIS APARIMENT, WHEN
+
+DEPARTED THE VICINITY AND
+
+REFUSED HIM ENTRY,
+
+DID NOT RETURN UNTIL THE NEXT EVENING,
+
+INVESTIGATION AT WASHINGTON, D.C., REVEALED THAT
+
+DOES IN FACT WIRE $900 MONTHLY FROM THE RAINIER
+
+NATIONAL, BANK, 1 RAINTER SQUARE, SEATTLE, WASHINGTON.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b/C
+
+pproved:
+
+Transmitted
+
+(Number)
+
+(Time)
+
+Per
+
+# U.S, GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18716
+
+---
+
+## Page 391
+
+R 40 Melekupe
+
+DJ Facsimila
+
+I Priority
+
+[/ Roating
+
+C COP SECRET
+
+I SECRET
+
+CJ CONFYDENTIAL
+
+DJ UNCLAS EFTO
+
+UNCLAS
+
+Date
+
+PAGE FOUR DE WE 0075 UNCLAS
+
+ADVISED THAT
+
+WAS GREATLY INTERESTED
+
+IN THE NEWSPAPER ARTICLE DESCRIBING THE $3,000 THAT
+
+WAS FOUND BY CHILDREN DURING A RECENT FAMILY PICNIC IN
+
+THE PORTLAND AREA,
+
+BELIEVES THAT|
+
+IS POSSINLY CAPTIONED .
+
+Do B, COOPER, HIS BELIEF IS BASED UPON 1)
+
+INTEREST IN THE RECOVERED MONEY: 2) THE $900
+
+THAT IS
+
+WIRED FROM A WASHINGTON BANK; 3) HIS FEAR OF FEDERAI
+
+BUREAU OF INVESTIGATION AGENTS: 4) HIS "OUTDOOR" EXPERTISE;
+
+5) HIS PARATROOPER EXPERIENCE AND 6) HIS PHYSICAL AGE
+
+AND FACIAL CHARACTERISTICS THAT COINCIDE WITH COMPOSITE
+
+DRAWINGS OF D. B. COOPER,
+
+'SEATTLE IS REQUESTED TO EXPEDITIOUSIY SUBPOENA THE
+
+BANK RECORDS OF
+
+AT RAINIER NATIONAL BANK,
+
+SHATTLE, WASHINGTON, AND ASCERTAIN 1) THE AMOUNT OF
+
+MONEY IN THAT ACCOUNT; 2) THE AMOUNT OF MONEY IN ANY
+
+OTHER ACCOUNT HELD BY OR FOR
+
+3)
+
+SOCIAL SECURITY NUMBER AND DATE OF BIRTH;
+
+4) ANY INFORMATION CONCERNING MILITARY SERVICE.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Approved:
+
+wasing y=
+
+Transmitted
+
+(Number)
+
+(Time)
+
+Per
+
+I U.S. COVERNMENT PRINTING OFFICE: 1980-305-750/5102
+
+DB Cooper-18717
+
+---
+
+## Page 392
+
+Facsimile
+
+L Immediate
+
+I Priority
+
+Lad Routine
+
+I TOP SECRET
+
+SECRET
+
+I CONFIDENTIAL
+
+- UNCLAS EFTO
+
+• UNCLAS
+
+Date
+
+PAGE FIVE DE WE 0075 UNCIAS
+
+SEATTLE WILI ALSO EXPEDITIOUSLY HANDLE CREDIT
+
+AND CRIMINAL CHECKS CONCERNING
+
+IN ADDITION
+
+TO CHECKING NCIC AND CCH FOR OUTSTANDING WARRANTS.
+
+INASMUCH AS TIME IS OE THE ESSENCE, SEATTLE WILL
+
+TELEPHONICALLY CONTACI WASHINGTON FIELD OFFICE SPECIAL
+
+AGENT
+
+CONCERMING THE ABOVE FOR
+
+APPROPRIATE ACTION,
+
+BT
+
+$0075
+
+WUNN
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+Approved:
+
+Transmitted
+
+DB Cooper-18718
+
+(Number)
+
+(Time)
+
+Per
+
+# U.S. GOVERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+---
+
+## Page 393
+
+(• Fuesimile
+
+CaPricity
+
+C3. Routine
+
++99075566461
+
+L SECRET
+
+Cy CONTIDENTIAL
+
+LI UNCLAS EF TO
+
+CXI UNCLAS
+
+7/3/80
+
+Date
+
+FBI WASHINGTON FIELD
+
+_(164-302)
+
+(P)
+
+FBI SEATTLE ROUTINE IT
+
+0025
+
+FM:
+
+TO:
+
+BT
+
+UNCLAS
+
+UNSUB: ARA, DA B, COOPER; CRIME ABOARD AIRCRAFT.
+
+ON JUNE 26, 1930, AN INDIVIDUAG KNOWN AS
+
+OFFICERS SERVICE CLUB,
+
+MASHINGTON, D.C. (WDC) • TETEPHONICALLY CONTACTED THE WASH
+
+INGTON FIELD OFFICE, (WIO) REGARDING AN INDIVIDUAL,
+
+KNOWN
+
+AS
+
+WHO CURRENTIN RESIDES AI
+
+THE CLUB.
+
+b6
+
+b7C
+
+DESCRIBED
+
+AS 45-50 YEARS OLD; 5'1I"
+
+TO E' TALE, MEDIUM BUILD, EXCELLENT PHYSICAL CONDITION :
+
+AND UNTIL RECENTLY WEARING A BEARD.
+
+ADVISED
+
+THAT
+
+IS AN AVID WOODSMAN AND PURPORTED PARATROOPER.
+
+KEEPS TO HIMSELE AND IT IS UNKNOWN WHERE HE GOES
+
+EACH DAY, HOWEVER, IT IS BELIEVED HE IS UNEMYLOYED.
+
+A PHOTOGRAPH OF SEVERAL COMPOSITE DRAWINGS WERE
+
+SHOWN TO
+
+AND REVEALED THAT THE BASIC FACIAL
+
+SEARCHES:
+
+CHARACTERISTICS AND HAIR LINE OF.
+
+ARE
+
+SINZHAR
+
+2hE0 007ch
+
+JUL
+
+4-3012
+
+..-.
+
+157 Pa'AN
+
+b6
+
+b7C
+
+b7C
+
+RO: neh
+
+(?)
+
+Approved:
+
+Tranomitted - mber
+
+COVERSE PRINTING CrACO45.0272515
+
+DB Cooper-18719
+
+---
+
+## Page 394
+
+ese rie"
+
+3830.
+
+DOB
+
+INVA
+
+CN
+
+DORBIWFG2
+
+b6
+
+b7C
+
+21041237ER33
+
+b6
+
+b7C
+
+* IC
+
+WANT PB1X
+
+804-3
+
+/ S7
+
+SEARCHEO
+
+SEKIL229
+
+JuL B
+
+9 57 PM 00
+
+1ot 813
+
+i:. 1 6 1980
+
+SERME PATRIARA MO..
+
+DB Cooper-18724
+
+b6
+
+b7C
+
+_",=
+
+---
+
+## Page 395
+
+gi hợc Sạie Bia AE 1
+
+v soun poe atoe99
+
+wonf srcharue
+
+irelal
+
+bucsgurog
+
+TEN F
+
+AW, DO FB IWFOO. NAM
+
+DOFGIUFO0
+
+NO
+
+Ne 3C
+
+WANT
+
+DOB
+
+b6
+
+b7C
+
+LW .DOFBIWFOO.NAM
+
+HC F91WF66
+
+INC IC
+
+HANT FBI/
+
+b6
+
+b7C
+
+1664-
+
+304-3
+
+SEARCHSO com.
+
+SERIALIZEO -
+
+JUL B 9 57 PM'80
+
+b6
+
+b7C
+
+164-81-85160
+
+-OME-MUNIEIVI FRIVTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18725
+
+---
+
+## Page 396
+
+X AIRIES
+
+«"""i
+
+C9: M÷9191"3
+
+l en. 45-12%
+
+70280
+
+PLACCHORT ERE YEA
+
+STINE LETTE EIEGURPKINE SECTZON
+
+BAC, W0O-( 164-301)
+
+"'i"
+
+110;
+
+FROM:
+
+UNSUB,
+
+aka
+
+D.E. COOPER;
+
+CRIVID ABOARD AIRCRAFT
+
+on 6/26/30, an iridividual known as
+
+Ofticera Servico Club, Washington,
+
+D.C. (WICT
+
+Calephonically contacted
+
+the washington
+
+Field Office (UFO) regardimy
+
+an individual know as
+
+_who cuxiently tasidos at
+
+the club,
+
+described
+
+as 15-50 years old, 5'11" to
+
+6' talk, Bodlum bu
+
+woaring a beard.
+
+ild.
+
+excallert physical concition and until recently
+
+133 an avid wooâsman and
+
+purported paratrooper.
+
+keeps to himself
+
+and it is unknown
+
+whore he goes each day,
+
+however, it is believod he is unemployed,
+
+protograph of several composite aramings were shown to
+
+aIG
+
+evealed thut the basic facial charactoristics and
+
+hair Line
+
+are similar to the photographs.
+
+aävised that
+
+the D.C.
+
+National
+
+Bank, Woes
+
+whicl
+
+has
+
+$900 per month wired to
+
+The comaining $550 is cashad by
+
+5250 15 deducted for his rent.
+
+and given to
+
+has indicated that
+
+io cEraid of the FAr
+
+and has shom great interest in the recent discovery of $3,000 of
+
+clie
+
+original D.B. COOPER Money;
+
+found
+
+in the state of Washington
+
+advised that
+
+noming and after reading it.
+
+Leavas
+
+purchases
+
+newspaper each
+
+it In the lobby aroa of the
+
+club.
+
+3-31110011
+
+INCo
+
+164-301-
+
+(4)
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1104-81-0
+
+SEARCHES.
+
+SERIALIZED
+
+OCt 1 9 1980
+
+•ĐB Cooper-18726
+
+b6
+
+:b7C
+
+---
+
+## Page 397
+
+mo roquote soient tingorprint orarinacion be
+
+conducted en the enclosed newspager, which vas purchused and
+
+handled by
+
+Intent nevagapor printe shouid be conpared
+
+to latont printo resultiry from the original. D.B. COOTER
+
+Invastigation.
+
+In addition, a comparison of all
+
+should be compared to those of
+
+Late BEints
+
+DOE:
+
+SINCE TIME
+
+_IS OF TH ESSENCE CONCARNING FEL TRUE IDENTITY
+
+EXPEDITICUS HANDLING OF THE ENCEOSED INTENT
+
+PRINTS IS REQUESTED.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+1?!!
+
+so 2 one
+
+DB Cooper-18727
+
+---
+
+## Page 398
+
+4H0999912333
+
+14022.75674
+
+11.32
+
+ATIN: LAXENT FINGERPRINT SECTION
+
+UNSUB, aka
+
+DiB. COOPER;
+
+CRINE ABOARD AIRCRAFT
+
+On 6/26/80, an individual known as
+
+Officers Servica Club, Washington,
+
+DuLa (WDC)
+
+colephonically contacted the Washington Field Office (WFO) regarding
+
+an individual known as
+
+who currently resides at
+
+the clus.
+
+described|
+
+as 45-50 years old, 5'11" to
+
+tall, medium build, excellent
+
+physical condition
+
+wearing a beard.
+
+and until regently
+
+advised
+
+_13 an avid woodsman and
+
+purported paratrooper,
+
+keeps to himself and it is unknown
+
+where he goes each day, however, it is belleved he is unemployed.
+
+A photograph of several composite arawingatwere shown to
+
+and revealed that che basic' facial characieristios and
+
+hair line of
+
+are similar to the photographs.
+
+advised that
+
+has $900 per month wired to
+
+the
+
+D.C.
+
+National Bank, WoC,
+
+The remaining $650 is cashed by
+
+which $250 is deducted for his rent.
+
+Jand given to
+
+has indicated that
+
+is afraid of the FBT.
+
+and has shown great interest in the recent discovery of $3,000 of
+
+the original D.3. COOPER money; found in the state of Washington,
+
+advised thatl
+
+homăng
+
+alua
+
+and
+
+atter reading it.
+
+purchases a newspaper each
+
+leaves ir in the lobby area of the
+
+3 -Buxeau
+
+IMPO
+
+RPQ: PEP
+
+(4)
+
+164-301-4
+
+dates.
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+164-81-5517
+
+DB Cooper-1872g
+
+---
+
+## Page 399
+
+2159647
+
+CPAP RD. SU
+
+705092 JUL BP
+
+MACHORGAT (164-227) (RUG)
+
+ITO PRIOFITY VIA HA
+
+•TLINO PRIOPITY VIA HA
+
+COLE PRIORITY VIA HA
+
+RE W50 TELCALL TO ANCHORAGE, JULY 39, 19'1
+
+ICE ROOURERD YAD APPLISE FOR PASSPOPT AT
+
+ST 1: 060:1
+
+30R:
+
+b6
+
+b7C
+
+ALASKA MAS NO S. TERRITORY PO102:20 1051. PETITORIA!
+
+WHITT "A!"
+
+b6
+
+b7C
+
+ТО РАТЧЕТ
+
+SERIALIXED
+
+JuL 31 2 49 AN '80
+
+DB Cooper-18730
+
+16454306-4851806
+
+EARCHE
+
+INDEXED.
+
+ERIALIZER)
+
+FILED..
+
+nOT 1 6 1980
+
+CEATTLE
+
+---
+
+## Page 400
+
+11074
+
+9427
+
+13NG
+
+BORN
+
+OCCUPATION
+
+WHITE
+
+ROMALE, 'AG
+
+AND
+
+TO
+
+NO OTHER TROCITION AVAILADLE
+
+b6
+
+b70
+
+SCCURATION
+
+METALESTATISTICS.
+
+ALASKA JUSTICE INFORMATION BYGOON CHIO) CHAT COMPUTER YAR
+
+.? RECORD IN GRIMINAL FILES ON DRIVER'S LIE FUCE OU
+
+ANCHORAGE POLICE DOPT HARD0: 4:. OF
+
+IVORADE CITY DIRECTORIOS OR 1053, 1954, 105E, 18C', 197", 1075,
+
+179, AUPI
+
+IS8A MAD NO ROCO02
+
+0r
+
+DICES NEGATIVE ON-I
+
+b6
+
+b70
+
+DB Cooper-18731
+
+---
+
+## Page 401
+
+V2.B2WPSSS 313964
+
+3:65: 92 YOUL, BP
+
+CALAND PRIORITY "VIA NO
+
+PILE PRIORITY VIA HA
+
+19145
+
+199 AКAО. Б. СООРЕР, САА • MIDACK О 600 100 90901А!.
+
+APIRFOURENO MAD APPLICO FOR PASSPORT AT
+
+, 1075,
+
+FACPORT 49
+
+S0R!
+
+b7C
+
+99
+
+nando
+
+WHITT
+
+b6
+
+b7C
+
+anite 0i
+
+'
+
+GERIALIZED
+
+JuL 31 2 49 AM
+
+'80
+
+TEC
+
+164-306-147
+
+b6
+
+b7C
+
+"tutte de 9+9156576 40-71
+
+DB Cooper-18732
+
+1404-81-8518
+
+---
+
+## Page 402
+
+Ratinit
+
+Pay mone
+
+Tama Foucine
+
+SURES
+
+D CONFIPENTIAL
+
+La UNCLAS EE TO
+
+EE UNCLAS
+
+Date --
+
+12/37/80
+
+775
+
+6004
+
+FA WASHINGTON FIELD (159-301) (P)
+
+To mo, are, a tea active 1866470I W
+
+UNCLAS
+
+UNSUB; AKA D.B. COOPER; CRIME ABOARD AIRCRAFT; INFORIATION CONCERN
+
+ING (00 :WFO)
+
+RENPOTELCALE TO ANCHORAGE, 7/30/80.
+
+DATE OF BIREE
+
+PLACE
+
+OF BIRTH
+
+] HAS APPLIED FOR A PASSPORI FOR TRAVEL
+
+TO THE
+
+TUSZO A BIRTH CERTITICATE HOVEVER WOULD
+
+PROVIDE NO OTHER IDENTIFICATION FOR THE PASSPONT SERVICES, WASHING-
+
+TON, D.C.
+
+INVESIIGATION AT WASHINGTON FIELD
+
+OICE INDICATES
+
+RESIDING IN NASHINGCON
+
+D
+
+•) MAY BE INDENTICAL IO
+
+CAPTIONED
+
+SUBJECT.
+
+CONVINCED AN ASSOCIATE OF SEVEN MOLTHS TO SUPPIY A
+
+FRAUDULEN'T AFFIDAVIT FOR IDENCIFICATION PURPOSTS AT PASSPORT SERVICHS,
+
+WASHINGTON, D.C., FOR TIE EXPRESS PURPOSE OF ATTAINING
+
+A PASSPORT
+
+4
+
+woww.
+
+70
+
+202H/ 0970018
+
+(2) "
+
+Transmitted
+
+sEat
+
+SENATES
+
+4?1 13 20 06 120
+
+(Number)
+
+10%
+
+104-811
+
+8511
+
+INDEXED, ...
+
+# U.S. GOVERNMINT PRINTING
+
+SERIALIZED..
+
+1. 1 6 1980
+
+DB Cooper-18734
+
+b6
+
+b7c
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+"b7c
+
+---
+
+## Page 403
+
+54514
+
+E Priority
+
+hang Rodtina
+
+MN SECRET
+
+C CONFIDENTIAL
+
+D UNCLAS EETO
+
+EU UNCLAS
+
+Date
+
+PACE INO DE WE #0004 UNCIAS
+
+ANCHORAGE WILL VERIEY
+
+LOGICAL INVESTIGATION REGARDING
+
+BIRTH CERIFICATE AND CONDUCT
+
+36
+
+b7C
+
+BI'
+
+#0004
+
+Apperved:
+
+Transmitted
+
+Por
+
+(Number)
+
+(Tir.e)
+
+SU.S, G0ITRANSiT PRIVINO OTTiCE: 1980-305-750/5462
+
+....DB.Cooper-18735
+
+---
+
+## Page 404
+
+To Roadine
+
+Lay SECRES
+
+L CONFIDENTIAL
+
+D UNCLAS BETO
+
+ER UNCLAS
+
+Date -
+
+- 8/31/80
+
+775
+
+6004
+
+FM'WASHINGION FIELD (154-301) (P)
+
+TO SAC, ANCHORAGE (164-227)
+
+BT
+
+UNCLAS
+
+UNSUB; AKA D.B. COOPER; CRIME ABOARD AIRCRAFT; INFORMATION CONCERN
+
+ING. (00: WFO)
+
+REWFOTELCALL TO ANCHORAGE, 7/30/80.
+
+DATE OF BIRTH
+
+PLACE
+
+OF BIRTH
+
+HAS APPLIED FOR A PASSPORT FOR TRAVEL
+
+TO THE
+
+USED A BIRTH CERTIFICATE HOWEVER WOULD
+
+PROVIDE NO OTHER IDENTIFICATION FOR
+
+THE PASSPOLT SERVICES, WASHING-
+
+TON, D.C.
+
+INVESTIGATION AT WASHINGION FIELD OFFICE INDICATES|
+
+RESIDING IN WASHINGION,
+
+D. @
+
+•MAY BE: INDENTICAI IO
+
+CAPTIONED SUBJECT.
+
+CONVINCED AN ASSOCIATE OF SEVÉN MONTHS TO SUPPIY A
+
+FRAUDULENT AFFIDAVIT FOR IDENTIFICATION PURPOSES AT PASSPORT SERVICES,
+
+WASHINGION, D.C., FOR THE EXPRESS PURPOSE OF ATTAINING A PASSPORT.
+
+ZWrO
+
+166
+
+SEAr
+
+4 - 30
+
+RE 2: 7gm
+
+20ZH| 087001E
+
+SENATES-
+
+(2) -Ni om
+
+Approved:
+
+CRan BASI
+
+JuL 31
+
+Đ 20 AM
+
+Transmitted
+
+10%
+
+(Number)
+
+• Per _
+
+(Time)
+
+# U.S. GOVERNMENT PRINTING OFFICE:
+
+1980-305-750/5402
+
+„DB Cooper-18736
+
+164-81-8519
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+---
+
+## Page 405
+
+• 110"
+
+Perrinti
+
+(X) Rootine
+
+La CONFIDENTIAL
+
+I UNCLAS CETO
+
+ED UNCLAS
+
+Date
+
+8/4/80
+
+0031
+
+our see to cops one to o
+
+EM EBT. WASHINGTON FIELD (164-301)
+
+TO FBI, SEATTLE
+
+ROUTINE
+
+ST
+
+9%
+
+UNCLAS
+
+UNSUB; AKA D.B. COOPER, CRIME ABOARD AIICRAFT; INFORMATION
+
+CONCERNING
+
+RE WEO TOLCALE TO SEATILE AUGUST 4, 1980. •
+
+WASHINGTON FIELD OFFICE (NEO) INVESTIGZCION INDICANES
+
+DATE AND PLACE DE BIRJE
+
+IS PRESENILY SUSPICIED OF POSSIBLY
+
+BEING IDENTICAT TO CAPTIONED UNCUB.
+
+ACCORDING TO A WIO SOURCEI
+
+] IS CUPRENTLY PLANNING
+
+LIQUIDATION OF HIS BANK ACCOUNT FROM RANIER NATIONAL BANK
+
+(VANCOUVER WASHINGTON BRANCH) BY HAVING MONEY WIRED TO ANOTHER
+
+ACCOUNT FOR CONFIDENTIAT, LIQUIDAIION IN WASHINGTON, D.C. (WDC) :
+
+OPENED A SAVINGS ACCOUNT AT D.C. NATIONAL BANK ON AUGUST A
+
+1980 BY WIRE FROM HIS ACCOUNT' IN VANCOUVER, WASHINGTON.
+
+1686-30
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+#2-WFO
+
+REQ: 1gm
+
+(2)
+
+Approved: 2PM lo
+
+Z8E
+
+28 688nnh
+
+AIG Y
+
+6 39 g E0
+
+1164-818-
+
+520
+
+Transmitted
+
+SCARSHED,
+
+(Numbe:)
+
+(Timo)
+
+¡SERIALIZED.
+
+SU.S. COVESMEN, PRINTING OFFICER: TOAD -081980/5462
+
+cOL
+
+GENTLE
+
+DB Cooper-18738
+
+b6
+
+b7C
+
+---
+
+## Page 406
+
+Li pachimitis
+
+Li Too iy
+
+here?
+
+La Routine
+
+so do ace
+
+PAGE TWO DE WE #0031 UNCLAS
+
+LJ SECITI
+
+OU CONEDENTIAL
+
+I UNCLAS DETO
+
+May UNCIAS
+
+Date
+
+IN ADDITION TO THE ABOVE
+
+IS SEEING A PASSPORT,
+
+USING A FRAUDULENT AFFADAVIT, FOR IMMEDIATE DEPARTURE TO THE
+
+b6
+
+b7C
+
+-
+
+IT IS NOTED BY WTO THAT THE RECOVERED MONEY OF APPROXIMATELY
+
+$3000 WAS FOUND NEAR VANCOUVER, WASHINGTON. IN ADDITION,
+
+HAS APPARENTLY USED MAKE-UP AND OR OTHER DISGUISES IN FAST BANK
+
+ROELERIES TO MAKE HIMSELF LOOK AS THOUGH HE HAD DARK/SWARTHY
+
+SKIN.
+
+ALSO WAS KIIOWN TO WEAR SUNGLASSPS DURING A BANK
+
+ROBBERY AS PART OF HIS DISGUISE AND IS A HEAVY SMOKER.
+
+IS A GRADUATE OF CHEL
+
+AND
+
+WORKED ON A CONTRACT BASIS FOR BOEING AIRCRAFI UNTII
+
+HE WAS
+
+IN THE U.S. ARMY.
+
+FACIAL CHARACTERISTICS AND PIYSICAL SIZE ARE
+
+EXTREMELY CLOSE TO THOSE OF THE DESCRIBED D.B. COOPER AND
+
+PINSICAL DESCRIPTION GIVEN BE THE VICTIMS OF THE HIJACKING.
+
+HAS BEEN
+
+RECEIVING $900 PER MONTH BY WIRE FROM THE
+
+RANIER NATIONAL BANK, VANCOUVER BRANCH, 801 MAIN STREET, VANCOUVER,
+
+WASHINGTON. THE MONEY HAS BEEN DEPOSITED INTO AN ACCOUNT MANAGED
+
+BY HIS RESIDENT MANAGER, THE RESIDENT MANAGER DEDUCTS HIS REN'T
+
+AND GIVES
+
+THE REMAINING $650 IN CASH.
+
+OPENED A SAYINGE ACCOUVILGINIONES-OU AUGUSTA
+
+1980 TO PRECLUDE FURTHER INVOLVEMENT BY HIS RESIDENT MANAGER,
+
+Approved:
+
+Transmitted
+
+Per -
+
+(Nurnber)
+
+(Time)
+
+SUiS, SEIERIVENT POINTING CFFICE: 1985-305-750/5102
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+b6
+
+b7C
+
+DB Cooper-18739
+
+Stee 900-e 29818
+
+on d 39-19.1
+
+---
+
+## Page 407
+
+i'accinile
+
+Routine
+
+I CONFICENTIAL
+
+IN UNCLAS EETO
+
+UNCLAS
+
+Date
+
+PAGE THREE
+
+• DE WE #003% UNCLAS
+
+HAS BEEN KNOWN TO USE SOCIAL SECURITY ACCOUNT NUMBERS
+
+340;
+
+FOR OPENING ACCOUNTS
+
+b6
+
+b7C
+
+AND FOR IDENTIFYING DATA.
+
+LEADS:
+
+SEATTLE AT VANCOUVER, WASHINGTON. WILL EXPEDIIIOUSLY
+
+CONTACT U.S. ATTORNEX AND ACQUIRE A COURT ORDER FOR THE
+
+ACCOUNT OF
+
+DATE CE BIRTHL
+
+PLACE OF BIRTH
+
+FOR HIS ACCOUNT AT RANIER
+
+NATIONAL BANK ABOVE.
+
+WILL DETERMINE WHAT KIND(S) OF ACCOUNT(S) ARE OPEN, WHERE
+
+DEPOSITS ORIGINATE; (I.E. OVERSEAS, OTHER BANKS ETC.) HOW MUCH
+
+NONEX WAS ORIGINALLY DEPOSITED INTO THE ACCOJNT; THE AVERAGE
+
+BALANCE; AND ANY OTHER IDENPIFYING INFORMATION CONCERNINGL
+
+OR ANY OTHER PERSON WHO MAY 3E HELPINGI
+
+WITH HIS ACCOUNT (S) .
+
+IN AS MUCH AS
+
+I IS PLANNING DEPARTURE FROM THE U.S.
+
+EXPEDITIOUS HANDLING OF THIS MATTER IS REQUESTED.
+
+BIr
+
+# 0031
+
+ANNN
+
+b6
+
+b7C
+
+b6 |
+
+b7C
+
+Approved:
+
+Transmitted
+
+Numbers
+
+Per
+
+(Timer
+
+# U.S. @C.ERAMENT MRINTING OFFICE: 1990-305-750/5402
+
+DB Cooper-18740
+
+---
+
+## Page 408
+
+10 707-307
+
+Cy F'acainile
+
+My Priority
+
+[X) Rostine
+
+cn 209 20210s)
+
+MY SECRET
+
+L CONFIDENTIAL
+
+L UNGLAS EF TO
+
+EX UNCLAS
+
+Date.
+
+8/4/80
+
+0031
+
+uns can an one cos to un th
+
+FM FBI WASHINGION FIELD (164-301)
+
+TO FBI, SEATTLE ROUTINE
+
+BOURNE 9P
+
+UNCLAS
+
+UNSUB; AKA D.B. COOPER, CRIME ABOARD AIRCRAFT; INFORMATION
+
+CONCERNING
+
+A
+
+RE WEO TELCALL TO SEATILE AUGUST 4, 1980.
+
+WASHINGTON FIELD OFFICE (WEO) INVESTIGATION INDICATES
+
+DATE AND PLACE DE BIRTE
+
+IS PRESENTLY SUSPECTED OF POSSIBLY
+
+BEING IDENTICAL TO CAPTIONED UNSUB.
+
+ACCORDING TO A WEO SOURCE
+
+IS CURRENTLY PLANNING
+
+LIQUIDATION OF HIS BANK ACCOUNT FROM RANIER NATIONAL BANK
+
+(VANCOUVER WASHINGION BRANCH) BY HAVING MONEY WIRED TO ANOTHER
+
+ACCOUNT FOR CONFIDENTIAL LIQUIDATION IN WASHINGTON, D.C. (WDC) .
+
+OPENED A SAVINGS ACCOUNT AT D.C. NATIONAL BANK ON AUGUST 4
+
+1980 BY WIRE FROM HIS ACCOUNT IN VANCOUVER, WASHINGTON.
+
+REQ: 1gm
+
+(2)
+
+1686-80
+
+SEARCHED
+
+SERIALIED
+
+ZDE
+
+20 0g0nh
+
+Aus 4
+
+6 39 9 60
+
+Approved: CRM mo
+
+Transmitted
+
+(Numbe:)
+
+Per
+
+(Time)
+
+# U.S.
+
+VERNMENT PRINTING OFFICE: 1980-305-750/5402
+
+DB Cooper-18741
+
+164-81-8520
+
+b6
+
+b7C
+
+b6
+
+b7c
+
+---
+
