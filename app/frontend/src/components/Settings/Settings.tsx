@@ -20,6 +20,7 @@ export interface SettingsProps {
     useSemanticRanker: boolean;
     useSemanticCaptions: boolean;
     useQueryRewriting: boolean;
+    useReflection: boolean;
     reasoningEffort: string;
     excludeCategory: string;
     includeCategory: string;
@@ -30,6 +31,7 @@ export interface SettingsProps {
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
+    showReflectionOption: boolean;
     showGPT4VOptions: boolean;
     showVectorOption: boolean;
     useOidSecurityFilter: boolean;
@@ -57,6 +59,7 @@ export const Settings = ({
     useSemanticRanker,
     useSemanticCaptions,
     useQueryRewriting,
+    useReflection,
     reasoningEffort,
     excludeCategory,
     includeCategory,
@@ -67,6 +70,7 @@ export const Settings = ({
     showSemanticRankerOption,
     showQueryRewritingOption,
     showReasoningEffortOption,
+    showReflectionOption,
     showGPT4VOptions,
     showVectorOption,
     useOidSecurityFilter,
@@ -106,6 +110,7 @@ export const Settings = ({
     const semanticRankerFieldId = useId("semanticRankerField");
     const queryRewritingFieldId = useId("queryRewritingField");
     const reasoningEffortFieldId = useId("reasoningEffortField");
+    const reflectionField = useId("reflectionField");
     const semanticCaptionsId = useId("semanticCaptions");
     const semanticCaptionsFieldId = useId("semanticCaptionsField");
     const useOidSecurityFilterId = useId("useOidSecurityFilter");
@@ -262,6 +267,20 @@ export const Settings = ({
                         onChange={(_ev, checked) => onChange("useQueryRewriting", !!checked)}
                         aria-labelledby={queryRewritingFieldId}
                         onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.useQueryRewriting"))}
+                    />
+                </>
+            )}
+
+            {showReflectionOption && (
+                <>
+                    <Checkbox
+                        id={reasoningEffortFieldId}
+                        className={styles.settingsSeparator}
+                        checked={useReflection}
+                        label={t("labels.useReflection")}
+                        onChange={(_ev, checked) => onChange("useReflection", !!checked)}
+                        aria-labelledby={reasoningEffortFieldId}
+                        onRenderLabel={props => renderLabel(props, reasoningEffortFieldId, reasoningEffortFieldId, t("helpTexts.useReflection"))}
                     />
                 </>
             )}
