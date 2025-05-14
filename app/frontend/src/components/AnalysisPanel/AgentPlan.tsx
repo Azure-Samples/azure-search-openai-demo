@@ -54,7 +54,7 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, description }) => {
 
             <div className={styles.header}>Subqueries</div>
             {queries.length > 0 && (
-                <table>
+                <table className={styles.subqueriesTable}>
                     <thead>
                         <tr>
                             <th>Subquery</th>

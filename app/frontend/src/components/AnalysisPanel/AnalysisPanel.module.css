@@ -141,3 +141,10 @@
     background-color: #424242;
     color: #ffffff;
 }
+
+.subqueriesTable,
+.subqueriesTable th,
+.subqueriesTable td,
+.subqueriesTable tr {
+    background: #fff;
+}
