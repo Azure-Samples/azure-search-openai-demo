@@ -46,6 +46,7 @@ const Chat = () => {
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
+    const [maxSubqueryCount, setMaxSubqueryCount] = useState<number>(10);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
@@ -134,6 +135,9 @@ const Chat = () => {
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            if (config.showAgenticRetrievalOption) {
+                setRetrieveCount(25);
+            }
         });
     };
 
@@ -307,6 +311,9 @@ const Chat = () => {
                 break;
             case "retrieveCount":
                 setRetrieveCount(value);
+                break;
+            case "maxSubqueryCount":
+                setMaxSubqueryCount(value);
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -529,6 +536,7 @@ const Chat = () => {
                         promptTemplate={promptTemplate}
                         temperature={temperature}
                         retrieveCount={retrieveCount}
+                        maxSubqueryCount={maxSubqueryCount}
                         seed={seed}
                         minimumSearchScore={minimumSearchScore}
                         minimumRerankerScore={minimumRerankerScore}

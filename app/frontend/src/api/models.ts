@@ -26,6 +26,7 @@ export type ChatAppRequestOverrides = {
     exclude_category?: string;
     seed?: number;
     top?: number;
+    max_subqueries?: number;
     temperature?: number;
     minimum_search_score?: number;
     minimum_reranker_score?: number;

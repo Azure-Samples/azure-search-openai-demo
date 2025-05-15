@@ -14,6 +14,7 @@ export interface SettingsProps {
     promptTemplate: string;
     temperature: number;
     retrieveCount: number;
+    maxSubqueryCount: number;
     seed: number | null;
     minimumSearchScore: number;
     minimumRerankerScore: number;
@@ -53,6 +54,7 @@ export const Settings = ({
     promptTemplate,
     temperature,
     retrieveCount,
+    maxSubqueryCount,
     seed,
     minimumSearchScore,
     minimumRerankerScore,
@@ -104,6 +106,8 @@ export const Settings = ({
     const rerankerScoreFieldId = useId("rerankerScoreField");
     const retrieveCountId = useId("retrieveCount");
     const retrieveCountFieldId = useId("retrieveCountField");
+    const maxSubqueryCountId = useId("maxSubqueryCount");
+    const maxSubqueryCountFieldId = useId("maxSubqueryCountField");
     const includeCategoryId = useId("includeCategory");
     const includeCategoryFieldId = useId("includeCategoryField");
     const excludeCategoryId = useId("excludeCategory");
@@ -205,6 +209,21 @@ export const Settings = ({
                     onChange={(_ev, val) => onChange("minimumRerankerScore", parseFloat(val || "0"))}
                     aria-labelledby={rerankerScoreId}
                     onRenderLabel={props => renderLabel(props, rerankerScoreId, rerankerScoreFieldId, t("helpTexts.rerankerScore"))}
+                />
+            )}
+
+            {showAgenticRetrievalOption && useAgenticRetrieval && (
+                <TextField
+                    id={maxSubqueryCountFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.maxSubqueryCount")}
+                    type="number"
+                    min={1}
+                    max={20}
+                    defaultValue={maxSubqueryCount.toString()}
+                    onChange={(_ev, val) => onChange("maxSubqueryCount", parseInt(val || "10"))}
+                    aria-labelledby={maxSubqueryCountId}
+                    onRenderLabel={props => renderLabel(props, maxSubqueryCountId, maxSubqueryCountFieldId, t("helpTexts.maxSubqueryCount"))}
                 />
             )}
 

@@ -30,6 +30,7 @@ export function Component(): JSX.Element {
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
+    const [maxSubqueryCount, setMaxSubqueryCount] = useState<number>(10);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
@@ -101,6 +102,9 @@ export function Component(): JSX.Element {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            if (config.showAgenticRetrievalOption) {
+                setRetrieveCount(25);
+            }
         });
     };
 
@@ -134,6 +138,7 @@ export function Component(): JSX.Element {
                         include_category: includeCategory.length === 0 ? undefined : includeCategory,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
+                        max_subqueries: maxSubqueryCount,
                         temperature: temperature,
                         minimum_reranker_score: minimumRerankerScore,
                         minimum_search_score: minimumSearchScore,
@@ -190,6 +195,9 @@ export function Component(): JSX.Element {
                 break;
             case "retrieveCount":
                 setRetrieveCount(value);
+                break;
+            case "maxSubqueryCount":
+                setMaxSubqueryCount(value);
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -341,6 +349,7 @@ export function Component(): JSX.Element {
                     promptTemplateSuffix={promptTemplateSuffix}
                     temperature={temperature}
                     retrieveCount={retrieveCount}
+                    maxSubqueryCount={maxSubqueryCount}
                     seed={seed}
                     minimumSearchScore={minimumSearchScore}
                     minimumRerankerScore={minimumRerankerScore}
