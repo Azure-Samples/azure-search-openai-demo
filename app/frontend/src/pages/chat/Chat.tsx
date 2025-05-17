@@ -135,9 +135,6 @@ const Chat = () => {
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
-            if (config.showAgenticRetrievalOption) {
-                setRetrieveCount(25);
-            }
         });
     };
 
