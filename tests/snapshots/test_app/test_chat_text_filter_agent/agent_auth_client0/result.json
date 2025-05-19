@@ -17,7 +17,7 @@
                 ],
                 "props": {
                     "filter": "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))",
-                    "max_docs_for_reranker": 150,
+                    "max_docs_for_reranker": 500,
                     "reranker_threshold": 0
                 },
                 "title": "Use agentic retrieval"
