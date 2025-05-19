@@ -128,6 +128,13 @@ This process does *not* delete your previous model deployment. If you want to de
 This feature allows you to use reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
 To enable reasoning models, follow the steps in [the reasoning models guide](./reasoning.md).
 
+## Using agentic retrieval
+
+⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md).
+
+This feature allows you to use [agentic retrieval](https://learn.microsoft.com/en-us/azure/search/search-agentic-retrieval-concept) in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
+
+
 ## Using different embedding models
 
 By default, the deployed Azure web app uses the `text-embedding-3-large` embedding model. If you want to use a different embedding model, you can do so by following these steps:
