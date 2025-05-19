@@ -132,7 +132,7 @@ To enable reasoning models, follow the steps in [the reasoning models guide](./r
 
 ⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md).
 
-This feature allows you to use [agentic retrieval](https://learn.microsoft.com/en-us/azure/search/search-agentic-retrieval-concept) in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
+This feature allows you to use agentic retrieval in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
 
 
 ## Using different embedding models
