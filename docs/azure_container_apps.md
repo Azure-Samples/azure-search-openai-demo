@@ -49,8 +49,8 @@ The default workload profile is Consumption. If you want to use a dedicated work
 azd env AZURE_CONTAINER_APPS_WORKLOAD_PROFILE D4
 ```
 
-For a full list of workload profiles, please check [here](https://learn.microsoft.com/azure/container-apps/workload-profiles-overview#profile-types).
-Please note dedicated workload profiles have a different billing model than Consumption plan. Please check [here](https://learn.microsoft.com/azure/container-apps/billing) for details.
+For a full list of workload profiles, please check [the workload profile documentation](https://learn.microsoft.com/azure/container-apps/workload-profiles-overview#profile-types).
+Please note dedicated workload profiles have a different billing model than Consumption plan. Please check [the billing documentation](https://learn.microsoft.com/azure/container-apps/billing) for details.
 
 ## Private endpoints
 

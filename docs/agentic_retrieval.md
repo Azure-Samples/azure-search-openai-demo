@@ -18,7 +18,6 @@ See the agentic retrieval documentation.
 
    Set the environment variables for your Azure OpenAI GPT deployments to your reasoning model
 
-
    ```shell
    azd env set USE_AGENTIC_RETRIEVAL true
    ```
@@ -28,6 +27,7 @@ See the agentic retrieval documentation.
    You can configure which model agentic retrieval uses. By default, gpt-4o-mini is used
 
    For gpt-4o:
+
    ```shell
    azd env set AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT searchagent
    azd env set AZURE_OPENAI_SEARCHAGENT_MODEL gpt-4o

@@ -134,7 +134,6 @@ To enable reasoning models, follow the steps in [the reasoning models guide](./r
 
 This feature allows you to use agentic retrieval in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
 
-
 ## Using different embedding models
 
 By default, the deployed Azure web app uses the `text-embedding-3-large` embedding model. If you want to use a different embedding model, you can do so by following these steps:
