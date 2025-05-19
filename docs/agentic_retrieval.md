@@ -6,7 +6,7 @@ This repository includes an optional feature that uses agentic retrieval to find
 
 ### Supported Models
 
-See the [agentic retrieval documentation](https://learn.microsoft.com/en-us/azure/search/search-agentic-retrieval-how-to-create).
+See the agentic retrieval documentation.
 
 ### Prerequisites
 

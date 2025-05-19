@@ -17,7 +17,7 @@
                 ],
                 "props": {
                     "filter": null,
-                    "max_docs_for_reranker": 150,
+                    "max_docs_for_reranker": 500,
                     "reranker_threshold": 0
                 },
                 "title": "Use agentic retrieval"

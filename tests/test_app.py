@@ -520,7 +520,7 @@ async def test_chat_text_agent(agent_client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["context"]["thoughts"][0]["props"]["max_docs_for_reranker"] == 150
+    assert result["context"]["thoughts"][0]["props"]["max_docs_for_reranker"] == 500
     assert result["context"]["thoughts"][0]["props"]["reranker_threshold"] == 0
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
