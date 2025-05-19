@@ -94,6 +94,7 @@
             "high": "Høj"
         },
         "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
+        "useAgenticRetrieval": "Brug agentisk hentning",
         "useGPT4V": "Brug GPT vision model",
         "gpt4VInput": {
             "label": "GPT vision model input",
@@ -143,6 +144,7 @@
         "retrievalMode": "Indstiller søgemodus for forespørgslen i Azure AI Search. `Vektorer + Tekst (Hybrid)` bruger en kombination af vektorsøgning og fuldtekstsøgning, `Vektorer` bruger kun vektorsøgning, og `Tekst` bruger kun fuldtekstsøgning. Hybrid er generelt optimalt.",
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",
         "useOidSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers OID.",
-        "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper."
+        "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

@@ -98,6 +98,7 @@
             "high": "Alto"
         },
         "useSuggestFollowupQuestions": "Sugerir preguntas de seguimiento",
+        "useAgenticRetrieval": "Usar la recuperación agéntica",
         "useGPT4V": "Usar modelo de visión GPT",
         "gpt4VInput": {
             "label": "Entradas del modelo de visión GPT",
@@ -163,6 +164,7 @@
             "Establece el modo de recuperación para la consulta de búsqueda de Azure AI. Vectores + Texto (Híbrido) utiliza una combinación de búsqueda vectorial y búsqueda de texto completo, Vectores utiliza solo la búsqueda vectorial y Texto utiliza solo la búsqueda de texto completo. Generalmente, el modo híbrido es óptimo.",
         "streamChat": "Transmite continuamente la respuesta a la interfaz de usuario del chat mientras se genera.",
         "useOidSecurityFilter": "Filtra los resultados de búsqueda en función del OID del usuario autenticado.",
-        "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado."
+        "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

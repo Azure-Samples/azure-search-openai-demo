@@ -83,6 +83,7 @@
         "minimumSearchScore": "Minimum search score",
         "minimumRerankerScore": "Minimum reranker score",
         "retrieveCount": "Retrieve this many search results:",
+        "maxSubqueryCount": "Max subqueries",
         "includeCategory": "Include category",
         "includeCategoryOptions": {
             "all": "All"
@@ -98,6 +99,7 @@
             "high": "High"
         },
         "useSuggestFollowupQuestions": "Suggest follow-up questions",
+        "useAgenticRetrieval": "Use agentic retrieval",
         "useGPT4V": "Use GPT vision model",
         "gpt4VInput": {
             "label": "GPT vision model inputs",
@@ -140,6 +142,8 @@
              "Sets a minimum score for search results coming back from the semantic reranker. The score always ranges between 0-4. The higher the score, the more semantically relevant the result is to the question.",
         "retrieveNumber":
              "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
+        "maxSubqueryCount":
+            "Sets the maximum number of subqueries to use for the agentic retrieval query plan.",
         "includeCategory":
             "Specifies a category to include in the search results. There are no categories used in the default data set.",
          "excludeCategory":
@@ -162,6 +166,7 @@
             "Sets the retrieval mode for the Azure AI Search query. `Vectors + Text (Hybrid)` uses a combination of vector search and full text search, `Vectors` uses only vector search, and `Text` uses only full text search. Hybrid is generally optimal.",
         "streamChat": "Continuously streams the response to the chat UI as it is generated.",
         "useOidSecurityFilter": "Filter search results based on the authenticated user's OID.",
-        "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups."
+        "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

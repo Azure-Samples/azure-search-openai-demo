@@ -98,6 +98,7 @@
             "high": "Alto"
         },
         "useSuggestFollowupQuestions": "Suggerisci domande di follow-up",
+        "useAgenticRetrieval": "Usa il recupero agentico",
         "useGPT4V": "Usa il modello GPT Vision",
         "gpt4VInput": {
             "label": "Input del modello GPT Vision",
@@ -163,6 +164,7 @@
             "Imposta la modalità di recupero per la query Azure AI Search. Vettori + Testo (Ibrido) utilizza una combinazione di ricerca vettoriale e ricerca full-text, Vettori utilizza solo la ricerca vettoriale, e Testo utilizza solo la ricerca full-text. Ibrido è generalmente ottimale.",
         "streamChat": "Trasmette in streaming la risposta all'interfaccia utente della chat man mano che viene generata.",
         "useOidSecurityFilter":"Filtra i risultati di ricerca in base all'OID dell'utente autenticato.",
-        "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato."
+        "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

@@ -98,6 +98,7 @@
             "high": "高"
         },
         "useSuggestFollowupQuestions": "フォローアップの質問を提案",
+        "useAgenticRetrieval": "使用主体性检索",
         "useGPT4V": "GPT Visionモデルを使用",
         "gpt4VInput": {
             "label": "GPT Visionモデルの入力",
@@ -160,6 +161,7 @@
             "Azure AI Searchクエリの取得モードを設定します。「ベクトル + テキスト (ハイブリッド)」はベクトル検索と全文検索の組み合わせを使用し、「ベクトル」はベクトル検索のみを使用し、「テキスト」は全文検索のみを使用します。一般的にはハイブリッド検索がお勧めです。",
         "streamChat": "生成された回答をチャットUIに対して継続的にストリームで送信します。",
         "useOidSecurityFilter": "認証ユーザーのOIDに基づいて検索結果をフィルタリングします。",
-        "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。"
+        "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

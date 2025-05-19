@@ -46,6 +46,7 @@ const Chat = () => {
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
+    const [maxSubqueryCount, setMaxSubqueryCount] = useState<number>(10);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
@@ -89,6 +90,9 @@ const Chat = () => {
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
     const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const [showChatHistoryCosmos, setShowChatHistoryCosmos] = useState<boolean>(false);
+    const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
+    const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
+
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -129,6 +133,8 @@ const Chat = () => {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowChatHistoryBrowser(config.showChatHistoryBrowser);
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
+            setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
+            setUseAgenticRetrieval(config.showAgenticRetrievalOption);
         });
     };
 
@@ -224,6 +230,7 @@ const Chat = () => {
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
                         language: i18n.language,
+                        use_agentic_retrieval: useAgenticRetrieval,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -302,6 +309,9 @@ const Chat = () => {
             case "retrieveCount":
                 setRetrieveCount(value);
                 break;
+            case "maxSubqueryCount":
+                setMaxSubqueryCount(value);
+                break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
                 break;
@@ -344,6 +354,8 @@ const Chat = () => {
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
+            case "useAgenticRetrieval":
+                setUseAgenticRetrieval(value);
         }
     };
 
@@ -521,6 +533,7 @@ const Chat = () => {
                         promptTemplate={promptTemplate}
                         temperature={temperature}
                         retrieveCount={retrieveCount}
+                        maxSubqueryCount={maxSubqueryCount}
                         seed={seed}
                         minimumSearchScore={minimumSearchScore}
                         minimumRerankerScore={minimumRerankerScore}
@@ -548,6 +561,8 @@ const Chat = () => {
                         streamingEnabled={streamingEnabled}
                         useSuggestFollowupQuestions={useSuggestFollowupQuestions}
                         showSuggestFollowupQuestions={true}
+                        showAgenticRetrievalOption={showAgenticRetrievalOption}
+                        useAgenticRetrieval={useAgenticRetrieval}
                         onChange={handleSettingsChange}
                     />
                     {useLogin && <TokenClaimsDisplay />}

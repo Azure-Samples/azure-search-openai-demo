@@ -2,17 +2,20 @@ import os
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass
-from typing import (
-    Any,
-    Callable,
-    Optional,
-    TypedDict,
-    Union,
-    cast,
-)
+from typing import Any, Callable, Optional, TypedDict, Union, cast
 from urllib.parse import urljoin
 
 import aiohttp
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
+from azure.search.documents.agent.models import (
+    KnowledgeAgentAzureSearchDocReference,
+    KnowledgeAgentIndexParams,
+    KnowledgeAgentMessage,
+    KnowledgeAgentMessageTextContent,
+    KnowledgeAgentRetrievalRequest,
+    KnowledgeAgentRetrievalResponse,
+    KnowledgeAgentSearchActivityRecord,
+)
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import (
     QueryCaptionResult,
@@ -36,16 +39,17 @@ from core.authentication import AuthenticationHelper
 
 @dataclass
 class Document:
-    id: Optional[str]
-    content: Optional[str]
-    category: Optional[str]
-    sourcepage: Optional[str]
-    sourcefile: Optional[str]
-    oids: Optional[list[str]]
-    groups: Optional[list[str]]
-    captions: list[QueryCaptionResult]
+    id: Optional[str] = None
+    content: Optional[str] = None
+    category: Optional[str] = None
+    sourcepage: Optional[str] = None
+    sourcefile: Optional[str] = None
+    oids: Optional[list[str]] = None
+    groups: Optional[list[str]] = None
+    captions: Optional[list[QueryCaptionResult]] = None
     score: Optional[float] = None
     reranker_score: Optional[float] = None
+    search_agent_query: Optional[str] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         result_dict = {
@@ -70,6 +74,7 @@ class Document:
             ),
             "score": self.score,
             "reranker_score": self.reranker_score,
+            "search_agent_query": self.search_agent_query,
         }
         return result_dict
 
@@ -246,6 +251,67 @@ class Approach(ABC):
             ]
 
         return qualified_documents
+
+    async def run_agentic_retrieval(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        agent_client: KnowledgeAgentRetrievalClient,
+        search_index_name: str,
+        top: Optional[int] = None,
+        filter_add_on: Optional[str] = None,
+        minimum_reranker_score: Optional[float] = None,
+        max_docs_for_reranker: Optional[int] = None,
+    ) -> tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
+        # STEP 1: Invoke agentic retrieval
+        response = await agent_client.retrieve(
+            retrieval_request=KnowledgeAgentRetrievalRequest(
+                messages=[
+                    KnowledgeAgentMessage(
+                        role=str(msg["role"]), content=[KnowledgeAgentMessageTextContent(text=str(msg["content"]))]
+                    )
+                    for msg in messages
+                    if msg["role"] != "system"
+                ],
+                target_index_params=[
+                    KnowledgeAgentIndexParams(
+                        index_name=search_index_name,
+                        reranker_threshold=minimum_reranker_score,
+                        max_docs_for_reranker=max_docs_for_reranker,
+                        filter_add_on=filter_add_on,
+                        include_reference_source_data=True,
+                    )
+                ],
+            )
+        )
+
+        # STEP 2: Generate a contextual and content specific answer using the search results and chat history
+        activities = response.activity
+        activity_mapping = (
+            {
+                activity.id: activity.query.search if activity.query else ""
+                for activity in activities
+                if isinstance(activity, KnowledgeAgentSearchActivityRecord)
+            }
+            if activities
+            else {}
+        )
+
+        results = []
+        if response and response.references:
+            for reference in response.references:
+                if isinstance(reference, KnowledgeAgentAzureSearchDocReference) and reference.source_data:
+                    results.append(
+                        Document(
+                            id=reference.doc_key,
+                            content=reference.source_data["content"],
+                            sourcepage=reference.source_data["sourcepage"],
+                            search_agent_query=activity_mapping[reference.activity_source],
+                        )
+                    )
+                if top and len(results) == top:
+                    break
+
+        return response, results
 
     def get_sources_content(
         self, results: list[Document], use_semantic_captions: bool, use_image_citation: bool
