@@ -31,4 +31,4 @@ python-dotenv
 prompty
 rich
 typing-extensions
-gevent>=24.10.1
+gevent~=24.10.1

@@ -104,7 +104,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-gevent==25.5.1
+gevent==24.10.3
     # via -r requirements.in
 greenlet==3.2.2
     # via gevent
