@@ -102,6 +102,10 @@ export function Component(): JSX.Element {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            if (config.showAgenticRetrievalOption) {
+                setRetrieveCount(10);
+                setMinimumRerankerScore(1.5);
+            }
         });
     };
 
