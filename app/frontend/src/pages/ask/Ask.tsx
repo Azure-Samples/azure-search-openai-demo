@@ -30,6 +30,7 @@ export function Component(): JSX.Element {
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
+    const [maxSubqueryCount, setMaxSubqueryCount] = useState<number>(10);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
@@ -54,6 +55,8 @@ export function Component(): JSX.Element {
     const [showSpeechOutputAzure, setShowSpeechOutputAzure] = useState<boolean>(false);
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
+    const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
+    const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -97,6 +100,8 @@ export function Component(): JSX.Element {
             setShowSpeechInput(config.showSpeechInput);
             setShowSpeechOutputBrowser(config.showSpeechOutputBrowser);
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
+            setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
+            setUseAgenticRetrieval(config.showAgenticRetrievalOption);
         });
     };
 
@@ -130,6 +135,7 @@ export function Component(): JSX.Element {
                         include_category: includeCategory.length === 0 ? undefined : includeCategory,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
+                        max_subqueries: maxSubqueryCount,
                         temperature: temperature,
                         minimum_reranker_score: minimumRerankerScore,
                         minimum_search_score: minimumSearchScore,
@@ -144,6 +150,7 @@ export function Component(): JSX.Element {
                         use_gpt4v: useGPT4V,
                         gpt4v_input: gpt4vInput,
                         language: i18n.language,
+                        use_agentic_retrieval: useAgenticRetrieval,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -186,6 +193,9 @@ export function Component(): JSX.Element {
             case "retrieveCount":
                 setRetrieveCount(value);
                 break;
+            case "maxSubqueryCount":
+                setMaxSubqueryCount(value);
+                break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
                 break;
@@ -222,6 +232,8 @@ export function Component(): JSX.Element {
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
+            case "useAgenticRetrieval":
+                setUseAgenticRetrieval(value);
         }
     };
 
@@ -334,6 +346,7 @@ export function Component(): JSX.Element {
                     promptTemplateSuffix={promptTemplateSuffix}
                     temperature={temperature}
                     retrieveCount={retrieveCount}
+                    maxSubqueryCount={maxSubqueryCount}
                     seed={seed}
                     minimumSearchScore={minimumSearchScore}
                     minimumRerankerScore={minimumRerankerScore}
@@ -357,6 +370,8 @@ export function Component(): JSX.Element {
                     useLogin={!!useLogin}
                     loggedIn={loggedIn}
                     requireAccessControl={requireAccessControl}
+                    showAgenticRetrievalOption={showAgenticRetrievalOption}
+                    useAgenticRetrieval={useAgenticRetrieval}
                     onChange={handleSettingsChange}
                 />
                 {useLogin && <TokenClaimsDisplay />}

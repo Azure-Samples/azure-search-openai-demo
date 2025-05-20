@@ -84,6 +84,7 @@
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": 0.03279569745063782,
+                        "search_agent_query": null,
                         "sourcefile": "Benefit_Options.pdf",
                         "sourcepage": "Benefit_Options-2.pdf"
                     }

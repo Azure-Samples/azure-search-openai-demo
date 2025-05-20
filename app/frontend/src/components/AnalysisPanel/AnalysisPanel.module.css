@@ -44,6 +44,13 @@
     margin-bottom: 0.5em;
 }
 
+.tQuery {
+    color: #010207;
+    position: relative;
+    font-size: 0.875em;
+    margin-bottom: 0.5em;
+}
+
 .tCodeBlock {
     max-height: 18.75em;
 }
@@ -133,4 +140,11 @@
 .totalBar {
     background-color: #424242;
     color: #ffffff;
+}
+
+.subqueriesTable,
+.subqueriesTable th,
+.subqueriesTable td,
+.subqueriesTable tr {
+    background: #fff;
 }

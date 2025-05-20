@@ -91,6 +91,7 @@
         "useSemanticRanker": "Usar rankeador semântico para recuperação",
         "useSemanticCaptions": "Usar legendas semânticas",
         "useSuggestFollowupQuestions": "Sugerir perguntas complementares",
+        "useAgenticRetrieval": "Usar a recuperação agêntica",
         "useQueryRewriting": "Utilize a reescrita de consultas para a recuperação",
         "reasoningEffort": "Esforço de raciocínio",
         "reasoningEffortOptions": {
@@ -162,6 +163,7 @@
             "Define o modo de recuperação para a consulta do Azure AI Search. 'Vetores + Texto (Híbrido)' usa uma combinação de busca vetorial e de texto completo, 'Vetores' usa apenas a busca vetorial, e 'Texto' usa apenas a busca de texto completo. O híbrido geralmente é o ideal.",
         "streamChat": "Transmite continuamente a resposta para a interface do chat conforme é gerada.",
         "useOidSecurityFilter": "Filtra os resultados da pesquisa com base no OID do usuário autenticado.",
-        "useGroupsSecurityFilter": "Filtra os resultados da pesquisa com base nos grupos do usuário autenticado."
+        "useGroupsSecurityFilter": "Filtra os resultados da pesquisa com base nos grupos do usuário autenticado.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

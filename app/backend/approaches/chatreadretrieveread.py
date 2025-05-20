@@ -1,6 +1,7 @@
 from collections.abc import Awaitable
 from typing import Any, Optional, Union, cast
 
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI, AsyncStream
@@ -28,6 +29,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self,
         *,
         search_client: SearchClient,
+        search_index_name: str,
+        agent_model: Optional[str],
+        agent_deployment: Optional[str],
+        agent_client: KnowledgeAgentRetrievalClient,
         auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
@@ -44,6 +49,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
+        self.search_index_name = search_index_name
+        self.agent_model = agent_model
+        self.agent_deployment = agent_deployment
+        self.agent_client = agent_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
@@ -70,6 +79,56 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+        use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
+        original_user_query = messages[-1]["content"]
+
+        reasoning_model_support = self.GPT_REASONING_MODELS.get(self.chatgpt_model)
+        if reasoning_model_support and (not reasoning_model_support.streaming and should_stream):
+            raise Exception(
+                f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
+            )
+        if use_agentic_retrieval:
+            extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
+        else:
+            extra_info = await self.run_search_approach(messages, overrides, auth_claims)
+
+        messages = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "past_messages": messages[:-1],
+                "user_query": original_user_query,
+                "text_sources": extra_info.data_points.text,
+            },
+        )
+
+        chat_coroutine = cast(
+            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+            self.create_chat_completion(
+                self.chatgpt_deployment,
+                self.chatgpt_model,
+                messages,
+                overrides,
+                self.get_response_token_limit(self.chatgpt_model, 1024),
+                should_stream,
+            ),
+        )
+        extra_info.thoughts.append(
+            self.format_thought_step_for_chatcompletion(
+                title="Prompt to generate answer",
+                messages=messages,
+                overrides=overrides,
+                model=self.chatgpt_model,
+                deployment=self.chatgpt_deployment,
+                usage=None,
+            )
+        )
+        return (extra_info, chat_coroutine)
+
+    async def run_search_approach(
+        self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ):
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -78,17 +137,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
-        filter = self.build_filter(overrides, auth_claims)
+        search_index_filter = self.build_filter(overrides, auth_claims)
 
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
-
-        reasoning_model_support = self.GPT_REASONING_MODELS.get(self.chatgpt_model)
-        if reasoning_model_support and (not reasoning_model_support.streaming and should_stream):
-            raise Exception(
-                f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
-            )
 
         query_messages = self.prompt_manager.render_prompt(
             self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
@@ -125,7 +178,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         results = await self.search(
             top,
             query_text,
-            filter,
+            search_index_filter,
             vectors,
             use_text_search,
             use_vector_search,
@@ -138,16 +191,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
-        messages = self.prompt_manager.render_prompt(
-            self.answer_prompt,
-            self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {
-                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
-                "past_messages": messages[:-1],
-                "user_query": original_user_query,
-                "text_sources": text_sources,
-            },
-        )
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
@@ -169,7 +212,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         "use_semantic_ranker": use_semantic_ranker,
                         "use_query_rewriting": use_query_rewriting,
                         "top": top,
-                        "filter": filter,
+                        "filter": search_index_filter,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
                     },
@@ -178,26 +221,58 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     "Search results",
                     [result.serialize_for_results() for result in results],
                 ),
-                self.format_thought_step_for_chatcompletion(
-                    title="Prompt to generate answer",
-                    messages=messages,
-                    overrides=overrides,
-                    model=self.chatgpt_model,
-                    deployment=self.chatgpt_deployment,
-                    usage=None,
+            ],
+        )
+        return extra_info
+
+    async def run_agentic_retrieval_approach(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+    ):
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
+        search_index_filter = self.build_filter(overrides, auth_claims)
+        top = overrides.get("top", 3)
+        max_subqueries = overrides.get("max_subqueries", 10)
+        # 50 is the amount of documents that the reranker can process per query
+        max_docs_for_reranker = max_subqueries * 50
+
+        response, results = await self.run_agentic_retrieval(
+            messages=messages,
+            agent_client=self.agent_client,
+            search_index_name=self.search_index_name,
+            top=top,
+            filter_add_on=search_index_filter,
+            minimum_reranker_score=minimum_reranker_score,
+            max_docs_for_reranker=max_docs_for_reranker,
+        )
+
+        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources),
+            thoughts=[
+                ThoughtStep(
+                    "Use agentic retrieval",
+                    messages,
+                    {
+                        "reranker_threshold": minimum_reranker_score,
+                        "max_docs_for_reranker": max_docs_for_reranker,
+                        "filter": search_index_filter,
+                    },
+                ),
+                ThoughtStep(
+                    f"Agentic retrieval results (top {top})",
+                    [result.serialize_for_results() for result in results],
+                    {
+                        "query_plan": (
+                            [activity.as_dict() for activity in response.activity] if response.activity else None
+                        ),
+                        "model": self.agent_model,
+                        "deployment": self.agent_deployment,
+                    },
                 ),
             ],
         )
-
-        chat_coroutine = cast(
-            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
-            self.create_chat_completion(
-                self.chatgpt_deployment,
-                self.chatgpt_model,
-                messages,
-                overrides,
-                self.get_response_token_limit(self.chatgpt_model, 1024),
-                should_stream,
-            ),
-        )
-        return (extra_info, chat_coroutine)
+        return extra_info

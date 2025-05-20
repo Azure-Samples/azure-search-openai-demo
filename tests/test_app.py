@@ -170,6 +170,22 @@ async def test_ask_rtr_text(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_ask_rtr_text_agent(agent_client, snapshot):
+    response = await agent_client.post(
+        "/ask",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text", "use_agentic_retrieval": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_ask_rtr_text_filter(auth_client, snapshot):
     response = await auth_client.post(
         "/ask",
@@ -189,6 +205,33 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
     assert response.status_code == 200
     assert (
         auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
+    response = await agent_auth_client.post(
+        "/ask",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "retrieval_mode": "text",
+                    "use_oid_security_filter": True,
+                    "use_groups_security_filter": True,
+                    "exclude_category": "excluded",
+                    "use_agentic_retrieval": True,
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
     )
     result = await response.get_json()
@@ -465,6 +508,24 @@ async def test_chat_text(client, snapshot):
 
 
 @pytest.mark.asyncio
+async def test_chat_text_agent(agent_client, snapshot):
+    response = await agent_client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"use_agentic_retrieval": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["context"]["thoughts"][0]["props"]["max_docs_for_reranker"] == 500
+    assert result["context"]["thoughts"][0]["props"]["reranker_threshold"] == 0
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
 async def test_chat_text_filter(auth_client, snapshot):
     response = await auth_client.post(
         "/chat",
@@ -484,6 +545,32 @@ async def test_chat_text_filter(auth_client, snapshot):
     assert response.status_code == 200
     assert (
         auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
+        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
+    )
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
+
+
+@pytest.mark.asyncio
+async def test_chat_text_filter_agent(agent_auth_client, snapshot):
+    response = await agent_auth_client.post(
+        "/chat",
+        headers={"Authorization": "Bearer MockToken"},
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {
+                    "use_agentic_retrieval": True,
+                    "use_oid_security_filter": True,
+                    "use_groups_security_filter": True,
+                    "exclude_category": "excluded",
+                },
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert (
+        agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter
         == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
     )
     result = await response.get_json()

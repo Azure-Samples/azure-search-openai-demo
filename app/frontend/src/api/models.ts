@@ -26,6 +26,7 @@ export type ChatAppRequestOverrides = {
     exclude_category?: string;
     seed?: number;
     top?: number;
+    max_subqueries?: number;
     temperature?: number;
     minimum_search_score?: number;
     minimum_reranker_score?: number;
@@ -39,6 +40,7 @@ export type ChatAppRequestOverrides = {
     gpt4v_input?: GPT4VInput;
     vector_fields: VectorFields;
     language: string;
+    use_agentic_retrieval: boolean;
 };
 
 export type ResponseMessage = {
@@ -98,6 +100,7 @@ export type Config = {
     showSpeechOutputAzure: boolean;
     showChatHistoryBrowser: boolean;
     showChatHistoryCosmos: boolean;
+    showAgenticRetrievalOption: boolean;
 };
 
 export type SimpleAPIResponse = {
