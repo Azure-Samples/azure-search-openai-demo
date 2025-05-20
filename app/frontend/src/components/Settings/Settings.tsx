@@ -218,8 +218,8 @@ export const Settings = ({
                     className={styles.settingsSeparator}
                     label={t("labels.maxSubqueryCount")}
                     type="number"
-                    min={1}
-                    max={20}
+                    min={2}
+                    max={40}
                     defaultValue={maxSubqueryCount.toString()}
                     onChange={(_ev, val) => onChange("maxSubqueryCount", parseInt(val || "10"))}
                     aria-labelledby={maxSubqueryCountId}

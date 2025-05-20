@@ -298,8 +298,7 @@ class Approach(ABC):
 
         results = []
         if response and response.references:
-            references = sorted(response.references, key=lambda reference: int(reference.id))
-            for reference in references:
+            for reference in response.references:
                 if isinstance(reference, KnowledgeAgentAzureSearchDocReference) and reference.source_data:
                     results.append(
                         Document(
