@@ -104,7 +104,7 @@ export function Component(): JSX.Element {
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
-                setMinimumRerankerScore(1.5);
+                setMinimumRerankerScore(2.1);
             }
         });
     };
