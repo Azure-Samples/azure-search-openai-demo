@@ -104,6 +104,10 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
+gevent==25.5.1
+    # via -r requirements.in
+greenlet==3.2.2
+    # via gevent
 h11==0.14.0
     # via
     #   httpcore
@@ -318,8 +322,6 @@ packaging==24.1
     #   opentelemetry-instrumentation-flask
 pillow==10.4.0
     # via -r requirements.in
-portalocker==2.10.1
-    # via msal-extensions
 priority==2.0.0
     # via hypercorn
 prompty==0.1.50
@@ -331,9 +333,7 @@ psutil==5.9.8
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
-    # via
-    #   openai
-    #   prompty
+    # via openai
 pydantic-core==2.20.1
     # via pydantic
 pygments==2.18.0
@@ -371,6 +371,10 @@ requests-oauthlib==2.0.0
     # via msrest
 rich==13.9.4
     # via -r requirements.in
+setuptools==80.7.1
+    # via
+    #   zope-event
+    #   zope-interface
 six==1.16.0
     # via
     #   azure-core
@@ -434,3 +438,7 @@ yarl==1.17.2
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata
+zope-event==5.0
+    # via gevent
+zope-interface==7.2
+    # via gevent
