@@ -84,6 +84,11 @@
         "minimumRerankerScore": "Minimum reranker score",
         "retrieveCount": "Retrieve this many search results:",
         "maxSubqueryCount": "Max subqueries",
+        "resultsMergeStrategy": "Results merge strategy",
+        "resultsMergeStrategyOptions": {
+            "interleaved": "Interleaved",
+            "descending": "Descending"
+        },
         "includeCategory": "Include category",
         "includeCategoryOptions": {
             "all": "All"
@@ -144,6 +149,8 @@
              "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
         "maxSubqueryCount":
             "Sets the maximum number of subqueries to use for the agentic retrieval query plan.",
+        "resultsMergeStrategy":
+            "Sets the strategy for merging results from multiple subqueries. Interleaved picks the top results from each subquery in round robin order, while descending sorts all results by reranker score.",
         "includeCategory":
             "Specifies a category to include in the search results. There are no categories used in the default data set.",
          "excludeCategory":

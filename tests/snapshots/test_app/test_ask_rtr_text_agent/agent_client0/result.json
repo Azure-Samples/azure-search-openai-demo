@@ -18,7 +18,8 @@
                 "props": {
                     "filter": null,
                     "max_docs_for_reranker": 500,
-                    "reranker_threshold": 0
+                    "reranker_threshold": 0,
+                    "results_merge_strategy": "interleaved"
                 },
                 "title": "Use agentic retrieval"
             },

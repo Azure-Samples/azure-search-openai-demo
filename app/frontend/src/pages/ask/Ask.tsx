@@ -31,6 +31,7 @@ export function Component(): JSX.Element {
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [maxSubqueryCount, setMaxSubqueryCount] = useState<number>(10);
+    const [resultsMergeStrategy, setResultsMergeStrategy] = useState<string>("interleaved");
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
@@ -102,6 +103,9 @@ export function Component(): JSX.Element {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            if (config.showAgenticRetrievalOption) {
+                setRetrieveCount(10);
+            }
         });
     };
 
@@ -136,6 +140,7 @@ export function Component(): JSX.Element {
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
                         max_subqueries: maxSubqueryCount,
+                        results_merge_strategy: resultsMergeStrategy,
                         temperature: temperature,
                         minimum_reranker_score: minimumRerankerScore,
                         minimum_search_score: minimumSearchScore,
@@ -195,6 +200,9 @@ export function Component(): JSX.Element {
                 break;
             case "maxSubqueryCount":
                 setMaxSubqueryCount(value);
+                break;
+            case "resultsMergeStrategy":
+                setResultsMergeStrategy(value);
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -347,6 +355,7 @@ export function Component(): JSX.Element {
                     temperature={temperature}
                     retrieveCount={retrieveCount}
                     maxSubqueryCount={maxSubqueryCount}
+                    resultsMergeStrategy={resultsMergeStrategy}
                     seed={seed}
                     minimumSearchScore={minimumSearchScore}
                     minimumRerankerScore={minimumRerankerScore}

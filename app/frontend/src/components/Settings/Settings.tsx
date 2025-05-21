@@ -15,6 +15,7 @@ export interface SettingsProps {
     temperature: number;
     retrieveCount: number;
     maxSubqueryCount: number;
+    resultsMergeStrategy: string;
     seed: number | null;
     minimumSearchScore: number;
     minimumRerankerScore: number;
@@ -55,6 +56,7 @@ export const Settings = ({
     temperature,
     retrieveCount,
     maxSubqueryCount,
+    resultsMergeStrategy,
     seed,
     minimumSearchScore,
     minimumRerankerScore,
@@ -108,6 +110,7 @@ export const Settings = ({
     const retrieveCountFieldId = useId("retrieveCountField");
     const maxSubqueryCountId = useId("maxSubqueryCount");
     const maxSubqueryCountFieldId = useId("maxSubqueryCountField");
+    const resultsMergeStrategyFieldId = useId("resultsMergeStrategy");
     const includeCategoryId = useId("includeCategory");
     const includeCategoryFieldId = useId("includeCategoryField");
     const excludeCategoryId = useId("excludeCategory");
@@ -218,12 +221,30 @@ export const Settings = ({
                     className={styles.settingsSeparator}
                     label={t("labels.maxSubqueryCount")}
                     type="number"
-                    min={1}
-                    max={20}
+                    min={2}
+                    max={40}
                     defaultValue={maxSubqueryCount.toString()}
                     onChange={(_ev, val) => onChange("maxSubqueryCount", parseInt(val || "10"))}
                     aria-labelledby={maxSubqueryCountId}
                     onRenderLabel={props => renderLabel(props, maxSubqueryCountId, maxSubqueryCountFieldId, t("helpTexts.maxSubqueryCount"))}
+                />
+            )}
+
+            {showAgenticRetrievalOption && useAgenticRetrieval && (
+                <Dropdown
+                    id={resultsMergeStrategyFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.resultsMergeStrategy")}
+                    selectedKey={resultsMergeStrategy}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
+                        onChange("resultsMergeStrategy", option?.key)
+                    }
+                    aria-labelledby={includeCategoryId}
+                    options={[
+                        { key: "interleaved", text: t("labels.resultsMergeStrategyOptions.interleaved") },
+                        { key: "descending", text: t("labels.resultsMergeStrategyOptions.descending") }
+                    ]}
+                    onRenderLabel={props => renderLabel(props, includeCategoryId, includeCategoryFieldId, t("helpTexts.resultsMergeStrategy"))}
                 />
             )}
 
