@@ -298,26 +298,20 @@ class Approach(ABC):
         )
 
         results = []
-        grounding_text = response.response[0].content[0].text
-        if response and grounding_text:
-            grounding_response = json.loads(grounding_text)
-            for grounding_reference in grounding_response:
-                ref_id = grounding_reference.get("ref_id")
-                if ref_id is not None:
-                    ref_id = str(ref_id)
-                    for reference in response.references:
-                        if isinstance(reference, KnowledgeAgentAzureSearchDocReference) and reference.id == ref_id and reference.source_data:
-                            results.append(
-                                Document(
-                                    id=reference.doc_key,
-                                    content=reference.source_data["content"],
-                                    sourcepage=reference.source_data["sourcepage"],
-                                    search_agent_query=activity_mapping[reference.activity_source],
-                                )
-                            )
-                            break
-                    if top and len(results) == top:
-                        break
+        if response and response.references:
+            references = sorted(response.references, key=lambda reference: int(reference.id))
+            for reference in references:
+                if isinstance(reference, KnowledgeAgentAzureSearchDocReference) and reference.source_data:
+                    results.append(
+                        Document(
+                            id=reference.doc_key,
+                            content=reference.source_data["content"],
+                            sourcepage=reference.source_data["sourcepage"],
+                            search_agent_query=activity_mapping[reference.activity_source],
+                        )
+                    )
+                if top and len(results) == top:
+                    break
 
         return response, results
 
