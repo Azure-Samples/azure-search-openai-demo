@@ -235,6 +235,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         search_index_filter = self.build_filter(overrides, auth_claims)
         top = overrides.get("top", 3)
         max_subqueries = overrides.get("max_subqueries", 10)
+        results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         # 50 is the amount of documents that the reranker can process per query
         max_docs_for_reranker = max_subqueries * 50
 
@@ -246,6 +247,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             filter_add_on=search_index_filter,
             minimum_reranker_score=minimum_reranker_score,
             max_docs_for_reranker=max_docs_for_reranker,
+            results_merge_strategy=results_merge_strategy,
         )
 
         text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)

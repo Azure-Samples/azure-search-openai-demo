@@ -261,6 +261,7 @@ class Approach(ABC):
         filter_add_on: Optional[str] = None,
         minimum_reranker_score: Optional[float] = None,
         max_docs_for_reranker: Optional[int] = None,
+        results_merge_strategy: Optional[str] = None,
     ) -> tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
         # STEP 1: Invoke agentic retrieval
         response = await agent_client.retrieve(
@@ -298,7 +299,12 @@ class Approach(ABC):
 
         results = []
         if response and response.references:
-            references = sorted(response.references, key=lambda reference: int(reference.id))
+            if results_merge_strategy == "interleaved":
+                # Use interleaved reference order
+                references = sorted(response.references, key=lambda reference: int(reference.id))
+            else:
+                # Default to descending strategy
+                references = response.references
             for reference in references:
                 if isinstance(reference, KnowledgeAgentAzureSearchDocReference) and reference.source_data:
                     results.append(
