@@ -4,7 +4,6 @@ from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass
 from typing import Any, Callable, Optional, TypedDict, Union, cast
 from urllib.parse import urljoin
-import json
 
 import aiohttp
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
