@@ -212,6 +212,7 @@ class RetrieveThenReadApproach(Approach):
                     {
                         "reranker_threshold": minimum_reranker_score,
                         "max_docs_for_reranker": max_docs_for_reranker,
+                        "results_merge_strategy": results_merge_strategy,
                         "filter": search_index_filter,
                     },
                 ),
