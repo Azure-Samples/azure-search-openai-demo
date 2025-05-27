@@ -6,6 +6,15 @@ from typing import Optional
 import openai.types
 from azure.cognitiveservices.speech import ResultReason
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.search.documents.agent.models import (
+    KnowledgeAgentAzureSearchDocReference,
+    KnowledgeAgentMessage,
+    KnowledgeAgentMessageTextContent,
+    KnowledgeAgentModelQueryPlanningActivityRecord,
+    KnowledgeAgentRetrievalResponse,
+    KnowledgeAgentSearchActivityRecord,
+    KnowledgeAgentSearchActivityRecordQuery,
+)
 from azure.search.documents.models import (
     VectorQuery,
 )
@@ -205,6 +214,39 @@ def mock_computervision_response():
                 "modelVersion": "2022-04-11",
             }
         ),
+    )
+
+
+def mock_retrieval_response():
+    return KnowledgeAgentRetrievalResponse(
+        response=[
+            KnowledgeAgentMessage(
+                role="assistant",
+                content=[
+                    KnowledgeAgentMessageTextContent(
+                        text=r'[{"ref_id":0,"title":"Benefit_Options-2.pdf","content":"There is a whistleblower policy."}]'
+                    )
+                ],
+            )
+        ],
+        activity=[
+            KnowledgeAgentModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
+            KnowledgeAgentSearchActivityRecord(
+                id=1,
+                target_index="index",
+                query=KnowledgeAgentSearchActivityRecordQuery(search="whistleblower query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+        ],
+        references=[
+            KnowledgeAgentAzureSearchDocReference(
+                id=0,
+                activity_source=1,
+                doc_key="Benefit_Options-2.pdf",
+                source_data={"content": "There is a whistleblower policy.", "sourcepage": "Benefit_Options-2.pdf"},
+            )
+        ],
     )
 
 

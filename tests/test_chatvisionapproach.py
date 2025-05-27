@@ -53,13 +53,14 @@ def chat_approach(openai_client, mock_confidential_client_success):
         blob_container_client=None,
         vision_endpoint="endpoint",
         vision_token_provider=lambda: "token",
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-4o-mini",
         chatgpt_deployment="chat",
         gpt4v_deployment="gpt-4v",
         gpt4v_model="gpt-4v",
         embedding_deployment="embeddings",
         embedding_model=MOCK_EMBEDDING_MODEL_NAME,
         embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
         sourcepage_field="",
         content_field="",
         query_language="en-us",
@@ -79,7 +80,7 @@ def test_get_search_query(chat_approach):
 	"id": "chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM",
 	"object": "chat.completion",
 	"created": 1695324963,
-	"model": "gpt-35-turbo",
+	"model": "gpt-4o-mini",
 	"prompt_filter_results": [
 		{
 			"prompt_index": 0,
@@ -149,4 +150,4 @@ async def test_compute_text_embedding(chat_approach, openai_client, mock_openai_
     assert isinstance(result, VectorizedQuery)
     assert result.vector == [0.0023064255, -0.009327292, -0.0028842222]
     assert result.k_nearest_neighbors == 50
-    assert result.fields == "embedding"
+    assert result.fields == "embedding3"

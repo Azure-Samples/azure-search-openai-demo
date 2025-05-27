@@ -1,5 +1,7 @@
 # RAG chat: Using GPT vision model with RAG approach
 
+[📺 Watch: (RAG Deep Dive series) Multimedia data ingestion](https://www.youtube.com/watch?v=5FfIy7G2WW0)
+
 This repository includes an optional feature that uses the GPT vision model to generate responses based on retrieved content. This feature is useful for answering questions based on the visual content of documents, such as photos and charts.
 
 ## How it works
@@ -19,11 +21,11 @@ For more details on how this feature works, read [this blog post](https://techco
 
 * Create a [AI Vision account in Azure Portal first](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision), so that you can agree to the Responsible AI terms for that resource. You can delete that account after agreeing.
 * The ability to deploy a gpt-4o model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a gpt-4o deployment from your Azure OpenAI deployments page.
-* Ensure that you can deploy the Azure OpenAI resource group in [a region where all required components are available](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability):
+* Ensure that you can deploy the Azure OpenAI resource group in [a region and deployment SKU where all required components are available](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability):
   * Azure OpenAI models
-    * gpt-35-turbo
-    * text-embedding-ada-002
-    * gpt-4o
+    * gpt-4o-mini
+    * text-embedding-3-large
+    * gpt-4o (for vision/evaluation features)
   * [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
 
 ### Deployment

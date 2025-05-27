@@ -91,6 +91,14 @@
         "useSemanticRanker": "Utiliser le reclasseur sémantique",
         "useSemanticCaptions": "Utiliser les titres sémantiques",
         "useSuggestFollowupQuestions": "Suggérer des questions de suivi",
+        "useAgenticRetrieval": "Utilisez la récupération agentique",
+        "useQueryRewriting": "Utilisez la réécriture des requêtes pour la récupération",
+        "reasoningEffort": "Effort de raisonnement",
+        "reasoningEffortOptions": {
+            "low": "Faible",
+            "medium": "Moyen",
+            "high": "Élevé"
+        },
         "useGPT4V": "Utiliser le modèle GPT Vision",
         "gpt4VInput": {
             "label": "Entrées du modèle GPT Vision",
@@ -143,6 +151,10 @@
         "useSemanticCaptions":
             "Envoie des légendes sémantiques à l'LLM au lieu du résultat de recherche complet. Une légende sémantique est extraite d'un résultat de recherche lors du processus de classement sémantique.",
         "suggestFollowupQuestions": "Demande à l'LLM de suggérer des questions de suivi en fonction de la requête de l'utilisateur.",
+        "useQueryRewriting":
+            "Active la réécriture de requêtes d'Azure AI Search, un processus qui modifie la requête de l'utilisateur pour améliorer les résultats de recherche. Nécessite que le reclasseur sémantique soit activé.",
+        "reasoningEffort":
+            "Définit l'effort de raisonnement pour le LLM. Des valeurs plus élevées entraînent plus de raisonnement, mais peuvent prendre plus de temps pour générer une réponse. La valeur par défaut est moyenne.",
         "useGPT4Vision": "Utilise GPT-4-Turbo avec Vision pour générer des réponses basées sur des images et du texte de l'index.",
         "vectorFields":
             "Spécifie quels champs d'incorporation dans l'index de recherche Azure AI seront recherchés, à la fois les incorporations 'Images et texte', 'Images' seulement, ou 'Texte' seulement.",
@@ -152,6 +164,7 @@
             "Définit le mode de récupération pour la requête Azure AI Search. Vecteurs + Texte (Hybride) utilise une combinaison de recherche vectorielle et de recherche en texte intégral, Vecteurs utilise uniquement la recherche vectorielle, et Texte utilise uniquement la recherche en texte intégral. Hybride est généralement optimal.",
         "streamChat": "Diffuse en continu la réponse à l'interface utilisateur du chat au fur et à mesure de sa génération.",
         "useOidSecurityFilter":"Filtrez les résultats de recherche en fonction de l'OID de l'utilisateur authentifié.",
-        "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié."
+        "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

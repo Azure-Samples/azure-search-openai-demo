@@ -2,6 +2,7 @@ import json
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from openai.types.chat import ChatCompletion
 
@@ -12,6 +13,7 @@ from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
     MOCK_EMBEDDING_MODEL_NAME,
     MockAsyncSearchResultsIterator,
+    mock_retrieval_response,
 )
 
 
@@ -19,17 +21,26 @@ async def mock_search(*args, **kwargs):
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
 
+async def mock_retrieval(*args, **kwargs):
+    return mock_retrieval_response()
+
+
 @pytest.fixture
 def chat_approach():
     return ChatReadRetrieveReadApproach(
         search_client=None,
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
         auth_helper=None,
         openai_client=None,
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-4o-mini",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
         embedding_model=MOCK_EMBEDDING_MODEL_NAME,
         embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
         sourcepage_field="",
         content_field="",
         query_language="en-us",
@@ -44,7 +55,7 @@ def test_get_search_query(chat_approach):
 	"id": "chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM",
 	"object": "chat.completion",
 	"created": 1695324963,
-	"model": "gpt-35-turbo",
+	"model": "gpt-4o-mini",
 	"prompt_filter_results": [
 		{
 			"prompt_index": 0,
@@ -106,7 +117,7 @@ def test_get_search_query(chat_approach):
 
 
 def test_get_search_query_returns_default(chat_approach):
-    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
+    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-4o-mini","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
     default_query = "hello"
     chatcompletions = ChatCompletion.model_validate(json.loads(payload), strict=False)
     query = chat_approach.get_search_query(chatcompletions, default_query)
@@ -169,13 +180,18 @@ async def test_search_results_filtering_by_scores(
 
     chat_approach = ChatReadRetrieveReadApproach(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
         auth_helper=None,
         openai_client=None,
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-4o-mini",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
         embedding_model=MOCK_EMBEDDING_MODEL_NAME,
         embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
         sourcepage_field="",
         content_field="",
         query_language="en-us",
@@ -201,3 +217,86 @@ async def test_search_results_filtering_by_scores(
     assert (
         len(filtered_results) == expected_result_count
     ), f"Expected {expected_result_count} results with minimum_search_score={minimum_search_score} and minimum_reranker_score={minimum_reranker_score}"
+
+
+@pytest.mark.asyncio
+async def test_search_results_query_rewriting(monkeypatch):
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+    )
+
+    query_rewrites = None
+
+    async def validate_qr_and_mock_search(*args, **kwargs):
+        nonlocal query_rewrites
+        query_rewrites = kwargs.get("query_rewrites")
+        return await mock_search(*args, **kwargs)
+
+    monkeypatch.setattr(SearchClient, "search", validate_qr_and_mock_search)
+
+    results = await chat_approach.search(
+        top=10,
+        query_text="test query",
+        filter=None,
+        vectors=[],
+        use_text_search=True,
+        use_vector_search=True,
+        use_semantic_ranker=True,
+        use_semantic_captions=True,
+        use_query_rewriting=True,
+    )
+    assert len(results) == 1
+    assert query_rewrites == "generative"
+
+
+@pytest.mark.asyncio
+async def test_agent_retrieval_results(monkeypatch):
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=None,
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+    )
+
+    agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
+
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
+
+    _, results = await chat_approach.run_agentic_retrieval(messages=[], agent_client=agent_client, search_index_name="")
+
+    assert len(results) == 1
+    assert results[0].id == "Benefit_Options-2.pdf"
+    assert results[0].content == "There is a whistleblower policy."
+    assert results[0].sourcepage == "Benefit_Options-2.pdf"
+    assert results[0].search_agent_query == "whistleblower query"

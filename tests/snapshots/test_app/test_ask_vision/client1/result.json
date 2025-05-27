@@ -8,20 +8,19 @@
                 "Financial Market Analysis Report 2023-6.png: 3</td><td>1</td></tr></table> Financial markets are interconnected, with movements in one segment often influencing others. This section examines the correlations between stock indices, cryptocurrency prices, and commodity prices, revealing how changes in one market can have ripple effects across the financial ecosystem.Impact of Macroeconomic Factors Impact of Interest Rates, Inflation, and GDP Growth on Financial Markets 5 4 3 2 1 0 -1 2018 2019 -2 -3 -4 -5 2020 2021 2022 2023 Macroeconomic factors such as interest rates, inflation, and GDP growth play a pivotal role in shaping financial markets. This section analyzes how these factors have influenced stock, cryptocurrency, and commodity markets over recent years, providing insights into the complex relationship between the economy and financial market performance. -Interest Rates % -Inflation Data % GDP Growth % :unselected: :unselected:Future Predictions and Trends Relative Growth Trends for S&P 500, Bitcoin, and Oil Prices (2024 Indexed to 100) 2028 Based on historical data, current trends, and economic indicators, this section presents predictions "
             ]
         },
+        "followup_questions": null,
         "thoughts": [
             {
                 "description": "Are interest rates high?",
                 "props": {
                     "filter": null,
                     "top": 3,
+                    "use_query_rewriting": false,
                     "use_semantic_captions": false,
                     "use_semantic_ranker": false,
                     "use_text_search": true,
                     "use_vector_search": true,
-                    "vector_fields": [
-                        "embedding",
-                        "imageEmbedding"
-                    ]
+                    "vector_fields": "textAndImageEmbeddings"
                 },
                 "title": "Search using user query"
             },
@@ -31,13 +30,12 @@
                         "captions": [],
                         "category": null,
                         "content": "3</td><td>1</td></tr></table>\nFinancial markets are interconnected, with movements in one segment often influencing others. This section examines the correlations between stock indices, cryptocurrency prices, and commodity prices, revealing how changes in one market can have ripple effects across the financial ecosystem.Impact of Macroeconomic Factors\nImpact of Interest Rates, Inflation, and GDP Growth on Financial Markets\n5\n4\n3\n2\n1\n0\n-1 2018 2019\n-2\n-3\n-4\n-5\n2020\n2021 2022 2023\nMacroeconomic factors such as interest rates, inflation, and GDP growth play a pivotal role in shaping financial markets. This section analyzes how these factors have influenced stock, cryptocurrency, and commodity markets over recent years, providing insights into the complex relationship between the economy and financial market performance.\n-Interest Rates % -Inflation Data % GDP Growth % :unselected: :unselected:Future Predictions and Trends\nRelative Growth Trends for S&P 500, Bitcoin, and Oil Prices (2024 Indexed to 100)\n2028\nBased on historical data, current trends, and economic indicators, this section presents predictions ",
-                        "embedding": "[-0.012668486, -0.02251158 ...+8 more]",
                         "groups": null,
                         "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-14",
-                        "imageEmbedding": null,
                         "oids": null,
                         "reranker_score": 3.1704962253570557,
                         "score": 0.04972677677869797,
+                        "search_agent_query": null,
                         "sourcefile": "Financial Market Analysis Report 2023.pdf",
                         "sourcepage": "Financial Market Analysis Report 2023-6.png"
                     }
