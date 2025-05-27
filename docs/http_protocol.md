@@ -403,7 +403,7 @@ The response context object can contain the following properties:
     },
     ```
 
-    The app turns the data points into clickable citations and the "Supporting content" tab. [See image](./images/datapoints.png)
+    The app turns the data points into clickable citations and the "Supporting content" tab. [See image](./images/data_points.png)
 
 * `"thoughts"`: A list describing each step of the backend. Each step should contain:
   * `"title"`: A string describing the step.
