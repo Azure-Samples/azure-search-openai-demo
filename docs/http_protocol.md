@@ -6,7 +6,7 @@ The HTTP protocol is inspired by the [OpenAI ChatCompletion API](https://platfor
 
 Table of contents:
 
-* [HTTP requests to AI chat app endpoints](#http-requests-to-ai-chat-app-endpoints)
+* [HTTP requests to chat app endpoints](#http-requests-to-chat-app-endpoints)
   * [Request context properties](#request-context-properties)
 * [HTTP responses from RAG chat app endpoints](#http-responses-from-rag-chat-app-endpoints)
   * [Non-streaming response](#non-streaming-response)
@@ -18,7 +18,7 @@ Table of contents:
   * [Answer formatting](#answer-formatting)
   * [Response context properties](#response-context-properties)
 
-## HTTP requests to the AI chat app endpoints
+## HTTP requests to chat app endpoints
 
 All requests use the POST method, with the following headers:
 
@@ -356,7 +356,6 @@ There is no specific information provided about what is included in the Northwin
 ```
 
 ### Response context properties
-
 
 The response context object can contain the following properties:
 
