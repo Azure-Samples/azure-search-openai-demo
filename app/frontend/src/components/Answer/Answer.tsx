@@ -80,7 +80,7 @@ export const Answer = ({
                             title={t("tooltips.showThoughtProcess")}
                             ariaLabel={t("tooltips.showThoughtProcess")}
                             onClick={() => onThoughtProcessClicked()}
-                            disabled={!answer.context.thoughts?.length}
+                            disabled={!answer.context.thoughts?.length || isStreaming}
                         />
                         <IconButton
                             style={{ color: "black" }}
@@ -88,7 +88,7 @@ export const Answer = ({
                             title={t("tooltips.showSupportingContent")}
                             ariaLabel={t("tooltips.showSupportingContent")}
                             onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.context.data_points}
+                            disabled={!answer.context.data_points || isStreaming}
                         />
                         {showSpeechOutputAzure && (
                             <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
