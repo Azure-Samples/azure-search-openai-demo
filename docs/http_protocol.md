@@ -371,7 +371,7 @@ The response context object can contain the following properties:
     ]
     ```
 
-    When the app sees this property in the response and the user has requested follow-up questions (in the settings), the app prompts the user with clickable versions of the questions. [See image](images/followup.png)
+    When the app sees this property in the response and the user has requested follow-up questions (in the settings), the app prompts the user with clickable versions of the questions. [See image](./images/followup.png)
 
 * `"data_points"`: An object containing text and/or image data chunks, a list in the `"text"` or `"images"` properties.
 
@@ -403,7 +403,7 @@ The response context object can contain the following properties:
     },
     ```
 
-    The app turns the data points into clickable citations and the "Supporting content" tab. [See image](images/datapoints.png)
+    The app turns the data points into clickable citations and the "Supporting content" tab. [See image](./images/datapoints.png)
 
 * `"thoughts"`: A list describing each step of the backend. Each step should contain:
   * `"title"`: A string describing the step.
@@ -482,4 +482,4 @@ The response context object can contain the following properties:
     ]
     ```
 
-    The app displays these thoughts in the "Thought process" tab, available by selecting the lightbulb icon on each answer. [See image](images/thoughts.png)
+    The app displays these thoughts in the "Thought process" tab, available by selecting the lightbulb icon on each answer. [See image](./images/thoughts.png)
