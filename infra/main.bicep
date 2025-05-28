@@ -66,7 +66,7 @@ param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
 param speechServiceVoice string = ''
-param useGPT4V bool = false
+param useMultimodal bool = false
 param useEval bool = false
 
 @allowed(['free', 'provisioned', 'serverless'])
@@ -170,19 +170,6 @@ var embedding = {
   deploymentSkuName: !empty(embeddingDeploymentSkuName) ? embeddingDeploymentSkuName : (embeddingModelName == 'text-embedding-ada-002' ? 'Standard' : 'GlobalStandard')
   deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 3072
-}
-
-param gpt4vModelName string = ''
-param gpt4vDeploymentName string = ''
-param gpt4vModelVersion string = ''
-param gpt4vDeploymentSkuName string = ''
-param gpt4vDeploymentCapacity int = 0
-var gpt4v = {
-  modelName: !empty(gpt4vModelName) ? gpt4vModelName : 'gpt-4o'
-  deploymentName: !empty(gpt4vDeploymentName) ? gpt4vDeploymentName : 'vision'
-  deploymentVersion: !empty(gpt4vModelVersion) ? gpt4vModelVersion : '2024-08-06'
-  deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'GlobalStandard' // Not-backward compatible
-  deploymentCapacity: gpt4vDeploymentCapacity != 0 ? gpt4vDeploymentCapacity : 10
 }
 
 param evalModelName string = ''
@@ -406,7 +393,7 @@ var appEnvVariables = {
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
   AZURE_SEARCH_QUERY_REWRITING: searchServiceQueryRewriting
-  AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
+  AZURE_VISION_ENDPOINT: useMultimodal ? computerVision.outputs.endpoint : ''
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
   AZURE_SEARCH_FIELD_NAME_EMBEDDING: searchFieldNameEmbedding
@@ -433,13 +420,11 @@ var appEnvVariables = {
   AZURE_OPENAI_EMB_MODEL_NAME: embedding.modelName
   AZURE_OPENAI_EMB_DIMENSIONS: embedding.dimensions
   AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
-  AZURE_OPENAI_GPT4V_MODEL: gpt4v.modelName
   AZURE_OPENAI_REASONING_EFFORT: defaultReasoningEffort
   // Specific to Azure OpenAI
   AZURE_OPENAI_SERVICE: isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
   AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
-  AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4v.deploymentName : ''
   AZURE_OPENAI_SEARCHAGENT_MODEL: searchAgent.modelName
   AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT: searchAgent.deploymentName
   AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
@@ -461,7 +446,7 @@ var appEnvVariables = {
   // CORS support, for frontends on other hosts
   ALLOWED_ORIGIN: join(allowedOrigins, ';')
   USE_VECTORS: useVectors
-  USE_GPT4V: useGPT4V
+  USE_MULTIMODAL: useMultimodal
   USE_USER_UPLOAD: useUserUpload
   AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
   AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
@@ -635,22 +620,6 @@ var openAiDeployments = concat(
         }
       }
     ] : [],
-  useGPT4V
-    ? [
-        {
-          name: gpt4v.deploymentName
-          model: {
-            format: 'OpenAI'
-            name: gpt4v.modelName
-            version: gpt4v.deploymentVersion
-          }
-          sku: {
-            name: gpt4v.deploymentSkuName
-            capacity: gpt4v.deploymentCapacity
-          }
-        }
-      ]
-    : [],
   useAgenticRetrieval
     ? [
         {
@@ -715,7 +684,7 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2'
   }
 }
 
-module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useGPT4V) {
+module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMultimodal) {
   name: 'computerVision'
   scope: computerVisionResourceGroup
   params: {
@@ -1179,7 +1148,7 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi &&
         dnsZoneName: 'privatelink.openai.azure.com'
         resourceIds: concat(
           [openAi.outputs.resourceId],
-          useGPT4V ? [computerVision.outputs.resourceId] : [],
+          useMultimodal ? [computerVision.outputs.resourceId] : [],
           useMediaDescriberAzureCU ? [contentUnderstanding.outputs.resourceId] : [],
           !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : []
         )
@@ -1256,7 +1225,7 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload) 
 }
 
 // For computer vision access by the backend
-module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
+module computerVisionRoleBackend 'core/security/role.bicep' = if (useMultimodal) {
   scope: computerVisionResourceGroup
   name: 'computervision-role-backend'
   params: {
@@ -1291,7 +1260,6 @@ output OPENAI_HOST string = openAiHost
 output AZURE_OPENAI_EMB_MODEL_NAME string = embedding.modelName
 output AZURE_OPENAI_EMB_DIMENSIONS int = embedding.dimensions
 output AZURE_OPENAI_CHATGPT_MODEL string = chatGpt.modelName
-output AZURE_OPENAI_GPT4V_MODEL string = gpt4v.modelName
 
 // Specific to Azure OpenAI
 output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
@@ -1304,9 +1272,6 @@ output AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU string = isAzureOpenAiHost ? chatGpt.
 output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embedding.deploymentName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT_VERSION string = isAzureOpenAiHost ? embedding.deploymentVersion : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT_SKU string = isAzureOpenAiHost ? embedding.deploymentSkuName : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentName : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentVersion : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentSkuName : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT string = isAzureOpenAiHost && useEval ? eval.deploymentName : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT_VERSION string = isAzureOpenAiHost && useEval ? eval.deploymentVersion : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT_SKU string = isAzureOpenAiHost && useEval ? eval.deploymentSkuName : ''
@@ -1317,7 +1282,7 @@ output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
-output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
+output AZURE_VISION_ENDPOINT string = useMultimodal ? computerVision.outputs.endpoint : ''
 output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name

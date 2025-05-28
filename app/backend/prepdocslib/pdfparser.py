@@ -18,6 +18,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
 from PIL import Image
 from pypdf import PdfReader
+from openai import AsyncOpenAI
 
 from .mediadescriber import ContentUnderstandingDescriber
 from .page import Page
@@ -55,7 +56,7 @@ class DocumentAnalysisParser(Parser):
         endpoint: str,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         model_id="prebuilt-layout",
-        use_content_understanding=True,
+        include_media_description: bool = False,
         content_understanding_endpoint: Union[str, None] = None,
     ):
         self.model_id = model_id

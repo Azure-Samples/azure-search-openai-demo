@@ -177,6 +177,7 @@ def setup_file_processors(
     local_html_parser: bool = False,
     search_images: bool = False,
     use_content_understanding: bool = False,
+    use_multimodal: bool = False,
     content_understanding_endpoint: Union[str, None] = None,
 ):
     sentence_text_splitter = SentenceTextSplitter()
@@ -190,7 +191,7 @@ def setup_file_processors(
         doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{document_intelligence_service}.cognitiveservices.azure.com/",
             credential=documentintelligence_creds,
-            use_content_understanding=use_content_understanding,
+            include_media_description=use_content_understanding or use_multimodal,
             content_understanding_endpoint=content_understanding_endpoint,
         )
 
@@ -238,20 +239,6 @@ def setup_file_processors(
             }
         )
     return file_processors
-
-
-def setup_image_embeddings_service(
-    azure_credential: AsyncTokenCredential, vision_endpoint: Union[str, None], search_images: bool
-) -> Union[ImageEmbeddings, None]:
-    image_embeddings_service: Optional[ImageEmbeddings] = None
-    if search_images:
-        if vision_endpoint is None:
-            raise ValueError("A computer vision endpoint is required when GPT-4-vision is enabled.")
-        image_embeddings_service = ImageEmbeddings(
-            endpoint=vision_endpoint,
-            token_provider=get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default"),
-        )
-    return image_embeddings_service
 
 
 async def main(strategy: Strategy, setup_index: bool = True):
@@ -328,7 +315,7 @@ if __name__ == "__main__":
         exit(0)
 
     use_int_vectorization = os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true"
-    use_gptvision = os.getenv("USE_GPT4V", "").lower() == "true"
+    use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
     use_acls = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL") is not None
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
     use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
@@ -444,12 +431,8 @@ if __name__ == "__main__":
             local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER") == "true",
             search_images=use_gptvision,
             use_content_understanding=use_content_understanding,
+            use_multimodal=use_multimodal,
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
-        )
-        image_embeddings_service = setup_image_embeddings_service(
-            azure_credential=azd_credential,
-            vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
-            search_images=use_gptvision,
         )
 
         ingestion_strategy = FileStrategy(

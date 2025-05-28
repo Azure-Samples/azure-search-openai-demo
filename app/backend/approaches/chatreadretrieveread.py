@@ -92,6 +92,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)
 
+        # If there are images, send the images to the model as well
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
@@ -174,6 +175,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         vectors: list[VectorQuery] = []
         if use_vector_search:
             vectors.append(await self.compute_text_embedding(query_text))
+            # Optionally add image embeddings if using multimodal approach
+            vectors.append(await self.compute_image_embedding(query_text))
 
         results = await self.search(
             top,
