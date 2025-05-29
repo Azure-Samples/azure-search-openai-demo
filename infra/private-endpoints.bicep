@@ -151,9 +151,9 @@ module monitorPrivateEndpoint './core/networking/private-endpoint.bicep' = {
         }
       }
       {
-        name: 'blob-dnszone' // dnsZones[dnsZoneBlobIndex].name
+        name: dnsZones[dnsZoneBlobIndex].name
         properties: {
-          privateDnsZoneId: '/subscriptions/77d8a3d0-8b18-47e9-b773-08bee327bb4a/resourceGroups/rg-pf-ragprivate/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net' // dnsZones[dnsZoneBlobIndex].outputs.id
+          privateDnsZoneId: dnsZones[dnsZoneBlobIndex].outputs.id
         }
       }
     ]

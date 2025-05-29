@@ -11,21 +11,27 @@ param tags object = {}
 
 param usePrivateEndpoint bool = false
 
+@allowed(['appservice', 'containerapps'])
+param deploymentTarget string
+
+@description('The name of an existing App Service Plan to connect to the VNet')
+param appServicePlanName string
+
+@description('The name of an existing Container Apps Environment to connect to the VNet')
 param containerAppsEnvName string
 
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
+param deployVpnGateway bool = false
+
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = if (deploymentTarget == 'appservice') {
+  name: appServicePlanName
+}
+
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = if (deploymentTarget == 'containerapps') {
   name: containerAppsEnvName
 }
 
-
-module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
-  name: 'vnet'
-  params: {
-    name: vnetName
-    location: location
-    tags: tags
-    subnets: [
-      {
+// Always need this one
+var backendSubnet =  {
         name: 'backend-subnet'
         properties: {
           addressPrefix: '10.0.1.0/24'
@@ -33,30 +39,71 @@ module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
           privateLinkServiceNetworkPolicies: 'Enabled'
         }
       }
-      { // App Service / Container Apps specific subnet
-        name: 'app-int-subnet'
-        properties: {
-          addressPrefix: '10.0.4.0/23'
-          privateEndpointNetworkPolicies: 'Enabled'
-          privateLinkServiceNetworkPolicies: 'Enabled'
-          delegations: [
-            {
-              id: containerAppsEnvironment.id
-              name: containerAppsEnvironment.name
-              properties: {
-                serviceName: 'Microsoft.App/environments'
-              }
+
+var appServiceSubnet = {
+      name: 'app-int-subnet'
+      properties: {
+        addressPrefix: '10.0.3.0/24'
+        privateEndpointNetworkPolicies: 'Enabled'
+        privateLinkServiceNetworkPolicies: 'Enabled'
+        delegations: [
+          {
+            id: appServicePlan.id
+            name: appServicePlan.name
+            properties: {
+              serviceName: 'Microsoft.Web/serverFarms'
             }
-          ]
-        }
+          }
+        ]
       }
-    ]
+    }
+
+var containerAppsSubnet = {
+      name: 'app-int-subnet'
+      properties: {
+        addressPrefix: '10.0.4.0/23'
+        privateEndpointNetworkPolicies: 'Enabled'
+        privateLinkServiceNetworkPolicies: 'Enabled'
+        delegations: [
+          {
+            id: containerAppsEnvironment.id
+            name: containerAppsEnvironment.name
+            properties: {
+              serviceName: 'Microsoft.App/environments'
+            }
+          }
+        ]
+      }
+}
+
+var gatewaySubnet = {
+    name: 'GatewaySubnet' // Required name for Gateway subnet
+    addressPrefix: '10.0.255.0/27' // Using a /27 subnet size which is minimal required size for gateway subnet
+  }
+
+var privateDnsResolverSubnet = {
+    name: 'dns-resolver-subnet' // Dedicated subnet for Azure Private DNS Resolver
+    addressPrefix: '10.0.11.0/28' // Original value kept as requested
+    delegation: 'Microsoft.Network/dnsResolvers'
+  }
+
+var subnets = union(
+  [backendSubnet, deploymentTarget == 'appservice' ? appServiceSubnet : containerAppsSubnet],
+  deployVpnGateway ? [gatewaySubnet, privateDnsResolverSubnet] : [])
+
+module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
+  name: 'vnet'
+  params: {
+    name: vnetName
+    location: location
+    tags: tags
+    subnets: subnets
   }
 }
 
-
 output appSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[1].id : ''
+output appSubnetName string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[1].name : ''
 output backendSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[0].id : ''
-output bastionSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[2].id : ''
-output vmSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[3].id : ''
+output privateDnsResolverSubnetId string = deployVpnGateway ? vnet.outputs.vnetSubnets[3].id : ''
 output vnetName string = usePrivateEndpoint ? vnet.outputs.name : ''
+output vnetId string = usePrivateEndpoint ? vnet.outputs.id : ''

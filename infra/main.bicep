@@ -244,6 +244,9 @@ param publicNetworkAccess string = 'Enabled'
 @description('Add a private endpoints for network connectivity')
 param usePrivateEndpoint bool = false
 
+@description('Use a P2S VPN Gateway for secure access to the private endpoints')
+param useVpnGateway bool = false
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -529,7 +532,8 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
     containerAppsEnvironmentName: acaManagedEnvironmentName
     containerRegistryName: '${containerRegistryName}${resourceToken}'
     logAnalyticsWorkspaceResourceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
-    virtualNetworkSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
+    subnetResourceId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
+    usePrivateIngress: usePrivateEndpoint
   }
 }
 
@@ -542,8 +546,8 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     acaIdentity
   ]
   params: {
-    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesContainerApps}backend-${resourceToken}'
-    location: location
+    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesContainerApps}backend${resourceToken}'
+    location: 'westus2'
     identityName: (deploymentTarget == 'containerapps') ? acaIdentityName : ''
     exists: webAppExists
     workloadProfile: azureContainerAppsWorkloadProfile
@@ -554,7 +558,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     targetPort: 8000
     containerCpuCoreCount: '1.0'
     containerMemory: '2Gi'
-    containerMinReplicas: 0
+    containerMinReplicas: 1
     allowedOrigins: allowedOrigins
     env: union(appEnvVariables, {
       // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
@@ -1165,7 +1169,10 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     tags: tags
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
     usePrivateEndpoint: usePrivateEndpoint
-    containerAppsEnvName: acaManagedEnvironmentName
+    deploymentTarget: deploymentTarget
+    // Need to check deploymentTarget due to https://github.com/Azure/bicep/issues/3990
+    appServicePlanName: deploymentTarget == 'appservice' ? appServicePlan.outputs.name : ''
+    containerAppsEnvName: deploymentTarget == 'containerapps' ? acaManagedEnvironmentName : ''
   }
 }
 
@@ -1224,6 +1231,51 @@ module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
     logAnalyticsWorkspaceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
     vnetName: isolation.outputs.vnetName
     vnetPeSubnetName: isolation.outputs.backendSubnetId
+  }
+}
+
+// Based on https://luke.geek.nz/azure/azure-point-to-site-vpn-and-private-dns-resolver/
+// Manual step required of updating azurevpnconfig.xml to use the correct DNS server IP address
+module dnsResolver 'br/public:avm/res/network/dns-resolver:0.5.3' = if (useVpnGateway) {
+  name: 'dnsResolverDeployment'
+  scope: resourceGroup
+  params: {
+    name: '${abbrs.privateDnsResolver}${resourceToken}'
+    location: location
+    virtualNetworkResourceId: isolation.outputs.vnetId
+    inboundEndpoints: [
+      {
+        name: 'inboundEndpoint'
+        subnetResourceId: useVpnGateway ? isolation.outputs.privateDnsResolverSubnetId : ''
+      }
+    ]
+  }
+}
+
+module virtualNetworkGateway 'br/public:avm/res/network/virtual-network-gateway:0.6.1' = if (useVpnGateway) {
+  name: 'virtualNetworkGatewayDeployment'
+  scope: resourceGroup
+  params: {
+    name: '${abbrs.networkVpnGateways}${resourceToken}'
+    clusterSettings: {
+      clusterMode: 'activePassiveNoBgp'
+    }
+    gatewayType: 'Vpn'
+    virtualNetworkResourceId: isolation.outputs.vnetId
+    vpnGatewayGeneration: 'Generation2'
+    vpnClientAddressPoolPrefix: '172.16.201.0/24'
+    skuName: 'VpnGw2'
+    vpnClientAadConfiguration: {
+      aadAudience: 'c632b3df-fb67-4d84-bdcf-b95ad541b5c8' // Azure VPN client
+      aadIssuer: 'https://sts.windows.net/${tenant().tenantId}/'
+      aadTenant: '${environment().authentication.loginEndpoint}${tenant().tenantId}'
+      vpnAuthenticationTypes: [
+        'AAD'
+      ]
+      vpnClientProtocols: [
+        'OpenVPN'
+      ]
+    }
   }
 }
 

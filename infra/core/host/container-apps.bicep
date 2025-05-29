@@ -8,8 +8,11 @@ param containerRegistryName string
 param containerRegistryResourceGroupName string = ''
 param containerRegistryAdminUserEnabled bool = false
 param logAnalyticsWorkspaceResourceId string
-param applicationInsightsName string = '' // Not used here, was used for DAPR
-param virtualNetworkSubnetId string = ''
+
+param subnetResourceId string = ''
+
+param usePrivateIngress bool = true
+
 @allowed(['Consumption', 'D4', 'D8', 'D16', 'D32', 'E4', 'E8', 'E16', 'E32', 'NC24-A100', 'NC48-A100', 'NC96-A100'])
 param workloadProfile string
 
@@ -26,7 +29,7 @@ var workloadProfiles = workloadProfile == 'Consumption'
         workloadProfileType: 'Consumption'
       }
       {
-        minimumCount: 0
+        minimumCount: 1
         maximumCount: 2
         name: workloadProfile
         workloadProfileType: workloadProfile
@@ -51,7 +54,8 @@ module containerAppsEnvironment 'br/public:avm/res/app/managed-environment:0.8.0
     name: containerAppsEnvironmentName
     // Non-required parameters
     infrastructureResourceGroupName: containerRegistryResourceGroupName
-    infrastructureSubnetId: virtualNetworkSubnetId
+    infrastructureSubnetId: subnetResourceId
+    internal: usePrivateIngress
     location: location
     tags: tags
     zoneRedundant: false
@@ -67,7 +71,9 @@ module containerRegistry 'br/public:avm/res/container-registry/registry:0.5.1' =
   params: {
     name: containerRegistryName
     location: location
+    acrSku: usePrivateIngress ? 'Premium' : 'Standard'
     acrAdminUserEnabled: containerRegistryAdminUserEnabled
+    publicNetworkAccess: usePrivateIngress ? 'Disabled' : 'Enabled'
     tags: tags
   }
 }
