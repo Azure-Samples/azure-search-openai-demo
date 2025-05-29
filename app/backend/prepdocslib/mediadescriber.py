@@ -1,11 +1,13 @@
 import logging
 from abc import ABC
+import base64
 
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
 from rich.progress import Progress
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
+from openai import AsyncOpenAI
 
 logger = logging.getLogger("scripts")
 
@@ -105,3 +107,31 @@ class ContentUnderstandingDescriber:
 
                 fields = results["result"]["contents"][0]["fields"]
                 return fields["Description"]["valueString"]
+
+class MultimodalModelDescriber(MediaDescriber):
+    def __init__(self, openai_client: AsyncOpenAI, model: str, deployment: str):
+        self.openai_client = openai_client
+        self.model = model
+        self.deployment = deployment
+        
+    async def describe_image(self, image_bytes: bytes) -> str:
+        logger.info("Describing image using LLM...")
+        image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+        image_datauri = f"data:image/png;base64,{image_base64}"
+
+        response = await self.openai_client.chat.completions.create(
+            model=self.model if self.deployment is None else self.deployment,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that describes images.",
+                },
+                {
+                    "role": "user",
+                    "content": 
+                    [{"text": "Describe this image in detail", "type": "text"},
+                    {"image_url": {"url": image_datauri}, "type": "image_url"}]
+                }
+            ])
+        return response.choices[0].message.content.strip() if response.choices else ""
+

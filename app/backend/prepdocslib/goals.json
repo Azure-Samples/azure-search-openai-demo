@@ -2,6 +2,8 @@
  "embedding": [0, 1, 2],
  "sourcepage": "bla.pdf#page=2",
  "sourcefile": "bla.pdf",
+ "oids": [],
+ "groups": [],
  "images": # collection of objects with fields https://learn.microsoft.com/en-us/azure/search/vector-search-multi-vector-fields
    [ {embedding, url, verbalization, boundingbox},
      {embedding, url, verbalization, boundingbox} ]

@@ -8,6 +8,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
 from rich.logging import RichHandler
+from openai import AsyncAzureOpenAI, AsyncOpenAI
 
 from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
@@ -30,7 +31,7 @@ from prepdocslib.listfilestrategy import (
     LocalListFileStrategy,
 )
 from prepdocslib.parser import Parser
-from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
+from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser, MediaDescriptionStrategy
 from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
@@ -178,6 +179,9 @@ def setup_file_processors(
     search_images: bool = False,
     use_content_understanding: bool = False,
     use_multimodal: bool = False,
+    openai_client: Union[AsyncOpenAI, None] = None,
+    openai_model: Union[str, None] = None,
+    openai_deployment: Union[str, None] = None,
     content_understanding_endpoint: Union[str, None] = None,
 ):
     sentence_text_splitter = SentenceTextSplitter()
@@ -191,7 +195,10 @@ def setup_file_processors(
         doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{document_intelligence_service}.cognitiveservices.azure.com/",
             credential=documentintelligence_creds,
-            include_media_description=use_content_understanding or use_multimodal,
+            media_description_strategy = "openai" if use_multimodal else "contentunderstanding" if use_content_understanding else "none",
+            openai_client=openai_client,
+            openai_model=openai_model,
+            openai_deployment=openai_deployment,
             content_understanding_endpoint=content_understanding_endpoint,
         )
 
