@@ -83,7 +83,7 @@ def setup_blob_manager(
     storage_container: str,
     storage_resource_group: str,
     subscription_id: str,
-    search_images: bool,
+    store_page_images: bool,
     storage_key: Union[str, None] = None,
 ):
     storage_creds: Union[AsyncTokenCredential, str] = azure_credential if storage_key is None else storage_key
@@ -94,7 +94,7 @@ def setup_blob_manager(
         credential=storage_creds,
         resourceGroup=storage_resource_group,
         subscriptionId=subscription_id,
-        store_page_images=search_images,
+        store_page_images=store_page_images,
     )
 
 
@@ -176,7 +176,6 @@ def setup_file_processors(
     document_intelligence_key: Union[str, None] = None,
     local_pdf_parser: bool = False,
     local_html_parser: bool = False,
-    search_images: bool = False,
     use_content_understanding: bool = False,
     use_multimodal: bool = False,
     openai_client: Union[AsyncOpenAI, None] = None,
@@ -246,6 +245,20 @@ def setup_file_processors(
             }
         )
     return file_processors
+
+
+def setup_image_embeddings_service(
+    azure_credential: AsyncTokenCredential, vision_endpoint: Union[str, None], use_multimodal: bool
+) -> Union[ImageEmbeddings, None]:
+    image_embeddings_service: Optional[ImageEmbeddings] = None
+    if use_multimodal:
+        if vision_endpoint is None:
+            raise ValueError("A computer vision endpoint is required when GPT-4-vision is enabled.")
+        image_embeddings_service = ImageEmbeddings(
+            endpoint=vision_endpoint,
+            token_provider=get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default"),
+        )
+    return image_embeddings_service
 
 
 async def main(strategy: Strategy, setup_index: bool = True):
@@ -372,7 +385,7 @@ if __name__ == "__main__":
         storage_container=os.environ["AZURE_STORAGE_CONTAINER"],
         storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
-        search_images=use_gptvision,
+        store_page_images=use_multimodal,
         storage_key=clean_key_if_exists(args.storagekey),
     )
     list_file_strategy = setup_list_file_strategy(
@@ -436,10 +449,15 @@ if __name__ == "__main__":
             document_intelligence_key=clean_key_if_exists(args.documentintelligencekey),
             local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER") == "true",
             local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER") == "true",
-            search_images=use_gptvision,
             use_content_understanding=use_content_understanding,
             use_multimodal=use_multimodal,
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
+        )
+
+        image_embeddings_service = setup_image_embeddings_service(
+            azure_credential=azd_credential,
+            vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
+            use_multimodal=use_multimodal,
         )
 
         ingestion_strategy = FileStrategy(

@@ -316,7 +316,7 @@ class SearchManager:
                     existing_index.vector_search.profiles.append(text_vector_search_profile)
                     if existing_index.vector_search.algorithms is None:
                         existing_index.vector_search.algorithms = []
-                    existing_index.vector_search.algorithms.append(text_vector_algorithm)
+                    #existing_index.vector_search.algorithms.append(text_vector_algorithm)
                     if existing_index.vector_search.compressions is None:
                         existing_index.vector_search.compressions = []
                     existing_index.vector_search.compressions.append(text_vector_compression)
