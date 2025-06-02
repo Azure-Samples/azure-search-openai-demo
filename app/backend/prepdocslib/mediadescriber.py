@@ -121,17 +121,20 @@ class MultimodalModelDescriber(MediaDescriber):
 
         response = await self.openai_client.chat.completions.create(
             model=self.model if self.deployment is None else self.deployment,
+            max_tokens=500,
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a helpful assistant that describes images.",
+                    "content": "You are a helpful assistant that describes images from organizational documents.",
                 },
                 {
                     "role": "user",
                     "content": 
-                    [{"text": "Describe this image in detail", "type": "text"},
-                    {"image_url": {"url": image_datauri}, "type": "image_url"}]
+                    [{"text": "Describe image with no more than 5 sentences. Do not speculate about anything you don't know.", "type": "text"},
+                    {"image_url": {"url": image_datauri}, "type": "image_url", "detail": "low"}]
                 }
             ])
-        return response.choices[0].message.content.strip() if response.choices else ""
+        description = response.choices[0].message.content.strip() if response.choices else ""
+        print(description)
+        return description
 

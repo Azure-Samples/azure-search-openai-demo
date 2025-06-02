@@ -298,6 +298,7 @@ class SearchManager:
                     field.name == self.field_name_embedding for field in existing_index.fields
                 ):
                     logger.info("Adding %s field for text embeddings", self.field_name_embedding)
+                    embedding_field.stored = True
                     existing_index.fields.append(embedding_field)
                     if existing_index.vector_search is None:
                         raise ValueError("Vector search is not enabled for the existing index")

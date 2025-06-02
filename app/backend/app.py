@@ -84,6 +84,7 @@ from config import (
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
+    CONFIG_MULTIMODAL_ENABLED
 )
 from core.authentication import AuthenticationHelper
 from core.sessionhelper import create_session_id
@@ -705,6 +706,8 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
         reasoning_effort=OPENAI_REASONING_EFFORT,
+        vision_endpoint=AZURE_VISION_ENDPOINT,
+        vision_token_provider=token_provider,
     )
 
 @bp.after_app_serving
@@ -734,7 +737,7 @@ def create_app():
 
     # Log levels should be one of https://docs.python.org/3/library/logging.html#logging-levels
     # Set root level to WARNING to avoid seeing overly verbose logs from SDKS
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=logging.DEBUG)
     # Set our own logger levels to INFO by default
     app_level = os.getenv("APP_LOG_LEVEL", "INFO")
     app.logger.setLevel(os.getenv("APP_LOG_LEVEL", app_level))

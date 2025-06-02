@@ -60,11 +60,11 @@ class BlobManager:
                     blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                     file.url = blob_client.url
 
-            if self.store_page_images:
-                if os.path.splitext(file.content.name)[1].lower() == ".pdf":
-                    return await self.upload_pdf_blob_images(service_client, container_client, file)
-                else:
-                    logger.info("File %s is not a PDF, skipping image upload", file.content.name)
+            #if self.store_page_images:
+            #    if os.path.splitext(file.content.name)[1].lower() == ".pdf":
+            #        return await self.upload_pdf_blob_images(service_client, container_client, file)
+            #    else:
+            #        logger.info("File %s is not a PDF, skipping image upload", file.content.name)
 
         return None
 

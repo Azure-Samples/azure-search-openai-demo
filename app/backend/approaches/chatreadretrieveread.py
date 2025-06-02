@@ -1,5 +1,5 @@
 from collections.abc import Awaitable
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, Union, cast, Callable
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
@@ -47,6 +47,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        vision_endpoint: Optional[str] = None,
+        vision_token_provider: Callable[[], Awaitable[str]],
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -71,6 +73,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
+        self.vision_endpoint = vision_endpoint
+        self.vision_token_provider = vision_token_provider
 
     async def run_until_final_call(
         self,

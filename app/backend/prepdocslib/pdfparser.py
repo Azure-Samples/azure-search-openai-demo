@@ -61,7 +61,6 @@ class DocumentAnalysisParser(Parser):
         endpoint: str,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         model_id="prebuilt-layout",
-        include_media_description: bool = False,
         media_description_strategy: Enum = MediaDescriptionStrategy.NONE,
         # If using OpenAI, this is the client to use
         openai_client: Union[AsyncOpenAI, None] = None,
@@ -275,6 +274,10 @@ class DocumentAnalysisParser(Parser):
         pix = page.get_pixmap(matrix=pymupdf.Matrix(page_dpi / bbox_dpi, page_dpi / bbox_dpi), clip=rect)
 
         img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+        # print out the number of pixels
+        print(f"Cropped image size: {img.size} pixels")
         bytes_io = io.BytesIO()
         img.save(bytes_io, format="PNG")
+        with open(f"cropped_page_{page_number + 1}.png", "wb") as f:
+            f.write(bytes_io.getvalue())
         return bytes_io.getvalue()
