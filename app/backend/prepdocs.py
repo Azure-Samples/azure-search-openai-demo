@@ -314,7 +314,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--concurrency",
         type=int,
-        default=10,
+        default=FileStrategy.DEFAULT_CONCURRENCY,
         help="Max. number of concurrent tasks to run for processing files (file strategy only) (default: 10)",
     )
 

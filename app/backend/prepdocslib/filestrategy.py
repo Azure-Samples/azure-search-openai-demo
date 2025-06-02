@@ -42,6 +42,8 @@ class FileStrategy(Strategy):
     Strategy for ingesting documents into a search service from files stored either locally or in a data lake storage account
     """
 
+    DEFAULT_CONCURRENCY = 4
+
     def __init__(
         self,
         list_file_strategy: ListFileStrategy,
@@ -57,7 +59,7 @@ class FileStrategy(Strategy):
         category: Optional[str] = None,
         use_content_understanding: bool = False,
         content_understanding_endpoint: Optional[str] = None,
-        concurrency: int = 10,
+        concurrency: int = DEFAULT_CONCURRENCY,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -118,6 +120,7 @@ class FileStrategy(Strategy):
 
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
+            logger.info("Running with concurrency: %d", self.concurrency)
             semaphore = asyncio.Semaphore(self.concurrency)
             tasks = [process_file_worker(semaphore, file) async for file in files]
             await asyncio.gather(*tasks)
