@@ -70,6 +70,8 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ![RAG Architecture](docs/images/appcomponents.png)
 
+For a detailed interactive architecture diagram with full component descriptions, see the [Architecture Overview](docs/architecture.md).
+
 ## Azure account requirements
 
 **IMPORTANT:** In order to deploy and run this example, you'll need:
@@ -246,6 +248,7 @@ The resource group and all the resources will be deleted.
 
 You can find extensive documentation in the [docs](docs/README.md) folder:
 
+- [Architecture Overview](docs/architecture.md)
 - Deploying:
   - [Troubleshooting deployment](docs/deploy_troubleshooting.md)
     - [Debugging the app on App Service](docs/appservice.md)
