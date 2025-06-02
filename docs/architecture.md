@@ -97,10 +97,12 @@ graph TB
 ## Key Components
 
 ### Frontend Layer
+
 - **React Frontend**: Modern web application built with TypeScript and Vite
 - **User Interface**: Provides Chat and Ask interfaces for different interaction modes
 
 ### Backend Layer
+
 - **Python API**: Quart-based asynchronous web framework
 - **RAG Approaches**: Different strategies for retrieval and generation
   - Chat: Multi-turn conversations with context
@@ -108,6 +110,7 @@ graph TB
   - Vision: Image-aware processing with GPT-4V
 
 ### Azure Services
+
 - **Azure OpenAI Service**: Core AI model hosting (GPT-4, GPT-3.5, Ada embeddings)
 - **Azure AI Search**: Vector and keyword search with semantic ranking
 - **Azure Blob Storage**: Document storage and content management
@@ -116,6 +119,7 @@ graph TB
 - **Azure Application Insights**: Monitoring, logging, and telemetry
 
 ### Optional Components
+
 - **Microsoft Entra ID**: Authentication and authorization
 - **Azure Cosmos DB**: Persistent chat history storage
 - **Azure AI Vision**: Image analysis for vision-enabled scenarios
@@ -132,6 +136,7 @@ graph TB
 7. **Response**: AI-generated response with citations is returned to the user
 
 ### Security Features
+
 - **Access Control**: Optional row-level security based on user identity
 - **Security Filters**: OID and group-based filtering of search results
 - **Private Endpoints**: Network isolation capabilities for enhanced security
@@ -139,6 +144,7 @@ graph TB
 ## Deployment Options
 
 The application supports two primary deployment modes:
+
 - **Azure Container Apps** (Default): Serverless container hosting with automatic scaling
 - **Azure App Service**: Traditional PaaS hosting option
 
