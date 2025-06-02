@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Optional
 
@@ -56,6 +57,7 @@ class FileStrategy(Strategy):
         category: Optional[str] = None,
         use_content_understanding: bool = False,
         content_understanding_endpoint: Optional[str] = None,
+        concurrency: int = 10,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -70,6 +72,7 @@ class FileStrategy(Strategy):
         self.category = category
         self.use_content_understanding = use_content_understanding
         self.content_understanding_endpoint = content_understanding_endpoint
+        self.concurrency = concurrency
 
     def setup_search_manager(self):
         self.search_manager = SearchManager(
@@ -98,9 +101,9 @@ class FileStrategy(Strategy):
 
     async def run(self):
         self.setup_search_manager()
-        if self.document_action == DocumentAction.Add:
-            files = self.list_file_strategy.list()
-            async for file in files:
+
+        async def process_file_worker(semaphore: asyncio.Semaphore, file: File):
+            async with semaphore:
                 try:
                     sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
                     if sections:
@@ -112,6 +115,12 @@ class FileStrategy(Strategy):
                 finally:
                     if file:
                         file.close()
+
+        if self.document_action == DocumentAction.Add:
+            files = self.list_file_strategy.list()
+            semaphore = asyncio.Semaphore(self.concurrency)
+            tasks = [process_file_worker(semaphore, file) async for file in files]
+            await asyncio.gather(*tasks)
         elif self.document_action == DocumentAction.Remove:
             paths = self.list_file_strategy.list_paths()
             async for path in paths:

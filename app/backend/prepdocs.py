@@ -311,6 +311,12 @@ if __name__ == "__main__":
         required=False,
         help="Search service system assigned Identity (Managed identity) (used for integrated vectorization)",
     )
+    parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=10,
+        help="Max. number of concurrent tasks to run for processing files (file strategy only) (default: 10)",
+    )
 
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
@@ -467,6 +473,7 @@ if __name__ == "__main__":
             category=args.category,
             use_content_understanding=use_content_understanding,
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
+            concurrency=args.concurrency,
         )
 
     loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))
