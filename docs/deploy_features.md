@@ -40,22 +40,28 @@ As of late March 2025, the default chat completion model is `gpt-4o-mini`. If yo
 
 1. To set the GPT model to a different [available model](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate model name.
 
-    For GPT-4:
+    For gpt-4.1-mini:
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4.1-mini
     ```
 
-    For GPT-4o:
+    For gpt-4o:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o
     ```
 
-    For GPT-4o mini:
+    For gpt-4o mini:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o-mini
+    ```
+
+    For gpt-4:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4
     ```
 
     For gpt-3.5-turbo:
@@ -66,22 +72,28 @@ As of late March 2025, the default chat completion model is `gpt-4o-mini`. If yo
 
 1. To set the Azure OpenAI model version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version string.
 
-    For GPT-4:
+    For gpt-4.1-mini:
 
-    ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
+    ```
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-14
     ```
 
-    For GPT-4o:
+    For gpt-4o:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-05-13
     ```
 
-    For GPT-4o mini:
+    For gpt-4o mini:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-07-18
+    ```
+
+    For gpt-4:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
     ```
 
     For gpt-3.5-turbo:

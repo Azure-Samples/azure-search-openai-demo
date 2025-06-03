@@ -24,7 +24,7 @@ See the agentic retrieval documentation.
 
 2. **(Optional) Set the agentic retrieval model**
 
-   You can configure which model agentic retrieval uses. By default, gpt-4o-mini is used
+   You can configure which model agentic retrieval uses. By default, gpt-4o-mini is used.
 
    For gpt-4o:
 

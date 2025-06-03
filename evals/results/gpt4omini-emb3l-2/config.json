@@ -1,7 +1,7 @@
 {
-    "evaluation_gpt_model": "gpt-4o",
-    "evaluation_timestamp": 1748932460,
-    "testdata_path": "/Users/pamelafox/azure-search-openai-demo/evals/ground_truth.jsonl",
+    "testdata_path": "ground_truth.jsonl",
+    "results_dir": "results/experiment<TIMESTAMP>",
+    "requested_metrics": ["gpt_groundedness", "gpt_relevance", "answer_length", "latency", "citations_matched", "any_citation"],
     "target_url": "http://localhost:50505/chat",
     "target_parameters": {
         "overrides": {
@@ -23,5 +23,6 @@
             "seed": 1
         }
     },
-    "num_questions": null
+    "target_response_answer_jmespath": "message.content",
+    "target_response_context_jmespath": "context.data_points.text"
 }
