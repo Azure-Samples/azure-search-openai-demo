@@ -86,7 +86,6 @@ class ContentUnderstandingDescriber:
                 await self.poll_api(session, poll_url, headers)
 
     async def describe_image(self, image_bytes: bytes) -> str:
-        logger.info("Sending image to Azure Content Understanding service...")
         async with aiohttp.ClientSession() as session:
             token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
             headers = {"Authorization": "Bearer " + token.token}
@@ -115,7 +114,6 @@ class MultimodalModelDescriber(MediaDescriber):
         self.deployment = deployment
         
     async def describe_image(self, image_bytes: bytes) -> str:
-        logger.info("Describing image using LLM...")
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
         image_datauri = f"data:image/png;base64,{image_base64}"
 
@@ -131,10 +129,9 @@ class MultimodalModelDescriber(MediaDescriber):
                     "role": "user",
                     "content": 
                     [{"text": "Describe image with no more than 5 sentences. Do not speculate about anything you don't know.", "type": "text"},
-                    {"image_url": {"url": image_datauri}, "type": "image_url", "detail": "low"}]
+                    {"image_url": {"url": image_datauri}, "type": "image_url", "detail": "auto"}]
                 }
             ])
         description = response.choices[0].message.content.strip() if response.choices else ""
-        print(description)
         return description
 

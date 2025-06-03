@@ -5,5 +5,12 @@
  "oids": [],
  "groups": [],
  "images": # collection of objects with fields https://learn.microsoft.com/en-us/azure/search/vector-search-multi-vector-fields
-   [ {embedding, url, verbalization, boundingbox},
-     {embedding, url, verbalization, boundingbox} ]
+   [ {embedding, url, description, boundingbox},
+     {embedding, url, description, boundingbox} ]
+
+# Consider gpt-4.1-mini as default: pricier? but relatively not pricey compared to o3 and gpt-4o. run our evals. its better at instruction following.
+
+# Parse each page, get back text with descritpions, associate each page with images on that page
+# Each image needs the citation file.pdf#figure=1 via Pillow
+# Each image needs to be stored in Blob storage
+# Update the search index with all the info

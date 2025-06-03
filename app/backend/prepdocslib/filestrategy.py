@@ -18,7 +18,8 @@ async def parse_file(
     file: File,
     file_processors: dict[str, FileProcessor],
     category: Optional[str] = None,
-    image_embeddings: Optional[ImageEmbeddings] = None,
+    blob_manager: Optional[BlobManager] = None,
+    image_embeddings_client: Optional[ImageEmbeddings] = None,
 ) -> list[Section]:
     key = file.file_extension().lower()
     processor = file_processors.get(key)
@@ -27,12 +28,24 @@ async def parse_file(
         return []
     logger.info("Ingesting '%s'", file.filename())
     pages = [page async for page in processor.parser.parse(content=file.content)]
+    for page in pages:
+        for image in page.images:
+            if image.url is None:
+                image.url = await blob_manager.upload_document_image(file, image.bytes, image.filename)
+            if image_embeddings_client:
+                image.embedding = await image_embeddings_client.create_embedding(image.bytes)
     logger.info("Splitting '%s' into sections", file.filename())
-    if image_embeddings:
-        logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
     sections = [
         Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)
     ]
+    # For now, add the images back to each split page based off split_page.page_num
+    for section in sections:
+        section.split_page.images = [
+            image for page in pages if page.page_num == section.split_page.page_num for image in page.images
+        ]
+        logger.info(
+            "Section for page %d has %d images", section.split_page.page_num, len(section.split_page.images)
+        )
     return sections
 
 
@@ -102,13 +115,9 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
+                    sections = await parse_file(file, self.file_processors, self.category, self.blob_manager, self.image_embeddings)
                     if sections:
-                        blob_sas_uris = await self.blob_manager.upload_blob(file)
-                        blob_image_embeddings: Optional[list[list[float]]] = None
-                        if self.image_embeddings and blob_sas_uris:
-                            blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                        await self.search_manager.update_content(sections, blob_image_embeddings, url=file.url)
+                        await self.search_manager.update_content(sections, url=file.url)
                 finally:
                     if file:
                         file.close()

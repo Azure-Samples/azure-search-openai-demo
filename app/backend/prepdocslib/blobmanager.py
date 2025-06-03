@@ -56,16 +56,21 @@ class BlobManager:
             if file.url is None:
                 with open(file.content.name, "rb") as reopened_file:
                     blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                    logger.info("Uploading blob for whole file -> %s", blob_name)
+                    logger.info("Uploading blob for document %s", blob_name)
                     blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                     file.url = blob_client.url
-
-            #if self.store_page_images:
-            #    if os.path.splitext(file.content.name)[1].lower() == ".pdf":
-            #        return await self.upload_pdf_blob_images(service_client, container_client, file)
-            #    else:
-            #        logger.info("File %s is not a PDF, skipping image upload", file.content.name)
-
+        return None
+    
+    async def upload_document_image(self, document_file: File, image_bytes: bytes, image_filename: str) -> Optional[str]:
+        async with BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
+        ) as service_client, service_client.get_container_client(self.container) as container_client:
+            if not await container_client.exists():
+                await container_client.create_container()
+            blob_name = BlobManager.blob_name_from_file_name(document_file.content.name) + "/" + image_filename
+            logger.info("Uploading blob for document image %s", blob_name)
+            blob_client = await container_client.upload_blob(blob_name, io.BytesIO(image_bytes), overwrite=True)
+            return blob_client.url
         return None
 
     def get_managedidentity_connectionstring(self):

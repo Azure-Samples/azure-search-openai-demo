@@ -21,7 +21,7 @@ from pypdf import PdfReader
 from openai import AsyncOpenAI
 
 from .mediadescriber import MediaDescriber, ContentUnderstandingDescriber, MultimodalModelDescriber
-from .page import Page
+from .page import Page, ImageOnPage
 from .parser import Parser
 
 logger = logging.getLogger("scripts")
@@ -50,6 +50,8 @@ class MediaDescriptionStrategy(Enum):
     OPENAI = "openai"
     CONTENTUNDERSTANDING = "content_understanding"
 
+
+
 class DocumentAnalysisParser(Parser):
     """
     Concrete parser backed by Azure AI Document Intelligence that can parse many document formats into pages
@@ -68,6 +70,7 @@ class DocumentAnalysisParser(Parser):
         openai_deployment: Optional[str] = None,
         # If using Content Understanding, this is the endpoint for the service
         content_understanding_endpoint: Union[str, None] = None,
+        # should this take the blob storage info too?
     ):
         self.model_id = model_id
         self.endpoint = endpoint
@@ -137,6 +140,7 @@ class DocumentAnalysisParser(Parser):
             analyze_result: AnalyzeResult = await poller.result()
 
             offset = 0
+            
             for page in analyze_result.pages:
                 tables_on_page = [
                     table
@@ -150,6 +154,7 @@ class DocumentAnalysisParser(Parser):
                         for figure in (analyze_result.figures or [])
                         if figure.bounding_regions and figure.bounding_regions[0].page_number == page.page_number
                     ]
+                page_images: list[ImageOnPage] = []
 
                 class ObjectType(Enum):
                     NONE = -1
@@ -195,24 +200,25 @@ class DocumentAnalysisParser(Parser):
                         if object_idx is None:
                             raise ValueError("Expected object_idx to be set")
                         if mask_char not in added_objects:
-                            figure_html = await DocumentAnalysisParser.figure_to_html(
+                            image_on_page = await DocumentAnalysisParser.process_figure(
                                 doc_for_pymupdf, figures_on_page[object_idx], media_describer
                             )
-                            page_text += figure_html
+                            page_images.append(image_on_page)
+                            page_text += image_on_page.description
                             added_objects.add(mask_char)
                 # We remove these comments since they are not needed and skew the page numbers
                 page_text = page_text.replace("<!-- PageBreak -->", "")
                 # We remove excess newlines at the beginning and end of the page
                 page_text = page_text.strip()
-                yield Page(page_num=page.page_number - 1, offset=offset, text=page_text)
+                yield Page(page_num=page.page_number - 1, offset=offset, text=page_text, images=page_images)
                 offset += len(page_text)
 
     @staticmethod
-    async def figure_to_html(
+    async def process_figure(
         doc: pymupdf.Document, figure: DocumentFigure, media_describer: MediaDescriber
     ) -> str:
         figure_title = (figure.caption and figure.caption.content) or ""
-        logger.info("Describing figure %s with title '%s'", figure.id, figure_title)
+        logger.info("Describing figure %s with title '%s' using %s", figure.id, figure_title, type(media_describer).__name__)
         if not figure.bounding_regions:
             return f"<figure><figcaption>{figure_title}</figcaption></figure>"
         if len(figure.bounding_regions) > 1:
@@ -228,7 +234,12 @@ class DocumentAnalysisParser(Parser):
         page_number = first_region["pageNumber"]  # 1-indexed
         cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
         figure_description = await media_describer.describe_image(cropped_img)
-        return f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>"
+        return ImageOnPage(
+            bytes=cropped_img,
+            filename=f"page_{page_number}_figure_{figure.id}.png",
+            bbox=bounding_box,
+            description=f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>"
+        )
 
     @staticmethod
     def table_to_html(table: DocumentTable):
@@ -274,10 +285,6 @@ class DocumentAnalysisParser(Parser):
         pix = page.get_pixmap(matrix=pymupdf.Matrix(page_dpi / bbox_dpi, page_dpi / bbox_dpi), clip=rect)
 
         img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
-        # print out the number of pixels
-        print(f"Cropped image size: {img.size} pixels")
         bytes_io = io.BytesIO()
         img.save(bytes_io, format="PNG")
-        with open(f"cropped_page_{page_number + 1}.png", "wb") as f:
-            f.write(bytes_io.getvalue())
         return bytes_io.getvalue()
