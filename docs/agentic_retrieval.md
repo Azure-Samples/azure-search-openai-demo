@@ -10,7 +10,7 @@ See the agentic retrieval documentation.
 
 ### Prerequisites
 
-* A deployment of any of the supported agentic retrieval models in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a gpt-4o-mini deployment from your Azure OpenAI deployments page.
+* A deployment of any of the supported agentic retrieval models in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a gpt-4o deployment from your Azure OpenAI deployments page.
 
 ### Deployment
 
@@ -24,7 +24,7 @@ See the agentic retrieval documentation.
 
 2. **(Optional) Set the agentic retrieval model**
 
-   You can configure which model agentic retrieval uses. By default, gpt-4o-mini is used.
+   You can configure which model agentic retrieval uses. By default, gpt-4o is used.
 
    For gpt-4o:
 
