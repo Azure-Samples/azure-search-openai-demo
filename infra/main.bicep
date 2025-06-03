@@ -204,9 +204,9 @@ param searchAgentModelVersion string = ''
 param searchAgentDeploymentSkuName string = ''
 param searchAgentDeploymentCapacity int = 0
 var searchAgent = {
-  modelName: !empty(searchAgentModelName) ? searchAgentModelName : 'gpt-4o'
+  modelName: !empty(searchAgentModelName) ? searchAgentModelName : 'gpt-4.1-mini'
   deploymentName: !empty(searchAgentDeploymentName) ? searchAgentDeploymentName : 'searchagent'
-  deploymentVersion: !empty(searchAgentModelVersion) ? searchAgentModelVersion : '2024-08-06'
+  deploymentVersion: !empty(searchAgentModelVersion) ? searchAgentModelVersion : '2025-04-14'
   deploymentSkuName: !empty(searchAgentDeploymentSkuName) ? searchAgentDeploymentSkuName : 'GlobalStandard'
   deploymentCapacity: searchAgentDeploymentCapacity != 0 ? searchAgentDeploymentCapacity : 30
 }
