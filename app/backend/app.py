@@ -66,8 +66,10 @@ from config import (
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
     CONFIG_CREDENTIAL,
     CONFIG_DEFAULT_REASONING_EFFORT,
+    CONFIG_IMAGE_BLOB_CONTAINER_CLIENT,  # Added this line
     CONFIG_INGESTER,
     CONFIG_LANGUAGE_PICKER_ENABLED,
+    CONFIG_MULTIMODAL_ENABLED,
     CONFIG_OPENAI_CLIENT,
     CONFIG_QUERY_REWRITING_ENABLED,
     CONFIG_REASONING_EFFORT_ENABLED,
@@ -84,7 +86,6 @@ from config import (
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
-    CONFIG_MULTIMODAL_ENABLED
 )
 from core.authentication import AuthenticationHelper
 from core.sessionhelper import create_session_id
@@ -182,7 +183,9 @@ async def ask(auth_claims: dict[str, Any]):
     context["auth_claims"] = auth_claims
     try:
         approach: Approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
-        r = await approach.run(request_json["messages"], context=context, session_state=request_json.get("session_state"))
+        r = await approach.run(
+            request_json["messages"], context=context, session_state=request_json.get("session_state")
+        )
         return jsonify(r)
     except Exception as error:
         return error_response(error, "/ask")
@@ -404,6 +407,7 @@ async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
     AZURE_STORAGE_CONTAINER = os.environ["AZURE_STORAGE_CONTAINER"]
+    AZURE_IMAGESTORAGE_CONTAINER = os.environ.get("AZURE_IMAGESTORAGE_CONTAINER")
     AZURE_USERSTORAGE_ACCOUNT = os.environ.get("AZURE_USERSTORAGE_ACCOUNT")
     AZURE_USERSTORAGE_CONTAINER = os.environ.get("AZURE_USERSTORAGE_CONTAINER")
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
@@ -510,6 +514,15 @@ async def setup_clients():
     blob_container_client = ContainerClient(
         f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", AZURE_STORAGE_CONTAINER, credential=azure_credential
     )
+
+    # Set up the image storage container client if configured
+    image_blob_container_client = None
+    if AZURE_IMAGESTORAGE_CONTAINER:
+        image_blob_container_client = ContainerClient(
+            f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net",
+            AZURE_IMAGESTORAGE_CONTAINER,
+            credential=azure_credential,
+        )
 
     # Set up authentication helper
     search_index = None
@@ -636,6 +649,8 @@ async def setup_clients():
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_AGENT_CLIENT] = agent_client
     current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
+    if image_blob_container_client:
+        current_app.config[CONFIG_IMAGE_BLOB_CONTAINER_CLIENT] = image_blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
@@ -710,12 +725,15 @@ async def setup_clients():
         vision_token_provider=token_provider,
     )
 
+
 @bp.after_app_serving
 async def close_clients():
     await current_app.config[CONFIG_SEARCH_CLIENT].close()
     await current_app.config[CONFIG_BLOB_CONTAINER_CLIENT].close()
     if current_app.config.get(CONFIG_USER_BLOB_CONTAINER_CLIENT):
         await current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT].close()
+    if current_app.config.get(CONFIG_IMAGE_BLOB_CONTAINER_CLIENT):
+        await current_app.config[CONFIG_IMAGE_BLOB_CONTAINER_CLIENT].close()
 
 
 def create_app():

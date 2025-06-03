@@ -47,6 +47,8 @@ param userStorageContainerName string = 'user-content'
 
 param tokenStorageContainerName string = 'tokens'
 
+param imageStorageContainerName string = 'images'
+
 param appServiceSkuName string // Set in main.parameters.json
 
 @allowed(['azure', 'openai', 'azure_custom'])
@@ -450,6 +452,7 @@ var appEnvVariables = {
   USE_USER_UPLOAD: useUserUpload
   AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
   AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
+  AZURE_IMAGESTORAGE_CONTAINER: useMultimodal ? imageStorageContainerName : ''
   AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
   USE_LOCAL_PDF_PARSER: useLocalPdfParser
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
@@ -792,6 +795,10 @@ module storage 'core/storage/storage-account.bicep' = {
     containers: [
       {
         name: storageContainerName
+        publicAccess: 'None'
+      }
+      {
+        name: imageStorageContainerName
         publicAccess: 'None'
       }
       {
@@ -1308,6 +1315,8 @@ output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage.outputs.name : ''
 output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
 output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_IMAGESTORAGE_CONTAINER string = useMultimodal ? imageStorageContainerName : ''
 
 output AZURE_AI_PROJECT string = useAiProject ? ai.outputs.projectName : ''
 

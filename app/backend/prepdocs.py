@@ -2,13 +2,14 @@ import argparse
 import asyncio
 import logging
 import os
+from enum import Enum
 from typing import Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
-from rich.logging import RichHandler
 from openai import AsyncAzureOpenAI, AsyncOpenAI
+from rich.logging import RichHandler
 
 from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
@@ -31,11 +32,14 @@ from prepdocslib.listfilestrategy import (
     LocalListFileStrategy,
 )
 from prepdocslib.parser import Parser
-from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser, MediaDescriptionStrategy
+from prepdocslib.pdfparser import (
+    DocumentAnalysisParser,
+    LocalPdfParser,
+    MediaDescriptionStrategy,
+)
 from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
-from enum import Enum
 
 logger = logging.getLogger("scripts")
 
@@ -86,11 +90,14 @@ def setup_blob_manager(
     subscription_id: str,
     store_page_images: bool,
     storage_key: Union[str, None] = None,
+    image_storage_container: Union[str, None] = None,  # Added this parameter
 ):
     storage_creds: Union[AsyncTokenCredential, str] = azure_credential if storage_key is None else storage_key
+
     return BlobManager(
         endpoint=f"https://{storage_account}.blob.core.windows.net",
         container=storage_container,
+        image_container=image_storage_container,
         account=storage_account,
         credential=storage_creds,
         resourceGroup=storage_resource_group,
@@ -178,6 +185,7 @@ def setup_embeddings_service(
             disable_batch=disable_batch_vectors,
         )
 
+
 def setup_openai_client(
     openai_host: OpenAIHost,
     azure_openai_api_key: Union[str, None] = None,
@@ -231,6 +239,7 @@ def setup_openai_client(
         )
     return openai_client
 
+
 def setup_file_processors(
     azure_credential: AsyncTokenCredential,
     document_intelligence_service: Union[str, None],
@@ -255,7 +264,15 @@ def setup_file_processors(
         doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{document_intelligence_service}.cognitiveservices.azure.com/",
             credential=documentintelligence_creds,
-            media_description_strategy = MediaDescriptionStrategy.OPENAI if use_multimodal else MediaDescriptionStrategy.CONTENTUNDERSTANDING if use_content_understanding else MediaDescriptionStrategy.NONE,
+            media_description_strategy=(
+                MediaDescriptionStrategy.OPENAI
+                if use_multimodal
+                else (
+                    MediaDescriptionStrategy.CONTENTUNDERSTANDING
+                    if use_content_understanding
+                    else MediaDescriptionStrategy.NONE
+                )
+            ),
             openai_client=openai_client,
             openai_model=openai_model,
             openai_deployment=openai_deployment,
@@ -384,7 +401,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.verbose:
-        logging.basicConfig(format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)], level=logging.WARNING)
+        logging.basicConfig(
+            format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)], level=logging.WARNING
+        )
         # We only set the level to INFO for our logger,
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.DEBUG)
@@ -448,6 +467,7 @@ if __name__ == "__main__":
         subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
         store_page_images=use_multimodal,
         storage_key=clean_key_if_exists(args.storagekey),
+        image_storage_container=os.environ.get("AZURE_IMAGESTORAGE_CONTAINER"),  # Pass the image container
     )
     list_file_strategy = setup_list_file_strategy(
         azure_credential=azd_credential,
@@ -460,7 +480,7 @@ if __name__ == "__main__":
 
     openai_host = OpenAIHost(os.environ["OPENAI_HOST"])
     # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
-    azure_openai_api_version=os.getenv("AZURE_OPENAI_API_VERSION") or "2024-06-01"
+    azure_openai_api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-06-01"
     emb_model_dimensions = 1536
     if os.getenv("AZURE_OPENAI_EMB_DIMENSIONS"):
         emb_model_dimensions = int(os.environ["AZURE_OPENAI_EMB_DIMENSIONS"])
@@ -489,7 +509,6 @@ if __name__ == "__main__":
         openai_api_key=clean_key_if_exists(os.getenv("OPENAI_API_KEY")),
         openai_organization=os.getenv("OPENAI_ORGANIZATION"),
     )
-
 
     ingestion_strategy: Strategy
     if use_int_vectorization:

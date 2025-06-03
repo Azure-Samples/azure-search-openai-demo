@@ -35,11 +35,13 @@ class BlobManager:
         resourceGroup: str,
         subscriptionId: str,
         store_page_images: bool = False,
+        image_container: Optional[str] = None,  # Added this parameter
     ):
         self.endpoint = endpoint
         self.credential = credential
         self.account = account
         self.container = container
+        self.image_container = image_container
         self.store_page_images = store_page_images
         self.resourceGroup = resourceGroup
         self.subscriptionId = subscriptionId
@@ -60,11 +62,17 @@ class BlobManager:
                     blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                     file.url = blob_client.url
         return None
-    
-    async def upload_document_image(self, document_file: File, image_bytes: bytes, image_filename: str) -> Optional[str]:
+
+    async def upload_document_image(
+        self, document_file: File, image_bytes: bytes, image_filename: str
+    ) -> Optional[str]:
+        if self.image_container is None:
+            raise ValueError(
+                "Image container name is not set. Re-run `azd provision` to automatically set up the images container."
+            )
         async with BlobServiceClient(
             account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
-        ) as service_client, service_client.get_container_client(self.container) as container_client:
+        ) as service_client, service_client.get_container_client(self.image_container) as container_client:
             if not await container_client.exists():
                 await container_client.create_container()
             blob_name = BlobManager.blob_name_from_file_name(document_file.content.name) + "/" + image_filename

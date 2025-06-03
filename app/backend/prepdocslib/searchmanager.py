@@ -46,9 +46,9 @@ class Section:
     """
 
     def __init__(self, split_page: SplitPage, content: File, category: Optional[str] = None):
-        self.split_page = split_page # content comes from here
-        self.content = content # sourcepage and sourcefile come from here
-        self.category = category 
+        self.split_page = split_page  # content comes from here
+        self.content = content  # sourcepage and sourcefile come from here
+        self.category = category
         # this also needs images which will become the images field
 
 
@@ -160,18 +160,39 @@ class SearchManager:
                     name="images",
                     type=SearchFieldDataType.Collection(SearchFieldDataType.ComplexType),
                     fields=[
-                        SearchField(name="embedding",
+                        SearchField(
+                            name="embedding",
                             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
                             stored=False,
                             vector_search_dimensions=1024,
-                            vector_search_profile_name=image_vector_search_profile.name),
-                        SearchField(name="url", type=SearchFieldDataType.String, searchable=False, filterable=True, sortable=False, facetable=True),
-                        SearchField(name="description", type=SearchFieldDataType.String, searchable=True, filterable=False, sortable=False, facetable=False),
-                        SearchField(name="boundingbox",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.Int32),
-                            searchable=False, filterable=False, sortable=False, facetable=False),
-                    ]
+                            vector_search_profile_name=image_vector_search_profile.name,
+                        ),
+                        SearchField(
+                            name="url",
+                            type=SearchFieldDataType.String,
+                            searchable=False,
+                            filterable=True,
+                            sortable=False,
+                            facetable=True,
+                        ),
+                        SearchField(
+                            name="description",
+                            type=SearchFieldDataType.String,
+                            searchable=True,
+                            filterable=False,
+                            sortable=False,
+                            facetable=False,
+                        ),
+                        SearchField(
+                            name="boundingbox",
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.Double),
+                            searchable=False,
+                            filterable=False,
+                            sortable=False,
+                            facetable=False,
+                        ),
+                    ],
                 )
 
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
@@ -324,7 +345,7 @@ class SearchManager:
                     existing_index.vector_search.profiles.append(text_vector_search_profile)
                     if existing_index.vector_search.algorithms is None:
                         existing_index.vector_search.algorithms = []
-                    #existing_index.vector_search.algorithms.append(text_vector_algorithm)
+                    # existing_index.vector_search.algorithms.append(text_vector_algorithm)
                     if existing_index.vector_search.compressions is None:
                         existing_index.vector_search.compressions = []
                     existing_index.vector_search.compressions.append(text_vector_compression)
@@ -419,9 +440,7 @@ class SearchManager:
 
             logger.info("Agent %s created successfully", self.search_info.agent_name)
 
-    async def update_content(
-        self, sections: list[Section], url: Optional[str] = None
-    ):
+    async def update_content(self, sections: list[Section], url: Optional[str] = None):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -432,16 +451,19 @@ class SearchManager:
                         "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
                         "content": section.split_page.text,
                         "category": section.category,
-                        "sourcepage": BlobManager.sourcepage_from_file_page(filename=section.content.filename(), page=section.split_page.page_num),
+                        "sourcepage": BlobManager.sourcepage_from_file_page(
+                            filename=section.content.filename(), page=section.split_page.page_num
+                        ),
                         "sourcefile": section.content.filename(),
                         "images": [
                             {
                                 "url": image.url,
                                 "description": image.description,
-                                #"boundingbox": list(image.bbox), # TODO: decide if it should be a float, ask mattg
+                                "boundingbox": image.bbox,
                                 "embedding": image.embedding,
                             }
-                            for image in section.split_page.images],
+                            for image in section.split_page.images
+                        ],
                         **section.content.acls,
                     }
                     for section_index, section in enumerate(batch)
@@ -457,7 +479,12 @@ class SearchManager:
                     )
                     for i, document in enumerate(documents):
                         document[self.field_name_embedding] = embeddings[i]
-                logger.info("Uploading batch %d with %d sections to search index '%s'", batch_index + 1, len(documents), self.search_info.index_name)
+                logger.info(
+                    "Uploading batch %d with %d sections to search index '%s'",
+                    batch_index + 1,
+                    len(documents),
+                    self.search_info.index_name,
+                )
                 await search_client.upload_documents(documents)
 
     async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
