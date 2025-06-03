@@ -1,6 +1,6 @@
 {
     "evaluation_gpt_model": "gpt-4o",
-    "evaluation_timestamp": 1746818372,
+    "evaluation_timestamp": 1748932460,
     "testdata_path": "/Users/pamelafox/azure-search-openai-demo/evals/ground_truth.jsonl",
     "target_url": "http://localhost:50505/chat",
     "target_parameters": {
