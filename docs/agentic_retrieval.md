@@ -31,7 +31,7 @@ See the agentic retrieval documentation.
    ```shell
    azd env set AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT searchagent
    azd env set AZURE_OPENAI_SEARCHAGENT_MODEL gpt-4.1-mini
-   azd env set AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION 2024-11-20
+   azd env set AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION 2025-04-14
    ```
 
 3. **Update the infrastructure and application:**
