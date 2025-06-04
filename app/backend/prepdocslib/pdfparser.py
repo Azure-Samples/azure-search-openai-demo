@@ -243,8 +243,10 @@ class DocumentAnalysisParser(Parser):
         figure_description = await media_describer.describe_image(cropped_img)
         return ImageOnPage(
             bytes=cropped_img,
-            filename=f"page_{page_number}_figure_{figure.id}.png",
+            page_num=page_number,
+            figure_id=figure.id,
             bbox=bbox_pixels,
+            filename=f"figure{figure.id.replace(".", "_")}.png",
             description=f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>",
         )
 

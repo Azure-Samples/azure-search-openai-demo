@@ -7,6 +7,8 @@ class ImageOnPage:
     bbox: list[float, float, float, float]  # Pixels
     filename: str
     description: str
+    figure_id: str
+    page_num: int  # 1-indexed
     url: str | None = None
     embedding: list[float] | None = None
 

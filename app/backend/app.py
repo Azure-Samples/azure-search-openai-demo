@@ -686,6 +686,7 @@ async def setup_clients():
         agent_client=agent_client,
         openai_client=openai_client,
         auth_helper=auth_helper,
+        images_blob_container_client=image_blob_container_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,

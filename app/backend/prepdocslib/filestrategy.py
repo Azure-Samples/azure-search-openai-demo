@@ -31,7 +31,7 @@ async def parse_file(
     for page in pages:
         for image in page.images:
             if image.url is None:
-                image.url = await blob_manager.upload_document_image(file, image.bytes, image.filename)
+                image.url = await blob_manager.upload_document_image(file, image.bytes, image.filename, image.page_num)
             if image_embeddings_client:
                 image.embedding = await image_embeddings_client.create_embedding(image.bytes)
     logger.info("Splitting '%s' into sections", file.filename())
@@ -43,9 +43,6 @@ async def parse_file(
         section.split_page.images = [
             image for page in pages if page.page_num == section.split_page.page_num for image in page.images
         ]
-        logger.info(
-            "Section for page %d has %d images", section.split_page.page_num, len(section.split_page.images)
-        )
     return sections
 
 
@@ -115,7 +112,9 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    sections = await parse_file(file, self.file_processors, self.category, self.blob_manager, self.image_embeddings)
+                    sections = await parse_file(
+                        file, self.file_processors, self.category, self.blob_manager, self.image_embeddings
+                    )
                     if sections:
                         await self.search_manager.update_content(sections, url=file.url)
                 finally:

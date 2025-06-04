@@ -1,20 +1,15 @@
-import datetime
 import io
 import logging
 import os
 import re
 from typing import Optional, Union
 
-import pymupdf
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.blob import (
-    BlobSasPermissions,
     UserDelegationKey,
-    generate_blob_sas,
 )
-from azure.storage.blob.aio import BlobServiceClient, ContainerClient
+from azure.storage.blob.aio import BlobServiceClient
 from PIL import Image, ImageDraw, ImageFont
-from pypdf import PdfReader
 
 from .listfilestrategy import File
 
@@ -64,7 +59,7 @@ class BlobManager:
         return None
 
     async def upload_document_image(
-        self, document_file: File, image_bytes: bytes, image_filename: str
+        self, document_file: File, image_bytes: bytes, image_filename: str, image_page_num: int
     ) -> Optional[str]:
         if self.image_container is None:
             raise ValueError(
@@ -75,81 +70,55 @@ class BlobManager:
         ) as service_client, service_client.get_container_client(self.image_container) as container_client:
             if not await container_client.exists():
                 await container_client.create_container()
-            blob_name = BlobManager.blob_name_from_file_name(document_file.content.name) + "/" + image_filename
+
+            # Load and modify the image to add text
+            image = Image.open(io.BytesIO(image_bytes))
+            text_height = 40
+            new_img = Image.new("RGB", (image.width, image.height + text_height), "white")
+            new_img.paste(image, (0, text_height))
+
+            # Add text
+            draw = ImageDraw.Draw(new_img)
+            sourcepage = BlobManager.sourcepage_from_file_page(document_file.content.name, page=image_page_num)
+            text = f"Document:  {sourcepage}"
+
+            font = None
+            try:
+                font = ImageFont.truetype("arial.ttf", 24)
+            except OSError:
+                try:
+                    font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 24)
+                except OSError:
+                    logger.info("Unable to find arial.ttf or FreeMono.ttf, using default font")
+
+            # Draw document text on left
+            draw.text((10, 10), text, font=font, fill="black")
+
+            # Draw figure text on right
+            figure_text = f"Figure:  {image_filename}"
+            if font:
+                # Get the width of the text to position it on the right
+                text_width = draw.textlength(figure_text, font=font)
+                draw.text((new_img.width - text_width - 10, 10), figure_text, font=font, fill="black")
+            else:
+                # If no font available, make a best effort to position on right
+                draw.text((new_img.width - 200, 10), figure_text, font=font, fill="black")
+
+            # Convert back to bytes
+            output = io.BytesIO()
+            new_img.save(output, format=image.format or "PNG")
+            output.seek(0)
+
+            blob_name = (
+                f"{self.blob_name_from_file_name(document_file.content.name)}/page{image_page_num}/{image_filename}"
+            )
             logger.info("Uploading blob for document image %s", blob_name)
-            blob_client = await container_client.upload_blob(blob_name, io.BytesIO(image_bytes), overwrite=True)
+            blob_client = await container_client.upload_blob(blob_name, output, overwrite=True)
             return blob_client.url
         return None
 
     def get_managedidentity_connectionstring(self):
         return f"ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};"
-
-    async def upload_pdf_blob_images(
-        self, service_client: BlobServiceClient, container_client: ContainerClient, file: File
-    ) -> list[str]:
-        with open(file.content.name, "rb") as reopened_file:
-            reader = PdfReader(reopened_file)
-            page_count = len(reader.pages)
-        doc = pymupdf.open(file.content.name)
-        sas_uris = []
-        start_time = datetime.datetime.now(datetime.timezone.utc)
-        expiry_time = start_time + datetime.timedelta(days=1)
-
-        font = None
-        try:
-            font = ImageFont.truetype("arial.ttf", 20)
-        except OSError:
-            try:
-                font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
-            except OSError:
-                logger.info("Unable to find arial.ttf or FreeMono.ttf, using default font")
-
-        for i in range(page_count):
-            blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
-            logger.info("Converting page %s to image and uploading -> %s", i, blob_name)
-
-            doc = pymupdf.open(file.content.name)
-            page = doc.load_page(i)
-            pix = page.get_pixmap()
-            original_img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)  # type: ignore
-
-            # Create a new image with additional space for text
-            text_height = 40  # Height of the text area
-            new_img = Image.new("RGB", (original_img.width, original_img.height + text_height), "white")
-
-            # Paste the original image onto the new image
-            new_img.paste(original_img, (0, text_height))
-
-            # Draw the text on the white area
-            draw = ImageDraw.Draw(new_img)
-            text = f"SourceFileName:{blob_name}"
-
-            # 10 pixels from the top and left of the image
-            x = 10
-            y = 10
-            draw.text((x, y), text, font=font, fill="black")
-
-            output = io.BytesIO()
-            new_img.save(output, format="PNG")
-            output.seek(0)
-
-            blob_client = await container_client.upload_blob(blob_name, output, overwrite=True)
-            if not self.user_delegation_key:
-                self.user_delegation_key = await service_client.get_user_delegation_key(start_time, expiry_time)
-
-            if blob_client.account_name is not None:
-                sas_token = generate_blob_sas(
-                    account_name=blob_client.account_name,
-                    container_name=blob_client.container_name,
-                    blob_name=blob_client.blob_name,
-                    user_delegation_key=self.user_delegation_key,
-                    permission=BlobSasPermissions(read=True),
-                    expiry=expiry_time,
-                    start=start_time,
-                )
-                sas_uris.append(f"{blob_client.url}?{sas_token}")
-
-        return sas_uris
 
     async def remove_blob(self, path: Optional[str] = None):
         async with BlobServiceClient(

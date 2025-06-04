@@ -1,13 +1,10 @@
 import base64
 import logging
-import os
 from typing import Optional
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob.aio import ContainerClient
 from typing_extensions import Literal, Required, TypedDict
-
-from approaches.approach import Document
 
 
 class ImageURL(TypedDict, total=False):
@@ -18,23 +15,30 @@ class ImageURL(TypedDict, total=False):
     """Specifies the detail level of the image."""
 
 
-async def download_blob_as_base64(blob_container_client: ContainerClient, file_path: str) -> Optional[str]:
-    base_name, _ = os.path.splitext(file_path)
-    image_filename = base_name + ".png"
+async def download_blob_as_base64(blob_container_client: ContainerClient, blob_url: str) -> Optional[str]:
     try:
-        blob = await blob_container_client.get_blob_client(image_filename).download_blob()
+        # Handle full URLs
+        if blob_url.startswith("http"):
+            # Extract blob path from full URL
+            # URL format: https://{account}.blob.core.windows.net/{container}/{blob_path}
+            url_parts = blob_url.split("/")
+            # Skip the domain parts and container name to get the blob path
+            blob_path = "/".join(url_parts[4:])
+        else:
+            # Treat as a direct blob path
+            blob_path = blob_url
+
+        # Download the blob
+        blob = await blob_container_client.get_blob_client(blob_path).download_blob()
         if not blob.properties:
-            logging.warning(f"No blob exists for {image_filename}")
+            logging.warning(f"No blob exists for {blob_path}")
             return None
+
         img = base64.b64encode(await blob.readall()).decode("utf-8")
         return f"data:image/png;base64,{img}"
     except ResourceNotFoundError:
-        logging.warning(f"No blob exists for {image_filename}")
+        logging.warning(f"No blob exists for {blob_path}")
         return None
-
-
-async def fetch_image(blob_container_client: ContainerClient, result: Document) -> Optional[str]:
-    if result.sourcepage:
-        img = await download_blob_as_base64(blob_container_client, result.sourcepage)
-        return img
-    return None
+    except Exception as e:
+        logging.error(f"Error downloading blob {blob_url}: {str(e)}")
+        return None
