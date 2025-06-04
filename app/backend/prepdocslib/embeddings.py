@@ -236,28 +236,24 @@ class ImageEmbeddings:
         self.token_provider = token_provider
         self.endpoint = endpoint
 
-    async def create_embeddings(self, blob_urls: list[str]) -> list[list[float]]:
+    async def create_embedding(self, image_bytes: bytes) -> list[float]:
         endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeImage")
-        headers = {"Content-Type": "application/json"}
         params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
-        headers["Authorization"] = "Bearer " + await self.token_provider()
+        headers = {"Authorization": "Bearer " + await self.token_provider()}
 
-        embeddings: list[list[float]] = []
         async with aiohttp.ClientSession(headers=headers) as session:
-            for blob_url in blob_urls:
-                async for attempt in AsyncRetrying(
-                    retry=retry_if_exception_type(Exception),
+            async for attempt in AsyncRetrying(
+                retry=retry_if_exception_type(Exception),
                     wait=wait_random_exponential(min=15, max=60),
                     stop=stop_after_attempt(15),
                     before_sleep=self.before_retry_sleep,
                 ):
-                    with attempt:
-                        body = {"url": blob_url}
-                        async with session.post(url=endpoint, params=params, json=body) as resp:
-                            resp_json = await resp.json()
-                            embeddings.append(resp_json["vector"])
-
-        return embeddings
+                with attempt:
+                    async with session.post(url=endpoint, params=params, data=image_bytes) as resp:
+                        resp_json = await resp.json()
+                        return resp_json["vector"]
+                    
+        return []
 
     def before_retry_sleep(self, retry_state):
         logger.info("Rate limited on the Vision embeddings API, sleeping before retrying...")

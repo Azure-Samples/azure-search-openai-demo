@@ -3,12 +3,14 @@ from typing import Any, Optional, cast
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
+from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from core.imageshelper import download_blob_as_base64
 
 
 class RetrieveThenReadApproach(Approach):
@@ -27,6 +29,7 @@ class RetrieveThenReadApproach(Approach):
         agent_deployment: Optional[str],
         agent_client: KnowledgeAgentRetrievalClient,
         auth_helper: AuthenticationHelper,
+        images_blob_container_client: ContainerClient,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -49,6 +52,7 @@ class RetrieveThenReadApproach(Approach):
         self.chatgpt_deployment = chatgpt_deployment
         self.openai_client = openai_client
         self.auth_helper = auth_helper
+        self.images_blob_container_client = images_blob_container_client
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
@@ -86,7 +90,11 @@ class RetrieveThenReadApproach(Approach):
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {"user_query": q, "text_sources": extra_info.data_points.text},
+            | {
+                "user_query": q,
+                "text_sources": extra_info.data_points.text,
+                "image_sources": extra_info.data_points.images,
+            },
         )
 
         chat_completion = cast(
@@ -126,6 +134,7 @@ class RetrieveThenReadApproach(Approach):
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
+        use_multimodal = True  # TODO: if overrides.get("use_multimodal") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
@@ -136,6 +145,11 @@ class RetrieveThenReadApproach(Approach):
         vectors: list[VectorQuery] = []
         if use_vector_search:
             vectors.append(await self.compute_text_embedding(q))
+
+        # If multimodal is enabled, also compute image embeddings
+        # TODO: will this work with agentic? is this doing multivector search correctly?
+        # if use_multimodal:
+        #    vectors.append(await self.compute_image_embedding(q))
 
         results = await self.search(
             top,
@@ -151,10 +165,26 @@ class RetrieveThenReadApproach(Approach):
             use_query_rewriting,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=use_multimodal)
+
+        # Extract unique image URLs from results if multimodal is enabled
+
+        seen_urls = set()
+        image_sources = []
+        if use_multimodal:
+            for doc in results:
+                if hasattr(doc, "images") and doc.images:
+                    for img in doc.images:
+                        # Skip if we've already processed this URL
+                        if img["url"] in seen_urls:
+                            continue
+                        seen_urls.add(img["url"])
+                        url = await download_blob_as_base64(self.images_blob_container_client, img["url"])
+                        if url:
+                            image_sources.append(url)
 
         return ExtraInfo(
-            DataPoints(text=text_sources),
+            DataPoints(text=text_sources, images=image_sources),
             thoughts=[
                 ThoughtStep(
                     "Search using user query",
@@ -167,6 +197,7 @@ class RetrieveThenReadApproach(Approach):
                         "filter": filter,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
+                        "use_multimodal": use_multimodal,
                     },
                 ),
                 ThoughtStep(

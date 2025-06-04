@@ -1,11 +1,13 @@
 import logging
 from abc import ABC
+import base64
 
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
 from rich.progress import Progress
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
+from openai import AsyncOpenAI
 
 logger = logging.getLogger("scripts")
 
@@ -84,7 +86,6 @@ class ContentUnderstandingDescriber:
                 await self.poll_api(session, poll_url, headers)
 
     async def describe_image(self, image_bytes: bytes) -> str:
-        logger.info("Sending image to Azure Content Understanding service...")
         async with aiohttp.ClientSession() as session:
             token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
             headers = {"Authorization": "Bearer " + token.token}
@@ -105,3 +106,32 @@ class ContentUnderstandingDescriber:
 
                 fields = results["result"]["contents"][0]["fields"]
                 return fields["Description"]["valueString"]
+
+class MultimodalModelDescriber(MediaDescriber):
+    def __init__(self, openai_client: AsyncOpenAI, model: str, deployment: str):
+        self.openai_client = openai_client
+        self.model = model
+        self.deployment = deployment
+        
+    async def describe_image(self, image_bytes: bytes) -> str:
+        image_base64 = base64.b64encode(image_bytes).decode("utf-8")
+        image_datauri = f"data:image/png;base64,{image_base64}"
+
+        response = await self.openai_client.chat.completions.create(
+            model=self.model if self.deployment is None else self.deployment,
+            max_tokens=500,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that describes images from organizational documents.",
+                },
+                {
+                    "role": "user",
+                    "content": 
+                    [{"text": "Describe image with no more than 5 sentences. Do not speculate about anything you don't know.", "type": "text"},
+                    {"image_url": {"url": image_datauri}, "type": "image_url", "detail": "auto"}]
+                }
+            ])
+        description = response.choices[0].message.content.strip() if response.choices else ""
+        return description
+
