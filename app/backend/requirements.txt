@@ -20,7 +20,7 @@ anyio==4.4.0
     #   openai
 asgiref==3.8.1
     # via opentelemetry-instrumentation-asgi
-attrs==24.2.0
+attrs==25.3.0
     # via aiohttp
 azure-ai-documentintelligence==1.0.0b4
     # via -r requirements.in
