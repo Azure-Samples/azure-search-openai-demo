@@ -10,6 +10,7 @@ import "./index.css";
 import Chat from "./pages/chat/Chat";
 import LayoutWrapper from "./layoutWrapper";
 import i18next from "./i18n/config";
+import PowerBIDashboard from "./pages/PowerBIDashboard";
 
 initializeIcons();
 
@@ -25,6 +26,10 @@ const router = createHashRouter([
             {
                 path: "qa",
                 lazy: () => import("./pages/ask/Ask")
+            },
+            {
+                path: "powerbi",
+                element: <PowerBIDashboard />
             },
             {
                 path: "*",
