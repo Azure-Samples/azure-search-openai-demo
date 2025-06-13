@@ -100,7 +100,7 @@ class LocalListFileStrategy(ListFileStrategy):
         if os.path.exists(hash_path):
             with open(hash_path, encoding="utf-8") as md5_f:
                 stored_hash = md5_f.read()
-
+        stored_hash = None
         if stored_hash and stored_hash.strip() == existing_hash.strip():
             logger.info("Skipping %s, no changes detected.", path)
             return True

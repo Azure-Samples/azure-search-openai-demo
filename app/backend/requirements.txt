@@ -434,3 +434,4 @@ yarl==1.17.2
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata
+lxml>=4.9.3

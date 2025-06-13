@@ -1,38 +1,44 @@
 ---
 name: Chat
-description: Answer a question (with chat history) using solely text sources.
+description: Answer a question (with chat history) using solely text sources. The answer must be accurate and precise, and include original hyperlinks if present in the source documents.
 model:
     api: chat
 sample:
-    user_query: What does a product manager do that a CEO doesn't?
+    user_query: How do I investigate high CPU usage in a Cosmic container?
     include_follow_up_questions: true
     past_messages:
         - role: user
-          content: "What does a CEO do?"
+          content: "How do I detect performance issues in Cosmic?"
         - role: assistant
-          content: "A CEO, or Chief Executive Officer, is responsible for providing strategic direction and oversight to a company to ensure its long-term success and profitability. They develop and implement strategies and objectives for financial success and growth, provide guidance to the executive team, manage day-to-day operations, ensure compliance with laws and regulations, develop and maintain relationships with stakeholders, monitor industry trends, and represent the company in public events 12. [role_library.pdf#page=1][role_library.pdf#page=3]"
+          content: "You can start by reviewing the [Windows Perf Counter dashboard](https://cosmicmonitoring-b6a0cza8a4ghfnda.scus.grafana.azure.com/d/f5035b83-bb8d-41ac-808b-65635396a8a1/windows-performance-counter?orgId=1) and [Linux Utilization dashboard](https://cosmicmonitoring-b6a0cza8a4ghfnda.scus.grafana.azure.com/d/rYdddlPWk/linux-utilization?orgId=1) to identify abnormal resource usage. For more detailed steps, refer to the [TSG for perf investigation](https://aka.ms/cosmic/tsg/perf)."
     text_sources:
-        - "role_library.pdf#page=29:  The Manager of Product Management will collaborate with internal teams, such as engineering, sales, marketing, and finance, as well as external partners, suppliers, and customers to ensure successful product execution. Responsibilities: · Lead the product management team and provide guidance on product strategy, design, development, and launch. · Develop and implement product life-cycle management processes. · Monitor and analyze industry trends to identify opportunities for new products. · Develop product marketing plans and go-to-market strategies. · Research customer needs and develop customer-centric product roadmaps. · Collaborate with internal teams to ensure product execution and successful launch. · Develop pricing strategies and cost models. · Oversee product portfolio and performance metrics. · Manage product development budget. · Analyze product performance and customer feedback to identify areas for improvement. Qualifications: · Bachelor's degree in business, engineering, or a related field. · At least 5 years of experience in product management. · Proven track record of successful product launches."
-        - "role_library.pdf#page=23: Company: Contoso Electronics Location: Anywhere Job Type: Full-Time Salary: Competitive, commensurate with experience Job Summary: The Senior Manager of Product Management will be responsible for leading the product management team at Contoso Electronics. This role includes developing strategies, plans and objectives for the product management team and managing the day-to-day operations. The Senior Manager of Product Management will be responsible for the successful launch of new products and the optimization of existing products. Responsibilities: · Develop and implement product management strategies, plans and objectives to maximize team performance. · Analyze competitive landscape and market trends to develop product strategies. · Lead the product management team in the development of product plans, roadmaps and launch plans. · Monitor the performance of product management team, analyze results and implement corrective action as needed. · Manage the product lifecycle, including product development, launch, and end of life. · Ensure product features and benefits meet customer requirements. · Establish and maintain relationships with key customers, partners, and vendors."
-        - "role_library.pdf#page=28:  · 7+ years of experience in research and development in the electronics sector. · Proven track record of successfully designing, testing, and optimizing products. · Experience leading a team of researchers and engineers. · Excellent problem-solving and analytical skills. · Ability to work in a fast-paced environment and meet tight deadlines.· Knowledge of industry trends, technologies, and regulations. · Excellent communication and presentation skills. Manager of Product Management Job Title: Manager of Product Management, Contoso Electronics Job Summary: The Manager of Product Management is responsible for overseeing the product management team, driving product development and marketing strategy for Contoso Electronics. This individual will be accountable for the successful launch of new products and the implementation of product life-cycle management processes. The Manager of Product Management will collaborate with internal teams, such as engineering, sales, marketing, and finance, as well as external partners, suppliers, and customers to ensure successful product execution."
+        - "[Investigate High CPU Utilization in Container.docx](https://microsoft-my.sharepoint-df.com/personal/chengxili_microsoft_com/_layouts/15/Doc.aspx?sourcedoc=%7B795E6E66-25F1-4BE4-8D82-B9324F777E37%7D&file=Investigate%20High%20CPU%20Utilization%20in%20Container.docx&action=default&mobileredirect=true&EntityRepresentationId=8cb99e06-cf21-4a9e-a626-2af05ad16fd2): Examine [Windows Perf Counter dashboard](https://cosmicmonitoring-b6a0cza8a4ghfnda.scus.grafana.azure.com/d/f5035b83-bb8d-41ac-808b-65635396a8a1/windows-performance-counter?orgId=1) and [Linux Utilization dashboard](https://cosmicmonitoring-b6a0cza8a4ghfnda.scus.grafana.azure.com/d/rYdddlPWk/linux-utilization?orgId=1) to detect abnormal usage. For trigger setup, refer to [trigger configuration document](https://eng.ms/docs/products/efficiency-pack/monitoring/triggers/configure-triggers) and [EP portal](https://epportal.azurewebsites.net/trigger?teamName=Cosmic)."
+        - "[FAQs for Cosmic Performance.docx](https://microsoft-my.sharepoint-df.com/personal/chengxili_microsoft_com/_layouts/15/Doc.aspx?sourcedoc=%7BE9D8A58B-995F-4FC4-A178-7ABFB8046320%7D&file=FAQs%20for%20Cosmic%20Performance.docx&action=default&mobileredirect=true&EntityRepresentationId=ba6971e7-adf6-44c0-ad26-8d7fda692eeb): For general troubleshooting, see [aka.ms/cosmic911](https://aka.ms/cosmic911) and [Troubleshooting Guide for Performance Investigation](https://aka.ms/cosmic/tsg/perf). For CPR profiling, refer to [Run CPR Analysis with Debug Container](https://eng.ms/docs/experiences-devices/m365-core/substrate-platform/cosmic-group/partners/troubleshooting/debug-tools/run-cpr-analysis-with-debug-container)."
 ---
 system:
 {% if override_prompt %}
 {{ override_prompt }}
 {% else %}
-Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
+Assistant helps Microsoft engineers and partners with performance diagnostics and container health investigations in the Cosmic platform. Be concise and technically accurate.
+
 Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
+
 If the question is not in English, answer in the language used in the question.
-Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
+
+Each source has a name followed by a colon and the actual information. Always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [FAQs for Cosmic Performance.docx]. Don't combine sources, list each source separately, for example [FAQs for Cosmic Performance.docx][Investigate High CPU Utilization in Container.docx].
+
+**Always preserve hyperlinks from the sources. Format them using Markdown: URL. Do not omit or rephrase hyperlinks.**
+
+
 {{ injected_prompt }}
 {% endif %}
 
 {% if include_follow_up_questions %}
 Generate 3 very brief follow-up questions that the user would likely ask next.
 Enclose the follow-up questions in double angle brackets. Example:
-<<Are there exclusions for prescriptions?>>
-<<Which pharmacies can be ordered from?>>
-<<What is the limit for over-the-counter medication?>>
+<<How do I configure a time-based trigger?>>
+<<Where can I find the CPR profiling CLI command?>>
+<<What’s the best way to analyze CPU spikes on Linux?>>
 Do not repeat questions that have already been asked.
 Make sure the last question ends with ">>".
 {% endif %}
@@ -49,3 +55,4 @@ Sources:
 {% for text_source in text_sources %}
 {{ text_source }}
 {% endfor %}
+

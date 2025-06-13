@@ -34,6 +34,8 @@ from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
 from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
+from prepdocslib.docxparser import DocxHyperlinkParser
+from prepdocslib.hyperlinktextsplitter import HyperlinkAwareTextSplitter
 
 logger = logging.getLogger("scripts")
 
@@ -115,7 +117,7 @@ def setup_list_file_strategy(
             data_lake_storage_account=datalake_storage_account,
             data_lake_filesystem=datalake_filesystem,
             data_lake_path=datalake_path,
-            credential=adls_gen2_creds,
+            credential=adls_gen2_creeds,
         )
     elif local_files:
         logger.info("Using local files: %s", local_files)
@@ -180,6 +182,8 @@ def setup_file_processors(
     content_understanding_endpoint: Union[str, None] = None,
 ):
     sentence_text_splitter = SentenceTextSplitter()
+    # Add hyperlink-aware text splitter
+    hyperlink_text_splitter = HyperlinkAwareTextSplitter()
 
     doc_int_parser: Optional[DocumentAnalysisParser] = None
     # check if Azure Document Intelligence credentials are provided
@@ -194,10 +198,15 @@ def setup_file_processors(
             content_understanding_endpoint=content_understanding_endpoint,
         )
 
+    # Create DOCX parser that preserves hyperlinks
+    docx_hyperlink_parser = DocxHyperlinkParser()
+
     pdf_parser: Optional[Parser] = None
     if local_pdf_parser or document_intelligence_service is None:
+        print("localpdf")
         pdf_parser = LocalPdfParser()
     elif document_intelligence_service is not None:
+        print("docintpdf")
         pdf_parser = doc_int_parser
     else:
         logger.warning("No PDF parser available")
@@ -216,17 +225,18 @@ def setup_file_processors(
         ".md": FileProcessor(TextParser(), sentence_text_splitter),
         ".txt": FileProcessor(TextParser(), sentence_text_splitter),
         ".csv": FileProcessor(CsvParser(), sentence_text_splitter),
+        # Use hyperlink-aware parser and splitter for DOCX files
+        ".docx": FileProcessor(docx_hyperlink_parser, hyperlink_text_splitter),
     }
     # These require either a Python package or Document Intelligence
     if pdf_parser is not None:
         file_processors.update({".pdf": FileProcessor(pdf_parser, sentence_text_splitter)})
     if html_parser is not None:
         file_processors.update({".html": FileProcessor(html_parser, sentence_text_splitter)})
-    # These file formats require Document Intelligence
+    # These file formats require Document Intelligence (except DOCX which now uses custom parser)
     if doc_int_parser is not None:
         file_processors.update(
             {
-                ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
                 ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
                 ".xlsx": FileProcessor(doc_int_parser, sentence_text_splitter),
                 ".png": FileProcessor(doc_int_parser, sentence_text_splitter),
@@ -440,7 +450,7 @@ if __name__ == "__main__":
             azure_credential=azd_credential,
             document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
             document_intelligence_key=clean_key_if_exists(args.documentintelligencekey),
-            local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER") == "true",
+            local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER") == "false",
             local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER") == "true",
             search_images=use_gptvision,
             use_content_understanding=use_content_understanding,

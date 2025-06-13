@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "Cosmic Perf TSG",
+    "headerTitle": "Cosmic Perf TSG",
     "chat": "Chat",
     "qa": "Ask a question",
     "login": "Login",
@@ -37,17 +37,17 @@
     "chatEmptyStateTitle": "Chat with your data",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
     "defaultExamples": {
-        "1": "What is included in my Northwind Health Plus plan that is not in standard?",
-        "2": "What happens in a performance review?",
-        "3": "What does a Product Manager do?",
-        "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
+        "1": "How to setup Watson on Cosmic?",
+        "2": "How to create an incident for performance issues on Cosmic?",
+        "3": "How to perform CPR profiling tools on Cosmic?",
+        "placeholder": "Type a new question (e.g. How to troubleshoot high CPU, memory, latency and timeout issues on Cosmic?)"
     },
     "askTitle": "Ask your data",
     "gpt4vExamples": {
         "1": "Compare the impact of interest rates and GDP in financial markets.",
         "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
         "3": "Can you identify any correlation between oil prices and stock market trends?",
-        "placeholder": "Example: Does my plan cover annual eye exams?"
+        "placeholder": "Example: How to troubleshoot high CPU, memory, latency and timeout issues on Cosmic?"
     },
     "generatingAnswer": "Generating answer",
     "citationWithColon": "Citation:",

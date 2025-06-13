@@ -16,10 +16,10 @@ class ChatUser(HttpUser):
         time.sleep(self.wait_time())
         first_question = random.choice(
             [
-                "What is included in my Northwind Health Plus plan that is not in standard?",
-                "What does a Product Manager do?",
-                "What happens in a performance review?",
-                "Whats your whistleblower policy?",
+                "How to create an incident for performance issues on Cosmic?",
+                "How to connect to a Cosmic Windows node without using jumpbox?",
+                "How to troubleshoot high CPU, memory, latency and timeout issues on Cosmic?",
+                "How to review resource utilization on Cosmic Windows?",
             ]
         )
 
