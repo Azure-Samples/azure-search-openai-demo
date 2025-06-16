@@ -10,7 +10,7 @@ services:
     # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
     host: containerapp
     docker:
-      remoteBuild: true
+      remoteBuild: false
     # Please check docs/azure_app_service.md for more information on how to deploy to Azure App Service
     # host: appservice
     hooks:
