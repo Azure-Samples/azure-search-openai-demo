@@ -264,7 +264,7 @@ opentelemetry-instrumentation-psycopg2==0.52b1
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-requests==0.52b1
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib==0.52b1
+opentelemetry-instrumentation-urllib==0.55b1
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-urllib3==0.52b1
     # via azure-monitor-opentelemetry
