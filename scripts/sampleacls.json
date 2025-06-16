@@ -111,6 +111,9 @@
         "fulton_decedents_estates.pdf": {
             "directory": "general_info"
         },
+        "housing_loans.pdf": {
+            "directory": "general_info"
+        },
         "A01.pdf": { "directory": "neighborhood_nexus" },
         "A02.pdf": { "directory": "neighborhood_nexus" },
         "A03.pdf": { "directory": "neighborhood_nexus" },
