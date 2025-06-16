@@ -15,7 +15,7 @@ def minimal_env(monkeypatch):
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_OPENAI_SERVICE", "test-openai-service")
-        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4.1-mini")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4.1")
         monkeypatch.setenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
         monkeypatch.setenv("AZURE_OPENAI_EMB_DIMENSIONS", "3072")
         yield

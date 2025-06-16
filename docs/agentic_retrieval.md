@@ -10,7 +10,7 @@ See the agentic retrieval documentation.
 
 ### Prerequisites
 
-* A deployment of any of the supported agentic retrieval models in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a gpt-4.1-mini deployment from your Azure OpenAI deployments page.
+* A deployment of any of the supported agentic retrieval models in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a gpt-4.1 deployment from your Azure OpenAI deployments page.
 
 ### Deployment
 
@@ -24,13 +24,13 @@ See the agentic retrieval documentation.
 
 2. **(Optional) Set the agentic retrieval model**
 
-   You can configure which model agentic retrieval uses. By default, gpt-4.1-mini is used.
+   You can configure which model agentic retrieval uses. By default, gpt-4.1 is used.
 
    To change the model, set the following environment variables appropriately:
 
    ```shell
    azd env set AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT searchagent
-   azd env set AZURE_OPENAI_SEARCHAGENT_MODEL gpt-4.1-mini
+   azd env set AZURE_OPENAI_SEARCHAGENT_MODEL gpt-4.1
    azd env set AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION 2025-04-14
    ```
 

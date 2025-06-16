@@ -24,7 +24,7 @@ You should typically enable these features before running `azd up`. Once you've 
 
 ## Using different chat completion models
 
-As of early June 2025, the default chat completion model is `gpt-4.1-mini`. If you deployed this sample before that date, the default model is `gpt-3.5-turbo` or `gpt-4o-mini`. You can change the chat completion model to any Azure OpenAI chat model that's available in your Azure OpenAI resource region by following these steps:
+As of early June 2025, the default chat completion model is `gpt-4.1`. If you deployed this sample before that date, the default model is `gpt-3.5-turbo` or `gpt-4o-mini`. You can change the chat completion model to any Azure OpenAI chat model that's available in your Azure OpenAI resource region by following these steps:
 
 1. To set the name of the deployment, run this command with a unique name in your Azure OpenAI account. You can use any deployment name, as long as it's unique in your Azure OpenAI account. For convenience, many developers use the same deployment name as the model name, but this is not required.
 
@@ -40,10 +40,10 @@ As of early June 2025, the default chat completion model is `gpt-4.1-mini`. If y
 
 1. To set the GPT model to a different [available model](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate model name.
 
-    For gpt-4.1-mini:
+    For gpt-4.1:
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4.1-mini
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4.1
     ```
 
     For gpt-4o:
@@ -72,7 +72,7 @@ As of early June 2025, the default chat completion model is `gpt-4.1-mini`. If y
 
 1. To set the Azure OpenAI model version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version string.
 
-    For gpt-4.1-mini:
+    For gpt-4.1:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-14

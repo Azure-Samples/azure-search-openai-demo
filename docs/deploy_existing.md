@@ -26,8 +26,8 @@ You should set these values before running `azd up`. Once you've set them, retur
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
 1. Run `azd env set AZURE_OPENAI_LOCATION {Location of existing OpenAI service}`
-1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT {Name of existing chat deployment}`. Only needed if your chat deployment name is not the default 'gpt-4.1-mini'.
-1. Run `azd env set AZURE_OPENAI_CHATGPT_MODEL {Model name of existing chat deployment}`. Only needed if your chat model is not the default 'gpt-4.1-mini'.
+1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT {Name of existing chat deployment}`. Only needed if your chat deployment name is not the default 'gpt-4.1'.
+1. Run `azd env set AZURE_OPENAI_CHATGPT_MODEL {Model name of existing chat deployment}`. Only needed if your chat model is not the default 'gpt-4.1'.
 1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION {Version string for existing chat deployment}`. Only needed if your chat deployment model version is not the default '2024-07-18'. You definitely need to change this if you changed the model.
 1. Run `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU {Name of SKU for existing chat deployment}`. Only needed if your chat deployment SKU is not the default 'Standard', like if it is 'GlobalStandard' instead.
 1. Run `azd env set AZURE_OPENAI_EMB_DEPLOYMENT {Name of existing embedding deployment}`. Only needed if your embeddings deployment is not the default 'embedding'.

@@ -150,8 +150,8 @@ param chatGptDeploymentSkuName string = ''
 param chatGptDeploymentCapacity int = 0
 
 var chatGpt = {
-  modelName: !empty(chatGptModelName) ? chatGptModelName : 'gpt-4.1-mini'
-  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'gpt-4.1-mini'
+  modelName: !empty(chatGptModelName) ? chatGptModelName : 'gpt-4.1'
+  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'gpt-4.1'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '2025-04-14'
   deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'GlobalStandard'
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
@@ -204,7 +204,7 @@ param searchAgentModelVersion string = ''
 param searchAgentDeploymentSkuName string = ''
 param searchAgentDeploymentCapacity int = 0
 var searchAgent = {
-  modelName: !empty(searchAgentModelName) ? searchAgentModelName : 'gpt-4.1-mini'
+  modelName: !empty(searchAgentModelName) ? searchAgentModelName : 'gpt-4.1'
   deploymentName: !empty(searchAgentDeploymentName) ? searchAgentDeploymentName : 'searchagent'
   deploymentVersion: !empty(searchAgentModelVersion) ? searchAgentModelVersion : '2025-04-14'
   deploymentSkuName: !empty(searchAgentDeploymentSkuName) ? searchAgentDeploymentSkuName : 'GlobalStandard'

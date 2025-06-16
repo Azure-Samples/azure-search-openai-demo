@@ -45,7 +45,7 @@
                 ],
                 "props": {
                     "deployment": "test-chatgpt",
-                    "model": "gpt-4.1-mini",
+                    "model": "gpt-4.1",
                     "token_usage": {
                         "completion_tokens": 896,
                         "prompt_tokens": 23,
@@ -114,7 +114,7 @@
                 ],
                 "props": {
                     "deployment": "test-chatgpt",
-                    "model": "gpt-4.1-mini",
+                    "model": "gpt-4.1",
                     "token_usage": {
                         "completion_tokens": 896,
                         "prompt_tokens": 23,
