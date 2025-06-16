@@ -1,44 +1,61 @@
+
 ---
 name: Rewrite RAG query
 description: Suggest the optimal search query based on the user's query, examples, and chat history.
 model:
-    api: chat
-    parameters:
-        tools: ${file:chat_query_rewrite_tools.json}
+  api: chat
+  parameters:
+    tools: ${file:chat_query_rewrite_tools.json}
 sample:
-    user_query: Does it include hearing?
-    past_messages:
-        - role: user
-          content: "What is included in my Northwind Health Plus plan that is not in standard?"
-        - role: assistant
-          content: "The Northwind Health Plus plan includes coverage for emergency services, mental health and substance abuse coverage, and out-of-network services, which are not included in the Northwind Standard plan. [Benefit_Options.pdf#page=3]"
+  user_query: Can I evict tenants if the landlord is dead?
+  past_messages:
+    - role: user
+      content: "What steps do I take if a property owner dies without a will in Georgia?"
+    - role: assistant
+      content: "If a property owner dies intestate (without a will) in Georgia, the estate typically goes through probate in the county probate court. The court appoints an administrator to manage the estate and distribute assets based on Georgia’s intestacy laws. Heirs may need to file a petition, provide a death certificate, and publish a notice to debtors and creditors. Property may require a title search and court approval before transfer."
 ---
 system:
 Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
-You have access to Azure AI Search index with 100's of documents.
-Generate a search query based on the conversation and the new question.
-Do not include cited source filenames and document names e.g. info.txt or doc.pdf in the search query terms.
-Do not include any text inside [] or <<>> in the search query terms.
-Do not include any special characters like '+'.
-If the question is not in English, translate the question to English before generating the search query.
-If you cannot generate a search query, return just the number 0.
+You have access to Azure AI Search index with 100s of legal and property-related documents for Georgia. Generate a **search query** based on the conversation and the new question.
 
-user:
-How did crypto do last year?
+**Guidelines:**
+- Do not include filenames or source citations.
+- Strip out any text in brackets `[]` or angle brackets `<<>>`.
+- Avoid special characters like `+`.
+- If the user’s question is not in English, translate it first before generating the search query.
+- If you're unable to produce a meaningful query, return just the number `0`.
 
-assistant:
-Summarize Cryptocurrency Market Dynamics from last year
+**Example query mappings:**
+examples:
+  - user_query: Can I evict tenants if the landlord is dead?
+    generated_query: eviction process when property owner is deceased in Georgia
 
-user:
-What are my health plans?
+  - user_query: What is heir property?
+    generated_query: Georgia law on heir property ownership and inheritance
 
-assistant:
-Show available health plans
+  - user_query: How do I resolve heir property disputes?
+    generated_query: resolving heir property disputes in Georgia probate court
 
-{% for message in past_messages %}
-{{ message["role"] }}:
-{{ message["content"] }}
+  - user_query: What is a quiet title action?
+    generated_query: quiet title action process in Georgia real estate
+
+  - user_query: How do I get the deed after my mother died?
+    generated_query: accessing property deed after relative dies without will in Georgia
+
+  - user_query: Can I sell a house with multiple heirs?
+    generated_query: selling inherited property with multiple heirs in Georgia
+
+  - user_query: What happens if no one files probate?
+    generated_query: consequences of not filing probate in Georgia
+
+  - user_query: Do I need court approval to transfer a property title after death?
+    generated_query: court approval for property title transfer after death in Georgia
+
+{% for message in past\_messages %}
+{{ message\["role"] }}:
+{{ message\["content"] }}
 {% endfor %}
 
 user:
-Generate search query for: {{ user_query }}
+Generate search query for: {{ user\_query }}
+

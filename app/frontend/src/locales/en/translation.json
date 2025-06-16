@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "HeirAid",
+    "headerTitle": "HeirAid",
     "chat": "Chat",
     "qa": "Ask a question",
     "login": "Login",
@@ -37,9 +37,9 @@
     "chatEmptyStateTitle": "Chat with your data",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
     "defaultExamples": {
-        "1": "What is included in my Northwind Health Plus plan that is not in standard?",
-        "2": "What happens in a performance review?",
-        "3": "What does a Product Manager do?",
+        "1": "What steps do I take if a property owner dies without a will in Georgia?",
+        "2": "How can I find out if a property has unpaid taxes in Fulton County?",
+        "3": "What is the process of transferring property ownership in Atlanta after death?",
         "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
     },
     "askTitle": "Ask your data",

@@ -6,17 +6,19 @@ The HTTP protocol is inspired by the [OpenAI ChatCompletion API](https://platfor
 
 Table of contents:
 
-* [HTTP requests to chat app endpoints](#http-requests-to-chat-app-endpoints)
-  * [Request context properties](#request-context-properties)
-* [HTTP responses from RAG chat app endpoints](#http-responses-from-rag-chat-app-endpoints)
-  * [Non-streaming response](#non-streaming-response)
-    * [Successful response](#successful-response)
-    * [Error response](#error-response)
-  * [Streaming response](#streaming-response)
-    * [Successful streamed response](#successful-streamed-response)
-    * [Error in streamed response](#error-in-streamed-response)
-  * [Answer formatting](#answer-formatting)
-  * [Response context properties](#response-context-properties)
+- [RAG Chat: HTTP Protocol](#rag-chat-http-protocol)
+  - [HTTP requests to chat app endpoints](#http-requests-to-chat-app-endpoints)
+    - [Usage example](#usage-example)
+    - [Request context properties](#request-context-properties)
+  - [HTTP responses from RAG chat app endpoints](#http-responses-from-rag-chat-app-endpoints)
+    - [Non-streaming response](#non-streaming-response)
+      - [Successful response](#successful-response)
+      - [Error response](#error-response)
+    - [Streaming response](#streaming-response)
+      - [Successful streamed response](#successful-streamed-response)
+      - [Error in streamed response](#error-in-streamed-response)
+    - [Answer formatting](#answer-formatting)
+    - [Response context properties](#response-context-properties)
 
 ## HTTP requests to chat app endpoints
 
@@ -41,7 +43,7 @@ The example belows represents a valid and compliant request body to the chat app
 {
     "messages": [
         {
-            "content": "What is included in my Northwind Health Plus plan that is not in standard?",
+            "content": "What steps do I take if a property owner dies without a will in Georgia?",
             "role": "user"
         }
     ],

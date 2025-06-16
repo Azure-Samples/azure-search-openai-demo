@@ -1,38 +1,282 @@
 {
     "files": {
-        "Benefit_Options.pdf": {
-            "directory": "benefitinfo"
+        "2025-Aircraft-Personal-Property-Return.pdf": {
+            "directory": "forms"
         },
-        "employee_handbook.pdf": {
-            "directory": "employeeinfo"
+        "2025-Business-Personal-Property-Return.pdf": {
+            "directory": "forms"
         },
-        "Northwind_Health_Plus_Benefits_Details.pdf": {
-            "directory": "benefitinfo"
+        "2025-Freeport-Exemption-Application.pdf": {
+            "directory": "forms"
         },
-        "Northwind_Standard_Benefits_Details.pdf": {
-            "directory": "benefitinfo"
+        "2025-Marine-Personal-Property-Return.pdf": {
+            "directory": "forms"
         },
-        "PerksPlus.pdf": {
-            "directory": "benefitinfo"
+        "53-8-10.pdf": {
+            "directory": "legal_codes"
         },
-        "role_library.pdf": {
-            "directory": "employeeinfo"
-        }
+        "53-8-13.pdf": {
+            "directory": "legal_codes"
+        },
+        "Fulton-Trust-Affidavit.pdf": {
+            "directory": "forms"
+        },
+        "GPCSF-1-General-Instructions.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-10-Petition-for-Years-Support.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-11-Petition-for-the-Appointment-of-an-Emergency-Guardian-and-or-Conservator-for-a-Proposed-Ward.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-12-Petition-for-the-Appointment-of-a-Guardian-and-or-Conservator-for-a-Proposed-Ward.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-13-Petition-of-Personal-Representative-for-Leave-to-Sell-Property.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-17-Petition-for-Leave-to-Convey-or-Encumber-Property-Previously-Set-Aside-as-Years-Support.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-19-Petition-to-Compromise-Doubtful-Claim-of-Minor-Adult-Ward.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-2-Petition-for-Temporary-Letters-of-Administration.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-20-Petition-for-Leave-to-Encroach-on-Corpus-1.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-28-Petition-for-Temporary-Letters-of-Guardianship-of-Minor.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-3-Petition-for-Letters-of-Administration.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-30-Petition-for-Letters-of-Conservatorship-of-Minor.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-32-Petition-by-Personal-Representative-for-Waiver-of-Bond-Waiver-of-Reports-Waiver-of-Stateme.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-33-Petition-for-Discharge-of-Personal-Representative.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-34-Petition-of-Conservator-for-Final-Settlement-of-Accounts-and-Discharge-from-Office-and-Liability.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-4-Petition-to-Probate-Will-in-Common-Form.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-5-Petition-to-Probate-Will-in-Solemn-Form.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-65-Petition-for-Termination-of-Guardianship-Conservatorship-and-Restoration-of-Rights.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-7-Petition-to-Probate-Will-in-Solemn-Form-and-for-Letters-of-Administration-with-Will-Annexed.pdf": {
+            "directory": "probate_forms"
+        },
+        "GPCSF-9-Petition-for-Order-Declaring-No-Administration-Necessary.pdf": {
+            "directory": "probate_forms"
+        },
+        "O.C.G.A. Section 53-5-2.pdf": {
+            "directory": "legal_codes"
+        },
+        "O.C.G.A. § 48-3-9.pdf": {
+            "directory": "legal_codes"
+        },
+        "O.C.G.A. § 48-5-7.pdf": {
+            "directory": "legal_codes"
+        },
+        "O.C.G.A. § 53-5-21.pdf": {
+            "directory": "legal_codes"
+        },
+        "O.C.G.A. § 53-7-40.pdf": {
+            "directory": "legal_codes"
+        },
+        "OCGA-52-1.pdf": {
+            "directory": "legal_codes"
+        },
+        "Physicians-Disability-Certification.pdf": {
+            "directory": "forms"
+        },
+        "Real-Property-Return.pdf": {
+            "directory": "forms"
+        },
+        "Request-to-Remove-Homestead-Exemption-02-28-20.pdf": {
+            "directory": "forms"
+        },
+        "fulton_decedents_estates.pdf": {
+            "directory": "general_info"
+        },
+        "A01.pdf": { "directory": "neighborhood_nexus" },
+        "A02.pdf": { "directory": "neighborhood_nexus" },
+        "A03.pdf": { "directory": "neighborhood_nexus" },
+        "B01.pdf": { "directory": "neighborhood_nexus" },
+        "B02.pdf": { "directory": "neighborhood_nexus" },
+        "B03.pdf": { "directory": "neighborhood_nexus" },
+        "B04.pdf": { "directory": "neighborhood_nexus" },
+        "B05.pdf": { "directory": "neighborhood_nexus" },
+        "B06.pdf": { "directory": "neighborhood_nexus" },
+        "B07.pdf": { "directory": "neighborhood_nexus" },
+        "B08.pdf": { "directory": "neighborhood_nexus" },
+        "B09.pdf": { "directory": "neighborhood_nexus" },
+        "B10.pdf": { "directory": "neighborhood_nexus" },
+        "B11.pdf": { "directory": "neighborhood_nexus" },
+        "C01.pdf": { "directory": "neighborhood_nexus" },
+        "C02.pdf": { "directory": "neighborhood_nexus" },
+        "C03.pdf": { "directory": "neighborhood_nexus" },
+        "C04.pdf": { "directory": "neighborhood_nexus" },
+        "C05.pdf": { "directory": "neighborhood_nexus" },
+        "C06.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL01.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL02.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL03.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL04.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL05.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL06.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL07.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL08.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL09.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL10.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL11.pdf": { "directory": "neighborhood_nexus" },
+        "COUNCIL12.pdf": { "directory": "neighborhood_nexus" },
+        "D01.pdf": { "directory": "neighborhood_nexus" },
+        "D02.pdf": { "directory": "neighborhood_nexus" },
+        "D03.pdf": { "directory": "neighborhood_nexus" },
+        "E01.pdf": { "directory": "neighborhood_nexus" },
+        "E02.pdf": { "directory": "neighborhood_nexus" },
+        "E03.pdf": { "directory": "neighborhood_nexus" },
+        "E04.pdf": { "directory": "neighborhood_nexus" },
+        "E05.pdf": { "directory": "neighborhood_nexus" },
+        "E06.pdf": { "directory": "neighborhood_nexus" },
+        "E07.pdf": { "directory": "neighborhood_nexus" },
+        "F01.pdf": { "directory": "neighborhood_nexus" },
+        "F02.pdf": { "directory": "neighborhood_nexus" },
+        "F03.pdf": { "directory": "neighborhood_nexus" },
+        "F04.pdf": { "directory": "neighborhood_nexus" },
+        "G01.pdf": { "directory": "neighborhood_nexus" },
+        "G02.pdf": { "directory": "neighborhood_nexus" },
+        "G03.pdf": { "directory": "neighborhood_nexus" },
+        "H01.pdf": { "directory": "neighborhood_nexus" },
+        "H02.pdf": { "directory": "neighborhood_nexus" },
+        "H03.pdf": { "directory": "neighborhood_nexus" },
+        "H04.pdf": { "directory": "neighborhood_nexus" },
+        "I01.pdf": { "directory": "neighborhood_nexus" },
+        "I02.pdf": { "directory": "neighborhood_nexus" },
+        "I03.pdf": { "directory": "neighborhood_nexus" },
+        "I04.pdf": { "directory": "neighborhood_nexus" },
+        "I05.pdf": { "directory": "neighborhood_nexus" },
+        "J01.pdf": { "directory": "neighborhood_nexus" },
+        "J02.pdf": { "directory": "neighborhood_nexus" },
+        "J03.pdf": { "directory": "neighborhood_nexus" },
+        "K01.pdf": { "directory": "neighborhood_nexus" },
+        "K02.pdf": { "directory": "neighborhood_nexus" },
+        "K03.pdf": { "directory": "neighborhood_nexus" },
+        "L01.pdf": { "directory": "neighborhood_nexus" },
+        "L02.pdf": { "directory": "neighborhood_nexus" },
+        "M01.pdf": { "directory": "neighborhood_nexus" },
+        "M02.pdf": { "directory": "neighborhood_nexus" },
+        "N01.pdf": { "directory": "neighborhood_nexus" },
+        "N02.pdf": { "directory": "neighborhood_nexus" },
+        "N03.pdf": { "directory": "neighborhood_nexus" },
+        "N04.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_A.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_B.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_C.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_D.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_E.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_F.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_G.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_H.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_I.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_J.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_K.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_L.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_M.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_N.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_O.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_P.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_Q.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_R.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_S.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_T.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_V.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_W.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_X.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_Y.pdf": { "directory": "neighborhood_nexus" },
+        "NPU_Z.pdf": { "directory": "neighborhood_nexus" },
+        "O01.pdf": { "directory": "neighborhood_nexus" },
+        "O02.pdf": { "directory": "neighborhood_nexus" },
+        "O03.pdf": { "directory": "neighborhood_nexus" },
+        "P01.pdf": { "directory": "neighborhood_nexus" },
+        "P02.pdf": { "directory": "neighborhood_nexus" },
+        "P03.pdf": { "directory": "neighborhood_nexus" },
+        "P04.pdf": { "directory": "neighborhood_nexus" },
+        "P05.pdf": { "directory": "neighborhood_nexus" },
+        "P06.pdf": { "directory": "neighborhood_nexus" },
+        "Q01.pdf": { "directory": "neighborhood_nexus" },
+        "R01.pdf": { "directory": "neighborhood_nexus" },
+        "R02.pdf": { "directory": "neighborhood_nexus" },
+        "R03.pdf": { "directory": "neighborhood_nexus" },
+        "S01.pdf": { "directory": "neighborhood_nexus" },
+        "S02.pdf": { "directory": "neighborhood_nexus" },
+        "S03.pdf": { "directory": "neighborhood_nexus" },
+        "T01.pdf": { "directory": "neighborhood_nexus" },
+        "T02.pdf": { "directory": "neighborhood_nexus" },
+        "T03.pdf": { "directory": "neighborhood_nexus" },
+        "T04.pdf": { "directory": "neighborhood_nexus" },
+        "V01.pdf": { "directory": "neighborhood_nexus" },
+        "V02.pdf": { "directory": "neighborhood_nexus" },
+        "V03.pdf": { "directory": "neighborhood_nexus" },
+        "V04.pdf": { "directory": "neighborhood_nexus" },
+        "W01.pdf": { "directory": "neighborhood_nexus" },
+        "W02.pdf": { "directory": "neighborhood_nexus" },
+        "W03.pdf": { "directory": "neighborhood_nexus" },
+        "W04.pdf": { "directory": "neighborhood_nexus" },
+        "X01.pdf": { "directory": "neighborhood_nexus" },
+        "X02.pdf": { "directory": "neighborhood_nexus" },
+        "X03.pdf": { "directory": "neighborhood_nexus" },
+        "X04.pdf": { "directory": "neighborhood_nexus" },
+        "Y01.pdf": { "directory": "neighborhood_nexus" },
+        "Y02.pdf": { "directory": "neighborhood_nexus" },
+        "Y03.pdf": { "directory": "neighborhood_nexus" },
+        "Y04.pdf": { "directory": "neighborhood_nexus" },
+        "Z01.pdf": { "directory": "neighborhood_nexus" },
+        "Z02.pdf": { "directory": "neighborhood_nexus" },
+        "Z03.pdf": { "directory": "neighborhood_nexus" },
+        "Z04.pdf": { "directory": "neighborhood_nexus" },
+        "Z05.pdf": { "directory": "neighborhood_nexus" }
     },
     "directories": {
-        "employeeinfo": {
-            "groups": ["GPTKB_HRTest"]
+        "forms": {
+            "groups": ["PropertyFormsUsers"]
         },
-        "benefitinfo": {
-            "groups": ["GPTKB_EmployeeTest", "GPTKB_HRTest"]
+        "probate_forms": {
+            "groups": ["ProbateCourtUsers", "LegalTeamUsers"]
+        },
+        "legal_codes": {
+            "groups": ["LegalReferenceUsers","LegalTeamUsers"]
+        },
+        "general_info": {
+            "groups": ["PublicInfoUsers","LegalTeamUsers"]
+        },
+        "neighborhood_nexus": {
+            "groups": ["CommunityUsers","PublicInfoUsers", "LegalTeamUsers"]
         },
         "/": {
-            "groups": ["GPTKB_AdminTest"]
+            "groups": ["GlobalAdmins"]
         }
     },
     "groups": [
-        "GPTKB_AdminTest",
-        "GPTKB_HRTest",
-        "GPTKB_EmployeeTest"
+        "PropertyFormsUsers",
+        "ProbateCourtUsers",
+        "LegalTeamUsers",
+        "LegalReferenceUsers",
+        "PublicInfoUsers",
+        "CommunityUsers",
+        "GlobalAdmins"
     ]
 }

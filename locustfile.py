@@ -16,10 +16,9 @@ class ChatUser(HttpUser):
         time.sleep(self.wait_time())
         first_question = random.choice(
             [
-                "What is included in my Northwind Health Plus plan that is not in standard?",
-                "What does a Product Manager do?",
-                "What happens in a performance review?",
-                "Whats your whistleblower policy?",
+                "What steps do I take if a property owner dies without a will in Georgia?",
+                "How can I find out if a property has unpaid taxes in Fulton County?",
+                "What is the process of transferring property ownership in Atlanta after death?",
             ]
         )
 
