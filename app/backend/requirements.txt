@@ -318,7 +318,7 @@ packaging==24.1
     #   opentelemetry-instrumentation-flask
 pillow==10.4.0
     # via -r requirements.in
-portalocker==2.10.1
+portalocker==3.2.0
     # via msal-extensions
 priority==2.0.0
     # via hypercorn
