@@ -37,17 +37,17 @@
     "chatEmptyStateTitle": "Chat with your data",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
     "defaultExamples": {
-        "1": "What is included in my Northwind Health Plus plan that is not in standard?",
-        "2": "What happens in a performance review?",
-        "3": "What does a Product Manager do?",
-        "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
+        "1": "What deployment options exist for the Premium Capacity Administration Solution Object?",
+        "2": "What are 3Cloud's recommended security controls for Power BI Service?",
+        "3": "Which career path levels align with the Azure Data Engineer role?",
+        "placeholder": "Example: Which Solution Object covers on-premises data gateway setup?"
     },
     "askTitle": "Ask your data",
     "gpt4vExamples": {
-        "1": "Compare the impact of interest rates and GDP in financial markets.",
-        "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
-        "3": "Can you identify any correlation between oil prices and stock market trends?",
-        "placeholder": "Example: Does my plan cover annual eye exams?"
+        "1": "Summarise the architecture diagram on slide 8 of the Monitoring deck.",
+        "2": "Compare the cost models shown on pages 12-15 of the Enrollment Guide.",
+        "3": "Identify governance responsibilities highlighted in the Data Governance slide deck.",
+        "placeholder": "Example: What does the capacity planning heatmap tell us?"
     },
     "generatingAnswer": "Generating answer",
     "citationWithColon": "Citation:",
