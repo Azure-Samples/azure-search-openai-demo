@@ -55,23 +55,24 @@ export function parseAnswerToHtml(answer: ChatAppResponse, isStreaming: boolean,
         if (index % 2 === 0) {
             return part;
         } else {
+            // Remove validation so every [filename] becomes a citation link
+            // if (!isCitationValid(contextDataPoints, part)) {
+            //     return `[${part}]`;
+            // }
+            const citationKey = part.trim();
             let citationIndex: number;
 
-            if (!isCitationValid(contextDataPoints, part)) {
-                return `[${part}]`;
-            }
-
-            if (citations.indexOf(part) !== -1) {
-                citationIndex = citations.indexOf(part) + 1;
+            if (citations.indexOf(citationKey) !== -1) {
+                citationIndex = citations.indexOf(citationKey) + 1;
             } else {
-                citations.push(part);
+                citations.push(citationKey);
                 citationIndex = citations.length;
             }
 
-            const path = getCitationFilePath(part);
+            const path = getCitationFilePath(citationKey);
 
             return renderToStaticMarkup(
-                <a className="supContainer" title={part} onClick={() => onCitationClicked(path)}>
+                <a className="supContainer" title={citationKey} onClick={() => onCitationClicked(path)}>
                     <sup>{citationIndex}</sup>
                 </a>
             );
