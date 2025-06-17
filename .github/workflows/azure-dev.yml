@@ -26,6 +26,7 @@ jobs:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
       AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
       # project specific
@@ -95,7 +96,7 @@ jobs:
       USE_SPEECH_OUTPUT_BROWSER: ${{ vars.USE_SPEECH_OUTPUT_BROWSER }}
       USE_SPEECH_OUTPUT_AZURE: ${{ vars.USE_SPEECH_OUTPUT_AZURE }}
       AZURE_SPEECH_SERVICE: ${{ vars.AZURE_SPEECH_SERVICE }}
-      AZURE_SPEECH_SERVICE_RESOURCE_GROUP: ${{ vars.AZURE_SPEECH_RESOURCE_GROUP }}
+      AZURE_SPEECH_SERVICE_RESOURCE_GROUP: ${{ vars.AZURE_SPEECH_SERVICE_RESOURCE_GROUP }}
       AZURE_SPEECH_SERVICE_LOCATION: ${{ vars.AZURE_SPEECH_SERVICE_LOCATION }}
       AZURE_SPEECH_SERVICE_SKU: ${{ vars.AZURE_SPEECH_SERVICE_SKU }}
       AZURE_SPEECH_SERVICE_VOICE: ${{ vars.AZURE_SPEECH_SERVICE_VOICE }}
@@ -116,6 +117,7 @@ jobs:
       USE_CHAT_HISTORY_BROWSER: ${{ vars.USE_CHAT_HISTORY_BROWSER }}
       USE_MEDIA_DESCRIBER_AZURE_CU: ${{ vars.USE_MEDIA_DESCRIBER_AZURE_CU }}
       USE_AI_PROJECT: ${{ vars.USE_AI_PROJECT }}
+      SERVICE_WEB_RESOURCE_EXISTS: ${{ vars.SERVICE_WEB_RESOURCE_EXISTS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -126,7 +128,7 @@ jobs:
       - name: Install Nodejs
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Log in with Azure (Federated Credentials)
         if: ${{ env.AZURE_CLIENT_ID != '' }}
@@ -150,6 +152,25 @@ jobs:
         shell: pwsh
         env:
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set default resource group variables
+        run: |
+          DEFAULT_RG="$AZURE_RESOURCE_GROUP"
+          for var in \
+            AZURE_OPENAI_RESOURCE_GROUP \
+            AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP \
+            AZURE_COMPUTER_VISION_RESOURCE_GROUP \
+            AZURE_CONTENT_UNDERSTANDING_RESOURCE_GROUP \
+            AZURE_SEARCH_SERVICE_RESOURCE_GROUP \
+            AZURE_STORAGE_RESOURCE_GROUP \
+            AZURE_SPEECH_SERVICE_RESOURCE_GROUP \
+            AZURE_COSMOSDB_RESOURCE_GROUP; do
+              if [ -z "${!var}" ]; then
+                echo "Setting $var to default $DEFAULT_RG"
+                echo "$var=$DEFAULT_RG" >> "$GITHUB_ENV"
+              fi
+          done
+        shell: bash
 
       - name: Provision Infrastructure
         run: azd provision --no-prompt

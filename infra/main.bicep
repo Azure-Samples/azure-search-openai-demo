@@ -481,7 +481,6 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
     location: location
     tags: union(tags, { 'azd-service-name': 'backend' })
-    // Need to check deploymentTarget again due to https://github.com/Azure/bicep/issues/3990
     appServicePlanId: deploymentTarget == 'appservice' ? appServicePlan.outputs.id : ''
     runtimeName: 'python'
     runtimeVersion: '3.11'
@@ -499,6 +498,7 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
     authenticationIssuerUri: authenticationIssuerUri
     use32BitWorkerProcess: appServiceSkuName == 'F1'
     alwaysOn: appServiceSkuName != 'F1'
+    exists: webAppExists
     appSettings: union(appEnvVariables, {
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_SECRET: clientAppSecret

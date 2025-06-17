@@ -14,7 +14,7 @@ resource databaseAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' exis
   name: databaseAccountName
 }
 
-resource sqlRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2023-04-15' = {
+resource sqlRoleAssignment 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2023-04-15' = if (!empty(principalId)) {
   name: guid(databaseAccount.id, principalId, roleDefinitionId)
   parent: databaseAccount
   properties: {

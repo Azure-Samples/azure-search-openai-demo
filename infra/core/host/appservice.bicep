@@ -83,7 +83,17 @@ var appServiceProperties = {
   publicNetworkAccess: publicNetworkAccess
 }
 
-resource appService 'Microsoft.Web/sites@2022-03-01' = {
+// add flag to indicate the App Service already exists and should not be re-created
+@description('If true the module will reference an existing App Service instead of creating a new one.')
+param exists bool = false
+
+// Reference existing site when `exists` is true
+resource appServiceExisting 'Microsoft.Web/sites@2022-03-01' existing = if (exists) {
+  name: name
+}
+
+// Create or update site only when it doesn't already exist
+resource appService 'Microsoft.Web/sites@2022-03-01' = if (!exists) {
   name: name
   location: location
   tags: tags
@@ -91,7 +101,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   properties: appServiceProperties
   identity: { type: managedIdentity ? 'SystemAssigned' : 'None' }
 
-  resource configAppSettings 'config' = {
+  resource configAppSettings 'config' = if (!exists) {
     name: 'appsettings'
     properties: union(appSettings,
       {
@@ -103,7 +113,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       !empty(keyVaultName) ? { AZURE_KEY_VAULT_ENDPOINT: keyVault.properties.vaultUri } : {})
   }
 
-  resource configLogs 'config' = {
+  resource configLogs 'config' = if (!exists) {
     name: 'logs'
     properties: {
       applicationLogs: { fileSystem: { level: 'Verbose' } }
@@ -116,21 +126,21 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     ]
   }
 
-  resource basicPublishingCredentialsPoliciesFtp 'basicPublishingCredentialsPolicies' = {
+  resource basicPublishingCredentialsPoliciesFtp 'basicPublishingCredentialsPolicies' = if (!exists) {
     name: 'ftp'
     properties: {
       allow: false
     }
   }
 
-  resource basicPublishingCredentialsPoliciesScm 'basicPublishingCredentialsPolicies' = {
+  resource basicPublishingCredentialsPoliciesScm 'basicPublishingCredentialsPolicies' = if (!exists) {
     name: 'scm'
     properties: {
       allow: false
     }
   }
 
-  resource configAuth 'config' = if (!(empty(clientAppId)) && !disableAppServicesAuthentication) {
+  resource configAuth 'config' = if (!exists && !(empty(clientAppId)) && !disableAppServicesAuthentication) {
     name: 'authsettingsV2'
     properties: {
       globalValidation: {
@@ -174,7 +184,10 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing
   name: applicationInsightsName
 }
 
-output id string = appService.id
-output identityPrincipalId string = managedIdentity ? appService.identity.principalId : ''
-output name string = appService.name
-output uri string = 'https://${appService.properties.defaultHostName}'
+// Choose correct reference for outputs
+var appRef = exists ? appServiceExisting : appService
+
+output id string = resourceId('Microsoft.Web/sites', name)
+output identityPrincipalId string = managedIdentity ? appRef.identity.principalId : ''
+output name string = name
+output uri string = 'https://${appRef.properties.defaultHostName}'

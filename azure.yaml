@@ -8,11 +8,11 @@ services:
     project: ./app/backend
     language: py
     # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
-    host: containerapp
+    # host: containerapp
     docker:
       remoteBuild: true
     # Please check docs/azure_app_service.md for more information on how to deploy to Azure App Service
-    # host: appservice
+    host: appservice
     hooks:
       # This hook is called when App Service is the host
       prepackage:
@@ -122,11 +122,13 @@ pipeline:
       - AZURE_ADLS_GEN2_STORAGE_ACCOUNT
       - AZURE_ADLS_GEN2_FILESYSTEM_PATH
       - AZURE_ADLS_GEN2_FILESYSTEM
+      - AZURE_RESOURCE_GROUP
       - DEPLOYMENT_TARGET
       - AZURE_CONTAINER_APPS_WORKLOAD_PROFILE
       - USE_CHAT_HISTORY_BROWSER
       - USE_MEDIA_DESCRIBER_AZURE_CU
       - USE_AI_PROJECT
+      - SERVICE_WEB_RESOURCE_EXISTS
   secrets:
       - AZURE_SERVER_APP_SECRET
       - AZURE_CLIENT_APP_SECRET
