@@ -91,7 +91,9 @@
         },
         "includeCategory": "Include category",
         "includeCategoryOptions": {
-            "all": "All"
+            "all": "All",
+            "solutionObjects": "Solution Objects",
+            "employeeInfo": "3Cloud"
         },
         "excludeCategory": "Exclude category",
         "useSemanticRanker": "Use semantic ranker for retrieval",
