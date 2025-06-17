@@ -79,7 +79,11 @@ export async function getSpeechApi(text: string): Promise<string | null> {
 }
 
 export function getCitationFilePath(citation: string): string {
-    return `${BACKEND_URI}/content/${citation}`;
+    // Encode the actual file path so spaces and other unsafe characters are handled,
+    // but keep any page fragment (e.g. "#page=3") intact so the PDF opens on the correct page.
+    const [pathPart, fragment] = citation.split("#");
+    const encodedPath = encodeURIComponent(pathPart);
+    return `${BACKEND_URI}/content/${encodedPath}${fragment ? `#${fragment}` : ""}`;
 }
 
 export async function uploadFileApi(request: FormData, idToken: string): Promise<SimpleAPIResponse> {
