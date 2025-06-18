@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Stack, TextField } from "@fluentui/react";
+import { Stack, TextField, TooltipHost, IconButton, IIconProps, initializeIcons } from "@fluentui/react";
 import { Button, Tooltip } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
@@ -72,14 +72,69 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
     }
 
     return (
-        <Stack horizontal className={styles.questionInputContainer}>
+        <Stack
+            horizontal
+            className={styles.questionInputContainer}
+            styles={{
+                root: {
+                    border: "2px solid transparent",
+                    borderRadius: "6px",
+                    selectors: {
+                        ":focus-within": {
+                            borderColor: "rgba(115, 118, 225, 1)" // Microsoft blue color
+                        }
+                    }
+                }
+            }}
+        >
             <TextField
+                styles={{
+                    fieldGroup: {
+                        height: "56px",
+                        fontSize: "16px",
+                        borderRadius: "4px",
+                        color: "#1d1db20",
+                        border: "none",
+                        selectors: {
+                            ":focus-within": {
+                                outline: "none",
+                                border: "none",
+                                borderColor: "transparent"
+                            },
+                            "::after": {
+                                border: "none",
+                                outline: "none"
+                            }
+                        }
+                    },
+                    field: {
+                        color: "#1d1b20",
+                        fontSize: "16px",
+                        padding: "12px",
+                        "&:focus": {
+                            outline: "none",
+                            border: "none"
+                        },
+                        "&:focus-visible": {
+                            outline: "none"
+                        },
+                        "&::selection": {
+                            background: "rgba(0, 120, 212, 0.2)" // Keep text selection color but remove focus ring
+                        }
+                    },
+                    wrapper: {
+                        selectors: {
+                            ":focus-within": {
+                                outline: "none",
+                                border: "none"
+                            }
+                        }
+                    }
+                }}
                 className={styles.questionInputTextArea}
                 disabled={disableRequiredAccessControl}
                 placeholder={placeholder}
-                multiline
                 resizable={false}
-                borderless
                 value={question}
                 onChange={onQuestionChange}
                 onKeyDown={onEnterPress}
@@ -88,7 +143,13 @@ export const QuestionInput = ({ onSend, disabled, placeholder, clearOnSend, init
             />
             <div className={styles.questionInputButtonsContainer}>
                 <Tooltip content={t("tooltips.submitQuestion")} relationship="label">
-                    <Button size="large" icon={<Send28Filled primaryFill="rgba(115, 118, 225, 1)" />} disabled={sendQuestionDisabled} onClick={sendQuestion} />
+                    <Button
+                        className={styles.submitButton}
+                        size="large"
+                        icon={<Send28Filled className={styles.iconButton} />}
+                        disabled={sendQuestionDisabled}
+                        onClick={sendQuestion}
+                    />
                 </Tooltip>
             </div>
             {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}

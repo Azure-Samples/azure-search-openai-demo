@@ -4,13 +4,17 @@ import { useTranslation } from "react-i18next";
 import styles from "./Layout.module.css";
 
 import { useLogin } from "../../authConfig";
-
+import logo from "../../assets/logo.svg";
 import { LoginButton } from "../../components/LoginButton";
+import { SettingsButton } from "../../components/SettingsButton";
 import { IconButton } from "@fluentui/react";
 
 const Layout = () => {
     const { t } = useTranslation();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+    const [excludeCategory, setExcludeCategory] = useState<string>("");
+
     const menuRef: RefObject<HTMLDivElement> = useRef(null);
 
     const toggleMenu = () => {
@@ -38,12 +42,12 @@ const Layout = () => {
         <div className={styles.layout}>
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer} ref={menuRef}>
-                    <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>{t("headerTitle")}</h3>
-                    </Link>
-                    <nav>
-                        <ul className={`${styles.headerNavList} ${menuOpen ? styles.show : ""}`}>
-                            <li>
+                    <div className={styles.headerLeftContainer}>
+                        <Link to="/" className={styles.headerTitleContainer}>
+                            <img src={logo} alt={t("headerTitle")} />
+                        </Link>
+                        <nav>
+                            <div className={`${styles.headerNavList} ${menuOpen ? styles.show : ""}`}>
                                 <NavLink
                                     to="/"
                                     className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
@@ -51,8 +55,7 @@ const Layout = () => {
                                 >
                                     {t("chat")}
                                 </NavLink>
-                            </li>
-                            <li>
+
                                 <NavLink
                                     to="/qa"
                                     className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
@@ -60,11 +63,16 @@ const Layout = () => {
                                 >
                                     {t("qa")}
                                 </NavLink>
-                            </li>
-                        </ul>
-                    </nav>
+
+                                <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+
+                                {useLogin && <LoginButton />}
+                            </div>
+                        </nav>
+                    </div>
+
                     <div className={styles.loginMenuContainer}>
-                        {useLogin && <LoginButton />}
+                        {/* {useLogin && <LoginButton />} */}
                         <IconButton
                             iconProps={{ iconName: "GlobalNavButton" }}
                             className={styles.menuToggle}
@@ -75,7 +83,7 @@ const Layout = () => {
                 </div>
             </header>
 
-            <Outlet />
+            <Outlet context={{ isConfigPanelOpen, setIsConfigPanelOpen, excludeCategory, setExcludeCategory }} />
         </div>
     );
 };

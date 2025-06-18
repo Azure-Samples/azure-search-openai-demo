@@ -15,12 +15,10 @@ export const ExampleList = ({ onExampleClicked, useGPT4V }: Props) => {
     const GPT4V_EXAMPLES: string[] = [t("gpt4vExamples.1"), t("gpt4vExamples.2"), t("gpt4vExamples.3")];
 
     return (
-        <ul className={styles.examplesNavList}>
+        <div className={styles.examplesNavList}>
             {(useGPT4V ? GPT4V_EXAMPLES : DEFAULT_EXAMPLES).map((question, i) => (
-                <li key={i}>
-                    <Example text={question} value={question} onClick={onExampleClicked} />
-                </li>
+                <Example key={i} text={question} value={question} onClick={onExampleClicked} />
             ))}
-        </ul>
+        </div>
     );
 };

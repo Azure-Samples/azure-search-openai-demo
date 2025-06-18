@@ -1,5 +1,6 @@
 import { useId } from "@fluentui/react-hooks";
 import { useTranslation } from "react-i18next";
+import { useOutletContext } from "react-router-dom";
 import { TextField, ITextFieldProps, Checkbox, ICheckboxProps, Dropdown, IDropdownProps, IDropdownOption } from "@fluentui/react";
 import { HelpCallout } from "../HelpCallout";
 import { GPT4VSettings } from "../GPT4VSettings";
@@ -9,6 +10,11 @@ import styles from "./Settings.module.css";
 
 // Add type for onRenderLabel
 type RenderLabelType = ITextFieldProps | IDropdownProps | ICheckboxProps;
+
+interface LayoutContextType {
+    excludeCategory: string;
+    setExcludeCategory: (category: string) => void;
+}
 
 export interface SettingsProps {
     promptTemplate: string;
@@ -64,7 +70,6 @@ export const Settings = ({
     useSemanticCaptions,
     useQueryRewriting,
     reasoningEffort,
-    excludeCategory,
     includeCategory,
     retrievalMode,
     useGPT4V,
@@ -92,6 +97,7 @@ export const Settings = ({
     useAgenticRetrieval
 }: SettingsProps) => {
     const { t } = useTranslation();
+    const { excludeCategory, setExcludeCategory } = useOutletContext<LayoutContextType>();
 
     // Form field IDs
     const promptTemplateId = useId("promptTemplate");
@@ -279,8 +285,8 @@ export const Settings = ({
                 id={excludeCategoryFieldId}
                 className={styles.settingsSeparator}
                 label={t("labels.excludeCategory")}
-                defaultValue={excludeCategory}
-                onChange={(_ev, val) => onChange("excludeCategory", val || "")}
+                value={excludeCategory}
+                onChange={(_ev, val) => setExcludeCategory(val || "")}
                 aria-labelledby={excludeCategoryId}
                 onRenderLabel={props => renderLabel(props, excludeCategoryId, excludeCategoryFieldId, t("helpTexts.excludeCategory"))}
             />

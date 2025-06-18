@@ -4,4 +4,6 @@
     gap: 0.375em;
     cursor: pointer;
     padding: 0.5rem;
+    background: red;
+    color: #fff;
 }

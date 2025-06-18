@@ -1,0 +1,23 @@
+.basicCard {
+    padding: 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    width: 50rem;
+}
+.basicCardTitle {
+    font-size: 16px;
+    margin: 0 0 6px;
+    padding: 0;
+    color: #1e1e1e;
+}
+.basicCardText {
+    font-size: 14px;
+    color: #757575;
+    margin: 0;
+}
+
+@media only screen and (max-width: 992px) {
+    .basicCard {
+        width: 100%;
+    }
+}

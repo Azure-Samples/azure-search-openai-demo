@@ -5,9 +5,52 @@
     margin-top: 1rem;
 }
 
+.policyContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 1.25rem;
+}
+
+.policyLabel {
+    display: flex;
+    flex-direction: column;
+    color: #49454f;
+    background: #fff;
+    position: absolute;
+    top: -9px;
+    left: 8px;
+    font-size: 14px;
+    padding: 0 4px;
+}
+
+.policyInput {
+    height: 56px;
+    width: 300px;
+    padding: 12px;
+    font-size: 16px;
+    color: #1d1b20;
+    border-radius: 4px;
+    border: 1px solid #79747e;
+}
+
+.policyInput:focus {
+    outline: none;
+    border-color: rgba(115, 118, 225, 1);
+}
+
 .chatRoot {
     flex: 1;
     display: flex;
+}
+
+.chatTipsContainer {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
 .chatContainer {
@@ -26,12 +69,11 @@
     justify-content: center;
     align-items: center;
     max-height: 64rem;
-    padding-top: 1rem;
 }
 
 .chatEmptyStateTitle {
-    font-size: 2.75rem;
-    font-weight: 600;
+    font-size: 1.75rem;
+    font-weight: 400;
     margin-top: 0;
     margin-bottom: 1.875rem;
 }
@@ -50,7 +92,7 @@
     display: flex;
     flex-direction: column;
     resize: horizontal;
-    min-width: 50vw;
+    /* min-width: 50vw; */
 }
 
 .chatMessageGpt {
@@ -65,13 +107,15 @@
 }
 
 .chatInput {
-    position: sticky;
+    /* position: sticky; */
     bottom: 0;
-    flex: 0 0 6.25rem;
-    padding: 1rem;
     width: 100%;
-    max-width: 64.25rem;
-    background: #f2f2f2;
+    /* max-width: 64.25rem; */
+    /* background: #f2f2f2; */
+}
+
+.submitButton {
+    padding: 0;
 }
 
 .chatAnalysisPanel {
@@ -113,16 +157,12 @@
         margin-top: 1.25rem;
     }
 
-    .chatEmptyState {
-        padding-top: 3.75rem;
-    }
-
     .chatEmptyStateTitle {
-        font-size: 4rem;
+        font-size: 2rem;
     }
 
     .chatInput {
-        padding: 0.75rem 1.5rem 1.5rem;
+        /* padding: 0.75rem 1.5rem 1.5rem; */
     }
 
     .commandsSplitContainer {
@@ -142,5 +182,11 @@
     .chatMessageGpt {
         max-width: 80%;
         min-width: 31.25rem;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .container {
+        padding: 0 1rem;
     }
 }

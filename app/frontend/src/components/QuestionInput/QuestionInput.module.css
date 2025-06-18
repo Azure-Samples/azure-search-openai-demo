@@ -1,11 +1,12 @@
 .questionInputContainer {
-    border-radius: 0.5rem;
-    box-shadow:
-        0px 0.5rem 1rem rgba(0, 0, 0, 0.14),
-        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
     width: 100%;
-    padding: 0.8rem;
     background: white;
+    border: 1px solid #e5e5ea;
+}
+
+.ms-TextField.is-active .ms-TextField-fieldGroup {
+    border: none;
 }
 
 .questionInputTextArea {
@@ -16,11 +17,16 @@
 .questionInputButtonsContainer {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
+}
+
+.iconButton {
+    color: rgba(127, 127, 127, 0.4);
+}
+
+.iconButton:hover {
+    color: rgba(115, 118, 225, 1);
 }
 
 @media (min-width: 992px) {
-    .questionInputContainer {
-        height: 5.625rem;
-    }
 }

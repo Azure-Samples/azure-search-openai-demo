@@ -2,10 +2,13 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 1rem 0;
 }
 
 .header {
-    background-color: #222222;
+    background-color: #fff;
     color: #f2f2f2;
 }
 
@@ -30,23 +33,41 @@
     width: auto;
 }
 
+.headerLeftContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem; /* Space between logo and title */
+}
+
 .headerTitle {
     margin-left: 0.5rem;
     font-weight: 600;
 }
 
+.headerNav {
+    display: none;
+}
+
 .headerNavList {
     z-index: 100;
+
+    gap: 6px;
     display: none;
     flex-direction: column;
-    background-color: #222222;
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     position: absolute;
     top: 2.7rem;
-    right: 0;
+    right: 12px;
     width: auto;
     list-style: none;
     padding: 1.1rem;
     align-items: flex-end;
+    font-size: 16px;
 }
 
 .headerNavList.show {
@@ -54,16 +75,11 @@
 }
 
 .headerNavPageLink {
-    padding: 1rem;
-    border-bottom: 1px solid #333;
-    text-align: right;
-    color: #f2f2f2;
     text-decoration: none;
-    opacity: 0.75;
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     transition-duration: 500ms;
     transition-property: opacity;
-    font-size: 1.2rem;
+    color: #49454f;
 }
 
 .headerNavPageLink:hover {
@@ -71,11 +87,9 @@
 }
 
 .headerNavPageLinkActive {
-    color: #f2f2f2;
     text-decoration: none;
-    font-size: 1.2rem;
     text-align: right;
-    padding: 1rem;
+    color: #49454f;
 }
 
 .headerNavLeftMargin {
@@ -105,17 +119,24 @@
 
     .headerNavList {
         display: flex;
+        box-shadow: none;
+        border: none;
         flex-direction: row;
+        align-items: center;
+        gap: 12px;
         list-style: none;
         padding: 0;
         position: static;
         width: auto;
+        margin: 0;
     }
 
     .headerNavPageLink {
         border-bottom: none;
         padding: 0;
         display: block;
+        color: #49454f;
+        font-size: 16px;
     }
 
     .headerNavPageLink:hover {
@@ -123,7 +144,7 @@
     }
 
     .headerNavPageLinkActive {
-        color: #f2f2f2;
+        color: #49454f;
         text-decoration: none;
     }
 

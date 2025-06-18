@@ -1,7 +1,12 @@
-.container {
-    display: flex;
+.settingsButton {
+    margin: 0;
+    padding: 0;
+    color: #49454f !important;
+    font-size: 16px;
+    display: flex !important;
     align-items: center;
-    gap: 0.375em;
-    cursor: pointer;
-    padding: 0.5rem;
+}
+
+.settingsButton:hover {
+    color: #49454f !important;
 }

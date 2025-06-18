@@ -1,10 +1,11 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Panel, DefaultButton } from "@fluentui/react";
 import readNDJSONStream from "ndjson-readablestream";
 
-import appLogo from "../../assets/applogo.svg";
+import appLogo from "../../assets/logoicon.svg";
 import styles from "./Chat.module.css";
 
 import {
@@ -20,6 +21,7 @@ import {
     SpeechConfig
 } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
+import { BasicCard } from "../../components/BasicCard/BasicCard";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
 import { UserChatMessage } from "../../components/UserChatMessage";
@@ -37,8 +39,15 @@ import { LoginContext } from "../../loginContext";
 import { LanguagePicker } from "../../i18n/LanguagePicker";
 import { Settings } from "../../components/Settings/Settings";
 
+interface LayoutContextType {
+    isConfigPanelOpen: boolean;
+    setIsConfigPanelOpen: (isOpen: boolean) => void;
+    excludeCategory: string;
+    setExcludeCategory: (category: string) => void;
+}
+
 const Chat = () => {
-    const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+    const { isConfigPanelOpen, setIsConfigPanelOpen, excludeCategory, setExcludeCategory } = useOutletContext<LayoutContextType>();
     const [isHistoryPanelOpen, setIsHistoryPanelOpen] = useState(false);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
@@ -56,7 +65,6 @@ const Chat = () => {
     const [shouldStream, setShouldStream] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [includeCategory, setIncludeCategory] = useState<string>("");
-    const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
     const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
@@ -289,6 +297,12 @@ const Chat = () => {
         setIsStreaming(false);
     };
 
+    const onPolicyInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.value;
+        setExcludeCategory(value);
+        console.log("Policy number changed to:", value);
+    };
+
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
     useEffect(() => {
@@ -334,7 +348,7 @@ const Chat = () => {
                 setUseSemanticCaptions(value);
                 break;
             case "excludeCategory":
-                setExcludeCategory(value);
+                onPolicyInputChange(value);
                 break;
             case "includeCategory":
                 setIncludeCategory(value);
@@ -407,25 +421,34 @@ const Chat = () => {
                         <HistoryButton className={styles.commandButton} onClick={() => setIsHistoryPanelOpen(!isHistoryPanelOpen)} />
                     )}
                 </div>
-                <div className={styles.commandsContainer}>
-                    <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
-                    {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
-                    <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
-                </div>
+                {lastQuestionRef.current && (
+                    <div className={styles.commandsContainer}>
+                        <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                        {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
+                    </div>
+                )}
             </div>
+
             <div className={styles.chatRoot} style={{ marginLeft: isHistoryPanelOpen ? "300px" : "0" }}>
                 <div className={styles.chatContainer}>
-                    {!lastQuestionRef.current ? (
+                    {!lastQuestionRef.current && (
                         <div className={styles.chatEmptyState}>
-                            <img src={appLogo} alt="App logo" width="120" height="120" />
+                            <img src={appLogo} alt="App logo" width="56" height="56" />
 
                             <h1 className={styles.chatEmptyStateTitle}>{t("chatEmptyStateTitle")}</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>{t("chatEmptyStateSubtitle")}</h2>
+                            {/* <h2 className={styles.chatEmptyStateSubtitle}>{t("chatEmptyStateSubtitle")}</h2> */}
+                            <div className={styles.policyContainer}>
+                                <div>
+                                    <label className={styles.policyLabel} htmlFor={"policyInput"}>
+                                        Policy Number
+                                    </label>
+                                    <input className={styles.policyInput} onChange={onPolicyInputChange} id="policyInput" value={excludeCategory} />
+                                </div>
+                            </div>
                             {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
-
-                            <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
                         </div>
-                    ) : (
+                    )}
+                    {lastQuestionRef.current && (
                         <div className={styles.chatMessageStream}>
                             {isStreaming &&
                                 streamedAnswers.map((streamedAnswer, index) => (
@@ -502,8 +525,19 @@ const Chat = () => {
                             showSpeechInput={showSpeechInput}
                         />
                     </div>
+                    <div>{!lastQuestionRef.current && <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />}</div>
+                    {!lastQuestionRef.current && (
+                        <div className={styles.chatTipsContainer}>
+                            <h2>Tips & Tricks</h2>
+                            <BasicCard title="Title 1" text="You can ask questions about your data, like 'What is the average sales in 2023?'" />
+                            <BasicCard title="Title 1" text="You can ask questions about your data, like 'What is the average sales in 2023?'" />
+                            <BasicCard
+                                title="Title 1"
+                                text="You can ask questions about your data, like 'What is the average sales in 2023? You can ask questions about your data, like 'What is the average sales in 2023?'"
+                            />
+                        </div>
+                    )}
                 </div>
-
                 {answers.length > 0 && activeAnalysisPanelTab && (
                     <AnalysisPanel
                         className={styles.chatAnalysisPanel}
@@ -512,9 +546,10 @@ const Chat = () => {
                         citationHeight="810px"
                         answer={answers[selectedAnswer][1]}
                         activeTab={activeAnalysisPanelTab}
+                        setActiveCitation={setActiveCitation}
+                        setActiveAnalysisPanelTab={setActiveAnalysisPanelTab}
                     />
                 )}
-
                 {((useLogin && showChatHistoryCosmos) || showChatHistoryBrowser) && (
                     <HistoryPanel
                         provider={historyProvider}
@@ -528,7 +563,6 @@ const Chat = () => {
                         }}
                     />
                 )}
-
                 <Panel
                     headerText={t("labels.headerText")}
                     isOpen={isConfigPanelOpen}

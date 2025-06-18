@@ -148,3 +148,7 @@
 .subqueriesTable tr {
     background: #fff;
 }
+
+.analysisPanelCloseButton {
+    position: relative;
+}
