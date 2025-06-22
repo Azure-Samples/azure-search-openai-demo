@@ -100,7 +100,23 @@ export const Answer = ({
 
             <Stack.Item grow>
                 <div className={styles.answerText}>
-                    <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
+                    <ReactMarkdown
+                        children={sanitizedAnswerHtml}
+                        rehypePlugins={[rehypeRaw]}
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                            a: ({ node, children, ...props }) => {
+                                // Preserve existing target="_blank" or add it if missing
+                                const target = props.target || "_blank";
+                                const rel = props.rel || "noopener noreferrer";
+                                return (
+                                    <a {...props} target={target} rel={rel}>
+                                        {children}
+                                    </a>
+                                );
+                            }
+                        }}
+                    />
                 </div>
             </Stack.Item>
 

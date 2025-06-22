@@ -1,11 +1,14 @@
+#!/usr/bin/env python3
 import argparse
 import asyncio
+import glob
 import logging
 import os
 from typing import Optional, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity import DefaultAzureCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
 from rich.logging import RichHandler
 
@@ -36,6 +39,8 @@ from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 from prepdocslib.docxparser import DocxHyperlinkParser
 from prepdocslib.hyperlinktextsplitter import HyperlinkAwareTextSplitter
+
+from prepdocslib.domain_classifier_setup import DomainClassifierSetup
 
 logger = logging.getLogger("scripts")
 
@@ -117,7 +122,7 @@ def setup_list_file_strategy(
             data_lake_storage_account=datalake_storage_account,
             data_lake_filesystem=datalake_filesystem,
             data_lake_path=datalake_path,
-            credential=adls_gen2_creeds,
+            credential=adls_gen2_creds,  # Should be adls_gen2_creds
         )
     elif local_files:
         logger.info("Using local files: %s", local_files)
@@ -183,7 +188,9 @@ def setup_file_processors(
 ):
     sentence_text_splitter = SentenceTextSplitter()
     # Add hyperlink-aware text splitter
-    hyperlink_text_splitter = HyperlinkAwareTextSplitter()
+    hyperlink_text_splitter = HyperlinkAwareTextSplitter(
+        add_target_blank=True,  # This ensures target="_blank" is added
+    )
 
     doc_int_parser: Optional[DocumentAnalysisParser] = None
     # check if Azure Document Intelligence credentials are provided
@@ -271,6 +278,74 @@ async def main(strategy: Strategy, setup_index: bool = True):
     await strategy.run()
 
 
+async def setup_domain_classifier(embeddings_service, search_info):
+    """Setup domain classifier with the provided search info"""
+    # Check if embeddings service is available
+    if not embeddings_service:
+        logger.warning("No embeddings service available. Skipping domain classifier setup.")
+        return
+    
+    # Check if data directories exist
+    cosmic_path = "./data/cosmic"
+    substrate_path = "./data/substrate"
+    
+    if not os.path.exists(cosmic_path) or not os.path.exists(substrate_path):
+        logger.warning(f"Domain classifier data directories not found. Expected: {cosmic_path} and {substrate_path}")
+        logger.info("Skipping domain classifier setup. Create the directories and add sample documents to enable this feature.")
+        return
+    
+    # Import the synchronous DefaultAzureCredential for the SearchIndexClient
+    from azure.identity import DefaultAzureCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    
+    # Create a synchronous credential for the SearchIndexClient
+    sync_credential = DefaultAzureCredential()
+    
+    search_index_client = None
+    try:
+        # Create a synchronous search index client for the domain classifier
+        search_index_client = SearchIndexClient(
+            endpoint=search_info.endpoint,
+            credential=sync_credential
+        )
+        
+        # Initialize classifier setup with the search index client
+        classifier_setup = DomainClassifierSetup(
+            search_client=search_index_client,
+            embeddings_service=embeddings_service,
+        )
+
+        # Use async context manager to ensure proper cleanup
+        async with classifier_setup:
+            # Create the classifier index (synchronous operation)
+            classifier_setup.create_domain_classifier_index()
+
+            # Get document lists
+            cosmic_docs = glob.glob("./data/cosmic/**/*", recursive=True)
+            substrate_docs = glob.glob("./data/substrate/**/*", recursive=True)
+            
+            # Filter to only actual files
+            cosmic_docs = [f for f in cosmic_docs if os.path.isfile(f)]
+            substrate_docs = [f for f in substrate_docs if os.path.isfile(f)]
+            
+            if not cosmic_docs and not substrate_docs:
+                logger.warning("No documents found in data directories. Add documents to enable domain classification.")
+                return
+
+            # Populate the classifier with domain knowledge
+            await classifier_setup.populate_classifier_index(cosmic_docs, substrate_docs)
+
+        logger.info("Domain classifier index created and populated successfully!")
+        
+    finally:
+        # Clean up the synchronous client and credential
+        if search_index_client:
+            search_index_client.close()
+        # Close the sync credential to prevent resource leaks
+        if hasattr(sync_credential, 'close'):
+            sync_credential.close()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Prepare documents by extracting content from PDFs, splitting content into sections, uploading to blob storage, and indexing in a search index."
@@ -322,7 +397,35 @@ if __name__ == "__main__":
         help="Search service system assigned Identity (Managed identity) (used for integrated vectorization)",
     )
 
+    parser.add_argument(
+        "--skip-domain-classifier",
+        action="store_true",
+        help="Skip domain classifier setup (useful when running multiple times)",
+    )
+
+    parser.add_argument(
+        "--skip-main-processing",
+        action="store_true",
+        help="Skip main document processing and only run domain classifier",
+    )
+
+    parser.add_argument(
+        "--domain-classifier-only",
+        action="store_true",
+        help="Only run domain classifier setup without processing documents",
+    )
+
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
+    parser.add_argument(
+        "--searchindex",
+        required=False,
+        help="Override the search index name (overrides AZURE_SEARCH_INDEX env var)"
+    )
+    parser.add_argument(
+        "--searchagent", 
+        required=False,
+        help="Override the search agent name (overrides AZURE_SEARCH_AGENT env var)"
+    )
     args = parser.parse_args()
 
     if args.verbose:
@@ -332,6 +435,15 @@ if __name__ == "__main__":
         logger.setLevel(logging.DEBUG)
 
     load_azd_env()
+
+    # Override environment variables with command line arguments if provided
+    if args.searchindex:
+        os.environ["AZURE_SEARCH_INDEX"] = args.searchindex
+        logger.info(f"Using command line override for search index: {args.searchindex}")
+    
+    if args.searchagent:
+        os.environ["AZURE_SEARCH_AGENT"] = args.searchagent
+        logger.info(f"Using command line override for search agent: {args.searchagent}")
 
     if os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled":
         logger.error("AZURE_PUBLIC_NETWORK_ACCESS is set to Disabled. Exiting.")
@@ -479,5 +591,33 @@ if __name__ == "__main__":
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
         )
 
-    loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))
+    # If only running domain classifier
+    if args.domain_classifier_only:
+        logger.info("Running domain classifier setup only")
+        try:
+            loop.run_until_complete(setup_domain_classifier(openai_embeddings_service, search_info))
+        except Exception as e:
+            logger.error(f"Failed to setup domain classifier: {e}")
+            import traceback
+            traceback.print_exc()
+    else:
+        # Normal processing
+        # Only run main processing if not skipped
+        if not args.skip_main_processing:
+            loop.run_until_complete(main(ingestion_strategy, setup_index=True))
+        
+        # After the main ingestion is complete, set up domain classifier
+        if not args.skip_domain_classifier:
+            try:
+                loop.run_until_complete(setup_domain_classifier(openai_embeddings_service, search_info))
+            except Exception as e:
+                logger.error(f"Failed to setup domain classifier: {e}")
+                import traceback
+                traceback.print_exc()
+    
+    # Ensure all async operations are complete before closing the loop
+    pending = asyncio.all_tasks(loop)
+    if pending:
+        loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+    
     loop.close()

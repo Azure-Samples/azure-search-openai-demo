@@ -52,6 +52,24 @@ export function parseAnswerToHtml(answer: ChatAppResponse, isStreaming: boolean,
         parsedAnswer = truncatedAnswer;
     }
 
+    // Process all anchor tags to ensure target="_blank"
+    parsedAnswer = parsedAnswer.replace(/<a\s+([^>]*?)href=["']([^"']+)["']([^>]*?)>/gi, (match, before, href, after) => {
+        // Check if target="_blank" already exists
+        if (match.includes('target="_blank"') || match.includes("target='_blank'")) {
+            return match;
+        }
+        // Add target="_blank" and rel="noopener noreferrer"
+        // Make sure to include any existing attributes
+        const existingRel = match.match(/rel=["']([^"']+)["']/);
+        const relValue = existingRel ? existingRel[1] + " noopener noreferrer" : "noopener noreferrer";
+
+        // Remove existing rel attribute if present
+        let newMatch = match.replace(/rel=["'][^"']*["']/g, "");
+
+        // Add target and rel attributes
+        return newMatch.replace(/(<a\s+[^>]*?)(>)/gi, `$1 target="_blank" rel="${relValue}"$2`);
+    });
+
     const parts = parsedAnswer.split(/\[([^\]]+)\]/g);
 
     const fragments: string[] = parts.map((part, index) => {

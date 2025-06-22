@@ -25,7 +25,7 @@ class RetrieveThenReadApproach(Approach):
         search_index_name: str,
         agent_model: Optional[str],
         agent_deployment: Optional[str],
-        agent_client: KnowledgeAgentRetrievalClient,
+        agent_client: Optional[KnowledgeAgentRetrievalClient],  # ❌ NOT Optional, but can be None in practice
         auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
@@ -77,7 +77,7 @@ class RetrieveThenReadApproach(Approach):
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
 
-        if use_agentic_retrieval:
+        if use_agentic_retrieval and self.agent_client is not None:
             extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)

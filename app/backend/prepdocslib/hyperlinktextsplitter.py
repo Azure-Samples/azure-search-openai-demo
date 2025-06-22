@@ -16,14 +16,23 @@ class HyperlinkAwareTextSplitter(SentenceTextSplitter):
     Text splitter that preserves hyperlinks during chunking
     """
 
-    def __init__(self, max_tokens_per_section: int = 500):
+    def __init__(self, max_tokens_per_section: int = 500, add_target_blank: bool = True):
         super().__init__(max_tokens_per_section)
-        self.hyperlink_pattern = re.compile(r'<a href="([^"]*)"[^>]*>([^<]*)</a>')
+        # More comprehensive pattern that handles various link formats
+        self.hyperlink_pattern = re.compile(
+            r'<a\s+(?:[^>]*?\s+)?href\s*=\s*["\']([^"\']*)["\'][^>]*>(.*?)</a>',
+            re.IGNORECASE | re.DOTALL
+        )
+        self.add_target_blank = add_target_blank
 
     def split_page_by_max_tokens(self, page_num: int, text: str) -> Generator[SplitPage, None, None]:
         """
         Split text while preserving hyperlinks
         """
+        # Optionally transform hyperlinks to add target="_blank"
+        if self.add_target_blank:
+            text = self._add_target_blank_to_links(text)
+        
         # Extract hyperlinks and their positions
         hyperlinks = list(self.hyperlink_pattern.finditer(text))
         
@@ -39,6 +48,33 @@ class HyperlinkAwareTextSplitter(SentenceTextSplitter):
 
         # Split text while keeping hyperlinks intact
         yield from self._split_preserving_hyperlinks(page_num, text, hyperlinks)
+
+    def _add_target_blank_to_links(self, text: str) -> str:
+        """
+        Add target="_blank" and rel="noopener noreferrer" to all hyperlinks
+        """
+        def replace_link(match):
+            full_match = match.group(0)
+            
+            # Check if target="_blank" already exists
+            if 'target="_blank"' in full_match or "target='_blank'" in full_match:
+                return full_match
+            
+            # Extract the opening tag and closing tag
+            href_match = re.search(r'href="([^"]*)"', full_match)
+            if not href_match:
+                return full_match
+            
+            # Insert target="_blank" and rel="noopener noreferrer" after href
+            new_link = full_match.replace(
+                href_match.group(0), 
+                f'{href_match.group(0)} target="_blank" rel="noopener noreferrer"'
+            )
+            
+            return new_link
+        
+        # Use the same pattern as the class-level pattern
+        return self.hyperlink_pattern.sub(replace_link, text)
 
     def _split_preserving_hyperlinks(self, page_num: int, text: str, hyperlinks: List[re.Match]) -> Generator[SplitPage, None, None]:
         """

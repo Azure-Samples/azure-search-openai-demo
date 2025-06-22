@@ -56,6 +56,8 @@ from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionAppr
 from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
+from approaches.orchestrator_approach import OrchestratorApproach
+from approaches.domain_classifier import DomainClassifier
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
     CONFIG_AGENT_CLIENT,
@@ -792,6 +794,113 @@ async def setup_clients():
             query_speller=AZURE_SEARCH_QUERY_SPELLER,
             prompt_manager=prompt_manager,
         )
+
+    # Environment variables for index names
+    AZURE_SEARCH_COSMIC_INDEX = os.getenv("AZURE_SEARCH_COSMIC_INDEX", "cosmic-index")
+    AZURE_SEARCH_SUBSTRATE_INDEX = os.getenv("AZURE_SEARCH_SUBSTRATE_INDEX", "substrate-index") 
+    AZURE_SEARCH_CLASSIFIER_INDEX = os.getenv("AZURE_SEARCH_CLASSIFIER_INDEX", "domain-classifier-index")
+    print(f"🔍 App will use these indexes:")
+    print(f"  Cosmic: {AZURE_SEARCH_COSMIC_INDEX}")
+    print(f"  Substrate: {AZURE_SEARCH_SUBSTRATE_INDEX}")
+    print(f"  Classifier: {AZURE_SEARCH_CLASSIFIER_INDEX}")
+
+    # Set up domain-specific search clients
+    cosmic_search_client = SearchClient(
+        endpoint=AZURE_SEARCH_ENDPOINT,
+        index_name=AZURE_SEARCH_COSMIC_INDEX,
+        credential=azure_credential
+    )
+    
+    substrate_search_client = SearchClient(
+        endpoint=AZURE_SEARCH_ENDPOINT,
+        index_name=AZURE_SEARCH_SUBSTRATE_INDEX,
+        credential=azure_credential
+    )
+    
+    # Set up domain classifier
+    classifier_search_client = SearchClient(
+        endpoint=AZURE_SEARCH_ENDPOINT,
+        index_name=AZURE_SEARCH_CLASSIFIER_INDEX,
+        credential=azure_credential
+    )
+    
+    # Define the embeddings service (this was missing!)
+    openai_embeddings_service = setup_embeddings_service(
+        azure_credential=azure_credential,
+        openai_host=OPENAI_HOST,
+        openai_model_name=OPENAI_EMB_MODEL,
+        openai_service=AZURE_OPENAI_SERVICE,
+        openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
+        openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        openai_dimensions=OPENAI_EMB_DIMENSIONS,
+        openai_api_version=AZURE_OPENAI_API_VERSION,
+        openai_key=clean_key_if_exists(OPENAI_API_KEY),
+        openai_org=OPENAI_ORGANIZATION,
+        disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
+    )
+    
+    domain_classifier = DomainClassifier(
+        search_client=classifier_search_client,
+        openai_client=openai_client,
+        embeddings_service=openai_embeddings_service,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT
+    )
+    
+    # Create domain-specific approaches WITHOUT agentic retrieval for now
+    cosmic_approach = ChatReadRetrieveReadApproach(
+        search_client=cosmic_search_client,
+        search_index_name=AZURE_SEARCH_COSMIC_INDEX,
+        agent_model=None,  # Disable agentic retrieval
+        agent_deployment=None,  # Disable agentic retrieval  
+        agent_client=None,  # Disable agentic retrieval
+        openai_client=openai_client,
+        auth_helper=auth_helper,
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+        embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
+        prompt_manager=prompt_manager,
+        reasoning_effort=OPENAI_REASONING_EFFORT,
+    )
+    
+    substrate_approach = ChatReadRetrieveReadApproach(
+        search_client=substrate_search_client,
+        search_index_name=AZURE_SEARCH_SUBSTRATE_INDEX,
+        agent_model=None,  # Disable agentic retrieval
+        agent_deployment=None,  # Disable agentic retrieval
+        agent_client=None,  # Disable agentic retrieval
+        openai_client=openai_client,
+        auth_helper=auth_helper,
+        chatgpt_model=OPENAI_CHATGPT_MODEL,
+        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
+        embedding_model=OPENAI_EMB_MODEL,
+        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+        embedding_dimensions=OPENAI_EMB_DIMENSIONS,
+        embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
+        sourcepage_field=KB_FIELDS_SOURCEPAGE,
+        content_field=KB_FIELDS_CONTENT,
+        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
+        query_speller=AZURE_SEARCH_QUERY_SPELLER,
+        prompt_manager=prompt_manager,
+        reasoning_effort=OPENAI_REASONING_EFFORT,
+    )
+    
+    # Create orchestrator with classifier
+    orchestrator = OrchestratorApproach(
+        cosmic_approach=cosmic_approach,
+        substrate_approach=substrate_approach,
+        domain_classifier=domain_classifier,
+        openai_client=openai_client,
+        prompt_manager=prompt_manager
+    )
+    
+    current_app.config[CONFIG_CHAT_APPROACH] = orchestrator
 
 
 @bp.after_app_serving
