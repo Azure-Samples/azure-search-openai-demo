@@ -1,4 +1,3 @@
-import os
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass
@@ -24,6 +23,7 @@ from azure.search.documents.models import (
     VectorizedQuery,
     VectorQuery,
 )
+from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI, AsyncStream
 from openai.types import CompletionUsage
 from openai.types.chat import (
@@ -168,11 +168,12 @@ class Approach(ABC):
         embedding_dimensions: int,
         embedding_field: str,
         openai_host: str,
-        vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
+        vision_endpoint: Optional[str] = None,
+        vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
+        images_blob_container_client: Optional[ContainerClient] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -184,12 +185,13 @@ class Approach(ABC):
         self.embedding_dimensions = embedding_dimensions
         self.embedding_field = embedding_field
         self.openai_host = openai_host
-        self.vision_endpoint = vision_endpoint
-        self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
+        self.vision_endpoint = vision_endpoint
+        self.vision_token_provider = vision_token_provider
+        self.images_blob_container_client = images_blob_container_client
 
     def get_default_llm_inputs(self) -> str:
         """
@@ -381,7 +383,7 @@ class Approach(ABC):
 
         for doc in results:
             # Get the citation for the source page
-            citation = self.get_citation(doc.sourcepage or "")
+            citation = self.get_citation(doc.sourcepage)
             citations.append(citation)
 
             # If semantic captions are used, extract captions; otherwise, use content
@@ -403,20 +405,13 @@ class Approach(ABC):
 
         return text_sources, image_sources, citations
 
-    def get_citation(self, sourcepage: str) -> str:
-        path, ext = os.path.splitext(sourcepage)
-        if ext.lower() == ".png":
-            page_idx = path.rfind("-")
-            page_number = int(path[page_idx + 1 :])
-            return f"{path[:page_idx]}.pdf#page={page_number}"
-        return sourcepage
+    def get_citation(self, sourcepage: Optional[str]):
+        return sourcepage or ""
 
-    def get_image_citation(self, sourcepage: str, image_url: str):
-        source_page_citation = self.get_citation(sourcepage)
-        # extract the image filename from image_url, last part after the last slash
+    def get_image_citation(self, sourcepage: Optional[str], image_url: str):
+        sourcepage_citation = self.get_citation(sourcepage)
         image_filename = image_url.split("/")[-1]
-        if source_page_citation:
-            return f"{source_page_citation}({image_filename})"
+        return f"{sourcepage_citation}({image_filename})"
 
     async def compute_text_embedding(self, q: str):
         SUPPORTED_DIMENSIONS_MODEL = {

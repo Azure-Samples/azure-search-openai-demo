@@ -86,44 +86,64 @@ class MockCaption:
 class MockAsyncSearchResultsIterator:
     def __init__(self, search_text, vector_queries: Optional[list[VectorQuery]]):
         if search_text == "interest rates" or (
-            vector_queries and any([vector.fields == "imageEmbedding" for vector in vector_queries])
+            vector_queries and any([vector.fields == "images/embeddings" for vector in vector_queries])
         ):
             self.data = [
                 [
                     {
+                        "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-7",
+                        "content": ' This\nsection examines the correlations between stock indices, cryptocurrency prices, and commodity prices,\nrevealing how changes in one market can have ripple effects across the financial ecosystem.### Impact of Macroeconomic Factors\n\n\n<figure><figcaption>Impact of Interest Rates, Inflation, and GDP Growth on Financial Markets<br>The image is a line graph titled "on Financial Markets" displaying data from 2018 to 2023. It tracks three variables: Interest Rates %, Inflation Data %, and GDP Growth %, each represented by a different colored line (blue for Interest Rates, orange for Inflation Data, and gray for GDP Growth). Interest Rates % start around 2% in 2018, dip to about 0.25% in 2021, then rise to 1.5% in 2023. Inflation Data % begin at approximately 1.9% in 2018, rise to a peak near 3.4% in 2022, and then decrease to 2.5% in 2023. GDP Growth % shows significant fluctuations, starting at 3% in 2018, plunging to almost -4% in 2020, then rebounding to around 4.5% in 2021 before gradually declining to around 2.8% in 2023.</figcaption></figure>\n\n\nMacroeconomic factors such as interest\nrates, inflation, and GDP growth play a\npivotal role in shaping financial markets.',
                         "category": None,
+                        "sourcepage": "Financial Market Analysis Report 2023.pdf#page=7",
                         "sourcefile": "Financial Market Analysis Report 2023.pdf",
-                        "image_embedding": [
-                            -0.86035156,
-                            1.3310547,
-                            3.9804688,
-                            -0.6425781,
-                            -2.7246094,
-                            -1.6308594,
-                            -0.69091797,
-                            -2.2539062,
-                            -0.09942627,
+                        "oids": None,
+                        "groups": None,
+                        "captions": [],
+                        "score": 0.03333333507180214,
+                        "reranker_score": 3.207321882247925,
+                        "search_agent_query": None,
+                        "images": [],
+                    },
+                    {
+                        "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-8",
+                        "content": "</figcaption></figure>\n\n\nMacroeconomic factors such as interest\nrates, inflation, and GDP growth play a\npivotal role in shaping financial markets.\nThis section analyzes how these factors\nhave influenced stock, cryptocurrency,\nand commodity markets over recent\nyears, providing insights into the\ncomplex relationship between the\neconomy and financial market\nperformance.## Future Predictions and Trends\n\n\n<figure><figcaption>Relative Growth Trends for S&P 500, Bitcoin, and Oil Prices (2024 Indexed to 100)<br>This horizontal bar chart shows prices indexed to 100 for the years 2024 to 2028. It compares the prices of Oil, Bitcoin, and the S&P 500 across these years. In 2024, all three have an index value of 100. From 2025 to 2028, all three generally increase, with Bitcoin consistently having the highest index value, followed closely by the S&P 500 and then Oil. The chart uses grey bars for Oil, orange bars for Bitcoin, and blue bars for the S&P 500.</figcaption></figure>\n\n\nBased on historical data, current trends,\nand economic indicators, this section\npresents predictions for the future of\nfinancial markets.",
+                        "category": None,
+                        "sourcepage": "Financial Market Analysis Report 2023.pdf#page=8",
+                        "sourcefile": "Financial Market Analysis Report 2023.pdf",
+                        "oids": None,
+                        "groups": None,
+                        "captions": [],
+                        "score": 0.04945354908704758,
+                        "reranker_score": 2.573531150817871,
+                        "search_agent_query": None,
+                        "images": [
+                            {
+                                "url": "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png",
+                                "description": '<figure><figcaption>Impact of Interest Rates, Inflation, and GDP Growth on Financial Markets<br>The image is a line graph titled "on Financial Markets" displaying data from 2018 to 2023. It tracks three variables: Interest Rates %, Inflation Data %, and GDP Growth %, each represented by a different colored line (blue for Interest Rates, orange for Inflation Data, and gray for GDP Growth). Interest Rates % start around 2% in 2018, dip to about 0.25% in 2021, then rise to 1.5% in 2023. Inflation Data % begin at approximately 1.9% in 2018, rise to a peak near 3.4% in 2022, and then decrease to 2.5% in 2023. GDP Growth % shows significant fluctuations, starting at 3% in 2018, plunging to almost -4% in 2020, then rebounding to around 4.5% in 2021 before gradually declining to around 2.8% in 2023.</figcaption></figure>',
+                                "boundingbox": [63.1008, 187.9416, 561.3408000000001, 483.5088],
+                            }
                         ],
-                        "content": "3</td><td>1</td></tr></table>\nFinancial markets are interconnected, with movements in one segment often influencing others. This section examines the correlations between stock indices, cryptocurrency prices, and commodity prices, revealing how changes in one market can have ripple effects across the financial ecosystem.Impact of Macroeconomic Factors\nImpact of Interest Rates, Inflation, and GDP Growth on Financial Markets\n5\n4\n3\n2\n1\n0\n-1 2018 2019\n-2\n-3\n-4\n-5\n2020\n2021 2022 2023\nMacroeconomic factors such as interest rates, inflation, and GDP growth play a pivotal role in shaping financial markets. This section analyzes how these factors have influenced stock, cryptocurrency, and commodity markets over recent years, providing insights into the complex relationship between the economy and financial market performance.\n-Interest Rates % -Inflation Data % GDP Growth % :unselected: :unselected:Future Predictions and Trends\nRelative Growth Trends for S&P 500, Bitcoin, and Oil Prices (2024 Indexed to 100)\n2028\nBased on historical data, current trends, and economic indicators, this section presents predictions ",
-                        "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-14",
-                        "sourcepage": "Financial Market Analysis Report 2023-6.png",
-                        "embedding": [
-                            -0.012668486,
-                            -0.02251158,
-                            0.008822813,
-                            -0.02531081,
-                            -0.014493219,
-                            -0.019503059,
-                            -0.015605063,
-                            -0.0141138835,
-                            -0.019699266,
-                            ...,
+                    },
+                    {
+                        "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-1",
+                        "content": 'advanced data\nanalytics to present a clear picture of the complex interplay between\ndifferent financial markets and their potential trajectories## Introduction to Financial Markets\n\n\n<figure><figcaption>Global Financial Market Distribution (2023)<br>The pie chart features four categories: Stocks, Bonds, Cryptocurrencies, and Commodities. Stocks take up the largest portion of the chart, represented in blue, accounting for 40%. Bonds are the second largest, shown in orange, making up 25%. Cryptocurrencies are depicted in gray and cover 20% of the chart. Commodities are the smallest segment, shown in yellow, comprising 15%.</figcaption></figure>\n\n\nThe global financial market is a vast and intricate network of\nexchanges, instruments, and assets, ranging from traditional stocks\nand bonds to modern cryptocurrencies and commodities. Each\nsegment plays a crucial role in the overall economy, and their\ninteractions can have profound effects on global financial stability.\nThis section provides an overview of these segments and sets the\nstage for a detailed analysis## Stock Market Overview\n\n\n<figure><figcaption><br>The image is a line graph titled "5-Year Trend of the S&P 500 Index.',
+                        "category": None,
+                        "sourcepage": "Financial Market Analysis Report 2023.pdf#page=2",
+                        "sourcefile": "Financial Market Analysis Report 2023.pdf",
+                        "oids": None,
+                        "groups": None,
+                        "captions": [],
+                        "score": 0.0317540317773819,
+                        "reranker_score": 1.8846203088760376,
+                        "search_agent_query": None,
+                        "images": [
+                            {
+                                "url": "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png",
+                                "description": '<figure><figcaption>Impact of Interest Rates, Inflation, and GDP Growth on Financial Markets<br>The image is a line graph titled "on Financial Markets" displaying data from 2018 to 2023. It tracks three variables: Interest Rates %, Inflation Data %, and GDP Growth %, each represented by a different colored line (blue for Interest Rates, orange for Inflation Data, and gray for GDP Growth). Interest Rates % start around 2% in 2018, dip to about 0.25% in 2021, then rise to 1.5% in 2023. Inflation Data % begin at approximately 1.9% in 2018, rise to a peak near 3.4% in 2022, and then decrease to 2.5% in 2023. GDP Growth % shows significant fluctuations, starting at 3% in 2018, plunging to almost -4% in 2020, then rebounding to around 4.5% in 2021 before gradually declining to around 2.8% in 2023.</figcaption></figure>',
+                                "boundingbox": [63.1008, 187.9416, 561.3408000000001, 483.5088],
+                            }
                         ],
-                        "@search.score": 0.04972677677869797,
-                        "@search.reranker_score": 3.1704962253570557,
-                        "@search.highlights": None,
-                        "@search.captions": None,
-                    }
+                    },
                 ]
             ]
         else:

@@ -63,10 +63,18 @@ Run the tests:
 python -m pytest
 ```
 
-Check the coverage report to make sure your changes are covered.
+If test snapshots need updating (and the changes are expected), you can update them by running:
 
 ```shell
-python -m pytest --cov
+python -m pytest --snapshot-update
+```
+
+Once tests are passing, generate a coverage report to make sure your changes are covered:
+
+```shell
+pytest --cov --cov-report=xml
+diff-cover coverage.xml --format html:coverage_report.html
+open coverage_report.html
 ```
 
 ## Running E2E tests
