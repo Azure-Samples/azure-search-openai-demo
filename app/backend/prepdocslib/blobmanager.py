@@ -5,9 +5,6 @@ import re
 from typing import Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.storage.blob import (
-    UserDelegationKey,
-)
 from azure.storage.blob.aio import BlobServiceClient
 from PIL import Image, ImageDraw, ImageFont
 
@@ -27,20 +24,17 @@ class BlobManager:
         container: str,
         account: str,
         credential: Union[AsyncTokenCredential, str],
-        resourceGroup: str,
-        subscriptionId: str,
-        store_page_images: bool = False,
+        resource_group: str,
+        subscription_id: str,
         image_container: Optional[str] = None,  # Added this parameter
     ):
         self.endpoint = endpoint
         self.credential = credential
         self.account = account
         self.container = container
+        self.resource_group = resource_group
+        self.subscription_id = subscription_id
         self.image_container = image_container
-        self.store_page_images = store_page_images
-        self.resourceGroup = resourceGroup
-        self.subscriptionId = subscriptionId
-        self.user_delegation_key: Optional[UserDelegationKey] = None
 
     async def upload_blob(self, file: File) -> Optional[list[str]]:
         async with BlobServiceClient(
@@ -118,7 +112,7 @@ class BlobManager:
         return None
 
     def get_managedidentity_connectionstring(self):
-        return f"ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};"
+        return f"ResourceId=/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Storage/storageAccounts/{self.account};"
 
     async def remove_blob(self, path: Optional[str] = None):
         async with BlobServiceClient(

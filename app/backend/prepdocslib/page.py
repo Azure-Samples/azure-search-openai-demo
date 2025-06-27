@@ -8,7 +8,7 @@ class ImageOnPage:
     filename: str
     description: str
     figure_id: str
-    page_num: int  # 1-indexed
+    page_num: int  # 0-indexed
     url: str | None = None
     embedding: list[float] | None = None
 

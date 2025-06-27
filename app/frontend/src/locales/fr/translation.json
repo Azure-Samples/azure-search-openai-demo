@@ -43,7 +43,7 @@
         "placeholder": "Tapez une nouvelle question (par exemple, mon plan couvre-t-il les examens oculaires annuels?)"
     },
     "askTitle": "Demandez à vos données",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "Comparez l'impact des taux d'intérêt et du PIB sur les marchés financiers.",
         "2": "Quelle est la tendance prévue pour l'indice S&P 500 au cours des cinq prochaines années? Comparez-le aux performances passées de l'S&P 500",
         "3": "Pouvez-vous identifier une corrélation entre les prix du pétrole et les tendances du marché boursier?",
@@ -99,14 +99,11 @@
             "medium": "Moyen",
             "high": "Élevé"
         },
-        "useGPT4V": "Utiliser le modèle GPT Vision",
-        "gpt4VInput": {
-            "label": "Entrées du modèle GPT Vision",
-            "options": {
-                "textAndImages": "Images et texte",
-                "images": "Images",
-                "texts": "Texte"
-            }
+        "llmInputs": "Entrées pour LLM",
+        "llmInputsOptions": {
+            "texts": "Textes",
+            "images": "Images",
+            "textAndImages": "Textes et images"
         },
         "retrievalMode": {
             "label": "Mode de récupération",
@@ -155,10 +152,9 @@
             "Active la réécriture de requêtes d'Azure AI Search, un processus qui modifie la requête de l'utilisateur pour améliorer les résultats de recherche. Nécessite que le reclasseur sémantique soit activé.",
         "reasoningEffort":
             "Définit l'effort de raisonnement pour le LLM. Des valeurs plus élevées entraînent plus de raisonnement, mais peuvent prendre plus de temps pour générer une réponse. La valeur par défaut est moyenne.",
-        "useGPT4Vision": "Utilise GPT-4-Turbo avec Vision pour générer des réponses basées sur des images et du texte de l'index.",
         "vectorFields":
             "Spécifie quels champs d'incorporation dans l'index de recherche Azure AI seront recherchés, à la fois les incorporations 'Images et texte', 'Images' seulement, ou 'Texte' seulement.",
-        "gpt4VisionInputs":
+        "llmInputs":
             "Définit ce qui sera envoyé au modèle de vision. 'Images et texte' envoie à la fois des images et du texte au modèle, 'Images' envoie seulement des images, et 'Texte' envoie seulement du texte.",
         "retrievalMode":
             "Définit le mode de récupération pour la requête Azure AI Search. Vecteurs + Texte (Hybride) utilise une combinaison de recherche vectorielle et de recherche en texte intégral, Vecteurs utilise uniquement la recherche vectorielle, et Texte utilise uniquement la recherche en texte intégral. Hybride est généralement optimal.",
@@ -166,5 +162,9 @@
         "useOidSecurityFilter":"Filtrez les résultats de recherche en fonction de l'OID de l'utilisateur authentifié.",
         "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié.",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
-    }
+    },
+
+    "overallSettings": "Paramètres généraux",
+    "searchSettings": "Paramètres de recherche",
+    "llmSettings": "Paramètres LLM"
 }

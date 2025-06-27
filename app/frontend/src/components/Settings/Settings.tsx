@@ -2,9 +2,8 @@ import { useId } from "@fluentui/react-hooks";
 import { useTranslation } from "react-i18next";
 import { TextField, ITextFieldProps, Checkbox, ICheckboxProps, Dropdown, IDropdownProps, IDropdownOption } from "@fluentui/react";
 import { HelpCallout } from "../HelpCallout";
-import { GPT4VSettings } from "../GPT4VSettings";
 import { VectorSettings } from "../VectorSettings";
-import { RetrievalMode, VectorFields, GPT4VInput } from "../../api";
+import { RetrievalMode, VectorFields, LLMInputs } from "../../api";
 import styles from "./Settings.module.css";
 
 // Add type for onRenderLabel
@@ -26,13 +25,12 @@ export interface SettingsProps {
     excludeCategory: string;
     includeCategory: string;
     retrievalMode: RetrievalMode;
-    useGPT4V: boolean;
-    gpt4vInput: GPT4VInput;
+    llmInputs: LLMInputs;
     vectorFields: VectorFields;
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
-    showGPT4VOptions: boolean;
+    showMultimodalOptions: boolean;
     showVectorOption: boolean;
     useOidSecurityFilter: boolean;
     useGroupsSecurityFilter: boolean;
@@ -67,13 +65,12 @@ export const Settings = ({
     excludeCategory,
     includeCategory,
     retrievalMode,
-    useGPT4V,
-    gpt4vInput,
     vectorFields,
+    llmInputs,
     showSemanticRankerOption,
     showQueryRewritingOption,
     showReasoningEffortOption,
-    showGPT4VOptions,
+    showMultimodalOptions,
     showVectorOption,
     useOidSecurityFilter,
     useGroupsSecurityFilter,
@@ -136,42 +133,36 @@ export const Settings = ({
 
     return (
         <div className={className}>
-            <TextField
-                id={promptTemplateFieldId}
-                className={styles.settingsSeparator}
-                defaultValue={promptTemplate}
-                label={t("labels.promptTemplate")}
-                multiline
-                autoAdjustHeight
-                onChange={(_ev, val) => onChange("promptTemplate", val || "")}
-                aria-labelledby={promptTemplateId}
-                onRenderLabel={props => renderLabel(props, promptTemplateId, promptTemplateFieldId, t("helpTexts.promptTemplate"))}
-            />
+            <h3 className={styles.sectionHeader}>{t("overallSettings")}</h3>
 
-            <TextField
-                id={temperatureFieldId}
-                className={styles.settingsSeparator}
-                label={t("labels.temperature")}
-                type="number"
-                min={0}
-                max={1}
-                step={0.1}
-                defaultValue={temperature.toString()}
-                onChange={(_ev, val) => onChange("temperature", parseFloat(val || "0"))}
-                aria-labelledby={temperatureId}
-                onRenderLabel={props => renderLabel(props, temperatureId, temperatureFieldId, t("helpTexts.temperature"))}
-            />
+            {shouldStream !== undefined && (
+                <Checkbox
+                    id={shouldStreamFieldId}
+                    disabled={!streamingEnabled}
+                    className={styles.settingsSeparator}
+                    checked={shouldStream}
+                    label={t("labels.shouldStream")}
+                    onChange={(_ev, checked) => onChange("shouldStream", !!checked)}
+                    aria-labelledby={shouldStreamId}
+                    onRenderLabel={props => renderLabel(props, shouldStreamId, shouldStreamFieldId, t("helpTexts.streamChat"))}
+                />
+            )}
 
-            <TextField
-                id={seedFieldId}
-                className={styles.settingsSeparator}
-                label={t("labels.seed")}
-                type="text"
-                defaultValue={seed?.toString() || ""}
-                onChange={(_ev, val) => onChange("seed", val ? parseInt(val) : null)}
-                aria-labelledby={seedId}
-                onRenderLabel={props => renderLabel(props, seedId, seedFieldId, t("helpTexts.seed"))}
-            />
+            {showSuggestFollowupQuestions && (
+                <Checkbox
+                    id={suggestFollowupQuestionsFieldId}
+                    className={styles.settingsSeparator}
+                    checked={useSuggestFollowupQuestions}
+                    label={t("labels.useSuggestFollowupQuestions")}
+                    onChange={(_ev, checked) => onChange("useSuggestFollowupQuestions", !!checked)}
+                    aria-labelledby={suggestFollowupQuestionsId}
+                    onRenderLabel={props =>
+                        renderLabel(props, suggestFollowupQuestionsId, suggestFollowupQuestionsFieldId, t("helpTexts.suggestFollowupQuestions"))
+                    }
+                />
+            )}
+
+            <h3 className={styles.sectionHeader}>{t("searchSettings")}</h3>
 
             {showAgenticRetrievalOption && (
                 <Checkbox
@@ -184,7 +175,7 @@ export const Settings = ({
                     onRenderLabel={props => renderLabel(props, agenticRetrievalId, agenticRetrievalFieldId, t("helpTexts.suggestFollowupQuestions"))}
                 />
             )}
-            {!useAgenticRetrieval && !useGPT4V && (
+            {!useAgenticRetrieval && (
                 <TextField
                     id={searchScoreFieldId}
                     className={styles.settingsSeparator}
@@ -214,7 +205,6 @@ export const Settings = ({
                     onRenderLabel={props => renderLabel(props, rerankerScoreId, rerankerScoreFieldId, t("helpTexts.rerankerScore"))}
                 />
             )}
-
             {showAgenticRetrievalOption && useAgenticRetrieval && (
                 <TextField
                     id={maxSubqueryCountFieldId}
@@ -229,7 +219,6 @@ export const Settings = ({
                     onRenderLabel={props => renderLabel(props, maxSubqueryCountId, maxSubqueryCountFieldId, t("helpTexts.maxSubqueryCount"))}
                 />
             )}
-
             {showAgenticRetrievalOption && useAgenticRetrieval && (
                 <Dropdown
                     id={resultsMergeStrategyFieldId}
@@ -247,7 +236,6 @@ export const Settings = ({
                     onRenderLabel={props => renderLabel(props, includeCategoryId, includeCategoryFieldId, t("helpTexts.resultsMergeStrategy"))}
                 />
             )}
-
             <TextField
                 id={retrieveCountFieldId}
                 className={styles.settingsSeparator}
@@ -260,7 +248,6 @@ export const Settings = ({
                 aria-labelledby={retrieveCountId}
                 onRenderLabel={props => renderLabel(props, retrieveCountId, retrieveCountFieldId, t("helpTexts.retrieveNumber"))}
             />
-
             <Dropdown
                 id={includeCategoryFieldId}
                 className={styles.settingsSeparator}
@@ -274,7 +261,6 @@ export const Settings = ({
                 ]}
                 onRenderLabel={props => renderLabel(props, includeCategoryId, includeCategoryFieldId, t("helpTexts.includeCategory"))}
             />
-
             <TextField
                 id={excludeCategoryFieldId}
                 className={styles.settingsSeparator}
@@ -284,7 +270,6 @@ export const Settings = ({
                 aria-labelledby={excludeCategoryId}
                 onRenderLabel={props => renderLabel(props, excludeCategoryId, excludeCategoryFieldId, t("helpTexts.excludeCategory"))}
             />
-
             {showSemanticRankerOption && !useAgenticRetrieval && (
                 <>
                     <Checkbox
@@ -309,7 +294,6 @@ export const Settings = ({
                     />
                 </>
             )}
-
             {showQueryRewritingOption && !useAgenticRetrieval && (
                 <>
                     <Checkbox
@@ -324,7 +308,6 @@ export const Settings = ({
                     />
                 </>
             )}
-
             {showReasoningEffortOption && (
                 <Dropdown
                     id={reasoningEffortFieldId}
@@ -342,7 +325,6 @@ export const Settings = ({
                     onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
                 />
             )}
-
             {useLogin && (
                 <>
                     <Checkbox
@@ -369,52 +351,66 @@ export const Settings = ({
                     />
                 </>
             )}
-
-            {showGPT4VOptions && !useAgenticRetrieval && (
-                <GPT4VSettings
-                    gpt4vInputs={gpt4vInput}
-                    isUseGPT4V={useGPT4V}
-                    updateUseGPT4V={val => onChange("useGPT4V", val)}
-                    updateGPT4VInputs={val => onChange("gpt4vInput", val)}
-                />
-            )}
-
             {showVectorOption && !useAgenticRetrieval && (
-                <VectorSettings
-                    defaultRetrievalMode={retrievalMode}
-                    defaultVectorFields={vectorFields}
-                    showImageOptions={useGPT4V && showGPT4VOptions}
-                    updateVectorFields={val => onChange("vectorFields", val)}
-                    updateRetrievalMode={val => onChange("retrievalMode", val)}
-                />
+                <>
+                    <VectorSettings
+                        defaultRetrievalMode={retrievalMode}
+                        defaultVectorFields={vectorFields}
+                        showImageOptions={showMultimodalOptions}
+                        updateVectorFields={val => onChange("vectorFields", val)}
+                        updateRetrievalMode={val => onChange("retrievalMode", val)}
+                    />
+                </>
             )}
 
-            {/* Streaming checkbox for Chat */}
-            {shouldStream !== undefined && (
-                <Checkbox
-                    id={shouldStreamFieldId}
-                    disabled={!streamingEnabled}
+            <h3 className={styles.sectionHeader}>{t("llmSettings")}</h3>
+            <TextField
+                id={promptTemplateFieldId}
+                className={styles.settingsSeparator}
+                defaultValue={promptTemplate}
+                label={t("labels.promptTemplate")}
+                multiline
+                autoAdjustHeight
+                onChange={(_ev, val) => onChange("promptTemplate", val || "")}
+                aria-labelledby={promptTemplateId}
+                onRenderLabel={props => renderLabel(props, promptTemplateId, promptTemplateFieldId, t("helpTexts.promptTemplate"))}
+            />
+            <TextField
+                id={temperatureFieldId}
+                className={styles.settingsSeparator}
+                label={t("labels.temperature")}
+                type="number"
+                min={0}
+                max={1}
+                step={0.1}
+                defaultValue={temperature.toString()}
+                onChange={(_ev, val) => onChange("temperature", parseFloat(val || "0"))}
+                aria-labelledby={temperatureId}
+                onRenderLabel={props => renderLabel(props, temperatureId, temperatureFieldId, t("helpTexts.temperature"))}
+            />
+            <TextField
+                id={seedFieldId}
+                className={styles.settingsSeparator}
+                label={t("labels.seed")}
+                type="text"
+                defaultValue={seed?.toString() || ""}
+                onChange={(_ev, val) => onChange("seed", val ? parseInt(val) : null)}
+                aria-labelledby={seedId}
+                onRenderLabel={props => renderLabel(props, seedId, seedFieldId, t("helpTexts.seed"))}
+            />
+            {showMultimodalOptions && !useAgenticRetrieval && (
+                <Dropdown
+                    id="llmInputsDropdown"
                     className={styles.settingsSeparator}
-                    checked={shouldStream}
-                    label={t("labels.shouldStream")}
-                    onChange={(_ev, checked) => onChange("shouldStream", !!checked)}
-                    aria-labelledby={shouldStreamId}
-                    onRenderLabel={props => renderLabel(props, shouldStreamId, shouldStreamFieldId, t("helpTexts.streamChat"))}
-                />
-            )}
-
-            {/* Followup questions checkbox for Chat */}
-            {showSuggestFollowupQuestions && (
-                <Checkbox
-                    id={suggestFollowupQuestionsFieldId}
-                    className={styles.settingsSeparator}
-                    checked={useSuggestFollowupQuestions}
-                    label={t("labels.useSuggestFollowupQuestions")}
-                    onChange={(_ev, checked) => onChange("useSuggestFollowupQuestions", !!checked)}
-                    aria-labelledby={suggestFollowupQuestionsId}
-                    onRenderLabel={props =>
-                        renderLabel(props, suggestFollowupQuestionsId, suggestFollowupQuestionsFieldId, t("helpTexts.suggestFollowupQuestions"))
-                    }
+                    label={t("labels.llmInputs")}
+                    selectedKey={llmInputs}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) => onChange("llmInputs", option?.key)}
+                    options={[
+                        { key: LLMInputs.Texts, text: t("labels.llmInputsOptions.texts") },
+                        { key: LLMInputs.Images, text: t("labels.llmInputsOptions.images") },
+                        { key: LLMInputs.TextAndImages, text: t("labels.llmInputsOptions.textAndImages") }
+                    ]}
+                    onRenderLabel={props => renderLabel(props, "llmInputsDropdownLabel", "llmInputsDropdown", t("helpTexts.llmInputs"))}
                 />
             )}
         </div>

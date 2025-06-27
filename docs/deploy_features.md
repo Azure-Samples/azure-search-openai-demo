@@ -135,14 +135,14 @@ This process does *not* delete your previous model deployment. If you want to de
 
 ## Using reasoning models
 
-⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md).
+⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md). TODO: OR IS IT?
 
 This feature allows you to use reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
 To enable reasoning models, follow the steps in [the reasoning models guide](./reasoning.md).
 
 ## Using agentic retrieval
 
-⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md).
+⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md). TODO: OR IS IT?
 
 This feature allows you to use agentic retrieval in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
 
@@ -219,16 +219,47 @@ If you have already deployed:
 * You'll need to change the deployment name by running the appropriate commands for the model above.
 * You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created. See the [data ingestion guide](./data_ingestion.md) for more details.
 
-## Enabling GPT vision feature
+## Enabling multimodal embeddings and answering
 
-⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
+⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization). TODO:
 
-This section covers the integration of GPT vision models with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our page on [Using GPT vision model with RAG approach](gpt4v.md).
+When your documents include images, you can optionally enable this feature that can
+use image embeddings when searching and also use images when answering questions.
+
+To enable multimodal embeddings and answering, run:
+
+```shell
+azd env set USE_MULTIMODAL true
+```
+
+With this feature enabled, the data ingestion process will extract images from your documents
+using Document Intelligence, store the images in Azure Blob Storage, vectorize the images using the Azure AI Vision service, and store the image embeddings in the Azure AI Search index.
+
+During the RAG flow, the app will perform a multi-vector query using both text and image embeddings, and then send any images associated with the retrieved document chunks to the chat completion model for answering questions. This feature assumes that your chat completion model supports multimodal inputs, such as `gpt-4o` or `gpt-4o-mini`.
+
+You can customize the RAG flow approach with a few additional environment variables.
+
+To only use the text embeddings for the search step (no image embeddings), run:
+
+```shell
+azd env set RAG_VECTOR_FIELDS_DEFAULT "textEmbeddingOnly"
+```
+
+To only send text sources to the chat completion model (no images), run:
+
+```shell
+azd env set RAG_LLM_INPUTS_OVERRIDE "texts"
+```
+
+You can also modify those settings in the "Developer Settings" in the chat UI,
+to experiment with different options before committing to them.
+
 
 ## Enabling media description with Azure Content Understanding
 
 ⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
-It is compatible with [GPT vision integration](./gpt4v.md), but the features provide similar functionality.
+
+It is compatible with [GPT vision integration](./gpt4v.md), but the features provide similar functionality. TODO: UPDATE
 
 By default, if your documents contain image-like figures, the data ingestion process will ignore those figures,
 so users will not be able to ask questions about them.
@@ -316,7 +347,7 @@ azd env set USE_SPEECH_OUTPUT_BROWSER true
 
 ## Enabling Integrated Vectorization
 
-⚠️ This feature is not currently compatible with the [GPT vision integration](./gpt4v.md).
+⚠️ This feature is not currently compatible with the [GPT vision integration](./gpt4v.md). TODO: UPDATE
 
 Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in-azure-ai-search/3960809). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
 

@@ -21,6 +21,7 @@ async def parse_file(
     blob_manager: Optional[BlobManager] = None,
     image_embeddings_client: Optional[ImageEmbeddings] = None,
 ) -> list[Section]:
+    await blob_manager.upload_blob(file)
     key = file.file_extension().lower()
     processor = file_processors.get(key)
     if processor is None:
@@ -112,6 +113,7 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
+                    await self.blob_manager.upload_blob(file)
                     sections = await parse_file(
                         file, self.file_processors, self.category, self.blob_manager, self.image_embeddings
                     )

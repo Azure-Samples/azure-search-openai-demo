@@ -1020,8 +1020,7 @@ async def test_chat_vision(client, snapshot):
             "messages": [{"content": "Are interest rates high?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
+                    "llm_inputs": "textAndImages",
                     "vector_fields": "textAndImageEmbeddings",
                 },
             },
@@ -1040,8 +1039,7 @@ async def test_chat_stream_vision(client, snapshot):
             "messages": [{"content": "Are interest rates high?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
+                    "llm_inputs": "textAndImages",
                     "vector_fields": "textAndImageEmbeddings",
                 },
             },
@@ -1060,8 +1058,7 @@ async def test_chat_vision_vectors(client, snapshot):
             "messages": [{"content": "Are interest rates high?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
+                    "llm_inputs": "textAndImages",
                     "vector_fields": "textAndImageEmbeddings",
                     "retrieval_mode": "vectors",
                 },
@@ -1081,8 +1078,7 @@ async def test_ask_vision(client, snapshot):
             "messages": [{"content": "Are interest rates high?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
+                    "llm_inputs": "textAndImages",
                     "vector_fields": "textAndImageEmbeddings",
                 },
             },

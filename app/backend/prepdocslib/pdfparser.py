@@ -243,7 +243,7 @@ class DocumentAnalysisParser(Parser):
         figure_description = await media_describer.describe_image(cropped_img)
         return ImageOnPage(
             bytes=cropped_img,
-            page_num=page_number,
+            page_num=page_number - 1,  # Convert to 0-indexed
             figure_id=figure.id,
             bbox=bbox_pixels,
             filename=f"figure{figure.id.replace(".", "_")}.png",

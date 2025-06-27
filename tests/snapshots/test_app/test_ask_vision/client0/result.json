@@ -1,18 +1,22 @@
 {
     "context": {
         "data_points": {
-            "images": null,
+            "citations": [
+                "Benefit_Options-2.pdf"
+            ],
+            "images": [],
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
             ]
         },
-        "followup_questions": null,
         "thoughts": [
             {
                 "description": "Are interest rates high?",
                 "props": {
                     "filter": null,
                     "top": 3,
+                    "use_image_embeddings": true,
+                    "use_image_sources": true,
                     "use_query_rewriting": false,
                     "use_semantic_captions": false,
                     "use_semantic_ranker": false,
@@ -35,6 +39,7 @@
                         "content": "There is a whistleblower policy.",
                         "groups": null,
                         "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                        "images": null,
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": 0.03279569745063782,
@@ -49,7 +54,7 @@
             {
                 "description": [
                     {
-                        "content": "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions.\nUse 'you' to refer to the individual asking the questions even if they ask with 'I'.\nAnswer the following question using only the data provided in the sources below.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response.\nIf you cannot answer using the sources below, say you don't know. Use below example to answer",
+                        "content": "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions.\nUse 'you' to refer to the individual asking the questions even if they ask with 'I'.\nAnswer the following question using only the data provided in the sources below.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response.\nIf you cannot answer using the sources below, say you don't know. Use below example to answer.\n\nPossible citations for current question:\n\n[Benefit_Options-2.pdf]",
                         "role": "system"
                     },
                     {
@@ -61,7 +66,7 @@
                         "role": "assistant"
                     },
                     {
-                        "content": "Are interest rates high?\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
+                        "content": "Are interest rates high?\n\nSources:\nBenefit_Options-2.pdf: There is a whistleblower policy.",
                         "role": "user"
                     }
                 ],

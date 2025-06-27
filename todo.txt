@@ -1,0 +1,8 @@
+TODO:
+
+* Fix/add unit tests
+* Add documentation
+* Test with agentic
+  * Add vectorizer for images field - special from https://learn.microsoft.com/en-us/azure/search/vector-search-vectorizer-ai-services-vision
+  * Update the approaches to set image_sources appropriately in run_agentic_retrieval_approach
+* Test with integrated vectorization

@@ -111,6 +111,8 @@ jobs:
       USE_CHAT_HISTORY_BROWSER: ${{ vars.USE_CHAT_HISTORY_BROWSER }}
       USE_MEDIA_DESCRIBER_AZURE_CU: ${{ vars.USE_MEDIA_DESCRIBER_AZURE_CU }}
       USE_AI_PROJECT: ${{ vars.USE_AI_PROJECT }}
+      RAG_LLM_INPUTS_OVERRIDE: ${{ vars.RAG_LLM_INPUTS_OVERRIDE }}
+      RAG_VECTOR_FIELDS_DEFAULT: ${{ vars.RAG_VECTOR_FIELDS_DEFAULT }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

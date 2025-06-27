@@ -337,6 +337,12 @@
     },
     "useAgenticRetrieval": {
       "value": "${USE_AGENTIC_RETRIEVAL=false}"
+    },
+    "ragLlmInputsOverride": {
+      "value": "${RAG_LLM_INPUTS_OVERRIDE}"
+    },
+    "ragVectorFieldsDefault": {
+      "value": "${RAG_VECTOR_FIELDS_DEFAULT}"
     }
   }
 }

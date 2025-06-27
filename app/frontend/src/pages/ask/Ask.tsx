@@ -5,7 +5,7 @@ import { Panel, DefaultButton, Spinner } from "@fluentui/react";
 
 import styles from "./Ask.module.css";
 
-import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFields, GPT4VInput, SpeechConfig } from "../../api";
+import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFields, LLMInputs, SpeechConfig } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -36,15 +36,15 @@ export function Component(): JSX.Element {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
-    const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
-    const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
+    const [llmInputs, setLLMInputs] = useState<LLMInputs>(LLMInputs.Texts);
     const [includeCategory, setIncludeCategory] = useState<string>("");
+
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [question, setQuestion] = useState<string>("");
     const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
-    const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
+    const [showMultimodalOptions, setShowMultimodalOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
     const [showReasoningEffortOption, setShowReasoningEffortOption] = useState<boolean>(false);
@@ -83,7 +83,17 @@ export function Component(): JSX.Element {
 
     const getConfig = async () => {
         configApi().then(config => {
-            setShowGPT4VOptions(config.showGPT4VOptions);
+            setShowMultimodalOptions(config.showMultimodalOptions);
+            if (config.showMultimodalOptions) {
+                // Set default LLM inputs based on config override or fallback to Texts
+                const defaultLlmInputs = config.ragLlmInputsOverride ? (config.ragLlmInputsOverride as LLMInputs) : LLMInputs.Texts;
+                setLLMInputs(defaultLlmInputs);
+                // Set default vector fields based on config override or fallback to TextAndImageEmbeddings
+                const defaultVectorFields = config.ragVectorFieldsDefault
+                    ? (config.ragVectorFieldsDefault as VectorFields)
+                    : VectorFields.TextAndImageEmbeddings;
+                setVectorFields(defaultVectorFields);
+            }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
             setUseQueryRewriting(config.showQueryRewritingOption);
@@ -152,8 +162,7 @@ export function Component(): JSX.Element {
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFields,
-                        use_gpt4v: useGPT4V,
-                        gpt4v_input: gpt4vInput,
+                        llm_inputs: llmInputs,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
                         ...(seed !== null ? { seed: seed } : {})
@@ -228,11 +237,8 @@ export function Component(): JSX.Element {
             case "useGroupsSecurityFilter":
                 setUseGroupsSecurityFilter(value);
                 break;
-            case "useGPT4V":
-                setUseGPT4V(value);
-                break;
-            case "gpt4vInput":
-                setGPT4VInput(value);
+            case "llmInputs":
+                setLLMInputs(value);
                 break;
             case "vectorFields":
                 setVectorFields(value);
@@ -291,7 +297,7 @@ export function Component(): JSX.Element {
                 <h1 className={styles.askTitle}>{t("askTitle")}</h1>
                 <div className={styles.askQuestionInput}>
                     <QuestionInput
-                        placeholder={t("gpt4vExamples.placeholder")}
+                        placeholder={t("multimodalExamples.placeholder")}
                         disabled={isLoading}
                         initQuestion={question}
                         onSend={question => makeApiRequest(question)}
@@ -304,7 +310,7 @@ export function Component(): JSX.Element {
                 {!lastQuestionRef.current && (
                     <div className={styles.askTopSection}>
                         {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
-                        <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
+                        <ExampleList onExampleClicked={onExampleClicked} useMultimodalAnswering={showMultimodalOptions} />
                     </div>
                 )}
                 {!isLoading && answer && !error && (
@@ -366,13 +372,12 @@ export function Component(): JSX.Element {
                     excludeCategory={excludeCategory}
                     includeCategory={includeCategory}
                     retrievalMode={retrievalMode}
-                    useGPT4V={useGPT4V}
-                    gpt4vInput={gpt4vInput}
+                    llmInputs={llmInputs}
                     vectorFields={vectorFields}
                     showSemanticRankerOption={showSemanticRankerOption}
                     showQueryRewritingOption={showQueryRewritingOption}
                     showReasoningEffortOption={showReasoningEffortOption}
-                    showGPT4VOptions={showGPT4VOptions}
+                    showMultimodalOptions={showMultimodalOptions}
                     showVectorOption={showVectorOption}
                     useOidSecurityFilter={useOidSecurityFilter}
                     useGroupsSecurityFilter={useGroupsSecurityFilter}

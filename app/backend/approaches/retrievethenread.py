@@ -1,4 +1,5 @@
-from typing import Any, Optional, cast
+from collections.abc import Awaitable
+from typing import Any, Callable, Optional, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
@@ -7,10 +8,16 @@ from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
-from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
+from approaches.approach import (
+    Approach,
+    DataPoints,
+    ExtraInfo,
+    LLMInputType,
+    ThoughtStep,
+    VectorFieldType,
+)
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
-from core.imageshelper import download_blob_as_base64
 
 
 class RetrieveThenReadApproach(Approach):
@@ -29,7 +36,6 @@ class RetrieveThenReadApproach(Approach):
         agent_deployment: Optional[str],
         agent_client: KnowledgeAgentRetrievalClient,
         auth_helper: AuthenticationHelper,
-        images_blob_container_client: ContainerClient,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -43,6 +49,10 @@ class RetrieveThenReadApproach(Approach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        multimodal_enabled: bool = False,
+        vision_endpoint: Optional[str] = None,
+        vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
+        images_blob_container_client: Optional[ContainerClient] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -67,6 +77,9 @@ class RetrieveThenReadApproach(Approach):
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
+        self.vision_endpoint = vision_endpoint
+        self.vision_token_provider = vision_token_provider
+        self.multimodal_enabled = multimodal_enabled
 
     async def run(
         self,
@@ -93,7 +106,8 @@ class RetrieveThenReadApproach(Approach):
             | {
                 "user_query": q,
                 "text_sources": extra_info.data_points.text,
-                "image_sources": extra_info.data_points.images,
+                "image_sources": extra_info.data_points.images or [],
+                "citations": extra_info.data_points.citations,
             },
         )
 
@@ -122,34 +136,54 @@ class RetrieveThenReadApproach(Approach):
                 "content": chat_completion.choices[0].message.content,
                 "role": chat_completion.choices[0].message.role,
             },
-            "context": extra_info,
+            "context": {
+                "thoughts": extra_info.thoughts,
+                "data_points": {
+                    "text": extra_info.data_points.text or [],
+                    "images": extra_info.data_points.images or [],
+                    "citations": extra_info.data_points.citations or [],
+                },
+            },
             "session_state": session_state,
         }
 
     async def run_search_approach(
         self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
-    ):
+    ) -> ExtraInfo:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
-        use_multimodal = True  # TODO: if overrides.get("use_multimodal") else False
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
         q = str(messages[-1]["content"])
 
-        # If retrieval mode includes vectors, compute an embedding for the query
+        llm_inputs = overrides.get("llm_inputs")
+        vector_fields = overrides.get("vector_fields")
+
+        # Use default values based on multimodal_enabled if not provided in overrides
+        if llm_inputs is None:
+            llm_inputs = self.get_default_llm_inputs()
+        if vector_fields is None:
+            vector_fields = self.get_default_vector_fields()
+
+        llm_inputs_enum = LLMInputType(llm_inputs) if llm_inputs is not None else None
+        vector_fields_enum = VectorFieldType(vector_fields) if vector_fields is not None else None
+        use_image_embeddings = vector_fields_enum in [
+            VectorFieldType.IMAGE_EMBEDDING,
+            VectorFieldType.TEXT_AND_IMAGE_EMBEDDINGS,
+        ]
+        use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
+
         vectors: list[VectorQuery] = []
         if use_vector_search:
-            vectors.append(await self.compute_text_embedding(q))
-
-        # If multimodal is enabled, also compute image embeddings
-        # TODO: will this work with agentic? is this doing multivector search correctly?
-        # if use_multimodal:
-        #    vectors.append(await self.compute_image_embedding(q))
+            if vector_fields_enum != VectorFieldType.IMAGE_EMBEDDING:
+                vectors.append(await self.compute_text_embedding(q))
+            if use_image_embeddings:
+                vectors.append(await self.compute_image_embedding(q))
 
         results = await self.search(
             top,
@@ -165,26 +199,12 @@ class RetrieveThenReadApproach(Approach):
             use_query_rewriting,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=use_multimodal)
-
-        # Extract unique image URLs from results if multimodal is enabled
-
-        seen_urls = set()
-        image_sources = []
-        if use_multimodal:
-            for doc in results:
-                if hasattr(doc, "images") and doc.images:
-                    for img in doc.images:
-                        # Skip if we've already processed this URL
-                        if img["url"] in seen_urls:
-                            continue
-                        seen_urls.add(img["url"])
-                        url = await download_blob_as_base64(self.images_blob_container_client, img["url"])
-                        if url:
-                            image_sources.append(url)
+        text_sources, image_sources, citations = await self.get_sources_content(
+            results, use_semantic_captions, use_image_sources=use_image_sources
+        )
 
         return ExtraInfo(
-            DataPoints(text=text_sources, images=image_sources),
+            DataPoints(text=text_sources, images=image_sources, citations=citations),
             thoughts=[
                 ThoughtStep(
                     "Search using user query",
@@ -197,7 +217,8 @@ class RetrieveThenReadApproach(Approach):
                         "filter": filter,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
-                        "use_multimodal": use_multimodal,
+                        "use_image_embeddings": use_image_embeddings,
+                        "use_image_sources": use_image_sources,
                     },
                 ),
                 ThoughtStep(
@@ -212,7 +233,7 @@ class RetrieveThenReadApproach(Approach):
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
-    ):
+    ) -> ExtraInfo:
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides, auth_claims)
         top = overrides.get("top", 3)
@@ -232,10 +253,19 @@ class RetrieveThenReadApproach(Approach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+        # Determine if we should use image sources based on overrides or defaults
+        llm_inputs = overrides.get("llm_inputs")
+        if llm_inputs is None:
+            llm_inputs = self.get_default_llm_inputs()
+        llm_inputs_enum = LLMInputType(llm_inputs) if llm_inputs is not None else None
+        use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
+
+        text_sources, image_sources, citations = await self.get_sources_content(
+            results, use_semantic_captions=False, use_image_sources=use_image_sources
+        )
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources),
+            DataPoints(text=text_sources, images=image_sources, citations=citations),
             thoughts=[
                 ThoughtStep(
                     "Use agentic retrieval",

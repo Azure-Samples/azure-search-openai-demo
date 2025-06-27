@@ -1,9 +1,12 @@
-from collections.abc import Awaitable
-from typing import Any, Optional, Union, cast, Callable
+import json
+import re
+from collections.abc import AsyncGenerator, Awaitable
+from typing import Any, Callable, Optional, Union, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
+from azure.storage.blob.aio import ContainerClient
 from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import (
     ChatCompletion,
@@ -12,18 +15,26 @@ from openai.types.chat import (
     ChatCompletionToolParam,
 )
 
-from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
-from approaches.chatapproach import ChatApproach
+from approaches.approach import (
+    Approach,
+    DataPoints,
+    ExtraInfo,
+    LLMInputType,
+    ThoughtStep,
+    VectorFieldType,
+)
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 
 
-class ChatReadRetrieveReadApproach(ChatApproach):
+class ChatReadRetrieveReadApproach(Approach):
     """
     A multi-step approach that first uses OpenAI to turn the user's question into a search query,
     then uses Azure AI Search to retrieve relevant documents, and then sends the conversation history,
     original user question, and search results to OpenAI to generate a response.
     """
+
+    NO_RESPONSE = "0"
 
     def __init__(
         self,
@@ -47,8 +58,10 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        multimodal_enabled: bool = False,
         vision_endpoint: Optional[str] = None,
-        vision_token_provider: Callable[[], Awaitable[str]],
+        vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
+        images_blob_container_client: Optional[ContainerClient] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -57,6 +70,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.agent_client = agent_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
+        self.images_blob_container_client = images_blob_container_client
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
@@ -75,6 +89,130 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.include_token_usage = True
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
+        self.multimodal_enabled = multimodal_enabled
+
+    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
+        response_message = chat_completion.choices[0].message
+
+        if response_message.tool_calls:
+            for tool in response_message.tool_calls:
+                if tool.type != "function":
+                    continue
+                function = tool.function
+                if function.name == "search_sources":
+                    arg = json.loads(function.arguments)
+                    search_query = arg.get("search_query", self.NO_RESPONSE)
+                    if search_query != self.NO_RESPONSE:
+                        return search_query
+        elif query_text := response_message.content:
+            if query_text.strip() != self.NO_RESPONSE:
+                return query_text
+        return user_query
+
+    def extract_followup_questions(self, content: Optional[str]):
+        if content is None:
+            return content, []
+        return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
+
+    async def run_without_streaming(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        session_state: Any = None,
+    ) -> dict[str, Any]:
+        extra_info, chat_coroutine = await self.run_until_final_call(
+            messages, overrides, auth_claims, should_stream=False
+        )
+        chat_completion_response: ChatCompletion = await cast(Awaitable[ChatCompletion], chat_coroutine)
+        content = chat_completion_response.choices[0].message.content
+        role = chat_completion_response.choices[0].message.role
+        if overrides.get("suggest_followup_questions"):
+            content, followup_questions = self.extract_followup_questions(content)
+            extra_info.followup_questions = followup_questions
+        # Assume last thought is for generating answer
+        if self.include_token_usage and extra_info.thoughts and chat_completion_response.usage:
+            extra_info.thoughts[-1].update_token_usage(chat_completion_response.usage)
+        chat_app_response = {
+            "message": {"content": content, "role": role},
+            "context": extra_info,
+            "session_state": session_state,
+        }
+        return chat_app_response
+
+    async def run_with_streaming(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        session_state: Any = None,
+    ) -> AsyncGenerator[dict, None]:
+        extra_info, chat_coroutine = await self.run_until_final_call(
+            messages, overrides, auth_claims, should_stream=True
+        )
+        chat_coroutine = cast(Awaitable[AsyncStream[ChatCompletionChunk]], chat_coroutine)
+        yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+
+        followup_questions_started = False
+        followup_content = ""
+        async for event_chunk in await chat_coroutine:
+            # "2023-07-01-preview" API version has a bug where first response has empty choices
+            event = event_chunk.model_dump()  # Convert pydantic model to dict
+            if event["choices"]:
+                # No usage during streaming
+                completion = {
+                    "delta": {
+                        "content": event["choices"][0]["delta"].get("content"),
+                        "role": event["choices"][0]["delta"]["role"],
+                    }
+                }
+                # if event contains << and not >>, it is start of follow-up question, truncate
+                content = completion["delta"].get("content")
+                content = content or ""  # content may either not exist in delta, or explicitly be None
+                if overrides.get("suggest_followup_questions") and "<<" in content:
+                    followup_questions_started = True
+                    earlier_content = content[: content.index("<<")]
+                    if earlier_content:
+                        completion["delta"]["content"] = earlier_content
+                        yield completion
+                    followup_content += content[content.index("<<") :]
+                elif followup_questions_started:
+                    followup_content += content
+                else:
+                    yield completion
+            else:
+                # Final chunk at end of streaming should contain usage
+                # https://cookbook.openai.com/examples/how_to_stream_completions#4-how-to-get-token-usage-data-for-streamed-chat-completion-response
+                if event_chunk.usage and extra_info.thoughts and self.include_token_usage:
+                    extra_info.thoughts[-1].update_token_usage(event_chunk.usage)
+                    yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+
+        if followup_content:
+            _, followup_questions = self.extract_followup_questions(followup_content)
+            yield {
+                "delta": {"role": "assistant"},
+                "context": {"context": extra_info, "followup_questions": followup_questions},
+            }
+
+    async def run(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        session_state: Any = None,
+        context: dict[str, Any] = {},
+    ) -> dict[str, Any]:
+        overrides = context.get("overrides", {})
+        auth_claims = context.get("auth_claims", {})
+        return await self.run_without_streaming(messages, overrides, auth_claims, session_state)
+
+    async def run_stream(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        session_state: Any = None,
+        context: dict[str, Any] = {},
+    ) -> AsyncGenerator[dict[str, Any], None]:
+        overrides = context.get("overrides", {})
+        auth_claims = context.get("auth_claims", {})
+        return self.run_with_streaming(messages, overrides, auth_claims, session_state)
 
     async def run_until_final_call(
         self,
@@ -96,7 +234,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)
 
-        # If there are images, send the images to the model as well
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
@@ -105,6 +242,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 "past_messages": messages[:-1],
                 "user_query": original_user_query,
                 "text_sources": extra_info.data_points.text,
+                "image_sources": extra_info.data_points.images,
+                "citations": extra_info.data_points.citations,
             },
         )
 
@@ -144,6 +283,24 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         search_index_filter = self.build_filter(overrides, auth_claims)
 
+        llm_inputs = overrides.get("llm_inputs")
+        vector_fields = overrides.get("vector_fields")
+
+        # Use default values based on multimodal_enabled if not provided in overrides
+        if llm_inputs is None:
+            llm_inputs = self.get_default_llm_inputs()
+        if vector_fields is None:
+            vector_fields = self.get_default_vector_fields()
+
+        llm_inputs_enum = LLMInputType(llm_inputs) if llm_inputs is not None else None
+        vector_fields_enum = VectorFieldType(vector_fields) if vector_fields is not None else None
+        # Use multimodal/image logic based on enums
+        use_image_embeddings = vector_fields_enum in [
+            VectorFieldType.IMAGE_EMBEDDING,
+            VectorFieldType.TEXT_AND_IMAGE_EMBEDDINGS,
+        ]
+        use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
+
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
@@ -175,12 +332,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
-        # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if use_vector_search:
             vectors.append(await self.compute_text_embedding(query_text))
-            # Optionally add image embeddings if using multimodal approach
-            vectors.append(await self.compute_image_embedding(query_text))
+            if use_image_embeddings:
+                vectors.append(await self.compute_image_embedding(query_text))
 
         results = await self.search(
             top,
@@ -197,10 +353,12 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        text_sources, image_sources, citations = await self.get_sources_content(
+            results, use_semantic_captions, use_image_sources=use_image_sources
+        )
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources),
+            DataPoints(text=text_sources, images=image_sources, citations=citations),
             thoughts=[
                 self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate search query",
@@ -222,6 +380,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         "filter": search_index_filter,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
+                        "use_image_embeddings": use_image_embeddings,
+                        "use_image_sources": use_image_sources,
                     },
                 ),
                 ThoughtStep(
@@ -257,10 +417,19 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+        # Determine if we should use image sources based on overrides or defaults
+        llm_inputs = overrides.get("llm_inputs")
+        if llm_inputs is None:
+            llm_inputs = self.get_default_llm_inputs()
+        llm_inputs_enum = LLMInputType(llm_inputs) if llm_inputs is not None else None
+        use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
+
+        text_sources, image_sources, citations = await self.get_sources_content(
+            results, use_semantic_captions=False, use_image_sources=use_image_sources
+        )
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources),
+            DataPoints(text=text_sources, images=image_sources, citations=citations),
             thoughts=[
                 ThoughtStep(
                     "Use agentic retrieval",

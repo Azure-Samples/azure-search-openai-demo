@@ -1,7 +1,10 @@
 {
     "context": {
         "data_points": {
-            "images": null,
+            "citations": [
+                "Benefit_Options-2.pdf"
+            ],
+            "images": [],
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
             ]
@@ -52,6 +55,8 @@
                 "props": {
                     "filter": null,
                     "top": 3,
+                    "use_image_embeddings": true,
+                    "use_image_sources": true,
                     "use_query_rewriting": false,
                     "use_semantic_captions": false,
                     "use_semantic_ranker": true,
@@ -74,6 +79,7 @@
                         "content": "There is a whistleblower policy.",
                         "groups": null,
                         "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                        "images": null,
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": 0.03279569745063782,
@@ -92,7 +98,7 @@
                         "role": "system"
                     },
                     {
-                        "content": "What is the capital of France?\n\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
+                        "content": "What is the capital of France?\n\n\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
                         "role": "user"
                     }
                 ],

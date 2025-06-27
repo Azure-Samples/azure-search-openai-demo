@@ -211,13 +211,11 @@ def test_chat_customization(page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
 
 
-def test_chat_customization_gpt4v(page: Page, live_server_url: str):
-
+def test_chat_customization_multimodal(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle_chat(route: Route):
         overrides = route.request.post_data_json["context"]["overrides"]
-        assert overrides["gpt4v_input"] == "images"
-        assert overrides["use_gpt4v"] is True
+        assert overrides["llm_inputs"] == "imagesOnly"
         assert overrides["vector_fields"] == "imageEmbeddingOnly"
 
         # Read the JSON from our snapshot results and return as the response
@@ -230,7 +228,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
         route.fulfill(
             body=json.dumps(
                 {
-                    "showGPT4VOptions": True,
+                    "showMultimodalOptions": True,
                     "showSemanticRankerOption": True,
                     "showUserUpload": False,
                     "showVectorOption": True,
@@ -247,11 +245,20 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
     page.goto(live_server_url)
     expect(page).to_have_title("Azure OpenAI + AI Search")
 
-    # Customize the GPT-4-vision settings
+    # Open Developer settings
     page.get_by_role("button", name="Developer settings").click()
+
+    # Assert default selected value for Vector fields
+    expect(page.get_by_label("Vector fields (Multi-query vector search)").locator("select")).to_have_value(
+        "textAndImageEmbeddings"
+    )
+    expect(page.get_by_label("Vector fields (Multi-query vector search)")).to_have_text(["Text and Image embeddings"])
+
+    # Assert default selected value for Inputs for LLM
+    expect(page.get_by_label("Inputs for LLM").locator("select")).to_have_value("textsAndImages")
+    expect(page.get_by_label("Inputs for LLM")).to_have_text(["Texts and Images"])
+
     # Check that "Use GPT vision model" is visible and selected
-    expect(page.get_by_text("Use GPT vision model")).to_be_visible()
-    expect(page.get_by_role("checkbox", name="Use GPT vision model")).to_be_checked()
     page.get_by_text("Images and text").click()
     page.get_by_role("option", name="Images", exact=True).click()
     page.get_by_text("Text and Image embeddings").click()
@@ -419,7 +426,7 @@ def test_upload_hidden(page: Page, live_server_url: str):
         route.fulfill(
             body=json.dumps(
                 {
-                    "showGPT4VOptions": False,
+                    "showMultimodalOptions": False,
                     "showSemanticRankerOption": True,
                     "showUserUpload": False,
                     "showVectorOption": True,
@@ -451,7 +458,7 @@ def test_upload_disabled(page: Page, live_server_url: str):
         route.fulfill(
             body=json.dumps(
                 {
-                    "showGPT4VOptions": False,
+                    "showMultimodalOptions": False,
                     "showSemanticRankerOption": True,
                     "showUserUpload": True,
                     "showVectorOption": True,

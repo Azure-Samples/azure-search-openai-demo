@@ -17,8 +17,9 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 - [Running unit tests](#running-unit-tests)
 - [Running E2E tests](#running-e2e-tests)
 - [Code style](#code-style)
-- [Adding new azd environment variables](#adding-new-azd-environment-variables)
-- [Adding new UI strings](#adding-new-ui-strings)
+- [Adding new features](#adding-new-features)
+  - [Adding new azd environment variables](#adding-new-azd-environment-variables)
+  - [Adding new UI strings](#adding-new-ui-strings)
 
 ## Submitting a Pull Request (PR)
 
@@ -118,7 +119,15 @@ python -m black <path-to-file>
 
 If you followed the steps above to install the pre-commit hooks, then you can just wait for those hooks to run `ruff` and `black` for you.
 
-## Adding new azd environment variables
+## Adding new features
+
+We recommend using GitHub Copilot Agent mode when adding new features,
+as this project includes [.github/copilot-instructions.md](.github/copilot-instructions.md) file
+that instructs Copilot on how to generate code for common code changes.
+
+If you are not using Copilot Agent mode, consult both that file and suggestions below.
+
+### Adding new azd environment variables
 
 When adding new azd environment variables, please remember to update:
 
@@ -128,7 +137,7 @@ When adding new azd environment variables, please remember to update:
 1. [ADO pipeline](.azdo/pipelines/azure-dev.yml).
 1. [Github workflows](.github/workflows/azure-dev.yml)
 
-## Adding new UI strings
+### Adding new UI strings
 
 When adding new UI strings, please remember to update all translations.
 For any translations that you generate with an AI tool,

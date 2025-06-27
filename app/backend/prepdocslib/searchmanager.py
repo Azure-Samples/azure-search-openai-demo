@@ -282,6 +282,7 @@ class SearchManager:
                         raise ValueError("Image search profile and algorithm must be set")
                     vector_search_profiles.append(image_vector_search_profile)
                     vector_algorithms.append(image_vector_algorithm)
+                    # TODO: Add image vectorizer if needed
 
                 index = SearchIndex(
                     name=self.search_info.index_name,

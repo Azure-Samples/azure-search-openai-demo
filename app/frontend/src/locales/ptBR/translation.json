@@ -43,7 +43,7 @@
         "placeholder": "Digite uma nova pergunta (por exemplo: Meu plano cobre exames oftalmológicos anuais?)"
     },
     "askTitle": "Pergunte aos seus dados",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "Compare o impacto das taxas de juros e do PIB nos mercados financeiros.",
         "2": "Qual é a tendência esperada para o índice S&P 500 nos próximos cinco anos? Compare com o desempenho passado do S&P 500",
         "3": "Você pode identificar alguma correlação entre os preços do petróleo e as tendências do mercado de ações?",
@@ -99,14 +99,11 @@
             "medium": "Médio",
             "high": "Alto"
         },
-        "useGPT4V": "Usar modelo de visão GPT",
-        "gpt4VInput": {
-            "label": "Entradas do modelo de visão GPT",
-            "options": {
-                "textAndImages": "Imagens e texto",
-                "images": "Imagens",
-                "texts": "Texto"
-            }
+        "llmInputs": "Entradas para LLM",
+        "llmInputsOptions": {
+            "texts": "Textos",
+            "images": "Imagens",
+            "textAndImages": "Textos e Imagens"
         },
         "retrievalMode": {
             "label": "Modo de recuperação",
@@ -154,10 +151,9 @@
         "reasoningEffort":
              "Define o esforço de raciocínio para o LLM. Valores mais altos resultam em mais raciocínio, mas podem levar mais tempo para gerar uma resposta. O padrão é médio.",
         "suggestFollowupQuestions": "Solicita ao LLM que sugira perguntas de acompanhamento com base na consulta do usuário.",
-        "useGPT4Vision": "Usa GPT-4-Turbo com Visão para gerar respostas com base em imagens e texto do índice.",
         "vectorFields":
             "Especifica quais campos de incorporação (embeddings) no Índice de Pesquisa do Azure AI serão pesquisados: 'Imagens e texto', 'Imagens' ou 'Texto'.",
-        "gpt4VisionInputs":
+        "llmInputs":
             "Define o que será enviado ao modelo de visão. 'Imagens e texto' envia ambos, 'Imagens' envia apenas imagens e 'Texto' envia apenas texto.",
         "retrievalMode":
             "Define o modo de recuperação para a consulta do Azure AI Search. 'Vetores + Texto (Híbrido)' usa uma combinação de busca vetorial e de texto completo, 'Vetores' usa apenas a busca vetorial, e 'Texto' usa apenas a busca de texto completo. O híbrido geralmente é o ideal.",
@@ -165,5 +161,9 @@
         "useOidSecurityFilter": "Filtra os resultados da pesquisa com base no OID do usuário autenticado.",
         "useGroupsSecurityFilter": "Filtra os resultados da pesquisa com base nos grupos do usuário autenticado.",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
-    }
+    },
+
+    "overallSettings": "Configurações gerais",
+    "searchSettings": "Configurações de pesquisa",
+    "llmSettings": "Configurações LLM"
 }

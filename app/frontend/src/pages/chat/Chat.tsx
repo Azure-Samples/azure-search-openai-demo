@@ -16,7 +16,7 @@ import {
     ChatAppRequest,
     ResponseMessage,
     VectorFields,
-    GPT4VInput,
+    LLMInputs,
     SpeechConfig
 } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
@@ -61,8 +61,7 @@ const Chat = () => {
     const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
-    const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
-    const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
+    const [llmInputs, setLLMInputs] = useState<LLMInputs>(LLMInputs.TextAndImages);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -79,7 +78,7 @@ const Chat = () => {
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [speechUrls, setSpeechUrls] = useState<(string | null)[]>([]);
 
-    const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
+    const [showMultimodalOptions, setShowMultimodalOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
     const [showReasoningEffortOption, setShowReasoningEffortOption] = useState<boolean>(false);
@@ -107,9 +106,16 @@ const Chat = () => {
 
     const getConfig = async () => {
         configApi().then(config => {
-            setShowGPT4VOptions(config.showGPT4VOptions);
-            if (config.showGPT4VOptions) {
-                setUseGPT4V(true);
+            setShowMultimodalOptions(config.showMultimodalOptions);
+            if (config.showMultimodalOptions) {
+                // Set default LLM inputs based on config override or fallback to TextAndImages
+                const defaultLlmInputs = config.ragLlmInputsOverride ? (config.ragLlmInputsOverride as LLMInputs) : LLMInputs.TextAndImages;
+                setLLMInputs(defaultLlmInputs);
+                // Set default vector fields based on config override or fallback to TextAndImageEmbeddings
+                const defaultVectorFields = config.ragVectorFieldsDefault
+                    ? (config.ragVectorFieldsDefault as VectorFields)
+                    : VectorFields.TextAndImageEmbeddings;
+                setVectorFields(defaultVectorFields);
             }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
@@ -233,8 +239,7 @@ const Chat = () => {
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFields,
-                        use_gpt4v: useGPT4V,
-                        gpt4v_input: gpt4vInput,
+                        llm_inputs: llmInputs,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
                         ...(seed !== null ? { seed: seed } : {})
@@ -351,11 +356,8 @@ const Chat = () => {
             case "useSuggestFollowupQuestions":
                 setUseSuggestFollowupQuestions(value);
                 break;
-            case "useGPT4V":
-                setUseGPT4V(value);
-                break;
-            case "gpt4vInput":
-                setGPT4VInput(value);
+            case "llmInputs":
+                setLLMInputs(value);
                 break;
             case "vectorFields":
                 setVectorFields(value);
@@ -365,6 +367,7 @@ const Chat = () => {
                 break;
             case "useAgenticRetrieval":
                 setUseAgenticRetrieval(value);
+                break;
         }
     };
 
@@ -423,7 +426,7 @@ const Chat = () => {
                             <h2 className={styles.chatEmptyStateSubtitle}>{t("chatEmptyStateSubtitle")}</h2>
                             {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
 
-                            <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
+                            <ExampleList onExampleClicked={onExampleClicked} useMultimodalAnswering={showMultimodalOptions} />
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
@@ -554,13 +557,12 @@ const Chat = () => {
                         excludeCategory={excludeCategory}
                         includeCategory={includeCategory}
                         retrievalMode={retrievalMode}
-                        useGPT4V={useGPT4V}
-                        gpt4vInput={gpt4vInput}
+                        showMultimodalOptions={showMultimodalOptions}
+                        llmInputs={llmInputs}
                         vectorFields={vectorFields}
                         showSemanticRankerOption={showSemanticRankerOption}
                         showQueryRewritingOption={showQueryRewritingOption}
                         showReasoningEffortOption={showReasoningEffortOption}
-                        showGPT4VOptions={showGPT4VOptions}
                         showVectorOption={showVectorOption}
                         useOidSecurityFilter={useOidSecurityFilter}
                         useGroupsSecurityFilter={useGroupsSecurityFilter}

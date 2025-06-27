@@ -88,7 +88,6 @@ def setup_blob_manager(
     storage_container: str,
     storage_resource_group: str,
     subscription_id: str,
-    store_page_images: bool,
     storage_key: Union[str, None] = None,
     image_storage_container: Union[str, None] = None,  # Added this parameter
 ):
@@ -97,12 +96,11 @@ def setup_blob_manager(
     return BlobManager(
         endpoint=f"https://{storage_account}.blob.core.windows.net",
         container=storage_container,
-        image_container=image_storage_container,
         account=storage_account,
         credential=storage_creds,
-        resourceGroup=storage_resource_group,
-        subscriptionId=subscription_id,
-        store_page_images=store_page_images,
+        resource_group=storage_resource_group,
+        subscription_id=subscription_id,
+        image_container=image_storage_container,
     )
 
 
@@ -465,7 +463,6 @@ if __name__ == "__main__":
         storage_container=os.environ["AZURE_STORAGE_CONTAINER"],
         storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
-        store_page_images=use_multimodal,
         storage_key=clean_key_if_exists(args.storagekey),
         image_storage_container=os.environ.get("AZURE_IMAGESTORAGE_CONTAINER"),  # Pass the image container
     )

@@ -5,9 +5,9 @@ import logging
 import mimetypes
 import os
 import time
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Awaitable
 from pathlib import Path
-from typing import Any, Union, cast
+from typing import Any, Callable, Union, cast
 
 from azure.cognitiveservices.speech import (
     ResultReason,
@@ -72,6 +72,8 @@ from config import (
     CONFIG_MULTIMODAL_ENABLED,
     CONFIG_OPENAI_CLIENT,
     CONFIG_QUERY_REWRITING_ENABLED,
+    CONFIG_RAG_LLM_INPUTS_OVERRIDE,
+    CONFIG_RAG_VECTOR_FIELDS_DEFAULT,
     CONFIG_REASONING_EFFORT_ENABLED,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
@@ -279,7 +281,7 @@ def auth_setup():
 def config():
     return jsonify(
         {
-            "showMultimodalOption": current_app.config[CONFIG_MULTIMODAL_ENABLED],
+            "showMultimodalOptions": current_app.config[CONFIG_MULTIMODAL_ENABLED],
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showQueryRewritingOption": current_app.config[CONFIG_QUERY_REWRITING_ENABLED],
             "showReasoningEffortOption": current_app.config[CONFIG_REASONING_EFFORT_ENABLED],
@@ -294,6 +296,8 @@ def config():
             "showChatHistoryBrowser": current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
             "showAgenticRetrievalOption": current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED],
+            "ragLlmInputsOverride": current_app.config[CONFIG_RAG_LLM_INPUTS_OVERRIDE],
+            "ragVectorFieldsDefault": current_app.config[CONFIG_RAG_VECTOR_FIELDS_DEFAULT],
         }
     )
 
@@ -432,6 +436,7 @@ async def setup_clients():
     # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
     AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-10-21"
     AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
+    AZURE_OPENAI_API_KEY_OVERRIDE = os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE")
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
@@ -461,6 +466,8 @@ async def setup_clients():
     AZURE_SPEECH_SERVICE_VOICE = os.getenv("AZURE_SPEECH_SERVICE_VOICE") or "en-US-AndrewMultilingualNeural"
 
     USE_MULTIMODAL = os.getenv("USE_MULTIMODAL", "").lower() == "true"
+    RAG_LLM_INPUTS_OVERRIDE = os.getenv("RAG_LLM_INPUTS_OVERRIDE", "")
+    RAG_VECTOR_FIELDS_DEFAULT = os.getenv("RAG_VECTOR_FIELDS_DEFAULT", "")
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
     ENABLE_LANGUAGE_PICKER = os.getenv("ENABLE_LANGUAGE_PICKER", "").lower() == "true"
     USE_SPEECH_INPUT_BROWSER = os.getenv("USE_SPEECH_INPUT_BROWSER", "").lower() == "true"
@@ -477,6 +484,7 @@ async def setup_clients():
     # This assumes you use 'azd auth login' locally, and managed identity when deployed on Azure.
     # The managed identity is setup in the infra/ folder.
     azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential]
+    azure_ai_token_provider: Callable[[], Awaitable[str]]
     if RUNNING_ON_AZURE:
         current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
         if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
@@ -497,6 +505,9 @@ async def setup_clients():
     else:
         current_app.logger.info("Setting up Azure credential using AzureDeveloperCliCredential for home tenant")
         azure_credential = AzureDeveloperCliCredential(process_timeout=60)
+    azure_ai_token_provider = get_bearer_token_provider(
+        azure_credential, "https://cognitiveservices.azure.com/.default"
+    )
 
     # Set the Azure credential in the app config for use in other parts of the app
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
@@ -565,7 +576,7 @@ async def setup_clients():
             document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
             local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER", "").lower() == "true",
             local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER", "").lower() == "true",
-            search_images=USE_MULTIMODAL,
+            use_multimodal=USE_MULTIMODAL,
         )
         search_info = await setup_search_info(
             search_service=AZURE_SEARCH_SERVICE, index_name=AZURE_SEARCH_INDEX, azure_credential=azure_credential
@@ -573,12 +584,13 @@ async def setup_clients():
         text_embeddings_service = setup_embeddings_service(
             azure_credential=azure_credential,
             openai_host=OPENAI_HOST,
-            openai_model_name=OPENAI_EMB_MODEL,
-            openai_service=AZURE_OPENAI_SERVICE,
-            openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
-            openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-            openai_dimensions=OPENAI_EMB_DIMENSIONS,
-            openai_api_version=AZURE_OPENAI_API_VERSION,
+            emb_model_name=OPENAI_EMB_MODEL,
+            emb_model_dimensions=OPENAI_EMB_DIMENSIONS,
+            azure_openai_service=AZURE_OPENAI_SERVICE,
+            azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
+            azure_openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+            azure_openai_api_version=AZURE_OPENAI_API_VERSION,
+            azure_openai_key=clean_key_if_exists(AZURE_OPENAI_API_KEY_OVERRIDE),
             openai_key=clean_key_if_exists(OPENAI_API_KEY),
             openai_org=OPENAI_ORGANIZATION,
             disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
@@ -617,18 +629,17 @@ async def setup_clients():
             if not AZURE_OPENAI_SERVICE:
                 raise ValueError("AZURE_OPENAI_SERVICE must be set when OPENAI_HOST is azure")
             endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-        if api_key := os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"):
+        if AZURE_OPENAI_API_KEY_OVERRIDE:
             current_app.logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
             openai_client = AsyncAzureOpenAI(
-                api_version=AZURE_OPENAI_API_VERSION, azure_endpoint=endpoint, api_key=api_key
+                api_version=AZURE_OPENAI_API_VERSION, azure_endpoint=endpoint, api_key=AZURE_OPENAI_API_KEY_OVERRIDE
             )
         else:
             current_app.logger.info("Using Azure credential (passwordless authentication) for Azure OpenAI client")
-            token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
             openai_client = AsyncAzureOpenAI(
                 api_version=AZURE_OPENAI_API_VERSION,
                 azure_endpoint=endpoint,
-                azure_ad_token_provider=token_provider,
+                azure_ad_token_provider=azure_ai_token_provider,
             )
     elif OPENAI_HOST == "local":
         current_app.logger.info("OPENAI_HOST is local, setting up local OpenAI client for OPENAI_BASE_URL with no key")
@@ -673,6 +684,8 @@ async def setup_clients():
     current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED] = USE_CHAT_HISTORY_COSMOS
     current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED] = USE_AGENTIC_RETRIEVAL
     current_app.config[CONFIG_MULTIMODAL_ENABLED] = USE_MULTIMODAL
+    current_app.config[CONFIG_RAG_LLM_INPUTS_OVERRIDE] = RAG_LLM_INPUTS_OVERRIDE
+    current_app.config[CONFIG_RAG_VECTOR_FIELDS_DEFAULT] = RAG_VECTOR_FIELDS_DEFAULT
 
     prompt_manager = PromptyManager()
 
@@ -699,6 +712,9 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
         reasoning_effort=OPENAI_REASONING_EFFORT,
+        vision_endpoint=AZURE_VISION_ENDPOINT,
+        vision_token_provider=azure_ai_token_provider,
+        multimodal_enabled=USE_MULTIMODAL,
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -710,6 +726,7 @@ async def setup_clients():
         agent_client=agent_client,
         openai_client=openai_client,
         auth_helper=auth_helper,
+        images_blob_container_client=image_blob_container_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
@@ -723,7 +740,8 @@ async def setup_clients():
         prompt_manager=prompt_manager,
         reasoning_effort=OPENAI_REASONING_EFFORT,
         vision_endpoint=AZURE_VISION_ENDPOINT,
-        vision_token_provider=token_provider,
+        vision_token_provider=azure_ai_token_provider,
+        multimodal_enabled=USE_MULTIMODAL,
     )
 
 

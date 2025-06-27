@@ -28,7 +28,7 @@ module main 'main.bicep' = {
     storageSkuName: 'Standard_LRS'
     useApplicationInsights: false
     useVectors: true
-    useGPT4V: false
+    useMultimodal: true
     enableLanguagePicker: false
     useSpeechInputBrowser: false
     useSpeechOutputBrowser: false

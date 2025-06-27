@@ -307,8 +307,7 @@ envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
         "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
-        "USE_GPT4V": "true",
-        "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
+        "USE_MULTIMODAL": "true",
         "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
     },
 ]
@@ -424,6 +423,10 @@ def mock_env(monkeypatch, request):
 
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
+            # Patch the token_provider in the app to avoid the error
+            monkeypatch.setattr(
+                "azure.identity.aio.get_bearer_token_provider", lambda *args, **kwargs: mock_token_provider
+            )
             yield
 
 
@@ -448,6 +451,10 @@ def mock_reasoning_env(monkeypatch, request):
 
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
+            # Patch the token_provider in the app to avoid the error
+            monkeypatch.setattr(
+                "azure.identity.aio.get_bearer_token_provider", lambda *args, **kwargs: mock_token_provider
+            )
             yield
 
 
@@ -472,6 +479,10 @@ def mock_agent_env(monkeypatch, request):
 
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
+            # Patch the token_provider in the app to avoid the error
+            monkeypatch.setattr(
+                "azure.identity.aio.get_bearer_token_provider", lambda *args, **kwargs: mock_token_provider
+            )
             yield
 
 
@@ -496,6 +507,10 @@ def mock_agent_auth_env(monkeypatch, request):
 
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
+            # Patch the token_provider in the app to avoid the error
+            monkeypatch.setattr(
+                "azure.identity.aio.get_bearer_token_provider", lambda *args, **kwargs: mock_token_provider
+            )
             yield
 
 
@@ -985,3 +1000,25 @@ def mock_data_lake_service_client(monkeypatch):
 
     monkeypatch.setattr(azure.storage.filedatalake.aio.StorageStreamDownloader, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.aio.StorageStreamDownloader, "readinto", mock_readinto)
+
+
+# Add a mock token_provider for tests
+@pytest.fixture
+def mock_token_provider():
+    async def dummy_token_provider():
+        return "dummy_token"
+
+    return dummy_token_provider
+
+
+@pytest.fixture(autouse=True)
+def patch_get_bearer_token_provider(monkeypatch, mock_token_provider):
+    """
+    Patch the get_bearer_token_provider function used in app.py to return our mock_token_provider.
+    This is automatically applied to all tests.
+    """
+
+    def mock_get_bearer_token(*args, **kwargs):
+        return mock_token_provider
+
+    monkeypatch.setattr("azure.identity.aio.get_bearer_token_provider", mock_get_bearer_token)

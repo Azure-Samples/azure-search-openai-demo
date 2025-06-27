@@ -2,6 +2,7 @@ import os
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Callable, Optional, TypedDict, Union, cast
 from urllib.parse import urljoin
 
@@ -35,6 +36,19 @@ from openai.types.chat import (
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from core.imageshelper import download_blob_as_base64
+
+
+class LLMInputType(str, Enum):
+    TEXT_AND_IMAGES = "textAndImages"
+    IMAGES = "images"
+    TEXTS = "texts"
+
+
+class VectorFieldType(str, Enum):
+    EMBEDDING = "textEmbeddingOnly"
+    IMAGE_EMBEDDING = "imageEmbeddingOnly"
+    TEXT_AND_IMAGE_EMBEDDINGS = "textAndImageEmbeddings"
 
 
 @dataclass
@@ -96,6 +110,7 @@ class ThoughtStep:
 class DataPoints:
     text: Optional[list[str]] = None
     images: Optional[list] = None
+    citations: Optional[list[str]] = None
 
 
 @dataclass
@@ -157,6 +172,7 @@ class Approach(ABC):
         vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        multimodal_enabled: bool = False,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -173,6 +189,25 @@ class Approach(ABC):
         self.prompt_manager = prompt_manager
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
+        self.multimodal_enabled = multimodal_enabled
+
+    def get_default_llm_inputs(self) -> str:
+        """
+        Returns the default LLM inputs based on whether multimodal is enabled
+        """
+        if self.multimodal_enabled:
+            return LLMInputType.TEXT_AND_IMAGES
+        else:
+            return LLMInputType.TEXTS
+
+    def get_default_vector_fields(self) -> str:
+        """
+        Returns the default vector fields based on whether multimodal is enabled
+        """
+        if self.multimodal_enabled:
+            return VectorFieldType.TEXT_AND_IMAGE_EMBEDDINGS
+        else:
+            return VectorFieldType.EMBEDDING
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -323,37 +358,65 @@ class Approach(ABC):
 
         return response, results
 
-    def get_sources_content(
-        self, results: list[Document], use_semantic_captions: bool, use_image_citation: bool
-    ) -> list[str]:
+    async def get_sources_content(
+        self, results: list[Document], use_semantic_captions: bool, use_image_sources: bool
+    ) -> tuple[list[str], list[str], list[str]]:
+        """
+        Extracts text and image sources from the search results.
+        If use_semantic_captions is True, it will use the captions from the results.
+        If use_image_sources is True, it will extract image URLs from the results.
+        Returns:
+            - A list of text sources (captions or content).
+            - A list of image sources (base64 encoded).
+            - A list of allowed citations for those sources.
+        """
 
         def nonewlines(s: str) -> str:
             return s.replace("\n", " ").replace("\r", " ")
 
-        if use_semantic_captions:
-            return [
-                (self.get_citation((doc.sourcepage or ""), use_image_citation))
-                + ": "
-                + nonewlines(" . ".join([cast(str, c.text) for c in (doc.captions or [])]))
-                for doc in results
-            ]
-        else:
-            return [
-                (self.get_citation((doc.sourcepage or ""), use_image_citation)) + ": " + nonewlines(doc.content or "")
-                for doc in results
-            ]
+        citations = []
+        text_sources = []
+        image_sources = []
+        seen_urls = set()
 
-    def get_citation(self, sourcepage: str, use_image_citation: bool) -> str:
-        if use_image_citation:
-            return sourcepage
-        else:
-            path, ext = os.path.splitext(sourcepage)
-            if ext.lower() == ".png":
-                page_idx = path.rfind("-")
-                page_number = int(path[page_idx + 1 :])
-                return f"{path[:page_idx]}.pdf#page={page_number}"
+        for doc in results:
+            # Get the citation for the source page
+            citation = self.get_citation(doc.sourcepage or "")
+            citations.append(citation)
 
-            return sourcepage
+            # If semantic captions are used, extract captions; otherwise, use content
+            if use_semantic_captions and doc.captions:
+                text_sources.append(f"{citation}: {nonewlines(' . '.join([cast(str, c.text) for c in doc.captions]))}")
+            else:
+                text_sources.append(f"{citation}: {nonewlines(doc.content or '')}")
+
+            if use_image_sources and hasattr(doc, "images") and doc.images:
+                for img in doc.images:
+                    # Skip if we've already processed this URL
+                    if img["url"] in seen_urls:
+                        continue
+                    seen_urls.add(img["url"])
+                    url = await download_blob_as_base64(self.images_blob_container_client, img["url"])
+                    if url:
+                        image_sources.append(url)
+                    citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))
+
+        return text_sources, image_sources, citations
+
+    def get_citation(self, sourcepage: str) -> str:
+        path, ext = os.path.splitext(sourcepage)
+        if ext.lower() == ".png":
+            page_idx = path.rfind("-")
+            page_number = int(path[page_idx + 1 :])
+            return f"{path[:page_idx]}.pdf#page={page_number}"
+        return sourcepage
+
+    def get_image_citation(self, sourcepage: str, image_url: str):
+        source_page_citation = self.get_citation(sourcepage)
+        # extract the image filename from image_url, last part after the last slash
+        image_filename = image_url.split("/")[-1]
+        if source_page_citation:
+            return f"{source_page_citation}({image_filename})"
 
     async def compute_text_embedding(self, q: str):
         SUPPORTED_DIMENSIONS_MODEL = {
@@ -393,7 +456,7 @@ class Approach(ABC):
             ) as response:
                 json = await response.json()
                 image_query_vector = json["vector"]
-        return VectorizedQuery(vector=image_query_vector, k_nearest_neighbors=50, fields="imageEmbedding")
+        return VectorizedQuery(vector=image_query_vector, k_nearest_neighbors=50, fields="images/embedding")
 
     def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>

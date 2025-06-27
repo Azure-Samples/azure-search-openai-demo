@@ -26,9 +26,8 @@ async def test_file_strategy_adls2(monkeypatch, mock_env, mock_data_lake_service
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
         account=os.environ["AZURE_STORAGE_ACCOUNT"],
-        resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
-        subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
-        store_page_images=False,
+        resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
     )
 
     # Set up mocks used by upload_blob

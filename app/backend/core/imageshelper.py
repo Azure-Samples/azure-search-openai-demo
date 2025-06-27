@@ -24,6 +24,8 @@ async def download_blob_as_base64(blob_container_client: ContainerClient, blob_u
             url_parts = blob_url.split("/")
             # Skip the domain parts and container name to get the blob path
             blob_path = "/".join(url_parts[4:])
+            # If %20 in URL, replace it with a space
+            blob_path = blob_path.replace("%20", " ")
         else:
             # Treat as a direct blob path
             blob_path = blob_url

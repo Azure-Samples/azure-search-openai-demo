@@ -43,7 +43,7 @@
         "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
     },
     "askTitle": "Ask your data",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "Compare the impact of interest rates and GDP in financial markets.",
         "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
         "3": "Can you identify any correlation between oil prices and stock market trends?",
@@ -105,14 +105,11 @@
         },
         "useSuggestFollowupQuestions": "Suggest follow-up questions",
         "useAgenticRetrieval": "Use agentic retrieval",
-        "useGPT4V": "Use GPT vision model",
-        "gpt4VInput": {
-            "label": "GPT vision model inputs",
-            "options": {
-                "textAndImages": "Images and text",
-                "images": "Images",
-                "texts": "Text"
-            }
+        "llmInputs": "Inputs for LLM",
+        "llmInputsOptions": {
+            "texts": "Texts",
+            "images": "Images",
+            "textAndImages": "Texts and Images"
         },
         "retrievalMode": {
             "label": "Retrieval mode",
@@ -164,10 +161,9 @@
         "useSemanticCaptions":
              "Sends semantic captions to the LLM instead of the full search result. A semantic caption is extracted from a search result during the process of semantic ranking.",
         "suggestFollowupQuestions": "Asks the LLM to suggest follow-up questions based on the user's query.",
-         "useGPT4Vision": "Uses GPT-4-Turbo with Vision to generate responses based on images and text from the index.",
         "vectorFields":
             "Specifies which embedding fields in the Azure AI Search Index will be searched, both the 'Images and text' embeddings, 'Images' only, or 'Text' only.",
-        "gpt4VisionInputs":
+        "llmInputs":
             "Sets what will be sent to the vision model. 'Images and text' sends both images and text to the model, 'Images' sends only images, and 'Text' sends only text.",
         "retrievalMode":
             "Sets the retrieval mode for the Azure AI Search query. `Vectors + Text (Hybrid)` uses a combination of vector search and full text search, `Vectors` uses only vector search, and `Text` uses only full text search. Hybrid is generally optimal.",
@@ -175,5 +171,9 @@
         "useOidSecurityFilter": "Filter search results based on the authenticated user's OID.",
         "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
-    }
+    },
+
+    "overallSettings": "Overall settings",
+    "searchSettings": "Search settings",
+    "llmSettings": "LLM settings"
 }

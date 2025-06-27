@@ -288,6 +288,14 @@ param azureContainerAppsWorkloadProfile string
 
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
+
+// RAG Configuration Parameters
+@description('Override for default LLM inputs dropdown options')
+param ragLlmInputsOverride string = ''
+
+@description('Default value for vector fields dropdown')
+param ragVectorFieldsDefault string = ''
+
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
@@ -459,6 +467,9 @@ var appEnvVariables = {
   USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
   AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
   RUNNING_IN_PRODUCTION: 'true'
+  // RAG Configuration
+  RAG_LLM_INPUTS_OVERRIDE: ragLlmInputsOverride
+  RAG_VECTOR_FIELDS_DEFAULT: ragVectorFieldsDefault
 }
 
 // App Service for the web application (Python Quart app with JS frontend)
@@ -1045,7 +1056,7 @@ module openAiRoleBackend 'core/security/role.bicep' = if (isAzureOpenAiHost && d
   }
 }
 
-module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi && (useIntegratedVectorization || useAgenticRetrieval)) {
+module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi) {
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
