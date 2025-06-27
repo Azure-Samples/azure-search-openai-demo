@@ -227,7 +227,14 @@ class DocumentAnalysisParser(Parser):
             "Describing figure %s with title '%s' using %s", figure.id, figure_title, type(media_describer).__name__
         )
         if not figure.bounding_regions:
-            return f"<figure><figcaption>{figure_title}</figcaption></figure>"
+            return ImageOnPage(
+                bytes=b"",
+                page_num=0,
+                figure_id=figure.id,
+                bbox=[0, 0, 0, 0],
+                filename=f"figure{figure.id.replace('.', '_')}.png",
+                description=f"<figure><figcaption>{figure_title}</figcaption></figure>",
+            )
         if len(figure.bounding_regions) > 1:
             logger.warning("Figure %s has more than one bounding region, using the first one", figure.id)
         first_region = figure.bounding_regions[0]

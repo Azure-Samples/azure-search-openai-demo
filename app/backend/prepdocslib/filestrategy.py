@@ -21,7 +21,6 @@ async def parse_file(
     blob_manager: Optional[BlobManager] = None,
     image_embeddings_client: Optional[ImageEmbeddings] = None,
 ) -> list[Section]:
-    await blob_manager.upload_blob(file)
     key = file.file_extension().lower()
     processor = file_processors.get(key)
     if processor is None:
