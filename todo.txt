@@ -1,6 +1,6 @@
 TODO:
 
-* Fix/add unit tests
+* Fix/add unit tests - check coverage
 * Add documentation
 * Test with agentic
   * Add vectorizer for images field - special from https://learn.microsoft.com/en-us/azure/search/vector-search-vectorizer-ai-services-vision

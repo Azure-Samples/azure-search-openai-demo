@@ -74,6 +74,8 @@ def mock_azurehttp_calls(monkeypatch):
     def mock_post(*args, **kwargs):
         if kwargs.get("url").endswith("computervision/retrieval:vectorizeText"):
             return mock_computervision_response()
+        elif kwargs.get("url").endswith("computervision/retrieval:vectorizeImage"):
+            return mock_computervision_response()
         else:
             raise Exception("Unexpected URL for mock call to ClientSession.post()")
 
@@ -424,10 +426,6 @@ def mock_env(monkeypatch, request):
 
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
-            # Patch the token_provider in the app to avoid the error
-            monkeypatch.setattr(
-                "azure.identity.aio.get_bearer_token_provider", lambda *args, **kwargs: mock_token_provider
-            )
             yield
 
 
@@ -452,10 +450,6 @@ def mock_reasoning_env(monkeypatch, request):
 
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
-            # Patch the token_provider in the app to avoid the error
-            monkeypatch.setattr(
-                "azure.identity.aio.get_bearer_token_provider", lambda *args, **kwargs: mock_token_provider
-            )
             yield
 
 
@@ -480,10 +474,6 @@ def mock_agent_env(monkeypatch, request):
 
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
-            # Patch the token_provider in the app to avoid the error
-            monkeypatch.setattr(
-                "azure.identity.aio.get_bearer_token_provider", lambda *args, **kwargs: mock_token_provider
-            )
             yield
 
 
@@ -508,10 +498,6 @@ def mock_agent_auth_env(monkeypatch, request):
 
         with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
             mock_default_azure_credential.return_value = MockAzureCredential()
-            # Patch the token_provider in the app to avoid the error
-            monkeypatch.setattr(
-                "azure.identity.aio.get_bearer_token_provider", lambda *args, **kwargs: mock_token_provider
-            )
             yield
 
 

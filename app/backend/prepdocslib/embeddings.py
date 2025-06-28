@@ -244,16 +244,14 @@ class ImageEmbeddings:
         async with aiohttp.ClientSession(headers=headers) as session:
             async for attempt in AsyncRetrying(
                 retry=retry_if_exception_type(Exception),
-                    wait=wait_random_exponential(min=15, max=60),
-                    stop=stop_after_attempt(15),
-                    before_sleep=self.before_retry_sleep,
-                ):
+                wait=wait_random_exponential(min=15, max=60),
+                stop=stop_after_attempt(15),
+                before_sleep=self.before_retry_sleep,
+            ):
                 with attempt:
                     async with session.post(url=endpoint, params=params, data=image_bytes) as resp:
                         resp_json = await resp.json()
                         return resp_json["vector"]
-                    
-        return []
 
     def before_retry_sleep(self, retry_state):
         logger.info("Rate limited on the Vision embeddings API, sleeping before retrying...")
