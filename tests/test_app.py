@@ -303,7 +303,7 @@ async def test_ask_rtr_hybrid(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "hybrid"},
+                "overrides": {"retrieval_mode": "hybrid", "vector_fields": "textEmbeddingOnly", "llm_inputs": "texts"},
             },
         },
     )
@@ -714,7 +714,7 @@ async def test_chat_seed(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"seed": 42},
+                "overrides": {"vector_fields": "textEmbeddingOnly", "llm_inputs": "texts", "seed": 42},
             },
         },
     )
@@ -730,7 +730,7 @@ async def test_chat_hybrid(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "hybrid"},
+                "overrides": {"retrieval_mode": "hybrid", "llm_inputs": "texts", "vector_fields": "textEmbeddingOnly"},
             },
         },
     )
@@ -750,7 +750,12 @@ async def test_chat_hybrid_semantic_ranker(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True},
+                "overrides": {
+                    "retrieval_mode": "hybrid",
+                    "llm_inputs": "texts",
+                    "vector_fields": "textEmbeddingOnly",
+                    "semantic_ranker": True,
+                },
             },
         },
     )
@@ -770,7 +775,13 @@ async def test_chat_hybrid_semantic_captions(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True, "semantic_captions": True},
+                "overrides": {
+                    "retrieval_mode": "hybrid",
+                    "vector_fields": "textEmbeddingOnly",
+                    "llm_inputs": "texts",
+                    "semantic_ranker": True,
+                    "semantic_captions": True,
+                },
             },
         },
     )
@@ -790,7 +801,7 @@ async def test_chat_vector(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "vectors"},
+                "overrides": {"retrieval_mode": "vectors", "vector_fields": "textEmbeddingOnly", "llm_inputs": "texts"},
             },
         },
     )
@@ -809,7 +820,12 @@ async def test_chat_vector_semantic_ranker(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "vectors", "semantic_ranker": True},
+                "overrides": {
+                    "retrieval_mode": "vectors",
+                    "vector_fields": "textEmbeddingOnly",
+                    "llm_inputs": "texts",
+                    "semantic_ranker": True,
+                },
             },
         },
     )
@@ -985,7 +1001,11 @@ async def test_chat_followup(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"suggest_followup_questions": True},
+                "overrides": {
+                    "vector_fields": "textEmbeddingOnly",
+                    "llm_inputs": "texts",
+                    "suggest_followup_questions": True,
+                },
             },
         },
     )
@@ -1003,7 +1023,11 @@ async def test_chat_stream_followup(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"suggest_followup_questions": True},
+                "overrides": {
+                    "vector_fields": "textEmbeddingOnly",
+                    "llm_inputs": "texts",
+                    "suggest_followup_questions": True,
+                },
             },
         },
     )

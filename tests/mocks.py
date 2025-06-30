@@ -86,7 +86,7 @@ class MockCaption:
 class MockAsyncSearchResultsIterator:
     def __init__(self, search_text, vector_queries: Optional[list[VectorQuery]]):
         if search_text == "interest rates" or (
-            vector_queries and any([vector.fields == "images/embeddings" for vector in vector_queries])
+            vector_queries and any([vector.fields == "images/embedding" for vector in vector_queries])
         ):
             self.data = [
                 [

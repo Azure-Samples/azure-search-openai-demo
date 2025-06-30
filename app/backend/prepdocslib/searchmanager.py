@@ -4,6 +4,8 @@ import os
 from typing import Optional
 
 from azure.search.documents.indexes.models import (
+    AIServicesVisionParameters,
+    AIServicesVisionVectorizer,
     AzureOpenAIVectorizer,
     AzureOpenAIVectorizerParameters,
     BinaryQuantizationCompression,
@@ -152,9 +154,20 @@ class SearchManager:
                     name="images_hnsw_config",
                     parameters=HnswParameters(metric="cosine"),
                 )
+
+                # Create the AI Vision vectorizer for image embeddings
+                image_vectorizer = AIServicesVisionVectorizer(
+                    vectorizer_name="images-vision-vectorizer",
+                    ai_services_vision_parameters=AIServicesVisionParameters(
+                        resource_uri=self.search_info.azure_vision_endpoint,
+                        model_version="2023-04-15",
+                    ),
+                )
+
                 image_vector_search_profile = VectorSearchProfile(
                     name="images_embedding_profile",
                     algorithm_configuration_name=image_vector_algorithm.name,
+                    vectorizer_name=image_vectorizer.vectorizer_name,
                 )
                 images_field = SearchField(
                     name="images",
@@ -282,7 +295,8 @@ class SearchManager:
                         raise ValueError("Image search profile and algorithm must be set")
                     vector_search_profiles.append(image_vector_search_profile)
                     vector_algorithms.append(image_vector_algorithm)
-                    # TODO: Add image vectorizer if needed
+                    # Add image vectorizer to vectorizers list
+                    vectorizers.append(image_vectorizer)
 
                 index = SearchIndex(
                     name=self.search_info.index_name,
@@ -366,6 +380,9 @@ class SearchManager:
                     if existing_index.vector_search.algorithms is None:
                         existing_index.vector_search.algorithms = []
                     existing_index.vector_search.algorithms.append(image_vector_algorithm)
+                    if existing_index.vector_search.vectorizers is None:
+                        existing_index.vector_search.vectorizers = []
+                    existing_index.vector_search.vectorizers.append(image_vectorizer)
                     await search_index_client.create_or_update_index(existing_index)
 
                 if existing_index.semantic_search:
@@ -408,6 +425,7 @@ class SearchManager:
                             "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
                             self.search_info,
                         )
+
         if self.search_info.use_agentic_retrieval and self.search_info.agent_name:
             await self.create_agent()
 

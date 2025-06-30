@@ -62,6 +62,7 @@ async def setup_search_info(
     azure_openai_searchagent_deployment: Union[str, None] = None,
     azure_openai_searchagent_model: Union[str, None] = None,
     search_key: Union[str, None] = None,
+    azure_vision_endpoint: Union[str, None] = None,
 ) -> SearchInfo:
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
@@ -79,6 +80,7 @@ async def setup_search_info(
         azure_openai_endpoint=azure_openai_endpoint,
         azure_openai_searchagent_model=azure_openai_searchagent_model,
         azure_openai_searchagent_deployment=azure_openai_searchagent_deployment,
+        azure_vision_endpoint=azure_vision_endpoint,
     )
 
 
@@ -455,6 +457,7 @@ if __name__ == "__main__":
             azure_openai_searchagent_model=os.getenv("AZURE_OPENAI_SEARCHAGENT_MODEL"),
             azure_credential=azd_credential,
             search_key=clean_key_if_exists(args.searchkey),
+            azure_vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
         )
     )
     blob_manager = setup_blob_manager(
