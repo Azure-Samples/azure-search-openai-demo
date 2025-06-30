@@ -6,7 +6,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using different chat completion models](#using-different-chat-completion-models)
 * [Using reasoning models](#using-reasoning-models)
 * [Using different embedding models](#using-different-embedding-models)
-* [Enabling GPT vision feature](#enabling-gpt-vision-feature)
+* [Enabling multimodal embeddings and answering](#enabling-multimodal-embeddings-and-answering)
 * [Enabling media description with Azure Content Understanding](#enabling-media-description-with-azure-content-understanding)
 * [Enabling client-side chat history](#enabling-client-side-chat-history)
 * [Enabling persistent chat history with Azure Cosmos DB](#enabling-persistent-chat-history-with-azure-cosmos-db)
@@ -226,34 +226,7 @@ If you have already deployed:
 When your documents include images, you can optionally enable this feature that can
 use image embeddings when searching and also use images when answering questions.
 
-To enable multimodal embeddings and answering, run:
-
-```shell
-azd env set USE_MULTIMODAL true
-```
-
-With this feature enabled, the data ingestion process will extract images from your documents
-using Document Intelligence, store the images in Azure Blob Storage, vectorize the images using the Azure AI Vision service, and store the image embeddings in the Azure AI Search index.
-
-During the RAG flow, the app will perform a multi-vector query using both text and image embeddings, and then send any images associated with the retrieved document chunks to the chat completion model for answering questions. This feature assumes that your chat completion model supports multimodal inputs, such as `gpt-4o` or `gpt-4o-mini`.
-
-You can customize the RAG flow approach with a few additional environment variables.
-
-To only use the text embeddings for the search step (no image embeddings), run:
-
-```shell
-azd env set RAG_VECTOR_FIELDS_DEFAULT "textEmbeddingOnly"
-```
-
-To only send text sources to the chat completion model (no images), run:
-
-```shell
-azd env set RAG_LLM_INPUTS_OVERRIDE "texts"
-```
-
-You can also modify those settings in the "Developer Settings" in the chat UI,
-to experiment with different options before committing to them.
-
+Learn more in the [multimodal guide](./multimodal.md).
 
 ## Enabling media description with Azure Content Understanding
 
