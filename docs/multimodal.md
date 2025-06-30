@@ -8,7 +8,6 @@ This repository includes an optional feature that uses the GPT vision model to g
 
 ## How it works
 
-
 With this feature enabled, the data ingestion process will extract images from your documents
 using Document Intelligence, store the images in Azure Blob Storage, vectorize the images using the Azure AI Vision service, and store the image embeddings in the Azure AI Search index.
 
@@ -53,11 +52,11 @@ For more details on how this feature works, read [this blog post](https://techco
    azd env set USE_MULTIMODAL true
    ```
 
-3. **Provision the multimodal resources:**
+2. **Provision the multimodal resources:**
 
    Either run `azd up` if you haven't run it before, or run `azd provision` to provision the multimodal resources. This will create a new Azure AI Vision account and update the Azure AI Search index to include the new image embedding field.
 
-4. **Re-index the data:**
+3. **Re-index the data:**
 
    If you have already indexed data, you will need to re-index it to include the new image embeddings.
    We recommend creating a new Azure AI Search index to avoid conflicts with the existing index.
