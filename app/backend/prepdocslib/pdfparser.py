@@ -223,16 +223,17 @@ class DocumentAnalysisParser(Parser):
     @staticmethod
     async def process_figure(doc: pymupdf.Document, figure: DocumentFigure, media_describer: MediaDescriber) -> str:
         figure_title = (figure.caption and figure.caption.content) or ""
+        figure_filename = f"figure{figure.id.replace('.', '_')}.png"
         logger.info(
             "Describing figure %s with title '%s' using %s", figure.id, figure_title, type(media_describer).__name__
         )
         if not figure.bounding_regions:
             return ImageOnPage(
                 bytes=b"",
-                page_num=0,
+                page_num=0,  # O-indexed
                 figure_id=figure.id,
                 bbox=[0, 0, 0, 0],
-                filename=f"figure{figure.id.replace('.', '_')}.png",
+                filename=figure_filename,
                 description=f"<figure><figcaption>{figure_title}</figcaption></figure>",
             )
         if len(figure.bounding_regions) > 1:
@@ -253,7 +254,7 @@ class DocumentAnalysisParser(Parser):
             page_num=page_number - 1,  # Convert to 0-indexed
             figure_id=figure.id,
             bbox=bbox_pixels,
-            filename=f"figure{figure.id.replace(".", "_")}.png",
+            filename=figure_filename,
             description=f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>",
         )
 

@@ -35,9 +35,6 @@
     "computerVisionResourceGroupLocation": {
       "value": "${AZURE_COMPUTER_VISION_LOCATION=eastus}"
     },
-    "computerVisionSkuName": {
-      "value": "${AZURE_COMPUTER_VISION_SKU=S1}"
-    },
     "contentUnderstandingServiceName": {
       "value": "${AZURE_CONTENT_UNDERSTANDING_SERVICE}"
     },

@@ -140,7 +140,6 @@ param documentIntelligenceSkuName string // Set in main.parameters.json
 param computerVisionServiceName string = '' // Set in main.parameters.json
 param computerVisionResourceGroupName string = '' // Set in main.parameters.json
 param computerVisionResourceGroupLocation string = '' // Set in main.parameters.json
-param computerVisionSkuName string // Set in main.parameters.json
 
 param contentUnderstandingServiceName string = '' // Set in main.parameters.json
 param contentUnderstandingResourceGroupName string = '' // Set in main.parameters.json
@@ -704,8 +703,8 @@ module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if 
   params: {
     name: !empty(computerVisionServiceName)
       ? computerVisionServiceName
-      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
-    kind: 'ComputerVision'
+      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}2'
+    kind: 'AIServices'
     networkAcls: {
       defaultAction: 'Allow'
     }
@@ -714,7 +713,7 @@ module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if 
       : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
     location: computerVisionResourceGroupLocation
     tags: tags
-    sku: computerVisionSkuName
+    sku: 'S0'
   }
 }
 
