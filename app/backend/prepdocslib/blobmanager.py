@@ -2,6 +2,7 @@ import io
 import logging
 import os
 import re
+from pathlib import Path
 from typing import Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -78,7 +79,8 @@ class BlobManager:
 
             font = None
             try:
-                font = ImageFont.truetype("arial.ttf", 24)
+                font_path = Path(__file__).parent / "Jupiteroid-Regular.ttf"
+                font = ImageFont.truetype(str(font_path), 24)
             except OSError:
                 try:
                     font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 24)

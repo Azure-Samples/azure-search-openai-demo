@@ -2,6 +2,7 @@ TODO:
 
 * Fix/add unit tests - check coverage
 * Add documentation
+* Test vectorizer from Search Portal - requires correct permissions and vectorizer
 * Test with agentic
   * Add vectorizer for images field - special from https://learn.microsoft.com/en-us/azure/search/vector-search-vectorizer-ai-services-vision
   * Update the approaches to set image_sources appropriately in run_agentic_retrieval_approach
