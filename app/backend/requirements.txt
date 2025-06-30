@@ -352,7 +352,7 @@ pymupdf==1.26.0
     # via -r requirements.in
 pypdf==4.3.1
     # via -r requirements.in
-python-dotenv==1.0.1
+python-dotenv==1.1.1
     # via
     #   -r requirements.in
     #   prompty
