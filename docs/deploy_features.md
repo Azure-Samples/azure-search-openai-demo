@@ -135,14 +135,14 @@ This process does *not* delete your previous model deployment. If you want to de
 
 ## Using reasoning models
 
-⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md). TODO: OR IS IT?
+⚠️ This feature is not currently compatible with [multimodal feature](./multimodal.md). TODO: OR IS IT?
 
 This feature allows you to use reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
 To enable reasoning models, follow the steps in [the reasoning models guide](./reasoning.md).
 
 ## Using agentic retrieval
 
-⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md). TODO: OR IS IT?
+⚠️ This feature is not currently compatible with [multimodal feature](./multimodal.md). TODO: OR IS IT?
 
 This feature allows you to use agentic retrieval in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
 
@@ -259,7 +259,7 @@ to experiment with different options before committing to them.
 
 ⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
 
-It is compatible with [GPT vision integration](./gpt4v.md), but the features provide similar functionality. TODO: UPDATE
+It is compatible with the [multimodal feature](./multimodal.md), but the features provide similar functionality. TODO: UPDATE
 
 By default, if your documents contain image-like figures, the data ingestion process will ignore those figures,
 so users will not be able to ask questions about them.
@@ -347,7 +347,7 @@ azd env set USE_SPEECH_OUTPUT_BROWSER true
 
 ## Enabling Integrated Vectorization
 
-⚠️ This feature is not currently compatible with the [GPT vision integration](./gpt4v.md). TODO: UPDATE
+⚠️ This feature is not currently compatible with the [multimodal feature](./multimodal.md). TODO: UPDATE
 
 Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in-azure-ai-search/3960809). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
 

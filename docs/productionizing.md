@@ -106,7 +106,7 @@ First make sure you have the locust package installed in your Python environment
 python -m pip install locust
 ```
 
-Then run the locust command, specifying the name of the User class to use from `locustfile.py`. We've provided a `ChatUser` class that simulates a user asking questions and receiving answers, as well as a `ChatVisionUser` to simulate a user asking questions with [multimodal answering enabled](/docs/gpt4v.md). TODO
+Then run the locust command, specifying the name of the User class to use from `locustfile.py`. We've provided a `ChatUser` class that simulates a user asking questions and receiving answers, as well as a `ChatVisionUser` to simulate a user asking questions with [multimodal answering enabled](/docs/multimodal.md). TODO
 
 ```shell
 locust ChatUser
