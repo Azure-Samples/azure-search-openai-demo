@@ -252,6 +252,7 @@ class ImageEmbeddings:
                     async with session.post(url=endpoint, params=params, data=image_bytes) as resp:
                         resp_json = await resp.json()
                         return resp_json["vector"]
+        raise ValueError("Failed to get image embedding after multiple retries.")
 
     def before_retry_sleep(self, retry_state):
         logger.info("Rate limited on the Vision embeddings API, sleeping before retrying...")

@@ -134,10 +134,12 @@ class MultimodalModelDescriber(MediaDescriber):
                             "text": "Describe image with no more than 5 sentences. Do not speculate about anything you don't know.",
                             "type": "text",
                         },
-                        {"image_url": {"url": image_datauri}, "type": "image_url", "detail": "auto"},
+                        {"image_url": {"url": image_datauri, "detail": "auto"}, "type": "image_url"},
                     ],
                 },
             ],
         )
-        description = response.choices[0].message.content.strip() if response.choices else ""
+        description = ""
+        if response.choices and response.choices[0].message.content:
+            description = response.choices[0].message.content.strip()
         return description
