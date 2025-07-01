@@ -22,7 +22,7 @@ function truncateImageUrl(val: string) {
         return val.slice(0, 30) + "...";
     } else if (typeof val === "string" && val.startsWith("http")) {
         const blobIndex = val.indexOf(".blob.core.windows.net/");
-        return blobIndex !== -1 ? val.slice(blobIndex + ".blob.core.windows.net/".length) : val;
+        return blobIndex !== -1 ? ".../" + val.slice(blobIndex + ".blob.core.windows.net/".length) : val;
     }
     return val;
 }
