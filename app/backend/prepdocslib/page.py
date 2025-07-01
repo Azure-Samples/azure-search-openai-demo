@@ -1,16 +1,17 @@
 from dataclasses import dataclass, field
+from typing import Optional
 
 
 @dataclass
 class ImageOnPage:
     bytes: bytes
-    bbox: list[float, float, float, float]  # Pixels
+    bbox: tuple[float, float, float, float]  # Pixels
     filename: str
     description: str
     figure_id: str
     page_num: int  # 0-indexed
-    url: str | None = None
-    embedding: list[float] | None = None
+    url: Optional[str] = None
+    embedding: Optional[list[float]] = None
 
 
 @dataclass

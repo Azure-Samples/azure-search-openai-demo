@@ -703,14 +703,14 @@ module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if 
   params: {
     name: !empty(computerVisionServiceName)
       ? computerVisionServiceName
-      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}2'
-    kind: 'AIServices'
+      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}cs'
+    kind: 'CognitiveServices'
     networkAcls: {
       defaultAction: 'Allow'
     }
     customSubDomainName: !empty(computerVisionServiceName)
       ? computerVisionServiceName
-      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
+      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}cs'
     location: computerVisionResourceGroupLocation
     tags: tags
     sku: 'S0'
@@ -1061,6 +1061,16 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   params: {
     principalId: searchService.outputs.principalId
     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+module computerVisionRoleSearchService 'core/security/role.bicep' = if (useMultimodal) {
+  scope: computerVisionResourceGroup
+  name: 'computervision-role-searchservice'
+  params: {
+    principalId: searchService.outputs.principalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
     principalType: 'ServicePrincipal'
   }
 }

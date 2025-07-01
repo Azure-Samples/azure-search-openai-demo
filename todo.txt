@@ -9,6 +9,10 @@ TODO:
 * Test with integrated vectorization
 * Update all TODOs in the code/docs
 
+
 Decide:
 * In conftest, should I make a new env for vision? Currently I mashed it into the existing env, but it might be cleaner to have a separate one, as now I have to pass llm_inputs explicitly in the tests to turn off image responses.
 * LLMInputType and VectorFields have inconsistently named values
+
+Later:
+Agentic: Incompatible since it doesnt retrieve images. We would need to do a follow-up search query to get each document, like filter: id eq 'x' or id eq 'y' or....

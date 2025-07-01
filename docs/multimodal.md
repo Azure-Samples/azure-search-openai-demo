@@ -104,3 +104,10 @@ For more details on how this feature works, read [this blog post](https://techco
 
    You can also modify those settings in the "Developer Settings" in the chat UI,
    to experiment with different options before committing to them.
+
+## Compatibility
+
+* This feature is not fully compatible with the [agentic retrieval](./agentic_retrieval.md) feature.
+The agent *will* perform the multimodal vector embedding search, but it will not return images in the response,
+so we cannot send the images to the chat completion model.
+* This feature is compatible with the [reasoning models](./reasoning.md) feature, as long as you use a model that [supports image inputs](https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure%2Cpy#api--feature-support).

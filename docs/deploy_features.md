@@ -135,14 +135,12 @@ This process does *not* delete your previous model deployment. If you want to de
 
 ## Using reasoning models
 
-⚠️ This feature is not currently compatible with [multimodal feature](./multimodal.md). TODO: OR IS IT?
-
 This feature allows you to use reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
 To enable reasoning models, follow the steps in [the reasoning models guide](./reasoning.md).
 
 ## Using agentic retrieval
 
-⚠️ This feature is not currently compatible with [multimodal feature](./multimodal.md). TODO: OR IS IT?
+⚠️ This feature is not fully compatible with [multimodal feature](./multimodal.md).
 
 This feature allows you to use agentic retrieval in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
 

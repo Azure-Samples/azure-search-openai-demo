@@ -1,6 +1,7 @@
 import html
 import io
 import logging
+import uuid
 from collections.abc import AsyncGenerator
 from enum import Enum
 from typing import IO, Optional, Union
@@ -221,23 +222,27 @@ class DocumentAnalysisParser(Parser):
                 offset += len(page_text)
 
     @staticmethod
-    async def process_figure(doc: pymupdf.Document, figure: DocumentFigure, media_describer: MediaDescriber) -> str:
+    async def process_figure(
+        doc: pymupdf.Document, figure: DocumentFigure, media_describer: MediaDescriber
+    ) -> ImageOnPage:
         figure_title = (figure.caption and figure.caption.content) or ""
-        figure_filename = f"figure{figure.id.replace('.', '_')}.png"
+        # Generate a random UUID if figure.id is None
+        figure_id = figure.id or f"fig_{uuid.uuid4().hex[:8]}"
+        figure_filename = f"figure{figure_id.replace('.', '_')}.png"
         logger.info(
-            "Describing figure %s with title '%s' using %s", figure.id, figure_title, type(media_describer).__name__
+            "Describing figure %s with title '%s' using %s", figure_id, figure_title, type(media_describer).__name__
         )
         if not figure.bounding_regions:
             return ImageOnPage(
                 bytes=b"",
                 page_num=0,  # O-indexed
-                figure_id=figure.id,
-                bbox=[0, 0, 0, 0],
+                figure_id=figure_id,
+                bbox=(0, 0, 0, 0),
                 filename=figure_filename,
                 description=f"<figure><figcaption>{figure_title}</figcaption></figure>",
             )
         if len(figure.bounding_regions) > 1:
-            logger.warning("Figure %s has more than one bounding region, using the first one", figure.id)
+            logger.warning("Figure %s has more than one bounding region, using the first one", figure_id)
         first_region = figure.bounding_regions[0]
         # To learn more about bounding regions, see https://aka.ms/bounding-region
         bounding_box = (
@@ -252,7 +257,7 @@ class DocumentAnalysisParser(Parser):
         return ImageOnPage(
             bytes=cropped_img,
             page_num=page_number - 1,  # Convert to 0-indexed
-            figure_id=figure.id,
+            figure_id=figure_id,
             bbox=bbox_pixels,
             filename=figure_filename,
             description=f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>",
@@ -282,18 +287,18 @@ class DocumentAnalysisParser(Parser):
     @staticmethod
     def crop_image_from_pdf_page(
         doc: pymupdf.Document, page_number: int, bbox_inches: tuple[float, float, float, float]
-    ) -> tuple[bytes, list[float]]:
+    ) -> tuple[bytes, tuple[float, float, float, float]]:
         """
         Crops a region from a given page in a PDF and returns it as an image.
 
         :param pdf_path: Path to the PDF file.
         :param page_number: The page number to crop from (0-indexed).
         :param bbox_inches: A tuple of (x0, y0, x1, y1) coordinates for the bounding box, in inches.
-        :return: A PIL Image of the cropped area.
+        :return: A tuple of (image_bytes, bbox_pixels).
         """
         # Scale the bounding box to 72 DPI
         bbox_dpi = 72
-        bbox_pixels = [x * bbox_dpi for x in bbox_inches]
+        bbox_pixels = tuple(x * bbox_dpi for x in bbox_inches)  # Convert to tuple
         rect = pymupdf.Rect(bbox_pixels)
         # Assume that the PDF has 300 DPI,
         # and use the matrix to convert between the 2 DPIs
