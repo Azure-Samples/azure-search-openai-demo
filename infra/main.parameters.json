@@ -26,14 +26,14 @@
     "openAiSkuName": {
       "value": "S0"
     },
-    "computerVisionServiceName": {
-      "value": "${AZURE_COMPUTER_VISION_SERVICE}"
+    "visionServiceName": {
+      "value": "${AZURE_VISION_SERVICE}"
     },
-    "computerVisionResourceGroupName": {
-      "value": "${AZURE_COMPUTER_VISION_RESOURCE_GROUP}"
+    "visionResourceGroupName": {
+      "value": "${AZURE_VISION_RESOURCE_GROUP}"
     },
-    "computerVisionResourceGroupLocation": {
-      "value": "${AZURE_COMPUTER_VISION_LOCATION=eastus}"
+    "visionResourceGroupLocation": {
+      "value": "${AZURE_VISION_LOCATION=eastus}"
     },
     "contentUnderstandingServiceName": {
       "value": "${AZURE_CONTENT_UNDERSTANDING_SERVICE}"

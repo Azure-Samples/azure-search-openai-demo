@@ -331,7 +331,7 @@ def setup_image_embeddings_service(
     image_embeddings_service: Optional[ImageEmbeddings] = None
     if use_multimodal:
         if vision_endpoint is None:
-            raise ValueError("A computer vision endpoint is required when GPT-4-vision is enabled.")
+            raise ValueError("An Azure AI Vision endpoint must be provided to use multimodal features.")
         image_embeddings_service = ImageEmbeddings(
             endpoint=vision_endpoint,
             token_provider=get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default"),

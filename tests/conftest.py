@@ -38,11 +38,11 @@ from .mocks import (
     MockAzureCredentialExpired,
     MockBlobClient,
     MockResponse,
-    mock_computervision_response,
     mock_retrieval_response,
     mock_speak_text_cancelled,
     mock_speak_text_failed,
     mock_speak_text_success,
+    mock_vision_response,
 )
 
 MockSearchIndex = SearchIndex(
@@ -73,9 +73,9 @@ async def mock_retrieve(self, *args, **kwargs):
 def mock_azurehttp_calls(monkeypatch):
     def mock_post(*args, **kwargs):
         if kwargs.get("url").endswith("computervision/retrieval:vectorizeText"):
-            return mock_computervision_response()
+            return mock_vision_response()
         elif kwargs.get("url").endswith("computervision/retrieval:vectorizeImage"):
-            return mock_computervision_response()
+            return mock_vision_response()
         else:
             raise Exception("Unexpected URL for mock call to ClientSession.post()")
 

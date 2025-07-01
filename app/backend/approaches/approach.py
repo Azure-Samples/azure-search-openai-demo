@@ -1,6 +1,6 @@
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Optional, TypedDict, Union, cast
 from urllib.parse import urljoin
@@ -116,7 +116,7 @@ class DataPoints:
 @dataclass
 class ExtraInfo:
     data_points: DataPoints
-    thoughts: Optional[list[ThoughtStep]] = None
+    thoughts: list[ThoughtStep] = field(default_factory=list)
     followup_questions: Optional[list[Any]] = None
 
 
@@ -395,6 +395,8 @@ class Approach(ABC):
                 text_sources.append(f"{citation}: {nonewlines(doc.content or '')}")
 
             if use_image_sources and hasattr(doc, "images") and doc.images:
+                if self.images_blob_container_client is None:
+                    raise ValueError("The images blob container client must be set to use image sources.")
                 for img in doc.images:
                     # Skip if we've already processed this URL
                     if img["url"] in seen_urls:
@@ -440,11 +442,15 @@ class Approach(ABC):
         return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
 
     async def compute_image_embedding(self, q: str):
+        if not self.vision_endpoint:
+            raise ValueError("Azure AI Vision endpoint must be set to compute image embedding.")
         endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
         headers = {"Content-Type": "application/json"}
         params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
         data = {"text": q}
 
+        if not self.vision_token_provider:
+            raise ValueError("Azure AI Vision token provider must be set to compute image embedding.")
         headers["Authorization"] = "Bearer " + await self.vision_token_provider()
 
         async with aiohttp.ClientSession() as session:

@@ -215,7 +215,7 @@ class MockClient:
         self.embeddings = embeddings_client
 
 
-def mock_computervision_response():
+def mock_vision_response():
     return MockResponse(
         status=200,
         text=json.dumps(

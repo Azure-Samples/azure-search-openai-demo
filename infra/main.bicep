@@ -137,9 +137,9 @@ param documentIntelligenceResourceGroupLocation string
 
 param documentIntelligenceSkuName string // Set in main.parameters.json
 
-param computerVisionServiceName string = '' // Set in main.parameters.json
-param computerVisionResourceGroupName string = '' // Set in main.parameters.json
-param computerVisionResourceGroupLocation string = '' // Set in main.parameters.json
+param visionServiceName string = '' // Set in main.parameters.json
+param visionResourceGroupName string = '' // Set in main.parameters.json
+param visionResourceGroupLocation string = '' // Set in main.parameters.json
 
 param contentUnderstandingServiceName string = '' // Set in main.parameters.json
 param contentUnderstandingResourceGroupName string = '' // Set in main.parameters.json
@@ -325,8 +325,8 @@ resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2
   name: !empty(documentIntelligenceResourceGroupName) ? documentIntelligenceResourceGroupName : resourceGroup.name
 }
 
-resource computerVisionResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(computerVisionResourceGroupName)) {
-  name: !empty(computerVisionResourceGroupName) ? computerVisionResourceGroupName : resourceGroup.name
+resource visionResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(visionResourceGroupName)) {
+  name: !empty(visionResourceGroupName) ? visionResourceGroupName : resourceGroup.name
 }
 
 resource contentUnderstandingResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(contentUnderstandingResourceGroupName)) {
@@ -402,7 +402,7 @@ var appEnvVariables = {
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
   AZURE_SEARCH_QUERY_REWRITING: searchServiceQueryRewriting
-  AZURE_VISION_ENDPOINT: useMultimodal ? computerVision.outputs.endpoint : ''
+  AZURE_VISION_ENDPOINT: useMultimodal ? vision.outputs.endpoint : ''
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
   AZURE_SEARCH_FIELD_NAME_EMBEDDING: searchFieldNameEmbedding
@@ -697,21 +697,21 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2'
   }
 }
 
-module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMultimodal) {
-  name: 'computerVision'
-  scope: computerVisionResourceGroup
+module vision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMultimodal) {
+  name: 'vision'
+  scope: visionResourceGroup
   params: {
-    name: !empty(computerVisionServiceName)
-      ? computerVisionServiceName
-      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}cs'
+    name: !empty(visionServiceName)
+      ? visionServiceName
+      : '${abbrs.cognitiveServicesVision}${resourceToken}'
     kind: 'CognitiveServices'
     networkAcls: {
       defaultAction: 'Allow'
     }
-    customSubDomainName: !empty(computerVisionServiceName)
-      ? computerVisionServiceName
-      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}cs'
-    location: computerVisionResourceGroupLocation
+    customSubDomainName: !empty(visionServiceName)
+      ? visionServiceName
+      : '${abbrs.cognitiveServicesVision}${resourceToken}'
+    location: visionResourceGroupLocation
     tags: tags
     sku: 'S0'
   }
@@ -936,7 +936,7 @@ module openAiRoleUser 'core/security/role.bicep' = if (isAzureOpenAiHost && depl
   }
 }
 
-// For both document intelligence and computer vision
+// For both Document Intelligence and AI vision
 module cognitiveServicesRoleUser 'core/security/role.bicep' = {
   scope: resourceGroup
   name: 'cognitiveservices-role-user'
@@ -1065,9 +1065,9 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   }
 }
 
-module computerVisionRoleSearchService 'core/security/role.bicep' = if (useMultimodal) {
-  scope: computerVisionResourceGroup
-  name: 'computervision-role-searchservice'
+module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal) {
+  scope: visionResourceGroup
+  name: 'vision-role-searchservice'
   params: {
     principalId: searchService.outputs.principalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
@@ -1175,7 +1175,7 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi &&
         dnsZoneName: 'privatelink.openai.azure.com'
         resourceIds: concat(
           [openAi.outputs.resourceId],
-          useMultimodal ? [computerVision.outputs.resourceId] : [],
+          useMultimodal ? [vision.outputs.resourceId] : [],
           useMediaDescriberAzureCU ? [contentUnderstanding.outputs.resourceId] : [],
           !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : []
         )
@@ -1251,10 +1251,10 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload) 
   }
 }
 
-// For computer vision access by the backend
-module computerVisionRoleBackend 'core/security/role.bicep' = if (useMultimodal) {
-  scope: computerVisionResourceGroup
-  name: 'computervision-role-backend'
+// For Azure AI Vision access by the backend
+module visionRoleBackend 'core/security/role.bicep' = if (useMultimodal) {
+  scope: visionResourceGroup
+  name: 'vision-role-backend'
   params: {
     principalId: (deploymentTarget == 'appservice')
       ? backend.outputs.identityPrincipalId
@@ -1309,7 +1309,7 @@ output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
-output AZURE_VISION_ENDPOINT string = useMultimodal ? computerVision.outputs.endpoint : ''
+output AZURE_VISION_ENDPOINT string = useMultimodal ? vision.outputs.endpoint : ''
 output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name

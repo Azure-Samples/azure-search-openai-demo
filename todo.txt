@@ -1,11 +1,7 @@
 TODO:
 
 * Fix/add unit tests - check coverage
-* Add documentation
-* Test vectorizer from Search Portal - requires correct permissions and vectorizer
-* Test with agentic
-  * Add vectorizer for images field - special from https://learn.microsoft.com/en-us/azure/search/vector-search-vectorizer-ai-services-vision
-  * Update the approaches to set image_sources appropriately in run_agentic_retrieval_approach
+* mypy
 * Test with integrated vectorization
 * Update all TODOs in the code/docs
 
@@ -13,6 +9,7 @@ TODO:
 Decide:
 * In conftest, should I make a new env for vision? Currently I mashed it into the existing env, but it might be cleaner to have a separate one, as now I have to pass llm_inputs explicitly in the tests to turn off image responses.
 * LLMInputType and VectorFields have inconsistently named values
+* Should we make an Azure AI Vision client class? So we dont have to pass two things around, just one?
 
 Later:
 Agentic: Incompatible since it doesnt retrieve images. We would need to do a follow-up search query to get each document, like filter: id eq 'x' or id eq 'y' or....

@@ -150,6 +150,8 @@ class SearchManager:
                 )
 
             if self.search_images:
+                if not self.search_info.azure_vision_endpoint:
+                    raise ValueError("Azure AI Vision endpoint must be provided to use image embeddings")
                 image_vector_algorithm = HnswAlgorithmConfiguration(
                     name="images_hnsw_config",
                     parameters=HnswParameters(metric="cosine"),
@@ -366,7 +368,11 @@ class SearchManager:
                     existing_index.vector_search.compressions.append(text_vector_compression)
                     await search_index_client.create_or_update_index(existing_index)
 
-                if images_field and not any(field.name == "images" for field in existing_index.fields):
+                if (
+                    images_field
+                    and images_field.fields
+                    and not any(field.name == "images" for field in existing_index.fields)
+                ):
                     logger.info("Adding %s field for image embeddings", images_field.name)
                     images_field.fields[0].stored = True
                     existing_index.fields.append(images_field)

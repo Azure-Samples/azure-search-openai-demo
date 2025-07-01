@@ -19,7 +19,7 @@ class MediaDescriber(ABC):
         raise NotImplementedError  # pragma: no cover
 
 
-class ContentUnderstandingDescriber:
+class ContentUnderstandingDescriber(MediaDescriber):
     CU_API_VERSION = "2024-12-01-preview"
 
     analyzer_schema = {
