@@ -1,11 +1,9 @@
 TODO:
 
-* Fix/add unit tests - check coverage
-* mypy
 * Test with integrated vectorization
 * Test with user upload feature
 * Update all TODOs in the code/docs
-* shall i truncate the image_urls to ".data:image/png;base64,asdsa...." for the JSON display
+* Fix/add unit tests - check coverage
 
 Decide:
 * In conftest, should I make a new env for vision? Currently I mashed it into the existing env, but it might be cleaner to have a separate one, as now I have to pass llm_inputs explicitly in the tests to turn off image responses.
