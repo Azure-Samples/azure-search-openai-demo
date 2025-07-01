@@ -188,16 +188,18 @@ def setup_embeddings_service(
 
 def setup_openai_client(
     openai_host: OpenAIHost,
+    azure_credential: AsyncTokenCredential,
     azure_openai_api_key: Union[str, None] = None,
     azure_openai_api_version: Union[str, None] = None,
     azure_openai_service: Union[str, None] = None,
     azure_openai_custom_url: Union[str, None] = None,
-    azure_credential: AsyncTokenCredential = None,
     openai_api_key: Union[str, None] = None,
     openai_organization: Union[str, None] = None,
 ):
     if openai_host not in OpenAIHost:
         raise ValueError(f"Invalid OPENAI_HOST value: {openai_host}. Must be one of {[h.value for h in OpenAIHost]}.")
+
+    openai_client: AsyncOpenAI
 
     if openai_host in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
         if openai_host == OpenAIHost.AZURE_CUSTOM:
@@ -501,11 +503,11 @@ if __name__ == "__main__":
     )
     openai_client = setup_openai_client(
         openai_host=openai_host,
+        azure_credential=azd_credential,
         azure_openai_api_version=azure_openai_api_version,
         azure_openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
         azure_openai_custom_url=os.getenv("AZURE_OPENAI_CUSTOM_URL"),
         azure_openai_api_key=os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"),
-        azure_credential=azd_credential,
         openai_api_key=clean_key_if_exists(os.getenv("OPENAI_API_KEY")),
         openai_organization=os.getenv("OPENAI_ORGANIZATION"),
     )

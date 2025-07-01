@@ -94,6 +94,7 @@ from core.sessionhelper import create_session_id
 from decorators import authenticated, authenticated_path
 from error import error_dict, error_response
 from prepdocs import (
+    OpenAIHost,
     clean_key_if_exists,
     setup_embeddings_service,
     setup_file_processors,
@@ -583,7 +584,7 @@ async def setup_clients():
         )
         text_embeddings_service = setup_embeddings_service(
             azure_credential=azure_credential,
-            openai_host=OPENAI_HOST,
+            openai_host=OpenAIHost(OPENAI_HOST),
             emb_model_name=OPENAI_EMB_MODEL,
             emb_model_dimensions=OPENAI_EMB_DIMENSIONS,
             azure_openai_service=AZURE_OPENAI_SERVICE,

@@ -298,7 +298,9 @@ class DocumentAnalysisParser(Parser):
         """
         # Scale the bounding box to 72 DPI
         bbox_dpi = 72
-        bbox_pixels = tuple(x * bbox_dpi for x in bbox_inches)  # Convert to tuple
+        # We multiply using unpacking to ensure the resulting tuple has the correct number of elements
+        x0, y0, x1, y1 = (x * bbox_dpi for x in bbox_inches)
+        bbox_pixels = (x0, y0, x1, y1)
         rect = pymupdf.Rect(bbox_pixels)
         # Assume that the PDF has 300 DPI,
         # and use the matrix to convert between the 2 DPIs

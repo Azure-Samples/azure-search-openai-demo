@@ -30,6 +30,8 @@ async def parse_file(
     pages = [page async for page in processor.parser.parse(content=file.content)]
     for page in pages:
         for image in page.images:
+            if not blob_manager or not image_embeddings_client:
+                raise ValueError("BlobManager and ImageEmbeddingsClient must be provided to parse images in the file.")
             if image.url is None:
                 image.url = await blob_manager.upload_document_image(file, image.bytes, image.filename, image.page_num)
             if image_embeddings_client:
