@@ -20,6 +20,7 @@ async def parse_file(
     category: Optional[str] = None,
     blob_manager: Optional[BlobManager] = None,
     image_embeddings_client: Optional[ImageEmbeddings] = None,
+    user_oid: Optional[str] = None,
 ) -> list[Section]:
     key = file.file_extension().lower()
     processor = file_processors.get(key)
@@ -33,7 +34,9 @@ async def parse_file(
             if not blob_manager or not image_embeddings_client:
                 raise ValueError("BlobManager and ImageEmbeddingsClient must be provided to parse images in the file.")
             if image.url is None:
-                image.url = await blob_manager.upload_document_image(file, image.bytes, image.filename, image.page_num)
+                image.url = await blob_manager.upload_document_image(
+                    file.filename(), image.bytes, image.filename, image.page_num, user_oid=user_oid
+                )
             if image_embeddings_client:
                 image.embedding = await image_embeddings_client.create_embedding(image.bytes)
     logger.info("Splitting '%s' into sections", file.filename())
@@ -133,7 +136,7 @@ class FileStrategy(Strategy):
             await self.search_manager.remove_content()
 
 
-class UploadUserFileStrategy:
+class UploadUserFileStrategy(FileStrategy):
     """
     Strategy for ingesting a file that has already been uploaded to a ADLS2 storage account
     """
@@ -163,10 +166,10 @@ class UploadUserFileStrategy:
         )
         self.search_field_name_embedding = search_field_name_embedding
 
-    async def add_file(self, file: File):
-        if self.image_embeddings:
-            logging.warning("Image embeddings are not currently supported for the user upload feature")
-        sections = await parse_file(file, self.file_processors, None, self.blob_manager, self.image_embeddings)
+    async def add_file(self, file: File, user_oid: str):
+        sections = await parse_file(
+            file, self.file_processors, None, self.blob_manager, self.image_embeddings, user_oid=user_oid
+        )
         if sections:
             await self.search_manager.update_content(sections, url=file.url)
 

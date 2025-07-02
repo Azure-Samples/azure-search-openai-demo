@@ -436,10 +436,10 @@ if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    openai_host = os.environ["OPENAI_HOST"]
+    OPENAI_HOST = OpenAIHost(os.environ["OPENAI_HOST"])
     # Check for incompatibility
     # if openai host is not azure
-    if openai_host != "azure" and use_agentic_retrieval:
+    if use_agentic_retrieval and OPENAI_HOST not in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
         raise Exception("Agentic retrieval requires an Azure OpenAI chat completion service")
 
     search_info = loop.run_until_complete(
@@ -475,7 +475,6 @@ if __name__ == "__main__":
         datalake_key=clean_key_if_exists(args.datalakekey),
     )
 
-    openai_host = OpenAIHost(os.environ["OPENAI_HOST"])
     # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
     azure_openai_api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-06-01"
     emb_model_dimensions = 1536
@@ -483,7 +482,7 @@ if __name__ == "__main__":
         emb_model_dimensions = int(os.environ["AZURE_OPENAI_EMB_DIMENSIONS"])
     openai_embeddings_service = setup_embeddings_service(
         azure_credential=azd_credential,
-        openai_host=openai_host,
+        openai_host=OPENAI_HOST,
         emb_model_name=os.environ["AZURE_OPENAI_EMB_MODEL_NAME"],
         emb_model_dimensions=emb_model_dimensions,
         azure_openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
@@ -497,7 +496,7 @@ if __name__ == "__main__":
         disable_batch_vectors=args.disablebatchvectors,
     )
     openai_client = setup_openai_client(
-        openai_host=openai_host,
+        openai_host=OPENAI_HOST,
         azure_credential=azd_credential,
         azure_openai_api_version=azure_openai_api_version,
         azure_openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
@@ -543,7 +542,7 @@ if __name__ == "__main__":
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
             openai_client=openai_client,
             openai_model=os.getenv("AZURE_OPENAI_CHATGPT_MODEL"),
-            openai_deployment=os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if openai_host == OpenAIHost.AZURE else None,
+            openai_deployment=os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == OpenAIHost.AZURE else None,
         )
 
         image_embeddings_service = setup_image_embeddings_service(

@@ -29,10 +29,12 @@ class File:
         self.url = url
 
     def filename(self):
+        if not self.content.name or self.content.name == "file":
+            return os.path.basename(self.content.filename)
         return os.path.basename(self.content.name)
 
     def file_extension(self):
-        return os.path.splitext(self.content.name)[1]
+        return os.path.splitext(self.filename())[1]
 
     def filename_to_id(self):
         filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.filename())

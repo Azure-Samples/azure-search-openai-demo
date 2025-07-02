@@ -30,7 +30,6 @@ from azure.storage.blob.aio import ContainerClient
 from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
 from azure.storage.filedatalake.aio import FileSystemClient
 from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
-from openai import AsyncAzureOpenAI, AsyncOpenAI
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import (
@@ -99,8 +98,10 @@ from prepdocs import (
     setup_embeddings_service,
     setup_file_processors,
     setup_image_embeddings_service,
+    setup_openai_client,
     setup_search_info,
 )
+from prepdocslib.blobmanager import AdlsBlobManager
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
 
@@ -358,22 +359,10 @@ async def upload(auth_claims: dict[str, Any]):
 
     user_oid = auth_claims["oid"]
     file = request_files.getlist("file")[0]
-    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
-    user_directory_client = user_blob_container_client.get_directory_client(user_oid)
-    try:
-        await user_directory_client.get_directory_properties()
-    except ResourceNotFoundError:
-        current_app.logger.info("Creating directory for user %s", user_oid)
-        await user_directory_client.create_directory()
-    await user_directory_client.set_access_control(owner=user_oid)
-    file_client = user_directory_client.get_file_client(file.filename)
-    file_io = file
-    file_io.name = file.filename
-    file_io = io.BufferedReader(file_io)
-    await file_client.upload_data(file_io, overwrite=True, metadata={"UploadedBy": user_oid})
-    file_io.seek(0)
+    adls_manager = AdlsBlobManager(current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT])
+    file_url = await adls_manager.upload_blob(file, file.filename, user_oid)
     ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
-    await ingester.add_file(File(content=file_io, acls={"oids": [user_oid]}, url=file_client.url))
+    await ingester.add_file(File(content=file, url=file_url), user_oid=user_oid)
     return jsonify({"message": "File uploaded successfully"}), 200
 
 
@@ -395,16 +384,35 @@ async def delete_uploaded(auth_claims: dict[str, Any]):
 @bp.get("/list_uploaded")
 @authenticated
 async def list_uploaded(auth_claims: dict[str, Any]):
+    """Lists the uploaded documents for the current user.
+    Only returns files directly in the user's directory, not in subdirectories.
+    Excludes image files and the images directory."""
     user_oid = auth_claims["oid"]
     user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
     files = []
     try:
         all_paths = user_blob_container_client.get_paths(path=user_oid)
         async for path in all_paths:
-            files.append(path.name.split("/", 1)[1])
+            # Split path into parts (user_oid/filename or user_oid/directory/files)
+            path_parts = path.name.split("/", 1)
+            if len(path_parts) != 2:
+                continue
+
+            filename = path_parts[1]
+            # Only include files that are:
+            # 1. Directly in the user's directory (no additional slashes)
+            # 2. Not image files
+            # 3. Not in a directory containing 'images'
+            if (
+                "/" not in filename
+                and not any(filename.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".gif", ".bmp"])
+                and "images" not in filename
+            ):
+                files.append(filename)
     except ResourceNotFoundError as error:
         if error.status_code != 404:
             current_app.logger.exception("Error listing uploaded files", error)
+        # Return empty list for 404 (no directory) as this is expected for new users
     return jsonify(files), 200
 
 
@@ -559,6 +567,29 @@ async def setup_clients():
         enable_unauthenticated_access=AZURE_ENABLE_UNAUTHENTICATED_ACCESS,
     )
 
+    if USE_SPEECH_OUTPUT_AZURE:
+        current_app.logger.info("USE_SPEECH_OUTPUT_AZURE is true, setting up Azure speech service")
+        if not AZURE_SPEECH_SERVICE_ID or AZURE_SPEECH_SERVICE_ID == "":
+            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_ID")
+        if not AZURE_SPEECH_SERVICE_LOCATION or AZURE_SPEECH_SERVICE_LOCATION == "":
+            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_LOCATION")
+        current_app.config[CONFIG_SPEECH_SERVICE_ID] = AZURE_SPEECH_SERVICE_ID
+        current_app.config[CONFIG_SPEECH_SERVICE_LOCATION] = AZURE_SPEECH_SERVICE_LOCATION
+        current_app.config[CONFIG_SPEECH_SERVICE_VOICE] = AZURE_SPEECH_SERVICE_VOICE
+        # Wait until token is needed to fetch for the first time
+        current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
+
+    openai_client = setup_openai_client(
+        openai_host=OPENAI_HOST,
+        azure_credential=azure_credential,
+        azure_openai_api_version=AZURE_OPENAI_API_VERSION,
+        azure_openai_service=AZURE_OPENAI_SERVICE,
+        azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
+        azure_openai_api_key=AZURE_OPENAI_API_KEY_OVERRIDE,
+        openai_api_key=OPENAI_API_KEY,
+        openai_organization=OPENAI_ORGANIZATION,
+    )
+
     if USE_USER_UPLOAD:
         current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
         if not AZURE_USERSTORAGE_ACCOUNT or not AZURE_USERSTORAGE_CONTAINER:
@@ -578,7 +609,12 @@ async def setup_clients():
             document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
             local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER", "").lower() == "true",
             local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER", "").lower() == "true",
+            use_content_understanding=os.getenv("USE_CONTENT_UNDERSTANDING", "").lower() == "true",
+            content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
             use_multimodal=USE_MULTIMODAL,
+            openai_client=openai_client,
+            openai_model=OPENAI_CHATGPT_MODEL,
+            openai_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT if OPENAI_HOST == OpenAIHost.AZURE else None,
         )
         search_info = await setup_search_info(
             search_service=AZURE_SEARCH_SERVICE, index_name=AZURE_SEARCH_INDEX, azure_credential=azure_credential
@@ -608,62 +644,9 @@ async def setup_clients():
             embeddings=text_embeddings_service,
             image_embeddings=image_embeddings_service,
             search_field_name_embedding=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
-            blob_manager=user_blob_container_client,
+            blob_manager=AdlsBlobManager(user_blob_container_client),
         )
         current_app.config[CONFIG_INGESTER] = ingester
-
-    # Used by the OpenAI SDK
-    openai_client: AsyncOpenAI
-
-    if USE_SPEECH_OUTPUT_AZURE:
-        current_app.logger.info("USE_SPEECH_OUTPUT_AZURE is true, setting up Azure speech service")
-        if not AZURE_SPEECH_SERVICE_ID or AZURE_SPEECH_SERVICE_ID == "":
-            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_ID")
-        if not AZURE_SPEECH_SERVICE_LOCATION or AZURE_SPEECH_SERVICE_LOCATION == "":
-            raise ValueError("Azure speech resource not configured correctly, missing AZURE_SPEECH_SERVICE_LOCATION")
-        current_app.config[CONFIG_SPEECH_SERVICE_ID] = AZURE_SPEECH_SERVICE_ID
-        current_app.config[CONFIG_SPEECH_SERVICE_LOCATION] = AZURE_SPEECH_SERVICE_LOCATION
-        current_app.config[CONFIG_SPEECH_SERVICE_VOICE] = AZURE_SPEECH_SERVICE_VOICE
-        # Wait until token is needed to fetch for the first time
-        current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
-
-    if OPENAI_HOST.startswith("azure"):
-        if OPENAI_HOST == "azure_custom":
-            current_app.logger.info("OPENAI_HOST is azure_custom, setting up Azure OpenAI custom client")
-            if not AZURE_OPENAI_CUSTOM_URL:
-                raise ValueError("AZURE_OPENAI_CUSTOM_URL must be set when OPENAI_HOST is azure_custom")
-            endpoint = AZURE_OPENAI_CUSTOM_URL
-        else:
-            current_app.logger.info("OPENAI_HOST is azure, setting up Azure OpenAI client")
-            if not AZURE_OPENAI_SERVICE:
-                raise ValueError("AZURE_OPENAI_SERVICE must be set when OPENAI_HOST is azure")
-            endpoint = f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com"
-        if AZURE_OPENAI_API_KEY_OVERRIDE:
-            current_app.logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
-            openai_client = AsyncAzureOpenAI(
-                api_version=AZURE_OPENAI_API_VERSION, azure_endpoint=endpoint, api_key=AZURE_OPENAI_API_KEY_OVERRIDE
-            )
-        else:
-            current_app.logger.info("Using Azure credential (passwordless authentication) for Azure OpenAI client")
-            openai_client = AsyncAzureOpenAI(
-                api_version=AZURE_OPENAI_API_VERSION,
-                azure_endpoint=endpoint,
-                azure_ad_token_provider=azure_ai_token_provider,
-            )
-    elif OPENAI_HOST == "local":
-        current_app.logger.info("OPENAI_HOST is local, setting up local OpenAI client for OPENAI_BASE_URL with no key")
-        openai_client = AsyncOpenAI(
-            base_url=os.environ["OPENAI_BASE_URL"],
-            api_key="no-key-required",
-        )
-    else:
-        current_app.logger.info(
-            "OPENAI_HOST is not azure, setting up OpenAI client using OPENAI_API_KEY and OPENAI_ORGANIZATION environment variables"
-        )
-        openai_client = AsyncOpenAI(
-            api_key=OPENAI_API_KEY,
-            organization=OPENAI_ORGANIZATION,
-        )
 
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
