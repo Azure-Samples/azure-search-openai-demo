@@ -27,14 +27,13 @@ For more details on how this feature works, read [this blog post](https://techco
 
 ### Prerequisites
 
-* Create a [AI Vision account in Azure Portal first](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesComputerVision), so that you can agree to the Responsible AI terms for that resource. You can delete that account after agreeing. (TODO: Is this still needed?)
-* The use of a chat completion model that supports multimodal inputs. The default model for the repository is currently `gpt-4.1-mini`, which does support multimodal inputs.
+* The use of a chat completion model that supports multimodal inputs. The default model for the repository is currently `gpt-4.1-mini`, which does support multimodal inputs. The `gpt-4o-mini` technically supports multimodal inputs, but due to how image tokens are calculated, you need a much higher deployment capacity to use it effectively. Please try `gpt-4.1-mini` first, and experiment with other models later.
 
 ### Deployment
 
 1. **Enable multimodal capabilities:**
 
-   First, make sure you do *not* have integrated vectorization enabled, since that is currently incompatible:
+   First, make sure you do *not* have integrated vectorization enabled, since that is currently incompatible: (TODO!)
 
    ```shell
    azd env set USE_FEATURE_INT_VECTORIZATION false

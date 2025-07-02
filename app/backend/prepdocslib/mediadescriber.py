@@ -6,9 +6,16 @@ from typing import Optional
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, RateLimitError
 from rich.progress import Progress
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_fixed
+from tenacity import (
+    AsyncRetrying,
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_fixed,
+    wait_random_exponential,
+)
 
 logger = logging.getLogger("scripts")
 
@@ -116,29 +123,39 @@ class MultimodalModelDescriber(MediaDescriber):
         self.deployment = deployment
 
     async def describe_image(self, image_bytes: bytes) -> str:
+        def before_retry_sleep(retry_state):
+            logger.info("Rate limited on the OpenAI chat completions API, sleeping before retrying...")
+
         image_base64 = base64.b64encode(image_bytes).decode("utf-8")
         image_datauri = f"data:image/png;base64,{image_base64}"
 
-        response = await self.openai_client.chat.completions.create(
-            model=self.model if self.deployment is None else self.deployment,
-            max_tokens=500,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant that describes images from organizational documents.",
-                },
-                {
-                    "role": "user",
-                    "content": [
+        async for attempt in AsyncRetrying(
+            retry=retry_if_exception_type(RateLimitError),
+            wait=wait_random_exponential(min=15, max=60),
+            stop=stop_after_attempt(15),
+            before_sleep=before_retry_sleep,
+        ):
+            with attempt:
+                response = await self.openai_client.chat.completions.create(
+                    model=self.model if self.deployment is None else self.deployment,
+                    max_tokens=500,
+                    messages=[
                         {
-                            "text": "Describe image with no more than 5 sentences. Do not speculate about anything you don't know.",
-                            "type": "text",
+                            "role": "system",
+                            "content": "You are a helpful assistant that describes images from organizational documents.",
                         },
-                        {"image_url": {"url": image_datauri, "detail": "auto"}, "type": "image_url"},
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "text": "Describe image with no more than 5 sentences. Do not speculate about anything you don't know.",
+                                    "type": "text",
+                                },
+                                {"image_url": {"url": image_datauri, "detail": "auto"}, "type": "image_url"},
+                            ],
+                        },
                     ],
-                },
-            ],
-        )
+                )
         description = ""
         if response.choices and response.choices[0].message.content:
             description = response.choices[0].message.content.strip()

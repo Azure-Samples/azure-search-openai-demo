@@ -5,7 +5,11 @@ from azure.search.documents.indexes._generated.models import (
     NativeBlobSoftDeleteDeletionDetectionPolicy,
 )
 from azure.search.documents.indexes.models import (
+    AIServicesAccountIdentity,
     AzureOpenAIEmbeddingSkill,
+    BlobIndexerImageAction,
+    IndexingParameters,
+    IndexingParametersConfiguration,
     IndexProjectionMode,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
@@ -16,12 +20,17 @@ from azure.search.documents.indexes.models import (
     SearchIndexerIndexProjection,
     SearchIndexerIndexProjectionSelector,
     SearchIndexerIndexProjectionsParameters,
+    SearchIndexerKnowledgeStore,
+    SearchIndexerKnowledgeStoreFileProjectionSelector,
+    SearchIndexerKnowledgeStoreProjection,
     SearchIndexerSkillset,
+    ShaperSkill,
     SplitSkill,
+    VisionVectorizeSkill,
 )
 
 from .blobmanager import BlobManager
-from .embeddings import AzureOpenAIEmbeddingService
+from .embeddings import AzureOpenAIEmbeddingService, ImageEmbeddings
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
 from .strategy import DocumentAction, SearchInfo, Strategy
@@ -42,20 +51,20 @@ class IntegratedVectorizerStrategy(Strategy):
         embeddings: AzureOpenAIEmbeddingService,
         search_field_name_embedding: str,
         subscription_id: str,
-        search_service_user_assigned_id: str,
         document_action: DocumentAction = DocumentAction.Add,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
         category: Optional[str] = None,
+        use_multimodal: bool = False,
+        image_embeddings: Optional[ImageEmbeddings] = None,
     ):
-
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
         self.document_action = document_action
         self.embeddings = embeddings
+        self.image_embeddings = image_embeddings
         self.search_field_name_embedding = search_field_name_embedding
         self.subscription_id = subscription_id
-        self.search_user_assigned_identity = search_service_user_assigned_id
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
         self.category = category
@@ -64,6 +73,7 @@ class IntegratedVectorizerStrategy(Strategy):
         self.skillset_name = f"{prefix}-skillset"
         self.indexer_name = f"{prefix}-indexer"
         self.data_source_name = f"{prefix}-blob"
+        self.use_multimodal = use_multimodal and image_embeddings is not None
 
     async def create_embedding_skill(self, index_name: str) -> SearchIndexerSkillset:
         """
@@ -97,6 +107,23 @@ class IntegratedVectorizerStrategy(Strategy):
             outputs=[OutputFieldMappingEntry(name="embedding", target_name="vector")],
         )
 
+        vision_embedding_skill = VisionVectorizeSkill(
+            name="vision-embedding-skill",
+            description="Skill to generate image embeddings via Azure AI Vision",
+            context="/document/normalized_images/*",
+            model_version="2023-04-15",
+            inputs=[InputFieldMappingEntry(name="image", source="/document/normalized_images/*")],
+            outputs=[OutputFieldMappingEntry(name="vector", target_name="image_vector")],
+        )
+        vision_embedding_shaper_skill = ShaperSkill(
+            name="vision-embedding-shaper-skill",
+            description="Shaper skill to ensure image embeddings are in the correct format",
+            context="/document/normalized_images/*",
+            inputs=[InputFieldMappingEntry(name="embedding", source="/document/normalized_images/*/image_vector")],
+            outputs=[OutputFieldMappingEntry(name="output", target_name="images")],
+        )
+        # TODO: project images into a container
+
         index_projection = SearchIndexerIndexProjection(
             selectors=[
                 SearchIndexerIndexProjectionSelector(
@@ -111,6 +138,7 @@ class IntegratedVectorizerStrategy(Strategy):
                         InputFieldMappingEntry(
                             name=self.search_field_name_embedding, source="/document/pages/*/vector"
                         ),
+                        InputFieldMappingEntry(name="images", source="/document/normalized_images/*/images"),
                     ],
                 ),
             ],
@@ -119,11 +147,36 @@ class IntegratedVectorizerStrategy(Strategy):
             ),
         )
 
+        indexer_skills = [split_skill, embedding_skill]
+        if self.use_multimodal:
+            indexer_skills.extend([vision_embedding_skill, vision_embedding_shaper_skill])
+        extra_params = {}
+        if self.use_multimodal:
+            extra_params = {
+                "cognitive_services_account": AIServicesAccountIdentity(subdomain_url=self.image_embeddings.endpoint),
+                "knowledge_store": SearchIndexerKnowledgeStore(
+                    storage_connection_string=self.blob_manager.get_managedidentity_connectionstring(),
+                    projections=[
+                        SearchIndexerKnowledgeStoreProjection(
+                            files=[
+                                SearchIndexerKnowledgeStoreFileProjectionSelector(
+                                    storage_container=self.blob_manager.image_container,
+                                    source="/document/normalized_images/*",
+                                )
+                            ]
+                        )
+                    ],
+                ),
+            }
+
+        # We still need to map the images onto url in the images complex field type
+        # something about key path
         skillset = SearchIndexerSkillset(
             name=self.skillset_name,
             description="Skillset to chunk documents and generate embeddings",
-            skills=[split_skill, embedding_skill],
+            skills=indexer_skills,
             index_projection=index_projection,
+            **extra_params,
         )
 
         return skillset
@@ -137,7 +190,7 @@ class IntegratedVectorizerStrategy(Strategy):
             use_int_vectorization=True,
             embeddings=self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
-            search_images=False,
+            search_images=self.use_multimodal,
         )
 
         await search_manager.create_index()
@@ -175,12 +228,24 @@ class IntegratedVectorizerStrategy(Strategy):
             await self.blob_manager.remove_blob()
 
         # Create an indexer
+        extra_params = {}
+        if self.use_multimodal:
+            extra_params = {
+                "parameters": IndexingParameters(
+                    configuration=IndexingParametersConfiguration(
+                        query_timeout=None,  # Current bug in AI Search SDK
+                        image_action=BlobIndexerImageAction.GENERATE_NORMALIZED_IMAGES,
+                    ),
+                )
+            }
+
         indexer = SearchIndexer(
             name=self.indexer_name,
             description="Indexer to index documents and generate embeddings",
             skillset_name=self.skillset_name,
             target_index_name=self.search_info.index_name,
             data_source_name=self.data_source_name,
+            **extra_params,
         )
 
         indexer_client = self.search_info.create_search_indexer_client()

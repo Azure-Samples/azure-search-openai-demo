@@ -145,11 +145,13 @@ class UploadUserFileStrategy:
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
         search_field_name_embedding: Optional[str] = None,
+        blob_manager: Optional[BlobManager] = None,
     ):
         self.file_processors = file_processors
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
         self.search_info = search_info
+        self.blob_manager = blob_manager
         self.search_manager = SearchManager(
             search_info=self.search_info,
             search_analyzer_name=None,
@@ -164,7 +166,7 @@ class UploadUserFileStrategy:
     async def add_file(self, file: File):
         if self.image_embeddings:
             logging.warning("Image embeddings are not currently supported for the user upload feature")
-        sections = await parse_file(file, self.file_processors)
+        sections = await parse_file(file, self.file_processors, None, self.blob_manager, self.image_embeddings)
         if sections:
             await self.search_manager.update_content(sections, url=file.url)
 

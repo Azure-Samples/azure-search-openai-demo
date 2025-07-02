@@ -1,14 +1,25 @@
 TODO:
 
 * Test with integrated vectorization
+   * Multivector is working
+   * Can we get images mapped??
 * Test with user upload feature
 * Update all TODOs in the code/docs
 * Fix/add unit tests - check coverage
-
-Decide:
 * In conftest, should I make a new env for vision? Currently I mashed it into the existing env, but it might be cleaner to have a separate one, as now I have to pass llm_inputs explicitly in the tests to turn off image responses.
+   * vote: make a new env
 * LLMInputType and VectorFields have inconsistently named values
+   * # Vector fields:
+      # [X] text embedding field (embedding3) use_text_vector=True
+      # [X] image embedding field (images/embedding) use_image_vector=True
+
+      # Inputs for LLM:
+      # [X] text sources , use_text_sources = True
+      # [X] image sources , use_image_sources = True
+
 * Should we make an Azure AI Vision client class? So we dont have to pass two things around, just one?
+   * vision_endpoint and vision_token_provider
+   * we have one! its in embeddings.py, add compute_image_embeddings method to it and use it instead
 
 Later:
 Agentic: Incompatible since it doesnt retrieve images. We would need to do a follow-up search query to get each document, like filter: id eq 'x' or id eq 'y' or....

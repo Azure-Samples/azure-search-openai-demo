@@ -98,6 +98,7 @@ from prepdocs import (
     clean_key_if_exists,
     setup_embeddings_service,
     setup_file_processors,
+    setup_image_embeddings_service,
     setup_search_info,
 )
 from prepdocslib.filestrategy import UploadUserFileStrategy
@@ -596,11 +597,18 @@ async def setup_clients():
             openai_org=OPENAI_ORGANIZATION,
             disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
         )
+        image_embeddings_service = setup_image_embeddings_service(
+            azure_credential=azure_credential,
+            vision_endpoint=AZURE_VISION_ENDPOINT,
+            use_multimodal=USE_MULTIMODAL,
+        )
         ingester = UploadUserFileStrategy(
             search_info=search_info,
-            embeddings=text_embeddings_service,
             file_processors=file_processors,
+            embeddings=text_embeddings_service,
+            image_embeddings=image_embeddings_service,
             search_field_name_embedding=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
+            blob_manager=user_blob_container_client,
         )
         current_app.config[CONFIG_INGESTER] = ingester
 

@@ -393,11 +393,6 @@ if __name__ == "__main__":
         required=False,
         help="Optional. Use this Azure Document Intelligence account key instead of the current user identity to login (use az login to set current user for Azure)",
     )
-    parser.add_argument(
-        "--searchserviceassignedid",
-        required=False,
-        help="Search service system assigned Identity (Managed identity) (used for integrated vectorization)",
-    )
 
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
@@ -526,10 +521,15 @@ if __name__ == "__main__":
             embeddings=openai_embeddings_service,
             search_field_name_embedding=os.environ["AZURE_SEARCH_FIELD_NAME_EMBEDDING"],
             subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
-            search_service_user_assigned_id=args.searchserviceassignedid,
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
             use_acls=use_acls,
             category=args.category,
+            use_multimodal=use_multimodal,
+            image_embeddings=setup_image_embeddings_service(
+                azure_credential=azd_credential,
+                vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
+                use_multimodal=use_multimodal,
+            ),
         )
     else:
         file_processors = setup_file_processors(

@@ -1109,6 +1109,16 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
   }
 }
 
+module storageRoleContributorSearchService 'core/security/role.bicep' = if (useIntegratedVectorization && useMultimodal) {
+  scope: storageResourceGroup
+  name: 'storage-role-contributor-searchservice'
+  params: {
+    principalId: searchService.outputs.principalId
+    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
+    principalType: 'ServicePrincipal'
+  }
+}
+
 // Used to issue search queries
 // https://learn.microsoft.com/azure/search/search-security-rbac
 module searchRoleBackend 'core/security/role.bicep' = {

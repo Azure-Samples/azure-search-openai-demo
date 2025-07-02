@@ -48,7 +48,7 @@ class BlobManager:
             if file.url is None:
                 with open(file.content.name, "rb") as reopened_file:
                     blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                    logger.info("Uploading blob for document %s", blob_name)
+                    logger.info("Uploading blob for document '%s'", blob_name)
                     blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                     file.url = blob_client.url
         return None
@@ -108,7 +108,7 @@ class BlobManager:
             blob_name = (
                 f"{self.blob_name_from_file_name(document_file.content.name)}/page{image_page_num}/{image_filename}"
             )
-            logger.info("Uploading blob for document image %s", blob_name)
+            logger.info("Uploading blob for document image '%s'", blob_name)
             blob_client = await container_client.upload_blob(blob_name, output, overwrite=True)
             return blob_client.url
         return None
