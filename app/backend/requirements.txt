@@ -22,7 +22,7 @@ asgiref==3.8.1
     # via opentelemetry-instrumentation-asgi
 async-timeout==5.0.1
     # via aiohttp
-attrs==24.2.0
+attrs==25.3.0
     # via aiohttp
 azure-ai-documentintelligence==1.0.0b4
     # via -r requirements.in
