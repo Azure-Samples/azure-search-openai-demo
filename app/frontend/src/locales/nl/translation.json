@@ -43,7 +43,7 @@
         "placeholder": "Typ een nieuwe vraag (bijv. dekt mijn pakket jaarlijkse oogonderzoeken?)"
     },
     "askTitle": "Stel je vraag aan de data",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "Vergelijk de impact van rentetarieven en het BBP op financiële markten.",
         "2": "Wat is de verwachte trend voor de S&P 500-index voor de komende vijf jaar? Vergelijk dit met de eerdere prestaties van de S&P 500",
         "3": "Kun je enige correlatie vinden tussen olieprijzen en markttrends?",
@@ -99,14 +99,11 @@
         },
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
         "useAgenticRetrieval": "Gebruik agentische retrieval",
-        "useGPT4V": "GPT-visiemodel gebruiken",
-        "gpt4VInput": {
-            "label": "Invoer voor GPT-visiemodel",
-            "options": {
-                "textAndImages": "Afbeeldingen en tekst",
-                "images": "Afbeeldingen",
-                "texts": "Tekst"
-            }
+        "llmInputs": "Invoer voor LLM",
+        "llmInputsOptions": {
+            "texts": "Teksten",
+            "images": "Afbeeldingen",
+            "textAndImages": "Teksten en Afbeeldingen"
         },
         "retrievalMode": {
             "label": "Ophaalmodus",
@@ -154,10 +151,9 @@
         "reasoningEffort":
             "Stelt de redeneerinspanning voor het taalmodel in. Hogere waarden resulteren in meer redeneren, maar kunnen langer duren om een reactie te genereren. De standaard is gemiddeld.",
         "suggestFollowupQuestions": "Vraagt het taalmodel om vervolgvragen voor te stellen op basis van de vraag.",
-        "useGPT4Vision": "Gebruikt GPT-4-Turbo met Vision om antwoorden te genereren op basis van afbeeldingen en tekst uit de index.",
         "vectorFields":
             "Specificeert welke embeddingvelden in de Azure AI zoekindex worden doorzocht: 'Afbeeldingen en tekst', alleen 'Afbeeldingen', of alleen 'Tekst'.",
-        "gpt4VisionInputs":
+        "llmInputs":
             "Stelt in wat er naar het visiemodel wordt verzonden. 'Afbeeldingen en tekst' verzendt beide, 'Afbeeldingen' alleen afbeeldingen, en 'Tekst' alleen tekst.",
         "retrievalMode":
             "Stelt de zoekmodus in voor de Azure AI zoekopdracht. `Vectoren + Tekst (Hybride)` gebruikt vector en volledige tekst, `Vectoren` alleen de vector, en `Tekst` alleen de volledige tekst. Hybride is meestal optimaal.",
@@ -165,5 +161,9 @@
         "useOidSecurityFilter": "Filtert zoekresultaten op basis van de OID van de geauthenticeerde gebruiker.",
         "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker.",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
-    }
+    },
+
+    "overallSettings": "Algemene instellingen",
+    "searchSettings": "Zoekinstellingen",
+    "llmSettings": "LLM-instellingen"
 }

@@ -750,7 +750,10 @@ async def test_chat_hybrid_semantic_ranker(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True},
+                "overrides": {
+                    "retrieval_mode": "hybrid",
+                    "semantic_ranker": True,
+                },
             },
         },
     )
@@ -770,7 +773,11 @@ async def test_chat_hybrid_semantic_captions(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True, "semantic_captions": True},
+                "overrides": {
+                    "retrieval_mode": "hybrid",
+                    "semantic_ranker": True,
+                    "semantic_captions": True,
+                },
             },
         },
     )
@@ -809,7 +816,10 @@ async def test_chat_vector_semantic_ranker(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "vectors", "semantic_ranker": True},
+                "overrides": {
+                    "retrieval_mode": "vectors",
+                    "semantic_ranker": True,
+                },
             },
         },
     )
@@ -985,7 +995,9 @@ async def test_chat_followup(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"suggest_followup_questions": True},
+                "overrides": {
+                    "suggest_followup_questions": True,
+                },
             },
         },
     )
@@ -1003,7 +1015,9 @@ async def test_chat_stream_followup(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"suggest_followup_questions": True},
+                "overrides": {
+                    "suggest_followup_questions": True,
+                },
             },
         },
     )
@@ -1013,15 +1027,14 @@ async def test_chat_stream_followup(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_vision(client, snapshot):
-    response = await client.post(
+async def test_chat_vision(vision_client, snapshot):
+    response = await vision_client.post(
         "/chat",
         json={
             "messages": [{"content": "Are interest rates high?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
+                    "llm_inputs": "textAndImages",
                     "vector_fields": "textAndImageEmbeddings",
                 },
             },
@@ -1033,15 +1046,14 @@ async def test_chat_vision(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_stream_vision(client, snapshot):
-    response = await client.post(
+async def test_chat_stream_vision(vision_client, snapshot):
+    response = await vision_client.post(
         "/chat/stream",
         json={
             "messages": [{"content": "Are interest rates high?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
+                    "llm_inputs": "textAndImages",
                     "vector_fields": "textAndImageEmbeddings",
                 },
             },
@@ -1053,15 +1065,14 @@ async def test_chat_stream_vision(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_vision_vectors(client, snapshot):
-    response = await client.post(
+async def test_chat_vision_vectors(vision_client, snapshot):
+    response = await vision_client.post(
         "/chat",
         json={
             "messages": [{"content": "Are interest rates high?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
+                    "llm_inputs": "textAndImages",
                     "vector_fields": "textAndImageEmbeddings",
                     "retrieval_mode": "vectors",
                 },
@@ -1074,15 +1085,14 @@ async def test_chat_vision_vectors(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_ask_vision(client, snapshot):
-    response = await client.post(
+async def test_ask_vision(vision_client, snapshot):
+    response = await vision_client.post(
         "/ask",
         json={
             "messages": [{"content": "Are interest rates high?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
+                    "llm_inputs": "textAndImages",
                     "vector_fields": "textAndImageEmbeddings",
                 },
             },

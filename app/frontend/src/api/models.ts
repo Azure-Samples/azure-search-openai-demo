@@ -4,7 +4,7 @@ export const enum RetrievalMode {
     Text = "text"
 }
 
-export const enum GPT4VInput {
+export const enum LLMInputs {
     TextAndImages = "textAndImages",
     Images = "images",
     Texts = "texts"
@@ -37,8 +37,7 @@ export type ChatAppRequestOverrides = {
     suggest_followup_questions?: boolean;
     use_oid_security_filter?: boolean;
     use_groups_security_filter?: boolean;
-    use_gpt4v?: boolean;
-    gpt4v_input?: GPT4VInput;
+    llm_inputs: LLMInputs;
     vector_fields: VectorFields;
     language: string;
     use_agentic_retrieval: boolean;
@@ -55,8 +54,14 @@ export type Thoughts = {
     props?: { [key: string]: any };
 };
 
+export type DataPoints = {
+    text: string[];
+    images: string[];
+    citations: string[];
+};
+
 export type ResponseContext = {
-    data_points: string[];
+    data_points: DataPoints;
     followup_questions: string[] | null;
     thoughts: Thoughts[];
 };
@@ -88,7 +93,7 @@ export type ChatAppRequest = {
 
 export type Config = {
     defaultReasoningEffort: string;
-    showGPT4VOptions: boolean;
+    showMultimodalOptions: boolean;
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
@@ -102,6 +107,8 @@ export type Config = {
     showChatHistoryBrowser: boolean;
     showChatHistoryCosmos: boolean;
     showAgenticRetrievalOption: boolean;
+    ragLlmInputsOverride: string;
+    ragVectorFieldsDefault: string;
 };
 
 export type SimpleAPIResponse = {

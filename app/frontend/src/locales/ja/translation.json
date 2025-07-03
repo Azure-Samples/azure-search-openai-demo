@@ -43,7 +43,7 @@
         "placeholder": "新しい質問を入力してください (例：私の契約プランは年1回の眼科検診もカバーしていますか？)"
     },
     "askTitle": "データを利用した問い合わせ",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "金融市場における金利とGDPの影響を比較してください。",
         "2": "S&P 500指数の今後5年間のトレンドを予想してください、そして過去のS&P 500のパフォーマンスと比較してください。",
         "3": "原油価格と株式市場の動向の間には相関関係があると思いますか？",
@@ -99,14 +99,11 @@
         },
         "useSuggestFollowupQuestions": "フォローアップの質問を提案",
         "useAgenticRetrieval": "使用主体性检索",
-        "useGPT4V": "GPT Visionモデルを使用",
-        "gpt4VInput": {
-            "label": "GPT Visionモデルの入力",
-            "options": {
-                "textAndImages": "画像とテキスト",
-                "images": "画像",
-                "texts": "テキスト"
-            }
+        "llmInputs": "LLMの入力",
+        "llmInputsOptions": {
+            "texts": "テキスト",
+            "images": "画像",
+            "textAndImages": "テキストと画像"
         },
         "retrievalMode": {
             "label": "検索モード",
@@ -152,10 +149,9 @@
         "reasoningEffort":
             "LLMの推論労力を設定します。値が高いほど推論が増加しますが、応答の生成に時間がかかる場合があります。デフォルトは中です。",
         "suggestFollowupQuestions": "ユーザーのクエリに基づいて、LLMにフォローアップの質問を提案するように問い合わせます。",
-        "useGPT4Vision": "インデックスから画像とテキストを利用して回答を生成するためGPT-4-Turbo with Visionを使用します。",
         "vectorFields":
             "Azure AI Search Index中でどの埋め込みフィールドを検索に利用するか指定します。「画像とテキスト」の両方、もしくは「画像」のみ、または「テキスト」のみのいずれかの埋め込みを指定します。",
-        "gpt4VisionInputs":
+        "llmInputs":
             "ビジョンモデルに送信する内容を設定します。「画像とテキスト」は画像とテキストの両方をモデルに送信し、「画像」は画像のみを送信し、「テキスト」はテキストのみを送信します。",
         "retrievalMode":
             "Azure AI Searchクエリの取得モードを設定します。「ベクトル + テキスト (ハイブリッド)」はベクトル検索と全文検索の組み合わせを使用し、「ベクトル」はベクトル検索のみを使用し、「テキスト」は全文検索のみを使用します。一般的にはハイブリッド検索がお勧めです。",
@@ -163,5 +159,9 @@
         "useOidSecurityFilter": "認証ユーザーのOIDに基づいて検索結果をフィルタリングします。",
         "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
-    }
+    },
+
+    "overallSettings": "全体設定",
+    "searchSettings": "検索設定",
+    "llmSettings": "LLM設定"
 }

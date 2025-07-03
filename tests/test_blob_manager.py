@@ -18,8 +18,8 @@ def blob_manager(monkeypatch):
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
         account=os.environ["AZURE_STORAGE_ACCOUNT"],
-        resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
-        subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
+        resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
     )
 
 
@@ -161,43 +161,6 @@ async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager)
 
 @pytest.mark.asyncio
 @pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
-async def test_upload_blob_no_image(monkeypatch, mock_env, caplog):
-    blob_manager = BlobManager(
-        endpoint=f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
-        credential=MockAzureCredential(),
-        container=os.environ["AZURE_STORAGE_CONTAINER"],
-        account=os.environ["AZURE_STORAGE_ACCOUNT"],
-        resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
-        subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
-        store_page_images=True,
-    )
-
-    with NamedTemporaryFile(suffix=".xlsx") as temp_file:
-        f = File(temp_file.file)
-        filename = os.path.basename(f.content.name)
-
-        # Set up mocks used by upload_blob
-        async def mock_exists(*args, **kwargs):
-            return True
-
-        monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.exists", mock_exists)
-
-        async def mock_upload_blob(self, name, *args, **kwargs):
-            assert name == filename
-            return azure.storage.blob.aio.BlobClient.from_blob_url(
-                "https://test.blob.core.windows.net/test/test.xlsx", credential=MockAzureCredential()
-            )
-
-        monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.upload_blob", mock_upload_blob)
-
-        with caplog.at_level("INFO"):
-            await blob_manager.upload_blob(f)
-            assert f.url == "https://test.blob.core.windows.net/test/test.xlsx"
-            assert "skipping image upload" in caplog.text
-
-
-@pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_dont_remove_if_no_container(monkeypatch, mock_env, blob_manager):
     async def mock_exists(*args, **kwargs):
         return False
@@ -210,6 +173,57 @@ async def test_dont_remove_if_no_container(monkeypatch, mock_env, blob_manager):
     monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.delete_blob", mock_delete_blob)
 
     await blob_manager.remove_blob()
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
+async def test_upload_document_image(monkeypatch, mock_env):
+    # Create a blob manager with an image container
+    blob_manager = BlobManager(
+        endpoint=f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
+        credential=MockAzureCredential(),
+        container=os.environ["AZURE_STORAGE_CONTAINER"],
+        account=os.environ["AZURE_STORAGE_ACCOUNT"],
+        resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
+        image_container="test-image-container",
+    )
+
+    # Create a test file and image bytes
+    with NamedTemporaryFile(suffix=".pdf") as temp_file:
+        document_file = File(temp_file.file)
+        # Create a simple 1x1 transparent PNG image
+        image_bytes = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x04\x00\x00\x00\xb5\x1c\x0c\x02\x00\x00\x00\x0bIDATx\xdac\xfc\xff\xff?\x00\x05\xfe\x02\xfe\xa3\xb8\xfb\x26\x00\x00\x00\x00IEND\xaeB`\x82"
+        image_filename = "test_image.png"
+        image_page_num = 0
+
+        # No need to mock PIL - it will process the tiny PNG image
+        # PIL operations will be simple and fast with this small image
+
+        # Mock container client operations
+        async def mock_exists(*args, **kwargs):
+            return True
+
+        monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.exists", mock_exists)
+
+        expected_blob_name = f"{os.path.basename(temp_file.name)}/page{image_page_num}/{image_filename}"
+
+        async def mock_upload_blob(self, name, *args, **kwargs):
+            assert name == expected_blob_name
+            return azure.storage.blob.aio.BlobClient.from_blob_url(
+                "https://test.blob.core.windows.net/test-image-container/test-image-url",
+                credential=MockAzureCredential(),
+            )
+
+        monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.upload_blob", mock_upload_blob)
+
+        # Call the method and verify the results
+        document_filename = document_file.filename()
+        result_url = await blob_manager.upload_document_image(
+            document_filename, image_bytes, image_filename, image_page_num
+        )
+
+        assert result_url == "https://test.blob.core.windows.net/test-image-container/test-image-url"
 
 
 def test_get_managed_identity_connection_string(mock_env, blob_manager):
