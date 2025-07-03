@@ -565,6 +565,7 @@ async def setup_clients():
         openai_organization=OPENAI_ORGANIZATION,
     )
 
+    user_blob_container_client = None
     if USE_USER_UPLOAD:
         current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
         if not AZURE_USERSTORAGE_ACCOUNT or not AZURE_USERSTORAGE_CONTAINER:

@@ -203,7 +203,7 @@ class RetrieveThenReadApproach(Approach):
         )
 
         text_sources, image_sources, citations = await self.get_sources_content(
-            results, use_semantic_captions, use_image_sources=use_image_sources, user_oid=auth_claims["oid"]
+            results, use_semantic_captions, use_image_sources=use_image_sources, user_oid=auth_claims.get("oid")
         )
 
         return ExtraInfo(
@@ -264,7 +264,7 @@ class RetrieveThenReadApproach(Approach):
         use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
 
         text_sources, image_sources, citations = await self.get_sources_content(
-            results, use_semantic_captions=False, use_image_sources=use_image_sources, user_oid=auth_claims["oid"]
+            results, use_semantic_captions=False, use_image_sources=use_image_sources, user_oid=auth_claims.get("oid")
         )
 
         extra_info = ExtraInfo(

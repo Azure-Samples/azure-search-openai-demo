@@ -235,6 +235,8 @@ def setup_openai_client(
         logger.info(
             "OPENAI_HOST is not azure, setting up OpenAI client using OPENAI_API_KEY and OPENAI_ORGANIZATION environment variables"
         )
+        if openai_api_key is None:
+            raise ValueError("OpenAI key is required when using the non-Azure OpenAI API")
         openai_client = AsyncOpenAI(
             api_key=openai_api_key,
             organization=openai_organization,

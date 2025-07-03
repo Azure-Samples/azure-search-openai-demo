@@ -60,3 +60,9 @@ If the feature is a UI element, add an e2e test for it.
 If it is an API endpoint, add an app integration test for it.
 If it is a function or method, add a unit test for it.
 Use mocks from conftest.py to mock external services.
+
+When you're running tests, make sure you activate the .venv virtual environment first:
+
+```bash
+source .venv/bin/activate
+```

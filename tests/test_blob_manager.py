@@ -218,8 +218,9 @@ async def test_upload_document_image(monkeypatch, mock_env):
         monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.upload_blob", mock_upload_blob)
 
         # Call the method and verify the results
+        document_filename = document_file.filename()
         result_url = await blob_manager.upload_document_image(
-            document_file, image_bytes, image_filename, image_page_num
+            document_filename, image_bytes, image_filename, image_page_num
         )
 
         assert result_url == "https://test.blob.core.windows.net/test-image-container/test-image-url"

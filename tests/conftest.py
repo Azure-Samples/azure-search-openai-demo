@@ -309,8 +309,19 @@ envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
         "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
+    },
+]
+
+vision_envs = [
+    {
+        "OPENAI_HOST": "azure",
+        "AZURE_OPENAI_SERVICE": "test-openai-service",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+        "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
         "USE_MULTIMODAL": "true",
-        "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
+        "AZURE_VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
     },
 ]
 
@@ -493,6 +504,25 @@ def mock_agent_auth_env(monkeypatch, request):
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_ID", "test-id")
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_LOCATION", "eastus")
         monkeypatch.setenv("ALLOWED_ORIGIN", "https://frontend.com")
+        for key, value in request.param.items():
+            monkeypatch.setenv(key, value)
+
+        with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
+            mock_default_azure_credential.return_value = MockAzureCredential()
+            yield
+
+
+@pytest.fixture(params=vision_envs, ids=["client0"])
+def mock_vision_env(monkeypatch, request):
+    with mock.patch.dict(os.environ, clear=True):
+        monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
+        monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_IMAGESTORAGE_CONTAINER", "test-image-container")
+        monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
+        monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
+        monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
+        monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4.1-mini")
         for key, value in request.param.items():
             monkeypatch.setenv(key, value)
 
@@ -687,6 +717,25 @@ async def auth_public_documents_client(
             client.config = quart_app.config
 
             yield client
+
+
+@pytest_asyncio.fixture(scope="function")
+async def vision_client(
+    monkeypatch,
+    mock_vision_env,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_acs_search,
+    mock_blob_container_client,
+    mock_azurehttp_calls,
+):
+    quart_app = app.create_app()
+
+    async with quart_app.test_app() as test_app:
+        test_app.app.config.update({"TESTING": True})
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        yield test_app.test_client()
 
 
 @pytest.fixture

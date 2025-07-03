@@ -3,7 +3,6 @@ TODO:
 * Test with integrated vectorization
    * Multivector is working
    * Can we get images mapped??
-* Test with user upload feature
 * Update all TODOs in the code/docs
 * Fix/add unit tests - check coverage
 * In conftest, should I make a new env for vision? Currently I mashed it into the existing env, but it might be cleaner to have a separate one, as now I have to pass llm_inputs explicitly in the tests to turn off image responses.
@@ -21,7 +20,8 @@ TODO:
    * vision_endpoint and vision_token_provider
    * we have one! its in embeddings.py, add compute_image_embeddings method to it and use it instead
 
-* For user upload, remove_file should remove images too
+To decide:
+* For user data lake client, how often should we double check the ACL matches the oid, versus assuming the URLs convey that? (Like when fetching the image?)
 
 Later:
 Agentic: Incompatible since it doesnt retrieve images. We would need to do a follow-up search query to get each document, like filter: id eq 'x' or id eq 'y' or....
