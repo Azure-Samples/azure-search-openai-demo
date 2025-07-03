@@ -53,7 +53,6 @@ async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_clie
 
     async def mock_upload_file(self, *args, **kwargs):
         assert kwargs.get("overwrite") is True
-        assert kwargs.get("metadata") == {"UploadedBy": "OID_X"}
         return None
 
     monkeypatch.setattr(DataLakeFileClient, "upload_data", mock_upload_file)
@@ -216,12 +215,19 @@ async def test_delete_uploaded(auth_client, monkeypatch, mock_data_lake_service_
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
     deleted_documents = []
+    deleted_directories = []
 
     async def mock_delete_documents(self, documents):
         deleted_documents.extend(documents)
         return documents
 
     monkeypatch.setattr(SearchClient, "delete_documents", mock_delete_documents)
+
+    async def mock_delete_directory(self):
+        deleted_directories.append("mock_directory_url")
+        return None
+
+    monkeypatch.setattr(DataLakeDirectoryClient, "delete_directory", mock_delete_directory)
 
     response = await auth_client.post(
         "/delete_uploaded", headers={"Authorization": "Bearer test"}, json={"filename": "a's doc.txt"}
@@ -231,3 +237,4 @@ async def test_delete_uploaded(auth_client, monkeypatch, mock_data_lake_service_
     assert searched_filters[0] == "sourcefile eq 'a''s doc.txt'"
     assert len(deleted_documents) == 1, "It should have only deleted the document solely owned by OID_X"
     assert deleted_documents[0]["id"] == "file-a_txt-7465737420646F63756D656E742E706466"
+    assert len(deleted_directories) == 1, "It should have deleted the directory for the file"

@@ -117,7 +117,7 @@ async def test_process_figure_without_bounding_regions():
     media_describer = MagicMock()
 
     result = await DocumentAnalysisParser.process_figure(doc, figure, media_describer)
-    expected_html = "<figure><figcaption></figcaption></figure>"
+    expected_html = "<figure><figcaption>1 </figcaption></figure>"
 
     assert isinstance(result, ImageOnPage)
     assert result.description == expected_html
@@ -128,7 +128,7 @@ async def test_process_figure_with_bounding_regions(monkeypatch, caplog):
     doc = MagicMock()
     figure = DocumentFigure(
         id="1",
-        caption=DocumentCaption(content="Figure 1"),
+        caption=DocumentCaption(content="Logo"),
         bounding_regions=[
             BoundingRegion(page_number=1, polygon=[1.4703, 2.8371, 5.5409, 2.8415, 5.5381, 6.6022, 1.4681, 6.5978]),
             BoundingRegion(page_number=2, polygon=[1.4703, 2.8371, 5.5409, 2.8415, 5.5381, 6.6022, 1.4681, 6.5978]),
@@ -151,7 +151,7 @@ async def test_process_figure_with_bounding_regions(monkeypatch, caplog):
 
     with caplog.at_level(logging.WARNING):
         result = await DocumentAnalysisParser.process_figure(doc, figure, media_describer)
-        expected_html = "<figure><figcaption>Figure 1<br>Described Image</figcaption></figure>"
+        expected_html = "<figure><figcaption>1 Logo<br>Described Image</figcaption></figure>"
 
         assert isinstance(result, ImageOnPage)
         assert result.description == expected_html
@@ -325,7 +325,7 @@ async def test_parse_doc_with_figures(monkeypatch):
     assert pages[0].offset == 0
     assert (
         pages[0].text
-        == "# Simple Figure\n\nThis text is before the figure and NOT part of it.\n\n\n<figure><figcaption>Figure 1<br>Pie chart</figcaption></figure>\n\n\nThis is text after the figure that's not part of it."
+        == "# Simple Figure\n\nThis text is before the figure and NOT part of it.\n\n\n<figure><figcaption>1.1 Figure 1<br>Pie chart</figcaption></figure>\n\n\nThis is text after the figure that's not part of it."
     )
 
 

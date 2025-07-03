@@ -362,7 +362,7 @@ async def upload(auth_claims: dict[str, Any]):
     adls_manager = AdlsBlobManager(current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT])
     file_url = await adls_manager.upload_blob(file, file.filename, user_oid)
     ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
-    await ingester.add_file(File(content=file, url=file_url), user_oid=user_oid)
+    await ingester.add_file(File(content=file, url=file_url, acls={"oids": [user_oid]}), user_oid=user_oid)
     return jsonify({"message": "File uploaded successfully"}), 200
 
 

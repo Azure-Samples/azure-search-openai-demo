@@ -29,8 +29,3 @@ To decide:
 
 Later:
 Agentic: Incompatible since it doesnt retrieve images. We would need to do a follow-up search query to get each document, like filter: id eq 'x' or id eq 'y' or....
-
-
-"id":
-"feb5e192afb6_aHR0cHM6Ly9zdHh4azRxenEzdGFoaWMyLmJsb2IuY29yZS53aW5kb3dzLm5ldC9jb250ZW50L05vcnRod2luZF9IZWFsdGhfUGx1c19CZW5lZml0c19EZXRhaWxzLnBkZg2_pages_65",
-"aHR0cHM6Ly9zdHh4azRxenEzdGFoaWMyLmJsb2IuY29yZS53aW5kb3dzLm5ldC9jb250ZW50L05vcnRod2luZF9IZWFsdGhfUGx1c19CZW5lZml0c19EZXRhaWxzLnBkZg2",
