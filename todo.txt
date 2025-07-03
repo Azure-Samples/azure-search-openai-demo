@@ -22,6 +22,15 @@ TODO:
 
 To decide:
 * For user data lake client, how often should we double check the ACL matches the oid, versus assuming the URLs convey that? (Like when fetching the image?)
+   * add a note that we only check owner, not full access control
+   * add owner check to each blob-related method (/list, /remove)
+   * move fetch image into blobmanager
+   * WHY ARE THERE NO OIDS on the uploaded sections????
 
 Later:
 Agentic: Incompatible since it doesnt retrieve images. We would need to do a follow-up search query to get each document, like filter: id eq 'x' or id eq 'y' or....
+
+
+"id":
+"feb5e192afb6_aHR0cHM6Ly9zdHh4azRxenEzdGFoaWMyLmJsb2IuY29yZS53aW5kb3dzLm5ldC9jb250ZW50L05vcnRod2luZF9IZWFsdGhfUGx1c19CZW5lZml0c19EZXRhaWxzLnBkZg2_pages_65",
+"aHR0cHM6Ly9zdHh4azRxenEzdGFoaWMyLmJsb2IuY29yZS53aW5kb3dzLm5ldC9jb250ZW50L05vcnRod2luZF9IZWFsdGhfUGx1c19CZW5lZml0c19EZXRhaWxzLnBkZg2",

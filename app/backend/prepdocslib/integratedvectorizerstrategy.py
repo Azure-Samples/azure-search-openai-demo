@@ -119,10 +119,16 @@ class IntegratedVectorizerStrategy(Strategy):
             name="vision-embedding-shaper-skill",
             description="Shaper skill to ensure image embeddings are in the correct format",
             context="/document/normalized_images/*",
-            inputs=[InputFieldMappingEntry(name="embedding", source="/document/normalized_images/*/image_vector")],
+            inputs=[
+                InputFieldMappingEntry(name="embedding", source="/document/normalized_images/*/image_vector"),
+                InputFieldMappingEntry(
+                    name="url",
+                    # source=f'="{self.blob_manager.endpoint}/images/"+$(/document/normalized_images/*/imagePath)'
+                    source="=$(/document/normalized_images/*/imagePath)",
+                ),
+            ],
             outputs=[OutputFieldMappingEntry(name="output", target_name="images")],
         )
-        # TODO: project images into a container
 
         index_projection = SearchIndexerIndexProjection(
             selectors=[
@@ -171,6 +177,10 @@ class IntegratedVectorizerStrategy(Strategy):
 
         # We still need to map the images onto url in the images complex field type
         # something about key path
+        # id = "feb5e192afb6_aHR0cHM6Ly9zdHh4azRxenEzdGFoaWMyLmJsb2IuY29yZS53aW5kb3dzLm5ldC9jb250ZW50L05vcnRod2luZF9IZWFsdGhfUGx1c19CZW5lZml0c19EZXRhaWxzLnBkZg2_pages_65",
+        # parent_id = is the folder name
+        # https://stxxk4qzq3tahic2.blob.core.windows.net/images/aHR0cHM6Ly9zdHh4azRxenEzdGFoaWMyLmJsb2IuY29yZS53aW5kb3dzLm5ldC9jb250ZW50L0JlbmVmaXRfT3B0aW9ucy5wZGY1/normalized_images_1.jpg
+
         skillset = SearchIndexerSkillset(
             name=self.skillset_name,
             description="Skillset to chunk documents and generate embeddings",
@@ -235,7 +245,7 @@ class IntegratedVectorizerStrategy(Strategy):
                     configuration=IndexingParametersConfiguration(
                         query_timeout=None,  # Current bug in AI Search SDK
                         image_action=BlobIndexerImageAction.GENERATE_NORMALIZED_IMAGES,
-                    ),
+                    )
                 )
             }
 
