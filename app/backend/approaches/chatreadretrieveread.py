@@ -7,6 +7,7 @@ from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from azure.storage.blob.aio import ContainerClient
+from azure.storage.filedatalake.aio import FileSystemClient
 from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import (
     ChatCompletion,
@@ -61,7 +62,8 @@ class ChatReadRetrieveReadApproach(Approach):
         multimodal_enabled: bool = False,
         vision_endpoint: Optional[str] = None,
         vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
-        images_blob_container_client: Optional[ContainerClient] = None,
+        image_blob_container_client: Optional[ContainerClient] = None,
+        image_datalake_client: Optional[FileSystemClient] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -70,7 +72,8 @@ class ChatReadRetrieveReadApproach(Approach):
         self.agent_client = agent_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
-        self.images_blob_container_client = images_blob_container_client
+        self.image_blob_container_client = image_blob_container_client
+        self.image_datalake_client = image_datalake_client
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
@@ -300,6 +303,7 @@ class ChatReadRetrieveReadApproach(Approach):
             VectorFieldType.TEXT_AND_IMAGE_EMBEDDINGS,
         ]
         use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
+        use_text_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.TEXTS]
 
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
@@ -354,11 +358,11 @@ class ChatReadRetrieveReadApproach(Approach):
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources, image_sources, citations = await self.get_sources_content(
-            results, use_semantic_captions, use_image_sources=use_image_sources
+            results, use_semantic_captions, use_image_sources=use_image_sources, user_oid=auth_claims["oid"]
         )
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources, images=image_sources, citations=citations),
+            DataPoints(text=text_sources if use_text_sources else [], images=image_sources, citations=citations),
             thoughts=[
                 self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate search query",
@@ -417,19 +421,20 @@ class ChatReadRetrieveReadApproach(Approach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        # Determine if we should use image sources based on overrides or defaults
+        # Determine if we should use text/image sources based on overrides or defaults
         llm_inputs = overrides.get("llm_inputs")
         if llm_inputs is None:
             llm_inputs = self.get_default_llm_inputs()
         llm_inputs_enum = LLMInputType(llm_inputs) if llm_inputs is not None else None
         use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
+        use_text_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.TEXTS]
 
         text_sources, image_sources, citations = await self.get_sources_content(
-            results, use_semantic_captions=False, use_image_sources=use_image_sources
+            results, use_semantic_captions=False, use_image_sources=use_image_sources, user_oid=auth_claims["oid"]
         )
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources, images=image_sources, citations=citations),
+            DataPoints(text=text_sources if use_text_sources else [], images=image_sources, citations=citations),
             thoughts=[
                 ThoughtStep(
                     "Use agentic retrieval",

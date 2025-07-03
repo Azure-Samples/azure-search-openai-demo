@@ -239,7 +239,7 @@ class DocumentAnalysisParser(Parser):
                 figure_id=figure_id,
                 bbox=(0, 0, 0, 0),
                 filename=figure_filename,
-                description=f"<figure><figcaption>{figure_title}</figcaption></figure>",
+                description=f"<figure><figcaption>{figure_id} {figure_title}</figcaption></figure>",
             )
         if len(figure.bounding_regions) > 1:
             logger.warning("Figure %s has more than one bounding region, using the first one", figure_id)
@@ -260,7 +260,7 @@ class DocumentAnalysisParser(Parser):
             figure_id=figure_id,
             bbox=bbox_pixels,
             filename=figure_filename,
-            description=f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>",
+            description=f"<figure><figcaption>{figure_id} {figure_title}<br>{figure_description}</figcaption></figure>",
         )
 
     @staticmethod

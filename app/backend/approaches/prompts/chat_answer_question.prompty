@@ -25,7 +25,9 @@ Answer ONLY with the facts listed in the list of sources below. If there isn't e
 If the question is not in English, answer in the language used in the question.
 Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
 {% if include_images %}
-Each image source has the file name in the top left corner of the image with coordinates (10,10) pixels and is in the format SourceFileName:<file_name>
+Each image source has the document file name in the top left corner of the image with coordinates (10,10) pixels with format <filename.ext#page=N>,
+and the image figure name is right-aligned in the top right corner of the image.
+The filename of the actual image is in the top right corner of the image and is in the format <figureN_N.png>.
 Each text source starts in a new line and has the file name followed by colon and the actual information
 Always include the source name from the image or text for each fact you use in the response in the format: [filename]
 Answer the following question using only the data provided in the sources below.

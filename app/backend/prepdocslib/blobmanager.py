@@ -4,6 +4,7 @@ import os
 import re
 from pathlib import Path
 from typing import IO, Optional, Union
+from urllib.parse import unquote
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
@@ -52,43 +53,36 @@ class BaseBlobManager:
         """
         # Load and modify the image to add text
         image = Image.open(io.BytesIO(image_bytes))
-        text_height = 40
+        line_height = 30
+        text_height = line_height * 2  # Two lines of text
         new_img = Image.new("RGB", (image.width, image.height + text_height), "white")
         new_img.paste(image, (0, text_height))
 
         # Add text
         draw = ImageDraw.Draw(new_img)
         sourcepage = cls.sourcepage_from_file_page(document_filename, page=page_num)
+        text = sourcepage
+        figure_text = image_filename
 
-        text = f"Document:  {sourcepage}"
+        # Load the Jupiteroid font which is included in the repo
+        font_path = Path(__file__).parent / "Jupiteroid-Regular.ttf"
+        font = ImageFont.truetype(str(font_path), 20)  # Slightly smaller font for better fit
 
-        font = None
-        try:
-            font_path = Path(__file__).parent / "Jupiteroid-Regular.ttf"
-            font = ImageFont.truetype(str(font_path), 24)
-        except OSError:
-            try:
-                font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 24)
-            except OSError:
-                logger.info("Unable to find arial.ttf or FreeMono.ttf, using default font")
+        # Calculate text widths for right alignment
+        fig_width = draw.textlength(figure_text, font=font)
 
-        # Draw document text on left
-        draw.text((10, 10), text, font=font, fill="black")
-
-        # Draw figure text on right
-        figure_text = f"Figure:  {image_filename}"
-        if font:
-            # Get the width of the text to position it on the right
-            text_width = draw.textlength(figure_text, font=font)
-            draw.text((new_img.width - text_width - 10, 10), figure_text, font=font, fill="black")
-        else:
-            # If no font available, make a best effort to position on right
-            draw.text((new_img.width - 200, 10), figure_text, font=font, fill="black")
+        # Left align document name, right align figure name
+        padding = 20  # Padding from edges
+        draw.text((padding, 5), text, font=font, fill="black")  # Left aligned
+        draw.text(
+            (new_img.width - fig_width - padding, line_height + 5), figure_text, font=font, fill="black"
+        )  # Right aligned
 
         # Convert back to bytes
         output = io.BytesIO()
         format = image.format or "PNG"
         new_img.save(output, format=format)
+
         return output.getvalue()
 
 
@@ -102,33 +96,23 @@ class AdlsBlobManager(BaseBlobManager):
     def __init__(self, filesystem_client: FileSystemClient):
         self.filesystem_client = filesystem_client
 
-    async def _ensure_directory(self, path_components: list[str], owner: str = None) -> str:
+    async def _ensure_directory(self, directory_path: str, owner: str = None) -> None:
         """
         Ensures that a directory path exists and has proper permissions.
         Creates the entire path in a single operation if it doesn't exist.
 
         Args:
-            path_components: List of directory names to create (e.g., ['user123', 'mydoc', 'images'])
+            directory_path: Full path of directory to create (e.g., 'user123/images/mydoc')
             owner: The owner to set for all created directories
-
-        Returns:
-            str: The full path that was created
         """
-        # Filter out empty components and join with /
-        full_path = "/".join(component for component in path_components if component)
-        if not full_path:
-            raise ValueError("No valid path components provided")
-
-        directory_client = self.filesystem_client.get_directory_client(full_path)
+        directory_client = self.filesystem_client.get_directory_client(directory_path)
         try:
             await directory_client.get_directory_properties()
         except ResourceNotFoundError:
-            logger.info("Creating directory path %s", full_path)
+            logger.info("Creating directory path %s", directory_path)
             await directory_client.create_directory()
             if owner:
                 await directory_client.set_access_control(owner=owner)
-
-        return full_path
 
     async def upload_blob(self, file: Union[File, IO], filename: str, user_oid: str) -> str:
         """
@@ -140,10 +124,10 @@ class AdlsBlobManager(BaseBlobManager):
             user_oid: The user's object ID
 
         Returns:
-            str: The URL of the uploaded file
+            str: The URL of the uploaded file, with forward slashes (not URL-encoded)
         """
         # Ensure user directory exists but don't create a subdirectory
-        await self._ensure_directory([user_oid], owner=user_oid)
+        await self._ensure_directory(user_oid, owner=user_oid)
 
         # Create file directly in user directory
         file_client = self.filesystem_client.get_file_client(f"{user_oid}/{filename}")
@@ -162,10 +146,32 @@ class AdlsBlobManager(BaseBlobManager):
         # Reset the file position for any subsequent reads
         file_io.seek(0)
 
-        return file_client.url
+        # Decode the URL to convert %2F back to / and other escaped characters
+        return unquote(file_client.url)
+
+    def _get_image_directory_path(self, document_filename: str, user_oid: str, page_num: Optional[int] = None) -> str:
+        """
+        Returns the standardized path for storing document images.
+
+        Args:
+            document_filename: The name of the document
+            user_oid: The user's object ID
+            page_num: Optional page number. If provided, includes a page-specific subdirectory
+
+        Returns:
+            str: Full path to the image directory
+        """
+        if page_num is not None:
+            return f"{user_oid}/images/{document_filename}/page_{page_num}"
+        return f"{user_oid}/images/{document_filename}"
 
     async def upload_document_image(
-        self, document_filename: str, image_bytes: bytes, image_filename: str, image_page_num: int, user_oid: str
+        self,
+        document_filename: str,
+        image_bytes: bytes,
+        image_filename: str,
+        image_page_num: int,
+        user_oid: str,
     ) -> Optional[str]:
         """
         Uploads an image from a document to ADLS in a directory structure:
@@ -180,16 +186,85 @@ class AdlsBlobManager(BaseBlobManager):
             user_oid: The user's object ID
 
         Returns:
-            str: The URL of the uploaded image file
+            str: The URL of the uploaded file, with forward slashes (not URL-encoded)
         """
-        directory_path = await self._ensure_directory(
-            [user_oid, "images", document_filename, f"page_{image_page_num}"], owner=user_oid
-        )
+        directory_path = self._get_image_directory_path(document_filename, user_oid, image_page_num)
+        await self._ensure_directory(directory_path, owner=user_oid)
         file_client = self.filesystem_client.get_file_client(f"{directory_path}/{image_filename}")
         image_bytes = BaseBlobManager.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
         logger.info("Uploading document image '%s' to '%s'", image_filename, directory_path)
         await file_client.upload_data(image_bytes, overwrite=True, metadata={"UploadedBy": user_oid})
-        return file_client.url
+        return unquote(file_client.url)
+
+    async def remove_blob(self, filename: str, user_oid: str) -> None:
+        """
+        Deletes a file from the user's directory in ADLS and any associated image directories.
+        The following will be deleted:
+        - {user_oid}/{filename}
+        - {user_oid}/images/{filename}/* (recursively)
+
+        Args:
+            filename: The name of the file to delete
+            user_oid: The user's object ID
+
+        Raises:
+            ResourceNotFoundError: If the file does not exist
+        """
+        logger.info(f"Deleting file '{filename}' and associated images for user '{user_oid}'")
+
+        # Delete the main document file
+        user_directory_client = self.filesystem_client.get_directory_client(user_oid)
+        file_client = user_directory_client.get_file_client(filename)
+        await file_client.delete_file()
+
+        # Try to delete any associated image directories
+        try:
+            image_directory_path = self._get_image_directory_path(filename, user_oid)
+            image_directory_client = self.filesystem_client.get_directory_client(image_directory_path)
+            await image_directory_client.delete_directory()
+            logger.info(f"Deleted associated image directory: {image_directory_path}")
+        except ResourceNotFoundError:
+            # It's okay if there was no image directory
+            logger.debug(f"No image directory found at {image_directory_path}")
+            pass
+
+    async def list_blobs(self, user_oid: str) -> list[str]:
+        """
+        Lists the uploaded documents for the given user.
+        Only returns files directly in the user's directory, not in subdirectories.
+        Excludes image files and the images directory.
+
+        Args:
+            user_oid: The user's object ID
+
+        Returns:
+            list[str]: List of filenames that belong to the user
+        """
+        files = []
+        try:
+            all_paths = self.filesystem_client.get_paths(path=user_oid)
+            async for path in all_paths:
+                # Split path into parts (user_oid/filename or user_oid/directory/files)
+                path_parts = path.name.split("/", 1)
+                if len(path_parts) != 2:
+                    continue
+
+                filename = path_parts[1]
+                # Only include files that are:
+                # 1. Directly in the user's directory (no additional slashes)
+                # 2. Not image files
+                # 3. Not in a directory containing 'images'
+                if (
+                    "/" not in filename
+                    and not any(filename.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".gif", ".bmp"])
+                    and "images" not in filename
+                ):
+                    files.append(filename)
+        except ResourceNotFoundError as error:
+            if error.status_code != 404:
+                logger.exception("Error listing uploaded files", error)
+            # Return empty list for 404 (no directory) as this is expected for new users
+        return files
 
 
 class BlobManager(BaseBlobManager):

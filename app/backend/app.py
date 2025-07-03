@@ -66,6 +66,7 @@ from config import (
     CONFIG_CREDENTIAL,
     CONFIG_DEFAULT_REASONING_EFFORT,
     CONFIG_IMAGE_BLOB_CONTAINER_CLIENT,  # Added this line
+    CONFIG_IMAGE_DATALAKE_CLIENT,
     CONFIG_INGESTER,
     CONFIG_LANGUAGE_PICKER_ENABLED,
     CONFIG_MULTIMODAL_ENABLED,
@@ -354,7 +355,6 @@ async def speech():
 async def upload(auth_claims: dict[str, Any]):
     request_files = await request.files
     if "file" not in request_files:
-        # If no files were included in the request, return an error response
         return jsonify({"message": "No file part in the request", "status": "failed"}), 400
 
     user_oid = auth_claims["oid"]
@@ -372,10 +372,8 @@ async def delete_uploaded(auth_claims: dict[str, Any]):
     request_json = await request.get_json()
     filename = request_json.get("filename")
     user_oid = auth_claims["oid"]
-    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
-    user_directory_client = user_blob_container_client.get_directory_client(user_oid)
-    file_client = user_directory_client.get_file_client(filename)
-    await file_client.delete_file()
+    adls_manager = AdlsBlobManager(current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT])
+    await adls_manager.remove_blob(filename, user_oid)
     ingester = current_app.config[CONFIG_INGESTER]
     await ingester.remove_file(filename, user_oid)
     return jsonify({"message": f"File {filename} deleted successfully"}), 200
@@ -388,31 +386,8 @@ async def list_uploaded(auth_claims: dict[str, Any]):
     Only returns files directly in the user's directory, not in subdirectories.
     Excludes image files and the images directory."""
     user_oid = auth_claims["oid"]
-    user_blob_container_client: FileSystemClient = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
-    files = []
-    try:
-        all_paths = user_blob_container_client.get_paths(path=user_oid)
-        async for path in all_paths:
-            # Split path into parts (user_oid/filename or user_oid/directory/files)
-            path_parts = path.name.split("/", 1)
-            if len(path_parts) != 2:
-                continue
-
-            filename = path_parts[1]
-            # Only include files that are:
-            # 1. Directly in the user's directory (no additional slashes)
-            # 2. Not image files
-            # 3. Not in a directory containing 'images'
-            if (
-                "/" not in filename
-                and not any(filename.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".gif", ".bmp"])
-                and "images" not in filename
-            ):
-                files.append(filename)
-    except ResourceNotFoundError as error:
-        if error.status_code != 404:
-            current_app.logger.exception("Error listing uploaded files", error)
-        # Return empty list for 404 (no directory) as this is expected for new users
+    adls_manager = AdlsBlobManager(current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT])
+    files = await adls_manager.list_blobs(user_oid)
     return jsonify(files), 200
 
 
@@ -691,7 +666,8 @@ async def setup_clients():
         agent_client=agent_client,
         openai_client=openai_client,
         auth_helper=auth_helper,
-        images_blob_container_client=image_blob_container_client,
+        image_blob_container_client=image_blob_container_client,
+        image_datalake_client=user_blob_container_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
@@ -718,7 +694,8 @@ async def setup_clients():
         agent_client=agent_client,
         openai_client=openai_client,
         auth_helper=auth_helper,
-        images_blob_container_client=image_blob_container_client,
+        image_blob_container_client=image_blob_container_client,
+        image_datalake_client=user_blob_container_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
@@ -745,6 +722,8 @@ async def close_clients():
         await current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT].close()
     if current_app.config.get(CONFIG_IMAGE_BLOB_CONTAINER_CLIENT):
         await current_app.config[CONFIG_IMAGE_BLOB_CONTAINER_CLIENT].close()
+    if current_app.config.get(CONFIG_IMAGE_DATALAKE_CLIENT):
+        await current_app.config[CONFIG_IMAGE_DATALAKE_CLIENT].close()
 
 
 def create_app():

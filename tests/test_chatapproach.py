@@ -46,6 +46,8 @@ def chat_approach():
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        blob_container_client=None,
+        datalake_client=None,
     )
 
 
@@ -197,6 +199,8 @@ async def test_search_results_filtering_by_scores(
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        blob_container_client=None,
+        datalake_client=None,
     )
 
     monkeypatch.setattr(SearchClient, "search", mock_search)
@@ -240,6 +244,8 @@ async def test_search_results_query_rewriting(monkeypatch):
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        blob_container_client=None,
+        datalake_client=None,
     )
 
     query_rewrites = None
@@ -287,6 +293,8 @@ async def test_agent_retrieval_results(monkeypatch):
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        blob_container_client=None,
+        datalake_client=None,
     )
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))

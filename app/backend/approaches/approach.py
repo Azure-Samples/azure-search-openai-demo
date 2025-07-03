@@ -24,6 +24,7 @@ from azure.search.documents.models import (
     VectorQuery,
 )
 from azure.storage.blob.aio import ContainerClient
+from azure.storage.filedatalake.aio import FileSystemClient
 from openai import AsyncOpenAI, AsyncStream
 from openai.types import CompletionUsage
 from openai.types.chat import (
@@ -175,7 +176,8 @@ class Approach(ABC):
         multimodal_enabled: bool = False,
         vision_endpoint: Optional[str] = None,
         vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
-        images_blob_container_client: Optional[ContainerClient] = None,
+        image_blob_container_client: Optional[ContainerClient] = None,
+        image_datalake_client: Optional[FileSystemClient] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -193,7 +195,23 @@ class Approach(ABC):
         self.multimodal_enabled = multimodal_enabled
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
-        self.images_blob_container_client = images_blob_container_client
+        self.image_blob_container_client = image_blob_container_client
+        self.image_datalake_client = image_datalake_client
+
+    def get_storage_client_for_url(self, url: str) -> Optional[Union[ContainerClient, FileSystemClient]]:
+        """
+        Determines which storage client to use for a given URL.
+
+        Args:
+            url: The URL or path of the image
+
+        Returns:
+            Either the ContainerClient for Blob Storage or FileSystemClient for Data Lake Storage,
+            based on the URL pattern. Returns None if no matching client is available.
+        """
+        if ".dfs.core.windows.net" in url and self.image_datalake_client:
+            return self.image_datalake_client
+        return self.image_blob_container_client
 
     def get_default_llm_inputs(self) -> str:
         """
@@ -363,7 +381,11 @@ class Approach(ABC):
         return response, results
 
     async def get_sources_content(
-        self, results: list[Document], use_semantic_captions: bool, use_image_sources: bool
+        self,
+        results: list[Document],
+        use_semantic_captions: bool,
+        use_image_sources: bool,
+        user_oid: Optional[str] = None,
     ) -> tuple[list[str], list[str], list[str]]:
         """
         Extracts text and image sources from the search results.
@@ -395,14 +417,13 @@ class Approach(ABC):
                 text_sources.append(f"{citation}: {nonewlines(doc.content or '')}")
 
             if use_image_sources and hasattr(doc, "images") and doc.images:
-                if self.images_blob_container_client is None:
-                    raise ValueError("The images blob container client must be set to use image sources.")
                 for img in doc.images:
                     # Skip if we've already processed this URL
-                    if img["url"] in seen_urls:
+                    if img["url"] in seen_urls or not img["url"]:
                         continue
                     seen_urls.add(img["url"])
-                    url = await download_blob_as_base64(self.images_blob_container_client, img["url"])
+                    storage_client = self.get_storage_client_for_url(img["url"])
+                    url = await download_blob_as_base64(storage_client, img["url"], user_oid=user_oid)
                     if url:
                         image_sources.append(url)
                     citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))

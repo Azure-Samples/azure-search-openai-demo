@@ -5,6 +5,7 @@ from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from azure.storage.blob.aio import ContainerClient
+from azure.storage.filedatalake.aio import FileSystemClient
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
@@ -52,7 +53,8 @@ class RetrieveThenReadApproach(Approach):
         multimodal_enabled: bool = False,
         vision_endpoint: Optional[str] = None,
         vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
-        images_blob_container_client: Optional[ContainerClient] = None,
+        image_blob_container_client: Optional[ContainerClient] = None,
+        image_datalake_client: Optional[FileSystemClient] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -62,7 +64,8 @@ class RetrieveThenReadApproach(Approach):
         self.chatgpt_deployment = chatgpt_deployment
         self.openai_client = openai_client
         self.auth_helper = auth_helper
-        self.images_blob_container_client = images_blob_container_client
+        self.image_blob_container_client = image_blob_container_client
+        self.image_datalake_client = image_datalake_client
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
@@ -200,7 +203,7 @@ class RetrieveThenReadApproach(Approach):
         )
 
         text_sources, image_sources, citations = await self.get_sources_content(
-            results, use_semantic_captions, use_image_sources=use_image_sources
+            results, use_semantic_captions, use_image_sources=use_image_sources, user_oid=auth_claims["oid"]
         )
 
         return ExtraInfo(
@@ -261,7 +264,7 @@ class RetrieveThenReadApproach(Approach):
         use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
 
         text_sources, image_sources, citations = await self.get_sources_content(
-            results, use_semantic_captions=False, use_image_sources=use_image_sources
+            results, use_semantic_captions=False, use_image_sources=use_image_sources, user_oid=auth_claims["oid"]
         )
 
         extra_info = ExtraInfo(
