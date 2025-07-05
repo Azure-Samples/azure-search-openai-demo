@@ -1,0 +1,105 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "value": "rg-volaris-dev-eus-001"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "searchServiceName": {
+      "value": "srch-volaris-dev-eus-001"
+    },
+    "searchIndexName": {
+      "value": "idx-volaris-dev-eus-001"
+    },
+    "storageAccountName": {
+      "value": "stgvolarisdeveus001"
+    },
+    "openAiServiceName": {
+      "value": "oai-volaris-dev-eus-001"
+    },
+    "appServicePlanName": {
+      "value": "asp-volaris-dev-eus-001"
+    },
+    "backendServiceName": {
+      "value": "api-volaris-dev-eus-001"
+    },
+    "cosmosDbAccountName": {
+      "value": "cosmos-volaris-dev-eus-001"
+    },
+    "applicationInsightsName": {
+      "value": "appi-volaris-dev-eus-001"
+    },
+    "applicationInsightsDashboardName": {
+      "value": "dash-volaris-dev-eus-001"
+    },
+    "logAnalyticsName": {
+      "value": "log-volaris-dev-eus-001"
+    },
+    "speechServiceName": {
+      "value": "speech-volaris-dev-eus-001"
+    },
+    "documentIntelligenceServiceName": {
+      "value": "di-volaris-dev-eus-001"
+    },
+    "computerVisionServiceName": {
+      "value": "cv-volaris-dev-eus-001"
+    },
+    "contentUnderstandingServiceName": {
+      "value": "cu-volaris-dev-eus-001"
+    },
+    "chatGptDeploymentName": {
+      "value": "chatgpt-volaris-dev-eus-001"
+    },
+    "embeddingDeploymentName": {
+      "value": "embed-volaris-dev-eus-001"
+    },
+    "searchAgentDeploymentName": {
+      "value": "agent-volaris-dev-eus-001"
+    },
+    "gpt4vDeploymentName": {
+      "value": "vision-volaris-dev-eus-001"
+    },
+    "evalDeploymentName": {
+      "value": "eval-volaris-dev-eus-001"
+    },
+    "searchServiceResourceGroupName": {
+      "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
+    },
+    "openAiApiKey": {
+      "value": "${OPENAI_API_KEY}"
+    },
+    "openAiHost": {
+      "value": "${OPENAI_HOST=azure}"
+    },
+    "searchQueryLanguage": {
+      "value": "${AZURE_SEARCH_QUERY_LANGUAGE=en-us}"
+    },
+    "searchQuerySpeller": {
+      "value": "${AZURE_SEARCH_QUERY_SPELLER=lexicon}"
+    },
+    "useAgenticRetrieval": {
+      "value": "${USE_AGENTIC_RETRIEVAL=true}"
+    },
+    "azureOpenAiApiVersion": {
+      "value": "${AZURE_OPENAI_API_VERSION}"
+    },
+    "storageSkuName": {
+      "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
+    },
+    "appServiceSkuName": {
+      "value": "${AZURE_APP_SERVICE_SKU=B1}"
+    },
+    "cosmosDbSkuName": {
+      "value": "${AZURE_COSMOSDB_SKU=serverless}"
+    },
+    "speechServiceSkuName": {
+      "value": "${AZURE_SPEECH_SERVICE_SKU=S0}"
+    },
+    "documentIntelligenceSkuName": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_SKU=S0}"
+    }
+  }
+}
