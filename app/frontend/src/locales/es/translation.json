@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "Lumston OpenAI + AI Search POC",
+    "headerTitle": "Lumtson OpenAI + AI Search POC",
     "chat": "Chat",
     "qa": "Haz una pregunta",
     "login": "Iniciar sesión",
@@ -34,20 +34,20 @@
     },
     "developerSettings": "Configuración del desarrollador",
 
-    "chatEmptyStateTitle": "Chatea con tus datos",
+    "chatEmptyStateTitle": "Lumston AI Toyota - Chat",
     "chatEmptyStateSubtitle": "Pregunta cualquier cosa o prueba un ejemplo",
     "defaultExamples": {
-        "1": "¿Qué está incluido en mi plan Northwind Health Plus que no está en el estándar?",
-        "2": "¿Qué sucede en una revisión de rendimiento?",
-        "3": "¿Qué hace un Gerente de producto?",
-        "placeholder": "Escribe una nueva pregunta (por ejemplo, ¿mi plan cubre exámenes anuales de la vista?)"
+        "1": "Muestrame acerca del 'Trade-in Screen Redising' para el periodo de marzo (MAR)",
+        "2": "En SmartPath RTI-D INVENTORY, dame sus puntos clave?",
+        "3": "Muestrame los 'Bug Fixes & Additional Enhancements' para dos periodos",
+        "placeholder": "Escribe una nueva pregunta (por ejemplo, ¿Como crear accesorios en una lista DIO?)"
     },
-    "askTitle": "Pregunta a tus datos",
+    "askTitle": "Lumston AI Toyota - Ask",
     "gpt4vExamples": {
-        "1": "Compara el impacto de las tasas de interés y el PIB en los mercados financieros.",
-        "2": "¿Cuál es la tendencia esperada para el índice S&P 500 en los próximos cinco años? Compáralo con el rendimiento pasado del S&P 500",
-        "3": "¿Puedes identificar alguna correlación entre los precios del petróleo y las tendencias del mercado de valores?",
-        "placeholder": "Ejemplo: ¿Mi plan cubre exámenes anuales de la vista?"
+        "1": "¿Cual es el paso 1 en el Overview de SmartPath_RTI-D?",
+        "2": "'Como agregar inventario para agregar accesorios de pre-venta?",
+        "3": "¿En que consiste la pagina de 'Staff Administration'?",
+        "placeholder": "Ejemplo: ¿Como crear accesorios en una lista DIO?"
     },
     "generatingAnswer": "Generando respuesta",
     "citationWithColon": "Cita:",
