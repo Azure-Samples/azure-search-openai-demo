@@ -9,8 +9,15 @@
         },
         "ghcr.io/devcontainers/features/azure-cli:1.2.5": {},
         "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-        "ghcr.io/azure/azure-dev/azd:latest": {}
-    },
+        "ghcr.io/azure/azure-dev/azd:latest": {},
+        "ghcr.io/devcontainers/features/python:1": {
+            "version": "3.10"
+        },
+        "ghcr.io/devcontainers/features/pip:1": {
+            "packages": ["msal", "requests"]
+        }
+},
+
     "customizations": {
         "vscode": {
             "extensions": [
@@ -28,5 +35,6 @@
     "remoteUser": "vscode",
     "hostRequirements": {
         "memory": "8gb"
-    }
+    },
+    "runArgs": ["--env-file=../.env"]
 }
