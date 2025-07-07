@@ -62,9 +62,9 @@
                 "description": "The capital of France is Paris. [Benefit_Options-2.pdf].",
                 "props": {
                     "filter": null,
+                    "search_image_embeddings": false,
+                    "search_text_embeddings": true,
                     "top": 3,
-                    "use_image_embeddings": false,
-                    "use_image_sources": false,
                     "use_query_rewriting": false,
                     "use_semantic_captions": false,
                     "use_semantic_ranker": false,

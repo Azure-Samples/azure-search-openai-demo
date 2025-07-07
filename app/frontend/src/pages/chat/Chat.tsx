@@ -99,13 +99,11 @@ const Chat = () => {
         configApi().then(config => {
             setShowMultimodalOptions(config.showMultimodalOptions);
             if (config.showMultimodalOptions) {
-                // Set default LLM inputs based on config override or fallback to TextAndImages
-                setSendTextSources(true);
-                setSendImageSources(true);
-                // Set default vector fields based on config override or fallback to TextAndImageEmbeddings
-                // Set default vector field settings
-                setSearchTextEmbeddings(true);
-                setSearchImageEmbeddings(true);
+                // Always have at least one source enabled, default to text if none specified
+                setSendTextSources(config.ragSendTextSources !== undefined ? config.ragSendTextSources : true);
+                setSendImageSources(config.ragSendImageSources);
+                setSearchTextEmbeddings(config.ragSearchTextEmbeddings);
+                setSearchImageEmbeddings(config.ragSearchImageEmbeddings);
             }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);

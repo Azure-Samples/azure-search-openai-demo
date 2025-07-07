@@ -335,14 +335,17 @@
     "useAgenticRetrieval": {
       "value": "${USE_AGENTIC_RETRIEVAL=false}"
     },
-    "ragLlmInputsOverride": {
-      "value": "${RAG_LLM_INPUTS_OVERRIDE}"
-    },
     "ragSearchTextEmbeddings": {
       "value": "${RAG_SEARCH_TEXT_EMBEDDINGS=true}"
     },
     "ragSearchImageEmbeddings": {
       "value": "${RAG_SEARCH_IMAGE_EMBEDDINGS=true}"
+    },
+    "ragSendTextSources": {
+      "value": "${RAG_SEND_TEXT_SOURCES=true}"
+    },
+    "ragSendImageSources": {
+      "value": "${RAG_SEND_IMAGE_SOURCES=true}"
     }
   }
 }

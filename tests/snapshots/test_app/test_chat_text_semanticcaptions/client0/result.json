@@ -53,9 +53,9 @@
                 "description": "capital of France",
                 "props": {
                     "filter": null,
+                    "search_image_embeddings": false,
+                    "search_text_embeddings": true,
                     "top": 3,
-                    "use_image_embeddings": false,
-                    "use_image_sources": false,
                     "use_query_rewriting": false,
                     "use_semantic_captions": true,
                     "use_semantic_ranker": false,

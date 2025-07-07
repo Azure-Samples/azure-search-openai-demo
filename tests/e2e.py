@@ -215,8 +215,10 @@ def test_chat_customization_multimodal(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle_chat(route: Route):
         overrides = route.request.post_data_json["context"]["overrides"]
-        assert overrides["llm_inputs"] == "imagesOnly"
-        assert overrides["vector_fields"] == "imageEmbeddingOnly"
+        assert overrides["send_text_sources"] is True
+        assert overrides["send_image_sources"] is True
+        assert overrides["search_text_embeddings"] is True
+        assert overrides["search_image_embeddings"] is True
 
         # Read the JSON from our snapshot results and return as the response
         f = open("tests/snapshots/test_app/test_chat_text/client0/result.json")

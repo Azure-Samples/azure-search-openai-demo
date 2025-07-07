@@ -12,7 +12,6 @@ from approaches.approach import (
     Approach,
     DataPoints,
     ExtraInfo,
-    LLMInputType,
     ThoughtStep,
 )
 from approaches.promptmanager import PromptManager
@@ -160,22 +159,15 @@ class RetrieveThenReadApproach(Approach):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
         q = str(messages[-1]["content"])
-
-        llm_inputs = overrides.get("llm_inputs")
-        # Use default values based on multimodal_enabled if not provided in overrides
-        if llm_inputs is None:
-            llm_inputs = self.get_default_llm_inputs()
-        llm_inputs_enum = LLMInputType(llm_inputs) if llm_inputs is not None else None
-        use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
-
-        use_image_embeddings = overrides.get("use_image_embeddings", self.multimodal_enabled)
-        use_text_embeddings = overrides.get("use_text_embeddings", True)
+        send_image_sources = overrides.get("send_image_sources", True)
+        search_text_embeddings = overrides.get("search_text_embeddings", True)
+        search_image_embeddings = overrides.get("search_image_embeddings", self.multimodal_enabled)
 
         vectors: list[VectorQuery] = []
         if use_vector_search:
-            if use_text_embeddings:
+            if search_text_embeddings:
                 vectors.append(await self.compute_text_embedding(q))
-            if use_image_embeddings:
+            if search_image_embeddings:
                 vectors.append(await self.compute_multimodal_embedding(q))
 
         results = await self.search(
@@ -193,7 +185,7 @@ class RetrieveThenReadApproach(Approach):
         )
 
         text_sources, image_sources, citations = await self.get_sources_content(
-            results, use_semantic_captions, use_image_sources=use_image_sources, user_oid=auth_claims.get("oid")
+            results, use_semantic_captions, download_image_sources=send_image_sources, user_oid=auth_claims.get("oid")
         )
 
         return ExtraInfo(
@@ -210,8 +202,8 @@ class RetrieveThenReadApproach(Approach):
                         "filter": filter,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
-                        "use_image_embeddings": use_image_embeddings,
-                        "use_image_sources": use_image_sources,
+                        "search_text_embeddings": search_text_embeddings,
+                        "search_image_embeddings": search_image_embeddings,
                     },
                 ),
                 ThoughtStep(
@@ -234,6 +226,7 @@ class RetrieveThenReadApproach(Approach):
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         # 50 is the amount of documents that the reranker can process per query
         max_docs_for_reranker = max_subqueries * 50
+        send_image_sources = overrides.get("send_image_sources", True)
 
         response, results = await self.run_agentic_retrieval(
             messages,
@@ -246,15 +239,11 @@ class RetrieveThenReadApproach(Approach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        # Determine if we should use image sources based on overrides or defaults
-        llm_inputs = overrides.get("llm_inputs")
-        if llm_inputs is None:
-            llm_inputs = self.get_default_llm_inputs()
-        llm_inputs_enum = LLMInputType(llm_inputs) if llm_inputs is not None else None
-        use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
-
         text_sources, image_sources, citations = await self.get_sources_content(
-            results, use_semantic_captions=False, use_image_sources=use_image_sources, user_oid=auth_claims.get("oid")
+            results,
+            use_semantic_captions=False,
+            download_image_sources=send_image_sources,
+            user_oid=auth_claims.get("oid"),
         )
 
         extra_info = ExtraInfo(

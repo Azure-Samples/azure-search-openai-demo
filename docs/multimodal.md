@@ -98,11 +98,11 @@ For more details on how this feature works, read [this blog post](https://techco
    to control whether the chat completion model will use text inputs, image inputs, or both:
 
    ```shell
-   azd env set RAG_CHAT_TEXT_INPUTS true
+   azd env set RAG_SEND_TEXT_SOURCES true
    ```
 
    ```shell
-   azd env set RAG_CHAT_IMAGE_INPUTS true
+   azd env set RAG_SEND_IMAGE_SOURCES true
    ```
 
    You can also modify those settings in the "Developer Settings" in the chat UI,

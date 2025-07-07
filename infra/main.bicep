@@ -289,13 +289,14 @@ param azureContainerAppsWorkloadProfile string
 param deploymentTarget string = 'appservice'
 
 // RAG Configuration Parameters
-@description('Override for default LLM inputs dropdown options')
-param ragLlmInputsOverride string = ''
-
 @description('Whether to use text embeddings for RAG search')
 param ragSearchTextEmbeddings bool = true
 @description('Whether to use image embeddings for RAG search')
 param ragSearchImageEmbeddings bool = true
+@description('Whether to send text sources to LLM for RAG responses')
+param ragSendTextSources bool = true
+@description('Whether to send image sources to LLM for RAG responses')
+param ragSendImageSources bool = true
 
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
@@ -469,9 +470,10 @@ var appEnvVariables = {
   AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
   RUNNING_IN_PRODUCTION: 'true'
   // RAG Configuration
-  RAG_LLM_INPUTS_OVERRIDE: ragLlmInputsOverride
   RAG_SEARCH_TEXT_EMBEDDINGS: ragSearchTextEmbeddings
   RAG_SEARCH_IMAGE_EMBEDDINGS: ragSearchImageEmbeddings
+  RAG_SEND_TEXT_SOURCES: ragSendTextSources
+  RAG_SEND_IMAGE_SOURCES: ragSendImageSources
 }
 
 // App Service for the web application (Python Quart app with JS frontend)

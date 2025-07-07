@@ -1030,15 +1030,7 @@ async def test_chat_stream_followup(client, snapshot):
 async def test_chat_vision(vision_client, snapshot):
     response = await vision_client.post(
         "/chat",
-        json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
-            "context": {
-                "overrides": {
-                    "llm_inputs": "textAndImages",
-                    "vector_fields": "textAndImageEmbeddings",
-                },
-            },
-        },
+        json={"messages": [{"content": "Are interest rates high?", "role": "user"}]},
     )
     assert response.status_code == 200
     result = await response.get_json()
@@ -1049,15 +1041,7 @@ async def test_chat_vision(vision_client, snapshot):
 async def test_chat_stream_vision(vision_client, snapshot):
     response = await vision_client.post(
         "/chat/stream",
-        json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
-            "context": {
-                "overrides": {
-                    "llm_inputs": "textAndImages",
-                    "vector_fields": "textAndImageEmbeddings",
-                },
-            },
-        },
+        json={"messages": [{"content": "Are interest rates high?", "role": "user"}]},
     )
     assert response.status_code == 200
     result = await response.get_data()
@@ -1065,38 +1049,10 @@ async def test_chat_stream_vision(vision_client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_vision_vectors(vision_client, snapshot):
-    response = await vision_client.post(
-        "/chat",
-        json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
-            "context": {
-                "overrides": {
-                    "llm_inputs": "textAndImages",
-                    "vector_fields": "textAndImageEmbeddings",
-                    "retrieval_mode": "vectors",
-                },
-            },
-        },
-    )
-    assert response.status_code == 200
-    result = await response.get_json()
-    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
-
-
-@pytest.mark.asyncio
 async def test_ask_vision(vision_client, snapshot):
     response = await vision_client.post(
         "/ask",
-        json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
-            "context": {
-                "overrides": {
-                    "llm_inputs": "textAndImages",
-                    "vector_fields": "textAndImageEmbeddings",
-                },
-            },
-        },
+        json={"messages": [{"content": "Are interest rates high?", "role": "user"}]},
     )
     assert response.status_code == 200
     result = await response.get_json()

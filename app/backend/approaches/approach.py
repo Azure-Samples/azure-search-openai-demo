@@ -1,7 +1,6 @@
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass, field
-from enum import Enum
 from typing import Any, Optional, TypedDict, Union, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
@@ -37,12 +36,6 @@ from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import download_blob_as_base64
 from prepdocslib.embeddings import ImageEmbeddings
-
-
-class LLMInputType(str, Enum):
-    TEXT_AND_IMAGES = "textAndImages"
-    IMAGES = "images"
-    TEXTS = "texts"
 
 
 @dataclass
@@ -204,15 +197,6 @@ class Approach(ABC):
             return self.image_datalake_client
         return self.image_blob_container_client
 
-    def get_default_llm_inputs(self) -> str:
-        """
-        Returns the default LLM inputs based on whether multimodal is enabled
-        """
-        if self.multimodal_enabled:
-            return LLMInputType.TEXT_AND_IMAGES
-        else:
-            return LLMInputType.TEXTS
-
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
         exclude_category = overrides.get("exclude_category")
@@ -366,7 +350,7 @@ class Approach(ABC):
         self,
         results: list[Document],
         use_semantic_captions: bool,
-        use_image_sources: bool,
+        download_image_sources: bool,
         user_oid: Optional[str] = None,
     ) -> tuple[list[str], list[str], list[str]]:
         """
@@ -398,7 +382,7 @@ class Approach(ABC):
             else:
                 text_sources.append(f"{citation}: {nonewlines(doc.content or '')}")
 
-            if use_image_sources and hasattr(doc, "images") and doc.images:
+            if download_image_sources and hasattr(doc, "images") and doc.images:
                 for img in doc.images:
                     # Skip if we've already processed this URL
                     if img["url"] in seen_urls or not img["url"]:

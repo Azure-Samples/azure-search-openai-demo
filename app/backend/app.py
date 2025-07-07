@@ -72,9 +72,10 @@ from config import (
     CONFIG_MULTIMODAL_ENABLED,
     CONFIG_OPENAI_CLIENT,
     CONFIG_QUERY_REWRITING_ENABLED,
-    CONFIG_RAG_LLM_INPUTS_OVERRIDE,
     CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS,
     CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS,
+    CONFIG_RAG_SEND_IMAGE_SOURCES,
+    CONFIG_RAG_SEND_TEXT_SOURCES,
     CONFIG_REASONING_EFFORT_ENABLED,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
@@ -302,9 +303,10 @@ def config():
             "showChatHistoryBrowser": current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
             "showAgenticRetrievalOption": current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED],
-            "ragLlmInputsOverride": current_app.config[CONFIG_RAG_LLM_INPUTS_OVERRIDE],
-            "ragSearchImageEmbeddings": current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS],
             "ragSearchTextEmbeddings": current_app.config[CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS],
+            "ragSearchImageEmbeddings": current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS],
+            "ragSendTextSources": current_app.config[CONFIG_RAG_SEND_TEXT_SOURCES],
+            "ragSendImageSources": current_app.config[CONFIG_RAG_SEND_IMAGE_SOURCES],
         }
     )
 
@@ -454,9 +456,10 @@ async def setup_clients():
     AZURE_SPEECH_SERVICE_VOICE = os.getenv("AZURE_SPEECH_SERVICE_VOICE") or "en-US-AndrewMultilingualNeural"
 
     USE_MULTIMODAL = os.getenv("USE_MULTIMODAL", "").lower() == "true"
-    RAG_LLM_INPUTS_OVERRIDE = os.getenv("RAG_LLM_INPUTS_OVERRIDE", "")
     RAG_SEARCH_TEXT_EMBEDDINGS = os.getenv("RAG_SEARCH_TEXT_EMBEDDINGS", "true").lower() == "true"
     RAG_SEARCH_IMAGE_EMBEDDINGS = os.getenv("RAG_SEARCH_IMAGE_EMBEDDINGS", "true").lower() == "true"
+    RAG_SEND_TEXT_SOURCES = os.getenv("RAG_SEND_TEXT_SOURCES", "true").lower() == "true"
+    RAG_SEND_IMAGE_SOURCES = os.getenv("RAG_SEND_IMAGE_SOURCES", "true").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
     ENABLE_LANGUAGE_PICKER = os.getenv("ENABLE_LANGUAGE_PICKER", "").lower() == "true"
     USE_SPEECH_INPUT_BROWSER = os.getenv("USE_SPEECH_INPUT_BROWSER", "").lower() == "true"
@@ -660,9 +663,10 @@ async def setup_clients():
     current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED] = USE_CHAT_HISTORY_COSMOS
     current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED] = USE_AGENTIC_RETRIEVAL
     current_app.config[CONFIG_MULTIMODAL_ENABLED] = USE_MULTIMODAL
-    current_app.config[CONFIG_RAG_LLM_INPUTS_OVERRIDE] = RAG_LLM_INPUTS_OVERRIDE
     current_app.config[CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS] = RAG_SEARCH_TEXT_EMBEDDINGS
     current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS] = RAG_SEARCH_IMAGE_EMBEDDINGS
+    current_app.config[CONFIG_RAG_SEND_TEXT_SOURCES] = RAG_SEND_TEXT_SOURCES
+    current_app.config[CONFIG_RAG_SEND_IMAGE_SOURCES] = RAG_SEND_IMAGE_SOURCES
 
     prompt_manager = PromptyManager()
 

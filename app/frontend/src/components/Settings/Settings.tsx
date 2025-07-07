@@ -413,14 +413,18 @@ export const Settings = ({
                             id="sendTextSources"
                             label={t("labels.llmInputsOptions.texts")}
                             checked={sendTextSources}
-                            onChange={(_ev, checked) => onChange("send_text_sources", !!checked)}
+                            onChange={(_ev, checked) => {
+                                onChange("sendTextSources", !!checked);
+                            }}
                             onRenderLabel={props => renderLabel(props, "sendTextSourcesLabel", "sendTextSources", t("helpTexts.llmTextInputs"))}
                         />
                         <Checkbox
                             id="sendImageSources"
                             label={t("labels.llmInputsOptions.images")}
                             checked={sendImageSources}
-                            onChange={(_ev, checked) => onChange("send_image_sources", !!checked)}
+                            onChange={(_ev, checked) => {
+                                onChange("sendImageSources", !!checked);
+                            }}
                             onRenderLabel={props => renderLabel(props, "sendImageSourcesLabel", "sendImageSources", t("helpTexts.llmImageInputs"))}
                         />
                     </Stack>

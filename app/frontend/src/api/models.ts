@@ -97,8 +97,10 @@ export type Config = {
     showChatHistoryBrowser: boolean;
     showChatHistoryCosmos: boolean;
     showAgenticRetrievalOption: boolean;
-    ragLlmInputsOverride: string;
-    ragVectorFieldsDefault: string;
+    ragSearchTextEmbeddings: boolean;
+    ragSearchImageEmbeddings: boolean;
+    ragSendTextSources: boolean;
+    ragSendImageSources: boolean;
 };
 
 export type SimpleAPIResponse = {
