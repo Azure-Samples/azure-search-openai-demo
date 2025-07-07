@@ -15,7 +15,6 @@ import {
     ChatAppResponseOrError,
     ChatAppRequest,
     ResponseMessage,
-    VectorFields,
     LLMInputs,
     SpeechConfig
 } from "../../api";
@@ -58,7 +57,8 @@ const Chat = () => {
     const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
-    const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
+    const [searchTextEmbeddings, setSearchTextEmbeddings] = useState<boolean>(true);
+    const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(true);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [llmInputs, setLLMInputs] = useState<LLMInputs>(LLMInputs.TextAndImages);
@@ -112,10 +112,9 @@ const Chat = () => {
                 const defaultLlmInputs = config.ragLlmInputsOverride ? (config.ragLlmInputsOverride as LLMInputs) : LLMInputs.TextAndImages;
                 setLLMInputs(defaultLlmInputs);
                 // Set default vector fields based on config override or fallback to TextAndImageEmbeddings
-                const defaultVectorFields = config.ragVectorFieldsDefault
-                    ? (config.ragVectorFieldsDefault as VectorFields)
-                    : VectorFields.TextAndImageEmbeddings;
-                setVectorFields(defaultVectorFields);
+                // Set default vector field settings
+                setSearchTextEmbeddings(true);
+                setSearchImageEmbeddings(true);
             }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
@@ -238,7 +237,8 @@ const Chat = () => {
                         suggest_followup_questions: useSuggestFollowupQuestions,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
-                        vector_fields: vectorFields,
+                        search_text_embeddings: searchTextEmbeddings,
+                        search_image_embeddings: searchImageEmbeddings,
                         llm_inputs: llmInputs,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
@@ -359,8 +359,11 @@ const Chat = () => {
             case "llmInputs":
                 setLLMInputs(value);
                 break;
-            case "vectorFields":
-                setVectorFields(value);
+            case "searchTextEmbeddings":
+                setSearchTextEmbeddings(value);
+                break;
+            case "searchImageEmbeddings":
+                setSearchImageEmbeddings(value);
                 break;
             case "retrievalMode":
                 setRetrievalMode(value);
@@ -559,7 +562,8 @@ const Chat = () => {
                         retrievalMode={retrievalMode}
                         showMultimodalOptions={showMultimodalOptions}
                         llmInputs={llmInputs}
-                        vectorFields={vectorFields}
+                        searchTextEmbeddings={searchTextEmbeddings}
+                        searchImageEmbeddings={searchImageEmbeddings}
                         showSemanticRankerOption={showSemanticRankerOption}
                         showQueryRewritingOption={showQueryRewritingOption}
                         showReasoningEffortOption={showReasoningEffortOption}

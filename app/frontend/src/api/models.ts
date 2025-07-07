@@ -10,12 +10,6 @@ export const enum LLMInputs {
     Texts = "texts"
 }
 
-export const enum VectorFields {
-    Embedding = "textEmbeddingOnly",
-    ImageEmbedding = "imageEmbeddingOnly",
-    TextAndImageEmbeddings = "textAndImageEmbeddings"
-}
-
 export type ChatAppRequestOverrides = {
     retrieval_mode?: RetrievalMode;
     semantic_ranker?: boolean;
@@ -38,7 +32,8 @@ export type ChatAppRequestOverrides = {
     use_oid_security_filter?: boolean;
     use_groups_security_filter?: boolean;
     llm_inputs: LLMInputs;
-    vector_fields: VectorFields;
+    search_text_embeddings: boolean;
+    search_image_embeddings: boolean;
     language: string;
     use_agentic_retrieval: boolean;
 };

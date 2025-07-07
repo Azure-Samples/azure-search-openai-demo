@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { TextField, ITextFieldProps, Checkbox, ICheckboxProps, Dropdown, IDropdownProps, IDropdownOption } from "@fluentui/react";
 import { HelpCallout } from "../HelpCallout";
 import { VectorSettings } from "../VectorSettings";
-import { RetrievalMode, VectorFields, LLMInputs } from "../../api";
+import { RetrievalMode, LLMInputs } from "../../api";
 import styles from "./Settings.module.css";
 
 // Add type for onRenderLabel
@@ -26,7 +26,8 @@ export interface SettingsProps {
     includeCategory: string;
     retrievalMode: RetrievalMode;
     llmInputs: LLMInputs;
-    vectorFields: VectorFields;
+    searchTextEmbeddings: boolean;
+    searchImageEmbeddings: boolean;
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;
     showReasoningEffortOption: boolean;
@@ -65,7 +66,8 @@ export const Settings = ({
     excludeCategory,
     includeCategory,
     retrievalMode,
-    vectorFields,
+    searchTextEmbeddings,
+    searchImageEmbeddings,
     llmInputs,
     showSemanticRankerOption,
     showQueryRewritingOption,
@@ -355,10 +357,12 @@ export const Settings = ({
                 <>
                     <VectorSettings
                         defaultRetrievalMode={retrievalMode}
-                        defaultVectorFields={vectorFields}
+                        defaultSearchTextEmbeddings={searchTextEmbeddings}
+                        defaultSearchImageEmbeddings={searchImageEmbeddings}
                         showImageOptions={showMultimodalOptions}
-                        updateVectorFields={val => onChange("vectorFields", val)}
                         updateRetrievalMode={val => onChange("retrievalMode", val)}
+                        updateSearchTextEmbeddings={val => onChange("searchTextEmbeddings", val)}
+                        updateSearchImageEmbeddings={val => onChange("searchImageEmbeddings", val)}
                     />
                 </>
             )}

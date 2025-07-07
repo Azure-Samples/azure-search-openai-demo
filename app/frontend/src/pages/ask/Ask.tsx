@@ -5,7 +5,7 @@ import { Panel, DefaultButton, Spinner } from "@fluentui/react";
 
 import styles from "./Ask.module.css";
 
-import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, VectorFields, LLMInputs, SpeechConfig } from "../../api";
+import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, LLMInputs, SpeechConfig } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -41,7 +41,8 @@ export function Component(): JSX.Element {
 
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [question, setQuestion] = useState<string>("");
-    const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
+    const [searchTextEmbeddings, setSearchTextEmbeddings] = useState<boolean>(true);
+    const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(true);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [showMultimodalOptions, setShowMultimodalOptions] = useState<boolean>(false);
@@ -88,11 +89,9 @@ export function Component(): JSX.Element {
                 // Set default LLM inputs based on config override or fallback to Texts
                 const defaultLlmInputs = config.ragLlmInputsOverride ? (config.ragLlmInputsOverride as LLMInputs) : LLMInputs.Texts;
                 setLLMInputs(defaultLlmInputs);
-                // Set default vector fields based on config override or fallback to TextAndImageEmbeddings
-                const defaultVectorFields = config.ragVectorFieldsDefault
-                    ? (config.ragVectorFieldsDefault as VectorFields)
-                    : VectorFields.TextAndImageEmbeddings;
-                setVectorFields(defaultVectorFields);
+                // Set default vector field settings
+                setSearchTextEmbeddings(true);
+                setSearchImageEmbeddings(true);
             }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
@@ -161,7 +160,8 @@ export function Component(): JSX.Element {
                         reasoning_effort: reasoningEffort,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
-                        vector_fields: vectorFields,
+                        search_text_embeddings: searchTextEmbeddings,
+                        search_image_embeddings: searchImageEmbeddings,
                         llm_inputs: llmInputs,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
@@ -240,8 +240,11 @@ export function Component(): JSX.Element {
             case "llmInputs":
                 setLLMInputs(value);
                 break;
-            case "vectorFields":
-                setVectorFields(value);
+            case "searchTextEmbeddings":
+                setSearchTextEmbeddings(value);
+                break;
+            case "searchImageEmbeddings":
+                setSearchImageEmbeddings(value);
                 break;
             case "retrievalMode":
                 setRetrievalMode(value);
@@ -373,7 +376,8 @@ export function Component(): JSX.Element {
                     includeCategory={includeCategory}
                     retrievalMode={retrievalMode}
                     llmInputs={llmInputs}
-                    vectorFields={vectorFields}
+                    searchTextEmbeddings={searchTextEmbeddings}
+                    searchImageEmbeddings={searchImageEmbeddings}
                     showSemanticRankerOption={showSemanticRankerOption}
                     showQueryRewritingOption={showQueryRewritingOption}
                     showReasoningEffortOption={showReasoningEffortOption}

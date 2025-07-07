@@ -120,11 +120,10 @@
             }
         },
         "vector": {
-            "label": "Vector fields (Multi-query vector search)",
+            "label": "Included vector fields",
             "options": {
-                "embedding": "Text Embeddings",
-                "imageEmbedding": "Image Embeddings",
-                "both": "Text and Image embeddings"
+                "embedding": "Text embeddings",
+                "imageEmbedding": "Image embeddings"
             }
         },
         "useOidSecurityFilter": "Use oid security filter",
@@ -163,6 +162,8 @@
         "suggestFollowupQuestions": "Asks the LLM to suggest follow-up questions based on the user's query.",
         "vectorFields":
             "Specifies which embedding fields in the Azure AI Search Index will be searched, both the 'Images and text' embeddings, 'Images' only, or 'Text' only.",
+        "textEmbeddings": "When selected, search will use embeddings from the text-only embeddings model of extracted text chunks.",
+        "imageEmbeddings": "When selected, search will use embeddings from the multimodal embeddings model of extracted images.",
         "llmInputs":
             "Sets what will be sent to the vision model. 'Images and text' sends both images and text to the model, 'Images' sends only images, and 'Text' sends only text.",
         "retrievalMode":
