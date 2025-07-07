@@ -110,11 +110,10 @@
             }
         },
         "vector": {
-            "label": "Vektorfelter (Multi-forespørgsels vektorsøgning)",
+            "label": "Inkluderede vektorfelter",
             "options": {
                 "embedding": "Tekstindlejringer",
-                "imageEmbedding": "Billedindlejringer",
-                "both": "Tekst- og billedindlejringer"
+                "imageEmbedding": "Billedindlejringer"
             }
         },
         "useOidSecurityFilter": "Brug oid sikkerhedsfilter",
@@ -135,7 +134,8 @@
         "useQueryRewriting": "Aktiverer Azure AI Search forespørgselsomskrivning, en proces der ændrer brugerens forespørgsel for at forbedre søgeresultaterne. Kræver at semantisk ranking er aktiveret.",
         "reasoningEffort": "Indstiller ræsonnementsindsatsen for sprogmodellen. Højere værdier resulterer i mere ræsonnement, men kan tage længere tid om at generere et svar. Standardværdien er medium.",
         "suggestFollowupQuestions": "Beder LLM'en om at foreslå opfølgende spørgsmål baseret på brugerens forespørgsel.",
-        "vectorFields": "Angiver hvilke indlejringsfelter i Azure AI Search Index, der vil blive søgt, enten både 'Billeder og tekst' indlejringer, 'Billeder' kun eller 'Tekst' kun.",
+        "textEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra tekst-kun indlejringsmodellen af udtrukne tekstbidder.",
+        "imageEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra den multimodale indlejringsmodel af udtrukne billeder.",
         "llmInputs": "Indstiller hvad der sendes til visionsmodellen. 'Billeder og tekst' sender både billeder og tekst til modellen, 'Billeder' sender kun billeder og 'Tekst' sender kun tekst.",
         "retrievalMode": "Indstiller søgemodus for forespørgslen i Azure AI Search. `Vektorer + Tekst (Hybrid)` bruger en kombination af vektorsøgning og fuldtekstsøgning, `Vektorer` bruger kun vektorsøgning, og `Tekst` bruger kun fuldtekstsøgning. Hybrid er generelt optimalt.",
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",

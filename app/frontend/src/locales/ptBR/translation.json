@@ -114,11 +114,10 @@
             }
         },
         "vector": {
-            "label": "Campos vetoriais (pesquisa vetorial de múltiplas consultas)",
+            "label": "Campos vetoriais incluídos",
             "options": {
                 "embedding": "Incorporações de texto (Embeddings)",
-                "imageEmbedding": "Incorporações de imagem",
-                "both": "Incorporações de texto e imagem"
+                "imageEmbedding": "Incorporações de imagem"
             }
         },
         "useOidSecurityFilter": "Usar filtro de segurança oid",
@@ -151,8 +150,8 @@
         "reasoningEffort":
              "Define o esforço de raciocínio para o LLM. Valores mais altos resultam em mais raciocínio, mas podem levar mais tempo para gerar uma resposta. O padrão é médio.",
         "suggestFollowupQuestions": "Solicita ao LLM que sugira perguntas de acompanhamento com base na consulta do usuário.",
-        "vectorFields":
-            "Especifica quais campos de incorporação (embeddings) no Índice de Pesquisa do Azure AI serão pesquisados: 'Imagens e texto', 'Imagens' ou 'Texto'.",
+        "textEmbeddings": "Quando selecionado, a pesquisa usará incorporações do modelo de incorporações apenas de texto para os trechos de texto extraídos.",
+        "imageEmbeddings": "Quando selecionado, a pesquisa usará incorporações do modelo de incorporações multimodal para as imagens extraídas.",
         "llmInputs":
             "Define o que será enviado ao modelo de visão. 'Imagens e texto' envia ambos, 'Imagens' envia apenas imagens e 'Texto' envia apenas texto.",
         "retrievalMode":

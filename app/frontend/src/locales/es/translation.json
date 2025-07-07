@@ -114,11 +114,10 @@
             }
         },
         "vector": {
-            "label": "Campos de vector (Búsqueda de vector de múltiples consultas)",
+            "label": "Campos de vector incluidos",
             "options": {
                 "embedding": "Incrustaciones de texto",
-                "imageEmbedding": "Incrustaciones de imagen",
-                "both": "Incrustaciones de texto e imagen"
+                "imageEmbedding": "Incrustaciones de imagen"
             }
         },
         "useOidSecurityFilter": "Usar filtro de seguridad oid",
@@ -152,8 +151,8 @@
         "reasoningEffort":
             "Establece el esfuerzo de razonamiento para el LLM. Los valores más altos resultan en más razonamiento, pero pueden tardar más en generar una respuesta. El valor predeterminado es medio.",
         "suggestFollowupQuestions": "Pide al LLM que sugiera preguntas de seguimiento basándose en la consulta del usuario.",
-        "vectorFields":
-            "Especifica qué campos de incrustación en el índice de búsqueda de Azure AI se buscarán, tanto las incrustaciones de 'Imágenes y texto', solo 'Imagenes', o solo 'Texto'.",
+        "textEmbeddings": "Cuando se selecciona, la búsqueda utilizará incrustaciones del modelo de incrustaciones de solo texto para los fragmentos de texto extraídos.",
+        "imageEmbeddings": "Cuando se selecciona, la búsqueda utilizará incrustaciones del modelo de incrustaciones multimodal para las imágenes extraídas.",
         "llmInputs":
             "Establece lo que se enviará al modelo de visión. 'Imágenes y texto' envía tanto imágenes como texto al modelo, 'Imágenes' solo envía imágenes y 'Texto' solo envía texto.",
         "retrievalMode":

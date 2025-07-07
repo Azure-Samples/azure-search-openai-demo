@@ -114,11 +114,10 @@
             }
         },
         "vector": {
-            "label": "Vectorvelden (Multi-query vectorzoektocht)",
+            "label": "Opgenomen vectorvelden",
             "options": {
                 "embedding": "Tekst Embeddings",
-                "imageEmbedding": "Afbeelding Embeddings",
-                "both": "Tekst en Afbeelding embeddings"
+                "imageEmbedding": "Afbeelding Embeddings"
             }
         },
         "useOidSecurityFilter": "OID-beveiligingsfilter gebruiken",
@@ -151,8 +150,8 @@
         "reasoningEffort":
             "Stelt de redeneerinspanning voor het taalmodel in. Hogere waarden resulteren in meer redeneren, maar kunnen langer duren om een reactie te genereren. De standaard is gemiddeld.",
         "suggestFollowupQuestions": "Vraagt het taalmodel om vervolgvragen voor te stellen op basis van de vraag.",
-        "vectorFields":
-            "Specificeert welke embeddingvelden in de Azure AI zoekindex worden doorzocht: 'Afbeeldingen en tekst', alleen 'Afbeeldingen', of alleen 'Tekst'.",
+        "textEmbeddings": "Wanneer geselecteerd, zal de zoekopdracht embeddings gebruiken van het tekstgebaseerde embeddings model voor geëxtraheerde tekststukken.",
+        "imageEmbeddings": "Wanneer geselecteerd, zal de zoekopdracht embeddings gebruiken van het multimodale embeddings model voor geëxtraheerde afbeeldingen.",
         "llmInputs":
             "Stelt in wat er naar het visiemodel wordt verzonden. 'Afbeeldingen en tekst' verzendt beide, 'Afbeeldingen' alleen afbeeldingen, en 'Tekst' alleen tekst.",
         "retrievalMode":

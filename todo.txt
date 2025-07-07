@@ -7,10 +7,6 @@ TODO:
 * Update all TODOs in the code/docs
 * Fix/add unit tests - check coverage
 * LLMInputType and VectorFields have inconsistently named values
-   * # Vector fields:
-      # [X] text embedding field (embedding3) use_text_vector=True
-      # [X] image embedding field (images/embedding) use_image_vector=True
-
       # Inputs for LLM:
       # [X] text sources , use_text_sources = True
       # [X] image sources , use_image_sources = True
