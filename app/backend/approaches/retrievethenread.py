@@ -14,7 +14,6 @@ from approaches.approach import (
     ExtraInfo,
     LLMInputType,
     ThoughtStep,
-    VectorFieldType,
 )
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
@@ -163,25 +162,18 @@ class RetrieveThenReadApproach(Approach):
         q = str(messages[-1]["content"])
 
         llm_inputs = overrides.get("llm_inputs")
-        vector_fields = overrides.get("vector_fields")
-
         # Use default values based on multimodal_enabled if not provided in overrides
         if llm_inputs is None:
             llm_inputs = self.get_default_llm_inputs()
-        if vector_fields is None:
-            vector_fields = self.get_default_vector_fields()
-
         llm_inputs_enum = LLMInputType(llm_inputs) if llm_inputs is not None else None
-        vector_fields_enum = VectorFieldType(vector_fields) if vector_fields is not None else None
-        use_image_embeddings = vector_fields_enum in [
-            VectorFieldType.IMAGE_EMBEDDING,
-            VectorFieldType.TEXT_AND_IMAGE_EMBEDDINGS,
-        ]
         use_image_sources = llm_inputs_enum in [LLMInputType.TEXT_AND_IMAGES, LLMInputType.IMAGES]
+
+        use_image_embeddings = overrides.get("use_image_embeddings", self.multimodal_enabled)
+        use_text_embeddings = overrides.get("use_text_embeddings", True)
 
         vectors: list[VectorQuery] = []
         if use_vector_search:
-            if vector_fields_enum != VectorFieldType.IMAGE_EMBEDDING:
+            if use_text_embeddings:
                 vectors.append(await self.compute_text_embedding(q))
             if use_image_embeddings:
                 vectors.append(await self.compute_multimodal_embedding(q))

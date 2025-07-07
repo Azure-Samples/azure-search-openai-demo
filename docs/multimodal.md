@@ -83,16 +83,26 @@ For more details on how this feature works, read [this blog post](https://techco
 
    You can customize the RAG flow approach with a few additional environment variables.
 
-   To only use the text embeddings for the search step (no image embeddings), run:
+   The following variables can be set to either true or false,
+   to control whether Azure AI Search will use text embeddings, image embeddings, or both:
 
    ```shell
-   azd env set RAG_VECTOR_FIELDS_DEFAULT "textEmbeddingOnly"
+   azd env set RAG_SEARCH_TEXT_EMBEDDINGS true
    ```
 
-   To only send text sources to the chat completion model (no images), run:
+   ```shell
+   azd env set RAG_SEARCH_IMAGE_EMBEDDINGS true
+   ```
+
+   The following variable can be set to either true or false,
+   to control whether the chat completion model will use text inputs, image inputs, or both:
 
    ```shell
-   azd env set RAG_LLM_INPUTS_OVERRIDE "texts"
+   azd env set RAG_CHAT_TEXT_INPUTS true
+   ```
+
+   ```shell
+   azd env set RAG_CHAT_IMAGE_INPUTS true
    ```
 
    You can also modify those settings in the "Developer Settings" in the chat UI,

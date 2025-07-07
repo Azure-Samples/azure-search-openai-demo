@@ -73,7 +73,8 @@ from config import (
     CONFIG_OPENAI_CLIENT,
     CONFIG_QUERY_REWRITING_ENABLED,
     CONFIG_RAG_LLM_INPUTS_OVERRIDE,
-    CONFIG_RAG_VECTOR_FIELDS_DEFAULT,
+    CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS,
+    CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS,
     CONFIG_REASONING_EFFORT_ENABLED,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
@@ -302,7 +303,8 @@ def config():
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
             "showAgenticRetrievalOption": current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED],
             "ragLlmInputsOverride": current_app.config[CONFIG_RAG_LLM_INPUTS_OVERRIDE],
-            "ragVectorFieldsDefault": current_app.config[CONFIG_RAG_VECTOR_FIELDS_DEFAULT],
+            "ragSearchImageEmbeddings": current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS],
+            "ragSearchTextEmbeddings": current_app.config[CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS],
         }
     )
 
@@ -453,7 +455,8 @@ async def setup_clients():
 
     USE_MULTIMODAL = os.getenv("USE_MULTIMODAL", "").lower() == "true"
     RAG_LLM_INPUTS_OVERRIDE = os.getenv("RAG_LLM_INPUTS_OVERRIDE", "")
-    RAG_VECTOR_FIELDS_DEFAULT = os.getenv("RAG_VECTOR_FIELDS_DEFAULT", "")
+    RAG_SEARCH_TEXT_EMBEDDINGS = os.getenv("RAG_SEARCH_TEXT_EMBEDDINGS", "true").lower() == "true"
+    RAG_SEARCH_IMAGE_EMBEDDINGS = os.getenv("RAG_SEARCH_IMAGE_EMBEDDINGS", "true").lower() == "true"
     USE_USER_UPLOAD = os.getenv("USE_USER_UPLOAD", "").lower() == "true"
     ENABLE_LANGUAGE_PICKER = os.getenv("ENABLE_LANGUAGE_PICKER", "").lower() == "true"
     USE_SPEECH_INPUT_BROWSER = os.getenv("USE_SPEECH_INPUT_BROWSER", "").lower() == "true"
@@ -658,7 +661,8 @@ async def setup_clients():
     current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED] = USE_AGENTIC_RETRIEVAL
     current_app.config[CONFIG_MULTIMODAL_ENABLED] = USE_MULTIMODAL
     current_app.config[CONFIG_RAG_LLM_INPUTS_OVERRIDE] = RAG_LLM_INPUTS_OVERRIDE
-    current_app.config[CONFIG_RAG_VECTOR_FIELDS_DEFAULT] = RAG_VECTOR_FIELDS_DEFAULT
+    current_app.config[CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS] = RAG_SEARCH_TEXT_EMBEDDINGS
+    current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS] = RAG_SEARCH_IMAGE_EMBEDDINGS
 
     prompt_manager = PromptyManager()
 

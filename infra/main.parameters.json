@@ -338,8 +338,11 @@
     "ragLlmInputsOverride": {
       "value": "${RAG_LLM_INPUTS_OVERRIDE}"
     },
-    "ragVectorFieldsDefault": {
-      "value": "${RAG_VECTOR_FIELDS_DEFAULT}"
+    "ragSearchTextEmbeddings": {
+      "value": "${RAG_SEARCH_TEXT_EMBEDDINGS=true}"
+    },
+    "ragSearchImageEmbeddings": {
+      "value": "${RAG_SEARCH_IMAGE_EMBEDDINGS=true}"
     }
   }
 }

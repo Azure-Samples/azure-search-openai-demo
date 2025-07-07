@@ -292,8 +292,10 @@ param deploymentTarget string = 'appservice'
 @description('Override for default LLM inputs dropdown options')
 param ragLlmInputsOverride string = ''
 
-@description('Default value for vector fields dropdown')
-param ragVectorFieldsDefault string = ''
+@description('Whether to use text embeddings for RAG search')
+param ragSearchTextEmbeddings bool = true
+@description('Whether to use image embeddings for RAG search')
+param ragSearchImageEmbeddings bool = true
 
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
@@ -468,7 +470,8 @@ var appEnvVariables = {
   RUNNING_IN_PRODUCTION: 'true'
   // RAG Configuration
   RAG_LLM_INPUTS_OVERRIDE: ragLlmInputsOverride
-  RAG_VECTOR_FIELDS_DEFAULT: ragVectorFieldsDefault
+  RAG_SEARCH_TEXT_EMBEDDINGS: ragSearchTextEmbeddings
+  RAG_SEARCH_IMAGE_EMBEDDINGS: ragSearchImageEmbeddings
 }
 
 // App Service for the web application (Python Quart app with JS frontend)

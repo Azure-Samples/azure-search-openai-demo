@@ -160,8 +160,6 @@
         "useSemanticCaptions":
              "Sends semantic captions to the LLM instead of the full search result. A semantic caption is extracted from a search result during the process of semantic ranking.",
         "suggestFollowupQuestions": "Asks the LLM to suggest follow-up questions based on the user's query.",
-        "vectorFields":
-            "Specifies which embedding fields in the Azure AI Search Index will be searched, both the 'Images and text' embeddings, 'Images' only, or 'Text' only.",
         "textEmbeddings": "When selected, search will use embeddings from the text-only embeddings model of extracted text chunks.",
         "imageEmbeddings": "When selected, search will use embeddings from the multimodal embeddings model of extracted images.",
         "llmInputs":

@@ -45,12 +45,6 @@ class LLMInputType(str, Enum):
     TEXTS = "texts"
 
 
-class VectorFieldType(str, Enum):
-    EMBEDDING = "textEmbeddingOnly"
-    IMAGE_EMBEDDING = "imageEmbeddingOnly"
-    TEXT_AND_IMAGE_EMBEDDINGS = "textAndImageEmbeddings"
-
-
 @dataclass
 class Document:
     id: Optional[str] = None
@@ -218,15 +212,6 @@ class Approach(ABC):
             return LLMInputType.TEXT_AND_IMAGES
         else:
             return LLMInputType.TEXTS
-
-    def get_default_vector_fields(self) -> str:
-        """
-        Returns the default vector fields based on whether multimodal is enabled
-        """
-        if self.multimodal_enabled:
-            return VectorFieldType.TEXT_AND_IMAGE_EMBEDDINGS
-        else:
-            return VectorFieldType.EMBEDDING
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
