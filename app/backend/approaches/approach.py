@@ -2,10 +2,8 @@ from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, Optional, TypedDict, Union, cast
-from urllib.parse import urljoin
+from typing import Any, Optional, TypedDict, Union, cast
 
-import aiohttp
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import (
     KnowledgeAgentAzureSearchDocReference,
@@ -38,6 +36,7 @@ from openai.types.chat import (
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from core.imageshelper import download_blob_as_base64
+from prepdocslib.embeddings import ImageEmbeddings
 
 
 class LLMInputType(str, Enum):
@@ -174,8 +173,7 @@ class Approach(ABC):
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
-        vision_endpoint: Optional[str] = None,
-        vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
+        image_embeddings_client: Optional[ImageEmbeddings] = None,
         image_blob_container_client: Optional[ContainerClient] = None,
         image_datalake_client: Optional[FileSystemClient] = None,
     ):
@@ -193,8 +191,7 @@ class Approach(ABC):
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
-        self.vision_endpoint = vision_endpoint
-        self.vision_token_provider = vision_token_provider
+        self.image_embeddings_client = image_embeddings_client
         self.image_blob_container_client = image_blob_container_client
         self.image_datalake_client = image_datalake_client
 
@@ -462,25 +459,9 @@ class Approach(ABC):
         # so we do not need to explicitly pass in an oversampling parameter here
         return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
 
-    async def compute_image_embedding(self, q: str):
-        if not self.vision_endpoint:
-            raise ValueError("Azure AI Vision endpoint must be set to compute image embedding.")
-        endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
-        headers = {"Content-Type": "application/json"}
-        params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
-        data = {"text": q}
-
-        if not self.vision_token_provider:
-            raise ValueError("Azure AI Vision token provider must be set to compute image embedding.")
-        headers["Authorization"] = "Bearer " + await self.vision_token_provider()
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                url=endpoint, params=params, headers=headers, json=data, raise_for_status=True
-            ) as response:
-                json = await response.json()
-                image_query_vector = json["vector"]
-        return VectorizedQuery(vector=image_query_vector, k_nearest_neighbors=50, fields="images/embedding")
+    async def compute_multimodal_embedding(self, q: str):
+        multimodal_query_vector = await self.image_embeddings_client.create_embedding_for_text(q)
+        return VectorizedQuery(vector=multimodal_query_vector, k_nearest_neighbors=50, fields="images/embedding")
 
     def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>

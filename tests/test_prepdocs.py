@@ -232,7 +232,7 @@ async def test_image_embeddings_success(mock_azurehttp_calls):
 
     # Call the create_embedding method with fake image bytes
     image_bytes = b"fake_image_data"
-    embedding = await image_embeddings.create_embedding(image_bytes)
+    embedding = await image_embeddings.create_embedding_for_image(image_bytes)
 
     # Verify the result
     assert embedding == [

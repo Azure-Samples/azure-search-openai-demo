@@ -236,7 +236,7 @@ class ImageEmbeddings:
         self.token_provider = token_provider
         self.endpoint = endpoint
 
-    async def create_embedding(self, image_bytes: bytes) -> list[float]:
+    async def create_embedding_for_image(self, image_bytes: bytes) -> list[float]:
         endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeImage")
         params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
         headers = {"Authorization": "Bearer " + await self.token_provider()}
@@ -252,6 +252,26 @@ class ImageEmbeddings:
                     async with session.post(url=endpoint, params=params, data=image_bytes) as resp:
                         resp_json = await resp.json()
                         return resp_json["vector"]
+        raise ValueError("Failed to get image embedding after multiple retries.")
+
+    async def create_embedding_for_text(self, q: str):
+        if not self.endpoint:
+            raise ValueError("Azure AI Vision endpoint must be set to compute image embedding.")
+        endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeText")
+        headers = {"Content-Type": "application/json"}
+        params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
+        data = {"text": q}
+
+        if not self.token_provider:
+            raise ValueError("Azure AI Vision token provider must be set to compute image embedding.")
+        headers["Authorization"] = "Bearer " + await self.token_provider()
+
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                url=endpoint, params=params, headers=headers, json=data, raise_for_status=True
+            ) as response:
+                json = await response.json()
+                return json["vector"]
         raise ValueError("Failed to get image embedding after multiple retries.")
 
     def before_retry_sleep(self, retry_state):

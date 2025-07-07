@@ -1,7 +1,7 @@
 import json
 import re
 from collections.abc import AsyncGenerator, Awaitable
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Optional, Union, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
@@ -26,6 +26,7 @@ from approaches.approach import (
 )
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from prepdocslib.embeddings import ImageEmbeddings
 
 
 class ChatReadRetrieveReadApproach(Approach):
@@ -60,8 +61,7 @@ class ChatReadRetrieveReadApproach(Approach):
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
-        vision_endpoint: Optional[str] = None,
-        vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
+        image_embeddings_client: Optional[ImageEmbeddings] = None,
         image_blob_container_client: Optional[ContainerClient] = None,
         image_datalake_client: Optional[FileSystemClient] = None,
     ):
@@ -72,8 +72,7 @@ class ChatReadRetrieveReadApproach(Approach):
         self.agent_client = agent_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
-        self.image_blob_container_client = image_blob_container_client
-        self.image_datalake_client = image_datalake_client
+
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
@@ -90,9 +89,10 @@ class ChatReadRetrieveReadApproach(Approach):
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
-        self.vision_endpoint = vision_endpoint
-        self.vision_token_provider = vision_token_provider
         self.multimodal_enabled = multimodal_enabled
+        self.image_embeddings_client = image_embeddings_client
+        self.image_blob_container_client = image_blob_container_client
+        self.image_datalake_client = image_datalake_client
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
@@ -340,7 +340,7 @@ class ChatReadRetrieveReadApproach(Approach):
         if use_vector_search:
             vectors.append(await self.compute_text_embedding(query_text))
             if use_image_embeddings:
-                vectors.append(await self.compute_image_embedding(query_text))
+                vectors.append(await self.compute_multimodal_embedding(query_text))
 
         results = await self.search(
             top,

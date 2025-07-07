@@ -3,10 +3,9 @@ TODO:
 * Test with integrated vectorization
    * Multivector is working
    * Can we get images mapped??
+   * We need DocIntelligence skill
 * Update all TODOs in the code/docs
 * Fix/add unit tests - check coverage
-* In conftest, should I make a new env for vision? Currently I mashed it into the existing env, but it might be cleaner to have a separate one, as now I have to pass llm_inputs explicitly in the tests to turn off image responses.
-   * vote: make a new env
 * LLMInputType and VectorFields have inconsistently named values
    * # Vector fields:
       # [X] text embedding field (embedding3) use_text_vector=True
@@ -16,9 +15,6 @@ TODO:
       # [X] text sources , use_text_sources = True
       # [X] image sources , use_image_sources = True
 
-* Should we make an Azure AI Vision client class? So we dont have to pass two things around, just one?
-   * vision_endpoint and vision_token_provider
-   * we have one! its in embeddings.py, add compute_image_embeddings method to it and use it instead
 
 To decide:
 * For user data lake client, how often should we double check the ACL matches the oid, versus assuming the URLs convey that? (Like when fetching the image?)

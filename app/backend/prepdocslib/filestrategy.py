@@ -38,7 +38,7 @@ async def parse_file(
                     file.filename(), image.bytes, image.filename, image.page_num, user_oid=user_oid
                 )
             if image_embeddings_client:
-                image.embedding = await image_embeddings_client.create_embedding(image.bytes)
+                image.embedding = await image_embeddings_client.create_embedding_for_image(image.bytes)
     logger.info("Splitting '%s' into sections", file.filename())
     sections = [
         Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)

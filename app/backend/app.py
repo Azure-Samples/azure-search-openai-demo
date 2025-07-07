@@ -103,6 +103,7 @@ from prepdocs import (
     setup_search_info,
 )
 from prepdocslib.blobmanager import AdlsBlobManager
+from prepdocslib.embeddings import ImageEmbeddings
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
 
@@ -624,6 +625,10 @@ async def setup_clients():
         )
         current_app.config[CONFIG_INGESTER] = ingester
 
+    image_embeddings_client = None
+    if USE_MULTIMODAL:
+        image_embeddings_client = ImageEmbeddings(AZURE_VISION_ENDPOINT, azure_ai_token_provider)
+
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_AGENT_CLIENT] = agent_client
@@ -659,6 +664,7 @@ async def setup_clients():
 
     # Set up the two default RAG approaches for /ask and /chat
     # RetrieveThenReadApproach is used by /ask for single-turn Q&A
+
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client=search_client,
         search_index_name=AZURE_SEARCH_INDEX,
@@ -667,8 +673,6 @@ async def setup_clients():
         agent_client=agent_client,
         openai_client=openai_client,
         auth_helper=auth_helper,
-        image_blob_container_client=image_blob_container_client,
-        image_datalake_client=user_blob_container_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
@@ -681,9 +685,10 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
         reasoning_effort=OPENAI_REASONING_EFFORT,
-        vision_endpoint=AZURE_VISION_ENDPOINT,
-        vision_token_provider=azure_ai_token_provider,
         multimodal_enabled=USE_MULTIMODAL,
+        image_embeddings_client=image_embeddings_client,
+        image_blob_container_client=image_blob_container_client,
+        image_datalake_client=user_blob_container_client,
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -695,8 +700,6 @@ async def setup_clients():
         agent_client=agent_client,
         openai_client=openai_client,
         auth_helper=auth_helper,
-        image_blob_container_client=image_blob_container_client,
-        image_datalake_client=user_blob_container_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
@@ -709,9 +712,10 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
         reasoning_effort=OPENAI_REASONING_EFFORT,
-        vision_endpoint=AZURE_VISION_ENDPOINT,
-        vision_token_provider=azure_ai_token_provider,
         multimodal_enabled=USE_MULTIMODAL,
+        image_embeddings_client=image_embeddings_client,
+        image_blob_container_client=image_blob_container_client,
+        image_datalake_client=user_blob_container_client,
     )
 
 

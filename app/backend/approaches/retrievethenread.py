@@ -1,5 +1,4 @@
-from collections.abc import Awaitable
-from typing import Any, Callable, Optional, cast
+from typing import Any, Optional, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
@@ -19,6 +18,7 @@ from approaches.approach import (
 )
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from prepdocslib.embeddings import ImageEmbeddings
 
 
 class RetrieveThenReadApproach(Approach):
@@ -51,8 +51,7 @@ class RetrieveThenReadApproach(Approach):
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
-        vision_endpoint: Optional[str] = None,
-        vision_token_provider: Optional[Callable[[], Awaitable[str]]] = None,
+        image_embeddings_client: Optional[ImageEmbeddings] = None,
         image_blob_container_client: Optional[ContainerClient] = None,
         image_datalake_client: Optional[FileSystemClient] = None,
     ):
@@ -64,8 +63,6 @@ class RetrieveThenReadApproach(Approach):
         self.chatgpt_deployment = chatgpt_deployment
         self.openai_client = openai_client
         self.auth_helper = auth_helper
-        self.image_blob_container_client = image_blob_container_client
-        self.image_datalake_client = image_datalake_client
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
@@ -80,9 +77,10 @@ class RetrieveThenReadApproach(Approach):
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
-        self.vision_endpoint = vision_endpoint
-        self.vision_token_provider = vision_token_provider
         self.multimodal_enabled = multimodal_enabled
+        self.image_embeddings_client = image_embeddings_client
+        self.image_blob_container_client = image_blob_container_client
+        self.image_datalake_client = image_datalake_client
 
     async def run(
         self,
@@ -186,7 +184,7 @@ class RetrieveThenReadApproach(Approach):
             if vector_fields_enum != VectorFieldType.IMAGE_EMBEDDING:
                 vectors.append(await self.compute_text_embedding(q))
             if use_image_embeddings:
-                vectors.append(await self.compute_image_embedding(q))
+                vectors.append(await self.compute_multimodal_embedding(q))
 
         results = await self.search(
             top,
