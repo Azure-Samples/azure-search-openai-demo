@@ -7,17 +7,7 @@ import readNDJSONStream from "ndjson-readablestream";
 import appLogo from "../../assets/applogo.svg";
 import styles from "./Chat.module.css";
 
-import {
-    chatApi,
-    configApi,
-    RetrievalMode,
-    ChatAppResponse,
-    ChatAppResponseOrError,
-    ChatAppRequest,
-    ResponseMessage,
-    LLMInputs,
-    SpeechConfig
-} from "../../api";
+import { chatApi, configApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ResponseMessage, SpeechConfig } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -61,7 +51,8 @@ const Chat = () => {
     const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(true);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
-    const [llmInputs, setLLMInputs] = useState<LLMInputs>(LLMInputs.TextAndImages);
+    const [sendTextSources, setSendTextSources] = useState<boolean>(true);
+    const [sendImageSources, setSendImageSources] = useState<boolean>(true);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -109,8 +100,8 @@ const Chat = () => {
             setShowMultimodalOptions(config.showMultimodalOptions);
             if (config.showMultimodalOptions) {
                 // Set default LLM inputs based on config override or fallback to TextAndImages
-                const defaultLlmInputs = config.ragLlmInputsOverride ? (config.ragLlmInputsOverride as LLMInputs) : LLMInputs.TextAndImages;
-                setLLMInputs(defaultLlmInputs);
+                setSendTextSources(true);
+                setSendImageSources(true);
                 // Set default vector fields based on config override or fallback to TextAndImageEmbeddings
                 // Set default vector field settings
                 setSearchTextEmbeddings(true);
@@ -239,7 +230,8 @@ const Chat = () => {
                         use_groups_security_filter: useGroupsSecurityFilter,
                         search_text_embeddings: searchTextEmbeddings,
                         search_image_embeddings: searchImageEmbeddings,
-                        llm_inputs: llmInputs,
+                        send_text_sources: sendTextSources,
+                        send_image_sources: sendImageSources,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
                         ...(seed !== null ? { seed: seed } : {})
@@ -357,7 +349,12 @@ const Chat = () => {
                 setUseSuggestFollowupQuestions(value);
                 break;
             case "llmInputs":
-                setLLMInputs(value);
+                break;
+            case "sendTextSources":
+                setSendTextSources(value);
+                break;
+            case "sendImageSources":
+                setSendImageSources(value);
                 break;
             case "searchTextEmbeddings":
                 setSearchTextEmbeddings(value);
@@ -561,7 +558,8 @@ const Chat = () => {
                         includeCategory={includeCategory}
                         retrievalMode={retrievalMode}
                         showMultimodalOptions={showMultimodalOptions}
-                        llmInputs={llmInputs}
+                        sendTextSources={sendTextSources}
+                        sendImageSources={sendImageSources}
                         searchTextEmbeddings={searchTextEmbeddings}
                         searchImageEmbeddings={searchImageEmbeddings}
                         showSemanticRankerOption={showSemanticRankerOption}

@@ -5,7 +5,7 @@ import { Panel, DefaultButton, Spinner } from "@fluentui/react";
 
 import styles from "./Ask.module.css";
 
-import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, LLMInputs, SpeechConfig } from "../../api";
+import { askApi, configApi, ChatAppResponse, ChatAppRequest, RetrievalMode, SpeechConfig } from "../../api";
 import { Answer, AnswerError } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -36,7 +36,8 @@ export function Component(): JSX.Element {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
-    const [llmInputs, setLLMInputs] = useState<LLMInputs>(LLMInputs.Texts);
+    const [sendTextSources, setSendTextSources] = useState<boolean>(true);
+    const [sendImageSources, setSendImageSources] = useState<boolean>(true);
     const [includeCategory, setIncludeCategory] = useState<string>("");
 
     const [excludeCategory, setExcludeCategory] = useState<string>("");
@@ -87,8 +88,8 @@ export function Component(): JSX.Element {
             setShowMultimodalOptions(config.showMultimodalOptions);
             if (config.showMultimodalOptions) {
                 // Set default LLM inputs based on config override or fallback to Texts
-                const defaultLlmInputs = config.ragLlmInputsOverride ? (config.ragLlmInputsOverride as LLMInputs) : LLMInputs.Texts;
-                setLLMInputs(defaultLlmInputs);
+                setSendTextSources(true);
+                setSendImageSources(true);
                 // Set default vector field settings
                 setSearchTextEmbeddings(true);
                 setSearchImageEmbeddings(true);
@@ -162,7 +163,8 @@ export function Component(): JSX.Element {
                         use_groups_security_filter: useGroupsSecurityFilter,
                         search_text_embeddings: searchTextEmbeddings,
                         search_image_embeddings: searchImageEmbeddings,
-                        llm_inputs: llmInputs,
+                        send_text_sources: sendTextSources,
+                        send_image_sources: sendImageSources,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
                         ...(seed !== null ? { seed: seed } : {})
@@ -238,7 +240,12 @@ export function Component(): JSX.Element {
                 setUseGroupsSecurityFilter(value);
                 break;
             case "llmInputs":
-                setLLMInputs(value);
+                break;
+            case "sendTextSources":
+                setSendTextSources(value);
+                break;
+            case "sendImageSources":
+                setSendImageSources(value);
                 break;
             case "searchTextEmbeddings":
                 setSearchTextEmbeddings(value);
@@ -375,7 +382,8 @@ export function Component(): JSX.Element {
                     excludeCategory={excludeCategory}
                     includeCategory={includeCategory}
                     retrievalMode={retrievalMode}
-                    llmInputs={llmInputs}
+                    sendTextSources={sendTextSources}
+                    sendImageSources={sendImageSources}
                     searchTextEmbeddings={searchTextEmbeddings}
                     searchImageEmbeddings={searchImageEmbeddings}
                     showSemanticRankerOption={showSemanticRankerOption}

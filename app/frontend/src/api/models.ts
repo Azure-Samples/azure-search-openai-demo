@@ -4,12 +4,6 @@ export const enum RetrievalMode {
     Text = "text"
 }
 
-export const enum LLMInputs {
-    TextAndImages = "textAndImages",
-    Images = "images",
-    Texts = "texts"
-}
-
 export type ChatAppRequestOverrides = {
     retrieval_mode?: RetrievalMode;
     semantic_ranker?: boolean;
@@ -31,7 +25,8 @@ export type ChatAppRequestOverrides = {
     suggest_followup_questions?: boolean;
     use_oid_security_filter?: boolean;
     use_groups_security_filter?: boolean;
-    llm_inputs: LLMInputs;
+    send_text_sources: boolean;
+    send_image_sources: boolean;
     search_text_embeddings: boolean;
     search_image_embeddings: boolean;
     language: string;

@@ -1,9 +1,9 @@
 import { useId } from "@fluentui/react-hooks";
 import { useTranslation } from "react-i18next";
-import { TextField, ITextFieldProps, Checkbox, ICheckboxProps, Dropdown, IDropdownProps, IDropdownOption } from "@fluentui/react";
+import { TextField, ITextFieldProps, Checkbox, ICheckboxProps, Dropdown, IDropdownProps, IDropdownOption, Stack } from "@fluentui/react";
 import { HelpCallout } from "../HelpCallout";
 import { VectorSettings } from "../VectorSettings";
-import { RetrievalMode, LLMInputs } from "../../api";
+import { RetrievalMode } from "../../api";
 import styles from "./Settings.module.css";
 
 // Add type for onRenderLabel
@@ -25,7 +25,8 @@ export interface SettingsProps {
     excludeCategory: string;
     includeCategory: string;
     retrievalMode: RetrievalMode;
-    llmInputs: LLMInputs;
+    sendTextSources: boolean;
+    sendImageSources: boolean;
     searchTextEmbeddings: boolean;
     searchImageEmbeddings: boolean;
     showSemanticRankerOption: boolean;
@@ -68,7 +69,8 @@ export const Settings = ({
     retrievalMode,
     searchTextEmbeddings,
     searchImageEmbeddings,
-    llmInputs,
+    sendTextSources,
+    sendImageSources,
     showSemanticRankerOption,
     showQueryRewritingOption,
     showReasoningEffortOption,
@@ -402,20 +404,27 @@ export const Settings = ({
                 aria-labelledby={seedId}
                 onRenderLabel={props => renderLabel(props, seedId, seedFieldId, t("helpTexts.seed"))}
             />
+
             {showMultimodalOptions && !useAgenticRetrieval && (
-                <Dropdown
-                    id="llmInputsDropdown"
-                    className={styles.settingsSeparator}
-                    label={t("labels.llmInputs")}
-                    selectedKey={llmInputs}
-                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) => onChange("llmInputs", option?.key)}
-                    options={[
-                        { key: LLMInputs.Texts, text: t("labels.llmInputsOptions.texts") },
-                        { key: LLMInputs.Images, text: t("labels.llmInputsOptions.images") },
-                        { key: LLMInputs.TextAndImages, text: t("labels.llmInputsOptions.textAndImages") }
-                    ]}
-                    onRenderLabel={props => renderLabel(props, "llmInputsDropdownLabel", "llmInputsDropdown", t("helpTexts.llmInputs"))}
-                />
+                <fieldset className={styles.fieldset + " " + styles.settingsSeparator}>
+                    <legend className={styles.legend}>{t("labels.llmInputs")}</legend>
+                    <Stack tokens={{ childrenGap: 8 }}>
+                        <Checkbox
+                            id="sendTextSources"
+                            label={t("labels.llmInputsOptions.texts")}
+                            checked={sendTextSources}
+                            onChange={(_ev, checked) => onChange("send_text_sources", !!checked)}
+                            onRenderLabel={props => renderLabel(props, "sendTextSourcesLabel", "sendTextSources", t("helpTexts.llmTextInputs"))}
+                        />
+                        <Checkbox
+                            id="sendImageSources"
+                            label={t("labels.llmInputsOptions.images")}
+                            checked={sendImageSources}
+                            onChange={(_ev, checked) => onChange("send_image_sources", !!checked)}
+                            onRenderLabel={props => renderLabel(props, "sendImageSourcesLabel", "sendImageSources", t("helpTexts.llmImageInputs"))}
+                        />
+                    </Stack>
+                </fieldset>
             )}
         </div>
     );

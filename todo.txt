@@ -10,8 +10,13 @@ TODO:
       # Inputs for LLM:
       # [X] text sources , use_text_sources = True
       # [X] image sources , use_image_sources = True
-
-
+    Update:
+                // Set default LLM inputs based on config override or fallback to Texts
+                setSendTextSources(true);
+                setSendImageSources(true);
+                // Set default vector field settings
+                setSearchTextEmbeddings(true);
+                setSearchImageEmbeddings(true);
 To decide:
 * For user data lake client, how often should we double check the ACL matches the oid, versus assuming the URLs convey that? (Like when fetching the image?)
    * add a note that we only check owner, not full access control

@@ -105,11 +105,11 @@
         },
         "useSuggestFollowupQuestions": "Suggest follow-up questions",
         "useAgenticRetrieval": "Use agentic retrieval",
-        "llmInputs": "Inputs for LLM",
+        "llmInputs": "LLM input sources",
         "llmInputsOptions": {
-            "texts": "Texts",
-            "images": "Images",
-            "textAndImages": "Texts and Images"
+            "texts": "Text sources",
+            "images": "Image sources",
+            "textAndImages": "Text and image sources"
         },
         "retrievalMode": {
             "label": "Retrieval mode",
@@ -162,8 +162,8 @@
         "suggestFollowupQuestions": "Asks the LLM to suggest follow-up questions based on the user's query.",
         "textEmbeddings": "When selected, search will use embeddings from the text-only embeddings model of extracted text chunks.",
         "imageEmbeddings": "When selected, search will use embeddings from the multimodal embeddings model of extracted images.",
-        "llmInputs":
-            "Sets what will be sent to the vision model. 'Images and text' sends both images and text to the model, 'Images' sends only images, and 'Text' sends only text.",
+        "llmTextInputs": "When selected, text content from the search results will be sent to the LLM as context.",
+        "llmImageInputs": "When selected, images from the search results will be sent to the LLM as context.",
         "retrievalMode":
             "Sets the retrieval mode for the Azure AI Search query. `Vectors + Text (Hybrid)` uses a combination of vector search and full text search, `Vectors` uses only vector search, and `Text` uses only full text search. Hybrid is generally optimal.",
         "streamChat": "Continuously streams the response to the chat UI as it is generated.",

@@ -99,7 +99,6 @@ export const VectorSettings = ({
                     <Stack tokens={{ childrenGap: 8 }}>
                         <Checkbox
                             id={vectorFieldsFieldId + "-text"}
-                            className={styles.settingsSeparator}
                             label={t("labels.vector.options.embedding")}
                             checked={searchTextEmbeddings}
                             onChange={onSearchTextEmbeddingsChange}
@@ -115,7 +114,6 @@ export const VectorSettings = ({
                         />
                         <Checkbox
                             id={vectorFieldsFieldId + "-image"}
-                            className={styles.settingsSeparator}
                             label={t("labels.vector.options.imageEmbedding")}
                             checked={searchImageEmbeddings}
                             onChange={onSearchImageEmbeddingsChange}
