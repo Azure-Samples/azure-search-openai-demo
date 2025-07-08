@@ -10,13 +10,11 @@ from azure.core.pipeline.transport import (
 )
 from azure.storage.blob.aio import BlobServiceClient
 
-from prepdocslib.blobmanager import BlobManager
-
 from .mocks import MockAzureCredential
 
 
 @pytest.mark.asyncio
-async def test_content_file(monkeypatch, mock_env, mock_acs_search):
+async def test_content_file(monkeypatch, mock_env, mock_acs_search, chat_approach):
     class MockAiohttpClientResponse404(aiohttp.ClientResponse):
         def __init__(self, url, body_bytes, headers=None):
             self._body = body_bytes
@@ -72,21 +70,21 @@ async def test_content_file(monkeypatch, mock_env, mock_acs_search):
         transport=MockTransport(),
         retry_total=0,  # Necessary to avoid unnecessary network requests during tests
     )
-    monkeypatch.setattr("azure.storage.blob.aio", "BlobServiceClient", lambda *args, **kwargs: blob_client)
 
-    # Make a BlobManager
-    blob_manager = BlobManager(
-        f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
-        credential=MockAzureCredential(),
-        container=os.environ["AZURE_STORAGE_CONTAINER"],
-    )
+    # Set up the BlobManager to use our mock blob client
+    monkeypatch.setattr("prepdocslib.blobmanager.BlobManager._get_service_client", lambda self: blob_client)
+
+    async def mock_exists(*args, **kwargs):
+        return True
+
+    monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.exists", mock_exists)
 
     blob_url = "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png"
-    image_url = await blob_manager.download_blob(blob_url)
+    image_url = await chat_approach.download_blob_as_base64(blob_url)
     assert image_url == "data:image/png;base64,dGVzdCBjb250ZW50"
 
-    image_url = await blob_manager.download_blob("notfound.png")
+    image_url = await chat_approach.download_blob_as_base64("notfound.png")
     assert image_url is None
 
-    image_url = await blob_manager.download_blob("")
+    image_url = await chat_approach.download_blob_as_base64("")
     assert image_url is None

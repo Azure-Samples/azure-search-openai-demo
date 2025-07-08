@@ -25,30 +25,6 @@ async def mock_retrieval(*args, **kwargs):
     return mock_retrieval_response()
 
 
-@pytest.fixture
-def chat_approach():
-    return ChatReadRetrieveReadApproach(
-        search_client=None,
-        search_index_name=None,
-        agent_model=None,
-        agent_deployment=None,
-        agent_client=None,
-        auth_helper=None,
-        openai_client=None,
-        chatgpt_model="gpt-4.1-mini",
-        chatgpt_deployment="chat",
-        embedding_deployment="embeddings",
-        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
-        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        embedding_field="embedding3",
-        sourcepage_field="",
-        content_field="",
-        query_language="en-us",
-        query_speller="lexicon",
-        prompt_manager=PromptyManager(),
-    )
-
-
 def test_get_search_query(chat_approach):
     payload = """
     {

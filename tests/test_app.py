@@ -1027,7 +1027,15 @@ async def test_chat_stream_followup(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_vision(vision_client, snapshot):
+async def test_chat_vision(monkeypatch, vision_client, snapshot):
+    async def mock_download_blob_as_base64(self, blob_url, user_oid):
+        return "data:image/png;base64,base64encodedimage"
+
+    monkeypatch.setattr(
+        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.download_blob_as_base64",
+        mock_download_blob_as_base64,
+    )
+
     response = await vision_client.post(
         "/chat",
         json={"messages": [{"content": "Are interest rates high?", "role": "user"}]},

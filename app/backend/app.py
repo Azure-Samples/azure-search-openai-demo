@@ -561,7 +561,7 @@ async def setup_clients():
         openai_organization=OPENAI_ORGANIZATION,
     )
 
-    user_image_blob_manager = None
+    user_blob_manager = None
     if USE_USER_UPLOAD:
         current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
         if not AZURE_USERSTORAGE_ACCOUNT or not AZURE_USERSTORAGE_CONTAINER:
@@ -616,7 +616,7 @@ async def setup_clients():
             embeddings=text_embeddings_service,
             image_embeddings=image_embeddings_service,
             search_field_name_embedding=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
-            blob_manager=user_image_blob_manager,
+            blob_manager=user_blob_manager,
         )
         current_app.config[CONFIG_INGESTER] = ingester
 

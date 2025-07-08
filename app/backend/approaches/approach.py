@@ -418,8 +418,8 @@ class Approach(ABC):
         if ".dfs.core.windows.net" in blob_url and self.user_blob_manager:
             blob_manager = self.user_blob_manager
         blob_downloader = await blob_manager.download_blob(blob_path, user_oid=user_oid)
-        blob = await blob_downloader.readall()
-        if blob is not None:
+        if blob_downloader is not None:
+            blob = await blob_downloader.readall()
             img = base64.b64encode(blob).decode("utf-8")
             return f"data:image/png;base64,{img}"
         return None

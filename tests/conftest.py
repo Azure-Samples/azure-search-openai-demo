@@ -29,9 +29,14 @@ from openai.types.create_embedding_response import Usage
 
 import app
 import core
+from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.promptmanager import PromptyManager
 from core.authentication import AuthenticationHelper
+from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 
 from .mocks import (
+    MOCK_EMBEDDING_DIMENSIONS,
+    MOCK_EMBEDDING_MODEL_NAME,
     MockAsyncPageIterator,
     MockAsyncSearchResultsIterator,
     MockAzureCredential,
@@ -1058,3 +1063,37 @@ def patch_get_bearer_token_provider(monkeypatch, mock_token_provider):
         return mock_token_provider
 
     monkeypatch.setattr("azure.identity.aio.get_bearer_token_provider", mock_get_bearer_token)
+
+
+@pytest.fixture
+def chat_approach():
+    return ChatReadRetrieveReadApproach(
+        search_client=None,
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-4.1-mini",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+        user_blob_manager=AdlsBlobManager(
+            endpoint="https://test-userstorage-account.dfs.core.windows.net",
+            container="test-userstorage-container",
+            credential=MockAzureCredential(),
+        ),
+        global_blob_manager=BlobManager(  # on normal Azure storage
+            endpoint="https://test-globalstorage-account.blob.core.windows.net",
+            container="test-globalstorage-container",
+            credential=MockAzureCredential(),
+        ),
+    )

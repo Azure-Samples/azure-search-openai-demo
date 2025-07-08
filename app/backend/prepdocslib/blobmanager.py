@@ -179,7 +179,7 @@ class AdlsBlobManager(BaseBlobManager):
             str: The URL of the uploaded file, with forward slashes (not URL-encoded)
         """
         # Ensure user directory exists but don't create a subdirectory
-        user_directory_client = await self._ensure_directory(user_oid, owner=user_oid)
+        user_directory_client = await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
 
         # Create file directly in user directory
         file_client = user_directory_client.get_file_client(filename)
@@ -240,12 +240,12 @@ class AdlsBlobManager(BaseBlobManager):
         Returns:
             str: The URL of the uploaded file, with forward slashes (not URL-encoded)
         """
-        await self._ensure_directory(user_oid, owner=user_oid)
-        directory_path = self._get_image_directory_path(document_filename, user_oid, image_page_num)
-        image_directory_client = await self._ensure_directory(directory_path, owner=user_oid)
+        await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
+        image_directory_path = self._get_image_directory_path(document_filename, user_oid, image_page_num)
+        image_directory_client = await self._ensure_directory(directory_path=image_directory_path, user_oid=user_oid)
         file_client = image_directory_client.get_file_client(image_filename)
         image_bytes = BaseBlobManager.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
-        logger.info("Uploading document image '%s' to '%s'", image_filename, directory_path)
+        logger.info("Uploading document image '%s' to '%s'", image_filename, image_directory_path)
         await file_client.upload_data(image_bytes, overwrite=True, metadata={"UploadedBy": user_oid})
         return unquote(file_client.url)
 
@@ -284,7 +284,7 @@ class AdlsBlobManager(BaseBlobManager):
             filename = path_parts[-1]
 
         try:
-            user_directory_client = self._ensure_directory(directory_path, user_oid)
+            user_directory_client = self._ensure_directory(directory_path=directory_path, user_oid=user_oid)
             file_client = user_directory_client.get_file_client(filename)
             blob = await file_client.download_file()
             return blob
@@ -310,7 +310,7 @@ class AdlsBlobManager(BaseBlobManager):
             ResourceNotFoundError: If the file does not exist
         """
         # Ensure the user directory exists
-        user_directory_client = await self._ensure_directory(user_oid, owner=user_oid)
+        user_directory_client = await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
         # Delete the main document file
         file_client = user_directory_client.get_file_client(filename)
         await file_client.delete_file()
@@ -318,7 +318,9 @@ class AdlsBlobManager(BaseBlobManager):
         # Try to delete any associated image directories
         try:
             image_directory_path = self._get_image_directory_path(filename, user_oid)
-            image_directory_client = await self._ensure_directory(image_directory_path, owner=user_oid)
+            image_directory_client = await self._ensure_directory(
+                directory_path=image_directory_path, user_oid=user_oid
+            )
             await image_directory_client.delete_directory()
             logger.info(f"Deleted associated image directory: {image_directory_path}")
         except ResourceNotFoundError:
@@ -338,7 +340,7 @@ class AdlsBlobManager(BaseBlobManager):
         Returns:
             list[str]: List of filenames that belong to the user
         """
-        user_directory_client = await self._ensure_directory(user_oid, owner=user_oid)
+        user_directory_client = await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
         files = []
         try:
             all_paths = user_directory_client.get_paths()
@@ -389,21 +391,30 @@ class BlobManager(BaseBlobManager):
         self.subscription_id = subscription_id
         self.image_container = image_container
 
-    async def upload_blob(self, file: File) -> Optional[list[str]]:
-        async with BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
-        ) as service_client, service_client.get_container_client(self.container) as container_client:
-            if not await container_client.exists():
-                await container_client.create_container()
+    def get_managedidentity_connectionstring(self):
+        if not self.account or not self.resource_group or not self.subscription_id:
+            raise ValueError("Account, resource group, and subscription ID must be set to generate connection string.")
+        return f"ResourceId=/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Storage/storageAccounts/{self.account};"
 
-            # Re-open and upload the original file
-            if file.url is None:
-                with open(file.content.name, "rb") as reopened_file:
-                    blob_name = self.blob_name_from_file_name(file.content.name)
-                    logger.info("Uploading blob for document '%s'", blob_name)
-                    blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
-                    file.url = blob_client.url
-        return None
+    async def _get_service_client(self) -> BlobServiceClient:
+        return BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
+        )
+
+    async def upload_blob(self, file: File) -> Optional[list[str]]:
+        blob_service_client = await self._get_service_client()
+        container_client = blob_service_client.get_container_client(self.container)
+        if not await container_client.exists():
+            await container_client.create_container()
+
+        # Re-open and upload the original file
+        if file.url is None:
+            with open(file.content.name, "rb") as reopened_file:
+                blob_name = self.blob_name_from_file_name(file.content.name)
+                logger.info("Uploading blob for document '%s'", blob_name)
+                blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
+                file.url = blob_client.url
+        blob_service_client.close()
 
     async def upload_document_image(
         self,
@@ -421,22 +432,16 @@ class BlobManager(BaseBlobManager):
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
             )
-        async with BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
-        ) as service_client, service_client.get_container_client(self.image_container) as container_client:
-            if not await container_client.exists():
-                await container_client.create_container()
-            image_bytes = self.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
-            blob_name = f"{self.blob_name_from_file_name(document_filename)}/page{image_page_num}/{image_filename}"
-            logger.info("Uploading blob for document image '%s'", blob_name)
-            blob_client = await container_client.upload_blob(blob_name, image_bytes, overwrite=True)
-            return blob_client.url
-        return None
-
-    def get_managedidentity_connectionstring(self):
-        if not self.account or not self.resource_group or not self.subscription_id:
-            raise ValueError("Account, resource group, and subscription ID must be set to generate connection string.")
-        return f"ResourceId=/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Storage/storageAccounts/{self.account};"
+        blob_service_client = await self._get_service_client()
+        container_client = blob_service_client.get_container_client(self.container)
+        if not await container_client.exists():
+            await container_client.create_container()
+        image_bytes = self.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
+        blob_name = f"{self.blob_name_from_file_name(document_filename)}/page{image_page_num}/{image_filename}"
+        logger.info("Uploading blob for document image '%s'", blob_name)
+        blob_client = await container_client.upload_blob(blob_name, image_bytes, overwrite=True)
+        blob_service_client.close()
+        return blob_client.url
 
     async def download_blob(
         self, blob_path: str, user_oid: Optional[str] = None
@@ -445,43 +450,43 @@ class BlobManager(BaseBlobManager):
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
             )
-
-        async with BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
-        ) as service_client, service_client.get_container_client(self.container) as container_client:
-            if not await container_client.exists():
+        blob_service_client = await self._get_service_client()
+        container_client = blob_service_client.get_container_client(self.container)
+        if not await container_client.exists():
+            return None
+        if len(blob_path) == 0:
+            logger.warning("Blob path is empty")
+            return None
+        blob_client = container_client.get_blob_client(blob_path)
+        try:
+            blob = await blob_client.download_blob()
+            if not blob.properties:
+                logger.warning(f"No blob exists for {blob_path}")
                 return None
-            blob_client = container_client.get_blob_client(blob_path)
-            try:
-                blob = await blob_client.download_blob()
-                if not blob.properties:
-                    logger.warning(f"No blob exists for {blob_path}")
-                    return None
-                return blob
-            except ResourceNotFoundError:
-                logger.warning("Blob not found: %s", blob_path)
-                return None
+            return blob
+        except ResourceNotFoundError:
+            logger.warning("Blob not found: %s", blob_path)
+            return None
+        # TODO: close client properly
 
     async def remove_blob(self, path: Optional[str] = None):
-        async with BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential
-        ) as service_client, service_client.get_container_client(self.container) as container_client:
-            if not await container_client.exists():
-                return
-            if path is None:
-                prefix = None
-                blobs = container_client.list_blob_names()
-            else:
-                prefix = os.path.splitext(os.path.basename(path))[0]
-                blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
-            async for blob_path in blobs:
-                # This still supports PDFs split into individual pages, but we could remove in future to simplify code
-                if (
-                    prefix is not None
-                    and (
-                        not re.match(rf"{prefix}-\d+\.pdf", blob_path) or not re.match(rf"{prefix}-\d+\.png", blob_path)
-                    )
-                ) or (path is not None and blob_path == os.path.basename(path)):
-                    continue
-                logger.info("Removing blob %s", blob_path)
-                await container_client.delete_blob(blob_path)
+        blob_service_client = await self._get_service_client()
+        container_client = blob_service_client.get_container_client(self.container)
+        if not await container_client.exists():
+            return
+        if path is None:
+            prefix = None
+            blobs = container_client.list_blob_names()
+        else:
+            prefix = os.path.splitext(os.path.basename(path))[0]
+            blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
+        async for blob_path in blobs:
+            # This still supports PDFs split into individual pages, but we could remove in future to simplify code
+            if (
+                prefix is not None
+                and (not re.match(rf"{prefix}-\d+\.pdf", blob_path) or not re.match(rf"{prefix}-\d+\.png", blob_path))
+            ) or (path is not None and blob_path == os.path.basename(path)):
+                continue
+            logger.info("Removing blob %s", blob_path)
+            await container_client.delete_blob(blob_path)
+        blob_service_client.close()
