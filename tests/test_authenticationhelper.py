@@ -1,7 +1,7 @@
 import base64
 import json
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import aiohttp
 import jwt
@@ -53,9 +53,9 @@ def create_mock_jwt(kid="mock_kid", oid="OID_X"):
         "iss": "https://login.microsoftonline.com/TENANT_ID/v2.0",
         "sub": "AaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaA",
         "aud": "SERVER_APP",
-        "exp": int((datetime.utcnow() + timedelta(hours=1)).timestamp()),
-        "iat": int(datetime.utcnow().timestamp()),
-        "nbf": int(datetime.utcnow().timestamp()),
+        "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp()),
+        "iat": int(datetime.now(timezone.utc).timestamp()),
+        "nbf": int(datetime.now(timezone.utc).timestamp()),
         "name": "John Doe",
         "oid": oid,
         "preferred_username": "john.doe@example.com",

@@ -24,13 +24,13 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 
 user:
-(EXAMPLE) How did crypto do last year?
+How did crypto do last year?
 
 assistant:
 Summarize Cryptocurrency Market Dynamics from last year
 
 user:
-(EXAMPLE) What are my health plans?
+What are my health plans?
 
 assistant:
 Show available health plans

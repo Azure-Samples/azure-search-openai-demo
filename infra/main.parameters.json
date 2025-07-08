@@ -20,6 +20,9 @@
     "openAiResourceGroupName": {
       "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
     },
+    "openAiLocation": {
+      "value": "${AZURE_OPENAI_LOCATION}"
+    },
     "openAiSkuName": {
       "value": "S0"
     },
@@ -76,6 +79,15 @@
     },
     "searchServiceSemanticRankerLevel": {
       "value": "${AZURE_SEARCH_SEMANTIC_RANKER=free}"
+    },
+    "searchServiceQueryRewriting": {
+      "value": "${AZURE_SEARCH_QUERY_REWRITING=false}"
+    },
+    "searchFieldNameEmbedding": {
+      "value": "${AZURE_SEARCH_FIELD_NAME_EMBEDDING=embedding3}"
+    },
+    "defaultReasoningEffort": {
+      "value": "${AZURE_OPENAI_REASONING_EFFORT=medium}"
     },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
@@ -143,6 +155,36 @@
     "gpt4vDeploymentCapacity":{
       "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY}"
     },
+    "evalModelName":{
+      "value": "${AZURE_OPENAI_EVAL_MODEL}"
+    },
+    "evalModelVersion":{
+      "value": "${AZURE_OPENAI_EVAL_MODEL_VERSION}"
+    },
+    "evalDeploymentName": {
+      "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT}"
+    },
+    "evalDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_SKU}"
+    },
+    "evalDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY}"
+    },
+    "searchAgentModelName":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL}"
+    },
+    "searchAgentModelVersion":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION}"
+    },
+    "searchAgentDeploymentName": {
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT}"
+    },
+    "searchAgentDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_SKU}"
+    },
+    "searchAgentDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_CAPACITY}"
+    },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
@@ -181,6 +223,9 @@
     },
     "useGPT4V": {
       "value": "${USE_GPT4V=false}"
+    },
+    "useEval": {
+      "value": "${USE_EVAL=false}"
     },
     "enableLanguagePicker": {
       "value": "${ENABLE_LANGUAGE_PICKER=false}"
@@ -301,6 +346,12 @@
     },
     "useMediaDescriberAzureCU": {
       "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
+    },
+    "useAiProject": {
+      "value": "${USE_AI_PROJECT=false}"
+    },
+    "useAgenticRetrieval": {
+      "value": "${USE_AGENTIC_RETRIEVAL=false}"
     }
   }
 }

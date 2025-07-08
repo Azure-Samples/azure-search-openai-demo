@@ -83,6 +83,12 @@
         "minimumSearchScore": "Minimum search score",
         "minimumRerankerScore": "Minimum reranker score",
         "retrieveCount": "Retrieve this many search results:",
+        "maxSubqueryCount": "Max subqueries",
+        "resultsMergeStrategy": "Results merge strategy",
+        "resultsMergeStrategyOptions": {
+            "interleaved": "Interleaved",
+            "descending": "Descending"
+        },
         "includeCategory": "Include category",
         "includeCategoryOptions": {
             "all": "All"
@@ -90,7 +96,15 @@
         "excludeCategory": "Exclude category",
         "useSemanticRanker": "Use semantic ranker for retrieval",
         "useSemanticCaptions": "Use semantic captions",
+        "useQueryRewriting": "Use query rewriting for retrieval",
+        "reasoningEffort": "Reasoning effort",
+        "reasoningEffortOptions": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
         "useSuggestFollowupQuestions": "Suggest follow-up questions",
+        "useAgenticRetrieval": "Use agentic retrieval",
         "useGPT4V": "Use GPT vision model",
         "gpt4VInput": {
             "label": "GPT vision model inputs",
@@ -133,12 +147,20 @@
              "Sets a minimum score for search results coming back from the semantic reranker. The score always ranges between 0-4. The higher the score, the more semantically relevant the result is to the question.",
         "retrieveNumber":
              "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
+        "maxSubqueryCount":
+            "Sets the maximum number of subqueries to use for the agentic retrieval query plan.",
+        "resultsMergeStrategy":
+            "Sets the strategy for merging results from multiple subqueries. Interleaved picks the top results from each subquery in round robin order, while descending sorts all results by reranker score.",
         "includeCategory":
             "Specifies a category to include in the search results. There are no categories used in the default data set.",
          "excludeCategory":
             "Specifies a category to exclude from the search results. There are no categories used in the default data set.",
          "useSemanticReranker":
             "Enables the Azure AI Search semantic ranker, a model that re-ranks search results based on semantic similarity to the user's query.",
+        "useQueryRewriting":
+            "Enables Azure AI Search query rewriting, a process that modifies the user's query to improve search results. Requires semantic ranker to be enabled.",
+        "reasoningEffort":
+            "Sets the reasoning effort for the LLM. Higher values result in more reasoning, but may take longer to generate a response. The default is medium.",
         "useSemanticCaptions":
              "Sends semantic captions to the LLM instead of the full search result. A semantic caption is extracted from a search result during the process of semantic ranking.",
         "suggestFollowupQuestions": "Asks the LLM to suggest follow-up questions based on the user's query.",
@@ -151,6 +173,7 @@
             "Sets the retrieval mode for the Azure AI Search query. `Vectors + Text (Hybrid)` uses a combination of vector search and full text search, `Vectors` uses only vector search, and `Text` uses only full text search. Hybrid is generally optimal.",
         "streamChat": "Continuously streams the response to the chat UI as it is generated.",
         "useOidSecurityFilter": "Filter search results based on the authenticated user's OID.",
-        "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups."
+        "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

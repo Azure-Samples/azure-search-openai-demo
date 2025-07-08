@@ -1,12 +1,12 @@
-
 # RAG chat: Enabling optional features
 
 This document covers optional features that can be enabled in the deployed Azure resources.
 You should typically enable these features before running `azd up`. Once you've set them, return to the [deployment steps](../README.md#deploying).
 
-* [Using GPT-4](#using-gpt-4)
-* [Using text-embedding-3 models](#using-text-embedding-3-models)
-* [Enabling GPT-4 Turbo with Vision](#enabling-gpt-4-turbo-with-vision)
+* [Using different chat completion models](#using-different-chat-completion-models)
+* [Using reasoning models](#using-reasoning-models)
+* [Using different embedding models](#using-different-embedding-models)
+* [Enabling GPT vision feature](#enabling-gpt-vision-feature)
 * [Enabling media description with Azure Content Understanding](#enabling-media-description-with-azure-content-understanding)
 * [Enabling client-side chat history](#enabling-client-side-chat-history)
 * [Enabling persistent chat history with Azure Cosmos DB](#enabling-persistent-chat-history-with-azure-cosmos-db)
@@ -17,19 +17,16 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling user document upload](#enabling-user-document-upload)
 * [Enabling CORS for an alternate frontend](#enabling-cors-for-an-alternate-frontend)
+* [Enabling query rewriting](#enabling-query-rewriting)
 * [Adding an OpenAI load balancer](#adding-an-openai-load-balancer)
 * [Deploying with private endpoints](#deploying-with-private-endpoints)
 * [Using local parsers](#using-local-parsers)
 
-## Using GPT-4
+## Using different chat completion models
 
-(Instructions for **GPT-4**, **GPT-4o**, and **GPT-4o mini** models are also included here.)
+As of early June 2025, the default chat completion model is `gpt-4.1-mini`. If you deployed this sample before that date, the default model is `gpt-3.5-turbo` or `gpt-4o-mini`. You can change the chat completion model to any Azure OpenAI chat model that's available in your Azure OpenAI resource region by following these steps:
 
-We generally find that most developers are able to get high-quality answers using GPT-3.5. However, if you want to try GPT-4, GPT-4o, or GPT-4o mini, you can do so by following these steps:
-
-Execute the following commands inside your terminal:
-
-1. To set the name of the deployment, run this command with a unique name in your Azure OpenAI account. You can use any deployment name, as long as it's unique in your Azure OpenAI account.
+1. To set the name of the deployment, run this command with a unique name in your Azure OpenAI account. You can use any deployment name, as long as it's unique in your Azure OpenAI account. For convenience, many developers use the same deployment name as the model name, but this is not required.
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT <your-deployment-name>
@@ -38,59 +35,91 @@ Execute the following commands inside your terminal:
     For example:
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat4
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-4o
     ```
 
-1. To set the GPT model name to a **gpt-4**, **gpt-4o**, or **gpt-4o mini** version from the [available models](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate GPT model name.
+1. To set the GPT model to a different [available model](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate model name.
 
-    For GPT-4:
+    For gpt-4.1-mini:
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4.1-mini
     ```
 
-    For GPT-4o:
+    For gpt-4o:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o
     ```
 
-    For GPT-4o mini:
+    For gpt-4o mini:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4o-mini
     ```
 
-1. To set the Azure OpenAI deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
+    For gpt-4:
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-4
     ```
 
-1. To set the Azure OpenAI deployment capacity, run this command with the desired capacity.
+    For gpt-3.5-turbo:
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 10
+    azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-35-turbo
     ```
 
-1. To set the Azure OpenAI deployment version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version.
+1. To set the Azure OpenAI model version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version string.
 
-    For GPT-4:
+    For gpt-4.1-mini:
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-14
     ```
 
-    For GPT-4o:
+    For gpt-4o:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-05-13
     ```
 
-    For GPT-4o mini:
+    For gpt-4o mini:
 
     ```bash
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-07-18
+    ```
+
+    For gpt-4:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION turbo-2024-04-09
+    ```
+
+    For gpt-3.5-turbo:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0125
+    ```
+
+1. To set the Azure OpenAI deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
+
+    For GlobalStandard:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+    ```
+
+    For Standard:
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU Standard
+    ```
+
+1. To set the Azure OpenAI deployment capacity (TPM, measured in thousands of tokens per minute), run this command with the desired capacity. This is not necessary if you are using the default capacity of 30.
+
+    ```bash
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 20
     ```
 
 1. To update the deployment with the new parameters, run this command.
@@ -99,23 +128,33 @@ Execute the following commands inside your terminal:
     azd up
     ```
 
+This process does *not* delete your previous model deployment. If you want to delete previous deployments, go to your Azure OpenAI resource in Azure AI Foundry and delete it there.
+
 > [!NOTE]
-> To revert back to GPT 3.5, run the following commands:
->
-> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT chat` to set the name of your old GPT 3.5 deployment.
-> * `azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-35-turbo` to set the name of your old GPT 3.5 model.
-> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY 30` to set the capacity of your old GPT 3.5 deployment.
-> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU Standard` to set the Sku name back to Standard.
-> * `azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0613` to set the version number of your old GPT 3.5.
-> * `azd up` to update the provisioned resources.
->
-> Note that this does not delete your GPT-4 deployment; it just makes your application create a new or reuse an old GPT 3.5 deployment. If you want to delete it, you can go to your Azure OpenAI studio and do so.
+> To revert back to a previous model, run the same commands with the previous model name and version.
 
-## Using text-embedding-3 models
+## Using reasoning models
 
-By default, the deployed Azure web app uses the `text-embedding-ada-002` embedding model. If you want to use one of the text-embedding-3 models, you can do so by following these steps:
+⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md).
+
+This feature allows you to use reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
+To enable reasoning models, follow the steps in [the reasoning models guide](./reasoning.md).
+
+## Using agentic retrieval
+
+⚠️ This feature is not currently compatible with [vision integration](./gpt4v.md).
+
+This feature allows you to use agentic retrieval in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
+
+## Using different embedding models
+
+By default, the deployed Azure web app uses the `text-embedding-3-large` embedding model. If you want to use a different embedding model, you can do so by following these steps:
 
 1. Run one of the following commands to set the desired model:
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-ada-002
+    ```
 
     ```shell
     azd env set AZURE_OPENAI_EMB_MODEL_NAME text-embedding-3-small
@@ -127,32 +166,64 @@ By default, the deployed Azure web app uses the `text-embedding-ada-002` embeddi
 
 2. Specify the desired dimensions of the model: (from 256-3072, model dependent)
 
+    Default dimensions for text-embedding-ada-002
+
     ```shell
-    azd env set AZURE_OPENAI_EMB_DIMENSIONS 256
+    azd env set AZURE_OPENAI_EMB_DIMENSIONS 1536
     ```
 
-3. Set the model version to "1" (the only version as of March 2024):
+    Default dimensions for text-embedding-3-small
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DIMENSIONS 1536
+    ```
+
+    Default dimensions for text-embedding-3-large
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DIMENSIONS 3072
+    ```
+
+3. Set the model version, depending on the model you are using:
+
+    For text-embedding-ada-002:
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 2
+    ```
+
+    For text-embedding-3-small and text-embedding-3-large:
 
     ```shell
     azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 1
     ```
 
-4. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the text-embedding-3 models. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#embeddings-models).
+4. To set the embedding model deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
+
+    For GlobalStandard:
+
+    ```bash
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_SKU GlobalStandard
+    ```
+
+    For Standard:
+
+    ```bash
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_SKU Standard
+    ```
+
+5. When prompted during `azd up`, make sure to select a region for the OpenAI resource group location that supports the desired embedding model and deployment SKU. There are [limited regions available](https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#models-by-deployment-type).
 
 If you have already deployed:
 
-* You'll need to change the deployment name by running `azd env set AZURE_OPENAI_EMB_DEPLOYMENT <new-deployment-name>`
-* You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created and the data will be re-indexed.
-* If your OpenAI resource is not in one of the supported regions, you should delete `openAiResourceGroupLocation` from `.azure/YOUR-ENV-NAME/config.json`. When running `azd up`, you will be prompted to select a new region.
+* You'll need to change the deployment name by running the appropriate commands for the model above.
+* You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created. See the [data ingestion guide](./data_ingestion.md) for more details.
 
-> ![NOTE]
-> The text-embedding-3 models are not currently supported by the integrated vectorization feature.
-
-## Enabling GPT-4 Turbo with Vision
+## Enabling GPT vision feature
 
 ⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
 
-This section covers the integration of GPT-4 Vision with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our [Enabling GPT-4 Turbo with Vision](gpt4v.md) page.
+This section covers the integration of GPT vision models with Azure AI Search. Learn how to enhance your search capabilities with the power of image and text indexing, enabling advanced search functionalities over diverse document types. For a detailed guide on setup and usage, visit our page on [Using GPT vision model with RAG approach](gpt4v.md).
 
 ## Enabling media description with Azure Content Understanding
 
@@ -179,6 +250,8 @@ Convert them first to PDF or image formats to enable media description.
 
 ## Enabling client-side chat history
 
+[📺 Watch: (RAG Deep Dive series) Storing chat history](https://www.youtube.com/watch?v=1YiTFnnLVIA)
+
 This feature allows users to view the chat history of their conversation, stored in the browser using [IndexedDB](https://developer.mozilla.org/docs/Web/API/IndexedDB_API). That means the chat history will be available only on the device where the chat was initiated. To enable browser-stored chat history, run:
 
 ```shell
@@ -186,6 +259,8 @@ azd env set USE_CHAT_HISTORY_BROWSER true
 ```
 
 ## Enabling persistent chat history with Azure Cosmos DB
+
+[📺 Watch: (RAG Deep Dive series) Storing chat history](https://www.youtube.com/watch?v=1YiTFnnLVIA)
 
 This feature allows authenticated users to view the chat history of their conversations, stored in the server-side storage using [Azure Cosmos DB](https://learn.microsoft.com/azure/cosmos-db/).This option requires that authentication be enabled. The chat history will be persistent and accessible from any device where the user logs in with the same account. To enable server-stored chat history, run:
 
@@ -316,6 +391,14 @@ For an alternate frontend that's written in Web Components and deployed to Stati
 [azure-search-openai-javascript](https://github.com/Azure-Samples/azure-search-openai-javascript) and its guide
 on [using a different backend](https://github.com/Azure-Samples/azure-search-openai-javascript#using-a-different-backend).
 Both these repositories adhere to the same [HTTP protocol for AI chat apps](https://aka.ms/chatprotocol).
+
+## Enabling query rewriting
+
+By default, the [query rewriting feature](https://learn.microsoft.com/azure/search/semantic-how-to-query-rewrite) from the Azure AI Search service is not enabled. Note that the search service query rewriting feature is different from the query rewriting step that is used by the Chat tab in the codebase. The in-repo query rewriting step also incorporates conversation history, while the search service query rewriting feature only considers the query itself. To enable search service query rewriting, set the following environment variables:
+
+1. Check that your Azure AI Search service is using one of the [supported regions](https://learn.microsoft.com/azure/search/semantic-how-to-query-rewrite#prerequisites) for query rewriting.
+1. Ensure semantic ranker is enabled. Query rewriting may only be used with semantic ranker. Run `azd env set AZURE_SEARCH_SEMANTIC_RANKER free` or `azd env set AZURE_SEARCH_SEMANTIC_RANKER standard` depending on your desired [semantic ranker tier](https://learn.microsoft.com/azure/search/semantic-how-to-configure).
+1. Enable query rewriting. Run `azd env set AZURE_SEARCH_QUERY_REWRITING true`. An option in developer settings will appear allowing you to toggle query rewriting on and off. It will be on by default.
 
 ## Adding an OpenAI load balancer
 

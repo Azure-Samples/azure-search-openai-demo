@@ -46,16 +46,33 @@ def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:
 
 
 async def setup_search_info(
-    search_service: str, index_name: str, azure_credential: AsyncTokenCredential, search_key: Union[str, None] = None
+    search_service: str,
+    index_name: str,
+    azure_credential: AsyncTokenCredential,
+    use_agentic_retrieval: Union[bool, None] = None,
+    azure_openai_endpoint: Union[str, None] = None,
+    agent_name: Union[str, None] = None,
+    agent_max_output_tokens: Union[int, None] = None,
+    azure_openai_searchagent_deployment: Union[str, None] = None,
+    azure_openai_searchagent_model: Union[str, None] = None,
+    search_key: Union[str, None] = None,
 ) -> SearchInfo:
     search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
     )
+    if use_agentic_retrieval and azure_openai_searchagent_model is None:
+        raise ValueError("Azure OpenAI SearchAgent model must be specified when using agentic retrieval.")
 
     return SearchInfo(
         endpoint=f"https://{search_service}.search.windows.net/",
         credential=search_creds,
         index_name=index_name,
+        agent_name=agent_name,
+        agent_max_output_tokens=agent_max_output_tokens,
+        use_agentic_retrieval=use_agentic_retrieval,
+        azure_openai_endpoint=azure_openai_endpoint,
+        azure_openai_searchagent_model=azure_openai_searchagent_model,
+        azure_openai_searchagent_deployment=azure_openai_searchagent_deployment,
     )
 
 
@@ -312,8 +329,9 @@ if __name__ == "__main__":
 
     use_int_vectorization = os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true"
     use_gptvision = os.getenv("USE_GPT4V", "").lower() == "true"
-    use_acls = os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT") is not None
+    use_acls = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL") is not None
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
+    use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
 
     # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
@@ -334,10 +352,22 @@ if __name__ == "__main__":
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
+    openai_host = os.environ["OPENAI_HOST"]
+    # Check for incompatibility
+    # if openai host is not azure
+    if openai_host != "azure" and use_agentic_retrieval:
+        raise Exception("Agentic retrieval requires an Azure OpenAI chat completion service")
+
     search_info = loop.run_until_complete(
         setup_search_info(
             search_service=os.environ["AZURE_SEARCH_SERVICE"],
             index_name=os.environ["AZURE_SEARCH_INDEX"],
+            use_agentic_retrieval=use_agentic_retrieval,
+            agent_name=os.getenv("AZURE_SEARCH_AGENT"),
+            agent_max_output_tokens=int(os.getenv("AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS", 10000)),
+            azure_openai_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+            azure_openai_searchagent_deployment=os.getenv("AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT"),
+            azure_openai_searchagent_model=os.getenv("AZURE_OPENAI_SEARCHAGENT_MODEL"),
             azure_credential=azd_credential,
             search_key=clean_key_if_exists(args.searchkey),
         )
@@ -398,6 +428,7 @@ if __name__ == "__main__":
             blob_manager=blob_manager,
             document_action=document_action,
             embeddings=openai_embeddings_service,
+            search_field_name_embedding=os.environ["AZURE_SEARCH_FIELD_NAME_EMBEDDING"],
             subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
             search_service_user_assigned_id=args.searchserviceassignedid,
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
@@ -430,6 +461,8 @@ if __name__ == "__main__":
             embeddings=openai_embeddings_service,
             image_embeddings=image_embeddings_service,
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
+            # Default to the previous field names for backward compatibility
+            search_field_name_embedding=os.getenv("AZURE_SEARCH_FIELD_NAME_EMBEDDING", "embedding"),
             use_acls=use_acls,
             category=args.category,
             use_content_understanding=use_content_understanding,

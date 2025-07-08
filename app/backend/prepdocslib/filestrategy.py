@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -19,7 +19,7 @@ async def parse_file(
     file_processors: dict[str, FileProcessor],
     category: Optional[str] = None,
     image_embeddings: Optional[ImageEmbeddings] = None,
-) -> List[Section]:
+) -> list[Section]:
     key = file.file_extension().lower()
     processor = file_processors.get(key)
     if processor is None:
@@ -51,6 +51,7 @@ class FileStrategy(Strategy):
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
         search_analyzer_name: Optional[str] = None,
+        search_field_name_embedding: Optional[str] = None,
         use_acls: bool = False,
         category: Optional[str] = None,
         use_content_understanding: bool = False,
@@ -63,22 +64,27 @@ class FileStrategy(Strategy):
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
         self.search_analyzer_name = search_analyzer_name
+        self.search_field_name_embedding = search_field_name_embedding
         self.search_info = search_info
         self.use_acls = use_acls
         self.category = category
         self.use_content_understanding = use_content_understanding
         self.content_understanding_endpoint = content_understanding_endpoint
 
-    async def setup(self):
-        search_manager = SearchManager(
+    def setup_search_manager(self):
+        self.search_manager = SearchManager(
             self.search_info,
             self.search_analyzer_name,
             self.use_acls,
             False,
             self.embeddings,
+            field_name_embedding=self.search_field_name_embedding,
             search_images=self.image_embeddings is not None,
         )
-        await search_manager.create_index()
+
+    async def setup(self):
+        self.setup_search_manager()
+        await self.search_manager.create_index()
 
         if self.use_content_understanding:
             if self.content_understanding_endpoint is None:
@@ -91,9 +97,7 @@ class FileStrategy(Strategy):
             await cu_manager.create_analyzer()
 
     async def run(self):
-        search_manager = SearchManager(
-            self.search_info, self.search_analyzer_name, self.use_acls, False, self.embeddings
-        )
+        self.setup_search_manager()
         if self.document_action == DocumentAction.Add:
             files = self.list_file_strategy.list()
             async for file in files:
@@ -101,10 +105,10 @@ class FileStrategy(Strategy):
                     sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
                     if sections:
                         blob_sas_uris = await self.blob_manager.upload_blob(file)
-                        blob_image_embeddings: Optional[List[List[float]]] = None
+                        blob_image_embeddings: Optional[list[list[float]]] = None
                         if self.image_embeddings and blob_sas_uris:
                             blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                        await search_manager.update_content(sections, blob_image_embeddings, url=file.url)
+                        await self.search_manager.update_content(sections, blob_image_embeddings, url=file.url)
                 finally:
                     if file:
                         file.close()
@@ -112,10 +116,10 @@ class FileStrategy(Strategy):
             paths = self.list_file_strategy.list_paths()
             async for path in paths:
                 await self.blob_manager.remove_blob(path)
-                await search_manager.remove_content(path)
+                await self.search_manager.remove_content(path)
         elif self.document_action == DocumentAction.RemoveAll:
             await self.blob_manager.remove_blob()
-            await search_manager.remove_content()
+            await self.search_manager.remove_content()
 
 
 class UploadUserFileStrategy:
@@ -129,12 +133,22 @@ class UploadUserFileStrategy:
         file_processors: dict[str, FileProcessor],
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
+        search_field_name_embedding: Optional[str] = None,
     ):
         self.file_processors = file_processors
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
         self.search_info = search_info
-        self.search_manager = SearchManager(self.search_info, None, True, False, self.embeddings)
+        self.search_manager = SearchManager(
+            search_info=self.search_info,
+            search_analyzer_name=None,
+            use_acls=True,
+            use_int_vectorization=False,
+            embeddings=self.embeddings,
+            field_name_embedding=search_field_name_embedding,
+            search_images=False,
+        )
+        self.search_field_name_embedding = search_field_name_embedding
 
     async def add_file(self, file: File):
         if self.image_embeddings:
