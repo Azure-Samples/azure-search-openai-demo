@@ -317,7 +317,7 @@ The script performs the following steps:
 - Creates a filesystem / container `gptkbcontainer` in the storage account.
 - Creates the directories listed in the [sampleacls.json](/scripts/sampleacls.json) file.
 - Scans the directories for files recursively if you add the option '--scandirs' (default false) cto the argument list (default off) and you don't have '"scandir": false' (default true)  below the directory element in the sampleacls.json file.
-- Caluclates md5 checksuk of each file refrenced anc compares with existing 'filename.ext.md5' file. Skip upload if same else upload and storenew md5 value in 'filename.ext.md5'
+- Caluclates md5 checksum of each file refrenced and compares with existing 'filename.ext.md5' file. Skip upload if same else upload and store new md5 value in 'filename.ext.md5'
 - Uploads the sample PDFs referenced in the [sampleacls.json](/scripts/sampleacls.json) file or files found in the folders with scandir option set to true into the appropriate directories.
 - [Recursively sets Access Control Lists (ACLs)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli) using the information from the [sampleacls.json](/scripts/sampleacls.json) file.
 
