@@ -315,7 +315,7 @@ if __name__ == "__main__":
         "--concurrency",
         type=int,
         default=FileStrategy.DEFAULT_CONCURRENCY,
-        help="Max. number of concurrent tasks to run for processing files (file strategy only) (default: 10)",
+        help="Max. number of concurrent tasks to run for processing files (file strategy only) (default: 4)",
     )
 
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")

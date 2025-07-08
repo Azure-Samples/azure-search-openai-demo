@@ -56,7 +56,7 @@ class BlobManager:
             if file.url is None:
                 with open(file.content.name, "rb") as reopened_file:
                     blob_name = BlobManager.blob_name_from_file_name(file.content.name)
-                    logger.info("Uploading blob for whole file -> %s", blob_name)
+                    logger.info("'%s': Uploading blob for whole file", file.content.name)
                     blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                     file.url = blob_client.url
 
@@ -64,7 +64,7 @@ class BlobManager:
                 if os.path.splitext(file.content.name)[1].lower() == ".pdf":
                     return await self.upload_pdf_blob_images(service_client, container_client, file)
                 else:
-                    logger.info("File %s is not a PDF, skipping image upload", file.content.name)
+                    logger.info("'%s': File is not a PDF, skipping image upload", file.content.name)
 
         return None
 

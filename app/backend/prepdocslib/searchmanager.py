@@ -77,7 +77,7 @@ class SearchManager:
         self.search_images = search_images
 
     async def create_index(self):
-        logger.info("Checking whether search index %s exists...", self.search_info.index_name)
+        logger.info("Checking whether search index '%s' exists", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
 
@@ -280,10 +280,10 @@ class SearchManager:
 
                 await search_index_client.create_index(index)
             else:
-                logger.info("Search index %s already exists", self.search_info.index_name)
+                logger.info("Search index '%s' already exists", self.search_info.index_name)
                 existing_index = await search_index_client.get_index(self.search_info.index_name)
                 if not any(field.name == "storageUrl" for field in existing_index.fields):
-                    logger.info("Adding storageUrl field to index %s", self.search_info.index_name)
+                    logger.info("Adding storageUrl field to index '%s'", self.search_info.index_name)
                     existing_index.fields.append(
                         SimpleField(
                             name="storageUrl",

@@ -24,11 +24,11 @@ async def parse_file(
     key = file.file_extension().lower()
     processor = file_processors.get(key)
     if processor is None:
-        logger.info("Skipping '%s', no parser found.", file.filename())
+        logger.info("'%s': Skipping, no parser found.", file.content.name)
         return []
-    logger.info("Ingesting '%s'", file.filename())
+    logger.info("'%s': Starting ingestion process", file.content.name)
     pages = [page async for page in processor.parser.parse(content=file.content)]
-    logger.info("Splitting '%s' into sections", file.filename())
+    logger.info("'%s': Splitting into sections", file.content.name)
     if image_embeddings:
         logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
     sections = [
@@ -113,9 +113,11 @@ class FileStrategy(Strategy):
                         blob_image_embeddings: Optional[list[list[float]]] = None
                         if self.image_embeddings and blob_sas_uris:
                             blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
+                        logger.info("'%s': Computing embeddings and updating search index", file.content.name)
                         await self.search_manager.update_content(sections, blob_image_embeddings, url=file.url)
                 finally:
                     if file:
+                        logger.info("'%s': Finished processing file", file.content.name)
                         file.close()
 
         if self.document_action == DocumentAction.Add:

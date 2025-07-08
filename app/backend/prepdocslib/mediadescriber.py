@@ -58,7 +58,7 @@ class ContentUnderstandingDescriber:
         return await poll()
 
     async def create_analyzer(self):
-        logger.info("Creating analyzer '%s'...", self.analyzer_schema["analyzerId"])
+        logger.info("Creating analyzer '%s'", self.analyzer_schema["analyzerId"])
 
         token_provider = get_bearer_token_provider(self.credential, "https://cognitiveservices.azure.com/.default")
         token = await token_provider()
@@ -84,7 +84,7 @@ class ContentUnderstandingDescriber:
                 await self.poll_api(session, poll_url, headers)
 
     async def describe_image(self, image_bytes: bytes) -> str:
-        logger.info("Sending image to Azure Content Understanding service...")
+        logger.info("Sending image to Azure Content Understanding service")
         async with aiohttp.ClientSession() as session:
             token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
             headers = {"Authorization": "Bearer " + token.token}
