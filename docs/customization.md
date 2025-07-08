@@ -2,6 +2,8 @@
 
 [📺 Watch: (RAG Deep Dive series) Customizing the app](https://www.youtube.com/watch?v=D3slfMqydHc)
 
+> **Tip:** We recommend using GitHub Copilot Agent mode when adding new features or making code changes. This project includes a [.github/copilot-instructions.md](../.github/copilot-instructions.md) file that guides Copilot to generate code following project conventions.
+
 This guide provides more details for customizing the RAG chat app.
 
 - [Using your own data](#using-your-own-data)
@@ -46,10 +48,12 @@ The prompts are currently tailored to the sample data since they start with "Ass
 
 ##### Chat with vision
 
-If you followed the instructions in [the GPT vision guide](gpt4v.md) to enable the vision approach and the "Use GPT vision model" option is selected, then the chat tab will use the `chatreadretrievereadvision.py` approach instead. This approach is similar to the `chatreadretrieveread.py` approach, with a few differences:
+TODO FIX THIS!
+
+If you followed the instructions in [the multimodal guide](multimodal.md) to enable the vision approach and the "Use GPT vision model" option is selected, then the chat tab will use the `chatreadretrievereadvision.py` approach instead. This approach is similar to the `chatreadretrieveread.py` approach, with a few differences:
 
 1. Step 1 is the same as before, except it uses the GPT-4 Vision model instead of the default GPT-3.5 model.
-2. For this step, it also calculates a vector embedding for the user question using [the Computer Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the `imageEmbeddings` fields in the indexed documents. For each matching document, it downloads the image blob and converts it to a base 64 encoding.
+2. For this step, it also calculates a vector embedding for the user question using [the Azure AI Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the `imageEmbeddings` fields in the indexed documents. For each matching document, it downloads the image blob and converts it to a base 64 encoding.
 3. When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the GPT4 Vision model (similar to this [documentation example](https://platform.openai.com/docs/guides/vision/quick-start)). The model generates a response that includes citations to the images, and the UI renders the base64 encoded images when a citation is clicked.
 
 The prompt for step 2 is currently tailored to the sample data since it starts with "You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd.". Modify the [chat_answer_question_vision.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_answer_question_vision.prompty) prompt to match your data.
@@ -65,9 +69,10 @@ The prompt for step 2 is currently tailored to the sample data since it starts w
 
 #### Ask with vision
 
-If you followed the instructions in [the GPT vision guide](gpt4v.md) to enable the vision approach and the "Use GPT vision model" option is selected, then the ask tab will use the `retrievethenreadvision.py` approach instead. This approach is similar to the `retrievethenread.py` approach, with a few differences:
+TODO FIX THIS!
+If you followed the instructions in [the multimodal guide](multimodal.md) to enable the vision approach and the "Use GPT vision model" option is selected, then the ask tab will use the `retrievethenreadvision.py` approach instead. This approach is similar to the `retrievethenread.py` approach, with a few differences:
 
-1. For this step, it also calculates a vector embedding for the user question using [the Computer Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the `imageEmbeddings` fields in the indexed documents. For each matching document, it downloads the image blob and converts it to a base 64 encoding.
+1. For this step, it also calculates a vector embedding for the user question using [the Azure AI Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the `imageEmbeddings` fields in the indexed documents. For each matching document, it downloads the image blob and converts it to a base 64 encoding.
 2. When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the GPT4 Vision model (similar to this [documentation example](https://platform.openai.com/docs/guides/vision/quick-start)). The model generates a response that includes citations to the images, and the UI renders the base64 encoded images when a citation is clicked.
 
 The prompt for step 2 is currently tailored to the sample data since it starts with "You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd". Modify the [ask_answer_question_vision.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question_vision.prompty) prompt to match your data.

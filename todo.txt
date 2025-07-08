@@ -1,0 +1,15 @@
+TODO:
+
+* Test with integrated vectorization
+   * Multivector is working
+   * Can we get images mapped??
+   * We need DocIntelligence skill
+* Update all TODOs in the code/docs
+* Fix/add unit tests - check coverage
+
+To decide:
+
+* Is there overhead to making new client each time in blobmanager? what do we prefer?
+
+Later:
+Agentic: Incompatible since it doesnt retrieve images. We would need to do a follow-up search query to get each document, like filter: id eq 'x' or id eq 'y' or....

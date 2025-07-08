@@ -38,11 +38,11 @@ from .mocks import (
     MockAzureCredentialExpired,
     MockBlobClient,
     MockResponse,
-    mock_computervision_response,
     mock_retrieval_response,
     mock_speak_text_cancelled,
     mock_speak_text_failed,
     mock_speak_text_success,
+    mock_vision_response,
 )
 
 MockSearchIndex = SearchIndex(
@@ -73,7 +73,9 @@ async def mock_retrieve(self, *args, **kwargs):
 def mock_azurehttp_calls(monkeypatch):
     def mock_post(*args, **kwargs):
         if kwargs.get("url").endswith("computervision/retrieval:vectorizeText"):
-            return mock_computervision_response()
+            return mock_vision_response()
+        elif kwargs.get("url").endswith("computervision/retrieval:vectorizeImage"):
+            return mock_vision_response()
         else:
             raise Exception("Unexpected URL for mock call to ClientSession.post()")
 
@@ -307,9 +309,19 @@ envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
         "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
-        "USE_GPT4V": "true",
-        "AZURE_OPENAI_GPT4V_MODEL": "gpt-4",
-        "VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
+    },
+]
+
+vision_envs = [
+    {
+        "OPENAI_HOST": "azure",
+        "AZURE_OPENAI_SERVICE": "test-openai-service",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+        "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
+        "USE_MULTIMODAL": "true",
+        "AZURE_VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
     },
 ]
 
@@ -406,6 +418,7 @@ def mock_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_IMAGESTORAGE_CONTAINER", "test-image-container")
         monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
         monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
         monkeypatch.setenv("ENABLE_LANGUAGE_PICKER", "true")
@@ -491,6 +504,25 @@ def mock_agent_auth_env(monkeypatch, request):
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_ID", "test-id")
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_LOCATION", "eastus")
         monkeypatch.setenv("ALLOWED_ORIGIN", "https://frontend.com")
+        for key, value in request.param.items():
+            monkeypatch.setenv(key, value)
+
+        with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
+            mock_default_azure_credential.return_value = MockAzureCredential()
+            yield
+
+
+@pytest.fixture(params=vision_envs, ids=["client0"])
+def mock_vision_env(monkeypatch, request):
+    with mock.patch.dict(os.environ, clear=True):
+        monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
+        monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_IMAGESTORAGE_CONTAINER", "test-image-container")
+        monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
+        monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
+        monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
+        monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4.1-mini")
         for key, value in request.param.items():
             monkeypatch.setenv(key, value)
 
@@ -685,6 +717,25 @@ async def auth_public_documents_client(
             client.config = quart_app.config
 
             yield client
+
+
+@pytest_asyncio.fixture(scope="function")
+async def vision_client(
+    monkeypatch,
+    mock_vision_env,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_acs_search,
+    mock_blob_container_client,
+    mock_azurehttp_calls,
+):
+    quart_app = app.create_app()
+
+    async with quart_app.test_app() as test_app:
+        test_app.app.config.update({"TESTING": True})
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        yield test_app.test_client()
 
 
 @pytest.fixture
@@ -985,3 +1036,25 @@ def mock_data_lake_service_client(monkeypatch):
 
     monkeypatch.setattr(azure.storage.filedatalake.aio.StorageStreamDownloader, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.aio.StorageStreamDownloader, "readinto", mock_readinto)
+
+
+# Add a mock token_provider for tests
+@pytest.fixture
+def mock_token_provider():
+    async def dummy_token_provider():
+        return "dummy_token"
+
+    return dummy_token_provider
+
+
+@pytest.fixture(autouse=True)
+def patch_get_bearer_token_provider(monkeypatch, mock_token_provider):
+    """
+    Patch the get_bearer_token_provider function used in app.py to return our mock_token_provider.
+    This is automatically applied to all tests.
+    """
+
+    def mock_get_bearer_token(*args, **kwargs):
+        return mock_token_provider
+
+    monkeypatch.setattr("azure.identity.aio.get_bearer_token_provider", mock_get_bearer_token)

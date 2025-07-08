@@ -10,8 +10,7 @@ from azure.core.pipeline.transport import (
 )
 from azure.storage.blob.aio import BlobServiceClient
 
-from approaches.approach import Document
-from core.imageshelper import fetch_image
+from prepdocslib.blobmanager import BlobManager
 
 from .mocks import MockAzureCredential
 
@@ -73,25 +72,21 @@ async def test_content_file(monkeypatch, mock_env, mock_acs_search):
         transport=MockTransport(),
         retry_total=0,  # Necessary to avoid unnecessary network requests during tests
     )
-    blob_container_client = blob_client.get_container_client(os.environ["AZURE_STORAGE_CONTAINER"])
+    monkeypatch.setattr("azure.storage.blob.aio", "BlobServiceClient", lambda *args, **kwargs: blob_client)
 
-    test_document = Document(
-        id="test",
-        content="test content",
-        oids=[],
-        groups=[],
-        captions=[],
-        category="",
-        sourcefile="test.pdf",
-        sourcepage="test.pdf#page2",
+    # Make a BlobManager
+    blob_manager = BlobManager(
+        f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
+        credential=MockAzureCredential(),
+        container=os.environ["AZURE_STORAGE_CONTAINER"],
     )
-    image_url = await fetch_image(blob_container_client, test_document)
+
+    blob_url = "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png"
+    image_url = await blob_manager.download_blob(blob_url)
     assert image_url == "data:image/png;base64,dGVzdCBjb250ZW50"
 
-    test_document.sourcepage = "notfound.pdf"
-    image_url = await fetch_image(blob_container_client, test_document)
+    image_url = await blob_manager.download_blob("notfound.png")
     assert image_url is None
 
-    test_document.sourcepage = ""
-    image_url = await fetch_image(blob_container_client, test_document)
+    image_url = await blob_manager.download_blob("")
     assert image_url is None

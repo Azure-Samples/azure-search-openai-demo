@@ -19,17 +19,27 @@ This repository includes an optional feature that uses reasoning models to gener
 
    Set the environment variables for your Azure OpenAI GPT deployments to your reasoning model
 
-   For o3-mini:
+   For o4-mini:
 
    ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL o3-mini
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o3-mini
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-01-31
+   azd env set AZURE_OPENAI_CHATGPT_MODEL o4-mini
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o4-mini
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-16
    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
-   azd env set AZURE_OPENAI_API_VERSION 2024-12-01-preview
+   azd env set AZURE_OPENAI_API_VERSION 2025-04-01-preview
    ```
 
-   For o1:
+   For o3:
+
+   ```shell
+   azd env set AZURE_OPENAI_CHATGPT_MODEL o3
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o3
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-16
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+   azd env set AZURE_OPENAI_API_VERSION 2025-04-01-preview
+   ```
+
+   For o1: (No streaming support)
 
    ```shell
    azd env set AZURE_OPENAI_CHATGPT_MODEL o1

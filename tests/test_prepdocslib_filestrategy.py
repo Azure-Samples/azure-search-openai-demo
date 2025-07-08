@@ -26,9 +26,8 @@ async def test_file_strategy_adls2(monkeypatch, mock_env, mock_data_lake_service
         credential=MockAzureCredential(),
         container=os.environ["AZURE_STORAGE_CONTAINER"],
         account=os.environ["AZURE_STORAGE_ACCOUNT"],
-        resourceGroup=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
-        subscriptionId=os.environ["AZURE_SUBSCRIPTION_ID"],
-        store_page_images=False,
+        resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
     )
 
     # Set up mocks used by upload_blob
@@ -75,6 +74,7 @@ async def test_file_strategy_adls2(monkeypatch, mock_env, mock_data_lake_service
             "content": "texttext",
             "category": None,
             "groups": ["A-GROUP-ID"],
+            "images": [],
             "oids": ["A-USER-ID"],
             "sourcepage": "a.txt",
             "sourcefile": "a.txt",
@@ -85,6 +85,7 @@ async def test_file_strategy_adls2(monkeypatch, mock_env, mock_data_lake_service
             "content": "texttext",
             "category": None,
             "groups": ["B-GROUP-ID"],
+            "images": [],
             "oids": ["B-USER-ID"],
             "sourcepage": "b.txt",
             "sourcefile": "b.txt",
@@ -95,6 +96,7 @@ async def test_file_strategy_adls2(monkeypatch, mock_env, mock_data_lake_service
             "content": "texttext",
             "category": None,
             "groups": ["C-GROUP-ID"],
+            "images": [],
             "oids": ["C-USER-ID"],
             "sourcepage": "c.txt",
             "sourcefile": "c.txt",
