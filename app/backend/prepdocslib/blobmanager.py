@@ -138,6 +138,14 @@ class AdlsBlobManager(BaseBlobManager):
         self.endpoint = endpoint
         self.container = container
         self.credential = credential
+        self.file_system_client = FileSystemClient(
+            account_url=self.endpoint,
+            file_system_name=self.container,
+            credential=self.credential,
+        )
+
+    async def close_clients(self):
+        await self.file_system_client.close()
 
     async def _ensure_directory(self, directory_path: str, user_oid: str) -> DataLakeDirectoryClient:
         """
@@ -148,23 +156,18 @@ class AdlsBlobManager(BaseBlobManager):
             directory_path: Full path of directory to create (e.g., 'user123/images/mydoc')
             user_oid: The owner to set for all created directories
         """
-        async with FileSystemClient(
-            account_url=self.endpoint,
-            file_system_name=self.container,
-            credential=self.credential,
-        ) as filesystem_client:
-            directory_client = filesystem_client.get_directory_client(directory_path)
-            try:
-                await directory_client.get_directory_properties()
-                # Check directory properties to ensure it has the correct owner
-                props = await directory_client.get_access_control()
-                if props.get("owner") != user_oid:
-                    raise PermissionError(f"User {user_oid} does not have permission to access {directory_path}")
-            except ResourceNotFoundError:
-                logger.info("Creating directory path %s", directory_path)
-                await directory_client.create_directory()
-                await directory_client.set_access_control(owner=user_oid)
-            return directory_client
+        directory_client = self.file_system_client.get_directory_client(directory_path)
+        try:
+            await directory_client.get_directory_properties()
+            # Check directory properties to ensure it has the correct owner
+            props = await directory_client.get_access_control()
+            if props.get("owner") != user_oid:
+                raise PermissionError(f"User {user_oid} does not have permission to access {directory_path}")
+        except ResourceNotFoundError:
+            logger.info("Creating directory path %s", directory_path)
+            await directory_client.create_directory()
+            await directory_client.set_access_control(owner=user_oid)
+        return directory_client
 
     async def upload_blob(self, file: Union[File, IO], filename: str, user_oid: str) -> str:
         """
@@ -390,20 +393,20 @@ class BlobManager(BaseBlobManager):
         self.resource_group = resource_group
         self.subscription_id = subscription_id
         self.image_container = image_container
+        self.blob_service_client = BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
+        )
+
+    async def close_clients(self):
+        await self.blob_service_client.close()
 
     def get_managedidentity_connectionstring(self):
         if not self.account or not self.resource_group or not self.subscription_id:
             raise ValueError("Account, resource group, and subscription ID must be set to generate connection string.")
         return f"ResourceId=/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Storage/storageAccounts/{self.account};"
 
-    async def _get_service_client(self) -> BlobServiceClient:
-        return BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
-        )
-
     async def upload_blob(self, file: File) -> Optional[list[str]]:
-        blob_service_client = await self._get_service_client()
-        container_client = blob_service_client.get_container_client(self.container)
+        container_client = self.blob_service_client.get_container_client(self.container)
         if not await container_client.exists():
             await container_client.create_container()
 
@@ -414,7 +417,6 @@ class BlobManager(BaseBlobManager):
                 logger.info("Uploading blob for document '%s'", blob_name)
                 blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                 file.url = blob_client.url
-        blob_service_client.close()
 
     async def upload_document_image(
         self,
@@ -432,15 +434,13 @@ class BlobManager(BaseBlobManager):
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
             )
-        blob_service_client = await self._get_service_client()
-        container_client = blob_service_client.get_container_client(self.container)
+        container_client = self.blob_service_client.get_container_client(self.container)
         if not await container_client.exists():
             await container_client.create_container()
         image_bytes = self.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
         blob_name = f"{self.blob_name_from_file_name(document_filename)}/page{image_page_num}/{image_filename}"
         logger.info("Uploading blob for document image '%s'", blob_name)
         blob_client = await container_client.upload_blob(blob_name, image_bytes, overwrite=True)
-        blob_service_client.close()
         return blob_client.url
 
     async def download_blob(
@@ -450,8 +450,7 @@ class BlobManager(BaseBlobManager):
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
             )
-        blob_service_client = await self._get_service_client()
-        container_client = blob_service_client.get_container_client(self.container)
+        container_client = self.blob_service_client.get_container_client(self.container)
         if not await container_client.exists():
             return None
         if len(blob_path) == 0:
@@ -467,11 +466,9 @@ class BlobManager(BaseBlobManager):
         except ResourceNotFoundError:
             logger.warning("Blob not found: %s", blob_path)
             return None
-        # TODO: close client properly
 
     async def remove_blob(self, path: Optional[str] = None):
-        blob_service_client = await self._get_service_client()
-        container_client = blob_service_client.get_container_client(self.container)
+        container_client = self.blob_service_client.get_container_client(self.container)
         if not await container_client.exists():
             return
         if path is None:
@@ -489,4 +486,3 @@ class BlobManager(BaseBlobManager):
                 continue
             logger.info("Removing blob %s", blob_path)
             await container_client.delete_blob(blob_path)
-        blob_service_client.close()
