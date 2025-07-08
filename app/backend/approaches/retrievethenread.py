@@ -3,8 +3,6 @@ from typing import Any, Optional, cast
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
-from azure.storage.blob.aio import ContainerClient
-from azure.storage.filedatalake.aio import FileSystemClient
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
@@ -16,6 +14,7 @@ from approaches.approach import (
 )
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
 
@@ -50,8 +49,8 @@ class RetrieveThenReadApproach(Approach):
         reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
         image_embeddings_client: Optional[ImageEmbeddings] = None,
-        image_blob_container_client: Optional[ContainerClient] = None,
-        image_datalake_client: Optional[FileSystemClient] = None,
+        global_blob_manager: Optional[BlobManager] = None,
+        user_blob_manager: Optional[AdlsBlobManager] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -77,8 +76,8 @@ class RetrieveThenReadApproach(Approach):
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
         self.image_embeddings_client = image_embeddings_client
-        self.image_blob_container_client = image_blob_container_client
-        self.image_datalake_client = image_datalake_client
+        self.global_blob_manager = global_blob_manager
+        self.user_blob_manager = user_blob_manager
 
     async def run(
         self,

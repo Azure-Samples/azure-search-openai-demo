@@ -1,3 +1,4 @@
+import base64
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass, field
@@ -20,8 +21,6 @@ from azure.search.documents.models import (
     VectorizedQuery,
     VectorQuery,
 )
-from azure.storage.blob.aio import ContainerClient
-from azure.storage.filedatalake.aio import FileSystemClient
 from openai import AsyncOpenAI, AsyncStream
 from openai.types import CompletionUsage
 from openai.types.chat import (
@@ -34,7 +33,7 @@ from openai.types.chat import (
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
-from core.imageshelper import download_blob_as_base64
+from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
 
@@ -161,8 +160,8 @@ class Approach(ABC):
         reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
         image_embeddings_client: Optional[ImageEmbeddings] = None,
-        image_blob_container_client: Optional[ContainerClient] = None,
-        image_datalake_client: Optional[FileSystemClient] = None,
+        global_blob_manager: Optional[BlobManager] = None,
+        user_blob_manager: Optional[AdlsBlobManager] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -179,23 +178,8 @@ class Approach(ABC):
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
         self.image_embeddings_client = image_embeddings_client
-        self.image_blob_container_client = image_blob_container_client
-        self.image_datalake_client = image_datalake_client
-
-    def get_storage_client_for_url(self, url: str) -> Optional[Union[ContainerClient, FileSystemClient]]:
-        """
-        Determines which storage client to use for a given URL.
-
-        Args:
-            url: The URL or path of the image
-
-        Returns:
-            Either the ContainerClient for Blob Storage or FileSystemClient for Data Lake Storage,
-            based on the URL pattern. Returns None if no matching client is available.
-        """
-        if ".dfs.core.windows.net" in url and self.image_datalake_client:
-            return self.image_datalake_client
-        return self.image_blob_container_client
+        self.global_blob_manager = global_blob_manager
+        self.user_blob_manager = user_blob_manager
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -388,8 +372,7 @@ class Approach(ABC):
                     if img["url"] in seen_urls or not img["url"]:
                         continue
                     seen_urls.add(img["url"])
-                    storage_client = self.get_storage_client_for_url(img["url"])
-                    url = await download_blob_as_base64(storage_client, img["url"], user_oid=user_oid)
+                    url = await self.download_blob_as_base64(img["url"], user_oid=user_oid)
                     if url:
                         image_sources.append(url)
                     citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))
@@ -403,6 +386,43 @@ class Approach(ABC):
         sourcepage_citation = self.get_citation(sourcepage)
         image_filename = image_url.split("/")[-1]
         return f"{sourcepage_citation}({image_filename})"
+
+    async def download_blob_as_base64(self, blob_url: str, user_oid: Optional[str] = None) -> Optional[str]:
+        """
+        Downloads a blob from either Azure Blob Storage or Azure Data Lake Storage and returns it as a base64 encoded string.
+
+        Args:
+            storage_client: Either a ContainerClient (for Blob Storage) or FileSystemClient (for Data Lake Storage)
+            blob_url: The URL or path to the blob to download
+            user_oid: The user's object ID, required for Data Lake Storage operations and access control
+
+        Returns:
+            Optional[str]: The base64 encoded image data with data URI scheme prefix, or None if the blob cannot be downloaded
+        """
+
+        # Handle full URLs for both Blob Storage and Data Lake Storage
+        if blob_url.startswith("http"):
+            url_parts = blob_url.split("/")
+            # Skip the domain parts and container/filesystem name to get the blob path
+            # For blob: https://{account}.blob.core.windows.net/{container}/{blob_path}
+            # For dfs: https://{account}.dfs.core.windows.net/{filesystem}/{path}
+            blob_path = "/".join(url_parts[4:])
+            # If %20 in URL, replace it with a space
+            blob_path = blob_path.replace("%20", " ")
+        else:
+            # Treat as a direct blob path
+            blob_path = blob_url
+
+        # Download the blob using the appropriate client
+        blob_manager = self.global_blob_manager
+        if ".dfs.core.windows.net" in blob_url and self.user_blob_manager:
+            blob_manager = self.user_blob_manager
+        blob_downloader = await blob_manager.download_blob(blob_path, user_oid=user_oid)
+        blob = await blob_downloader.readall()
+        if blob is not None:
+            img = base64.b64encode(blob).decode("utf-8")
+            return f"data:image/png;base64,{img}"
+        return None
 
     async def compute_text_embedding(self, q: str):
         SUPPORTED_DIMENSIONS_MODEL = {

@@ -8,11 +8,8 @@ TODO:
 * Fix/add unit tests - check coverage
 
 To decide:
-* For user data lake client, how often should we double check the ACL matches the oid, versus assuming the URLs convey that? (Like when fetching the image?)
-   * add a note that we only check owner, not full access control
-   * add owner check to each blob-related method (/list, /remove)
-   * move fetch image into blobmanager
-   * WHY ARE THERE NO OIDS on the uploaded sections???? (should be fixed now)
+
+* Is there overhead to making new client each time in blobmanager? what do we prefer?
 
 Later:
 Agentic: Incompatible since it doesnt retrieve images. We would need to do a follow-up search query to get each document, like filter: id eq 'x' or id eq 'y' or....

@@ -363,7 +363,7 @@ You can enable an optional user document upload system to allow users to upload 
 
 Then you'll need to run `azd up` to provision an Azure Data Lake Storage Gen2 account for storing the user-uploaded documents.
 When the user uploads a document, it will be stored in a directory in that account with the same name as the user's Entra object id,
-and will have ACLs associated with that directory. When the ingester runs, it will also set the `oids` of the indexed chunks to the user's Entra object id.
+and will have ACLs associated with that directory. When the ingester runs, it will also set the `oids` of the indexed chunks to the user's Entra object id. Whenever any content is retrieved or added to the directory, the "owner" property will be checked to ensure that the user is the owner of the directory, and thus has access to the content.
 
 If you are enabling this feature on an existing index, you should also update your index to have the new `storageUrl` field:
 

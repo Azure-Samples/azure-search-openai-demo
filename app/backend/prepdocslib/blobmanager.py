@@ -9,6 +9,13 @@ from urllib.parse import unquote
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.blob.aio import (
+    StorageStreamDownloader as BlobStorageStreamDownloader,
+)
+from azure.storage.filedatalake import DataLakeDirectoryClient
+from azure.storage.filedatalake import (
+    StorageStreamDownloader as AdlsBlobStorageStreamDownloader,
+)
 from azure.storage.filedatalake.aio import FileSystemClient
 from PIL import Image, ImageDraw, ImageFont
 
@@ -85,6 +92,32 @@ class BaseBlobManager:
 
         return output.getvalue()
 
+    async def upload_document_image(
+        self,
+        document_filename: str,
+        image_bytes: bytes,
+        image_filename: str,
+        image_page_num: int,
+        user_oid: str,
+    ) -> Optional[str]:
+        raise NotImplementedError("Subclasses must implement this method")
+
+    async def download_blob(
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[Union[BlobStorageStreamDownloader, AdlsBlobStorageStreamDownloader]]:
+        """
+        Downloads a blob from Azure Storage.
+        If user_oid is provided, it checks if the blob belongs to the user.
+
+        Args:
+            blob_path: The path to the blob in the storage
+            user_oid: The user's object ID (optional)
+
+        Returns:
+            bytes: The content of the blob, or None if not found or access denied
+        """
+        raise NotImplementedError("Subclasses must implement this method")
+
 
 class AdlsBlobManager(BaseBlobManager):
     """
@@ -93,26 +126,45 @@ class AdlsBlobManager(BaseBlobManager):
     Images are stored in a separate images subdirectory for better organization.
     """
 
-    def __init__(self, filesystem_client: FileSystemClient):
-        self.filesystem_client = filesystem_client
+    def __init__(self, endpoint: str, container: str, credential: AsyncTokenCredential):
+        """
+        Initializes the AdlsBlobManager with the necessary parameters.
 
-    async def _ensure_directory(self, directory_path: str, owner: str = None) -> None:
+        Args:
+            endpoint: The ADLS endpoint URL
+            container: The name of the container (file system)
+            credential: The credential for accessing ADLS
+        """
+        self.endpoint = endpoint
+        self.container = container
+        self.credential = credential
+
+    async def _ensure_directory(self, directory_path: str, user_oid: str) -> DataLakeDirectoryClient:
         """
         Ensures that a directory path exists and has proper permissions.
         Creates the entire path in a single operation if it doesn't exist.
 
         Args:
             directory_path: Full path of directory to create (e.g., 'user123/images/mydoc')
-            owner: The owner to set for all created directories
+            user_oid: The owner to set for all created directories
         """
-        directory_client = self.filesystem_client.get_directory_client(directory_path)
-        try:
-            await directory_client.get_directory_properties()
-        except ResourceNotFoundError:
-            logger.info("Creating directory path %s", directory_path)
-            await directory_client.create_directory()
-            if owner:
-                await directory_client.set_access_control(owner=owner)
+        async with FileSystemClient(
+            account_url=self.endpoint,
+            file_system_name=self.container,
+            credential=self.credential,
+        ) as filesystem_client:
+            directory_client = filesystem_client.get_directory_client(directory_path)
+            try:
+                await directory_client.get_directory_properties()
+                # Check directory properties to ensure it has the correct owner
+                props = await directory_client.get_access_control()
+                if props.get("owner") != user_oid:
+                    raise PermissionError(f"User {user_oid} does not have permission to access {directory_path}")
+            except ResourceNotFoundError:
+                logger.info("Creating directory path %s", directory_path)
+                await directory_client.create_directory()
+                await directory_client.set_access_control(owner=user_oid)
+            return directory_client
 
     async def upload_blob(self, file: Union[File, IO], filename: str, user_oid: str) -> str:
         """
@@ -127,10 +179,10 @@ class AdlsBlobManager(BaseBlobManager):
             str: The URL of the uploaded file, with forward slashes (not URL-encoded)
         """
         # Ensure user directory exists but don't create a subdirectory
-        await self._ensure_directory(user_oid, owner=user_oid)
+        user_directory_client = await self._ensure_directory(user_oid, owner=user_oid)
 
         # Create file directly in user directory
-        file_client = self.filesystem_client.get_file_client(f"{user_oid}/{filename}")
+        file_client = user_directory_client.get_file_client(filename)
 
         # Handle both File and IO objects
         if isinstance(file, File):
@@ -188,13 +240,60 @@ class AdlsBlobManager(BaseBlobManager):
         Returns:
             str: The URL of the uploaded file, with forward slashes (not URL-encoded)
         """
+        await self._ensure_directory(user_oid, owner=user_oid)
         directory_path = self._get_image_directory_path(document_filename, user_oid, image_page_num)
-        await self._ensure_directory(directory_path, owner=user_oid)
-        file_client = self.filesystem_client.get_file_client(f"{directory_path}/{image_filename}")
+        image_directory_client = await self._ensure_directory(directory_path, owner=user_oid)
+        file_client = image_directory_client.get_file_client(image_filename)
         image_bytes = BaseBlobManager.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
         logger.info("Uploading document image '%s' to '%s'", image_filename, directory_path)
         await file_client.upload_data(image_bytes, overwrite=True, metadata={"UploadedBy": user_oid})
         return unquote(file_client.url)
+
+    async def download_blob(
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[Union[AdlsBlobStorageStreamDownloader, BlobStorageStreamDownloader]]:
+        """
+        Downloads a blob from Azure Data Lake Storage.
+
+        Args:
+            blob_path: The path to the blob in the format {user_oid}/{document_name}/images/{image_name}
+            user_oid: The user's object ID
+
+        Returns:
+            Optional[Union[AdlsBlobStorageStreamDownloader, BlobStorageStreamDownloader]]: A stream downloader for the blob, or None if not found
+        """
+        if user_oid is None:
+            logger.warning("user_oid must be provided for Data Lake Storage operations.")
+            return None
+
+        # Get the directory path and file name from the blob path
+        path_parts = blob_path.split("/")
+        if len(path_parts) < 2:
+            # If no slashes in path, we assume it's a file in the user's root directory
+            filename = blob_path
+            directory_path = user_oid
+        else:
+            # First verify that the root directory matches the user_oid
+            root_dir = path_parts[0]
+            if root_dir != user_oid:
+                logger.warning(f"User {user_oid} does not have permission to access {blob_path}")
+                return None
+
+            # Get the directory client for the full path except the filename
+            directory_path = "/".join(path_parts[:-1])
+            filename = path_parts[-1]
+
+        try:
+            user_directory_client = self._ensure_directory(directory_path, user_oid)
+            file_client = user_directory_client.get_file_client(filename)
+            blob = await file_client.download_file()
+            return blob
+        except ResourceNotFoundError:
+            logger.warning(f"Directory or file not found: {directory_path}/{filename}")
+            return None
+        except Exception as e:
+            logging.error(f"Error accessing directory {directory_path}: {str(e)}")
+            return None
 
     async def remove_blob(self, filename: str, user_oid: str) -> None:
         """
@@ -210,17 +309,16 @@ class AdlsBlobManager(BaseBlobManager):
         Raises:
             ResourceNotFoundError: If the file does not exist
         """
-        logger.info(f"Deleting file '{filename}' and associated images for user '{user_oid}'")
-
+        # Ensure the user directory exists
+        user_directory_client = await self._ensure_directory(user_oid, owner=user_oid)
         # Delete the main document file
-        user_directory_client = self.filesystem_client.get_directory_client(user_oid)
         file_client = user_directory_client.get_file_client(filename)
         await file_client.delete_file()
 
         # Try to delete any associated image directories
         try:
             image_directory_path = self._get_image_directory_path(filename, user_oid)
-            image_directory_client = self.filesystem_client.get_directory_client(image_directory_path)
+            image_directory_client = await self._ensure_directory(image_directory_path, owner=user_oid)
             await image_directory_client.delete_directory()
             logger.info(f"Deleted associated image directory: {image_directory_path}")
         except ResourceNotFoundError:
@@ -240,9 +338,10 @@ class AdlsBlobManager(BaseBlobManager):
         Returns:
             list[str]: List of filenames that belong to the user
         """
+        user_directory_client = await self._ensure_directory(user_oid, owner=user_oid)
         files = []
         try:
-            all_paths = self.filesystem_client.get_paths(path=user_oid)
+            all_paths = user_directory_client.get_paths()
             async for path in all_paths:
                 # Split path into parts (user_oid/filename or user_oid/directory/files)
                 path_parts = path.name.split("/", 1)
@@ -276,11 +375,11 @@ class BlobManager(BaseBlobManager):
         self,
         endpoint: str,
         container: str,
-        account: str,
         credential: Union[AsyncTokenCredential, str],
-        resource_group: str,
-        subscription_id: str,
-        image_container: Optional[str] = None,  # Added this parameter
+        image_container: Optional[str] = None,
+        account: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        subscription_id: Optional[str] = None,
     ):
         self.endpoint = endpoint
         self.credential = credential
@@ -307,11 +406,20 @@ class BlobManager(BaseBlobManager):
         return None
 
     async def upload_document_image(
-        self, document_filename: str, image_bytes: bytes, image_filename: str, image_page_num: int
+        self,
+        document_filename: str,
+        image_bytes: bytes,
+        image_filename: str,
+        image_page_num: int,
+        user_oid: Optional[str] = None,
     ) -> Optional[str]:
         if self.image_container is None:
             raise ValueError(
                 "Image container name is not set. Re-run `azd provision` to automatically set up the images container."
+            )
+        if user_oid is not None:
+            raise ValueError(
+                "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
             )
         async with BlobServiceClient(
             account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
@@ -326,7 +434,33 @@ class BlobManager(BaseBlobManager):
         return None
 
     def get_managedidentity_connectionstring(self):
+        if not self.account or not self.resource_group or not self.subscription_id:
+            raise ValueError("Account, resource group, and subscription ID must be set to generate connection string.")
         return f"ResourceId=/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Storage/storageAccounts/{self.account};"
+
+    async def download_blob(
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[Union[BlobStorageStreamDownloader, AdlsBlobStorageStreamDownloader]]:
+        if user_oid is not None:
+            raise ValueError(
+                "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
+            )
+
+        async with BlobServiceClient(
+            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
+        ) as service_client, service_client.get_container_client(self.container) as container_client:
+            if not await container_client.exists():
+                return None
+            blob_client = container_client.get_blob_client(blob_path)
+            try:
+                blob = await blob_client.download_blob()
+                if not blob.properties:
+                    logger.warning(f"No blob exists for {blob_path}")
+                    return None
+                return blob
+            except ResourceNotFoundError:
+                logger.warning("Blob not found: %s", blob_path)
+                return None
 
     async def remove_blob(self, path: Optional[str] = None):
         async with BlobServiceClient(

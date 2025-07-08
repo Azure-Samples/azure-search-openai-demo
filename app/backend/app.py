@@ -26,9 +26,7 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
-from azure.storage.blob.aio import ContainerClient
 from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
-from azure.storage.filedatalake.aio import FileSystemClient
 from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
@@ -59,14 +57,12 @@ from config import (
     CONFIG_AGENTIC_RETRIEVAL_ENABLED,
     CONFIG_ASK_APPROACH,
     CONFIG_AUTH_CLIENT,
-    CONFIG_BLOB_CONTAINER_CLIENT,
     CONFIG_CHAT_APPROACH,
     CONFIG_CHAT_HISTORY_BROWSER_ENABLED,
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
     CONFIG_CREDENTIAL,
     CONFIG_DEFAULT_REASONING_EFFORT,
-    CONFIG_IMAGE_BLOB_CONTAINER_CLIENT,  # Added this line
-    CONFIG_IMAGE_DATALAKE_CLIENT,
+    CONFIG_GLOBAL_BLOB_MANAGER,
     CONFIG_INGESTER,
     CONFIG_LANGUAGE_PICKER_ENABLED,
     CONFIG_MULTIMODAL_ENABLED,
@@ -87,7 +83,7 @@ from config import (
     CONFIG_SPEECH_SERVICE_TOKEN,
     CONFIG_SPEECH_SERVICE_VOICE,
     CONFIG_STREAMING_ENABLED,
-    CONFIG_USER_BLOB_CONTAINER_CLIENT,
+    CONFIG_USER_BLOB_MANAGER,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
 )
@@ -104,7 +100,7 @@ from prepdocs import (
     setup_openai_client,
     setup_search_info,
 )
-from prepdocslib.blobmanager import AdlsBlobManager
+from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
@@ -153,19 +149,16 @@ async def content_file(path: str, auth_claims: dict[str, Any]):
         path_parts = path.rsplit("#page=", 1)
         path = path_parts[0]
     current_app.logger.info("Opening file %s", path)
-    blob_container_client: ContainerClient = current_app.config[CONFIG_BLOB_CONTAINER_CLIENT]
+    blob_manager: BlobManager = current_app.config[CONFIG_GLOBAL_BLOB_MANAGER]
     blob: Union[BlobDownloader, DatalakeDownloader]
-    try:
-        blob = await blob_container_client.get_blob_client(path).download_blob()
-    except ResourceNotFoundError:
+    blob = await blob_manager.download_blob(path)
+    if blob is None:
         current_app.logger.info("Path not found in general Blob container: %s", path)
         if current_app.config[CONFIG_USER_UPLOAD_ENABLED]:
             try:
                 user_oid = auth_claims["oid"]
-                user_blob_container_client = current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT]
-                user_directory_client: FileSystemClient = user_blob_container_client.get_directory_client(user_oid)
-                file_client = user_directory_client.get_file_client(path)
-                blob = await file_client.download_file()
+                user_blob_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
+                blob = await user_blob_manager.download_blob(path, user_oid=user_oid)
             except ResourceNotFoundError:
                 current_app.logger.exception("Path not found in DataLake: %s", path)
                 abort(404)
@@ -364,7 +357,7 @@ async def upload(auth_claims: dict[str, Any]):
 
     user_oid = auth_claims["oid"]
     file = request_files.getlist("file")[0]
-    adls_manager = AdlsBlobManager(current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT])
+    adls_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
     file_url = await adls_manager.upload_blob(file, file.filename, user_oid)
     ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
     await ingester.add_file(File(content=file, url=file_url, acls={"oids": [user_oid]}), user_oid=user_oid)
@@ -377,9 +370,9 @@ async def delete_uploaded(auth_claims: dict[str, Any]):
     request_json = await request.get_json()
     filename = request_json.get("filename")
     user_oid = auth_claims["oid"]
-    adls_manager = AdlsBlobManager(current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT])
+    adls_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
     await adls_manager.remove_blob(filename, user_oid)
-    ingester = current_app.config[CONFIG_INGESTER]
+    ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
     await ingester.remove_file(filename, user_oid)
     return jsonify({"message": f"File {filename} deleted successfully"}), 200
 
@@ -391,7 +384,7 @@ async def list_uploaded(auth_claims: dict[str, Any]):
     Only returns files directly in the user's directory, not in subdirectories.
     Excludes image files and the images directory."""
     user_oid = auth_claims["oid"]
-    adls_manager = AdlsBlobManager(current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT])
+    adls_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
     files = await adls_manager.list_blobs(user_oid)
     return jsonify(files), 200
 
@@ -514,18 +507,14 @@ async def setup_clients():
         endpoint=AZURE_SEARCH_ENDPOINT, agent_name=AZURE_SEARCH_AGENT, credential=azure_credential
     )
 
-    blob_container_client = ContainerClient(
-        f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", AZURE_STORAGE_CONTAINER, credential=azure_credential
+    # Set up the global blob storage manager (used for global content/images, but not user uploads)
+    global_blob_manager = BlobManager(
+        endpoint=f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net",
+        credential=azure_credential,
+        container=AZURE_STORAGE_CONTAINER,
+        image_container=AZURE_IMAGESTORAGE_CONTAINER,
     )
-
-    # Set up the image storage container client if configured
-    image_blob_container_client = None
-    if AZURE_IMAGESTORAGE_CONTAINER:
-        image_blob_container_client = ContainerClient(
-            f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net",
-            AZURE_IMAGESTORAGE_CONTAINER,
-            credential=azure_credential,
-        )
+    current_app.config[CONFIG_GLOBAL_BLOB_MANAGER] = global_blob_manager
 
     # Set up authentication helper
     search_index = None
@@ -572,19 +561,19 @@ async def setup_clients():
         openai_organization=OPENAI_ORGANIZATION,
     )
 
-    user_blob_container_client = None
+    user_image_blob_manager = None
     if USE_USER_UPLOAD:
         current_app.logger.info("USE_USER_UPLOAD is true, setting up user upload feature")
         if not AZURE_USERSTORAGE_ACCOUNT or not AZURE_USERSTORAGE_CONTAINER:
             raise ValueError(
                 "AZURE_USERSTORAGE_ACCOUNT and AZURE_USERSTORAGE_CONTAINER must be set when USE_USER_UPLOAD is true"
             )
-        user_blob_container_client = FileSystemClient(
-            f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net",
-            AZURE_USERSTORAGE_CONTAINER,
+        user_blob_manager = AdlsBlobManager(
+            endpoint=f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net",
+            container=AZURE_USERSTORAGE_CONTAINER,
             credential=azure_credential,
         )
-        current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT] = user_blob_container_client
+        current_app.config[CONFIG_USER_BLOB_MANAGER] = user_blob_manager
 
         # Set up ingester
         file_processors = setup_file_processors(
@@ -627,7 +616,7 @@ async def setup_clients():
             embeddings=text_embeddings_service,
             image_embeddings=image_embeddings_service,
             search_field_name_embedding=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
-            blob_manager=AdlsBlobManager(user_blob_container_client),
+            blob_manager=user_image_blob_manager,
         )
         current_app.config[CONFIG_INGESTER] = ingester
 
@@ -638,9 +627,6 @@ async def setup_clients():
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_AGENT_CLIENT] = agent_client
-    current_app.config[CONFIG_BLOB_CONTAINER_CLIENT] = blob_container_client
-    if image_blob_container_client:
-        current_app.config[CONFIG_IMAGE_BLOB_CONTAINER_CLIENT] = image_blob_container_client
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
@@ -695,8 +681,8 @@ async def setup_clients():
         reasoning_effort=OPENAI_REASONING_EFFORT,
         multimodal_enabled=USE_MULTIMODAL,
         image_embeddings_client=image_embeddings_client,
-        image_blob_container_client=image_blob_container_client,
-        image_datalake_client=user_blob_container_client,
+        global_blob_manager=global_blob_manager,
+        user_blob_manager=user_blob_manager,
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -722,21 +708,14 @@ async def setup_clients():
         reasoning_effort=OPENAI_REASONING_EFFORT,
         multimodal_enabled=USE_MULTIMODAL,
         image_embeddings_client=image_embeddings_client,
-        image_blob_container_client=image_blob_container_client,
-        image_datalake_client=user_blob_container_client,
+        global_blob_manager=global_blob_manager,
+        user_blob_manager=user_blob_manager,
     )
 
 
 @bp.after_app_serving
 async def close_clients():
     await current_app.config[CONFIG_SEARCH_CLIENT].close()
-    await current_app.config[CONFIG_BLOB_CONTAINER_CLIENT].close()
-    if current_app.config.get(CONFIG_USER_BLOB_CONTAINER_CLIENT):
-        await current_app.config[CONFIG_USER_BLOB_CONTAINER_CLIENT].close()
-    if current_app.config.get(CONFIG_IMAGE_BLOB_CONTAINER_CLIENT):
-        await current_app.config[CONFIG_IMAGE_BLOB_CONTAINER_CLIENT].close()
-    if current_app.config.get(CONFIG_IMAGE_DATALAKE_CLIENT):
-        await current_app.config[CONFIG_IMAGE_DATALAKE_CLIENT].close()
 
 
 def create_app():
