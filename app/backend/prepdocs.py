@@ -325,7 +325,7 @@ if __name__ == "__main__":
         logging.basicConfig(format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)])
         # We only set the level to INFO for our logger,
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
-        logger.setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
 
     load_azd_env()
 
