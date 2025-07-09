@@ -66,7 +66,7 @@
       "value": "eval-volaris-dev-eus-001"
     },
     "searchServiceResourceGroupName": {
-      "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
+      "value": "rg-volaris-dev-eus-001"
     },
     "openAiApiKey": {
       "value": "${OPENAI_API_KEY}"
@@ -100,6 +100,24 @@
     },
     "documentIntelligenceSkuName": {
       "value": "${AZURE_DOCUMENTINTELLIGENCE_SKU=S0}"
-    }
+    },
+    "openAiResourceGroupName": {
+      "value": "rg-volaris-dev-eus-001"
+    },
+    "storageResourceGroupName": {
+      "value": "rg-volaris-dev-eus-001"
+    },
+    "documentIntelligenceResourceGroupName": {
+      "value": "rg-volaris-dev-eus-001"
+    },
+    "cosmodDbResourceGroupName": {
+      "value": "rg-volaris-dev-eus-001"
+    },
+    "computerVisionResourceGroupName": {
+      "value": "rg-volaris-dev-eus-001"
+    },
+    "speechServiceResourceGroupName": {
+      "value": "rg-volaris-dev-eus-001"
+    }    
   }
 }
