@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Optional
 
@@ -23,11 +24,11 @@ async def parse_file(
     key = file.file_extension().lower()
     processor = file_processors.get(key)
     if processor is None:
-        logger.info("Skipping '%s', no parser found.", file.filename())
+        logger.info("'%s': Skipping, no parser found.", file.content.name)
         return []
-    logger.info("Ingesting '%s'", file.filename())
+    logger.info("'%s': Starting ingestion process", file.content.name)
     pages = [page async for page in processor.parser.parse(content=file.content)]
-    logger.info("Splitting '%s' into sections", file.filename())
+    logger.info("'%s': Splitting into sections", file.content.name)
     if image_embeddings:
         logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
     sections = [
@@ -40,6 +41,8 @@ class FileStrategy(Strategy):
     """
     Strategy for ingesting documents into a search service from files stored either locally or in a data lake storage account
     """
+
+    DEFAULT_CONCURRENCY = 4
 
     def __init__(
         self,
@@ -56,6 +59,7 @@ class FileStrategy(Strategy):
         category: Optional[str] = None,
         use_content_understanding: bool = False,
         content_understanding_endpoint: Optional[str] = None,
+        concurrency: int = DEFAULT_CONCURRENCY,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -70,6 +74,7 @@ class FileStrategy(Strategy):
         self.category = category
         self.use_content_understanding = use_content_understanding
         self.content_understanding_endpoint = content_understanding_endpoint
+        self.concurrency = concurrency
 
     def setup_search_manager(self):
         self.search_manager = SearchManager(
@@ -98,9 +103,9 @@ class FileStrategy(Strategy):
 
     async def run(self):
         self.setup_search_manager()
-        if self.document_action == DocumentAction.Add:
-            files = self.list_file_strategy.list()
-            async for file in files:
+
+        async def process_file_worker(semaphore: asyncio.Semaphore, file: File):
+            async with semaphore:
                 try:
                     sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
                     if sections:
@@ -108,10 +113,19 @@ class FileStrategy(Strategy):
                         blob_image_embeddings: Optional[list[list[float]]] = None
                         if self.image_embeddings and blob_sas_uris:
                             blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
+                        logger.info("'%s': Computing embeddings and updating search index", file.content.name)
                         await self.search_manager.update_content(sections, blob_image_embeddings, url=file.url)
                 finally:
                     if file:
+                        logger.info("'%s': Finished processing file", file.content.name)
                         file.close()
+
+        if self.document_action == DocumentAction.Add:
+            files = self.list_file_strategy.list()
+            logger.info("Running with concurrency: %d", self.concurrency)
+            semaphore = asyncio.Semaphore(self.concurrency)
+            tasks = [process_file_worker(semaphore, file) async for file in files]
+            await asyncio.gather(*tasks)
         elif self.document_action == DocumentAction.Remove:
             paths = self.list_file_strategy.list_paths()
             async for path in paths:
