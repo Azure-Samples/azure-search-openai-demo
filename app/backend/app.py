@@ -717,7 +717,8 @@ async def setup_clients():
 async def close_clients():
     await current_app.config[CONFIG_SEARCH_CLIENT].close()
     await current_app.config[CONFIG_GLOBAL_BLOB_MANAGER].close_clients()
-    await current_app.config[CONFIG_USER_BLOB_MANAGER].close_clients()
+    if user_blob_manager := current_app.config.get(CONFIG_USER_BLOB_MANAGER):
+        await user_blob_manager.close_clients()
 
 
 def create_app():
