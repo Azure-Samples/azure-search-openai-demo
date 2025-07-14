@@ -1,6 +1,5 @@
 import os
 
-import aiohttp
 import azure.storage.blob.aio
 import azure.storage.filedatalake.aio
 import pytest
@@ -14,31 +13,16 @@ from azure.storage.blob.aio import BlobServiceClient
 
 import app
 
-from .mocks import MockAzureCredential, MockBlob
-
-
-class MockAiohttpClientResponse404(aiohttp.ClientResponse):
-    def __init__(self, url, body_bytes, headers=None):
-        self._body = body_bytes
-        self._headers = headers
-        self._cache = {}
-        self.status = 404
-        self.reason = "Not Found"
-        self._url = url
-
-
-class MockAiohttpClientResponse(aiohttp.ClientResponse):
-    def __init__(self, url, body_bytes, headers=None):
-        self._body = body_bytes
-        self._headers = headers
-        self._cache = {}
-        self.status = 200
-        self.reason = "OK"
-        self._url = url
+from .mocks import (
+    MockAiohttpClientResponse,
+    MockAiohttpClientResponse404,
+    MockAzureCredential,
+    MockBlob,
+)
 
 
 @pytest.mark.asyncio
-async def test_content_file(monkeypatch, mock_env, mock_acs_search):
+async def test_content_file(monkeypatch, mock_env, mock_acs_search, mock_blob_container_client_exists):
 
     class MockTransport(AsyncHttpTransport):
         async def send(self, request: HttpRequest, **kwargs) -> AioHttpTransportResponse:
@@ -70,17 +54,16 @@ async def test_content_file(monkeypatch, mock_env, mock_acs_search):
         async def close(self):
             pass
 
-    blob_client = BlobServiceClient(
+    mock_blob_service_client = BlobServiceClient(
         f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
         credential=MockAzureCredential(),
         transport=MockTransport(),
         retry_total=0,  # Necessary to avoid unnecessary network requests during tests
     )
-    blob_container_client = blob_client.get_container_client(os.environ["AZURE_STORAGE_CONTAINER"])
 
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
-        quart_app.config.update({"blob_container_client": blob_container_client})
+        test_app.app.config[app.CONFIG_GLOBAL_BLOB_MANAGER].blob_service_client = mock_blob_service_client
 
         client = test_app.test_client()
         response = await client.get("/content/notfound.pdf")
@@ -98,8 +81,10 @@ async def test_content_file(monkeypatch, mock_env, mock_acs_search):
 
 
 @pytest.mark.asyncio
-async def test_content_file_useruploaded_found(monkeypatch, auth_client, mock_blob_container_client):
-
+async def test_content_file_useruploaded_found(
+    monkeypatch, auth_client, mock_blob_container_client, mock_blob_container_client_exists
+):
+    # We need to mock our the global blob and container client since the /content path checks that first!
     class MockBlobClient:
         async def download_blob(self):
             raise ResourceNotFoundError(MockAiohttpClientResponse404("userdoc.pdf", b""))
@@ -108,8 +93,39 @@ async def test_content_file_useruploaded_found(monkeypatch, auth_client, mock_bl
         azure.storage.blob.aio.ContainerClient, "get_blob_client", lambda *args, **kwargs: MockBlobClient()
     )
 
+    # Track downloaded files
     downloaded_files = []
 
+    # Mock directory client for _ensure_directory method
+    class MockDirectoryClient:
+        async def get_directory_properties(self):
+            # Return dummy properties to indicate directory exists
+            return {"name": "test-directory"}
+
+        async def get_access_control(self):
+            # Return a dictionary with the owner matching the auth_client's user_oid
+            return {"owner": "OID_X"}  # This should match the user_oid in auth_client
+
+        def get_file_client(self, filename):
+            # Return a file client for the given filename
+            return MockFileClient(filename)
+
+    class MockFileClient:
+        def __init__(self, path_name):
+            self.path_name = path_name
+
+        async def download_file(self):
+            downloaded_files.append(self.path_name)
+            return MockBlob()
+
+    # Mock get_directory_client to return our MockDirectoryClient
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.FileSystemClient,
+        "get_directory_client",
+        lambda *args, **kwargs: MockDirectoryClient(),
+    )
+
+    # Original mock for download_file (keep for backward compatibility)
     async def mock_download_file(self):
         downloaded_files.append(self.path_name)
         return MockBlob()
@@ -122,7 +138,9 @@ async def test_content_file_useruploaded_found(monkeypatch, auth_client, mock_bl
 
 
 @pytest.mark.asyncio
-async def test_content_file_useruploaded_notfound(monkeypatch, auth_client, mock_blob_container_client):
+async def test_content_file_useruploaded_notfound(
+    monkeypatch, auth_client, mock_blob_container_client, mock_blob_container_client_exists
+):
 
     class MockBlobClient:
         async def download_blob(self):
@@ -132,6 +150,36 @@ async def test_content_file_useruploaded_notfound(monkeypatch, auth_client, mock
         azure.storage.blob.aio.ContainerClient, "get_blob_client", lambda *args, **kwargs: MockBlobClient()
     )
 
+    # Mock directory client for _ensure_directory method
+    class MockDirectoryClient:
+        async def get_directory_properties(self):
+            # Return dummy properties to indicate directory exists
+            return {"name": "test-directory"}
+
+        async def get_access_control(self):
+            # Return a dictionary with the owner matching the auth_client's user_oid
+            return {"owner": "OID_X"}  # This should match the user_oid in auth_client
+
+        def get_file_client(self, filename):
+            # Return a file client for the given filename
+            return MockFileClient(filename)
+
+    class MockFileClient:
+        def __init__(self, path_name):
+            self.path_name = path_name
+
+        async def download_file(self):
+            # Simulate file not found error
+            raise ResourceNotFoundError(MockAiohttpClientResponse404(self.path_name, b""))
+
+    # Mock get_directory_client to return our MockDirectoryClient
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.FileSystemClient,
+        "get_directory_client",
+        lambda *args, **kwargs: MockDirectoryClient(),
+    )
+
+    # Original mock for download_file (keep for backward compatibility)
     async def mock_download_file(self):
         raise ResourceNotFoundError(MockAiohttpClientResponse404("userdoc.pdf", b""))
 

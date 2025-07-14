@@ -3,9 +3,16 @@ from collections import namedtuple
 from io import BytesIO
 from typing import Optional
 
+import aiohttp
 import openai.types
 from azure.cognitiveservices.speech import ResultReason
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.transport import (
+    AioHttpTransportResponse,
+    AsyncHttpTransport,
+    HttpRequest,
+)
 from azure.search.documents.agent.models import (
     KnowledgeAgentAzureSearchDocReference,
     KnowledgeAgentMessage,
@@ -61,6 +68,57 @@ class MockBlob:
 
     async def readinto(self, buffer: BytesIO):
         buffer.write(b"test")
+
+
+class MockAiohttpClientResponse404(aiohttp.ClientResponse):
+    def __init__(self, url, body_bytes, headers=None):
+        self._body = body_bytes
+        self._headers = headers
+        self._cache = {}
+        self.status = 404
+        self.reason = "Not Found"
+        self._url = url
+
+
+class MockAiohttpClientResponse(aiohttp.ClientResponse):
+    def __init__(self, url, body_bytes, headers=None):
+        self._body = body_bytes
+        self._headers = headers
+        self._cache = {}
+        self.status = 200
+        self.reason = "OK"
+        self._url = url
+
+
+class MockTransport(AsyncHttpTransport):
+    async def send(self, request: HttpRequest, **kwargs) -> AioHttpTransportResponse:
+        if request.url.endswith("notfound.png"):
+            raise ResourceNotFoundError(MockAiohttpClientResponse404(request.url, b""))
+        else:
+            return AioHttpTransportResponse(
+                request,
+                MockAiohttpClientResponse(
+                    request.url,
+                    b"test content",
+                    {
+                        "Content-Type": "application/octet-stream",
+                        "Content-Range": "bytes 0-27/28",
+                        "Content-Length": "28",
+                    },
+                ),
+            )
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+    async def open(self):
+        pass
+
+    async def close(self):
+        pass
 
 
 class MockAsyncPageIterator:

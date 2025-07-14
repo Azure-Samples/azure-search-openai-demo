@@ -18,7 +18,7 @@ from azure.search.documents.indexes.models import (
     SearchField,
     SearchIndex,
 )
-from azure.storage.blob.aio import ContainerClient
+from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from openai.types import CompletionUsage, CreateEmbeddingResponse, Embedding
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from openai.types.chat.chat_completion import (
@@ -43,6 +43,7 @@ from .mocks import (
     MockAzureCredentialExpired,
     MockBlobClient,
     MockResponse,
+    MockTransport,
     mock_retrieval_response,
     mock_speak_text_cancelled,
     mock_speak_text_failed,
@@ -297,6 +298,14 @@ def mock_acs_search_filter(monkeypatch):
 @pytest.fixture
 def mock_blob_container_client(monkeypatch):
     monkeypatch.setattr(ContainerClient, "get_blob_client", lambda *args, **kwargs: MockBlobClient())
+
+
+@pytest.fixture
+def mock_blob_container_client_exists(monkeypatch):
+    async def mock_exists(*args, **kwargs):
+        return True
+
+    monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.exists", mock_exists)
 
 
 envs = [
@@ -731,7 +740,7 @@ async def vision_client(
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_acs_search,
-    mock_blob_container_client,
+    mock_blob_container_client_exists,
     mock_azurehttp_calls,
 ):
     quart_app = app.create_app()
@@ -740,6 +749,15 @@ async def vision_client(
         test_app.app.config.update({"TESTING": True})
         mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        # need to mock app.CONFIG_GLOBAL_BLOB_MANAGER to
+        mock_blob_service_client = BlobServiceClient(
+            f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
+            credential=MockAzureCredential(),
+            transport=MockTransport(),
+            retry_total=0,  # Necessary to avoid unnecessary network requests during tests
+        )
+        test_app.app.config[app.CONFIG_GLOBAL_BLOB_MANAGER].blob_service_client = mock_blob_service_client
+
         yield test_app.test_client()
 
 
@@ -939,13 +957,14 @@ def mock_data_lake_service_client(monkeypatch):
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "__init__", mock_init_filesystem_aio)
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "__aenter__", mock_aenter)
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "__aexit__", mock_aexit)
-    monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "get_paths", mock_get_paths)
+
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "exists", mock_exists_aio)
-    monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "get_paths", mock_get_paths)
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "get_file_client", mock_get_file_client)
     monkeypatch.setattr(
         azure.storage.filedatalake.aio.FileSystemClient, "create_file_system", mock_create_filesystem_aio
     )
+    monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "get_paths", mock_get_paths)
+
     monkeypatch.setattr(azure.storage.filedatalake.aio.FileSystemClient, "create_directory", mock_create_directory_aio)
     monkeypatch.setattr(
         azure.storage.filedatalake.aio.FileSystemClient,
@@ -985,7 +1004,6 @@ def mock_data_lake_service_client(monkeypatch):
     monkeypatch.setattr(
         azure.storage.filedatalake.aio.DataLakeFileClient, "get_access_control", mock_get_access_control
     )
-
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__init__", mock_init_file)
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "url", property(mock_url))
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "__aenter__", mock_aenter)
@@ -999,6 +1017,12 @@ def mock_data_lake_service_client(monkeypatch):
     def mock_init_directory(self, path, *args, **kwargs):
         self.path = path
         self.files = {}
+
+    async def mock_get_directory_properties(self, *args, **kwargs):
+        return azure.storage.filedatalake.DirectoryProperties()
+
+    async def mock_get_access_control(self, *args, **kwargs):
+        return {"owner": "OID_X"}
 
     def mock_directory_get_file_client(self, *args, **kwargs):
         path = kwargs.get("file")
@@ -1029,6 +1053,14 @@ def mock_data_lake_service_client(monkeypatch):
         azure.storage.filedatalake.aio.DataLakeDirectoryClient,
         "update_access_control_recursive",
         mock_update_access_control_recursive_aio,
+    )
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.DataLakeDirectoryClient,
+        "get_directory_properties",
+        mock_get_directory_properties,
+    )
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.DataLakeDirectoryClient, "get_access_control", mock_get_access_control
     )
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeDirectoryClient, "close", mock_close_aio)
 

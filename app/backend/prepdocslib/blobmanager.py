@@ -287,7 +287,7 @@ class AdlsBlobManager(BaseBlobManager):
             filename = path_parts[-1]
 
         try:
-            user_directory_client = self._ensure_directory(directory_path=directory_path, user_oid=user_oid)
+            user_directory_client = await self._ensure_directory(directory_path=directory_path, user_oid=user_oid)
             file_client = user_directory_client.get_file_client(filename)
             blob = await file_client.download_file()
             return blob
@@ -343,10 +343,10 @@ class AdlsBlobManager(BaseBlobManager):
         Returns:
             list[str]: List of filenames that belong to the user
         """
-        user_directory_client = await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
+        await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
         files = []
         try:
-            all_paths = user_directory_client.get_paths()
+            all_paths = self.file_system_client.get_paths(path=user_oid, recursive=True)
             async for path in all_paths:
                 # Split path into parts (user_oid/filename or user_oid/directory/files)
                 path_parts = path.name.split("/", 1)

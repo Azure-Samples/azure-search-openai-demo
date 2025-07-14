@@ -16,7 +16,6 @@ from azure.cognitiveservices.speech import (
     SpeechSynthesisResult,
     SpeechSynthesizer,
 )
-from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import (
     AzureDeveloperCliCredential,
     ManagedIdentityCredential,
@@ -155,16 +154,12 @@ async def content_file(path: str, auth_claims: dict[str, Any]):
     if blob is None:
         current_app.logger.info("Path not found in general Blob container: %s", path)
         if current_app.config[CONFIG_USER_UPLOAD_ENABLED]:
-            try:
-                user_oid = auth_claims["oid"]
-                user_blob_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
-                blob = await user_blob_manager.download_blob(path, user_oid=user_oid)
-            except ResourceNotFoundError:
+            user_oid = auth_claims["oid"]
+            user_blob_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
+            blob = await user_blob_manager.download_blob(path, user_oid=user_oid)
+            if blob is None:
                 current_app.logger.exception("Path not found in DataLake: %s", path)
-                abort(404)
-        else:
-            abort(404)
-    if not blob.properties or not blob.properties.has_key("content_settings"):
+    if not blob or not blob.properties or not blob.properties.has_key("content_settings"):
         abort(404)
     mime_type = blob.properties["content_settings"]["content_type"]
     if mime_type == "application/octet-stream":

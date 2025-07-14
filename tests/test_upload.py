@@ -23,33 +23,42 @@ from .mocks import MockClient, MockEmbeddingsClient
 @pytest.mark.parametrize("directory_exists", [True, False])
 async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_client, directory_exists):
 
-    async def mock_get_directory_properties(self, *args, **kwargs):
-        if directory_exists:
-            return None
-        else:
-            raise azure.core.exceptions.ResourceNotFoundError()
+    # Create a mock class for DataLakeDirectoryClient that includes the _client attribute
+    class MockDataLakeDirectoryClient:
+        def __init__(self, *args, **kwargs):
+            self._client = object()  # Mock the _client attribute
+            self.url = "https://test.blob.core.windows.net/container/path"
 
-    monkeypatch.setattr(DataLakeDirectoryClient, "get_directory_properties", mock_get_directory_properties)
+        async def get_directory_properties(self, *args, **kwargs):
+            if directory_exists:
+                return {"name": "test-directory"}
+            else:
+                raise azure.core.exceptions.ResourceNotFoundError()
+
+        async def create_directory(self, *args, **kwargs):
+            directory_created[0] = True
+            return None
+
+        async def set_access_control(self, *args, **kwargs):
+            assert kwargs.get("owner") == "OID_X"
+            return None
+
+        async def get_access_control(self, *args, **kwargs):
+            return {"owner": "OID_X"}
+
+        def get_file_client(self, *args, **kwargs):
+            return azure.storage.filedatalake.aio.DataLakeFileClient(
+                account_url="https://test.blob.core.windows.net/", file_system_name="user-content", file_path=args[0]
+            )
+
+    # Replace the DataLakeDirectoryClient with our mock
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.FileSystemClient,
+        "get_directory_client",
+        lambda *args, **kwargs: MockDataLakeDirectoryClient(),
+    )
 
     directory_created = [False]
-
-    async def mock_create_directory(self, *args, **kwargs):
-        directory_created[0] = True
-
-    monkeypatch.setattr(DataLakeDirectoryClient, "create_directory", mock_create_directory)
-
-    async def mock_directory_set_access_control(self, *args, **kwargs):
-        assert kwargs.get("owner") == "OID_X"
-        return None
-
-    monkeypatch.setattr(DataLakeDirectoryClient, "set_access_control", mock_directory_set_access_control)
-
-    def mock_directory_get_file_client(self, *args, **kwargs):
-        return azure.storage.filedatalake.aio.DataLakeFileClient(
-            account_url="https://test.blob.core.windows.net/", file_system_name="user-content", file_path=args[0]
-        )
-
-    monkeypatch.setattr(DataLakeDirectoryClient, "get_file_client", mock_directory_get_file_client)
 
     async def mock_upload_file(self, *args, **kwargs):
         assert kwargs.get("overwrite") is True
