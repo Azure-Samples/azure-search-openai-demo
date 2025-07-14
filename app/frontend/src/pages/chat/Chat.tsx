@@ -403,7 +403,7 @@ const Chat = () => {
             </Helmet>
             <div className={styles.commandsSplitContainer}>
                 <div className={styles.commandsContainer}>
-                    {((useLogin && showChatHistoryCosmos) || showChatHistoryBrowser) && (
+                    {((useLogin && showChatHistoryCosmos) && showChatHistoryBrowser) && (
                         <HistoryButton className={styles.commandButton} onClick={() => setIsHistoryPanelOpen(!isHistoryPanelOpen)} />
                     )}
                 </div>
