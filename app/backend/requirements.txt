@@ -270,7 +270,7 @@ opentelemetry-instrumentation-httpx==0.52b1
     # via -r requirements.in
 opentelemetry-instrumentation-openai==0.39.0
     # via -r requirements.in
-opentelemetry-instrumentation-psycopg2==0.52b1
+opentelemetry-instrumentation-psycopg2==0.56b0
     # via azure-monitor-opentelemetry
 opentelemetry-instrumentation-requests==0.52b1
     # via azure-monitor-opentelemetry
