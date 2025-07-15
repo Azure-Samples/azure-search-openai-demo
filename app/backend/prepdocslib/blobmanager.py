@@ -103,8 +103,8 @@ class BaseBlobManager:
         raise NotImplementedError("Subclasses must implement this method")
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None
-    ) -> Optional[Union[BlobStorageStreamDownloader, AdlsBlobStorageStreamDownloader]]:
+        self, blob_path: str, user_oid: Optional[str] = None, as_bytes: bool = False
+    ) -> Optional[Union[BlobStorageStreamDownloader, AdlsBlobStorageStreamDownloader, bytes]]:
         """
         Downloads a blob from Azure Storage.
         If user_oid is provided, it checks if the blob belongs to the user.
@@ -253,7 +253,7 @@ class AdlsBlobManager(BaseBlobManager):
         return unquote(file_client.url)
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None
+        self, blob_path: str, user_oid: Optional[str] = None, as_bytes: bool = False
     ) -> Optional[Union[AdlsBlobStorageStreamDownloader, BlobStorageStreamDownloader]]:
         """
         Downloads a blob from Azure Data Lake Storage.
@@ -290,7 +290,10 @@ class AdlsBlobManager(BaseBlobManager):
             user_directory_client = await self._ensure_directory(directory_path=directory_path, user_oid=user_oid)
             file_client = user_directory_client.get_file_client(filename)
             blob = await file_client.download_file()
-            return blob
+            if as_bytes:
+                return await blob.readall()
+            else:
+                return blob
         except ResourceNotFoundError:
             logger.warning(f"Directory or file not found: {directory_path}/{filename}")
             return None
@@ -444,8 +447,8 @@ class BlobManager(BaseBlobManager):
         return blob_client.url
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None
-    ) -> Optional[Union[BlobStorageStreamDownloader, AdlsBlobStorageStreamDownloader]]:
+        self, blob_path: str, user_oid: Optional[str] = None, as_bytes: bool = False
+    ) -> Optional[Union[BlobStorageStreamDownloader, AdlsBlobStorageStreamDownloader, bytes]]:
         if user_oid is not None:
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
@@ -462,7 +465,10 @@ class BlobManager(BaseBlobManager):
             if not blob.properties:
                 logger.warning(f"No blob exists for {blob_path}")
                 return None
-            return blob
+            if as_bytes:
+                return await blob.readall()
+            else:
+                return blob
         except ResourceNotFoundError:
             logger.warning("Blob not found: %s", blob_path)
             return None
