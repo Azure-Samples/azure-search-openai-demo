@@ -334,16 +334,14 @@ class IntegratedVectorizerStrategy(Strategy):
         elif self.document_action == DocumentAction.RemoveAll:
             await self.blob_manager.remove_blob()
 
-        extra_params = {}
+        indexing_parameters = None
         if self.use_multimodal:
-            extra_params = {
-                "parameters": IndexingParameters(
-                    configuration=IndexingParametersConfiguration(
-                        query_timeout=None, allow_skillset_to_read_file_data=True  # Current bug in AI Search SDK
-                    ),
-                    max_failed_items=-1,
-                )
-            }
+            indexing_parameters = IndexingParameters(
+                configuration=IndexingParametersConfiguration(
+                    query_timeout=None, allow_skillset_to_read_file_data=True  # type: ignore
+                ),
+                max_failed_items=-1,
+            )
 
         indexer = SearchIndexer(
             name=self.indexer_name,
@@ -351,7 +349,7 @@ class IntegratedVectorizerStrategy(Strategy):
             skillset_name=self.skillset_name,
             target_index_name=self.search_info.index_name,
             data_source_name=self.data_source_name,
-            **extra_params,
+            parameters=indexing_parameters,  # Properly pass the parameters
         )
 
         indexer_client = self.search_info.create_search_indexer_client()
