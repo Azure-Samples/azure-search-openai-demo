@@ -12,11 +12,10 @@ from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.blob.aio import (
     StorageStreamDownloader as BlobStorageStreamDownloader,
 )
-from azure.storage.filedatalake import DataLakeDirectoryClient
-from azure.storage.filedatalake import (
+from azure.storage.filedatalake.aio import DataLakeDirectoryClient, FileSystemClient
+from azure.storage.filedatalake.aio import (
     StorageStreamDownloader as AdlsBlobStorageStreamDownloader,
 )
-from azure.storage.filedatalake.aio import FileSystemClient
 from PIL import Image, ImageDraw, ImageFont
 
 from .listfilestrategy import File
@@ -254,16 +253,17 @@ class AdlsBlobManager(BaseBlobManager):
 
     async def download_blob(
         self, blob_path: str, user_oid: Optional[str] = None, as_bytes: bool = False
-    ) -> Optional[Union[AdlsBlobStorageStreamDownloader, BlobStorageStreamDownloader]]:
+    ) -> Optional[Union[AdlsBlobStorageStreamDownloader, bytes]]:
         """
         Downloads a blob from Azure Data Lake Storage.
 
         Args:
             blob_path: The path to the blob in the format {user_oid}/{document_name}/images/{image_name}
             user_oid: The user's object ID
+            as_bytes: If True, returns the blob as bytes, otherwise returns a stream downloader
 
         Returns:
-            Optional[Union[AdlsBlobStorageStreamDownloader, BlobStorageStreamDownloader]]: A stream downloader for the blob, or None if not found
+            Optional[Union[AdlsBlobStorageStreamDownloader, bytes]]: A stream downloader for the blob, or bytes if as_bytes=True, or None if not found
         """
         if user_oid is None:
             logger.warning("user_oid must be provided for Data Lake Storage operations.")
@@ -322,8 +322,8 @@ class AdlsBlobManager(BaseBlobManager):
         await file_client.delete_file()
 
         # Try to delete any associated image directories
+        image_directory_path = self._get_image_directory_path(filename, user_oid)
         try:
-            image_directory_path = self._get_image_directory_path(filename, user_oid)
             image_directory_client = await self._ensure_directory(
                 directory_path=image_directory_path, user_oid=user_oid
             )
@@ -408,7 +408,7 @@ class BlobManager(BaseBlobManager):
             raise ValueError("Account, resource group, and subscription ID must be set to generate connection string.")
         return f"ResourceId=/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Storage/storageAccounts/{self.account};"
 
-    async def upload_blob(self, file: File) -> Optional[list[str]]:
+    async def upload_blob(self, file: File) -> str:
         container_client = self.blob_service_client.get_container_client(self.container)
         if not await container_client.exists():
             await container_client.create_container()
@@ -420,6 +420,8 @@ class BlobManager(BaseBlobManager):
                 logger.info("Uploading blob for document '%s'", blob_name)
                 blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                 file.url = blob_client.url
+
+        return unquote(file.url)
 
     async def upload_document_image(
         self,

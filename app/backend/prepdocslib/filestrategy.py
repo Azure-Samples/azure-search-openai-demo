@@ -3,7 +3,7 @@ from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential
 
-from .blobmanager import BlobManager
+from .blobmanager import AdlsBlobManager, BaseBlobManager, BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
 from .listfilestrategy import File, ListFileStrategy
@@ -18,7 +18,7 @@ async def parse_file(
     file: File,
     file_processors: dict[str, FileProcessor],
     category: Optional[str] = None,
-    blob_manager: Optional[BlobManager] = None,
+    blob_manager: Optional[BaseBlobManager] = None,
     image_embeddings_client: Optional[ImageEmbeddings] = None,
     user_oid: Optional[str] = None,
 ) -> list[Section]:
@@ -145,10 +145,10 @@ class UploadUserFileStrategy(FileStrategy):
         self,
         search_info: SearchInfo,
         file_processors: dict[str, FileProcessor],
+        blob_manager: AdlsBlobManager,
+        search_field_name_embedding: Optional[str] = None,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
-        search_field_name_embedding: Optional[str] = None,
-        blob_manager: Optional[BlobManager] = None,
     ):
         self.file_processors = file_processors
         self.embeddings = embeddings
