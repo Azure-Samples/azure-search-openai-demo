@@ -72,8 +72,8 @@ python -m pytest --snapshot-update
 Once tests are passing, generate a coverage report to make sure your changes are covered:
 
 ```shell
-pytest --cov --cov-report=xml
-diff-cover coverage.xml --format html:coverage_report.html
+pytest --cov --cov-report=xml && \
+diff-cover coverage.xml --format html:coverage_report.html && \
 open coverage_report.html
 ```
 

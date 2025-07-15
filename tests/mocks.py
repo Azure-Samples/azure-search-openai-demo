@@ -7,7 +7,6 @@ import aiohttp
 import openai.types
 from azure.cognitiveservices.speech import ResultReason
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import (
     AioHttpTransportResponse,
     AsyncHttpTransport,
@@ -92,24 +91,18 @@ class MockAiohttpClientResponse(aiohttp.ClientResponse):
 
 class MockTransport(AsyncHttpTransport):
     async def send(self, request: HttpRequest, **kwargs) -> AioHttpTransportResponse:
-        if request.url.endswith("notfound.png"):
-            raise ResourceNotFoundError(MockAiohttpClientResponse404(request.url, b""))
-        else:
-            return AioHttpTransportResponse(
-                request,
-                MockAiohttpClientResponse(
-                    request.url,
-                    b"test content",
-                    {
-                        "Content-Type": "application/octet-stream",
-                        "Content-Range": "bytes 0-27/28",
-                        "Content-Length": "28",
-                    },
-                ),
-            )
-
-    async def __aenter__(self):
-        return self
+        return AioHttpTransportResponse(
+            request,
+            MockAiohttpClientResponse(
+                request.url,
+                b"test content",
+                {
+                    "Content-Type": "application/octet-stream",
+                    "Content-Range": "bytes 0-27/28",
+                    "Content-Length": "28",
+                },
+            ),
+        )
 
     async def __aexit__(self, *args):
         pass

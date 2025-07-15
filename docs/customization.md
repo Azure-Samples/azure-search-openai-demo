@@ -9,11 +9,9 @@ This guide provides more details for customizing the RAG chat app.
 - [Using your own data](#using-your-own-data)
 - [Customizing the UI](#customizing-the-ui)
 - [Customizing the backend](#customizing-the-backend)
-  - [Chat/Ask tabs](#chatask-tabs)
+  - [Chat/Ask approaches](#chatask-approaches)
     - [Chat approach](#chat-approach)
-      - [Chat with vision](#chat-with-vision)
-    - [Ask tab](#ask-tab)
-      - [Ask with vision](#ask-with-vision)
+    - [Ask approach](#ask-approach)
 - [Improving answer quality](#improving-answer-quality)
   - [Identify the problem point](#identify-the-problem-point)
   - [Improving OpenAI ChatCompletion results](#improving-openai-chatcompletion-results)
@@ -32,7 +30,7 @@ The frontend is built using [React](https://reactjs.org/) and [Fluent UI compone
 
 The backend is built using [Quart](https://quart.palletsprojects.com/), a Python framework for asynchronous web applications. The backend code is stored in the `app/backend` folder. The frontend and backend communicate over HTTP using JSON or streamed NDJSON responses. Learn more in the [HTTP Protocol guide](http_protocol.md).
 
-### Chat/Ask tabs
+### Chat/Ask approaches
 
 Typically, the primary backend code you'll want to customize is the `app/backend/approaches` folder, which contains the classes powering the Chat and Ask tabs. Each class uses a different RAG (Retrieval Augmented Generation) approach, which include system messages that should be changed to match your data
 
@@ -55,7 +53,7 @@ there are several differences in the chat approach:
 2. **Search**: For this step, it also calculates a vector embedding for the user question using [the Azure AI Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the image embedding fields in the indexed documents. For each matching document, it downloads each associated image from Azure Blob Storage and converts it to a base 64 encoding.
 3. **Answering**: When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the multimodal LLM. The model generates a response that includes citations to the images, and the UI renders the images when a citation is clicked.
 
-#### Ask tab
+#### Ask approach
 
 The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
 

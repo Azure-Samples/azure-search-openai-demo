@@ -1083,28 +1083,6 @@ def mock_data_lake_service_client(monkeypatch):
     monkeypatch.setattr(azure.storage.filedatalake.aio.StorageStreamDownloader, "readinto", mock_readinto)
 
 
-# Add a mock token_provider for tests
-@pytest.fixture
-def mock_token_provider():
-    async def dummy_token_provider():
-        return "dummy_token"
-
-    return dummy_token_provider
-
-
-@pytest.fixture(autouse=True)
-def patch_get_bearer_token_provider(monkeypatch, mock_token_provider):
-    """
-    Patch the get_bearer_token_provider function used in app.py to return our mock_token_provider.
-    This is automatically applied to all tests.
-    """
-
-    def mock_get_bearer_token(*args, **kwargs):
-        return mock_token_provider
-
-    monkeypatch.setattr("azure.identity.aio.get_bearer_token_provider", mock_get_bearer_token)
-
-
 @pytest.fixture
 def chat_approach():
     return ChatReadRetrieveReadApproach(

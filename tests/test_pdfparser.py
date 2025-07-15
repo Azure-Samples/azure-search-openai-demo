@@ -21,7 +21,10 @@ from azure.ai.documentintelligence.models import (
 from azure.core.exceptions import HttpResponseError
 from PIL import Image, ImageChops
 
-from prepdocslib.mediadescriber import ContentUnderstandingDescriber
+from prepdocslib.mediadescriber import (
+    ContentUnderstandingDescriber,
+    MultimodalModelDescriber,
+)
 from prepdocslib.page import ImageOnPage
 from prepdocslib.pdfparser import DocumentAnalysisParser, MediaDescriptionStrategy
 
@@ -386,3 +389,78 @@ async def test_parse_unsupportedformat(monkeypatch, caplog):
     assert pages[0].page_num == 0
     assert pages[0].offset == 0
     assert pages[0].text == "Page content"
+
+
+@pytest.mark.asyncio
+async def test_parse_doc_with_openai(monkeypatch):
+    mock_poller = MagicMock()
+
+    async def mock_begin_analyze_document(self, model_id, analyze_request, **kwargs):
+        return mock_poller
+
+    async def mock_poller_result():
+        content = open(TEST_DATA_DIR / "Simple Figure_content.txt").read()
+        return AnalyzeResult(
+            content=content,
+            pages=[DocumentPage(page_number=1, spans=[DocumentSpan(offset=0, length=148)])],
+            figures=[
+                DocumentFigure(
+                    id="1.1",
+                    caption=DocumentCaption(content="Figure 1"),
+                    bounding_regions=[
+                        BoundingRegion(
+                            page_number=1, polygon=[0.4295, 1.3072, 1.7071, 1.3076, 1.7067, 2.6088, 0.4291, 2.6085]
+                        )
+                    ],
+                    spans=[DocumentSpan(offset=70, length=22)],
+                )
+            ],
+        )
+
+    monkeypatch.setattr(DocumentIntelligenceClient, "begin_analyze_document", mock_begin_analyze_document)
+    monkeypatch.setattr(mock_poller, "result", mock_poller_result)
+
+    async def mock_describe_image(self, image_bytes):
+        return "Pie chart"
+
+    monkeypatch.setattr(MultimodalModelDescriber, "describe_image", mock_describe_image)
+
+    parser = DocumentAnalysisParser(
+        endpoint="https://example.com",
+        credential=MockAzureCredential(),
+        media_description_strategy=MediaDescriptionStrategy.OPENAI,
+        openai_client=Mock(),
+        openai_model="gpt-4o",
+        openai_deployment="gpt-4o",
+    )
+
+    with open(TEST_DATA_DIR / "Simple Figure.pdf", "rb") as f:
+        content = io.BytesIO(f.read())
+        content.name = "Simple Figure.pdf"
+
+    pages = [page async for page in parser.parse(content)]
+
+    assert len(pages) == 1
+    assert pages[0].page_num == 0
+    assert pages[0].offset == 0
+    assert (
+        pages[0].text
+        == "# Simple Figure\n\nThis text is before the figure and NOT part of it.\n\n\n<figure><figcaption>1.1 Figure 1<br>Pie chart</figcaption></figure>\n\n\nThis is text after the figure that's not part of it."
+    )
+
+
+@pytest.mark.asyncio
+async def test_parse_doc_with_openai_missing_parameters():
+    parser = DocumentAnalysisParser(
+        endpoint="https://example.com",
+        credential=MockAzureCredential(),
+        media_description_strategy=MediaDescriptionStrategy.OPENAI,
+        # Intentionally not providing openai_client and openai_model
+    )
+
+    content = io.BytesIO(b"pdf content bytes")
+    content.name = "test.pdf"
+
+    with pytest.raises(ValueError, match="OpenAI client must be provided when using OpenAI media description strategy"):
+        # Call the first iteration of the generator without using async for
+        await parser.parse(content).__anext__()
