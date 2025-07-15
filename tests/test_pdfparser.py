@@ -52,6 +52,7 @@ def test_crop_image_from_pdf_page():
     assert len(cropped_image_bytes) > 0
     assert bbox_pixels is not None
     assert len(bbox_pixels) == 4
+    assert bbox_pixels == (105.86, 204.27, 398.74, 475.36)  # Coordinates in pixels
 
     # Verify the output is a valid image
     cropped_image = Image.open(io.BytesIO(cropped_image_bytes))
@@ -61,8 +62,6 @@ def test_crop_image_from_pdf_page():
 
     expected_image = Image.open(TEST_DATA_DIR / "Financial Market Analysis Report 2023_page2_figure.png")
     assert_image_equal(cropped_image, expected_image)
-
-    # TODO: assert bbox pixels too
 
 
 def test_table_to_html():

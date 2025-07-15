@@ -219,7 +219,7 @@ If you have already deployed:
 
 ## Enabling multimodal embeddings and answering
 
-⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization). TODO:
+⚠️ This feature is not currently compatible with [agentic retrieval](./agentic_retrieval.md).
 
 When your documents include images, you can optionally enable this feature that can
 use image embeddings when searching and also use images when answering questions.
@@ -229,8 +229,8 @@ Learn more in the [multimodal guide](./multimodal.md).
 ## Enabling media description with Azure Content Understanding
 
 ⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
-
-It is compatible with the [multimodal feature](./multimodal.md), but the features provide similar functionality. TODO: UPDATE
+It is compatible with the [multimodal feature](./multimodal.md), but this feature enables only a subset of multimodal capabilities,
+so you may want to enable the multimodal feature instead or as well.
 
 By default, if your documents contain image-like figures, the data ingestion process will ignore those figures,
 so users will not be able to ask questions about them.
@@ -317,8 +317,6 @@ azd env set USE_SPEECH_OUTPUT_BROWSER true
 ```
 
 ## Enabling Integrated Vectorization
-
-⚠️ This feature is not currently compatible with the [multimodal feature](./multimodal.md). TODO: UPDATE
 
 Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in-azure-ai-search/3960809). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
 
