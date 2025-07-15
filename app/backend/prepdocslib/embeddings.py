@@ -255,15 +255,10 @@ class ImageEmbeddings:
         raise ValueError("Failed to get image embedding after multiple retries.")
 
     async def create_embedding_for_text(self, q: str):
-        if not self.endpoint:
-            raise ValueError("Azure AI Vision endpoint must be set to compute image embedding.")
         endpoint = urljoin(self.endpoint, "computervision/retrieval:vectorizeText")
         headers = {"Content-Type": "application/json"}
         params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
         data = {"text": q}
-
-        if not self.token_provider:
-            raise ValueError("Azure AI Vision token provider must be set to compute image embedding.")
         headers["Authorization"] = "Bearer " + await self.token_provider()
 
         async with aiohttp.ClientSession() as session:
