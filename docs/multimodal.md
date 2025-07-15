@@ -102,4 +102,4 @@ With this feature enabled, the following changes are made:
 The agent *will* perform the multimodal vector embedding search, but it will not return images in the response,
 so we cannot send the images to the chat completion model.
 * This feature *is* compatible with the [reasoning models](./reasoning.md) feature, as long as you use a model that [supports image inputs](https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure%2Cpy#api--feature-support).
-* This feature is *mostly* compatible with [integrated vectorization](./integrated_vectorization.md). The extraction process will not be exactly the same, so the chunks will not be identical, and the extracted images will not contain citations.
+* This feature is *mostly* compatible with [integrated vectorization](./deploy_features.md#enabling-integrated-vectorization). The extraction process will not be exactly the same, so the chunks will not be identical, and the extracted images will not contain citations.
