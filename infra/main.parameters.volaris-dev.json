@@ -1,0 +1,151 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName":                  { "value": "${AZURE_ENV_NAME}" },
+    "resourceGroupName":               { "value": "rg-volaris-dev-eus-001" },
+    "location":                        { "value": "eastus" },
+    "principalId":                     { "value": "${AZURE_PRINCIPAL_ID}" },
+    
+    "openAiServiceName":               { "value": "oai-volaris-dev-eus-001" },
+    "openAiResourceGroupName":         { "value": "rg-volaris-dev-eus-001" },
+    "openAiLocation":                  { "value": "eastus" },
+    "openAiSkuName":                   { "value": "S0" },
+    
+    "computerVisionServiceName":       { "value": "cv-volaris-dev-eus-001" },
+    "computerVisionResourceGroupName": { "value": "rg-volaris-dev-eus-001" },
+    "computerVisionResourceGroupLocation": { "value": "eastus" },
+    "computerVisionSkuName":           { "value": "S1" },
+    
+    "contentUnderstandingServiceName":       { "value": "cu-volaris-dev-eus-001" },
+    "contentUnderstandingResourceGroupName": { "value": "rg-volaris-dev-eus-001" },
+    
+    "documentIntelligenceServiceName":         { "value": "di-volaris-dev-eus-001" },
+    "documentIntelligenceResourceGroupName":   { "value": "rg-volaris-dev-eus-001" },
+    "documentIntelligenceSkuName":             { "value": "S0" },
+    "documentIntelligenceResourceGroupLocation": { "value": "eastus" },
+    
+    "searchIndexName":                  { "value": "idx-volaris-dev-eus-001" },
+    "searchServiceName":                { "value": "srch-volaris-dev-eus-001" },
+    "searchServiceResourceGroupName":   { "value": "rg-volaris-dev-eus-001" },
+    "searchServiceLocation":            { "value": "eastus" },
+    "searchServiceSkuName":             { "value": "basic" },
+    "searchQueryLanguage":              { "value": "en-us" },
+    "searchQuerySpeller":               { "value": "lexicon" },
+    "searchServiceSemanticRankerLevel": { "value": "free" },
+    "searchServiceQueryRewriting":      { "value": "false" },
+    "searchFieldNameEmbedding":         { "value": "embedding3" },
+
+    "defaultReasoningEffort":           { "value": "medium" },
+
+    "storageAccountName":               { "value": "stgvolarisdeveus001" },
+    "storageResourceGroupName":         { "value": "rg-volaris-dev-eus-001" },
+    "storageSkuName":                   { "value": "Standard_LRS" },
+
+    "appServicePlanName":               { "value": "asp-volaris-dev-eus-001" },
+    "appServiceSkuName":                { "value": "B1" },
+    "backendServiceName":               { "value": "api-volaris-dev-eus-001" },
+
+    "chatGptModelName":           { "value": "${AZURE_OPENAI_CHATGPT_MODEL}" },
+    "chatGptDeploymentName":      { "value": "chatgpt-volaris-dev-eus-001" },
+    "chatGptDeploymentVersion":   { "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION}" },
+    "chatGptDeploymentSkuName":   { "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU}" },
+    "chatGptDeploymentCapacity":  { "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}" },
+
+    "embeddingModelName":            { "value": "${AZURE_OPENAI_EMB_MODEL_NAME}" },
+    "embeddingDeploymentName":       { "value": "embed-volaris-dev-eus-001" },
+    "embeddingDeploymentVersion":    { "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}" },
+    "embeddingDeploymentSkuName":    { "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_SKU}" },
+    "embeddingDeploymentCapacity":   { "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}" },
+    "embeddingDimensions":           { "value": "${AZURE_OPENAI_EMB_DIMENSIONS}" },
+
+    "gpt4vModelName":               { "value": "${AZURE_OPENAI_GPT4V_MODEL}" },
+    "gpt4vDeploymentName":          { "value": "vision-volaris-dev-eus-001" },
+    "gpt4vDeploymentVersion":       { "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION}" },
+    "gpt4vDeploymentSkuName":       { "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU}" },
+    "gpt4vDeploymentCapacity":      { "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY}" },
+
+    "evalModelName":                { "value": "${AZURE_OPENAI_EVAL_MODEL}" },
+    "evalModelVersion":             { "value": "${AZURE_OPENAI_EVAL_MODEL_VERSION}" },
+    "evalDeploymentName":           { "value": "eval-volaris-dev-eus-001" },
+    "evalDeploymentSkuName":        { "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_SKU}" },
+    "evalDeploymentCapacity":       { "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY}" },
+
+    "searchAgentModelName":         { "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL}" },
+    "searchAgentModelVersion":      { "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION}" },
+    "searchAgentDeploymentName":    { "value": "agent-volaris-dev-eus-001" },
+    "searchAgentDeploymentSkuName": { "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_SKU}" },
+    "searchAgentDeploymentCapacity":{ "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_CAPACITY}" },
+
+    "openAiHost":            { "value": "${OPENAI_HOST=azure}" },
+    "azureOpenAiCustomUrl":  { "value": "${AZURE_OPENAI_CUSTOM_URL}" },
+    "azureOpenAiApiVersion": { "value": "${AZURE_OPENAI_API_VERSION}" },
+    "azureOpenAiApiKey":     { "value": "${AZURE_OPENAI_API_KEY_OVERRIDE}" },
+    "azureOpenAiDisableKeys":{ "value": "${AZURE_OPENAI_DISABLE_KEYS=true}" },
+
+    "openAiApiKey":             { "value": "${OPENAI_API_KEY}" },
+    "openAiApiOrganization":    { "value": "${OPENAI_ORGANIZATION}" },
+
+    "useApplicationInsights":   { "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}" },
+    "applicationInsightsName":   { "value": "appi-volaris-dev-eus-001" },
+    "applicationInsightsDashboardName": { "value": "dash-volaris-dev-eus-001" },
+    "logAnalyticsName":          { "value": "log-volaris-dev-eus-001" },
+
+    "useVectors":    { "value": "${USE_VECTORS=true}" },
+    "useGPT4V":      { "value": "${USE_GPT4V=false}" },
+    "useEval":       { "value": "${USE_EVAL=false}" },
+    "enableLanguagePicker": { "value": "${ENABLE_LANGUAGE_PICKER=false}" },
+
+    "useSpeechInputBrowser":  { "value": "${USE_SPEECH_INPUT_BROWSER=false}" },
+    "useSpeechOutputBrowser": { "value": "${USE_SPEECH_OUTPUT_BROWSER=false}" },
+    "useSpeechOutputAzure":   { "value": "${USE_SPEECH_OUTPUT_AZURE=false}" },
+    "speechServiceName":      { "value": "speech-volaris-dev-eus-001" },
+    "speechServiceSkuName":   { "value": "S0" },
+    "speechServiceResourceGroupName": { "value": "rg-volaris-dev-eus-001" },
+    "speechServiceLocation":  { "value": "eastus" },
+
+    "useChatHistoryBrowser": { "value": "${USE_CHAT_HISTORY_BROWSER=false}" },
+    "useChatHistoryCosmos":  { "value": "${USE_CHAT_HISTORY_COSMOS=false}" },
+
+    "cosmosDbSkuName":           { "value": "${AZURE_COSMOSDB_SKU=serverless}" },
+    "cosmodDbResourceGroupName": { "value": "rg-volaris-dev-eus-001" },
+    "cosmosDbLocation":          { "value": "${AZURE_COSMOSDB_LOCATION}" },
+    "cosmosDbAccountName":       { "value": "cosmos-volaris-dev-eus-001" },
+    "cosmosDbThroughput":        { "value": "${AZURE_COSMOSDB_THROUGHPUT}" },
+
+    "speechServiceVoice": { "value": "${AZURE_SPEECH_SERVICE_VOICE}" },
+
+    "useAuthentication":               { "value": "${AZURE_USE_AUTHENTICATION=false}" },
+    "enforceAccessControl":            { "value": "${AZURE_ENFORCE_ACCESS_CONTROL=false}" },
+    "disableAppServicesAuthentication":{ "value": "${AZURE_DISABLE_APP_SERVICES_AUTHENTICATION=false}" },
+
+    "enableGlobalDocuments":       { "value": "${AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS=false}" },
+    "enableUnauthenticatedAccess": { "value": "${AZURE_ENABLE_UNAUTHENTICATED_ACCESS=false}" },
+
+    "authTenantId":     { "value": "${AZURE_AUTH_TENANT_ID}" },
+    "serverAppId":      { "value": "${AZURE_SERVER_APP_ID}" },
+    "serverAppSecret":  { "value": "${AZURE_SERVER_APP_SECRET}" },
+    "clientAppId":      { "value": "${AZURE_CLIENT_APP_ID}" },
+    "clientAppSecret":  { "value": "${AZURE_CLIENT_APP_SECRET}" },
+
+    "allowedOrigin":          { "value": "${ALLOWED_ORIGIN}" },
+    "publicNetworkAccess":    { "value": "${AZURE_PUBLIC_NETWORK_ACCESS=Enabled}" },
+    "usePrivateEndpoint":     { "value": "${AZURE_USE_PRIVATE_ENDPOINT=false}" },
+    "bypass":                 { "value": "${AZURE_NETWORK_BYPASS=AzureServices}" },
+
+    "useIntegratedVectorization": { "value": "${USE_FEATURE_INT_VECTORIZATION}" },
+    "useUserUpload":             { "value": "${USE_USER_UPLOAD}" },
+    "useLocalPdfParser":         { "value": "${USE_LOCAL_PDF_PARSER}" },
+    "useLocalHtmlParser":        { "value": "${USE_LOCAL_HTML_PARSER}" },
+
+    "runningOnGh":       { "value": "${GITHUB_ACTIONS}" },
+    "runningOnAdo":      { "value": "${TF_BUILD}" },
+    "deploymentTarget":  { "value": "${DEPLOYMENT_TARGET=containerapps}" },
+    "webAppExists":      { "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}" },
+
+    "azureContainerAppsWorkloadProfile": { "value": "${AZURE_CONTAINER_APPS_WORKLOAD_PROFILE=Consumption}" },
+    "useMediaDescriberAzureCU":           { "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}" },
+    "useAiProject":                       { "value": "${USE_AI_PROJECT=false}" },
+    "useAgenticRetrieval":                { "value": "${USE_AGENTIC_RETRIEVAL=false}" }
+  }
+}
