@@ -308,6 +308,14 @@ def mock_blob_container_client_exists(monkeypatch):
     monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.exists", mock_exists)
 
 
+@pytest.fixture
+def mock_blob_container_client_does_not_exist(monkeypatch):
+    async def mock_exists(*args, **kwargs):
+        return False
+
+    monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.exists", mock_exists)
+
+
 envs = [
     {
         "OPENAI_HOST": "openai",

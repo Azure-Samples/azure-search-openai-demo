@@ -4,7 +4,6 @@ TODO:
    * DocIntelligence does not support JSON/MD - note in docs
    * Verbalization strategy from Sri's skillset
    * Filter images to match page numbers, using shaping + conditional skills
-* Update all TODOs in the code/docs
 * Fix/add unit tests - check coverage
 
 

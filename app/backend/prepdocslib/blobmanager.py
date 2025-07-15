@@ -39,10 +39,6 @@ class BaseBlobManager:
             return os.path.basename(filename)
 
     @classmethod
-    def blob_image_name_from_file_page(cls, filename, page=0) -> str:
-        return os.path.splitext(os.path.basename(filename))[0] + f"-{page+1}" + ".png"
-
-    @classmethod
     def blob_name_from_file_name(cls, filename) -> str:
         return os.path.basename(filename)
 
