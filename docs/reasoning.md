@@ -39,6 +39,16 @@ This repository includes an optional feature that uses reasoning models to gener
    azd env set AZURE_OPENAI_API_VERSION 2025-04-01-preview
    ```
 
+   For o3-mini: (No vision support)
+
+   ```shell
+   azd env set AZURE_OPENAI_CHATGPT_MODEL o4-mini
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o4-mini
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-16
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+   azd env set AZURE_OPENAI_API_VERSION 2025-04-01-preview
+   ```
+
    For o1: (No streaming support)
 
    ```shell
