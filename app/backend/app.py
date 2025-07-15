@@ -25,8 +25,6 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
-from azure.storage.blob.aio import StorageStreamDownloader as BlobDownloader
-from azure.storage.filedatalake.aio import StorageStreamDownloader as DatalakeDownloader
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import (
@@ -149,24 +147,33 @@ async def content_file(path: str, auth_claims: dict[str, Any]):
         path = path_parts[0]
     current_app.logger.info("Opening file %s", path)
     blob_manager: BlobManager = current_app.config[CONFIG_GLOBAL_BLOB_MANAGER]
-    blob: Union[BlobDownloader, DatalakeDownloader]
-    blob = await blob_manager.download_blob(path)
-    if blob is None:
+
+    # Get bytes and properties from the blob manager
+    result = await blob_manager.download_blob(path)
+
+    if result is None:
         current_app.logger.info("Path not found in general Blob container: %s", path)
         if current_app.config[CONFIG_USER_UPLOAD_ENABLED]:
             user_oid = auth_claims["oid"]
             user_blob_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
-            blob = await user_blob_manager.download_blob(path, user_oid=user_oid)
-            if blob is None:
+            result = await user_blob_manager.download_blob(path, user_oid=user_oid)
+            if result is None:
                 current_app.logger.exception("Path not found in DataLake: %s", path)
-    if not blob or not blob.properties or not blob.properties.has_key("content_settings"):
+
+    if not result:
         abort(404)
-    mime_type = blob.properties["content_settings"]["content_type"]
+
+    content, properties = result
+
+    if not properties or "content_settings" not in properties:
+        abort(404)
+
+    mime_type = properties["content_settings"]["content_type"]
     if mime_type == "application/octet-stream":
         mime_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
-    blob_file = io.BytesIO()
-    await blob.readinto(blob_file)
-    blob_file.seek(0)
+
+    # Create a BytesIO object from the bytes
+    blob_file = io.BytesIO(content)
     return await send_file(blob_file, mimetype=mime_type, as_attachment=False, attachment_filename=path)
 
 

@@ -140,6 +140,11 @@ class IntegratedVectorizerStrategy(Strategy):
         return skillset
 
     async def create_multimodal_skillset(self, index_name: str) -> SearchIndexerSkillset:
+        if self.image_embeddings is None:
+            raise ValueError("Image embeddings client must be provided for multimodal skillset creation.")
+        if self.blob_manager.image_container is None:
+            raise ValueError("Blob manager must have an image container set for multimodal skillset creation.")
+
         document_layout_skill = DocumentIntelligenceLayoutSkill(
             description="Layout skill to read documents",
             context="/document",

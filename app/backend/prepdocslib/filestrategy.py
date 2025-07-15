@@ -136,7 +136,7 @@ class FileStrategy(Strategy):
             await self.search_manager.remove_content()
 
 
-class UploadUserFileStrategy(FileStrategy):
+class UploadUserFileStrategy:
     """
     Strategy for ingesting a file that has already been uploaded to a ADLS2 storage account
     """

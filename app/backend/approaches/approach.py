@@ -392,7 +392,6 @@ class Approach(ABC):
         Downloads a blob from either Azure Blob Storage or Azure Data Lake Storage and returns it as a base64 encoded string.
 
         Args:
-            storage_client: Either a ContainerClient (for Blob Storage) or FileSystemClient (for Data Lake Storage)
             blob_url: The URL or path to the blob to download
             user_oid: The user's object ID, required for Data Lake Storage operations and access control
 
@@ -414,13 +413,15 @@ class Approach(ABC):
             blob_path = blob_url
 
         # Download the blob using the appropriate client
-        blob_bytes = None
+        result = None
         if ".dfs.core.windows.net" in blob_url and self.user_blob_manager:
-            blob_bytes = await self.user_blob_manager.download_blob(blob_path, user_oid=user_oid, as_bytes=True)
+            result = await self.user_blob_manager.download_blob(blob_path, user_oid=user_oid)
         elif self.global_blob_manager:
-            blob_bytes = await self.global_blob_manager.download_blob(blob_path, as_bytes=True)
-        if blob_bytes and isinstance(blob_bytes, (bytes)):
-            img = base64.b64encode(blob_bytes).decode("utf-8")
+            result = await self.global_blob_manager.download_blob(blob_path)
+
+        if result:
+            content, _ = result  # Unpack the tuple, ignoring properties
+            img = base64.b64encode(content).decode("utf-8")
             return f"data:image/png;base64,{img}"
         return None
 

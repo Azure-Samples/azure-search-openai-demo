@@ -3,24 +3,27 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import IO, Optional, Union
+from typing import IO, Any, Optional, TypedDict, Union
 from urllib.parse import unquote
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob.aio import (
-    StorageStreamDownloader as BlobStorageStreamDownloader,
-)
-from azure.storage.filedatalake.aio import DataLakeDirectoryClient, FileSystemClient
 from azure.storage.filedatalake.aio import (
-    StorageStreamDownloader as AdlsBlobStorageStreamDownloader,
+    DataLakeDirectoryClient,
+    FileSystemClient,
 )
 from PIL import Image, ImageDraw, ImageFont
 
 from .listfilestrategy import File
 
 logger = logging.getLogger("scripts")
+
+
+class BlobProperties(TypedDict, total=False):
+    """Properties of a blob, with optional fields for content settings"""
+
+    content_settings: dict[str, Any]
 
 
 class BaseBlobManager:
@@ -97,13 +100,13 @@ class BaseBlobManager:
         image_bytes: bytes,
         image_filename: str,
         image_page_num: int,
-        user_oid: str,
+        user_oid: Optional[str] = None,
     ) -> Optional[str]:
         raise NotImplementedError("Subclasses must implement this method")
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None, as_bytes: bool = False
-    ) -> Optional[Union[BlobStorageStreamDownloader, AdlsBlobStorageStreamDownloader, bytes]]:
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[tuple[bytes, BlobProperties]]:
         """
         Downloads a blob from Azure Storage.
         If user_oid is provided, it checks if the blob belongs to the user.
@@ -113,7 +116,9 @@ class BaseBlobManager:
             user_oid: The user's object ID (optional)
 
         Returns:
-            bytes: The content of the blob, or None if not found or access denied
+            Optional[tuple[bytes, BlobProperties]]:
+                - A tuple containing the blob content as bytes and the blob properties
+                - None if blob not found or access denied
         """
         raise NotImplementedError("Subclasses must implement this method")
 
@@ -225,7 +230,7 @@ class AdlsBlobManager(BaseBlobManager):
         image_bytes: bytes,
         image_filename: str,
         image_page_num: int,
-        user_oid: str,
+        user_oid: Optional[str] = None,
     ) -> Optional[str]:
         """
         Uploads an image from a document to ADLS in a directory structure:
@@ -242,6 +247,8 @@ class AdlsBlobManager(BaseBlobManager):
         Returns:
             str: The URL of the uploaded file, with forward slashes (not URL-encoded)
         """
+        if user_oid is None:
+            raise ValueError("user_oid must be provided for user-specific operations.")
         await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
         image_directory_path = self._get_image_directory_path(document_filename, user_oid, image_page_num)
         image_directory_client = await self._ensure_directory(directory_path=image_directory_path, user_oid=user_oid)
@@ -252,18 +259,19 @@ class AdlsBlobManager(BaseBlobManager):
         return unquote(file_client.url)
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None, as_bytes: bool = False
-    ) -> Optional[Union[AdlsBlobStorageStreamDownloader, bytes]]:
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[tuple[bytes, BlobProperties]]:
         """
         Downloads a blob from Azure Data Lake Storage.
 
         Args:
             blob_path: The path to the blob in the format {user_oid}/{document_name}/images/{image_name}
             user_oid: The user's object ID
-            as_bytes: If True, returns the blob as bytes, otherwise returns a stream downloader
 
         Returns:
-            Optional[Union[AdlsBlobStorageStreamDownloader, bytes]]: A stream downloader for the blob, or bytes if as_bytes=True, or None if not found
+            Optional[tuple[bytes, BlobProperties]]:
+                - A tuple containing the blob content as bytes and the blob properties as a dictionary
+                - None if blob not found or access denied
         """
         if user_oid is None:
             logger.warning("user_oid must be provided for Data Lake Storage operations.")
@@ -289,11 +297,17 @@ class AdlsBlobManager(BaseBlobManager):
         try:
             user_directory_client = await self._ensure_directory(directory_path=directory_path, user_oid=user_oid)
             file_client = user_directory_client.get_file_client(filename)
-            blob = await file_client.download_file()
-            if as_bytes:
-                return await blob.readall()
-            else:
-                return blob
+            download_response = await file_client.download_file()
+            content = await download_response.readall()
+
+            # Convert FileProperties to our BlobProperties format
+            properties: BlobProperties = {
+                "content_settings": {
+                    "content_type": download_response.properties.get("content_type", "application/octet-stream")
+                }
+            }
+
+            return content, properties
         except ResourceNotFoundError:
             logger.warning(f"Directory or file not found: {directory_path}/{filename}")
             return None
@@ -449,8 +463,23 @@ class BlobManager(BaseBlobManager):
         return blob_client.url
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None, as_bytes: bool = False
-    ) -> Optional[Union[BlobStorageStreamDownloader, AdlsBlobStorageStreamDownloader, bytes]]:
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[tuple[bytes, BlobProperties]]:
+        """
+        Downloads a blob from Azure Blob Storage.
+
+        Args:
+            blob_path: The path to the blob in the storage
+            user_oid: Not used in BlobManager, but included for API compatibility
+
+        Returns:
+            Optional[tuple[bytes, BlobProperties]]:
+                - A tuple containing the blob content as bytes and the blob properties
+                - None if blob not found
+
+        Raises:
+            ValueError: If user_oid is provided (not supported for BlobManager)
+        """
         if user_oid is not None:
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
@@ -461,16 +490,33 @@ class BlobManager(BaseBlobManager):
         if len(blob_path) == 0:
             logger.warning("Blob path is empty")
             return None
+
         blob_client = container_client.get_blob_client(blob_path)
         try:
-            blob = await blob_client.download_blob()
-            if not blob.properties:
+            download_response = await blob_client.download_blob()
+            if not download_response.properties:
                 logger.warning(f"No blob exists for {blob_path}")
                 return None
-            if as_bytes:
-                return await blob.readall()
-            else:
-                return blob
+
+            # Get the content as bytes
+            content = await download_response.readall()
+
+            # Convert BlobProperties to our internal BlobProperties format
+            properties: BlobProperties = {
+                "content_settings": {
+                    "content_type": (
+                        download_response.properties.content_settings.content_type
+                        if (
+                            hasattr(download_response.properties, "content_settings")
+                            and download_response.properties.content_settings
+                            and hasattr(download_response.properties.content_settings, "content_type")
+                        )
+                        else "application/octet-stream"
+                    )
+                }
+            }
+
+            return content, properties
         except ResourceNotFoundError:
             logger.warning("Blob not found: %s", blob_path)
             return None
