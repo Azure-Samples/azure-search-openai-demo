@@ -1,18 +1,21 @@
 import os
 import sys
 from tempfile import NamedTemporaryFile
+from unittest.mock import MagicMock
 
 import azure.storage.blob.aio
+import azure.storage.filedatalake.aio
 import pytest
 
-from prepdocslib.blobmanager import BlobManager
+# The pythonpath is configured in pyproject.toml to include app/backend
+from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.listfilestrategy import File
 
-from .mocks import MockAzureCredential
+from .mocks import MockAzureCredential, MockBlob
 
 
 @pytest.fixture
-def blob_manager(monkeypatch):
+def blob_manager():
     return BlobManager(
         endpoint=f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
         credential=MockAzureCredential(),
@@ -20,6 +23,15 @@ def blob_manager(monkeypatch):
         account=os.environ["AZURE_STORAGE_ACCOUNT"],
         resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
+    )
+
+
+@pytest.fixture
+def adls_blob_manager(monkeypatch):
+    return AdlsBlobManager(
+        endpoint="https://test-storage-account.dfs.core.windows.net",
+        container="test-storage-container",
+        credential=MockAzureCredential(),
     )
 
 
@@ -219,6 +231,55 @@ async def test_upload_document_image(monkeypatch, mock_env, directory_exists):
         assert result_url == "https://test.blob.core.windows.net/test-image-container/test-image-url"
 
 
+@pytest.mark.asyncio
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
+async def test_adls_upload_document_image(monkeypatch, mock_env, adls_blob_manager):
+
+    # Test parameters
+    document_filename = "test_document.pdf"
+    image_bytes = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x04\x00\x00\x00\xb5\x1c\x0c\x02\x00\x00\x00\x0bIDATx\xdac\xfc\xff\xff?\x00\x05\xfe\x02\xfe\xa3\xb8\xfb\x26\x00\x00\x00\x00IEND\xaeB`\x82"
+    image_filename = "test_image.png"
+    image_page_num = 0
+    user_oid = "test-user-123"
+
+    # Mock directory path operations
+    image_directory_path = f"{user_oid}/images/{document_filename}/page_{image_page_num}"
+
+    # Mock the _ensure_directory method to avoid needing Azure Data Lake Storage
+    mock_directory_client = MagicMock()
+    mock_file_client = MagicMock()
+    mock_directory_client.get_file_client.return_value = mock_file_client
+    mock_file_client.url = f"https://test-storage-account.dfs.core.windows.net/{image_directory_path}/{image_filename}"
+
+    async def mock_ensure_directory(self, directory_path, user_oid):
+        assert directory_path in [user_oid, image_directory_path]
+        return mock_directory_client
+
+    monkeypatch.setattr(AdlsBlobManager, "_ensure_directory", mock_ensure_directory)
+
+    # Mock file_client.upload_data to avoid actual upload
+    async def mock_upload_data(data, overwrite=True, metadata=None):
+        assert overwrite is True
+        assert metadata == {"UploadedBy": user_oid}
+        # Verify we're adding the citation to the image
+        assert len(data) > len(image_bytes)  # The citation adds to the size
+
+    mock_file_client.upload_data = mock_upload_data
+
+    # Call the method and verify the results
+    result_url = await adls_blob_manager.upload_document_image(
+        document_filename, image_bytes, image_filename, image_page_num, user_oid
+    )
+
+    # Verify the URL is correct and unquoted
+    assert result_url == f"https://test-storage-account.dfs.core.windows.net/{image_directory_path}/{image_filename}"
+    assert result_url == f"https://test-storage-account.dfs.core.windows.net/{image_directory_path}/{image_filename}"
+
+    # Test with missing user_oid
+    with pytest.raises(ValueError, match="user_oid must be provided for user-specific operations."):
+        await adls_blob_manager.upload_document_image(document_filename, image_bytes, image_filename, image_page_num)
+
+
 def test_get_managed_identity_connection_string(mock_env, blob_manager):
     assert (
         blob_manager.get_managedidentity_connectionstring()
@@ -311,3 +372,64 @@ async def test_download_blob_with_user_oid(monkeypatch, mock_env, blob_manager):
         await blob_manager.download_blob("test_document.pdf", user_oid="user123")
 
     assert "user_oid is not supported for BlobManager" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_adls_download_blob_permission_denied(monkeypatch, mock_env, adls_blob_manager):
+    """Test that AdlsBlobManager.download_blob returns None when a user tries to access a blob that doesn't belong to them."""
+    user_oid = "test-user-123"
+    other_user_oid = "another-user-456"
+    blob_path = f"{other_user_oid}/document.pdf"  # Path belonging to another user
+
+    # Attempt to download blob
+    result = await adls_blob_manager.download_blob(blob_path, user_oid)
+
+    # Verify the blob access is denied and the method returns None
+    assert result is None
+
+    # Also test the case where no user_oid is provided
+    result = await adls_blob_manager.download_blob(blob_path, None)
+    assert result is None
+
+
+@pytest.mark.asyncio
+async def test_adls_download_blob_with_permission(monkeypatch, mock_data_lake_service_client, adls_blob_manager):
+    """Test that AdlsBlobManager.download_blob works when a user has permission to access a blob."""
+
+    # Track downloaded files
+    downloaded_files = []
+
+    # Mock directory client for _ensure_directory method
+    class MockDirectoryClient:
+        async def get_directory_properties(self):
+            # Return dummy properties to indicate directory exists
+            return {"name": "test-directory"}
+
+        async def get_access_control(self):
+            # Return a dictionary with the owner matching the auth_client's user_oid
+            return {"owner": "OID_X"}  # This should match the user_oid in auth_client
+
+        def get_file_client(self, filename):
+            # Return a file client for the given filename
+            return MockFileClient(filename)
+
+    class MockFileClient:
+        def __init__(self, path_name):
+            self.path_name = path_name
+
+        async def download_file(self):
+            downloaded_files.append(self.path_name)
+            return MockBlob()
+
+    # Mock get_directory_client to return our MockDirectoryClient
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.FileSystemClient,
+        "get_directory_client",
+        lambda *args, **kwargs: MockDirectoryClient(),
+    )
+
+    content, properties = await adls_blob_manager.download_blob("OID_X/document.pdf", "OID_X")
+
+    assert content.startswith(b"\x89PNG\r\n\x1a\n")
+    assert properties["content_settings"]["content_type"] == "application/octet-stream"
+    assert downloaded_files == ["document.pdf"]

@@ -125,13 +125,6 @@ async def test_content_file_useruploaded_found(
         lambda *args, **kwargs: MockDirectoryClient(),
     )
 
-    # Original mock for download_file (keep for backward compatibility)
-    async def mock_download_file(self):
-        downloaded_files.append(self.path_name)
-        return MockBlob()
-
-    monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "download_file", mock_download_file)
-
     response = await auth_client.get("/content/userdoc.pdf", headers={"Authorization": "Bearer test"})
     assert response.status_code == 200
     assert len(downloaded_files) == 1
@@ -178,12 +171,6 @@ async def test_content_file_useruploaded_notfound(
         "get_directory_client",
         lambda *args, **kwargs: MockDirectoryClient(),
     )
-
-    # Original mock for download_file (keep for backward compatibility)
-    async def mock_download_file(self):
-        raise ResourceNotFoundError(MockAiohttpClientResponse404("userdoc.pdf", b""))
-
-    monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeFileClient, "download_file", mock_download_file)
 
     response = await auth_client.get("/content/userdoc.pdf", headers={"Authorization": "Bearer test"})
     assert response.status_code == 404
