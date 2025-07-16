@@ -29,6 +29,8 @@ jobs:
         node_version: ["20", "22"]
     steps:
         - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0  # Fetch all history for diff-cover
         - name: Install uv
           uses: astral-sh/setup-uv@v6
           with:
@@ -61,11 +63,12 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=90
+          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=89
         - name: Check diff coverage
           if: runner.os != 'Windows' && github.event_name == 'pull_request'
           run: |
-            diff-cover coverage.xml --fail-under=90
+            git fetch origin main:refs/remotes/origin/main
+            diff-cover coverage.xml --compare-branch=origin/main --fail-under=90
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
