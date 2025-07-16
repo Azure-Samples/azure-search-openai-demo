@@ -1,15 +1,6 @@
 # 📋 SharePoint Integration - Progreso y Documentación
 
-> **Fecha de implementac### **Variables de Entorno (`.env` y `.azure/dev/.env`)**:
-```bash
-# SHAREPOINT/GRAPH API - REQUERIDAS
-TENANT_ID=cee3a5ad-5671-483b-b551-7215dea20158
-CLIENT_ID=418de683-d96c-405f-bde1-53ebe8103591  
-CLIENT_SECRET=<SECRETO_CONFIGURADO_EN_ENV>
-
-# SHAREPOINT ESPECÍFICO
-SITE_ID=lumston.sharepoint.com,ba73e177-0099-4952-8581-ad202e66afd9,2a8826e5-8087-43c1-b91d-5622136aaa41
-DRIVE_ID=<DRIVE_ID_CONFIGURADO_EN_ENV>de Julio, 2025  
+> **Fecha de implementación**: 16 de Julio, 2025  
 > **Estado**: ✅ **COMPLETADO Y FUNCIONAL**  
 > **Objetivo**: Integrar SharePoint Teams para consultas específicas sobre documentos de pilotos
 

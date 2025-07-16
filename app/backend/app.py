@@ -428,12 +428,18 @@ async def debug_sharepoint():
         from core.graph import GraphClient
 
         graph_client = GraphClient()
-        test_result = await graph_client.test_sharepoint_connection()
+        # Usar el método existente para buscar archivos de pilotos
+        pilotos_files = graph_client.search_files_in_pilotos_folder()
 
         return jsonify(
             {
-                "status": "success" if test_result["success"] else "error",
-                "data": test_result,
+                "status": "success",
+                "data": {
+                    "success": True,
+                    "message": f"Encontrados {len(pilotos_files)} archivos de pilotos",
+                    "files_count": len(pilotos_files),
+                    "files": pilotos_files[:5] if pilotos_files else []  # Solo los primeros 5 para debug
+                },
             }
         )
 
