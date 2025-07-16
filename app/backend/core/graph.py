@@ -30,7 +30,7 @@ class GraphClient:
     """Cliente para interactuar con Microsoft Graph API y SharePoint"""
     
     def __init__(self):
-        self.tenant_id = os.getenv('AZURE_TENANT_ID')
+        self.tenant_id = os.getenv('AZURE_AUTH_TENANT_ID') or os.getenv('AZURE_TENANT_ID')
         self.client_id = os.getenv('AZURE_CLIENT_APP_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_APP_SECRET')
         self.base_url = "https://graph.microsoft.com/v1.0"

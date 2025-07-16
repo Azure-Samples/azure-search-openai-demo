@@ -848,6 +848,68 @@ async def debug_test_configured_folders():
     except Exception as e:
         logger.error(f"Error probando carpetas configuradas: {e}")
         return {"error": str(e), "status": "error"}, 500
+
+@bp.route("/debug/sharepoint/aibot-site", methods=["GET"])
+async def debug_aibot_site():
+    """Debug específico para el sitio AI Volaris Cognitive Chatbot"""
+    try:
+        from core.graph import GraphClient
+        
+        graph_client = GraphClient()
+        
+        # Buscar el sitio específico
+        site = graph_client.find_site_by_name("AI Volaris Cognitive Chatbot")
+        if not site:
+            return jsonify({
+                "status": "error", 
+                "message": "Sitio AI Volaris Cognitive Chatbot no encontrado"
+            })
+        
+        site_id = site["id"]
+        site_name = site.get("displayName", "Unknown")
+        
+        # Obtener la estructura de bibliotecas de documentos
+        document_libraries = graph_client.get_document_library_items(site_id)
+        
+        # Buscar carpetas que contengan "piloto", "flightbot", "documentos"
+        relevant_folders = []
+        for item in document_libraries[:50]:  # Limitar a 50 elementos
+            fields = item.get("fields", {})
+            content_type = fields.get("ContentType", "")
+            file_leaf_ref = fields.get("FileLeafRef", "")
+            file_ref = fields.get("FileRef", "")
+            
+            if ("folder" in content_type.lower() and 
+                any(keyword in file_leaf_ref.lower() for keyword in ["piloto", "flightbot", "documentos", "compartidos", "shared"])):
+                relevant_folders.append({
+                    "name": file_leaf_ref,
+                    "path": file_ref,
+                    "content_type": content_type
+                })
+        
+        # Buscar archivos usando búsqueda de contenido
+        content_search_files = graph_client.search_all_files_in_site(site_id, "pilotos")
+        
+        return jsonify({
+            "status": "success",
+            "site_info": {
+                "name": site_name,
+                "id": site_id,
+                "url": site.get("webUrl", "")
+            },
+            "document_library_items": len(document_libraries),
+            "relevant_folders": relevant_folders,
+            "content_search_results": len(content_search_files),
+            "sample_content_files": content_search_files[:5] if content_search_files else []
+        })
+        
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_aibot_site: {e}")
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        })
+
 async def debug_find_specific_file():
     """Debug endpoint para buscar un archivo específico en todos los sitios de SharePoint"""
     try:
