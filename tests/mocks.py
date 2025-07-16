@@ -108,10 +108,10 @@ class MockTransport(AsyncHttpTransport):
         pass
 
     async def open(self):
-        pass
+        pass  # pragma: no cover
 
     async def close(self):
-        pass
+        pass  # pragma: no cover
 
 
 class MockAsyncPageIterator:

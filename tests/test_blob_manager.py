@@ -166,7 +166,7 @@ async def test_dont_remove_if_no_container(
     monkeypatch, mock_env, mock_blob_container_client_does_not_exist, blob_manager
 ):
     async def mock_delete_blob(*args, **kwargs):
-        assert False, "delete_blob() shouldn't have been called"
+        assert False, "delete_blob() shouldn't have been called"  # pragma: no cover
 
     monkeypatch.setattr("azure.storage.blob.aio.ContainerClient.delete_blob", mock_delete_blob)
 
@@ -377,7 +377,7 @@ async def test_download_blob_properties_none(monkeypatch, mock_env, mock_blob_co
             self.properties = None  # This is the condition we're testing
 
         async def readall(self):
-            return b"This content should not be returned"
+            assert False, "This should not be called, as properties is None"  # pragma: no cover
 
     async def mock_download_blob(*args, **kwargs):
         return MockDownloadResponseWithNoProperties()

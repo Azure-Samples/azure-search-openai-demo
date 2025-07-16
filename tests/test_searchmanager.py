@@ -508,7 +508,7 @@ async def test_create_index_with_search_images(monkeypatch, search_info):
 
     async def mock_list_index_names(self):
         for index in []:
-            yield index
+            yield index  # pragma: no cover
 
     monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
@@ -562,17 +562,6 @@ async def test_create_index_with_search_images(monkeypatch, search_info):
 @pytest.mark.asyncio
 async def test_create_index_with_search_images_no_endpoint(monkeypatch, search_info):
     """Test that SearchManager raises an error when search_images=True but no Azure Vision endpoint is provided."""
-    indexes = []
-
-    async def mock_create_index(self, index):
-        indexes.append(index)
-
-    async def mock_list_index_names(self):
-        for index in []:
-            yield index
-
-    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
-    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
 
     # Create a SearchManager with search_images=True but no Azure Vision endpoint
     manager = SearchManager(
@@ -599,25 +588,7 @@ async def test_create_index_with_search_images_and_embeddings(monkeypatch, searc
 
     async def mock_list_index_names(self):
         for index in []:
-            yield index
-
-    async def mock_create_client(*args, **kwargs):
-        return MockClient(
-            embeddings_client=MockEmbeddingsClient(
-                create_embedding_response=openai.types.CreateEmbeddingResponse(
-                    object="list",
-                    data=[
-                        openai.types.Embedding(
-                            embedding=[0.1, 0.2, 0.3],
-                            index=0,
-                            object="embedding",
-                        )
-                    ],
-                    model=MOCK_EMBEDDING_MODEL_NAME,
-                    usage=Usage(prompt_tokens=8, total_tokens=8),
-                )
-            )
-        )
+            yield index  # pragma: no cover
 
     monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
     monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
@@ -640,7 +611,6 @@ async def test_create_index_with_search_images_and_embeddings(monkeypatch, searc
         credential=AzureKeyCredential("test"),
         disable_batch=True,
     )
-    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
 
     # Create a SearchManager with both search_images and embeddings
     manager = SearchManager(
