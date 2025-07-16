@@ -4,7 +4,10 @@ import logging
 from typing import List, Dict, Optional
 import json
 
+# Configurar logging más detallado para debugging
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class GraphClient:
     """Cliente para interactuar con Microsoft Graph API y SharePoint"""
@@ -269,7 +272,8 @@ class GraphClient:
                         "size": item.get("size", 0),
                         "lastModified": item.get("lastModifiedDateTime", ""),
                         "createdBy": item.get("createdBy", {}).get("user", {}).get("displayName", ""),
-                        "mimeType": item.get("file", {}).get("mimeType", "")
+                        "mimeType": item.get("file", {}).get("mimeType", ""),
+                        "site_id": site_id  # Agregar site_id para poder usarlo después
                     })
             
             logger.info(f"Encontrados {len(files)} archivos en la carpeta Pilotos")
@@ -468,7 +472,8 @@ class GraphClient:
                         "size": item.get("size", 0),
                         "lastModified": item.get("lastModifiedDateTime", ""),
                         "parentPath": item.get("parentReference", {}).get("path", ""),
-                        "mimeType": item.get("file", {}).get("mimeType", "")
+                        "mimeType": item.get("file", {}).get("mimeType", ""),
+                        "site_id": site_id  # Agregar site_id para poder usarlo después
                     })
             
             return files

@@ -306,6 +306,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
     def _is_pilot_related_query(self, query: str) -> bool:
         """
         Detecta si la consulta está relacionada con pilotos de aerolíneas o documentos de la carpeta Pilotos
+        También detecta consultas generales sobre documentos disponibles
         """
         pilot_keywords = [
             "piloto", "pilotos", "pilot", "pilots",
@@ -317,39 +318,71 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             "licencia de piloto", "certificación", "certificaciones", "entrenamiento",
             "instructor de vuelo", "flight instructor"
         ]
+        
+        # Patrones de consultas generales sobre documentos
+        general_document_patterns = [
+            "qué documentos tienes", "que documentos tienes",
+            "documentos disponibles", "documentos que tienes",
+            "archivos disponibles", "archivos que tienes",
+            "qué archivos tienes", "que archivos tienes",
+            "muestra documentos", "muestra archivos",
+            "lista de documentos", "lista de archivos",
+            "documentos de", "archivos de",
+            "qué información tienes", "que información tienes",
+            "información disponible", "datos disponibles",
+            "what documents", "available documents", "show me documents",
+            "list documents", "list files", "available files"
+        ]
+        
         query_lower = query.lower()
-        return any(keyword in query_lower for keyword in pilot_keywords)
+        
+        # Primero verificar si es una consulta específica sobre pilotos
+        if any(keyword in query_lower for keyword in pilot_keywords):
+            return True
+            
+        # Luego verificar si es una consulta general sobre documentos
+        # (para Volaris, asumir que documentos generales = documentos de pilotos)
+        if any(pattern in query_lower for pattern in general_document_patterns):
+            return True
+            
+        return False
 
     async def _search_sharepoint_files(self, query: str, top: int = 3) -> list[dict]:
         """
         Busca archivos en la carpeta Pilotos de SharePoint y retorna contenido relevante
         """
         try:
-            # Buscar archivos en la carpeta Pilotos
-            files = await self.graph_client.search_files_in_pilotos_folder(query)
+            # Buscar archivos en la carpeta Pilotos (sin pasar query como site_id)
+            files = self.graph_client.search_files_in_pilotos_folder()
 
             results = []
             for file in files[:top]:  # Limitar a los mejores resultados
                 try:
-                    # Obtener el contenido del archivo
-                    content = await self.graph_client.get_file_content(file['id'])
-                    if content:
-                        results.append({
-                            'content': content[:2000],  # Limitar contenido para no exceder tokens
-                            'source': f"SharePoint: {file['name']}",
-                            'url': file.get('webUrl', ''),
-                            'filename': file['name'],
-                            'lastModified': file.get('lastModifiedDateTime', ''),
-                            'score': 1.0  # Puntuación alta para archivos de SharePoint
-                        })
+                    # Para consultas generales, simplemente mostrar información del archivo
+                    # sin necesidad de descargar el contenido completo
+                    file_info = f"Documento: {file['name']}"
+                    if file.get('lastModified'):
+                        file_info += f" (Última modificación: {file['lastModified'][:10]})"
+                    if file.get('size'):
+                        size_kb = file['size'] / 1024
+                        file_info += f" (Tamaño: {size_kb:.1f} KB)"
+                    
+                    results.append({
+                        'content': file_info,
+                        'source': f"SharePoint: {file['name']}",
+                        'url': file.get('webUrl', ''),
+                        'filename': file['name'],
+                        'lastModified': file.get('lastModified', ''),
+                        'score': 1.0  # Puntuación alta para archivos de SharePoint
+                    })
                 except Exception as e:
-                    # Si falla obtener contenido, al menos incluir metadatos
+                    # Si falla, al menos incluir información básica
                     results.append({
                         'content': f"Documento disponible: {file['name']}",
                         'source': f"SharePoint: {file['name']}",
                         'url': file.get('webUrl', ''),
                         'filename': file['name'],
-                        'lastModified': file.get('lastModifiedDateTime', ''),
+                        'lastModified': file.get('lastModified', ''),
                         'score': 0.8
                     })
 

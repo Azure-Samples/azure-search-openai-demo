@@ -449,6 +449,73 @@ async def debug_sharepoint():
             {
                 "status": "error",
                 "error": str(e),
+                "debug_info": "Check logs for detailed error information"
+            }
+        )
+
+@bp.route("/debug/sharepoint/sites", methods=["GET"])
+async def debug_sharepoint_sites():
+    """Endpoint para ver todos los sitios de SharePoint disponibles"""
+    try:
+        from core.graph import GraphClient
+
+        graph_client = GraphClient()
+        sites = graph_client.get_sharepoint_sites()
+
+        return jsonify(
+            {
+                "status": "success",
+                "data": {
+                    "sites_count": len(sites),
+                    "sites": [
+                        {
+                            "id": site.get("id"),
+                            "displayName": site.get("displayName"),
+                            "webUrl": site.get("webUrl"),
+                            "isTeamSite": site.get("isTeamSite", False)
+                        }
+                        for site in sites
+                    ]
+                }
+            }
+        )
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_sharepoint_sites: {e}")
+        return jsonify(
+            {
+                "status": "error",
+                "error": str(e),
+            }
+        ), 500
+
+
+@bp.route("/debug/logs", methods=["GET"])
+async def debug_logs():
+    """Endpoint para ver logs recientes del sistema"""
+    try:
+        import logging
+        
+        # Obtener el último handler de logs
+        logger = logging.getLogger()
+        
+        return jsonify(
+            {
+                "status": "success",
+                "data": {
+                    "log_level": logging.getLevelName(logger.level),
+                    "handlers_count": len(logger.handlers),
+                    "message": "Logs están siendo escritos en terminal. Para ver logs detallados, revisa el terminal donde está corriendo el bot."
+                }
+            }
+        )
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_logs: {e}")
+        return jsonify(
+            {
+                "status": "error",
+                "error": str(e),
             }
         ), 500
 
