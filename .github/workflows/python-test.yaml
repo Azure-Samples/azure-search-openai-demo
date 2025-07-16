@@ -62,6 +62,10 @@ jobs:
         - name: Run Python tests
           if: runner.os != 'Windows'
           run: pytest -s -vv --cov --cov-fail-under=89
+        - name: Check diff coverage
+          if: runner.os != 'Windows' && github.event_name == 'pull_request'
+          run: |
+            diff-cover coverage.xml --fail-under=90
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
