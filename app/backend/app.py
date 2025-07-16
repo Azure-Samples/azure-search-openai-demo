@@ -421,6 +421,323 @@ async def list_uploaded(auth_claims: dict[str, Any]):
     return jsonify(files), 200
 
 
+@bp.route("/debug/sharepoint", methods=["GET"])
+async def debug_sharepoint():
+    """Endpoint de debug para probar la conectividad con SharePoint"""
+    try:
+        from core.graph import GraphClient
+
+        graph_client = GraphClient()
+        test_result = await graph_client.test_sharepoint_connection()
+
+        return jsonify(
+            {
+                "status": "success" if test_result["success"] else "error",
+                "data": test_result,
+            }
+        )
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_sharepoint: {e}")
+        return jsonify(
+            {
+                "status": "error",
+                "error": str(e),
+            }
+        ), 500
+
+
+@bp.route("/debug/pilot-query", methods=["POST"])
+async def debug_pilot_query():
+    """Endpoint de debug para probar detección de consultas relacionadas con pilotos"""
+    try:
+        if not request.is_json:
+            return jsonify({"error": "request must be json"}), 415
+
+        request_json = await request.get_json()
+        query = request_json.get("query", "")
+
+        if not query:
+            return jsonify({"error": "query is required"}), 400
+
+        # Obtener la instancia del chat approach
+        from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+
+        chat_approach = current_app.config[CONFIG_CHAT_APPROACH]
+        if isinstance(chat_approach, ChatReadRetrieveReadApproach):
+            is_pilot_related = chat_approach._is_pilot_related_query(query)
+
+            # También probar la búsqueda en SharePoint si es relacionada con pilotos
+            sharepoint_results = []
+            if is_pilot_related:
+                sharepoint_results = await chat_approach._search_sharepoint_files(query, top=3)
+
+            return jsonify(
+                {
+                    "query": query,
+                    "is_pilot_related": is_pilot_related,
+                    "sharepoint_results_count": len(sharepoint_results),
+                    "sharepoint_results": sharepoint_results[:2],  # Solo mostrar los primeros 2 para debug
+                }
+            )
+        else:
+            return jsonify({"error": "Chat approach not configured correctly"}), 500
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_pilot_query: {e}")
+        return jsonify(
+            {
+                "error": str(e),
+            }
+        ), 500
+
+
+@bp.route("/debug")
+async def debug_page():
+    """Página de debug para probar funcionalidad de SharePoint"""
+    return await send_from_directory("../frontend", "debug-sharepoint.html")
+
+
+@bp.route("/debug/sharepoint/explore", methods=["GET"])
+async def debug_sharepoint_explore():
+    """Endpoint de debug para explorar la estructura de SharePoint"""
+    try:
+        from core.graph import GraphClient
+
+        graph_client = GraphClient()
+        site_name = request.args.get('site_name', 'Software engineering')
+        site_url = request.args.get('site_url', '')
+        
+        # Buscar el sitio por nombre o URL
+        site = None
+        if site_url:
+            current_app.logger.info(f"Buscando sitio por URL: {site_url}")
+            site = graph_client.find_site_by_url(site_url)
+        
+        if not site:
+            current_app.logger.info(f"Buscando sitio por nombre: {site_name}")
+            site = graph_client.find_site_by_name(site_name)
+        
+        if not site:
+            return jsonify({
+                "status": "error",
+                "error": f"No se encontró el sitio: {site_name}",
+                "available_sites": [
+                    {
+                        "name": s.get("displayName", ""),
+                        "webUrl": s.get("webUrl", ""),
+                        "isTeamSite": s.get("isTeamSite", False),
+                        "teamDisplayName": s.get("teamDisplayName", "")
+                    }
+                    for s in graph_client.get_sharepoint_sites()
+                ]
+            }), 404
+        
+        # Explorar la estructura del sitio
+        site_id = site["id"]
+        
+        # Obtener elementos de la raíz
+        root_items = graph_client.get_drive_items(site_id)
+        
+        # Buscar la carpeta Pilotos recursivamente
+        pilotos_path = graph_client.find_pilotos_folder_recursive(site_id)
+        
+        return jsonify({
+            "status": "success",
+            "site_info": {
+                "id": site["id"],
+                "name": site.get("displayName", ""),
+                "webUrl": site.get("webUrl", ""),
+                "isTeamSite": site.get("isTeamSite", False),
+                "teamDisplayName": site.get("teamDisplayName", "")
+            },
+            "root_items": [
+                {
+                    "name": item.get("name", ""),
+                    "type": "folder" if "folder" in item else "file",
+                    "id": item.get("id", "")
+                }
+                for item in root_items[:10]  # Limitar a 10 elementos
+            ],
+            "pilotos_folder_path": pilotos_path,
+            "total_root_items": len(root_items)
+        })
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_sharepoint_explore: {e}")
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        }), 500
+
+
+@bp.route("/debug/sharepoint/search-folders", methods=["GET"])
+async def debug_sharepoint_search_folders():
+    """Endpoint de debug para buscar carpetas específicas en SharePoint"""
+    try:
+        from core.graph import GraphClient
+
+        graph_client = GraphClient()
+        site_url = request.args.get('site_url', 'https://lumston.sharepoint.com/sites/Softwareengineering/')
+        search_term = request.args.get('search_term', 'volaris')
+        
+        # Buscar el sitio por URL
+        site = graph_client.find_site_by_url(site_url)
+        if not site:
+            return jsonify({
+                "status": "error",
+                "error": f"No se encontró el sitio: {site_url}"
+            }), 404
+        
+        site_id = site["id"]
+        
+        # Obtener TODOS los elementos de la raíz
+        all_root_items = graph_client.get_drive_items(site_id)
+        
+        # Buscar carpetas que contengan el término de búsqueda
+        matching_folders = []
+        for item in all_root_items:
+            if "folder" in item:
+                item_name = item.get("name", "").lower()
+                if (search_term.lower() in item_name or 
+                    "volaris" in item_name or 
+                    "flightbot" in item_name or
+                    "pilot" in item_name):
+                    matching_folders.append({
+                        "name": item.get("name", ""),
+                        "id": item.get("id", ""),
+                        "webUrl": item.get("webUrl", "")
+                    })
+        
+        return jsonify({
+            "status": "success",
+            "site_info": {
+                "id": site["id"],
+                "name": site.get("displayName", ""),
+                "webUrl": site.get("webUrl", "")
+            },
+            "search_term": search_term,
+            "total_root_items": len(all_root_items),
+            "matching_folders": matching_folders,
+            "all_folder_names": [item.get("name", "") for item in all_root_items if "folder" in item][:50]  # Mostrar primeros 50 nombres de carpetas
+        })
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_sharepoint_search_folders: {e}")
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        }), 500
+
+
+@bp.route("/debug/sharepoint/library", methods=["GET"])
+async def debug_sharepoint_library():
+    """Endpoint de debug para explorar la biblioteca de documentos de SharePoint"""
+    try:
+        from core.graph import GraphClient
+
+        graph_client = GraphClient()
+        site_url = "https://lumston.sharepoint.com/sites/Softwareengineering/"
+        
+        # Buscar el sitio por URL
+        site = graph_client.find_site_by_url(site_url)
+        if not site:
+            return jsonify({
+                "status": "error",
+                "error": f"No se encontró el sitio: {site_url}"
+            }), 404
+        
+        site_id = site["id"]
+        
+        # Obtener elementos de la biblioteca de documentos
+        library_items = graph_client.get_document_library_items(site_id)
+        
+        # Buscar la carpeta Pilotos en la biblioteca
+        pilotos_path = graph_client.find_pilotos_in_document_library(site_id)
+        
+        # Filtrar solo carpetas para mostrar la estructura
+        folders = []
+        for item in library_items:
+            fields = item.get("fields", {})
+            content_type = fields.get("ContentType", "")
+            file_leaf_ref = fields.get("FileLeafRef", "")
+            file_ref = fields.get("FileRef", "")
+            
+            if "folder" in content_type.lower():
+                folders.append({
+                    "name": file_leaf_ref,
+                    "path": file_ref,
+                    "contentType": content_type
+                })
+        
+        return jsonify({
+            "status": "success",
+            "site_info": {
+                "id": site["id"],
+                "name": site.get("displayName", ""),
+                "webUrl": site.get("webUrl", "")
+            },
+            "total_library_items": len(library_items),
+            "folders_count": len(folders),
+            "folders": folders[:20],  # Mostrar primeras 20 carpetas
+            "pilotos_folder_path": pilotos_path
+        })
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_sharepoint_library: {e}")
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        }), 500
+
+
+@bp.route("/debug/sharepoint/search", methods=["GET"])
+async def debug_sharepoint_search():
+    """Endpoint de debug para buscar archivos por contenido en SharePoint"""
+    try:
+        from core.graph import GraphClient
+
+        graph_client = GraphClient()
+        site_url = "https://lumston.sharepoint.com/sites/Softwareengineering/"
+        search_query = request.args.get('query', 'pilotos')
+        
+        # Buscar el sitio por URL
+        site = graph_client.find_site_by_url(site_url)
+        if not site:
+            return jsonify({
+                "status": "error",
+                "error": f"No se encontró el sitio: {site_url}"
+            }), 404
+        
+        site_id = site["id"]
+        
+        # Buscar archivos por contenido
+        files = graph_client.search_all_files_in_site(site_id, search_query)
+        
+        # También obtener información de los drives
+        drives = graph_client.get_all_drives_in_site(site_id)
+        
+        return jsonify({
+            "status": "success",
+            "site_info": {
+                "id": site["id"],
+                "name": site.get("displayName", ""),
+                "webUrl": site.get("webUrl", "")
+            },
+            "search_query": search_query,
+            "files_found": len(files),
+            "files": files[:10],  # Mostrar primeros 10 archivos
+            "drives": drives
+        })
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_sharepoint_search: {e}")
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        }), 500
+
+
 @bp.before_app_serving
 async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here
