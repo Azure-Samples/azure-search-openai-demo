@@ -16,6 +16,7 @@ from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from core.graph import GraphClient
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):
@@ -46,6 +47,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         prompt_manager: PromptManager,
+        graph_client: GraphClient,
         reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
@@ -55,6 +57,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.agent_client = agent_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
+        self.graph_client = graph_client
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
@@ -189,8 +192,17 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             use_query_rewriting,
         )
 
+        # PASO 2.5: Si la consulta está relacionada con pilotos, buscar también en SharePoint
+        sharepoint_results = []
+        if self._is_pilot_related_query(original_user_query):
+            sharepoint_results = await self._search_sharepoint_files(query_text, top)
+
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        
+        # Combinar con resultados de SharePoint si los hay
+        if sharepoint_results:
+            text_sources = self._combine_search_results(text_sources, sharepoint_results)
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
@@ -250,7 +262,18 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             results_merge_strategy=results_merge_strategy,
         )
 
+        # También buscar en SharePoint si la consulta está relacionada con pilotos
+        original_user_query = messages[-1]["content"]
+        sharepoint_results = []
+        if isinstance(original_user_query, str):
+            if self._is_pilot_related_query(original_user_query):
+                sharepoint_results = await self._search_sharepoint_files(original_user_query, top)
+
         text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+        
+        # Combinar con resultados de SharePoint si los hay
+        if sharepoint_results:
+            text_sources = self._combine_search_results(text_sources, sharepoint_results)
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
@@ -279,3 +302,72 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             ],
         )
         return extra_info
+
+    def _is_pilot_related_query(self, query: str) -> bool:
+        """
+        Detecta si la consulta está relacionada con pilotos de aerolíneas o documentos de la carpeta Pilotos
+        """
+        pilot_keywords = [
+            "piloto", "pilotos", "pilot", "pilots",
+            "capitán", "capitan", "captain", "comandante",
+            "aerolínea", "aerolinea", "airline", "aviación", "aviation",
+            "vuelo", "vuelos", "flight", "flights",
+            "cabina", "cockpit", "tripulación", "crew",
+            "aviador", "aviadores", "aviator", "aviators",
+            "licencia de piloto", "certificación", "certificaciones", "entrenamiento",
+            "instructor de vuelo", "flight instructor"
+        ]
+        query_lower = query.lower()
+        return any(keyword in query_lower for keyword in pilot_keywords)
+
+    async def _search_sharepoint_files(self, query: str, top: int = 3) -> list[dict]:
+        """
+        Busca archivos en la carpeta Pilotos de SharePoint y retorna contenido relevante
+        """
+        try:
+            # Buscar archivos en la carpeta Pilotos
+            files = await self.graph_client.search_files_in_pilotos_folder(query)
+
+            results = []
+            for file in files[:top]:  # Limitar a los mejores resultados
+                try:
+                    # Obtener el contenido del archivo
+                    content = await self.graph_client.get_file_content(file['id'])
+                    if content:
+                        results.append({
+                            'content': content[:2000],  # Limitar contenido para no exceder tokens
+                            'source': f"SharePoint: {file['name']}",
+                            'url': file.get('webUrl', ''),
+                            'filename': file['name'],
+                            'lastModified': file.get('lastModifiedDateTime', ''),
+                            'score': 1.0  # Puntuación alta para archivos de SharePoint
+                        })
+                except Exception as e:
+                    # Si falla obtener contenido, al menos incluir metadatos
+                    results.append({
+                        'content': f"Documento disponible: {file['name']}",
+                        'source': f"SharePoint: {file['name']}",
+                        'url': file.get('webUrl', ''),
+                        'filename': file['name'],
+                        'lastModified': file.get('lastModifiedDateTime', ''),
+                        'score': 0.8
+                    })
+
+            return results
+        except Exception as e:
+            # Si falla la búsqueda en SharePoint, continuar sin ella
+            return []
+
+    def _combine_search_results(self, azure_sources: list[str], sharepoint_results: list[dict]) -> list[str]:
+        """
+        Combina resultados de Azure AI Search y SharePoint en el formato esperado
+        """
+        combined_sources = azure_sources.copy()
+        
+        # Agregar resultados de SharePoint en el formato esperado (string con citación)
+        for result in sharepoint_results:
+            citation = result['source']
+            content = result['content'].replace("\n", " ").replace("\r", " ")
+            combined_sources.append(f"{citation}: {content}")
+        
+        return combined_sources

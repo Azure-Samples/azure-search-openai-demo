@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 
-name: azure-search-openai-demo
+name: Lumston-Cognitive-Chatbot
 
 metadata:
-  template: azure-search-openai-demo@0.0.2-beta
+  template: Lumston-Cognitive-Chatbot@0.0.2-beta
 
 infra:
   provider: bicep

@@ -13,11 +13,11 @@ products:
 - azure-app-service
 - azure
 page_type: sample
-urlFragment: azure-search-openai-demo
+urlFragment: lumston-cognitive-chatbot
 ---
 -->
 
-# RAG chat app with Azure OpenAI and Azure AI Search (Python)
+# Lumston Cognitive Chatbot - RAG chat app with Azure OpenAI and Azure AI Search (Python)
 
 This solution creates a ChatGPT-like frontend experience over your own documents using RAG (Retrieval Augmented Generation). It uses Azure OpenAI Service to access GPT models, and Azure AI Search for data indexing and retrieval.
 
@@ -143,7 +143,7 @@ A related option is VS Code Dev Containers, which will open the project in your 
 3. Run this command to download the project code:
 
     ```shell
-    azd init -t azure-search-openai-demo
+    azd init -t lumston-cognitive-chatbot
     ```
 
     Note that this command will initialize a git repository, so you do not need to clone this repository.

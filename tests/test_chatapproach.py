@@ -27,6 +27,9 @@ async def mock_retrieval(*args, **kwargs):
 
 @pytest.fixture
 def chat_approach():
+    from unittest.mock import Mock
+    mock_graph_client = Mock()
+    
     return ChatReadRetrieveReadApproach(
         search_client=None,
         search_index_name=None,
@@ -46,6 +49,7 @@ def chat_approach():
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        graph_client=mock_graph_client,
     )
 
 
@@ -197,6 +201,7 @@ async def test_search_results_filtering_by_scores(
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        graph_client=None,
     )
 
     monkeypatch.setattr(SearchClient, "search", mock_search)
@@ -240,6 +245,7 @@ async def test_search_results_query_rewriting(monkeypatch):
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        graph_client=None,
     )
 
     query_rewrites = None
@@ -287,6 +293,7 @@ async def test_agent_retrieval_results(monkeypatch):
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        graph_client=None,
     )
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
