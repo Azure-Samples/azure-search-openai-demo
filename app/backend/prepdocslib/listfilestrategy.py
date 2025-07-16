@@ -53,8 +53,7 @@ class File:
             if content_name and content_name != "file":
                 return os.path.basename(content_name)
 
-        # If we couldn't determine a name, return a default
-        return "unknown"
+        raise ValueError("The content object does not have a filename or name attribute. ")
 
     def file_extension(self):
         return os.path.splitext(self.filename())[1]

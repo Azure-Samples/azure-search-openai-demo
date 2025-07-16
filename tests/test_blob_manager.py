@@ -36,7 +36,7 @@ def adls_blob_manager(monkeypatch):
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher (due to NamedTemporaryFile)")
 async def test_upload_and_remove(monkeypatch, mock_env, mock_blob_container_client_exists, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
@@ -84,7 +84,7 @@ async def test_upload_and_remove(monkeypatch, mock_env, mock_blob_container_clie
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher (due to NamedTemporaryFile)")
 async def test_upload_and_remove_all(monkeypatch, mock_env, mock_blob_container_client_exists, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
@@ -132,7 +132,7 @@ async def test_upload_and_remove_all(monkeypatch, mock_env, mock_blob_container_
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher (due to NamedTemporaryFile)")
 async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
         f = File(temp_file.file)
@@ -162,7 +162,6 @@ async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager)
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_dont_remove_if_no_container(
     monkeypatch, mock_env, mock_blob_container_client_does_not_exist, blob_manager
 ):
@@ -175,7 +174,7 @@ async def test_dont_remove_if_no_container(
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
+@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher (due to NamedTemporaryFile)")
 @pytest.mark.parametrize("directory_exists", [True, False])
 async def test_upload_document_image(monkeypatch, mock_env, directory_exists):
     # Create a blob manager with an image container
@@ -232,7 +231,6 @@ async def test_upload_document_image(monkeypatch, mock_env, directory_exists):
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_adls_upload_document_image(monkeypatch, mock_env, adls_blob_manager):
 
     # Test parameters
@@ -298,7 +296,6 @@ def test_blob_name_from_file_name():
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_download_blob(monkeypatch, mock_env, mock_blob_container_client_exists, blob_manager):
     # Mock the download_blob method
     test_content = b"test content bytes"
@@ -332,7 +329,6 @@ async def test_download_blob(monkeypatch, mock_env, mock_blob_container_client_e
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_download_blob_not_found(monkeypatch, mock_env, mock_blob_container_client_exists, blob_manager):
     # Mock the download_blob method to raise ResourceNotFoundError
     async def mock_download_blob(*args, **kwargs):
@@ -348,7 +344,6 @@ async def test_download_blob_not_found(monkeypatch, mock_env, mock_blob_containe
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_download_blob_container_not_exist(
     monkeypatch, mock_env, mock_blob_container_client_does_not_exist, blob_manager
 ):
@@ -358,7 +353,6 @@ async def test_download_blob_container_not_exist(
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_download_blob_empty_path(monkeypatch, mock_env, mock_blob_container_client_exists, blob_manager):
     result = await blob_manager.download_blob("")
 
@@ -366,12 +360,35 @@ async def test_download_blob_empty_path(monkeypatch, mock_env, mock_blob_contain
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher")
 async def test_download_blob_with_user_oid(monkeypatch, mock_env, blob_manager):
     with pytest.raises(ValueError) as excinfo:
         await blob_manager.download_blob("test_document.pdf", user_oid="user123")
 
     assert "user_oid is not supported for BlobManager" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_download_blob_properties_none(monkeypatch, mock_env, mock_blob_container_client_exists, blob_manager):
+    """Test that BlobManager.download_blob returns None when download_response.properties is None."""
+
+    # Mock the download_blob method with properties=None
+    class MockDownloadResponseWithNoProperties:
+        def __init__(self):
+            self.properties = None  # This is the condition we're testing
+
+        async def readall(self):
+            return b"This content should not be returned"
+
+    async def mock_download_blob(*args, **kwargs):
+        return MockDownloadResponseWithNoProperties()
+
+    monkeypatch.setattr("azure.storage.blob.aio.BlobClient.download_blob", mock_download_blob)
+
+    # Call the download_blob method
+    result = await blob_manager.download_blob("test_document.pdf")
+
+    # Verify the result is None due to properties being None
+    assert result is None
 
 
 @pytest.mark.asyncio

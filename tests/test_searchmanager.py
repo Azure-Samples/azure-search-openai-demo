@@ -496,3 +496,176 @@ async def test_remove_content_no_inf_loop(monkeypatch, search_info):
     assert len(searched_filters) == 1, "It should have searched once"
     assert searched_filters[0] == "sourcefile eq 'foo.pdf'"
     assert len(deleted_documents) == 0, "It should have deleted no documents"
+
+
+@pytest.mark.asyncio
+async def test_create_index_with_search_images(monkeypatch, search_info):
+    """Test that SearchManager correctly creates an index with image search capabilities."""
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    # Create a SearchInfo with an Azure Vision endpoint
+    search_info_with_vision = SearchInfo(
+        endpoint=search_info.endpoint,
+        credential=search_info.credential,
+        index_name=search_info.index_name,
+        azure_vision_endpoint="https://testvision.cognitiveservices.azure.com/",
+    )
+
+    # Create a SearchManager with search_images=True
+    manager = SearchManager(search_info_with_vision, search_images=True, field_name_embedding="embedding")
+    await manager.create_index()
+
+    # Verify the index was created correctly
+    assert len(indexes) == 1, "It should have created one index"
+    assert indexes[0].name == "test"
+
+    # Find the "images" field in the index
+    images_field = next((field for field in indexes[0].fields if field.name == "images"), None)
+    assert images_field is not None, "The index should include an 'images' field"
+
+    # Verify the "images" field structure
+    assert images_field.type.startswith(
+        "Collection(Edm.ComplexType)"
+    ), "The 'images' field should be a collection of complex type"
+
+    # Check subfields of the images field
+    image_subfields = images_field.fields
+    assert len(image_subfields) == 4, "The 'images' field should have 4 subfields"
+
+    # Verify specific subfields
+    assert any(field.name == "embedding" for field in image_subfields), "Should have an 'embedding' subfield"
+    assert any(field.name == "url" for field in image_subfields), "Should have a 'url' subfield"
+    assert any(field.name == "description" for field in image_subfields), "Should have a 'description' subfield"
+    assert any(field.name == "boundingbox" for field in image_subfields), "Should have a 'boundingbox' subfield"
+
+    # Verify vector search configuration
+    vectorizers = indexes[0].vector_search.vectorizers
+    assert any(
+        v.vectorizer_name == "images-vision-vectorizer" for v in vectorizers
+    ), "Should have an AI Vision vectorizer"
+
+    # Verify vector search profile
+    profiles = indexes[0].vector_search.profiles
+    assert any(p.name == "images_embedding_profile" for p in profiles), "Should have an image embedding profile"
+
+
+@pytest.mark.asyncio
+async def test_create_index_with_search_images_no_endpoint(monkeypatch, search_info):
+    """Test that SearchManager raises an error when search_images=True but no Azure Vision endpoint is provided."""
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    # Create a SearchManager with search_images=True but no Azure Vision endpoint
+    manager = SearchManager(
+        search_info,  # search_info doesn't have azure_vision_endpoint
+        search_images=True,
+        field_name_embedding="embedding",
+    )
+
+    # Verify that create_index raises a ValueError
+    with pytest.raises(ValueError) as excinfo:
+        await manager.create_index()
+
+    # Check the error message
+    assert "Azure AI Vision endpoint must be provided to use image embeddings" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_create_index_with_search_images_and_embeddings(monkeypatch, search_info):
+    """Test that SearchManager correctly creates an index with both image search and embeddings."""
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index
+
+    async def mock_create_client(*args, **kwargs):
+        return MockClient(
+            embeddings_client=MockEmbeddingsClient(
+                create_embedding_response=openai.types.CreateEmbeddingResponse(
+                    object="list",
+                    data=[
+                        openai.types.Embedding(
+                            embedding=[0.1, 0.2, 0.3],
+                            index=0,
+                            object="embedding",
+                        )
+                    ],
+                    model=MOCK_EMBEDDING_MODEL_NAME,
+                    usage=Usage(prompt_tokens=8, total_tokens=8),
+                )
+            )
+        )
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    # Create a SearchInfo with an Azure Vision endpoint
+    search_info_with_vision = SearchInfo(
+        endpoint=search_info.endpoint,
+        credential=search_info.credential,
+        index_name=search_info.index_name,
+        azure_vision_endpoint="https://testvision.cognitiveservices.azure.com/",
+    )
+
+    # Create embeddings service
+    embeddings = AzureOpenAIEmbeddingService(
+        open_ai_service="x",
+        open_ai_deployment="x",
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        open_ai_api_version="test-api-version",
+        credential=AzureKeyCredential("test"),
+        disable_batch=True,
+    )
+    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
+
+    # Create a SearchManager with both search_images and embeddings
+    manager = SearchManager(
+        search_info_with_vision, search_images=True, embeddings=embeddings, field_name_embedding="embedding3"
+    )
+    await manager.create_index()
+
+    # Verify the index was created correctly
+    assert len(indexes) == 1, "It should have created one index"
+
+    # Find both the embeddings field and images field
+    embedding_field = next((field for field in indexes[0].fields if field.name == "embedding3"), None)
+    images_field = next((field for field in indexes[0].fields if field.name == "images"), None)
+
+    assert embedding_field is not None, "The index should include an 'embedding3' field"
+    assert images_field is not None, "The index should include an 'images' field"
+
+    # Verify vector search configuration includes both text and image vectorizers
+    vectorizers = indexes[0].vector_search.vectorizers
+    assert any(
+        v.vectorizer_name == "images-vision-vectorizer" for v in vectorizers
+    ), "Should have an AI Vision vectorizer"
+    assert any(hasattr(v, "ai_services_vision_parameters") for v in vectorizers), "Should have AI vision parameters"
+
+    # Verify vector search profiles for both text and images
+    profiles = indexes[0].vector_search.profiles
+    assert any(p.name == "images_embedding_profile" for p in profiles), "Should have an image embedding profile"
+    assert any(p.name == "embedding3-profile" for p in profiles), "Should have a text embedding profile"
