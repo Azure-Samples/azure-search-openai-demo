@@ -196,13 +196,20 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         sharepoint_results = []
         if self._is_pilot_related_query(original_user_query):
             sharepoint_results = await self._search_sharepoint_files(query_text, top)
+            print(f"DEBUG: SharePoint search returned {len(sharepoint_results)} results")
+            for i, result in enumerate(sharepoint_results):
+                print(f"DEBUG: SharePoint result {i+1}: {result.get('content', 'No content')}")
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        print(f"DEBUG: Azure AI Search returned {len(text_sources)} text sources")
+        for i, source in enumerate(text_sources[:3]):  # Solo primeros 3
+            print(f"DEBUG: Azure source {i+1}: {source[:100]}...")
         
         # Combinar con resultados de SharePoint si los hay
         if sharepoint_results:
             text_sources = self._combine_search_results(text_sources, sharepoint_results)
+            print(f"DEBUG: Combined sources total: {len(text_sources)}")
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
@@ -349,11 +356,11 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
     async def _search_sharepoint_files(self, query: str, top: int = 10) -> list[dict]:
         """
-        Busca archivos en la carpeta Pilotos de SharePoint y retorna contenido relevante
+        Busca archivos en las carpetas configuradas de SharePoint y retorna contenido relevante
         """
         try:
-            # Buscar archivos en la carpeta Pilotos (sin pasar query como site_id)
-            files = self.graph_client.search_files_in_pilotos_folder()
+            # Usar la nueva funcionalidad configurable
+            files = self.graph_client.search_files_in_configured_folders()
 
             results = []
             for file in files[:top]:  # Limitar a los mejores resultados
@@ -361,6 +368,16 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     # Para consultas generales, simplemente mostrar información del archivo
                     # sin necesidad de descargar el contenido completo
                     file_info = f"Documento: {file['name']}"
+                    
+                    # Mostrar información adicional sobre dónde se encontró
+                    if file.get('site_name'):
+                        file_info += f" (Sitio: {file['site_name']})"
+                    
+                    if file.get('folder_found'):
+                        file_info += f" (Carpeta: {file['folder_found']})"
+                    elif file.get('found_by_content_search'):
+                        file_info += f" (Encontrado por búsqueda: {file.get('search_query', 'contenido')})"
+                    
                     if file.get('lastModified'):
                         file_info += f" (Última modificación: {file['lastModified'][:10]})"
                     if file.get('size'):
@@ -373,6 +390,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                         'url': file.get('webUrl', ''),
                         'filename': file['name'],
                         'lastModified': file.get('lastModified', ''),
+                        'site_name': file.get('site_name', ''),
+                        'folder_found': file.get('folder_found', ''),
+                        'found_by_content_search': file.get('found_by_content_search', False),
                         'score': 1.0  # Puntuación alta para archivos de SharePoint
                     })
                 except Exception as e:

@@ -811,6 +811,96 @@ async def debug_sharepoint_search():
         }), 500
 
 
+@bp.route("/debug/sharepoint/config", methods=["GET"])
+async def debug_sharepoint_config():
+    """Endpoint para verificar la configuración actual de SharePoint"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    try:
+        from core.graph import get_sharepoint_config_summary
+        config = get_sharepoint_config_summary()
+        
+        return {
+            "config": config,
+            "status": "success"
+        }
+    except Exception as e:
+        logger.error(f"Error obteniendo configuración SharePoint: {e}")
+        return {"error": str(e), "status": "error"}, 500
+
+@bp.route("/debug/sharepoint/test-configured-folders", methods=["GET"])
+async def debug_test_configured_folders():
+    """Endpoint para probar búsqueda con carpetas configuradas"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    try:
+        from core.graph import get_configured_files
+        
+        files = get_configured_files()
+        
+        return {
+            "files_found": len(files),
+            "found_files": files[:10],  # Mostrar solo primeros 10 para evitar sobrecarga
+            "status": "success"
+        }
+    except Exception as e:
+        logger.error(f"Error probando carpetas configuradas: {e}")
+        return {"error": str(e), "status": "error"}, 500
+async def debug_find_specific_file():
+    """Debug endpoint para buscar un archivo específico en todos los sitios de SharePoint"""
+    try:
+        filename = request.args.get('filename', '20051222 AIP AD 1.1-1 Introducción.pdf')
+        graph_client = GraphClient()
+        
+        current_app.logger.info(f"Buscando archivo: {filename}")
+        
+        # Obtener todos los sitios de SharePoint
+        sites = graph_client.get_sharepoint_sites()
+        current_app.logger.info(f"Explorando {len(sites)} sitios de SharePoint")
+        
+        found_files = []
+        
+        for site in sites[:20]:  # Limitar a primeros 20 sitios para evitar timeout
+            try:
+                site_id = site["id"]
+                site_name = site.get("displayName", site.get("name", "Unknown"))
+                current_app.logger.info(f"Buscando en sitio: {site_name}")
+                
+                # Buscar archivos en este sitio
+                files = graph_client.search_all_files_in_site(site_id, filename.split('.')[0])  # Buscar por parte del nombre
+                
+                for file in files:
+                    if filename.lower() in file.get("name", "").lower():
+                        found_files.append({
+                            "site_name": site_name,
+                            "site_id": site_id,
+                            "site_url": site.get("webUrl", ""),
+                            "file": file
+                        })
+                        current_app.logger.info(f"¡Archivo encontrado en {site_name}!")
+                        
+            except Exception as e:
+                current_app.logger.warning(f"Error buscando en sitio {site_name}: {e}")
+                continue
+        
+        return jsonify({
+            "status": "success",
+            "filename_searched": filename,
+            "sites_explored": len(sites),
+            "files_found": len(found_files),
+            "found_files": found_files
+        })
+
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_find_specific_file: {e}")
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        }), 500
+
+
 @bp.before_app_serving
 async def setup_clients():
     # Replace these with your own values, either in environment variables or directly here

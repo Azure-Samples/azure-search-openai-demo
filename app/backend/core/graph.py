@@ -3,11 +3,28 @@ import os
 import logging
 from typing import List, Dict, Optional
 import json
+import sys
 
 # Configurar logging más detallado para debugging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+# Importar configuración de SharePoint
+try:
+    from sharepoint_config.sharepoint_config import sharepoint_config
+except ImportError:
+    # Fallback si no se puede importar la configuración
+    class FallbackConfig:
+        def get_search_folders(self): return ["Pilotos"]
+        def get_site_keywords(self): return ["company", "general", "operativ", "pilot"]
+        def get_search_queries(self): return ["pilotos"]
+        def get_max_sites(self): return 15
+        def get_search_depth(self): return 5
+        def is_content_fallback_enabled(self): return True
+    
+    sharepoint_config = FallbackConfig()
+    logger.warning("Usando configuración fallback para SharePoint")
 
 class GraphClient:
     """Cliente para interactuar con Microsoft Graph API y SharePoint"""
@@ -181,106 +198,218 @@ class GraphClient:
             logger.error(f"Error obteniendo elementos de la unidad: {e}")
             return []
     
-    def find_pilotos_folder_recursive(self, site_id: str, current_path: str = "", depth: int = 0, max_depth: int = 5) -> Optional[str]:
-        """Busca recursivamente la carpeta 'Pilotos' en toda la estructura de SharePoint"""
+    def find_configured_folder_recursive(self, site_id: str, folder_name: str, current_path: str = "", depth: int = 0) -> Optional[str]:
+        """Busca recursivamente una carpeta configurada en toda la estructura de SharePoint"""
+        max_depth = sharepoint_config.get_search_depth()
+        
         if depth > max_depth:
             logger.warning(f"Máxima profundidad alcanzada ({max_depth}) en búsqueda recursiva")
             return None
         
         try:
-            logger.info(f"Buscando en ruta: '{current_path}' (profundidad: {depth})")
+            logger.debug(f"Buscando carpeta '{folder_name}' en ruta: '{current_path}' (profundidad: {depth})")
             items = self.get_drive_items(site_id, folder_path=current_path)
             
             for item in items:
                 item_name = item.get("name", "").lower()
-                logger.info(f"  Explorando elemento: '{item.get('name')}'")
+                folder_name_lower = folder_name.lower()
                 
-                # Si encontramos la carpeta Pilotos
-                if item_name == "pilotos" and "folder" in item:
+                # Si encontramos la carpeta específica
+                if item_name == folder_name_lower and "folder" in item:
                     found_path = f"{current_path}/{item['name']}" if current_path else item['name']
-                    logger.info(f"¡Carpeta Pilotos encontrada en: {found_path}")
+                    logger.info(f"¡Carpeta {folder_name} encontrada en: {found_path}")
                     return found_path
                 
-                # Si es una carpeta que podría contener info de Volaris/Flightbot, buscar dentro
+                # Si es una carpeta que podría contener documentos relevantes, buscar dentro
                 if ("folder" in item and 
-                    ("volaris" in item_name or "flightbot" in item_name or 
-                     "documentos" in item_name or "compartidos" in item_name)):
+                    any(keyword in item_name for keyword in ["documentos", "compartidos", "documents", "shared", "files", "archivos"])):
                     
                     nested_path = f"{current_path}/{item['name']}" if current_path else item['name']
-                    logger.info(f"  Buscando recursivamente en carpeta relacionada: '{nested_path}'")
+                    logger.debug(f"  Buscando recursivamente en carpeta: '{nested_path}'")
                     
-                    result = self.find_pilotos_folder_recursive(site_id, nested_path, depth + 1, max_depth)
+                    result = self.find_configured_folder_recursive(site_id, folder_name, nested_path, depth + 1)
                     if result:
                         return result
             
             return None
             
         except Exception as e:
-            logger.error(f"Error en búsqueda recursiva en '{current_path}': {e}")
+            logger.error(f"Error en búsqueda recursiva de '{folder_name}' en '{current_path}': {e}")
             return None
 
-    def search_files_in_pilotos_folder(self, site_id: str = None, site_name: str = "DevOps") -> List[Dict]:
-        """Busca archivos específicamente en la carpeta 'Pilotos' de la biblioteca de documentos"""
+    def find_configured_folder_in_document_library(self, site_id: str, folder_name: str) -> Optional[str]:
+        """Busca una carpeta configurada específicamente en la biblioteca de documentos"""
         try:
-            # Si no se proporciona site_id, buscar por nombre o URL
-            if not site_id:
-                # Intentar primero con la URL conocida
-                site = self.find_site_by_url("https://lumston.sharepoint.com/sites/Softwareengineering/")
-                if not site:
-                    site = self.find_site_by_name(site_name)
+            logger.info(f"Buscando carpeta '{folder_name}' en la biblioteca de documentos...")
+            
+            # Obtener elementos de la biblioteca de documentos
+            library_items = self.get_document_library_items(site_id)
+            
+            for item in library_items:
+                fields = item.get("fields", {})
+                content_type = fields.get("ContentType", "")
+                file_leaf_ref = fields.get("FileLeafRef", "")
+                file_ref = fields.get("FileRef", "")
                 
-                if not site:
-                    logger.warning(f"No se encontró el sitio: {site_name}")
-                    return []
-                site_id = site["id"]
+                # Buscar carpetas que coincidan con el nombre configurado
+                if ("folder" in content_type.lower() and 
+                    folder_name.lower() in file_leaf_ref.lower()):
+                    logger.info(f"¡Carpeta {folder_name} encontrada en biblioteca: {file_ref}")
+                    return file_ref
             
-            logger.info(f"Buscando carpeta Pilotos en sitio: {site_name} (ID: {site_id})")
+            # Si no se encuentra directamente, buscar en subcarpetas relevantes
+            logger.debug(f"No se encontró {folder_name} en el nivel raíz, buscando en subcarpetas...")
             
-            # Buscar primero en la biblioteca de documentos
-            pilotos_path = self.find_pilotos_in_document_library(site_id)
+            for item in library_items:
+                fields = item.get("fields", {})
+                content_type = fields.get("ContentType", "")
+                file_leaf_ref = fields.get("FileLeafRef", "")
+                file_ref = fields.get("FileRef", "")
+                
+                if ("folder" in content_type.lower() and 
+                    any(keyword in file_leaf_ref.lower() for keyword in ["documentos", "compartidos", "documents", "shared"])):
+                    
+                    logger.debug(f"Explorando subcarpeta relacionada: {file_leaf_ref}")
+                    # Buscar recursivamente en esta carpeta
+                    subfolder_path = file_ref.split("/")[-1]  # Obtener solo el nombre de la carpeta
+                    result = self.find_configured_folder_recursive(site_id, folder_name, subfolder_path)
+                    if result:
+                        return result
             
-            if not pilotos_path:
-                # Si no se encuentra en la biblioteca, intentar búsqueda recursiva tradicional
-                logger.info("No se encontró en biblioteca, intentando búsqueda recursiva...")
-                pilotos_path = self.find_pilotos_folder_recursive(site_id)
-            
-            if not pilotos_path:
-                # Como último recurso, usar búsqueda directa por contenido
-                logger.info("No se encontró carpeta específica, buscando archivos por contenido...")
-                files = self.search_all_files_in_site(site_id, "pilotos")
-                if files:
-                    logger.info(f"Encontrados {len(files)} archivos relacionados con pilotos mediante búsqueda de contenido")
-                    return files
-                else:
-                    logger.warning("No se encontraron archivos relacionados con pilotos")
-                    return []
-            
-            logger.info(f"Carpeta Pilotos encontrada en: {pilotos_path}")
-            
-            # Obtener archivos de la carpeta Pilotos
-            pilotos_files = self.get_drive_items(site_id, folder_path=pilotos_path)
-            
-            # Filtrar solo archivos (no carpetas)
-            files = []
-            for item in pilotos_files:
-                if "file" in item:  # Es un archivo, no una carpeta
-                    files.append({
-                        "id": item["id"],
-                        "name": item["name"],
-                        "webUrl": item["webUrl"],
-                        "downloadUrl": item.get("@microsoft.graph.downloadUrl", ""),
-                        "size": item.get("size", 0),
-                        "lastModified": item.get("lastModifiedDateTime", ""),
-                        "createdBy": item.get("createdBy", {}).get("user", {}).get("displayName", ""),
-                        "mimeType": item.get("file", {}).get("mimeType", ""),
-                        "site_id": site_id  # Agregar site_id para poder usarlo después
-                    })
-            
-            logger.info(f"Encontrados {len(files)} archivos en la carpeta Pilotos")
-            return files
+            return None
             
         except Exception as e:
-            logger.error(f"Error buscando archivos en carpeta Pilotos: {e}")
+            logger.error(f"Error buscando '{folder_name}' en biblioteca de documentos: {e}")
+            return None
+
+    def search_files_in_configured_folders(self, site_id: str = None, site_name: str = None) -> List[Dict]:
+        """Busca archivos en las carpetas configuradas dinámicamente"""
+        try:
+            # Si no se proporciona site_id, buscar dinámicamente en sitios de Teams
+            if not site_id:
+                logger.info("No se proporcionó site_id, buscando en sitios de Teams disponibles...")
+                
+                # Obtener todos los sitios de SharePoint
+                all_sites = self.get_sharepoint_sites()
+                
+                # Obtener keywords de configuración
+                site_keywords = sharepoint_config.get_site_keywords()
+                
+                # Filtrar sitios de Teams y sitios que podrían contener documentos operativos
+                candidate_sites = []
+                for site in all_sites:
+                    site_name_lower = site.get("displayName", "").lower()
+                    is_team_site = site.get("isTeamSite", False)
+                    
+                    # Priorizar sitios de Teams y sitios con nombres que sugieren contenido operativo
+                    if (is_team_site or 
+                        any(keyword in site_name_lower for keyword in site_keywords)):
+                        candidate_sites.append(site)
+                        logger.info(f"Sitio candidato: {site.get('displayName', 'Unknown')} (Teams: {is_team_site})")
+                
+                # Si no encontramos sitios específicos, usar todos los sitios de Teams como fallback
+                if not candidate_sites:
+                    candidate_sites = [site for site in all_sites if site.get("isTeamSite", False)]
+                    logger.info(f"Fallback: usando todos los sitios de Teams ({len(candidate_sites)} sitios)")
+                
+                # Buscar en múltiples sitios candidatos (límite configurable)
+                max_sites = sharepoint_config.get_max_sites()
+                all_files = []
+                for site in candidate_sites[:max_sites]:
+                    try:
+                        site_id = site["id"]
+                        site_display_name = site.get("displayName", "Unknown")
+                        logger.info(f"Buscando en: {site_display_name}")
+                        
+                        # Buscar archivos en este sitio específico
+                        site_files = self._search_files_in_single_site(site_id, site_display_name)
+                        if site_files:
+                            logger.info(f"Encontrados {len(site_files)} archivos en {site_display_name}")
+                            all_files.extend(site_files)
+                        
+                    except Exception as e:
+                        logger.warning(f"Error buscando en {site_display_name}: {e}")
+                        continue
+                
+                return all_files
+            
+            # Si se proporciona site_id específico, usar el método auxiliar
+            return self._search_files_in_single_site(site_id, site_name or "Sitio específico")
+            
+        except Exception as e:
+            logger.error(f"Error buscando archivos en carpetas configuradas: {e}")
+            return []
+    
+    def _search_files_in_single_site(self, site_id: str, site_name: str) -> List[Dict]:
+        """Método auxiliar para buscar archivos en las carpetas configuradas de un sitio específico"""
+        try:
+            logger.info(f"Buscando en sitio específico: {site_name}")
+            
+            # Obtener carpetas configuradas para buscar
+            search_folders = sharepoint_config.get_search_folders()
+            logger.info(f"Buscando en carpetas configuradas: {search_folders}")
+            
+            # Intentar buscar en cada carpeta configurada
+            for folder_name in search_folders:
+                logger.info(f"Intentando buscar carpeta: {folder_name}")
+                
+                # Buscar primero en la biblioteca de documentos
+                folder_path = self.find_configured_folder_in_document_library(site_id, folder_name)
+                
+                if not folder_path:
+                    # Si no se encuentra en la biblioteca, intentar búsqueda recursiva
+                    logger.debug(f"No se encontró {folder_name} en biblioteca, intentando búsqueda recursiva...")
+                    folder_path = self.find_configured_folder_recursive(site_id, folder_name)
+                
+                if folder_path:
+                    logger.info(f"Carpeta {folder_name} encontrada en {site_name}: {folder_path}")
+                    
+                    # Obtener archivos de la carpeta encontrada
+                    folder_files = self.get_drive_items(site_id, folder_path=folder_path)
+                    
+                    # Filtrar solo archivos (no carpetas)
+                    files = []
+                    for item in folder_files:
+                        if "file" in item:  # Es un archivo, no una carpeta
+                            files.append({
+                                "id": item["id"],
+                                "name": item["name"],
+                                "webUrl": item["webUrl"],
+                                "downloadUrl": item.get("@microsoft.graph.downloadUrl", ""),
+                                "size": item.get("size", 0),
+                                "lastModified": item.get("lastModifiedDateTime", ""),
+                                "createdBy": item.get("createdBy", {}).get("user", {}).get("displayName", ""),
+                                "mimeType": item.get("file", {}).get("mimeType", ""),
+                                "site_id": site_id,
+                                "site_name": site_name,
+                                "folder_found": folder_name
+                            })
+                    
+                    if files:
+                        logger.info(f"Encontrados {len(files)} archivos en carpeta {folder_name} de {site_name}")
+                        return files
+            
+            # Si no se encontró ninguna carpeta específica y está habilitado el fallback
+            if sharepoint_config.is_content_fallback_enabled():
+                logger.debug("No se encontraron carpetas específicas, usando búsqueda de contenido...")
+                
+                # Usar queries configuradas para búsqueda de contenido
+                search_queries = sharepoint_config.get_search_queries()
+                for query in search_queries:
+                    files = self.search_all_files_in_site(site_id, query)
+                    if files:
+                        logger.info(f"Encontrados {len(files)} archivos por búsqueda de contenido '{query}' en {site_name}")
+                        # Agregar información del sitio a cada archivo
+                        for file in files:
+                            file["site_name"] = site_name
+                            file["found_by_content_search"] = True
+                            file["search_query"] = query
+                        return files
+            
+            return []
+            
+        except Exception as e:
+            logger.warning(f"Error buscando en sitio {site_name}: {e}")
             return []
     
     def download_file(self, download_url: str) -> bytes:
@@ -402,50 +531,8 @@ class GraphClient:
             return []
 
     def find_pilotos_in_document_library(self, site_id: str) -> Optional[str]:
-        """Busca la carpeta Pilotos específicamente en la biblioteca de documentos"""
-        try:
-            logger.info("Buscando carpeta Pilotos en la biblioteca de documentos...")
-            
-            # Obtener elementos de la biblioteca de documentos
-            library_items = self.get_document_library_items(site_id)
-            
-            for item in library_items:
-                fields = item.get("fields", {})
-                content_type = fields.get("ContentType", "")
-                file_leaf_ref = fields.get("FileLeafRef", "")
-                file_ref = fields.get("FileRef", "")
-                
-                # Buscar carpetas (ContentType contiene "Folder")
-                if "folder" in content_type.lower() and "pilotos" in file_leaf_ref.lower():
-                    logger.info(f"¡Carpeta Pilotos encontrada en biblioteca: {file_ref}")
-                    return file_ref
-            
-            # Si no se encuentra directamente, buscar en subcarpetas
-            logger.info("No se encontró Pilotos en el nivel raíz de la biblioteca, buscando en subcarpetas...")
-            
-            for item in library_items:
-                fields = item.get("fields", {})
-                content_type = fields.get("ContentType", "")
-                file_leaf_ref = fields.get("FileLeafRef", "")
-                file_ref = fields.get("FileRef", "")
-                
-                if ("folder" in content_type.lower() and 
-                    ("volaris" in file_leaf_ref.lower() or 
-                     "flightbot" in file_leaf_ref.lower() or
-                     "bot" in file_leaf_ref.lower())):
-                    
-                    logger.info(f"Explorando subcarpeta relacionada: {file_leaf_ref}")
-                    # Buscar recursivamente en esta carpeta
-                    subfolder_path = file_ref.split("/")[-1]  # Obtener solo el nombre de la carpeta
-                    result = self.find_pilotos_folder_recursive(site_id, subfolder_path)
-                    if result:
-                        return result
-            
-            return None
-            
-        except Exception as e:
-            logger.error(f"Error buscando Pilotos en biblioteca de documentos: {e}")
-            return None
+        """Método legacy - busca la carpeta Pilotos (mantener para compatibilidad)"""
+        return self.find_configured_folder_in_document_library(site_id, "Pilotos")
 
     def search_all_files_in_site(self, site_id: str, search_query: str = "pilotos") -> List[Dict]:
         """Busca archivos en todo el sitio usando la API de búsqueda de Microsoft Graph"""
@@ -506,9 +593,19 @@ graph_client = GraphClient()
 
 
 # Funciones de conveniencia para usar en la aplicación
-def get_pilotos_files(site_name: str = "DevOps") -> List[Dict]:
-    """Función de conveniencia para obtener archivos de la carpeta Pilotos"""
-    return graph_client.search_files_in_pilotos_folder(site_name=site_name)
+def get_configured_files(site_name: str = None) -> List[Dict]:
+    """Función de conveniencia para obtener archivos de las carpetas configuradas"""
+    return graph_client.search_files_in_configured_folders(site_name=site_name)
+
+
+def get_pilotos_files(site_name: str = None) -> List[Dict]:
+    """Función legacy - mantener para compatibilidad"""
+    return graph_client.search_files_in_configured_folders(site_name=site_name)
+
+
+def get_sharepoint_config_summary() -> Dict:
+    """Función para obtener resumen de la configuración actual"""
+    return sharepoint_config.get_config_summary()
 
 
 def search_sharepoint_files(query: str, site_name: str = "DevOps") -> List[Dict]:
