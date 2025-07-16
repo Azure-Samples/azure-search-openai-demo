@@ -347,7 +347,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             
         return False
 
-    async def _search_sharepoint_files(self, query: str, top: int = 3) -> list[dict]:
+    async def _search_sharepoint_files(self, query: str, top: int = 10) -> list[dict]:
         """
         Busca archivos en la carpeta Pilotos de SharePoint y retorna contenido relevante
         """
