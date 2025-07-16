@@ -559,11 +559,11 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
       // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
       AZURE_CLIENT_ID: (deploymentTarget == 'containerapps') ? acaIdentity.outputs.clientId : ''
     })
-    secrets: useAuthentication ? {
+    secrets: (useAuthentication && !empty(clientAppId)) ? {
       azureclientappsecret: clientAppSecret
       azureserverappsecret: serverAppSecret
     } : {}
-    envSecrets: useAuthentication ? [
+    envSecrets: (useAuthentication && !empty(clientAppId)) ? [
       {
         name: 'AZURE_CLIENT_APP_SECRET'
         secretRef: 'azureclientappsecret'
@@ -576,7 +576,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
   }
 }
 
-module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == 'containerapps' && !empty(clientAppId)) {
+module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == 'containerapps' && useAuthentication && !empty(clientAppId)) {
   name: 'aca-auth'
   scope: resourceGroup
   params: {
