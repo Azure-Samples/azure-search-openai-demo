@@ -53,3 +53,14 @@
     font-weight: bold;
     color: #fff;
 }
+
+.fieldset {
+    border: none;
+    padding: 0;
+}
+
+.legend {
+    font-size: 14px;
+    margin-bottom: 5px;
+    padding: 0;
+}
