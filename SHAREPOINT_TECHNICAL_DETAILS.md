@@ -110,6 +110,12 @@ async def debug_pilot_query():
 
 ## 🔐 **CONFIGURACIÓN DE SEGURIDAD**
 
+### **¿Por qué funciona desde local/GitHub Codespaces?**
+- **SharePoint está en la nube**: No importa si el bot está local o Azure
+- **Client Credentials**: Usa App Registration en Azure AD, no requiere usuario
+- **Microsoft Graph API**: Acceso directo HTTPS a `graph.microsoft.com`
+- **Mismas credenciales**: Local y Azure usan las mismas variables `.env`
+
 ### **Microsoft Graph API - Client Credentials Flow**:
 ```env
 # REQUIRED - SharePoint/Graph access
