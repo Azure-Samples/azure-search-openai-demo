@@ -11,7 +11,7 @@ import pytest
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.listfilestrategy import File
 
-from .mocks import MockAzureCredential, MockBlob
+from .mocks import MockAzureCredential
 
 
 @pytest.fixture
@@ -410,43 +410,12 @@ async def test_adls_download_blob_permission_denied(monkeypatch, mock_env, adls_
 
 
 @pytest.mark.asyncio
-async def test_adls_download_blob_with_permission(monkeypatch, mock_data_lake_service_client, adls_blob_manager):
+async def test_adls_download_blob_with_permission(
+    monkeypatch, mock_data_lake_service_client, mock_user_directory_client, adls_blob_manager
+):
     """Test that AdlsBlobManager.download_blob works when a user has permission to access a blob."""
-
-    # Track downloaded files
-    downloaded_files = []
-
-    # Mock directory client for _ensure_directory method
-    class MockDirectoryClient:
-        async def get_directory_properties(self):
-            # Return dummy properties to indicate directory exists
-            return {"name": "test-directory"}
-
-        async def get_access_control(self):
-            # Return a dictionary with the owner matching the auth_client's user_oid
-            return {"owner": "OID_X"}  # This should match the user_oid in auth_client
-
-        def get_file_client(self, filename):
-            # Return a file client for the given filename
-            return MockFileClient(filename)
-
-    class MockFileClient:
-        def __init__(self, path_name):
-            self.path_name = path_name
-
-        async def download_file(self):
-            downloaded_files.append(self.path_name)
-            return MockBlob()
-
-    # Mock get_directory_client to return our MockDirectoryClient
-    monkeypatch.setattr(
-        azure.storage.filedatalake.aio.FileSystemClient,
-        "get_directory_client",
-        lambda *args, **kwargs: MockDirectoryClient(),
-    )
 
     content, properties = await adls_blob_manager.download_blob("OID_X/document.pdf", "OID_X")
 
     assert content.startswith(b"\x89PNG\r\n\x1a\n")
     assert properties["content_settings"]["content_type"] == "application/octet-stream"
-    assert downloaded_files == ["document.pdf"]

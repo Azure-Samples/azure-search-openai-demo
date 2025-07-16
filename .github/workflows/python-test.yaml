@@ -62,10 +62,8 @@ jobs:
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests
-          if: runner.os != 'Windows'
-          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=89
+          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=90
         - name: Check diff coverage
-          if: runner.os != 'Windows' && github.event_name == 'pull_request'
           run: |
             git fetch origin main:refs/remotes/origin/main
             diff-cover coverage.xml --compare-branch=origin/main --fail-under=90

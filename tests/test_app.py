@@ -1028,14 +1028,6 @@ async def test_chat_stream_followup(client, snapshot):
 
 @pytest.mark.asyncio
 async def test_chat_vision(monkeypatch, vision_client, snapshot):
-    async def mock_download_blob_as_base64(self, blob_url, user_oid):
-        return "data:image/png;base64,base64encodedimage"
-
-    monkeypatch.setattr(
-        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.download_blob_as_base64",
-        mock_download_blob_as_base64,
-    )
-
     response = await vision_client.post(
         "/chat",
         json={"messages": [{"content": "Are interest rates high?", "role": "user"}]},
@@ -1054,6 +1046,19 @@ async def test_chat_stream_vision(vision_client, snapshot):
     assert response.status_code == 200
     result = await response.get_data()
     snapshot.assert_match(result, "result.jsonlines")
+
+
+@pytest.mark.asyncio
+async def test_chat_vision_user(monkeypatch, auth_client, mock_user_directory_client, snapshot):
+    response = await auth_client.post(
+        "/chat",
+        headers={"Authorization": "Bearer MockToken"},
+        json={"messages": [{"content": "Flowers in westbrae nursery logo?", "role": "user"}]},
+    )
+
+    assert response.status_code == 200
+    result = await response.get_json()
+    snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio

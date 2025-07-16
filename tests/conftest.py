@@ -42,6 +42,7 @@ from .mocks import (
     MockAzureCredential,
     MockAzureCredentialExpired,
     MockBlobClient,
+    MockDirectoryClient,
     MockResponse,
     MockTransport,
     mock_retrieval_response,
@@ -237,6 +238,8 @@ def mock_openai_chatcompletion(monkeypatch):
             answer = "capital of France"
         elif last_question == "Generate search query for: Are interest rates high?":
             answer = "interest rates"
+        elif last_question == "Generate search query for: Flowers in westbrae nursery logo?":
+            answer = "westbrae nursery logo"
         elif isinstance(last_question, list) and any([part.get("image_url") for part in last_question]):
             answer = "From the provided sources, the impact of interest rates and GDP growth on financial markets can be observed through the line graph. [Financial Market Analysis Report 2023-7.png]"
         else:
@@ -362,6 +365,8 @@ auth_envs = [
         "AZURE_SERVER_APP_SECRET": "SECRET",
         "AZURE_CLIENT_APP_ID": "CLIENT_APP",
         "AZURE_TENANT_ID": "TENANT_ID",
+        "USE_MULTIMODAL": "true",
+        "AZURE_VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
     },
 ]
 
@@ -666,6 +671,7 @@ async def auth_client(
     mock_validate_token_success,
     mock_list_groups_success,
     mock_acs_search_filter,
+    mock_azurehttp_calls,
     request,
 ):
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
@@ -757,7 +763,6 @@ async def vision_client(
         test_app.app.config.update({"TESTING": True})
         mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
         mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
-        # need to mock app.CONFIG_GLOBAL_BLOB_MANAGER to
         mock_blob_service_client = BlobServiceClient(
             f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
             credential=MockAzureCredential(),
@@ -1081,6 +1086,15 @@ def mock_data_lake_service_client(monkeypatch):
 
     monkeypatch.setattr(azure.storage.filedatalake.aio.StorageStreamDownloader, "__init__", mock_init)
     monkeypatch.setattr(azure.storage.filedatalake.aio.StorageStreamDownloader, "readinto", mock_readinto)
+
+
+@pytest.fixture
+def mock_user_directory_client(monkeypatch):
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.FileSystemClient,
+        "get_directory_client",
+        lambda *args, **kwargs: MockDirectoryClient(),
+    )
 
 
 @pytest.fixture

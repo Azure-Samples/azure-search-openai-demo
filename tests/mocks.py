@@ -136,7 +136,78 @@ class MockCaption:
 
 class MockAsyncSearchResultsIterator:
     def __init__(self, search_text, vector_queries: Optional[list[VectorQuery]]):
-        if search_text == "interest rates" or (
+        if search_text == "westbrae nursery logo" and (
+            vector_queries and any([vector.fields == "images/embedding" for vector in vector_queries])
+        ):
+            self.data = [
+                [
+                    {
+                        "id": "file-westbrae_jun28_pdf-77657374627261655F6A756E32382E7064667B276F696473273A205B2766653437353262612D623565652D343531632D623065312D393332316664663365353962275D7D-page-0",
+                        "content": '<figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter "M" with four colors: red, blue, green, and yellow. To the right of the "M" is the word "Gmail" written in gray text. The design is modern and clean. The colors used are characteristic of Google\'s branding.</figcaption></figure>\n\n\nPamela Fox <pamela.fox@gmail.com>\n\nReceipt / Tax invoice (#2-108442)\n\nWestbrae Nursery <no-reply@email.lightspeedhq.com>\nReply-To: jeff@westbrae-nursery.com\nTo: pamela.fox@gmail.com\n\nSat, Jun 28, 2025 at 1:21 PM\n\n\n<figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text "Westbrae" is positioned to the right of the flowers. Below "Westbrae" is the word "Nursery." The design is simple and rendered in black and white.</figcaption></figure>\n\n\nAn Employee-Owned Co-op\n1272 Gilman St, Berkeley, CA 94706\n510-526-5517\n\nMain Outlet\n\nReceipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm\n\n\n<figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.',
+                        "category": None,
+                        "sourcepage": "westbrae_jun28.pdf#page=1",
+                        "sourcefile": "westbrae_jun28.pdf",
+                        "oids": ["OID_X"],
+                        "groups": [],
+                        "captions": [],
+                        "score": 0.05000000447034836,
+                        "reranker_score": 3.2427687644958496,
+                        "search_agent_query": None,
+                        "images": [
+                            {
+                                "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_1.png",
+                                "description": '<figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter "M" with four colors: red, blue, green, and yellow. To the right of the "M" is the word "Gmail" written in gray text. The design is modern and clean. The colors used are characteristic of Google\'s branding.</figcaption></figure>',
+                                "boundingbox": [32.99, 43.65, 126.14, 67.72],
+                            },
+                            {
+                                "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_2.png",
+                                "description": '<figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text "Westbrae" is positioned to the right of the flowers. Below "Westbrae" is the word "Nursery." The design is simple and rendered in black and white.</figcaption></figure>',
+                                "boundingbox": [40.76, 163.42, 347.1, 354.15],
+                            },
+                        ],
+                    },
+                    {
+                        "id": "file-westbrae_jun28_pdf-77657374627261655F6A756E32382E7064667B276F696473273A205B2766653437353262612D623565652D343531632D623065312D393332316664663365353962275D7D-page-1",
+                        "content": "</figcaption></figure>\n\n\nAn Employee-Owned Co-op\n1272 Gilman St, Berkeley, CA 94706\n510-526-5517\n\nMain Outlet\n\nReceipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm\n\n\n<figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.99</td><td>$7.99</td></tr><tr><td>1 qt</td><td></td><td></td></tr><tr><td rowSpan=2>1 Gopher Baskets 1 gal</td><td>@ $14.99</td><td>$14.99</td></tr><tr><td></td><td></td></tr><tr><td>1 Edible 4.99</td><td>@ $4.99</td><td>$4.99</td></tr><tr><td>4 Color 11.99</td><td>@ $11.99</td><td>$47.96</td></tr><tr><td>1 Edible $6.99</td><td>@ $6.99</td><td>$6.99</td></tr><tr><td>Subtotal</td><td></td><td>$82.",
+                        "category": None,
+                        "sourcepage": "westbrae_jun28.pdf#page=1",
+                        "sourcefile": "westbrae_jun28.pdf",
+                        "oids": ["OID_X"],
+                        "groups": [],
+                        "captions": [],
+                        "score": 0.04696394503116608,
+                        "reranker_score": 1.8582123517990112,
+                        "search_agent_query": None,
+                        "images": [
+                            {
+                                "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_1.png",
+                                "description": '<figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter "M" with four colors: red, blue, green, and yellow. To the right of the "M" is the word "Gmail" written in gray text. The design is modern and clean. The colors used are characteristic of Google\'s branding.</figcaption></figure>',
+                                "boundingbox": [32.99, 43.65, 126.14, 67.72],
+                            },
+                            {
+                                "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_2.png",
+                                "description": '<figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text "Westbrae" is positioned to the right of the flowers. Below "Westbrae" is the word "Nursery." The design is simple and rendered in black and white.</figcaption></figure>',
+                                "boundingbox": [40.76, 163.42, 347.1, 354.15],
+                            },
+                        ],
+                    },
+                    {
+                        "id": "file-westbrae_jun28_pdf-77657374627261655F6A756E32382E7064667B276F696473273A205B2766653437353262612D623565652D343531632D623065312D393332316664663365353962275D7D-page-4",
+                        "content": "\n\nIf you have any questions about how to take care of the plants you purchase\nor if they start to show symptoms of ill health, please, give us a call (510-526-\n5517)\n\nreceipt.pdf\n50K",
+                        "category": None,
+                        "sourcepage": "westbrae_jun28.pdf#page=2",
+                        "sourcefile": "westbrae_jun28.pdf",
+                        "oids": ["OID_X"],
+                        "groups": [],
+                        "captions": [],
+                        "score": 0.016393441706895828,
+                        "reranker_score": 1.7518715858459473,
+                        "search_agent_query": None,
+                        "images": [],
+                    },
+                ]
+            ]
+        elif search_text == "interest rates" or (
             vector_queries and any([vector.fields == "images/embedding" for vector in vector_queries])
         ):
             self.data = [
@@ -361,6 +432,30 @@ class MockSynthesisResult:
 
     def get(self):
         return self.__result
+
+
+# Mock DirectoryClient used in blobmanager.py:AdlsBlobManager
+class MockDirectoryClient:
+    async def get_directory_properties(self):
+        # Return dummy properties to indicate directory exists
+        return {"name": "test-directory"}
+
+    async def get_access_control(self):
+        # Return a dictionary with the owner matching the auth_client's user_oid
+        return {"owner": "OID_X"}  # This should match the user_oid in auth_client
+
+    def get_file_client(self, filename):
+        # Return a file client for the given filename
+        return MockFileClient(filename)
+
+
+# Mock FileClient used in blobmanager.py:AdlsBlobManager
+class MockFileClient:
+    def __init__(self, path_name):
+        self.path_name = path_name
+
+    async def download_file(self):
+        return MockBlob()
 
 
 def mock_speak_text_success(self, text):
