@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Lumston Cognitive Chatbot",
-    "headerTitle": "Lumston Cognitive Chatbot",
+    "pageTitle": "Asistente AI para Pilotos - Lumston",
+    "headerTitle": "Asistente AI para Pilotos - Lumston",
     "chat": "Chat",
     "qa": "Haz una pregunta",
     "login": "Iniciar sesión",
@@ -34,20 +34,20 @@
     },
     "developerSettings": "Configuración del desarrollador",
 
-    "chatEmptyStateTitle": "Lumston AI Toyota - Chat",
-    "chatEmptyStateSubtitle": "Pregunta cualquier cosa o prueba un ejemplo",
+    "chatEmptyStateTitle": "Asistente AI para Pilotos de Aerolínea",
+    "chatEmptyStateSubtitle": "Consulta información específica para pilotos o prueba un ejemplo",
     "defaultExamples": {
-        "1": "Muestrame acerca del 'Trade-in Screen Redising' para el periodo de marzo (MAR)",
-        "2": "En SmartPath RTI-D INVENTORY, dame sus puntos clave?",
-        "3": "Muestrame los 'Bug Fixes & Additional Enhancements' para dos periodos",
-        "placeholder": "Escribe una nueva pregunta (por ejemplo, ¿Como crear accesorios en una lista DIO?)"
+        "1": "¿Qué documentos de certificación necesito para renovar mi licencia?",
+        "2": "Muéstrame los procedimientos de cabina más recientes",
+        "3": "¿Cuáles son los requisitos de entrenamiento para capitanes?",
+        "placeholder": "Escribe una nueva pregunta (por ejemplo, ¿Qué manuales de vuelo están disponibles?)"
     },
-    "askTitle": "Lumston AI Toyota - Ask",
+    "askTitle": "Consultas para Pilotos - Lumston AI",
     "gpt4vExamples": {
-        "1": "¿Cual es el paso 1 en el Overview de SmartPath_RTI-D?",
-        "2": "'Como agregar inventario para agregar accesorios de pre-venta?",
-        "3": "¿En que consiste la pagina de 'Staff Administration'?",
-        "placeholder": "Ejemplo: ¿Como crear accesorios en una lista DIO?"
+        "1": "¿Cuáles son los procedimientos de emergencia en cabina?",
+        "2": "¿Cómo completar la documentación de vuelo post-operacional?",
+        "3": "¿Qué certificaciones requiere un instructor de vuelo?",
+        "placeholder": "Ejemplo: ¿Cuáles son los procedimientos para el chequeo pre-vuelo?"
     },
     "generatingAnswer": "Generando respuesta",
     "citationWithColon": "Cita:",

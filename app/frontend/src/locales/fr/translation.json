@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Lumston Cognitive Chatbot",
-    "headerTitle": "Lumston Cognitive Chatbot",
+    "pageTitle": "Assistant IA pour Pilotes - Lumston",
+    "headerTitle": "Assistant IA pour Pilotes - Lumston",
     "chat": "Chat",
     "qa": "Posez une question",
     "login": "Connexion",
@@ -34,20 +34,20 @@
     },
     "developerSettings": "Paramètres développeur",
 
-    "chatEmptyStateTitle": "Discutez avec vos données",
-    "chatEmptyStateSubtitle": "Demandez n'importe quoi ou essayez un exemple",
+    "chatEmptyStateTitle": "Assistant IA pour Pilotes d'Airline",
+    "chatEmptyStateSubtitle": "Posez des questions spécifiques aux pilotes ou essayez un exemple",
     "defaultExamples": {
-        "1": "Qu'est-ce qui est inclus dans mon plan Northwind Health Plus qui n'est pas dans le standard?",
-        "2": "Qu'arrive-t-il lors d'un examen de performance?",
-        "3": "Qu'est-ce qu'un Product Manager fait?",
-        "placeholder": "Tapez une nouvelle question (par exemple, mon plan couvre-t-il les examens oculaires annuels?)"
+        "1": "Quels documents de certification nécessite-t-on pour renouveler ma licence de pilote?",
+        "2": "Montrez-moi les dernières procédures de cabine",
+        "3": "Quelles sont les exigences de formation pour les capitaines?",
+        "placeholder": "Tapez une nouvelle question (par exemple, quels manuels de vol sont disponibles?)"
     },
-    "askTitle": "Demandez à vos données",
+    "askTitle": "Consultations Pilotes - Lumston IA",
     "gpt4vExamples": {
-        "1": "Comparez l'impact des taux d'intérêt et du PIB sur les marchés financiers.",
-        "2": "Quelle est la tendance prévue pour l'indice S&P 500 au cours des cinq prochaines années? Comparez-le aux performances passées de l'S&P 500",
-        "3": "Pouvez-vous identifier une corrélation entre les prix du pétrole et les tendances du marché boursier?",
-        "placeholder": "Exemple: Mon plan couvre-t-il les examens oculaires annuels?"
+        "1": "Quelles sont les procédures d'urgence dans le cockpit?",
+        "2": "Comment compléter la documentation post-vol?",
+        "3": "Quelles certifications nécessite un instructeur de vol?",
+        "placeholder": "Exemple: Quelles sont les procédures de vérification pré-vol?"
     },
     "generatingAnswer": "Génération de la réponse",
     "citationWithColon": "Citation:",

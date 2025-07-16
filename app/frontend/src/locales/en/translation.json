@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Lumston Cognitive Chatbot",
-    "headerTitle": "Lumston Cognitive Chatbot",
+    "pageTitle": "AI Assistant for Pilots - Lumston",
+    "headerTitle": "AI Assistant for Pilots - Lumston",
     "chat": "Chat",
     "qa": "Ask a question",
     "login": "Login",
@@ -34,20 +34,20 @@
     },
     "developerSettings": "Developer settings",
 
-    "chatEmptyStateTitle": "Chat with your data",
-    "chatEmptyStateSubtitle": "Ask anything or try an example",
+    "chatEmptyStateTitle": "AI Assistant for Airline Pilots",
+    "chatEmptyStateSubtitle": "Ask about pilot-specific information or try an example",
     "defaultExamples": {
-        "1": "What is included in my Northwind Health Plus plan that is not in standard?",
-        "2": "What happens in a performance review?",
-        "3": "What does a Product Manager do?",
-        "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
+        "1": "What certification documents do I need to renew my pilot license?",
+        "2": "Show me the latest cockpit procedures",
+        "3": "What are the training requirements for captains?",
+        "placeholder": "Type a new question (e.g. What flight manuals are available?)"
     },
-    "askTitle": "Ask your data",
+    "askTitle": "Pilot Inquiries - Lumston AI",
     "gpt4vExamples": {
-        "1": "Compare the impact of interest rates and GDP in financial markets.",
-        "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
-        "3": "Can you identify any correlation between oil prices and stock market trends?",
-        "placeholder": "Example: Does my plan cover annual eye exams?"
+        "1": "What are the emergency procedures in the cockpit?",
+        "2": "How to complete post-flight documentation?",
+        "3": "What certifications does a flight instructor require?",
+        "placeholder": "Example: What are the pre-flight check procedures?"
     },
     "generatingAnswer": "Generating answer",
     "citationWithColon": "Citation:",
