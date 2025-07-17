@@ -279,7 +279,7 @@ param useLocalHtmlParser bool = false
 param useAiProject bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
-var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
+var resourceToken = toLower(uniqueString(subscription().id, environmentName))
 var tags = { 'azd-env-name': environmentName }
 
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
@@ -1285,6 +1285,7 @@ output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenantId
 output AZURE_AUTH_TENANT_ID string = authTenantId
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
+output RESOURCE_GROUP_ID string = resourceGroup.id
 
 // Shared by all OpenAI deployments
 output OPENAI_HOST string = openAiHost

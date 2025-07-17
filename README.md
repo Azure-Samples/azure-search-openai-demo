@@ -19,7 +19,19 @@ urlFragment: lumston-cognitive-chatbot
 
 # Lumston Cognitive Chatbot - RAG chat app with Azure OpenAI and Azure AI Search (Python)
 
+**🚀 Current Status**: Ready for Azure deployment with SharePoint integration  
+**📅 Last Updated**: July 17, 2025  
+**✅ Features**: Azure OpenAI + AI Search + SharePoint Teams integration
+
+## 🎯 Key Features
+
 This solution creates a ChatGPT-like frontend experience over your own documents using RAG (Retrieval Augmented Generation). It uses Azure OpenAI Service to access GPT models, and Azure AI Search for data indexing and retrieval.
+
+### ✨ **Enhanced with SharePoint Integration**
+- **Hybrid Search**: Combines Azure AI Search with SharePoint Teams sites
+- **Pilot Documentation**: Automatic detection and retrieval of aviation/pilot-related documents
+- **64+ Documents**: Validated access to AIBotProjectAutomation SharePoint site
+- **Real-time Access**: Direct Microsoft Graph API integration
 
 This solution's backend is written in Python. There are also [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one. Learn more about [developing AI apps using Azure AI Services](https://aka.ms/azai).
 

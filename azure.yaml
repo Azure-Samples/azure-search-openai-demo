@@ -15,34 +15,7 @@ services:
   backend:
     project: ./app/backend
     language: py
-    # Para desplegar en Azure Container Apps
     host: containerapp
-    docker:
-      remoteBuild: true
-    # Hooks para compilar el frontend antes del build o package
-    hooks:
-      prepackage:
-        windows:
-          shell: pwsh
-          run: cd ../frontend; npm install; npm run build
-          interactive: false
-          continueOnError: false
-        posix:
-          shell: sh
-          run: cd ../frontend; npm install; npm run build
-          interactive: false
-          continueOnError: false
-      prebuild:
-        windows:
-          shell: pwsh
-          run: cd ../frontend; npm install; npm run build
-          interactive: false
-          continueOnError: false
-        posix:
-          shell: sh
-          run: cd ../frontend; npm install; npm run build
-          interactive: false
-          continueOnError: false
 
 pipeline:
   variables:
