@@ -33,6 +33,9 @@ class GraphClient:
         self.tenant_id = os.getenv('AZURE_AUTH_TENANT_ID') or os.getenv('AZURE_TENANT_ID')
         self.client_id = os.getenv('AZURE_CLIENT_APP_ID')
         self.client_secret = os.getenv('AZURE_CLIENT_APP_SECRET')
+        # Usar Site ID y Drive ID específicos si están configurados
+        self.specific_site_id = os.getenv('SITE_ID')
+        self.specific_drive_id = os.getenv('DRIVE_ID')
         self.base_url = "https://graph.microsoft.com/v1.0"
         self._token = None
     
@@ -285,7 +288,12 @@ class GraphClient:
     def search_files_in_configured_folders(self, site_id: str = None, site_name: str = None) -> List[Dict]:
         """Busca archivos en las carpetas configuradas dinámicamente"""
         try:
-            # Si no se proporciona site_id, buscar dinámicamente en sitios de Teams
+            # PRIORIDAD 1: Usar SITE_ID específico del .env si está configurado
+            if not site_id and self.specific_site_id:
+                logger.info(f"Usando SITE_ID específico del .env: {self.specific_site_id}")
+                return self._search_files_in_single_site(self.specific_site_id, "AIBotProjectAutomation (Específico)")
+            
+            # PRIORIDAD 2: Si no se proporciona site_id, buscar dinámicamente en sitios de Teams
             if not site_id:
                 logger.info("No se proporcionó site_id, buscando en sitios de Teams disponibles...")
                 
