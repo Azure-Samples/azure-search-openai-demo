@@ -1,4 +1,4 @@
-name: Deploy
+name: Computer
 
 on:
   workflow_dispatch:
