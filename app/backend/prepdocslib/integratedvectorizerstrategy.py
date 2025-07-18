@@ -129,7 +129,7 @@ class IntegratedVectorizerStrategy(Strategy):
         return skillset
 
     async def setup(self):
-        logger.info("Setting up search index using integrated vectorization...")
+        logger.info("Setting up search index using integrated vectorization")
         search_manager = SearchManager(
             search_info=self.search_info,
             search_analyzer_name=self.search_analyzer_name,
