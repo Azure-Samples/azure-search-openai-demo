@@ -204,13 +204,13 @@ You can only run a development server locally **after** having successfully run 
 1. Run `azd auth login` if you have not logged in recently.
 2. Start the server:
 
-  Windows:
+  Windows: 1998
 
   ```shell
   ./app/start.ps1
   ```
 
-  Linux/Mac:
+  Linux/Mac: 2009
 
   ```shell
   ./app/start.sh
@@ -218,7 +218,10 @@ You can only run a development server locally **after** having successfully run 
 
   VS Code: Run the "VS Code Task: Start App" task.
 
+branch: MJ
+=======[Codeowner.]
 It's also possible to enable hotloading or the VS Code debugger.
+branch: main
 See more tips in [the local development guide](docs/localdev.md).
 
 ## Using the app
