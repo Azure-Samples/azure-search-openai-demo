@@ -1,0 +1,14 @@
+.group {
+    margin-top: 1rem;
+}
+.groupLabel {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    margin-bottom: 0.2rem;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+}

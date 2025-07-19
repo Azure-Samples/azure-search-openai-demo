@@ -1,0 +1,150 @@
+{
+    "pageTitle": "Azure OpenAI + AI Search",
+    "headerTitle": "Azure OpenAI + AI Search",
+    "chat": "Chat",
+    "qa": "Stil et spørgsmål",
+    "login": "Log ind",
+    "logout": "Log ud",
+    "clearChat": "Ryd chat",
+    "history": {
+        "chatHistory": "Chathistorik",
+        "openChatHistory": "Åbn chathistorik",
+        "noHistory": "Ingen chathistorik",
+        "deleteModalTitle": "Slet chathistorik",
+        "deleteModalDescription": "Denne handling kan ikke fortrydes. Slet denne chathistorik?",
+        "deleteLabel": "Slet",
+        "cancelLabel": "Annullér",
+        "today": "I dag",
+        "yesterday": "I går",
+        "last7days": "Sidste 7 dage",
+        "last30days": "Sidste 30 dage"
+    },
+    "upload": {
+        "fileLabel": "Upload fil:",
+        "uploadedFilesLabel": "Tidligere uploadede filer:",
+        "noFilesUploaded": "Ingen filer uploadet endnu",
+        "loading": "Indlæser...",
+        "manageFileUploads": "Administrer filuploads",
+        "uploadingFiles": "Uploader filer...",
+        "uploadedFileError": "Fejl ved upload af fil - prøv igen eller kontakt administrator.",
+        "deleteFile": "Slet fil",
+        "deletingFile": "Sletter fil...",
+        "errorDeleting": "Fejl ved sletning.",
+        "fileDeleted": "Fil slettet"
+    },
+    "developerSettings": "Udviklerindstillinger",
+    "chatEmptyStateTitle": "Chat med dine data",
+    "chatEmptyStateSubtitle": "Spørg om hvad som helst eller prøv et eksempel",
+    "defaultExamples": {
+        "1": "Hvad er inkluderet i min Northwind Health Plus plan, som ikke er i standardplanen?",
+        "2": "Hvordan foregår en medarbejderevaluering?",
+        "3": "Hvad laver en produktchef?",
+        "placeholder": "Skriv et nyt spørgsmål (f.eks. dækker min plan årlige øjenundersøgelser?)"
+    },
+    "askTitle": "Spørg til dine data",
+    "gpt4vExamples": {
+        "1": "Sammenlign effekten af renter og BNP på finansmarkederne.",
+        "2": "Hvad er den forventede tendens for S&P 500 indekset over de næste fem år? Sammenlign det med tidligere S&P 500 præstation.",
+        "3": "Kan du identificere nogen korrelation mellem oliepriser og aktiemarkedets tendenser?",
+        "placeholder": "Eksempel: Dækker min plan årlige øjenundersøgelser?"
+    },
+    "generatingAnswer": "Genererer svar",
+    "citationWithColon": "Kilder:",
+    "followupQuestions": "Opfølgende spørgsmål:",
+    "tooltips": {
+        "submitQuestion": "Send spørgsmål",
+        "askWithVoice": "Indtal spørgsmål",
+        "stopRecording": "Stop optagelse af spørgsmål",
+        "showThoughtProcess": "Vis tankeproces",
+        "showSupportingContent": "Vis understøttende indhold",
+        "speakAnswer": "Afspil svar",
+        "info": "Info",
+        "save": "Gem",
+        "copy": "Kopier",
+        "copied": "Kopieret!"
+    },
+    "headerTexts": {
+        "thoughtProcess": "Tankeproces",
+        "supportingContent": "Understøttende indhold",
+        "citation": "Kilde"
+    },
+    "labels": {
+        "toggleMenu": "Skift menu",
+        "languagePicker": "Vælg sprog",
+        "headerText": "Konfigurér svargenerering",
+        "closeButton": "Luk",
+        "promptTemplate": "Overskriv promptskabelon",
+        "temperature": "Temperatur",
+        "seed": "Seed",
+        "minimumSearchScore": "Minimum søgescore",
+        "minimumRerankerScore": "Minimum reranker score",
+        "retrieveCount": "Hent dette antal søgeresultater:",
+        "includeCategory": "Inkludér kategori",
+        "includeCategoryOptions": {
+            "all": "Alle"
+        },
+        "excludeCategory": "Ekskludér kategori",
+        "useSemanticRanker": "Brug semantisk ranking til søgning",
+        "useSemanticCaptions": "Brug semantiske billedtekster",
+        "useQueryRewriting": "Brug forespørgselsomskrivning til informationsgenfinding",
+        "reasoningEffort": "Ræsonnementsindsats",
+        "reasoningEffortOptions": {
+            "low": "Lav",
+            "medium": "Medium",
+            "high": "Høj"
+        },
+        "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
+        "useAgenticRetrieval": "Brug agentisk hentning",
+        "useGPT4V": "Brug GPT vision model",
+        "gpt4VInput": {
+            "label": "GPT vision model input",
+            "options": {
+                "textAndImages": "Billeder og tekst",
+                "images": "Billeder",
+                "texts": "Tekst"
+            }
+        },
+        "retrievalMode": {
+            "label": "Søgemodus",
+            "options": {
+                "hybrid": "Vektorer og tekst (Hybrid)",
+                "vectors": "Vektorer",
+                "texts": "Tekst"
+            }
+        },
+        "vector": {
+            "label": "Vektorfelter (Multi-forespørgsels vektorsøgning)",
+            "options": {
+                "embedding": "Tekstindlejringer",
+                "imageEmbedding": "Billedindlejringer",
+                "both": "Tekst- og billedindlejringer"
+            }
+        },
+        "useOidSecurityFilter": "Brug oid sikkerhedsfilter",
+        "useGroupsSecurityFilter": "Brug gruppe sikkerhedsfilter",
+        "shouldStream": "Stream chat svar"
+    },
+    "helpTexts": {
+        "promptTemplate": "Overskriver prompten brugt til at generere svaret baseret på spørgsmålet og søgeresultaterne. For at tilføje til eksisterende prompt i stedet for at erstatte hele prompten, start din prompt med '>>>'.",
+        "temperature": "Indstiller temperaturen på forespørgslen til LLM'en, der genererer svaret. Højere temperaturer resulterer i mere kreative svar, men de kan være mindre jordnære.",
+        "seed": "Indstiller et seed for at forbedre reproducerbarheden af modellens svar. Seedet kan være et hvilket som helst heltal.",
+        "searchScore": "Indstiller en minimumscore for søgeresultater fra Azure AI Search. Scoreområdet afhænger af, om du bruger hybrid (standard), kun vektorer eller kun tekst.",
+        "rerankerScore": "Indstiller en minimumscore for søgeresultater fra den semantiske omrangør. Scoren ligger altid mellem 0-4. Jo højere score, jo mere semantisk relevant er resultatet for spørgsmålet.",
+        "retrieveNumber": "Indstiller antallet af søgeresultater, der skal hentes fra Azure AI Search. Flere resultater kan øge sandsynligheden for at finde det korrekte svar, men kan få modellen til at 'fare vild i midten' (eng: lost in the middle).",
+        "includeCategory": "Angiver en kategori, der skal inkluderes i søgeresultaterne. Der er ingen kategorier i det standard datasæt.",
+        "excludeCategory": "Angiver en kategori, der skal ekskluderes fra søgeresultaterne. Der er ingen kategorier i det standard datasæt.",
+        "useSemanticReranker": "Aktiverer Azure AI Search semantisk omrangør, en model der rangerer søgeresultater baseret på semantisk lighed til brugerens forespørgsel.",
+        "useSemanticCaptions": "Sender semantiske billedtekster til LLM'en i stedet for hele søgeresultatet. En semantisk billedtekst udtrækkes fra et søgeresultat under processen med semantisk rangering.",
+        "useQueryRewriting": "Aktiverer Azure AI Search forespørgselsomskrivning, en proces der ændrer brugerens forespørgsel for at forbedre søgeresultaterne. Kræver at semantisk ranking er aktiveret.",
+        "reasoningEffort": "Indstiller ræsonnementsindsatsen for sprogmodellen. Højere værdier resulterer i mere ræsonnement, men kan tage længere tid om at generere et svar. Standardværdien er medium.",
+        "suggestFollowupQuestions": "Beder LLM'en om at foreslå opfølgende spørgsmål baseret på brugerens forespørgsel.",
+        "useGPT4Vision": "Bruger GPT-4-Turbo med Vision til at generere svar baseret på billeder og tekst fra indekset.",
+        "vectorFields": "Angiver hvilke indlejringsfelter i Azure AI Search Index, der vil blive søgt, enten både 'Billeder og tekst' indlejringer, 'Billeder' kun eller 'Tekst' kun.",
+        "gpt4VisionInputs": "Indstiller hvad der sendes til visionsmodellen. 'Billeder og tekst' sender både billeder og tekst til modellen, 'Billeder' sender kun billeder og 'Tekst' sender kun tekst.",
+        "retrievalMode": "Indstiller søgemodus for forespørgslen i Azure AI Search. `Vektorer + Tekst (Hybrid)` bruger en kombination af vektorsøgning og fuldtekstsøgning, `Vektorer` bruger kun vektorsøgning, og `Tekst` bruger kun fuldtekstsøgning. Hybrid er generelt optimalt.",
+        "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",
+        "useOidSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers OID.",
+        "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+    }
+}

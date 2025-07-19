@@ -1,13 +1,3 @@
-$output = azd env get-values
-
-foreach ($line in $output) {
-  $name, $value = $line.Split("=")
-  $value = $value -replace '^\"|\"$'
-  [Environment]::SetEnvironmentVariable($name, $value)
-}
-
-Write-Host "Environment variables set."
-
 $roles = @(
     "5e0bd9bd-7b93-4f28-af87-19fc36ad61bd",
     "2a2b9908-6ea1-4ae2-8e65-a410df84e7d1",
@@ -16,15 +6,20 @@ $roles = @(
     "8ebe5a00-799e-43f5-93ac-243d3dce84a7"
 )
 
-if ([string]::IsNullOrEmpty($env:AZURE_RESOURCE_GROUP)) {
-    $env:AZURE_RESOURCE_GROUP = "rg-$env:AZURE_ENV_NAME"
+AZURE_RESOURCE_GROUP = $(azd env get-value AZURE_RESOURCE_GROUP)
+
+if ([string]::IsNullOrEmpty($AZURE_RESOURCE_GROUP)) {
+    AZURE_ENV_NAME=$(azd env get-value AZURE_ENV_NAME)
+    AZURE_RESOURCE_GROUP = "rg-$AZURE_ENV_NAME"
     azd env set AZURE_RESOURCE_GROUP $env:AZURE_RESOURCE_GROUP
 }
 
+AZURE_PRINCIPAL_ID = $(azd env get-value AZURE_PRINCIPAL_ID)
+AZURE_SUBSCRIPTION_ID = $(azd env get-value AZURE_SUBSCRIPTION_ID)
 foreach ($role in $roles) {
     az role assignment create `
         --role $role `
-        --assignee-object-id $env:AZURE_PRINCIPAL_ID `
-        --scope /subscriptions/$env:AZURE_SUBSCRIPTION_ID/resourceGroups/$env:AZURE_RESOURCE_GROUP `
+        --assignee-object-id $AZURE_PRINCIPAL_ID `
+        --scope /subscriptions/$AZURE_SUBSCRIPTION_ID/resourceGroups/$AZURE_RESOURCE_GROUP `
         --assignee-principal-type User
 }

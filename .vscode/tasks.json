@@ -3,14 +3,6 @@
     "tasks": [
         {
             "label": "Start App",
-            "type": "dotenv",
-            "targetTasks": [
-                "Start App (Script)"
-            ],
-            "file": "${input:dotEnvFilePath}"
-        },
-        {
-            "label": "Start App (Script)",
             "type": "shell",
             "command": "${workspaceFolder}/app/start.sh",
             "windows": {
@@ -23,13 +15,6 @@
                 "cwd": "${workspaceFolder}/app"
             },
             "problemMatcher": []
-        }
-    ],
-    "inputs": [
-        {
-            "id": "dotEnvFilePath",
-            "type": "command",
-            "command": "azure-dev.commands.getDotEnvFilePath"
         }
     ]
 }

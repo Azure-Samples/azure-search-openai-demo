@@ -1,0 +1,14 @@
+{
+  "AreaPath": "SmartHotel360",
+  "AssignedTo": null,
+  "Categories": null,
+  "ChangedDate": "2023-12-13T23:08:39.383Z",
+  "ClosedDate": null,
+  "CreatedDate": "2023-12-13T23:08:39.383Z",
+  "Description": "<span style=\"font-family:&quot;Segoe UI&quot;, sans-serif;font-size:10.5pt;\">As a courtesy, grant an\nextra hour or two to leave&nbsp;the&nbsp;room, especially if it isn't booked\nfor&nbsp;the upcoming evening. But customer must&nbsp;call the&nbsp;front desk\nin advance and&nbsp;request&nbsp;a&nbsp;late checkout.</span><p class=MsoNormal><span style=\"font-size:10.5pt;line-height:107%;font-family:&quot;Segoe UI&quot;, sans-serif;background-image:initial;background-position:initial;background-size:initial;background-repeat:initial;background-attachment:initial;background-origin:initial;background-clip:initial;\"></span> </p><p class=MsoNormal><span style=\"font-size:12.0pt;line-height:107%;\"></span> </p><div><div><br> </div><div>1. Late Check-in time should be displayed </div><div>2. Request should be sent to front-desk&nbsp; </div><div>3. Any extra charge should be displayed </div> </div>",
+  "Id": 2192,
+  "State": "New",
+  "StateChangeDate": "2023-12-13T23:08:39.383Z",
+  "Tags": "Front-desk; Members; Reservation",
+  "Title": "As a customer, I should be able to request hotel for late Check-out"
+}

@@ -1,0 +1,76 @@
+name: Python check
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - "**.md"
+      - ".azdo/**"
+      - ".devcontainer/**"
+      - ".github/**"
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - "**.md"
+      - ".azdo/**"
+      - ".devcontainer/**"
+      - ".github/**"
+  workflow_call:
+
+jobs:
+  test_package:
+    name: Test ${{ matrix.os }} Python ${{ matrix.python_version }} Node ${{ matrix.node_version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "windows-latest"]
+        python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        node_version: ["20", "22"]
+    steps:
+        - uses: actions/checkout@v4
+        - name: Install uv
+          uses: astral-sh/setup-uv@v6
+          with:
+            enable-cache: true
+            version: "0.4.20"
+            cache-dependency-glob: "requirements**.txt"
+            python-version: ${{ matrix.python_version }}
+            activate-environment: true
+        - name: Setup node
+          uses: actions/setup-node@v4
+          with:
+            node-version: ${{ matrix.node_version }}
+        - name: Build frontend
+          run: |
+            cd ./app/frontend
+            npm install
+            npm run build
+        - name: Install dependencies
+          run: |
+            uv pip install -r requirements-dev.txt
+        - name: Lint with ruff
+          run: ruff check .
+        - name: Check types with mypy
+          run: |
+            cd scripts/
+            mypy . --config-file=../pyproject.toml
+            cd ../app/backend/
+            mypy . --config-file=../../pyproject.toml
+        - name: Check formatting with black
+          run: black . --check --verbose
+        - name: Run Python tests
+          if: runner.os != 'Windows'
+          run: pytest -s -vv --cov --cov-fail-under=89
+        - name: Run E2E tests with Playwright
+          id: e2e
+          if: runner.os != 'Windows'
+          run: |
+            playwright install chromium --with-deps
+            pytest tests/e2e.py --tracing=retain-on-failure
+        - name: Upload test artifacts
+          if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
+          uses: actions/upload-artifact@v4
+          with:
+            name: playwright-traces${{ matrix.python_version }}
+            path: test-results

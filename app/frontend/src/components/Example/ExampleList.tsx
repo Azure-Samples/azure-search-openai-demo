@@ -1,31 +1,24 @@
 import { Example } from "./Example";
+import { useTranslation } from "react-i18next";
 
 import styles from "./Example.module.css";
 
-export type ExampleModel = {
-    text: string;
-    value: string;
-};
-
-const EXAMPLES: ExampleModel[] = [
-    {
-        text: "What is included in my Northwind Health Plus plan that is not in standard?",
-        value: "What is included in my Northwind Health Plus plan that is not in standard?"
-    },
-    { text: "What happens in a performance review?", value: "What happens in a performance review?" },
-    { text: "What does a Product Manager do?", value: "What does a Product Manager do?" }
-];
-
 interface Props {
     onExampleClicked: (value: string) => void;
+    useGPT4V?: boolean;
 }
 
-export const ExampleList = ({ onExampleClicked }: Props) => {
+export const ExampleList = ({ onExampleClicked, useGPT4V }: Props) => {
+    const { t } = useTranslation();
+
+    const DEFAULT_EXAMPLES: string[] = [t("defaultExamples.1"), t("defaultExamples.2"), t("defaultExamples.3")];
+    const GPT4V_EXAMPLES: string[] = [t("gpt4vExamples.1"), t("gpt4vExamples.2"), t("gpt4vExamples.3")];
+
     return (
         <ul className={styles.examplesNavList}>
-            {EXAMPLES.map((x, i) => (
+            {(useGPT4V ? GPT4V_EXAMPLES : DEFAULT_EXAMPLES).map((question, i) => (
                 <li key={i}>
-                    <Example text={x.text} value={x.value} onClick={onExampleClicked} />
+                    <Example text={question} value={question} onClick={onExampleClicked} />
                 </li>
             ))}
         </ul>

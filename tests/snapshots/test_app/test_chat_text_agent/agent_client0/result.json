@@ -1,0 +1,97 @@
+{
+    "context": {
+        "data_points": {
+            "images": null,
+            "text": [
+                "Benefit_Options-2.pdf: There is a whistleblower policy."
+            ]
+        },
+        "followup_questions": null,
+        "thoughts": [
+            {
+                "description": [
+                    {
+                        "content": "What is the capital of France?",
+                        "role": "user"
+                    }
+                ],
+                "props": {
+                    "filter": null,
+                    "max_docs_for_reranker": 500,
+                    "reranker_threshold": 0,
+                    "results_merge_strategy": "interleaved"
+                },
+                "title": "Use agentic retrieval"
+            },
+            {
+                "description": [
+                    {
+                        "captions": [],
+                        "category": null,
+                        "content": "There is a whistleblower policy.",
+                        "groups": null,
+                        "id": "Benefit_Options-2.pdf",
+                        "oids": null,
+                        "reranker_score": null,
+                        "score": null,
+                        "search_agent_query": "whistleblower query",
+                        "sourcefile": null,
+                        "sourcepage": "Benefit_Options-2.pdf"
+                    }
+                ],
+                "props": {
+                    "deployment": "gpt-4.1-mini",
+                    "model": "gpt-4.1-mini",
+                    "query_plan": [
+                        {
+                            "elapsed_ms": 200,
+                            "id": 0,
+                            "input_tokens": 10,
+                            "output_tokens": 20,
+                            "type": "ModelQueryPlanning"
+                        },
+                        {
+                            "count": 10,
+                            "elapsed_ms": 50,
+                            "id": 1,
+                            "query": {
+                                "search": "whistleblower query"
+                            },
+                            "target_index": "index",
+                            "type": "AzureSearchQuery"
+                        }
+                    ]
+                },
+                "title": "Agentic retrieval results (top 3)"
+            },
+            {
+                "description": [
+                    {
+                        "content": "Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.\nAnswer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.\nIf the question is not in English, answer in the language used in the question.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].",
+                        "role": "system"
+                    },
+                    {
+                        "content": "What is the capital of France?\n\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
+                        "role": "user"
+                    }
+                ],
+                "props": {
+                    "deployment": "gpt-4.1-mini",
+                    "model": "gpt-4.1-mini",
+                    "token_usage": {
+                        "completion_tokens": 896,
+                        "prompt_tokens": 23,
+                        "reasoning_tokens": 0,
+                        "total_tokens": 919
+                    }
+                },
+                "title": "Prompt to generate answer"
+            }
+        ]
+    },
+    "message": {
+        "content": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+        "role": "assistant"
+    },
+    "session_state": null
+}

@@ -1,0 +1,14 @@
+-r app/backend/requirements.txt
+ruff
+black
+pytest
+pytest-asyncio
+pytest-snapshot
+coverage
+playwright
+pytest-cov
+pytest-playwright
+pytest-snapshot
+pre-commit
+pip-tools
+mypy==1.14.1

@@ -5,56 +5,49 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Flask",
-            "type": "python",
+            "name": "Backend (Python)",
+            "type": "debugpy",
             "request": "launch",
-            "module": "flask",
+            "module": "quart",
             "cwd": "${workspaceFolder}/app/backend",
+            "python": "${workspaceFolder}/.venv/bin/python",
             "env": {
-                "FLASK_APP": "app.py",
-                "FLASK_ENV": "development",
-                "FLASK_DEBUG": "0"
+                "QUART_APP": "main:app",
+                "QUART_ENV": "development",
+                "QUART_DEBUG": "0",
+                // Set this to "no-override" if you want env vars here to override AZD env vars
+                "LOADING_MODE_FOR_AZD_ENV_VARS": "override"
             },
             "args": [
                 "run",
-                "--no-debugger",
                 "--no-reload",
-                "-p 5000"
+                "-p 50505"
             ],
             "console": "integratedTerminal",
-            "justMyCode": true,
-            "envFile": "${input:dotEnvFilePath}",
+            "justMyCode": false
         },
         {
-            "name": "Frontend: watch",
-            "type": "node",
+            "name": "Frontend",
+            "type": "node-terminal",
             "request": "launch",
+            "command": "npm run dev",
             "cwd": "${workspaceFolder}/app/frontend",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "watch"
-            ],
-            "console": "integratedTerminal",
         },
         {
-            "name": "Frontend: build",
-            "type": "node",
+            "name": "Tests (Python)",
+            "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/app/frontend",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script",
-                "build"
-            ],
+            "program": "${file}",
+            "purpose": ["debug-test"],
             "console": "integratedTerminal",
-        }
+            "justMyCode": false
+          }
     ],
-    "inputs": [
+    "compounds": [
         {
-            "id": "dotEnvFilePath",
-            "type": "command",
-            "command": "azure-dev.commands.getDotEnvFilePath"
+          "name": "Frontend & Backend",
+          "configurations": ["Backend (Python)", "Frontend"],
+          "stopAll": true
         }
     ]
 }

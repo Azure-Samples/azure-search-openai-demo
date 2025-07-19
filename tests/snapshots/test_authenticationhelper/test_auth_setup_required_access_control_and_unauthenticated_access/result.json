@@ -1,0 +1,28 @@
+{
+    "useLogin": true,
+    "requireAccessControl": true,
+    "enableUnauthenticatedAccess": true,
+    "msalConfig": {
+        "auth": {
+            "clientId": "CLIENT_APP",
+            "authority": "https://login.microsoftonline.com/TENANT_ID",
+            "redirectUri": "/redirect",
+            "postLogoutRedirectUri": "/",
+            "navigateToLoginRequestUrl": false
+        },
+        "cache": {
+            "cacheLocation": "localStorage",
+            "storeAuthStateInCookie": false
+        }
+    },
+    "loginRequest": {
+        "scopes": [
+            ".default"
+        ]
+    },
+    "tokenRequest": {
+        "scopes": [
+            "api://SERVER_APP/access_as_user"
+        ]
+    }
+}

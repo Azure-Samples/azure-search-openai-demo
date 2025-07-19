@@ -1,9 +1,10 @@
 .examplesNavList {
     list-style: none;
-    padding-left: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 0.625rem;
     flex: 1;
     justify-content: center;
 }
@@ -11,29 +12,57 @@
 .example {
     word-break: break-word;
     background: #dbdbdb;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    margin-bottom: 5px;
+    margin-bottom: 0.3125rem;
     cursor: pointer;
 }
 
 .example:hover {
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12);
-    outline: 2px solid rgba(115, 118, 225, 1);
+    box-shadow:
+        0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
+        0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
+    outline: 0.125rem solid rgba(115, 118, 225, 1);
 }
 
 .exampleText {
     margin: 0;
-    font-size: 22px;
-    width: 280px;
-    height: 100px;
+    font-size: 1.25rem;
+    width: 25rem;
+    padding: 0.5rem;
+    min-height: 4.5rem;
 }
 
-@media only screen and (max-height: 780px) {
+.examplesNavList li {
+    display: none;
+}
+
+.examplesNavList li:nth-of-type(1),
+.examplesNavList li:nth-of-type(2) {
+    display: block; /* Default to showing two list items */
+}
+
+@media only screen and (min-width: 992px) {
+    .examplesNavList {
+        flex-direction: row; /* Switch to row layout for wider screens */
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .example {
+        margin-bottom: 0.3125rem;
+        padding: 1.25rem;
+    }
+
+    .examplesNavList li:nth-of-type(2),
+    .examplesNavList li:nth-of-type(3) {
+        display: block; /* Show an additional list item for medium heights */
+    }
     .exampleText {
-        font-size: 20px;
-        height: 80px;
+        font-size: 1.375rem;
+        width: 17.5rem;
+        padding: 0;
+        min-height: 6.25rem;
     }
 }

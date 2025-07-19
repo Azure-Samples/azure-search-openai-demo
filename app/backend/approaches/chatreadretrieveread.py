@@ -1,114 +1,281 @@
-import openai
-from azure.search.documents import SearchClient
-from azure.search.documents.models import QueryType
-from approaches.approach import Approach
-from text import nonewlines
+from collections.abc import Awaitable
+from typing import Any, Optional, Union, cast
 
-# Simple retrieve-then-read implementation, using the Cognitive Search and OpenAI APIs directly. It first retrieves
-# top documents from search, then constructs a prompt with them, and then uses OpenAI to generate an completion 
-# (answer) with that prompt.
-class ChatReadRetrieveReadApproach(Approach):
-    prompt_prefix = """<|im_start|>system
-Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook. Be brief in your answers.
-Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below. If asking a clarifying question to the user would help, ask the question.
-For tabular information return it as an html table. Do not return markdown format.
-Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brakets to reference the source, e.g. [info1.txt]. Don't combine sources, list each source separately, e.g. [info1.txt][info2.pdf].
-{follow_up_questions_prompt}
-{injected_prompt}
-Sources:
-{sources}
-<|im_end|>
-{chat_history}
-"""
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
+from azure.search.documents.aio import SearchClient
+from azure.search.documents.models import VectorQuery
+from openai import AsyncOpenAI, AsyncStream
+from openai.types.chat import (
+    ChatCompletion,
+    ChatCompletionChunk,
+    ChatCompletionMessageParam,
+    ChatCompletionToolParam,
+)
 
-    follow_up_questions_prompt_content = """Generate three very brief follow-up questions that the user would likely ask next about their healthcare plan and employee handbook. 
-    Use double angle brackets to reference the questions, e.g. <<Are there exclusions for prescriptions?>>.
-    Try not to repeat questions that have already been asked.
-    Only generate questions and do not generate any text before or after the questions, such as 'Next Questions'"""
+from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
+from approaches.chatapproach import ChatApproach
+from approaches.promptmanager import PromptManager
+from core.authentication import AuthenticationHelper
 
-    query_prompt_template = """Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base about employee healthcare plans and the employee handbook.
-    Generate a search query based on the conversation and the new question. 
-    Do not include cited source filenames and document names e.g info.txt or doc.pdf in the search query terms.
-    Do not include any text inside [] or <<>> in the search query terms.
-    If the question is not in English, translate the question to English before generating the search query.
 
-Chat History:
-{chat_history}
+class ChatReadRetrieveReadApproach(ChatApproach):
+    """
+    A multi-step approach that first uses OpenAI to turn the user's question into a search query,
+    then uses Azure AI Search to retrieve relevant documents, and then sends the conversation history,
+    original user question, and search results to OpenAI to generate a response.
+    """
 
-Question:
-{question}
-
-Search query:
-"""
-
-    def __init__(self, search_client: SearchClient, chatgpt_deployment: str, gpt_deployment: str, sourcepage_field: str, content_field: str):
+    def __init__(
+        self,
+        *,
+        search_client: SearchClient,
+        search_index_name: str,
+        agent_model: Optional[str],
+        agent_deployment: Optional[str],
+        agent_client: KnowledgeAgentRetrievalClient,
+        auth_helper: AuthenticationHelper,
+        openai_client: AsyncOpenAI,
+        chatgpt_model: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
+        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_model: str,
+        embedding_dimensions: int,
+        embedding_field: str,
+        sourcepage_field: str,
+        content_field: str,
+        query_language: str,
+        query_speller: str,
+        prompt_manager: PromptManager,
+        reasoning_effort: Optional[str] = None,
+    ):
         self.search_client = search_client
+        self.search_index_name = search_index_name
+        self.agent_model = agent_model
+        self.agent_deployment = agent_deployment
+        self.agent_client = agent_client
+        self.openai_client = openai_client
+        self.auth_helper = auth_helper
+        self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
-        self.gpt_deployment = gpt_deployment
+        self.embedding_deployment = embedding_deployment
+        self.embedding_model = embedding_model
+        self.embedding_dimensions = embedding_dimensions
+        self.embedding_field = embedding_field
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
+        self.query_language = query_language
+        self.query_speller = query_speller
+        self.prompt_manager = prompt_manager
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
+        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
+        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
+        self.reasoning_effort = reasoning_effort
+        self.include_token_usage = True
 
-    def run(self, history: list[dict], overrides: dict) -> any:
+    async def run_until_final_call(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+        should_stream: bool = False,
+    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+        use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
+        original_user_query = messages[-1]["content"]
+
+        reasoning_model_support = self.GPT_REASONING_MODELS.get(self.chatgpt_model)
+        if reasoning_model_support and (not reasoning_model_support.streaming and should_stream):
+            raise Exception(
+                f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
+            )
+        if use_agentic_retrieval:
+            extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
+        else:
+            extra_info = await self.run_search_approach(messages, overrides, auth_claims)
+
+        messages = self.prompt_manager.render_prompt(
+            self.answer_prompt,
+            self.get_system_prompt_variables(overrides.get("prompt_template"))
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "past_messages": messages[:-1],
+                "user_query": original_user_query,
+                "text_sources": extra_info.data_points.text,
+            },
+        )
+
+        chat_coroutine = cast(
+            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+            self.create_chat_completion(
+                self.chatgpt_deployment,
+                self.chatgpt_model,
+                messages,
+                overrides,
+                self.get_response_token_limit(self.chatgpt_model, 1024),
+                should_stream,
+            ),
+        )
+        extra_info.thoughts.append(
+            self.format_thought_step_for_chatcompletion(
+                title="Prompt to generate answer",
+                messages=messages,
+                overrides=overrides,
+                model=self.chatgpt_model,
+                deployment=self.chatgpt_deployment,
+                usage=None,
+            )
+        )
+        return (extra_info, chat_coroutine)
+
+    async def run_search_approach(
+        self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ):
+        use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
-        top = overrides.get("top") or 3
-        exclude_category = overrides.get("exclude_category") or None
-        filter = "category ne '{}'".format(exclude_category.replace("'", "''")) if exclude_category else None
+        use_query_rewriting = True if overrides.get("query_rewriting") else False
+        top = overrides.get("top", 3)
+        minimum_search_score = overrides.get("minimum_search_score", 0.0)
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
+        search_index_filter = self.build_filter(overrides, auth_claims)
+
+        original_user_query = messages[-1]["content"]
+        if not isinstance(original_user_query, str):
+            raise ValueError("The most recent message content must be a string.")
+
+        query_messages = self.prompt_manager.render_prompt(
+            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
+        )
+        tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        prompt = self.query_prompt_template.format(chat_history=self.get_chat_history_as_text(history, include_last_turn=False), question=history[-1]["user"])
-        completion = openai.Completion.create(
-            engine=self.gpt_deployment, 
-            prompt=prompt, 
-            temperature=0.0, 
-            max_tokens=32, 
-            n=1, 
-            stop=["\n"])
-        q = completion.choices[0].text
+
+        chat_completion = cast(
+            ChatCompletion,
+            await self.create_chat_completion(
+                self.chatgpt_deployment,
+                self.chatgpt_model,
+                messages=query_messages,
+                overrides=overrides,
+                response_token_limit=self.get_response_token_limit(
+                    self.chatgpt_model, 100
+                ),  # Setting too low risks malformed JSON, setting too high may affect performance
+                temperature=0.0,  # Minimize creativity for search query generation
+                tools=tools,
+                reasoning_effort="low",  # Minimize reasoning for search query generation
+            ),
+        )
+
+        query_text = self.get_search_query(chat_completion, original_user_query)
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
-        if overrides.get("semantic_ranker"):
-            r = self.search_client.search(q, 
-                                          filter=filter,
-                                          query_type=QueryType.SEMANTIC, 
-                                          query_language="en-us", 
-                                          query_speller="lexicon", 
-                                          semantic_configuration_name="default", 
-                                          top=top, 
-                                          query_caption="extractive|highlight-false" if use_semantic_captions else None)
-        else:
-            r = self.search_client.search(q, filter=filter, top=top)
-        if use_semantic_captions:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(" . ".join([c.text for c in doc['@search.captions']])) for doc in r]
-        else:
-            results = [doc[self.sourcepage_field] + ": " + nonewlines(doc[self.content_field]) for doc in r]
-        content = "\n".join(results)
 
-        follow_up_questions_prompt = self.follow_up_questions_prompt_content if overrides.get("suggest_followup_questions") else ""
-        
-        # Allow client to replace the entire prompt, or to inject into the exiting prompt using >>>
-        prompt_override = overrides.get("prompt_template")
-        if prompt_override is None:
-            prompt = self.prompt_prefix.format(injected_prompt="", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
-        elif prompt_override.startswith(">>>"):
-            prompt = self.prompt_prefix.format(injected_prompt=prompt_override[3:] + "\n", sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
-        else:
-            prompt = prompt_override.format(sources=content, chat_history=self.get_chat_history_as_text(history), follow_up_questions_prompt=follow_up_questions_prompt)
+        # If retrieval mode includes vectors, compute an embedding for the query
+        vectors: list[VectorQuery] = []
+        if use_vector_search:
+            vectors.append(await self.compute_text_embedding(query_text))
+
+        results = await self.search(
+            top,
+            query_text,
+            search_index_filter,
+            vectors,
+            use_text_search,
+            use_vector_search,
+            use_semantic_ranker,
+            use_semantic_captions,
+            minimum_search_score,
+            minimum_reranker_score,
+            use_query_rewriting,
+        )
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        completion = openai.Completion.create(
-            engine=self.chatgpt_deployment, 
-            prompt=prompt, 
-            temperature=overrides.get("temperature") or 0.7, 
-            max_tokens=1024, 
-            n=1, 
-            stop=["<|im_end|>", "<|im_start|>"])
+        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
 
-        return {"data_points": results, "answer": completion.choices[0].text, "thoughts": f"Searched for:<br>{q}<br><br>Prompt:<br>" + prompt.replace('\n', '<br>')}
-    
-    def get_chat_history_as_text(self, history, include_last_turn=True, approx_max_tokens=1000) -> str:
-        history_text = ""
-        for h in reversed(history if include_last_turn else history[:-1]):
-            history_text = """<|im_start|>user""" +"\n" + h["user"] + "\n" + """<|im_end|>""" + "\n" + """<|im_start|>assistant""" + "\n" + (h.get("bot") + """<|im_end|>""" if h.get("bot") else "") + "\n" + history_text
-            if len(history_text) > approx_max_tokens*4:
-                break    
-        return history_text
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources),
+            thoughts=[
+                self.format_thought_step_for_chatcompletion(
+                    title="Prompt to generate search query",
+                    messages=query_messages,
+                    overrides=overrides,
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    usage=chat_completion.usage,
+                    reasoning_effort="low",
+                ),
+                ThoughtStep(
+                    "Search using generated search query",
+                    query_text,
+                    {
+                        "use_semantic_captions": use_semantic_captions,
+                        "use_semantic_ranker": use_semantic_ranker,
+                        "use_query_rewriting": use_query_rewriting,
+                        "top": top,
+                        "filter": search_index_filter,
+                        "use_vector_search": use_vector_search,
+                        "use_text_search": use_text_search,
+                    },
+                ),
+                ThoughtStep(
+                    "Search results",
+                    [result.serialize_for_results() for result in results],
+                ),
+            ],
+        )
+        return extra_info
+
+    async def run_agentic_retrieval_approach(
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
+    ):
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
+        search_index_filter = self.build_filter(overrides, auth_claims)
+        top = overrides.get("top", 3)
+        max_subqueries = overrides.get("max_subqueries", 10)
+        results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
+        # 50 is the amount of documents that the reranker can process per query
+        max_docs_for_reranker = max_subqueries * 50
+
+        response, results = await self.run_agentic_retrieval(
+            messages=messages,
+            agent_client=self.agent_client,
+            search_index_name=self.search_index_name,
+            top=top,
+            filter_add_on=search_index_filter,
+            minimum_reranker_score=minimum_reranker_score,
+            max_docs_for_reranker=max_docs_for_reranker,
+            results_merge_strategy=results_merge_strategy,
+        )
+
+        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+
+        extra_info = ExtraInfo(
+            DataPoints(text=text_sources),
+            thoughts=[
+                ThoughtStep(
+                    "Use agentic retrieval",
+                    messages,
+                    {
+                        "reranker_threshold": minimum_reranker_score,
+                        "max_docs_for_reranker": max_docs_for_reranker,
+                        "results_merge_strategy": results_merge_strategy,
+                        "filter": search_index_filter,
+                    },
+                ),
+                ThoughtStep(
+                    f"Agentic retrieval results (top {top})",
+                    [result.serialize_for_results() for result in results],
+                    {
+                        "query_plan": (
+                            [activity.as_dict() for activity in response.activity] if response.activity else None
+                        ),
+                        "model": self.agent_model,
+                        "deployment": self.agent_deployment,
+                    },
+                ),
+            ],
+        )
+        return extra_info
