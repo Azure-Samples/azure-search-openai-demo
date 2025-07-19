@@ -1,0 +1,244 @@
+name: Evaluate RAG answer flow
+
+on:
+  issue_comment:
+    types: [created]
+
+# Set up permissions for deploying with secretless Azure federated credentials
+# https://learn.microsoft.com/azure/developer/github/connect-from-azure?tabs=azure-portal%2Clinux#set-up-azure-login-with-openid-connect-authentication
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  evaluate:
+    if: |
+      contains('["OWNER", "CONTRIBUTOR", "COLLABORATOR", "MEMBER"]', github.event.comment.author_association) &&
+      github.event.issue.pull_request &&
+      github.event.comment.body == '/evaluate'
+    runs-on: ubuntu-latest
+    env:
+      # azd required
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      # project specific
+      AZURE_OPENAI_SERVICE: ${{ vars.AZURE_OPENAI_SERVICE }}
+      AZURE_OPENAI_LOCATION: ${{ vars.AZURE_OPENAI_LOCATION }}
+      AZURE_OPENAI_API_VERSION: ${{ vars.AZURE_OPENAI_API_VERSION }}
+      AZURE_OPENAI_RESOURCE_GROUP: ${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
+      AZURE_DOCUMENTINTELLIGENCE_SERVICE: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_SERVICE }}
+      AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP }}
+      AZURE_DOCUMENTINTELLIGENCE_SKU: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_SKU }}
+      AZURE_DOCUMENTINTELLIGENCE_LOCATION: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_LOCATION }}
+      AZURE_COMPUTER_VISION_SERVICE: ${{ vars.AZURE_COMPUTER_VISION_SERVICE }}
+      AZURE_COMPUTER_VISION_RESOURCE_GROUP: ${{ vars.AZURE_COMPUTER_VISION_RESOURCE_GROUP }}
+      AZURE_COMPUTER_VISION_LOCATION: ${{ vars.AZURE_COMPUTER_VISION_LOCATION }}
+      AZURE_COMPUTER_VISION_SKU: ${{ vars.AZURE_COMPUTER_VISION_SKU }}
+      AZURE_SEARCH_INDEX: ${{ vars.AZURE_SEARCH_INDEX }}
+      AZURE_SEARCH_SERVICE: ${{ vars.AZURE_SEARCH_SERVICE }}
+      AZURE_SEARCH_SERVICE_RESOURCE_GROUP: ${{ vars.AZURE_SEARCH_SERVICE_RESOURCE_GROUP }}
+      AZURE_SEARCH_SERVICE_LOCATION: ${{ vars.AZURE_SEARCH_SERVICE_LOCATION }}
+      AZURE_SEARCH_SERVICE_SKU: ${{ vars.AZURE_SEARCH_SERVICE_SKU }}
+      AZURE_SEARCH_QUERY_LANGUAGE: ${{ vars.AZURE_SEARCH_QUERY_LANGUAGE }}
+      AZURE_SEARCH_QUERY_SPELLER: ${{ vars.AZURE_SEARCH_QUERY_SPELLER }}
+      AZURE_SEARCH_SEMANTIC_RANKER: ${{ vars.AZURE_SEARCH_SEMANTIC_RANKER }}
+      AZURE_STORAGE_ACCOUNT: ${{ vars.AZURE_STORAGE_ACCOUNT }}
+      AZURE_STORAGE_RESOURCE_GROUP: ${{ vars.AZURE_STORAGE_RESOURCE_GROUP }}
+      AZURE_STORAGE_SKU: ${{ vars.AZURE_STORAGE_SKU }}
+      AZURE_APP_SERVICE_PLAN: ${{ vars.AZURE_APP_SERVICE_PLAN }}
+      AZURE_APP_SERVICE_SKU: ${{ vars.AZURE_APP_SERVICE_SKU }}
+      AZURE_APP_SERVICE: ${{ vars.AZURE_APP_SERVICE }}
+      AZURE_OPENAI_CHATGPT_MODEL: ${{ vars.AZURE_OPENAI_CHATGPT_MODEL }}
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT: ${{ vars.AZURE_OPENAI_CHATGPT_DEPLOYMENT }}
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY }}
+      AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION }}
+      AZURE_OPENAI_EMB_MODEL_NAME: ${{ vars.AZURE_OPENAI_EMB_MODEL_NAME }}
+      AZURE_OPENAI_EMB_DEPLOYMENT: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT }}
+      AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY }}
+      AZURE_OPENAI_EMB_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT_VERSION }}
+      AZURE_OPENAI_EMB_DIMENSIONS: ${{ vars.AZURE_OPENAI_EMB_DIMENSIONS }}
+      AZURE_OPENAI_GPT4V_MODEL: ${{ vars.AZURE_OPENAI_GPT4V_MODEL }}
+      AZURE_OPENAI_GPT4V_DEPLOYMENT: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT }}
+      AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY }}
+      AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION }}
+      AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU }}
+      USE_EVAL: ${{ vars.USE_EVAL }}
+      AZURE_OPENAI_EVAL_MODEL: ${{ vars.AZURE_OPENAI_EVAL_MODEL }}
+      AZURE_OPENAI_EVAL_MODEL_VERSION: ${{ vars.AZURE_OPENAI_EVAL_MODEL_VERSION }}
+      AZURE_OPENAI_EVAL_DEPLOYMENT: ${{ vars.AZURE_OPENAI_EVAL_DEPLOYMENT }}
+      AZURE_OPENAI_EVAL_DEPLOYMENT_SKU: ${{ vars.AZURE_OPENAI_EVAL_DEPLOYMENT_SKU }}
+      AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY }}
+      AZURE_OPENAI_DISABLE_KEYS: ${{ vars.AZURE_OPENAI_DISABLE_KEYS }}
+      OPENAI_HOST: ${{ vars.OPENAI_HOST }}
+      OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
+      OPENAI_ORGANIZATION: ${{ vars.OPENAI_ORGANIZATION }}
+      AZURE_USE_APPLICATION_INSIGHTS: ${{ vars.AZURE_USE_APPLICATION_INSIGHTS }}
+      AZURE_APPLICATION_INSIGHTS: ${{ vars.AZURE_APPLICATION_INSIGHTS }}
+      AZURE_APPLICATION_INSIGHTS_DASHBOARD: ${{ vars.AZURE_APPLICATION_INSIGHTS_DASHBOARD }}
+      AZURE_LOG_ANALYTICS: ${{ vars.AZURE_LOG_ANALYTICS }}
+      USE_VECTORS: ${{ vars.USE_VECTORS }}
+      USE_GPT4V: ${{ vars.USE_GPT4V }}
+      AZURE_VISION_ENDPOINT: ${{ vars.AZURE_VISION_ENDPOINT }}
+      VISION_SECRET_NAME: ${{ vars.VISION_SECRET_NAME }}
+      ENABLE_LANGUAGE_PICKER: ${{ vars.ENABLE_LANGUAGE_PICKER }}
+      USE_SPEECH_INPUT_BROWSER: ${{ vars.USE_SPEECH_INPUT_BROWSER }}
+      USE_SPEECH_OUTPUT_BROWSER: ${{ vars.USE_SPEECH_OUTPUT_BROWSER }}
+      USE_SPEECH_OUTPUT_AZURE: ${{ vars.USE_SPEECH_OUTPUT_AZURE }}
+      AZURE_SPEECH_SERVICE: ${{ vars.AZURE_SPEECH_SERVICE }}
+      AZURE_SPEECH_SERVICE_RESOURCE_GROUP: ${{ vars.AZURE_SPEECH_RESOURCE_GROUP }}
+      AZURE_SPEECH_SERVICE_LOCATION: ${{ vars.AZURE_SPEECH_SERVICE_LOCATION }}
+      AZURE_SPEECH_SERVICE_SKU: ${{ vars.AZURE_SPEECH_SERVICE_SKU }}
+      AZURE_SPEECH_SERVICE_VOICE: ${{ vars.AZURE_SPEECH_SERVICE_VOICE }}
+      AZURE_KEY_VAULT_NAME: ${{ vars.AZURE_KEY_VAULT_NAME }}
+      AZURE_USE_AUTHENTICATION: ${{ vars.AZURE_USE_AUTHENTICATION }}
+      AZURE_ENFORCE_ACCESS_CONTROL: ${{ vars.AZURE_ENFORCE_ACCESS_CONTROL }}
+      AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS: ${{ vars.AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS }}
+      AZURE_ENABLE_UNAUTHENTICATED_ACCESS: ${{ vars.AZURE_ENABLE_UNAUTHENTICATED_ACCESS }}
+      AZURE_AUTH_TENANT_ID: ${{ vars.AZURE_AUTH_TENANT_ID }}
+      AZURE_SERVER_APP_ID: ${{ vars.AZURE_SERVER_APP_ID }}
+      AZURE_CLIENT_APP_ID: ${{ vars.AZURE_CLIENT_APP_ID }}
+      ALLOWED_ORIGIN: ${{ vars.ALLOWED_ORIGIN }}
+      AZURE_ADLS_GEN2_STORAGE_ACCOUNT: ${{ vars.AZURE_ADLS_GEN2_STORAGE_ACCOUNT }}
+      AZURE_ADLS_GEN2_FILESYSTEM_PATH: ${{ vars.AZURE_ADLS_GEN2_FILESYSTEM_PATH }}
+      AZURE_ADLS_GEN2_FILESYSTEM: ${{ vars.AZURE_ADLS_GEN2_FILESYSTEM }}
+      DEPLOYMENT_TARGET: ${{ vars.DEPLOYMENT_TARGET }}
+      AZURE_CONTAINER_APPS_WORKLOAD_PROFILE: ${{ vars.AZURE_CONTAINER_APPS_WORKLOAD_PROFILE }}
+      USE_CHAT_HISTORY_BROWSER: ${{ vars.USE_CHAT_HISTORY_BROWSER }}
+      USE_MEDIA_DESCRIBER_AZURE_CU: ${{ vars.USE_MEDIA_DESCRIBER_AZURE_CU }}
+      USE_AI_PROJECT: ${{ vars.USE_AI_PROJECT }}
+    steps:
+
+      - name: Comment on pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "Starting evaluation! Check the Actions tab for progress, or wait for a comment with the results."
+            })
+
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          version: "0.4.20"
+          cache-dependency-glob: "requirements**.txt"
+          python-version: "3.11"
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install azd
+        uses: Azure/setup-azd@v2.1.0
+
+      - name: Login to Azure with az CLI
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set az account
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az account set --subscription ${{env.AZURE_SUBSCRIPTION_ID}}
+
+      - name: Login to with Azure with azd (Federated Credentials)
+        if: ${{ env.AZURE_CLIENT_ID != '' }}
+        run: |
+          azd auth login `
+            --client-id "$Env:AZURE_CLIENT_ID" `
+            --federated-credential-provider "github" `
+            --tenant-id "$Env:AZURE_TENANT_ID"
+        shell: pwsh
+
+      - name: Refresh azd environment variables
+        run: |
+            azd env refresh -e $AZURE_ENV_NAME --no-prompt
+        env:
+            AZD_INITIAL_ENVIRONMENT_CONFIG: ${{ secrets.AZD_INITIAL_ENVIRONMENT_CONFIG }}
+
+      - name: Build frontend
+        run: |
+          cd ./app/frontend
+          npm install
+          npm run build
+
+      - name: Install dependencies
+        run: |
+          uv pip install -r requirements-dev.txt
+
+      - name: Run local server in background
+        run: |
+          cd app/backend
+          RUNNER_TRACKING_ID="" && (nohup python3 -m quart --app main:app run --port 50505 > serverlogs.out 2> serverlogs.err &)
+          cd ../..
+
+      - name: Install evaluate dependencies
+        run: |
+          uv pip install -r evals/requirements.txt
+
+      - name: Evaluate local RAG flow
+        run: |
+          python evals/evaluate.py --targeturl=http://127.0.0.1:50505/chat --resultsdir=evals/results/pr${{ github.event.issue.number }}
+
+      - name: Upload eval results as build artifact
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with:
+            name: eval_result
+            path: ./evals/results/pr${{ github.event.issue.number }}
+
+      - name: Upload server logs as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server_logs
+          path: ./app/backend/serverlogs.out
+
+      - name: Upload server error logs as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server_error_logs
+          path: ./app/backend/serverlogs.err
+
+      - name: Summarize results
+        if: ${{ success() }}
+        run: |
+          echo "## Evaluation results" >> eval-summary.md
+          python -m evaltools summary evals/results --output=markdown >> eval-summary.md
+          echo "## Answer differences across runs" >> run-diff.md
+          python -m evaltools diff evals/results/baseline evals/results/pr${{ github.event.issue.number }} --output=markdown >> run-diff.md
+          cat eval-summary.md >> $GITHUB_STEP_SUMMARY
+          cat run-diff.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summaryPath = "eval-summary.md";
+            const summary = fs.readFileSync(summaryPath, 'utf8');
+            const runId = process.env.GITHUB_RUN_ID;
+            const repo = process.env.GITHUB_REPOSITORY;
+            const actionsUrl = `https://github.com/${repo}/actions/runs/${runId}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${summary}\n\n[Check the workflow run for more details](${actionsUrl}).`
+            })

@@ -1,8 +1,11 @@
+import json
+import os
 import socket
 import time
+from collections.abc import Generator
 from contextlib import closing
 from multiprocessing import Process
-from typing import Generator
+from unittest import mock
 
 import pytest
 import requests
@@ -37,9 +40,34 @@ def free_port() -> int:
         return s.getsockname()[1]
 
 
+def run_server(port: int):
+    with mock.patch.dict(
+        os.environ,
+        {
+            "AZURE_STORAGE_ACCOUNT": "test-storage-account",
+            "AZURE_STORAGE_CONTAINER": "test-storage-container",
+            "AZURE_STORAGE_RESOURCE_GROUP": "test-storage-rg",
+            "AZURE_SUBSCRIPTION_ID": "test-storage-subid",
+            "ENABLE_LANGUAGE_PICKER": "false",
+            "USE_SPEECH_INPUT_BROWSER": "false",
+            "USE_SPEECH_OUTPUT_AZURE": "false",
+            "AZURE_SEARCH_INDEX": "test-search-index",
+            "AZURE_SEARCH_SERVICE": "test-search-service",
+            "AZURE_SPEECH_SERVICE_ID": "test-id",
+            "AZURE_SPEECH_SERVICE_LOCATION": "eastus",
+            "AZURE_OPENAI_SERVICE": "test-openai-service",
+            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4.1-mini",
+            "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+            "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
+        },
+        clear=True,
+    ):
+        uvicorn.run(app.create_app(), port=port)
+
+
 @pytest.fixture()
 def live_server_url(mock_env, mock_acs_search, free_port: int) -> Generator[str, None, None]:
-    proc = Process(target=lambda: uvicorn.run(app.create_app(), port=free_port), daemon=True)
+    proc = Process(target=run_server, args=(free_port,), daemon=True)
     proc.start()
     url = f"http://localhost:{free_port}/"
     wait_for_server_ready(url, timeout=10.0, check_interval=0.5)
@@ -47,12 +75,21 @@ def live_server_url(mock_env, mock_acs_search, free_port: int) -> Generator[str,
     proc.kill()
 
 
+@pytest.fixture(params=[(480, 800), (600, 1024), (768, 1024), (992, 1024), (1024, 768)])
+def sized_page(page: Page, request):
+    size = request.param
+    page.set_viewport_size({"width": size[0], "height": size[1]})
+    yield page
+
+
 def test_home(page: Page, live_server_url: str):
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
 
-def test_chat(page: Page, live_server_url: str):
+def test_chat(sized_page: Page, live_server_url: str):
+    page = sized_page
+
     # Set up a mock route to the /chat endpoint with streaming results
     def handle(route: Route):
         # Assert that session_state is specified in the request (None for now)
@@ -64,11 +101,11 @@ def test_chat(page: Page, live_server_url: str):
         f.close()
         route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
 
-    page.route("*/**/chat", handle)
+    page.route("*/**/chat/stream", handle)
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
     expect(page.get_by_role("heading", name="Chat with your data")).to_be_visible()
     expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
@@ -78,7 +115,7 @@ def test_chat(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_role("button", name="Ask question button").click()
+    page.get_by_role("button", name="Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -109,14 +146,18 @@ def test_chat(page: Page, live_server_url: str):
 def test_chat_customization(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle(route: Route):
-        assert route.request.post_data_json["stream"] is False
         overrides = route.request.post_data_json["context"]["overrides"]
+        assert overrides["temperature"] == 0.5
+        assert overrides["seed"] == 123
+        assert overrides["minimum_search_score"] == 0.5
+        assert overrides["minimum_reranker_score"] == 0.5
         assert overrides["retrieval_mode"] == "vectors"
         assert overrides["semantic_ranker"] is False
         assert overrides["semantic_captions"] is True
         assert overrides["top"] == 1
         assert overrides["prompt_template"] == "You are a cat and only talk about tuna."
         assert overrides["exclude_category"] == "dogs"
+        assert overrides["suggest_followup_questions"] is True
         assert overrides["use_oid_security_filter"] is False
         assert overrides["use_groups_security_filter"] is False
 
@@ -130,18 +171,29 @@ def test_chat_customization(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
     # Customize all the settings
     page.get_by_role("button", name="Developer settings").click()
     page.get_by_label("Override prompt template").click()
     page.get_by_label("Override prompt template").fill("You are a cat and only talk about tuna.")
+    page.get_by_label("Temperature").click()
+    page.get_by_label("Temperature").fill("0.5")
+    page.get_by_label("Seed").click()
+    page.get_by_label("Seed").fill("123")
+    page.get_by_label("Minimum search score").click()
+    page.get_by_label("Minimum search score").fill("0.5")
+    page.get_by_label("Minimum reranker score").click()
+    page.get_by_label("Minimum reranker score").fill("0.5")
     page.get_by_label("Retrieve this many search results:").click()
     page.get_by_label("Retrieve this many search results:").fill("1")
+    page.get_by_label("Include category").click()
+    page.get_by_role("option", name="All", exact=True).click()
     page.get_by_label("Exclude category").click()
     page.get_by_label("Exclude category").fill("dogs")
-    page.get_by_text("Use query-contextual summaries instead of whole documents").click()
+    page.get_by_text("Use semantic captions").click()
     page.get_by_text("Use semantic ranker for retrieval").click()
+    page.get_by_text("Suggest follow-up questions").click()
     page.get_by_text("Vectors + Text (Hybrid)").click()
     page.get_by_role("option", name="Vectors", exact=True).click()
     page.get_by_text("Stream chat completion responses").click()
@@ -152,11 +204,67 @@ def test_chat_customization(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_role("button", name="Ask question button").click()
+    page.get_by_role("button", name="Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
     expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
+
+
+def test_chat_customization_gpt4v(page: Page, live_server_url: str):
+
+    # Set up a mock route to the /chat endpoint
+    def handle_chat(route: Route):
+        overrides = route.request.post_data_json["context"]["overrides"]
+        assert overrides["gpt4v_input"] == "images"
+        assert overrides["use_gpt4v"] is True
+        assert overrides["vector_fields"] == "imageEmbeddingOnly"
+
+        # Read the JSON from our snapshot results and return as the response
+        f = open("tests/snapshots/test_app/test_chat_text/client0/result.json")
+        json = f.read()
+        f.close()
+        route.fulfill(body=json, status=200)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "showGPT4VOptions": True,
+                    "showSemanticRankerOption": True,
+                    "showUserUpload": False,
+                    "showVectorOption": True,
+                    "streamingEnabled": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+    page.route("*/**/chat", handle_chat)
+
+    # Check initial page state
+    page.goto(live_server_url)
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+
+    # Customize the GPT-4-vision settings
+    page.get_by_role("button", name="Developer settings").click()
+    # Check that "Use GPT vision model" is visible and selected
+    expect(page.get_by_text("Use GPT vision model")).to_be_visible()
+    expect(page.get_by_role("checkbox", name="Use GPT vision model")).to_be_checked()
+    page.get_by_text("Images and text").click()
+    page.get_by_role("option", name="Images", exact=True).click()
+    page.get_by_text("Text and Image embeddings").click()
+    page.get_by_role("option", name="Image Embeddings", exact=True).click()
+    page.get_by_text("Stream chat completion responses").click()
+    page.locator("button").filter(has_text="Close").click()
+
+    # Ask a question and wait for the message to appear
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_label("Submit question").click()
 
 
 def test_chat_nonstreaming(page: Page, live_server_url: str):
@@ -172,7 +280,7 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
     page.get_by_role("button", name="Developer settings").click()
     page.get_by_text("Stream chat completion responses").click()
@@ -183,7 +291,7 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -201,11 +309,11 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
         f.close()
         route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
 
-    page.route("*/**/chat", handle)
+    page.route("*/**/chat/stream", handle)
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
     page.get_by_role("button", name="Developer settings").click()
     page.get_by_text("Suggest follow-up questions").click()
@@ -216,7 +324,7 @@ def test_chat_followup_streaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -242,7 +350,7 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
 
     # Check initial page state
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
     page.get_by_role("button", name="Developer settings").click()
     page.get_by_text("Stream chat completion responses").click()
@@ -254,7 +362,7 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
         "Whats the dental plan?"
     )
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
@@ -267,7 +375,9 @@ def test_chat_followup_nonstreaming(page: Page, live_server_url: str):
     expect(page.get_by_text("The capital of France is Paris.")).to_have_count(2)
 
 
-def test_ask(page: Page, live_server_url: str):
+def test_ask(sized_page: Page, live_server_url: str):
+    page = sized_page
+
     # Set up a mock route to the /ask endpoint
     def handle(route: Route):
         # Assert that session_state is specified in the request (None for now)
@@ -281,13 +391,81 @@ def test_ask(page: Page, live_server_url: str):
 
     page.route("*/**/ask", handle)
     page.goto(live_server_url)
-    expect(page).to_have_title("GPT + Enterprise data | Sample")
+    expect(page).to_have_title("Azure OpenAI + AI Search")
 
+    # The burger menu only exists at smaller viewport sizes
+    if page.get_by_role("button", name="Toggle menu").is_visible():
+        page.get_by_role("button", name="Toggle menu").click()
     page.get_by_role("link", name="Ask a question").click()
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").fill("Whats the dental plan?")
     page.get_by_placeholder("Example: Does my plan cover annual eye exams?").click()
-    page.get_by_label("Ask question button").click()
+    page.get_by_label("Submit question").click()
 
     expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
     expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+
+def test_upload_hidden(page: Page, live_server_url: str):
+
+    def handle_auth_setup(route: Route):
+        with open("tests/snapshots/test_authenticationhelper/test_auth_setup/result.json") as f:
+            auth_setup = json.load(f)
+            route.fulfill(body=json.dumps(auth_setup), status=200)
+
+    page.route("*/**/auth_setup", handle_auth_setup)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "showGPT4VOptions": False,
+                    "showSemanticRankerOption": True,
+                    "showUserUpload": False,
+                    "showVectorOption": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+
+    page.goto(live_server_url)
+
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+
+    expect(page.get_by_role("button", name="Clear chat")).to_be_visible()
+    expect(page.get_by_role("button", name="Manage file uploads")).not_to_be_visible()
+
+
+def test_upload_disabled(page: Page, live_server_url: str):
+
+    def handle_auth_setup(route: Route):
+        with open("tests/snapshots/test_authenticationhelper/test_auth_setup/result.json") as f:
+            auth_setup = json.load(f)
+            route.fulfill(body=json.dumps(auth_setup), status=200)
+
+    page.route("*/**/auth_setup", handle_auth_setup)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "showGPT4VOptions": False,
+                    "showSemanticRankerOption": True,
+                    "showUserUpload": True,
+                    "showVectorOption": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+
+    page.goto(live_server_url)
+
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+
+    expect(page.get_by_role("button", name="Manage file uploads")).to_be_visible()
+    expect(page.get_by_role("button", name="Manage file uploads")).to_be_disabled()
+    # We can't test actual file upload as we don't currently have isLoggedIn(client) mocked out

@@ -1,11 +1,10 @@
  #!/bin/sh
 
-. ./scripts/load_azd_env.sh
-
-if [ -z "$AZURE_USE_AUTHENTICATION" ]; then
+AZURE_USE_AUTHENTICATION=$(azd env get-value AZURE_USE_AUTHENTICATION)
+if [ "$AZURE_USE_AUTHENTICATION" != "true" ]; then
   exit 0
 fi
 
 . ./scripts/load_python_env.sh
 
-./scripts/.venv/bin/python ./scripts/auth_update.py --appid "$AUTH_APP_ID" --uri "$BACKEND_URI"
+./.venv/bin/python ./scripts/auth_update.py

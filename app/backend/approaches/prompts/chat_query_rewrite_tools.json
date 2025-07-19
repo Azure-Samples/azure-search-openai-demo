@@ -1,0 +1,17 @@
+[{
+    "type": "function",
+    "function": {
+        "name": "search_sources",
+        "description": "Retrieve sources from the Azure AI Search index",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "search_query": {
+                    "type": "string",
+                    "description": "Query string to retrieve documents from azure search eg: 'Health care plan'"
+                }
+            },
+            "required": ["search_query"]
+        }
+    }
+}]

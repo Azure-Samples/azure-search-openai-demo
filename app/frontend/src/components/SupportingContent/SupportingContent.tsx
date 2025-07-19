@@ -3,12 +3,7 @@ import { parseSupportingContentItem } from "./SupportingContentParser";
 import styles from "./SupportingContent.module.css";
 
 interface Props {
-    supportingContent: string[] | { text: string[]; images?: { url: string }[] };
-}
-
-interface SupportingItemProps {
-    title: string;
-    content: string;
+    supportingContent: string[] | { text: string[]; images?: string[] };
 }
 
 export const SupportingContent = ({ supportingContent }: Props) => {
@@ -16,22 +11,22 @@ export const SupportingContent = ({ supportingContent }: Props) => {
     const imageItems = !Array.isArray(supportingContent) ? supportingContent?.images : [];
     return (
         <ul className={styles.supportingContentNavList}>
-            {textItems.map(c => {
+            {textItems.map((c, ind) => {
                 const parsed = parseSupportingContentItem(c);
-                return <TextSupportingContent {...parsed} />;
+                return (
+                    <li className={styles.supportingContentItem} key={`supporting-content-text-${ind}`}>
+                        <h4 className={styles.supportingContentItemHeader}>{parsed.title}</h4>
+                        <p className={styles.supportingContentItemText} dangerouslySetInnerHTML={{ __html: parsed.content }} />
+                    </li>
+                );
             })}
-            {imageItems?.map(i => {
-                return <img className={styles.supportingContentItemImage} src={i.url} />;
+            {imageItems?.map((img, ind) => {
+                return (
+                    <li className={styles.supportingContentItem} key={`supporting-content-image-${ind}`}>
+                        <img className={styles.supportingContentItemImage} src={img} />
+                    </li>
+                );
             })}
         </ul>
-    );
-};
-
-export const TextSupportingContent = ({ title, content }: SupportingItemProps) => {
-    return (
-        <li className={styles.supportingContentItem}>
-            <h4 className={styles.supportingContentItemHeader}>{title}</h4>
-            <p className={styles.supportingContentItemText} dangerouslySetInnerHTML={{ __html: content }} />
-        </li>
     );
 };

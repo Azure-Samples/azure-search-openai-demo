@@ -16,18 +16,22 @@ param defaultToOAuthAuthentication bool = false
 param deleteRetentionPolicy object = {}
 @allowed([ 'AzureDnsZone', 'Standard' ])
 param dnsEndpointType string = 'Standard'
+param isHnsEnabled bool = false
 param kind string = 'StorageV2'
 param minimumTlsVersion string = 'TLS1_2'
 param supportsHttpsTrafficOnly bool = true
-param networkAcls object = {
-  bypass: 'AzureServices'
-  defaultAction: 'Allow'
-}
 @allowed([ 'Enabled', 'Disabled' ])
 param publicNetworkAccess string = 'Enabled'
 param sku object = { name: 'Standard_LRS' }
+@allowed([ 'None', 'AzureServices' ])
+param bypass string = 'AzureServices'
 
-resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
+var networkAcls = (publicNetworkAccess == 'Enabled') ? {
+  bypass: bypass
+  defaultAction: 'Allow'
+} : { defaultAction: 'Deny' }
+
+resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: name
   location: location
   tags: tags
@@ -40,6 +44,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
     allowSharedKeyAccess: allowSharedKeyAccess
     defaultToOAuthAuthentication: defaultToOAuthAuthentication
     dnsEndpointType: dnsEndpointType
+    isHnsEnabled: isHnsEnabled
     minimumTlsVersion: minimumTlsVersion
     networkAcls: networkAcls
     publicNetworkAccess: publicNetworkAccess
@@ -60,5 +65,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   }
 }
 
+output id string = storage.id
 output name string = storage.name
 output primaryEndpoints object = storage.properties.primaryEndpoints

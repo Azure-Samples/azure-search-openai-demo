@@ -1,6 +1,6 @@
 import logging
 from functools import wraps
-from typing import Any, Callable, Dict
+from typing import Any, Callable, TypeVar, cast
 
 from quart import abort, current_app, request
 
@@ -9,7 +9,7 @@ from core.authentication import AuthError
 from error import error_response
 
 
-def authenticated_path(route_fn: Callable[[str], Any]):
+def authenticated_path(route_fn: Callable[[str, dict[str, Any]], Any]):
     """
     Decorator for routes that request a specific file that might require access control enforcement
     """
@@ -32,24 +32,27 @@ def authenticated_path(route_fn: Callable[[str], Any]):
         if not authorized:
             abort(403)
 
-        return await route_fn(path)
+        return await route_fn(path, auth_claims)
 
     return auth_handler
 
 
-def authenticated(route_fn: Callable[[Dict[str, Any]], Any]):
+_C = TypeVar("_C", bound=Callable[..., Any])
+
+
+def authenticated(route_fn: _C) -> _C:
     """
     Decorator for routes that might require access control. Unpacks Authorization header information into an auth_claims dictionary
     """
 
     @wraps(route_fn)
-    async def auth_handler():
+    async def auth_handler(*args, **kwargs):
         auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
         try:
             auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
         except AuthError:
             abort(403)
 
-        return await route_fn(auth_claims)
+        return await route_fn(auth_claims, *args, **kwargs)
 
-    return auth_handler
+    return cast(_C, auth_handler)

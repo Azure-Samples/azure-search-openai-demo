@@ -1,5 +1,4 @@
 -r app/backend/requirements.txt
--r scripts/requirements.txt
 ruff
 black
 pytest
@@ -9,7 +8,7 @@ coverage
 playwright
 pytest-cov
 pytest-playwright
+pytest-snapshot
 pre-commit
-locust
 pip-tools
-mypy
+mypy==1.14.1

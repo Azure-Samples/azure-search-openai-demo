@@ -1,0 +1,11 @@
+{
+    "continuation_token": "next",
+    "sessions": [
+        {
+            "entra_oid": "OID_X",
+            "id": "123",
+            "timestamp": 123456789,
+            "title": "This is a test message"
+        }
+    ]
+}

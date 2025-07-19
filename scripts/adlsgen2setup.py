@@ -13,6 +13,10 @@ from azure.storage.filedatalake.aio import (
     DataLakeServiceClient,
 )
 
+from load_azd_env import load_azd_env
+
+logger = logging.getLogger("scripts")
+
 
 class AdlsGen2Setup:
     """
@@ -40,7 +44,7 @@ class AdlsGen2Setup:
         filesystem_name
             Name of the container / filesystem in the Data Lake Storage Gen 2 account to use
         security_enabled_groups
-            When creating groups in Azure AD, whether or not to make them security enabled
+            When creating groups in Microsoft Entra, whether or not to make them security enabled
         data_access_control_format
             File describing how to create groups, upload files with access control. See the sampleacls.json for the format of this file
         """
@@ -54,18 +58,18 @@ class AdlsGen2Setup:
 
     async def run(self):
         async with self.create_service_client() as service_client:
-            logging.info(f"Ensuring {self.filesystem_name} exists...")
+            logger.info(f"Ensuring {self.filesystem_name} exists...")
             async with service_client.get_file_system_client(self.filesystem_name) as filesystem_client:
                 if not await filesystem_client.exists():
                     await filesystem_client.create_file_system()
 
-                logging.info("Creating groups...")
+                logger.info("Creating groups...")
                 groups: dict[str, str] = {}
                 for group in self.data_access_control_format["groups"]:
                     group_id = await self.create_or_get_group(group)
                     groups[group] = group_id
 
-                logging.info("Ensuring directories exist...")
+                logger.info("Ensuring directories exist...")
                 directories: dict[str, DataLakeDirectoryClient] = {}
                 try:
                     for directory in self.data_access_control_format["directories"].keys():
@@ -76,29 +80,32 @@ class AdlsGen2Setup:
                         )
                         directories[directory] = directory_client
 
-                    logging.info("Uploading files...")
+                    logger.info("Uploading files...")
                     for file, file_info in self.data_access_control_format["files"].items():
                         directory = file_info["directory"]
                         if directory not in directories:
-                            logging.error(f"File {file} has unknown directory {directory}, exiting...")
+                            logger.error(f"File {file} has unknown directory {directory}, exiting...")
                             return
                         await self.upload_file(
                             directory_client=directories[directory], file_path=os.path.join(self.data_directory, file)
                         )
 
-                    logging.info("Setting access control...")
+                    logger.info("Setting access control...")
                     for directory, access_control in self.data_access_control_format["directories"].items():
                         directory_client = directories[directory]
                         if "groups" in access_control:
                             for group_name in access_control["groups"]:
                                 if group_name not in groups:
-                                    logging.error(
+                                    logger.error(
                                         f"Directory {directory} has unknown group {group_name} in access control list, exiting"
                                     )
                                     return
                                 await directory_client.update_access_control_recursive(
                                     acl=f"group:{groups[group_name]}:r-x"
                                 )
+                        if "oids" in access_control:
+                            for oid in access_control["oids"]:
+                                await directory_client.update_access_control_recursive(acl=f"user:{oid}:r-x")
                 finally:
                     for directory_client in directories.values():
                         await directory_client.close()
@@ -119,7 +126,7 @@ class AdlsGen2Setup:
             token_result = await self.credentials.get_token("https://graph.microsoft.com/.default")
             self.graph_headers = {"Authorization": f"Bearer {token_result.token}"}
         async with aiohttp.ClientSession(headers=self.graph_headers) as session:
-            logging.info(f"Searching for group {group_name}...")
+            logger.info(f"Searching for group {group_name}...")
             async with session.get(
                 f"https://graph.microsoft.com/v1.0/groups?$select=id&$top=1&$filter=displayName eq '{group_name}'"
             ) as response:
@@ -129,28 +136,36 @@ class AdlsGen2Setup:
                 if len(content["value"]) == 1:
                     group_id = content["value"][0]["id"]
             if not group_id:
-                logging.info(f"Could not find group {group_name}, creating...")
+                logger.info(f"Could not find group {group_name}, creating...")
                 group = {
                     "displayName": group_name,
-                    "groupTypes": ["Unified"],
                     "securityEnabled": self.security_enabled_groups,
+                    "groupTypes": ["Unified"],
+                    # If Unified does not work for you, then you may need the following settings instead:
+                    # "mailEnabled": False,
+                    # "mailNickname": group_name,
                 }
                 async with session.post("https://graph.microsoft.com/v1.0/groups", json=group) as response:
                     content = await response.json()
                     if response.status != 201:
                         raise Exception(content)
                     group_id = content["id"]
-        logging.info(f"Group {group_name} ID {group_id}")
+        logger.info(f"Group {group_name} ID {group_id}")
         return group_id
 
 
 async def main(args: Any):
+    load_azd_env()
+
+    if not os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT"):
+        raise Exception("AZURE_ADLS_GEN2_STORAGE_ACCOUNT must be set to continue")
+
     async with AzureDeveloperCliCredential() as credentials:
         with open(args.data_access_control) as f:
             data_access_control_format = json.load(f)
         command = AdlsGen2Setup(
             data_directory=args.data_directory,
-            storage_account_name=args.storage_account,
+            storage_account_name=os.environ["AZURE_ADLS_GEN2_STORAGE_ACCOUNT"],
             filesystem_name="gptkbcontainer",
             security_enabled_groups=args.create_security_enabled_groups,
             credentials=credentials,
@@ -162,19 +177,14 @@ async def main(args: Any):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Upload sample data to a Data Lake Storage Gen2 account and associate sample access control lists with it using sample groups",
-        epilog="Example: ./scripts/adlsgen2setup.py ./data --data-access-control ./scripts/sampleacls.json --storage-account <name of storage account> --create-security-enabled-groups <true|false>",
+        epilog="Example: ./scripts/adlsgen2setup.py ./data --data-access-control ./scripts/sampleacls.json --create-security-enabled-groups <true|false>",
     )
     parser.add_argument("data_directory", help="Data directory that contains sample PDFs")
-    parser.add_argument(
-        "--storage-account",
-        required=True,
-        help="Name of the Data Lake Storage Gen2 account to upload the sample data to",
-    )
     parser.add_argument(
         "--create-security-enabled-groups",
         required=False,
         action="store_true",
-        help="Whether or not the sample groups created are security enabled in Azure AD",
+        help="Whether or not the sample groups created are security enabled in Microsoft Entra",
     )
     parser.add_argument(
         "--data-access-control", required=True, help="JSON file describing access control for the sample data"

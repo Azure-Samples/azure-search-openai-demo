@@ -1,0 +1,22 @@
+name: Validate Markdown
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.md'
+
+jobs:
+  lint-markdown:
+    name: Check for Markdown linting errors
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Run markdownlint
+        uses: articulate/actions-markdownlint@v1
+        with:
+          config: .github/workflows/markdownlint-config.json
+          files: '**/*.md'
+          ignore: data/

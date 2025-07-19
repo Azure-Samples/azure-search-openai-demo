@@ -1,25 +1,51 @@
 import json
 
 import pytest
+from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
+from azure.search.documents.aio import SearchClient
 from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.promptmanager import PromptyManager
+
+from .mocks import (
+    MOCK_EMBEDDING_DIMENSIONS,
+    MOCK_EMBEDDING_MODEL_NAME,
+    MockAsyncSearchResultsIterator,
+    mock_retrieval_response,
+)
+
+
+async def mock_search(*args, **kwargs):
+    return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
+
+
+async def mock_retrieval(*args, **kwargs):
+    return mock_retrieval_response()
 
 
 @pytest.fixture
 def chat_approach():
     return ChatReadRetrieveReadApproach(
         search_client=None,
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
         auth_helper=None,
         openai_client=None,
-        chatgpt_model="gpt-35-turbo",
+        chatgpt_model="gpt-4.1-mini",
         chatgpt_deployment="chat",
         embedding_deployment="embeddings",
-        embedding_model="text-",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
         sourcepage_field="",
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
+        prompt_manager=PromptyManager(),
     )
 
 
@@ -29,7 +55,7 @@ def test_get_search_query(chat_approach):
 	"id": "chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM",
 	"object": "chat.completion",
 	"created": 1695324963,
-	"model": "gpt-35-turbo",
+	"model": "gpt-4.1-mini",
 	"prompt_filter_results": [
 		{
 			"prompt_index": 0,
@@ -91,126 +117,12 @@ def test_get_search_query(chat_approach):
 
 
 def test_get_search_query_returns_default(chat_approach):
-    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-35-turbo","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
+    payload = '{"id":"chatcmpl-81JkxYqYppUkPtOAia40gki2vJ9QM","object":"chat.completion","created":1695324963,"model":"gpt-4.1-mini","prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}],"choices":[{"index":0,"finish_reason":"function_call","message":{"content":"","role":"assistant"},"content_filter_results":{}}],"usage":{"completion_tokens":19,"prompt_tokens":425,"total_tokens":444}}'
     default_query = "hello"
     chatcompletions = ChatCompletion.model_validate(json.loads(payload), strict=False)
     query = chat_approach.get_search_query(chatcompletions, default_query)
 
     assert query == default_query
-
-
-def test_get_messages_from_history(chat_approach):
-    messages = chat_approach.get_messages_from_history(
-        system_prompt="You are a bot.",
-        model_id="gpt-35-turbo",
-        history=[
-            {"role": "user", "content": "What happens in a performance review?"},
-            {
-                "role": "assistant",
-                "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
-            },
-            {"role": "user", "content": "What does a Product Manager do?"},
-        ],
-        user_content="What does a Product Manager do?",
-        max_tokens=3000,
-    )
-    assert messages == [
-        {"role": "system", "content": "You are a bot."},
-        {"role": "user", "content": "What happens in a performance review?"},
-        {
-            "role": "assistant",
-            "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
-        },
-        {"role": "user", "content": "What does a Product Manager do?"},
-    ]
-
-
-def test_get_messages_from_history_truncated(chat_approach):
-    messages = chat_approach.get_messages_from_history(
-        system_prompt="You are a bot.",
-        model_id="gpt-35-turbo",
-        history=[
-            {"role": "user", "content": "What happens in a performance review?"},
-            {
-                "role": "assistant",
-                "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
-            },
-            {"role": "user", "content": "What does a Product Manager do?"},
-        ],
-        user_content="What does a Product Manager do?",
-        max_tokens=10,
-    )
-    assert messages == [
-        {"role": "system", "content": "You are a bot."},
-        {"role": "user", "content": "What does a Product Manager do?"},
-    ]
-
-
-def test_get_messages_from_history_truncated_longer(chat_approach):
-    messages = chat_approach.get_messages_from_history(
-        system_prompt="You are a bot.",  # 8 tokens
-        model_id="gpt-35-turbo",
-        history=[
-            {"role": "user", "content": "What happens in a performance review?"},  # 10 tokens
-            {
-                "role": "assistant",
-                "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
-            },  # 102 tokens
-            {"role": "user", "content": "Is there a dress code?"},  # 9 tokens
-            {
-                "role": "assistant",
-                "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]",
-            },  # 26 tokens
-            {"role": "user", "content": "What does a Product Manager do?"},  # 10 tokens
-        ],
-        user_content="What does a Product Manager do?",
-        max_tokens=55,
-    )
-    assert messages == [
-        {"role": "system", "content": "You are a bot."},
-        {"role": "user", "content": "Is there a dress code?"},
-        {
-            "role": "assistant",
-            "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]",
-        },
-        {"role": "user", "content": "What does a Product Manager do?"},
-    ]
-
-
-def test_get_messages_from_history_truncated_break_pair(chat_approach):
-    """Tests that the truncation breaks the pair of messages."""
-    messages = chat_approach.get_messages_from_history(
-        system_prompt="You are a bot.",  # 8 tokens
-        model_id="gpt-35-turbo",
-        history=[
-            {"role": "user", "content": "What happens in a performance review?"},  # 10 tokens
-            {
-                "role": "assistant",
-                "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
-            },  # 102 tokens
-            {"role": "user", "content": "Is there a dress code?"},  # 9 tokens
-            {
-                "role": "assistant",
-                "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]",
-            },  # 26 tokens
-            {"role": "user", "content": "What does a Product Manager do?"},  # 10 tokens
-        ],
-        user_content="What does a Product Manager do?",
-        max_tokens=147,
-    )
-    assert messages == [
-        {"role": "system", "content": "You are a bot."},
-        {
-            "role": "assistant",
-            "content": "During the performance review at Contoso Electronics, the supervisor will discuss the employee's performance over the past year and provide feedback on areas for improvement. They will also provide an opportunity for the employee to discuss their goals and objectives for the upcoming year. The review is a two-way dialogue between managers and employees, and employees will receive a written summary of their performance review which will include a rating of their performance, feedback, and goals and objectives for the upcoming year [employee_handbook-3.pdf].",
-        },
-        {"role": "user", "content": "Is there a dress code?"},
-        {
-            "role": "assistant",
-            "content": "Yes, there is a dress code at Contoso Electronics. Look sharp! [employee_handbook-1.pdf]",
-        },
-        {"role": "user", "content": "What does a Product Manager do?"},
-    ]
 
 
 def test_extract_followup_questions(chat_approach):
@@ -249,21 +161,142 @@ def test_extract_followup_questions_no_pre_content(chat_approach):
     assert followup_questions == ["What is the dress code?"]
 
 
-def test_get_messages_from_history_few_shots(chat_approach):
-    user_query_request = "What does a Product manager do?"
-    messages = chat_approach.get_messages_from_history(
-        system_prompt=chat_approach.query_prompt_template,
-        model_id=chat_approach.chatgpt_model,
-        user_content=user_query_request,
-        history=[],
-        max_tokens=chat_approach.chatgpt_token_limit - len(user_query_request),
-        few_shots=chat_approach.query_prompt_few_shots,
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "minimum_search_score,minimum_reranker_score,expected_result_count",
+    [
+        (0, 0, 1),
+        (0, 2, 1),
+        (0.03, 0, 1),
+        (0.03, 2, 1),
+        (1, 0, 0),
+        (0, 4, 0),
+        (1, 4, 0),
+    ],
+)
+async def test_search_results_filtering_by_scores(
+    monkeypatch, minimum_search_score, minimum_reranker_score, expected_result_count
+):
+
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-4.1-mini",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
     )
-    # Make sure messages are in the right order
-    assert messages[0]["role"] == "system"
-    assert messages[1]["role"] == "user"
-    assert messages[2]["role"] == "assistant"
-    assert messages[3]["role"] == "user"
-    assert messages[4]["role"] == "assistant"
-    assert messages[5]["role"] == "user"
-    assert messages[5]["content"] == user_query_request
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    filtered_results = await chat_approach.search(
+        top=10,
+        query_text="test query",
+        filter=None,
+        vectors=[],
+        use_text_search=True,
+        use_vector_search=True,
+        use_semantic_ranker=True,
+        use_semantic_captions=True,
+        minimum_search_score=minimum_search_score,
+        minimum_reranker_score=minimum_reranker_score,
+    )
+
+    assert (
+        len(filtered_results) == expected_result_count
+    ), f"Expected {expected_result_count} results with minimum_search_score={minimum_search_score} and minimum_reranker_score={minimum_reranker_score}"
+
+
+@pytest.mark.asyncio
+async def test_search_results_query_rewriting(monkeypatch):
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+    )
+
+    query_rewrites = None
+
+    async def validate_qr_and_mock_search(*args, **kwargs):
+        nonlocal query_rewrites
+        query_rewrites = kwargs.get("query_rewrites")
+        return await mock_search(*args, **kwargs)
+
+    monkeypatch.setattr(SearchClient, "search", validate_qr_and_mock_search)
+
+    results = await chat_approach.search(
+        top=10,
+        query_text="test query",
+        filter=None,
+        vectors=[],
+        use_text_search=True,
+        use_vector_search=True,
+        use_semantic_ranker=True,
+        use_semantic_captions=True,
+        use_query_rewriting=True,
+    )
+    assert len(results) == 1
+    assert query_rewrites == "generative"
+
+
+@pytest.mark.asyncio
+async def test_agent_retrieval_results(monkeypatch):
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=None,
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+    )
+
+    agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
+
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
+
+    _, results = await chat_approach.run_agentic_retrieval(messages=[], agent_client=agent_client, search_index_name="")
+
+    assert len(results) == 1
+    assert results[0].id == "Benefit_Options-2.pdf"
+    assert results[0].content == "There is a whistleblower policy."
+    assert results[0].sourcepage == "Benefit_Options-2.pdf"
+    assert results[0].search_agent_query == "whistleblower query"

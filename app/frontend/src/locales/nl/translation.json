@@ -1,0 +1,169 @@
+{
+    "pageTitle": "Azure OpenAI + AI Search",
+    "headerTitle": "Azure OpenAI + AI Search",
+    "chat": "Chat",
+    "qa": "Stel een vraag",
+    "login": "Inloggen",
+    "logout": "Uitloggen",
+    "clearChat": "Chat wissen",
+    "history": {
+        "chatHistory": "Chatgeschiedenis",
+        "openChatHistory": "Open chatgeschiedenis",
+        "noHistory": "Geen chatgeschiedenis",
+        "deleteModalTitle": "Chatgeschiedenis verwijderen",
+        "deleteModalDescription": "Deze actie kan niet ongedaan worden gemaakt. Deze chatgeschiedenis verwijderen?",
+        "deleteLabel": "Verwijderen",
+        "cancelLabel": "Annuleren",
+        "today": "Vandaag",
+        "yesterday": "Gisteren",
+        "last7days": "Laatste 7 dagen",
+        "last30days": "Laatste 30 dagen"
+    },
+    "upload": {
+        "fileLabel": "Bestand uploaden:",
+        "uploadedFilesLabel": "Eerder geüploade bestanden:",
+        "noFilesUploaded": "Nog geen bestanden geüpload",
+        "loading": "Laden...",
+        "manageFileUploads": "Bestandsuploads beheren",
+        "uploadingFiles": "Bestanden uploaden...",
+        "uploadedFileError": "Fout bij uploaden van bestand - probeer het opnieuw of neem contact op met de beheerder.",
+        "deleteFile": "Bestand verwijderen",
+        "deletingFile": "Bestand verwijderen...",
+        "errorDeleting": "Fout bij verwijderen.",
+        "fileDeleted": "Bestand verwijderd"
+    },
+    "developerSettings": "Ontwikkelaarinstellingen",
+
+    "chatEmptyStateTitle": "Chat met je gegevens",
+    "chatEmptyStateSubtitle": "Stel een vraag of probeer een voorbeeld",
+    "defaultExamples": {
+        "1": "Wat zit er in mijn Northwind Health Plus-pakket dat niet in het standaardpakket zit?",
+        "2": "Wat gebeurt er tijdens een functioneringsgesprek?",
+        "3": "Wat doet een Product Manager?",
+        "placeholder": "Typ een nieuwe vraag (bijv. dekt mijn pakket jaarlijkse oogonderzoeken?)"
+    },
+    "askTitle": "Stel je vraag aan de data",
+    "gpt4vExamples": {
+        "1": "Vergelijk de impact van rentetarieven en het BBP op financiële markten.",
+        "2": "Wat is de verwachte trend voor de S&P 500-index voor de komende vijf jaar? Vergelijk dit met de eerdere prestaties van de S&P 500",
+        "3": "Kun je enige correlatie vinden tussen olieprijzen en markttrends?",
+        "placeholder": "Voorbeeld: dekt mijn pakket jaarlijkse oogonderzoeken?"
+    },
+    "generatingAnswer": "Antwoord genereren",
+    "citationWithColon": "Citaat:",
+    "followupQuestions": "Vervolgvragen:",
+
+    "tooltips": {
+        "submitQuestion": "Vraag indienen",
+        "askWithVoice": "Vraag stellen met stem",
+        "stopRecording": "Opname stoppen",
+        "showThoughtProcess": "Denkproces tonen",
+        "showSupportingContent": "Ondersteunende inhoud tonen",
+        "speakAnswer": "Antwoord uitspreken",
+        "info": "Info",
+        "save": "Opslaan",
+        "copy": "Kopieer",
+        "copied": "Gekopieerd!"
+    },
+
+    "headerTexts": {
+        "thoughtProcess": "Denkproces",
+        "supportingContent": "Ondersteunende Inhoud",
+        "citation": "Citaat"
+    },
+
+    "labels": {
+        "toggleMenu": "Menu wisselen",
+        "languagePicker": "Selecteer je taal",
+        "headerText": "Antwoordgeneratie instellen",
+        "closeButton": "Sluiten",
+        "promptTemplate": "Prompt-template overschrijven",
+        "temperature": "Temperatuur",
+        "seed": "Seed",
+        "minimumSearchScore": "Minimale zoekscore",
+        "minimumRerankerScore": "Minimale reranker score",
+        "retrieveCount": "Dit aantal zoekresultaten ophalen:",
+        "includeCategory": "Categorie opnemen",
+        "includeCategoryOptions": {
+            "all": "Alle"
+        },
+        "excludeCategory": "Categorie uitsluiten",
+        "useSemanticRanker": "Semantische rangschikking gebruiken",
+        "useSemanticCaptions": "Semantische bijschriften gebruiken",
+        "useQueryRewriting": "Gebruik de herformulering van zoekopdrachten om informatie op te halen",
+        "reasoningEffort": "Redeneerinspanning",
+        "reasoningEffortOptions": {
+            "low": "Laag",
+            "medium": "Gemiddeld",
+            "high": "Hoog"
+        },
+        "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
+        "useAgenticRetrieval": "Gebruik agentische retrieval",
+        "useGPT4V": "GPT-visiemodel gebruiken",
+        "gpt4VInput": {
+            "label": "Invoer voor GPT-visiemodel",
+            "options": {
+                "textAndImages": "Afbeeldingen en tekst",
+                "images": "Afbeeldingen",
+                "texts": "Tekst"
+            }
+        },
+        "retrievalMode": {
+            "label": "Ophaalmodus",
+            "options": {
+                "hybrid": "Vectoren + Tekst (Hybride)",
+                "vectors": "Vectoren",
+                "texts": "Tekst"
+            }
+        },
+        "vector": {
+            "label": "Vectorvelden (Multi-query vectorzoektocht)",
+            "options": {
+                "embedding": "Tekst Embeddings",
+                "imageEmbedding": "Afbeelding Embeddings",
+                "both": "Tekst en Afbeelding embeddings"
+            }
+        },
+        "useOidSecurityFilter": "OID-beveiligingsfilter gebruiken",
+        "useGroupsSecurityFilter": "Groepsbeveiligingsfilter gebruiken",
+        "shouldStream": "Chat-antwoorden streamen"
+    },
+
+    "helpTexts": {
+        "promptTemplate":
+            "Overschrijft de prompt die wordt gebruikt om het antwoord te genereren op basis van de vraag en zoekresultaten. Om de bestaande prompt uit te breiden in plaats van te overschrijven, start je prompt met '>>>'",
+        "temperature":
+            "Stelt de temperatuur in van het verzoek aan het taalmodel dat het antwoord genereert. Hogere temperaturen leiden tot creatievere antwoorden, maar kunnen minder feitelijk zijn.",
+        "seed": "Stelt een seed in om de reproduceerbaarheid van de reacties van het model te verbeteren. De seed kan een willekeurig geheel getal zijn.",
+        "searchScore":
+             "Stelt een minimale score in voor zoekresultaten van de Azure AI zoekfunctie. De bereik van de score varieert afhankelijk van de zoekmodus: hybride (standaard), alleen vectoren, of alleen tekst.",
+        "rerankerScore":
+             "Stelt een minimale score in voor zoekresultaten van de semantische ranker. De score varieert van 0 tot 4, waarbij een hogere score aangeeft dat het resultaat semantisch relevanter is voor de vraag.",
+        "retrieveNumber":
+             "Stelt het aantal zoekresultaten in om op te halen van Azure AI zoekfunctie. Meer resultaten vergroten de kans op het juiste antwoord, maar kunnen ook leiden tot het 'lost in the middle' probleem.",
+        "includeCategory":
+            "Specificeert een categorie om op te nemen in de zoekresultaten. Er zijn geen categorieën in de standaard dataset.",
+        "excludeCategory":
+            "Specificeert een categorie om uit te sluiten van de zoekresultaten. Er zijn geen categorieën in de standaard dataset.",
+        "useSemanticReranker":
+            "Activeert de semantische ranker van Azure AI Search, een model dat zoekresultaten rangschikt op basis van semantische overeenkomst met de zoekopdracht.",
+        "useSemanticCaptions":
+            "Stuurt semantische bijschriften naar het taalmodel in plaats van het volledige zoekresultaat. Een semantisch bijschrift wordt geëxtraheerd voor ieder zoekresultaat tijdens het toepassen van de semantische ranker.",
+        "useQueryRewriting":
+            "Schakelt Azure AI Search query herformulering in, een proces dat de query van de gebruiker wijzigt om zoekresultaten te verbeteren. Vereist dat semantische rangschikking is ingeschakeld.",
+        "reasoningEffort":
+            "Stelt de redeneerinspanning voor het taalmodel in. Hogere waarden resulteren in meer redeneren, maar kunnen langer duren om een reactie te genereren. De standaard is gemiddeld.",
+        "suggestFollowupQuestions": "Vraagt het taalmodel om vervolgvragen voor te stellen op basis van de vraag.",
+        "useGPT4Vision": "Gebruikt GPT-4-Turbo met Vision om antwoorden te genereren op basis van afbeeldingen en tekst uit de index.",
+        "vectorFields":
+            "Specificeert welke embeddingvelden in de Azure AI zoekindex worden doorzocht: 'Afbeeldingen en tekst', alleen 'Afbeeldingen', of alleen 'Tekst'.",
+        "gpt4VisionInputs":
+            "Stelt in wat er naar het visiemodel wordt verzonden. 'Afbeeldingen en tekst' verzendt beide, 'Afbeeldingen' alleen afbeeldingen, en 'Tekst' alleen tekst.",
+        "retrievalMode":
+            "Stelt de zoekmodus in voor de Azure AI zoekopdracht. `Vectoren + Tekst (Hybride)` gebruikt vector en volledige tekst, `Vectoren` alleen de vector, en `Tekst` alleen de volledige tekst. Hybride is meestal optimaal.",
+        "streamChat": "Geeft het antwoord in real-time weer in de chat terwijl het wordt gegenereerd.",
+        "useOidSecurityFilter": "Filtert zoekresultaten op basis van de OID van de geauthenticeerde gebruiker.",
+        "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+    }
+}

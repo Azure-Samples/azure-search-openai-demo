@@ -1,19 +1,48 @@
 import json
 from collections import namedtuple
+from io import BytesIO
 from typing import Optional
 
+import openai.types
+from azure.cognitiveservices.speech import ResultReason
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.search.documents.agent.models import (
+    KnowledgeAgentAzureSearchDocReference,
+    KnowledgeAgentMessage,
+    KnowledgeAgentMessageTextContent,
+    KnowledgeAgentModelQueryPlanningActivityRecord,
+    KnowledgeAgentRetrievalResponse,
+    KnowledgeAgentSearchActivityRecord,
+    KnowledgeAgentSearchActivityRecordQuery,
+)
 from azure.search.documents.models import (
     VectorQuery,
 )
 from azure.storage.blob import BlobProperties
 
+MOCK_EMBEDDING_DIMENSIONS = 1536
+MOCK_EMBEDDING_MODEL_NAME = "text-embedding-ada-002"
+
 MockToken = namedtuple("MockToken", ["token", "expires_on", "value"])
 
 
 class MockAzureCredential(AsyncTokenCredential):
+
     async def get_token(self, uri):
         return MockToken("", 9999999999, "")
+
+
+class MockAzureCredentialExpired(AsyncTokenCredential):
+
+    def __init__(self):
+        self.access_number = 0
+
+    async def get_token(self, uri):
+        self.access_number += 1
+        if self.access_number == 1:
+            return MockToken("", 0, "")
+        else:
+            return MockToken("", 9999999999, "")
 
 
 class MockBlobClient:
@@ -28,17 +57,10 @@ class MockBlob:
         )
 
     async def readall(self):
-        return b"\x89PNG\x50\x4e\x47\x0d\x0a\x1a\x0a\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x01\x00\x00\x00\x01\x01\x00\x00\x00\x00\x37\x6e\xf9\x24\x00\x00\x00\x0a\x49\x44\x41\x54\x78\x9c\x63\x00\x01\x00\x00\x05\x00\x01\x0d\x0d\x2d\xba\x1b\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82"
+        return b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\xdac\xfc\xcf\xf0\xbf\x1e\x00\x06\x83\x02\x7f\x94\xad\xd0\xeb\x00\x00\x00\x00IEND\xaeB`\x82"
 
-
-class MockKeyVaultSecret:
-    def __init__(self, value):
-        self.value = value
-
-
-class MockKeyVaultSecretClient:
-    async def get_secret(self, secret_name):
-        return MockKeyVaultSecret("mysecret")
+    async def readinto(self, buffer: BytesIO):
+        buffer.write(b"test")
 
 
 class MockAsyncPageIterator:
@@ -130,17 +152,18 @@ class MockAsyncSearchResultsIterator:
             raise StopAsyncIteration
         return MockAsyncPageIterator(self.data.pop(0))
 
+    async def get_count(self):
+        return len(self.data)
+
     def by_page(self):
         return self
 
 
 class MockResponse:
-    def __init__(self, text, status):
-        self.text = text
+    def __init__(self, status, text=None, headers=None):
+        self._text = text or ""
         self.status = status
-
-    async def text(self):
-        return self._text
+        self.headers = headers or {}
 
     async def __aexit__(self, exc_type, exc, tb):
         pass
@@ -148,8 +171,28 @@ class MockResponse:
     async def __aenter__(self):
         return self
 
+    async def text(self):
+        return self._text
+
     async def json(self):
-        return json.loads(self.text)
+        return json.loads(self._text)
+
+    def raise_for_status(self):
+        if self.status != 200:
+            raise Exception(f"HTTP status {self.status}")
+
+
+class MockEmbeddingsClient:
+    def __init__(self, create_embedding_response: openai.types.CreateEmbeddingResponse):
+        self.create_embedding_response = create_embedding_response
+
+    async def create(self, *args, **kwargs) -> openai.types.CreateEmbeddingResponse:
+        return self.create_embedding_response
+
+
+class MockClient:
+    def __init__(self, embeddings_client):
+        self.embeddings = embeddings_client
 
 
 def mock_computervision_response():
@@ -172,3 +215,90 @@ def mock_computervision_response():
             }
         ),
     )
+
+
+def mock_retrieval_response():
+    return KnowledgeAgentRetrievalResponse(
+        response=[
+            KnowledgeAgentMessage(
+                role="assistant",
+                content=[
+                    KnowledgeAgentMessageTextContent(
+                        text=r'[{"ref_id":0,"title":"Benefit_Options-2.pdf","content":"There is a whistleblower policy."}]'
+                    )
+                ],
+            )
+        ],
+        activity=[
+            KnowledgeAgentModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
+            KnowledgeAgentSearchActivityRecord(
+                id=1,
+                target_index="index",
+                query=KnowledgeAgentSearchActivityRecordQuery(search="whistleblower query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+        ],
+        references=[
+            KnowledgeAgentAzureSearchDocReference(
+                id=0,
+                activity_source=1,
+                doc_key="Benefit_Options-2.pdf",
+                source_data={"content": "There is a whistleblower policy.", "sourcepage": "Benefit_Options-2.pdf"},
+            )
+        ],
+    )
+
+
+class MockAudio:
+    def __init__(self, audio_data):
+        self.audio_data = audio_data
+        self.reason = ResultReason.SynthesizingAudioCompleted
+
+    def read(self):
+        return self.audio_data
+
+
+class MockSpeechSynthesisCancellationDetails:
+    def __init__(self):
+        self.reason = "Canceled"
+        self.error_details = "The synthesis was canceled."
+
+
+class MockAudioCancelled:
+    def __init__(self, audio_data):
+        self.audio_data = audio_data
+        self.reason = ResultReason.Canceled
+        self.cancellation_details = MockSpeechSynthesisCancellationDetails()
+
+    def read(self):
+        return self.audio_data
+
+
+class MockAudioFailure:
+    def __init__(self, audio_data):
+        self.audio_data = audio_data
+        self.reason = ResultReason.NoMatch
+
+    def read(self):
+        return self.audio_data
+
+
+class MockSynthesisResult:
+    def __init__(self, result):
+        self.__result = result
+
+    def get(self):
+        return self.__result
+
+
+def mock_speak_text_success(self, text):
+    return MockSynthesisResult(MockAudio("mock_audio_data"))
+
+
+def mock_speak_text_cancelled(self, text):
+    return MockSynthesisResult(MockAudioCancelled("mock_audio_data"))
+
+
+def mock_speak_text_failed(self, text):
+    return MockSynthesisResult(MockAudioFailure("mock_audio_data"))

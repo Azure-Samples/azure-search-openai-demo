@@ -1,0 +1,167 @@
+{
+    "pageTitle": "Azure OpenAI + AI Search",
+    "headerTitle": "Azure OpenAI + AI Search",
+    "chat": "チャット",
+    "qa": "一問一答",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "clearChat": "チャットをクリア",
+    "history": {
+        "chatHistory": "チャット履歴",
+        "openChatHistory": "チャット履歴を開く",
+        "noHistory": "チャット履歴がありません",
+        "deleteModalTitle": "チャット履歴の削除",
+        "deleteModalDescription": "この操作は取り消せません。このチャット履歴を削除しますか？",
+        "deleteLabel": "削除",
+        "cancelLabel": "キャンセル",
+        "today": "今日",
+        "yesterday": "昨日",
+        "last7days": "過去7日間",
+        "last30days": "過去30日間"
+    },
+    "upload": {
+        "fileLabel": "ファイルをアップロード：",
+        "uploadedFilesLabel": "アップロード済みのファイル：",
+        "noFilesUploaded": "まだファイルがアップロードされていません",
+        "loading": "読み込み中...",
+        "manageFileUploads": "ファイルのアップロードを管理",
+        "uploadingFiles": "ファイルをアップロード中...",
+        "uploadedFileError": "ファイルのアップロードエラー - 再試行、もしくは管理者にお問い合わせください。",
+        "deleteFile": "ファイルを削除",
+        "deletingFile": "ファイルを削除中...",
+        "errorDeleting": "削除エラー。",
+        "fileDeleted": "ファイル削除済み"
+    },
+    "developerSettings": "高度な設定",
+
+    "chatEmptyStateTitle": "データを用いてチャットを行います",
+    "chatEmptyStateSubtitle": "ご自由にお問い合わせいただくか、もしくは下記のサンプルをお試しください",
+    "defaultExamples": {
+        "1": "私が契約中の Northwind Health Plus の標準プランには何が含まれ、何が含まれないのですか？",
+        "2": "パフォーマンス・レビューで何を行いますか？",
+        "3": "プロダクトマネージャーの職務内容について教えてください。",
+        "placeholder": "新しい質問を入力してください (例：私の契約プランは年1回の眼科検診もカバーしていますか？)"
+    },
+    "askTitle": "データを利用した問い合わせ",
+    "gpt4vExamples": {
+        "1": "金融市場における金利とGDPの影響を比較してください。",
+        "2": "S&P 500指数の今後5年間のトレンドを予想してください、そして過去のS&P 500のパフォーマンスと比較してください。",
+        "3": "原油価格と株式市場の動向の間には相関関係があると思いますか？",
+        "placeholder": "例：私の契約プランは年1回の眼科検診もカバーしていますか？"
+    },
+    "generatingAnswer": "回答を生成中",
+    "citationWithColon": "引用：",
+    "followupQuestions": "フォローアップの質問：",
+
+    "tooltips":{
+        "submitQuestion": "質問を送信",
+        "askWithVoice": "音声で質問",
+        "stopRecording": "質問の記録を停止",
+        "showThoughtProcess": "思考プロセスの表示",
+        "showSupportingContent": "サポート内容の表示",
+        "speakAnswer": "音声による回答",
+        "info": "情報",
+        "save": "保存",
+        "copy": "コピー",
+        "copied": "コピーしました！"
+    },
+
+    "headerTexts":{
+        "thoughtProcess": "思考プロセス",
+        "supportingContent": "サポート内容",
+        "citation": "引用"
+    },
+
+    "labels": {
+        "toggleMenu": "メニューを切り替える",
+        "languagePicker": "言語の選択",
+        "headerText": "回答生成の設定",
+        "closeButton": "閉じる",
+        "promptTemplate": "プロンプト・テンプレートを上書き",
+        "temperature": "温度",
+        "seed": "シード",
+        "minimumSearchScore": "最小検索スコア",
+        "minimumRerankerScore": "最小リランキング・スコア",
+        "retrieveCount": "ここで指定する検索結果数を取得：",
+        "includeCategory": "カテゴリを指定",
+        "includeCategoryOptions": {
+            "all": "全て"
+        },
+        "excludeCategory": "カテゴリを除外",
+        "useSemanticRanker": "取得にセマンティック・ランカーを使用",
+        "useSemanticCaptions": "セマンティック・キャプションを使用",
+        "useQueryRewriting": "検索のためにクエリの書き換えを使用する",
+        "reasoningEffort": "推論の労力",
+        "reasoningEffortOptions": {
+            "low": "低",
+            "medium": "中",
+            "high": "高"
+        },
+        "useSuggestFollowupQuestions": "フォローアップの質問を提案",
+        "useAgenticRetrieval": "使用主体性检索",
+        "useGPT4V": "GPT Visionモデルを使用",
+        "gpt4VInput": {
+            "label": "GPT Visionモデルの入力",
+            "options": {
+                "textAndImages": "画像とテキスト",
+                "images": "画像",
+                "texts": "テキスト"
+            }
+        },
+        "retrievalMode": {
+            "label": "検索モード",
+            "options": {
+                "hybrid": "ベクトル + テキスト (ハイブリッド)",
+                "vectors": "ベクトル",
+                "texts": "テキスト"
+            }
+        },
+        "vector": {
+            "label": "ベクトルフィールド (マルチクエリベクトル検索)",
+            "options": {
+                "embedding": "テキスト埋め込み",
+                "imageEmbedding": "画像埋め込み",
+                "both": "テキストと画像の埋め込み"
+            }
+        },
+        "useOidSecurityFilter": "OIDセキュリティフィルターの使用",
+        "useGroupsSecurityFilter": "グループセキュリティフィルターの使用",
+        "shouldStream": "ストリームでチャット応答を取得"
+    },
+
+    "helpTexts": {
+        "promptTemplate":
+            "質問や検索結果に基づいて回答を生成するためプロンプトを上書きします。既存のプロンプトに追加する場合、全てを置き換えるのではなく、プロンプトを'>>>'で始めてください。",
+        "temperature":
+            "LLMで回答を生成する際、リクエストに対して温度を設定します。温度が高いほど、より創造的な回答が得られますが、不安定になる可能性があります。",
+        "seed": "モデルによる回答の再現性を向上させるためシードを設定します。シードは任意の整数に設定できます。",
+        "searchScore":
+            "Azure AI Searchから返される検索結果の最小スコアを設定します。スコアの範囲は、ハイブリッド(デフォルト)、ベクトルのみ、またはテキストのみを使用しているかどうかによって異なります。",
+        "rerankerScore":
+            "セマンティック・リランカーから返される検索結果の最小スコアを設定します。スコアの値は0から4の範囲で変更できます。スコアの値が大きいほど、質問に対する結果の意味的な関連性が高まります。",
+        "retrieveNumber":
+            "Azure AI Searchの検索結果から取得する数を設定します。結果が多ければ多いほど、正しい答えを見つける可能性は高まるかもしれませんが、モデルが「途中で迷子になる」可能性もあります。",
+        "includeCategory": "検索結果に含めるカテゴリを指定します。デフォルトのデータセットはカテゴリを使用していません。",
+        "excludeCategory": "検索結果から除外するカテゴリを指定します。デフォルトのデータセットはカテゴリを使用していません。",
+        "useSemanticReranker":
+            "Azure AI Searchのセマンティック・ランカーを有効にします(ユーザーのクエリに対するセマンティック類似性に基づいて検索結果をリランク付けするモデル)。",
+        "useSemanticCaptions":
+            "完全な検索結果ではなく、LLMにセマンティック・キャプションを送信します。セマンティック・キャプションは、セマンティック・ランキングの処理中に検索結果から抽出されます。",
+        "useQueryRewriting":
+            "Azure AI Searchのクエリの書き換えを有効にします。これは、ユーザーのクエリを変更して検索結果を改善するプロセスです。セマンティック・ランカーが有効になっている必要があります。",
+        "reasoningEffort":
+            "LLMの推論労力を設定します。値が高いほど推論が増加しますが、応答の生成に時間がかかる場合があります。デフォルトは中です。",
+        "suggestFollowupQuestions": "ユーザーのクエリに基づいて、LLMにフォローアップの質問を提案するように問い合わせます。",
+        "useGPT4Vision": "インデックスから画像とテキストを利用して回答を生成するためGPT-4-Turbo with Visionを使用します。",
+        "vectorFields":
+            "Azure AI Search Index中でどの埋め込みフィールドを検索に利用するか指定します。「画像とテキスト」の両方、もしくは「画像」のみ、または「テキスト」のみのいずれかの埋め込みを指定します。",
+        "gpt4VisionInputs":
+            "ビジョンモデルに送信する内容を設定します。「画像とテキスト」は画像とテキストの両方をモデルに送信し、「画像」は画像のみを送信し、「テキスト」はテキストのみを送信します。",
+        "retrievalMode":
+            "Azure AI Searchクエリの取得モードを設定します。「ベクトル + テキスト (ハイブリッド)」はベクトル検索と全文検索の組み合わせを使用し、「ベクトル」はベクトル検索のみを使用し、「テキスト」は全文検索のみを使用します。一般的にはハイブリッド検索がお勧めです。",
+        "streamChat": "生成された回答をチャットUIに対して継続的にストリームで送信します。",
+        "useOidSecurityFilter": "認証ユーザーのOIDに基づいて検索結果をフィルタリングします。",
+        "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+    }
+}

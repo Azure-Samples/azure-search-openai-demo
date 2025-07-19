@@ -10,7 +10,8 @@ import {
     createTableColumn,
     TableColumnDefinition
 } from "@fluentui/react-table";
-import { appServicesToken } from "../../authConfig";
+import { getTokenClaims } from "../../authConfig";
+import { useState, useEffect } from "react";
 
 type Claim = {
     name: string;
@@ -20,6 +21,15 @@ type Claim = {
 export const TokenClaimsDisplay = () => {
     const { instance } = useMsal();
     const activeAccount = instance.getActiveAccount();
+    const [claims, setClaims] = useState<Record<string, unknown> | undefined>(undefined);
+
+    useEffect(() => {
+        const fetchClaims = async () => {
+            setClaims(await getTokenClaims(instance));
+        };
+
+        fetchClaims();
+    }, []);
 
     const ToString = (a: string | any) => {
         if (typeof a === "string") {
@@ -43,7 +53,7 @@ export const TokenClaimsDisplay = () => {
             return { name: key, value: ToString((o ?? {})[originalKey]) };
         });
     };
-    const items: Claim[] = createClaims(activeAccount?.idTokenClaims ?? appServicesToken?.user_claims);
+    const items: Claim[] = createClaims(claims);
 
     const columns: TableColumnDefinition<Claim>[] = [
         createTableColumn<Claim>({

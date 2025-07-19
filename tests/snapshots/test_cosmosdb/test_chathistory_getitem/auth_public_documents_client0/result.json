@@ -1,0 +1,19 @@
+{
+    "answers": [
+        [
+            "What does a Product Manager do?",
+            {
+                "delta": {
+                    "role": "assistant"
+                },
+                "message": {
+                    "content": "A Product Manager is responsible for leading the product management team and providing guidance on product strategy, design, development, and launch. They collaborate with internal teams and external partners to ensure successful product execution. They also develop and implement product life-cycle management processes, monitor industry trends, develop product marketing plans, research customer needs, collaborate with internal teams, develop pricing strategies, oversee product portfolio, analyze product performance, and identify areas for improvement [role_library.pdf#page=29][role_library.pdf#page=12][role_library.pdf#page=23].",
+                    "role": "assistant"
+                },
+                "session_state": "143c0240-b2ee-4090-8e90-2a1c58124894"
+            }
+        ]
+    ],
+    "entra_oid": "OID_X",
+    "id": "123"
+}

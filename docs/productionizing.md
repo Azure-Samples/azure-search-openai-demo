@@ -1,8 +1,13 @@
-# Productionizing the Chat App
+# RAG chat: Productionizing the app
 
 This sample is designed to be a starting point for your own production application,
 but you should do a thorough review of the security and performance before deploying
 to production. Here are some things to consider:
+
+* [Azure resource configuration](#azure-resource-configuration)
+* [Additional security measures](#additional-security-measures)
+* [Load testing](#load-testing)
+* [Evaluation](#evaluation)
 
 ## Azure resource configuration
 
@@ -19,7 +24,10 @@ If the maximum TPM isn't enough for your expected load, you have a few options:
 
 * Use a backoff mechanism to retry the request. This is helpful if you're running into a short-term quota due to bursts of activity but aren't over long-term quota. The [tenacity](https://tenacity.readthedocs.io/en/latest/) library is a good option for this, and this [pull request](https://github.com/Azure-Samples/azure-search-openai-demo/pull/500) shows how to apply it to this app.
 
-* If you are consistently going over the TPM, then consider implementing a load balancer between OpenAI instances. Most developers implement that using Azure API Management following [this blog post](https://www.raffertyuy.com/raztype/azure-openai-load-balancing/) or [this repository](https://github.com/andredewes/apim-aoai-smart-loadbalancing). Another approach is to use [LiteLLM's load balancer](https://docs.litellm.ai/docs/providers/azure#azure-api-load-balancing) with Azure Cache for Redis.
+* If you are consistently going over the TPM, then consider implementing a load balancer between OpenAI instances. Most developers implement that using Azure API Management or container-based load balancers. A native Python approach that integrates with the OpenAI Python API Library is also possible. For integration instructions with this sample, please check:
+  * [Scale Azure OpenAI for Python with Azure API Management](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-api-management)
+  * [Scale Azure OpenAI for Python chat using RAG with Azure Container Apps](https://learn.microsoft.com/azure/developer/python/get-started-app-chat-scaling-with-azure-container-apps)
+  * [Pull request: Scale Azure OpenAI for Python with the Python openai-priority-loadbalancer](https://github.com/Azure-Samples/azure-search-openai-demo/pull/1626)
 
 ### Azure Storage
 
@@ -29,11 +37,34 @@ which you can specify using the `sku` property under the `storage` module in `in
 
 ### Azure AI Search
 
-The default search service uses the `Standard` SKU
-with the free semantic search option, which gives you 1000 free queries a month.
-Assuming your app will experience more than 1000 questions, you should either change `semanticSearch`
-to "standard" or disable semantic search entirely in the `/app/backend/approaches` files.
-If you see errors about search service capacity being exceeded, you may find it helpful to increase
+The default search service uses the "Basic" SKU
+with the free semantic ranker option, which gives you 1000 free queries a month.
+After 1000 queries, you will get an error message about exceeding the semantic ranker free capacity.
+
+* Assuming your app will experience more than 1000 questions per month,
+  you should upgrade the semantic ranker SKU from "free" to "standard" SKU:
+
+  ```shell
+  azd env set AZURE_SEARCH_SEMANTIC_RANKER standard
+  ```
+
+  Or disable semantic search entirely:
+
+  ```shell
+  azd env set AZURE_SEARCH_SEMANTIC_RANKER disabled
+  ```
+
+* The search service can handle fairly large indexes, but it does have per-SKU limits on storage sizes, maximum vector dimensions, etc. You may want to upgrade the SKU to either a Standard or Storage Optimized SKU, depending on your expected load.
+However, you [cannot change the SKU](https://learn.microsoft.com/azure/search/search-sku-tier#tier-upgrade-or-downgrade) of an existing search service, so you will need to re-index the data or manually copy it over.
+You can change the SKU by setting the `AZURE_SEARCH_SERVICE_SKU` azd environment variable to [an allowed SKU](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku).
+
+  ```shell
+  azd env set AZURE_SEARCH_SERVICE_SKU standard
+  ```
+
+  See the [Azure AI Search service limits documentation](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity) for more details.
+
+* If you see errors about search service capacity being exceeded, you may find it helpful to increase
 the number of replicas by changing `replicaCount` in `infra/core/search/search-services.bicep`
 or manually scaling it from the Azure Portal.
 
@@ -44,15 +75,24 @@ We recommend using a Premium level SKU, starting with 1 CPU core.
 You can use auto-scaling rules or scheduled scaling rules,
 and scale up the maximum/minimum based on load.
 
+### Azure Container Apps
+
+The default container app uses a "Consumption" workload profile with 1 CPU core and 2 GB RAM,
+and scaling rules that allow for scaling all the way down to 0 replicas when idle.
+For production, consider either increasing the CPU cores and memory or
+[switching to a "Dedicated" workload profile](azure_container_apps.md#customizing-workload-profile),
+and configure the scaling rules to keep at least two replicas running at all times.
+Learn more in the [Azure Container Apps documentation](https://learn.microsoft.com/azure/container-apps).
+
 ## Additional security measures
 
 * **Authentication**: By default, the deployed app is publicly accessible.
   We recommend restricting access to authenticated users.
-  See [Enabling authentication](../README.md#enabling-authentication) to learn how to enable authentication.
-* **Networking**: We recommend deploying inside a Virtual Network. If the app is only for
+  See [Enabling authentication](./deploy_features.md#enabling-authentication) to learn how to enable authentication.
+* **Networking**: We recommend [deploying inside a Virtual Network](./deploy_private.md). If the app is only for
   internal enterprise use, use a private DNS zone. Also consider using Azure API Management (APIM)
   for firewalls and other forms of protection.
-  For more details, read [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/t5/azure-architecture-blog/azure-openai-landing-zone-reference-architecture/ba-p/3882102).
+  For more details, read [Azure OpenAI Landing Zone reference architecture](https://techcommunity.microsoft.com/blog/azurearchitectureblog/azure-openai-landing-zone-reference-architecture/3882102).
 
 ## Load testing
 
@@ -60,25 +100,19 @@ We recommend running a loadtest for your expected number of users.
 You can use the [locust tool](https://docs.locust.io/) with the `locustfile.py` in this sample
 or set up a loadtest with Azure Load Testing.
 
-To use locust, first install the dev requirements that includes locust:
+First make sure you have the locust package installed in your Python environment:
 
 ```shell
-python3 -m pip install -r requirements-dev.txt
+python -m pip install locust
 ```
 
-Or manually install locust:
+Then run the locust command, specifying the name of the User class to use from `locustfile.py`. We've provided a `ChatUser` class that simulates a user asking questions and receiving answers, as well as a `ChatVisionUser` to simulate a user asking questions with the [GPT-4 vision mode enabled](/docs/gpt4v.md).
 
 ```shell
-python3 -m pip install locust
+locust ChatUser
 ```
 
-Then run the locust command:
-
-```shell
-locust
-```
-
-Open the locust UI at http://localhost:8089/, the URI displayed in the terminal.
+Open the locust UI at [http://localhost:8089/](http://localhost:8089/), the URI displayed in the terminal.
 
 Start a new test with the URI of your website, e.g. `https://my-chat-app.azurewebsites.net`.
 Do *not* end the URI with a slash. You can start by pointing at your localhost if you're concerned
@@ -89,6 +123,10 @@ From there, you can keep increasing the number of users to simulate your expecte
 
 Here's an example loadtest for 50 users and a spawn rate of 1 per second:
 
-![Screenshot of Locust charts showing 5 requests per second](screenshot_locust.png)
+![Screenshot of Locust charts showing 5 requests per second](images/screenshot_locust.png)
 
 After each test, check the local or App Service logs to see if there are any errors.
+
+## Evaluation
+
+Before you make your chat app available to users, you'll want to rigorously evaluate the answer quality. You can use tools in [the AI RAG Chat evaluator](https://github.com/Azure-Samples/ai-rag-chat-evaluator) repository to run evaluations, review results, and compare answers across runs.

@@ -1,0 +1,170 @@
+{
+    "pageTitle": "Azure OpenAI + AI Search",
+    "headerTitle": "Azure OpenAI + AI Search",
+    "chat": "Chat",
+    "qa": "Fai una domanda",
+    "login": "Accedi",
+    "logout": "Disconnetti",
+    "clearChat": "Cancella chat",
+    "history": {
+        "chatHistory": "Cronologia chat",
+        "openChatHistory": "Apri cronologia chat",
+        "noHistory": "Nessuna cronologia in questa chat",
+        "deleteModalTitle": "Elimina cronologia chat",
+        "deleteModalDescription": "Questa azione è irreversibile. Eliminare la cronologia di questa chat?",
+        "deleteLabel": "Elimina",
+        "cancelLabel": "Annulla",
+        "today": "Oggi",
+        "yesterday": "Ieri",
+        "last7days": "Ultimi 7 giorni",
+        "last30days": "Ultimi 30 giorni"
+    },
+    "upload": {
+        "fileLabel": "Carica file:",
+        "uploadedFilesLabel": "File caricati precedentemente:",
+        "noFilesUploaded": "Nessun file caricato al momento",
+        "loading": "Caricamento...",
+        "manageFileUploads": "Gestisci caricamenti file",
+        "uploadingFiles": "Caricamento file...",
+        "uploadedFileError": "Errore durante il caricamento del file - riprova o contatta l'amministratore.",
+        "deleteFile": "Elimina file",
+        "deletingFile": "Eliminazione file...",
+        "errorDeleting": "Errore durante l'eliminazione.",
+        "fileDeleted": "File eliminato"
+    },
+    "developerSettings": "Impostazioni sviluppatore",
+
+    "chatEmptyStateTitle": "Chatta con i tuoi dati",
+    "chatEmptyStateSubtitle": "Chiedi qualsiasi cosa o prova un esempio",
+    "defaultExamples": {
+        "1": "Cosa è incluso nel mio piano Northwind Health Plus che non è nello standard?",
+        "2": "Cosa succede durante una valutazione delle prestazioni?",
+        "3": "Cosa fa un Product Manager?",
+        "placeholder": "Digita una nuova domanda (es. il mio piano copre gli esami oculistici annuali?)"
+    },
+    "askTitle": "Chiedi ai tuoi dati",
+    "gpt4vExamples": {
+        "1": "Confronta l'impatto dei tassi di interesse e del PIL sui mercati finanziari.",
+        "2": "Qual è la tendenza prevista per l'indice S&P 500 nei prossimi cinque anni? Confrontalo con le performance passate dell'S&P 500",
+        "3": "Puoi identificare una correlazione tra i prezzi del petrolio e le tendenze del mercato azionario?",
+        "placeholder": "Esempio: Il mio piano copre gli esami oculistici annuali?"
+    },
+    "generatingAnswer": "Generazione della risposta",
+    "citationWithColon": "Citazione:",
+    "followupQuestions": "Domande di follow-up:",
+
+    "tooltips": {
+        "submitQuestion": "Invia una domanda",
+        "askWithVoice": "Fai una domanda usando la voce",
+        "stopRecording": "Interrompi la registrazione della domanda",
+        "showThoughtProcess": "Mostra il processo di pensiero",
+        "showSupportingContent": "Mostra contenuto di supporto",
+        "speakAnswer": "Parla risposta",
+        "info": "Info",
+        "save": "Salva",
+        "copy": "Copia",
+        "copied": "Copiato!"
+    },
+
+    "headerTexts":{
+        "thoughtProcess": "Processo di Pensiero",
+        "supportingContent": "Contenuto di Supporto",
+        "citation": "Citazione"
+    },
+
+    "labels": {
+        "toggleMenu": "Attiva/disattiva menu",
+        "languagePicker": "Seleziona la tua lingua",
+        "headerText": "Configura la generazione delle risposte",
+        "closeButton": "Chiudi",
+        "promptTemplate": "Modello di prompt",
+        "temperature": "Temperatura",
+        "seed": "Seed",
+        "minimumSearchScore": "Punteggio minimo di ricerca",
+        "minimumRerankerScore": "Punteggio minimo del reranker semantico",
+        "retrieveCount": "Recupera questo numero di risultati di ricerca:",
+        "includeCategory": "Includi categoria",
+        "includeCategoryOptions": {
+            "all": "Tutte"
+        },
+        "excludeCategory": "Escludi categoria",
+        "useSemanticRanker": "Usa il reranker semantico",
+        "useSemanticCaptions": "Usa didascalie semantiche",
+        "useQueryRewriting": "Usa la riscrittura delle query per il recupero",
+        "reasoningEffort": "Sforzo di ragionamento",
+        "reasoningEffortOptions": {
+            "low": "Basso",
+            "medium": "Medio",
+            "high": "Alto"
+        },
+        "useSuggestFollowupQuestions": "Suggerisci domande di follow-up",
+        "useAgenticRetrieval": "Usa il recupero agentico",
+        "useGPT4V": "Usa il modello GPT Vision",
+        "gpt4VInput": {
+            "label": "Input del modello GPT Vision",
+            "options": {
+                "textAndImages": "Immagini e testo",
+                "images": "Immagini",
+                "texts": "Testo"
+            }
+        },
+        "retrievalMode": {
+            "label": "Modalità di recupero",
+            "options": {
+                "hybrid": "Vettori + Testo (Ibrido)",
+                "vectors": "Vettori",
+                "texts": "Testo"
+            }
+        },
+        "vector": {
+            "label": "Campi vettoriali (ricerca vettoriale multi-query)",
+            "options": {
+                "embedding": "Incorporazioni di testo",
+                "imageEmbedding": "Incorporazioni di immagini",
+                "both": "Incorporazioni di testo e immagini"
+            }
+        },
+        "useOidSecurityFilter": "Usa filtro di sicurezza oid",
+        "useGroupsSecurityFilter": "Usa filtro di sicurezza di gruppo",
+        "shouldStream": "Trasmetti in streaming le risposte"
+    },
+
+    "helpTexts": {
+        "promptTemplate":
+            "Sostituisce il prompt utilizzato per generare la risposta in base alla domanda e ai risultati della ricerca. Per aggiungere al prompt esistente invece di sostituire l'intero prompt, inizia il tuo prompt con '>>>'.",
+        "temperature":
+            "Imposta la temperatura della query al Grande Modello di Linguaggio (LLM) che genera la risposta. Temperature più alte producono risposte più creative, ma possono essere meno ancorate.",
+        "seed":
+            "Determina un numero primo che servirà a migliorare la ripetibilità delle risposte del modello. Il numero primo deve essere un intero qualsiasi.",
+        "searchScore":
+            "Imposta un punteggio minimo per i risultati di ricerca provenienti da Azure AI Search. L'intervallo di punteggi dipende se si utilizza l'ibrido (predefinito), solo vettori, o solo testo.",
+        "rerankerScore":
+            "Imposta un punteggio minimo per i risultati di ricerca provenienti dal reranker semantico. Il punteggio varia sempre tra 0 e 4. Più alto è il punteggio, più il risultato è semanticamente rilevante rispetto alla domanda.",
+        "retrieveNumber":
+            "Imposta il numero di risultati di ricerca da recuperare da Azure AI Search. Più risultati possono aumentare la probabilità di trovare la risposta giusta, ma possono portare il modello a 'perdersi nel mezzo'.",
+        "includeCategory":
+            "Specifica una categoria da includere nei risultati di ricerca. Non ci sono categorie utilizzate nel set di dati predefinito.",
+        "excludeCategory":
+            "Specifica una categoria da escludere dai risultati di ricerca. Non ci sono categorie utilizzate nel set di dati predefinito.",
+        "useSemanticReranker":
+            "Abilita il ranking semantico di Azure AI Search, un modello che riordina i risultati di ricerca in base alla somiglianza semantica con la query dell'utente.",
+        "useSemanticCaptions":
+            "Invia didascalie semantiche all'LLM invece del risultato di ricerca completo. Una didascalia semantica è estratta da un risultato di ricerca durante il processo di ranking semantico.",
+        "useQueryRewriting":
+            "Abilita la riscrittura delle query di Azure AI Search, un processo che modifica la query dell'utente per migliorare i risultati di ricerca. Richiede che il reranker semantico sia abilitato.",
+        "reasoningEffort":
+            "Imposta lo sforzo di ragionamento per l'LLM. Valori più alti comportano un maggiore ragionamento, ma potrebbero richiedere più tempo per generare una risposta. Il valore predefinito è medio.",
+        "suggestFollowupQuestions": "Chiede all'LLM di suggerire domande di follow-up in base alla query dell'utente.",
+        "useGPT4Vision": "Utilizza GPT-4-Turbo con Vision per generare risposte basate su immagini e testo dell'indice.",
+        "vectorFields":
+            "Specifica quali campi di incorporazione nell'indice di ricerca Azure AI saranno ricercati, sia le incorporazioni 'Immagini e testo', 'Solo immagini', o 'Solo testo'.",
+        "gpt4VisionInputs":
+            "Imposta cosa sarà inviato al modello di visione. 'Immagini e testo' invia sia immagini che testo al modello, 'Immagini' invia solo immagini, e 'Testo' invia solo testo.",
+        "retrievalMode":
+            "Imposta la modalità di recupero per la query Azure AI Search. Vettori + Testo (Ibrido) utilizza una combinazione di ricerca vettoriale e ricerca full-text, Vettori utilizza solo la ricerca vettoriale, e Testo utilizza solo la ricerca full-text. Ibrido è generalmente ottimale.",
+        "streamChat": "Trasmette in streaming la risposta all'interfaccia utente della chat man mano che viene generata.",
+        "useOidSecurityFilter":"Filtra i risultati di ricerca in base all'OID dell'utente autenticato.",
+        "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+    }
+}

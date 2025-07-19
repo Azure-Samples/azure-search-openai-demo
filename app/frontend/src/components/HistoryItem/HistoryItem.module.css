@@ -1,0 +1,120 @@
+.historyItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.historyItem:hover {
+    background-color: #f3f4f6;
+}
+
+.historyItemButton {
+    flex-grow: 1;
+    text-align: left;
+    padding: 0;
+    margin-right: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.historyItemTitle {
+    font-size: 1rem;
+}
+
+.deleteIcon {
+    width: 20px;
+    height: 20px;
+}
+
+.deleteButton {
+    opacity: 0;
+    transition: opacity 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 9999px;
+    color: #6b7280;
+}
+
+.historyItem:hover .deleteButton,
+.deleteButton:focus {
+    opacity: 1;
+}
+
+.deleteButton:hover {
+    color: #111827;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modalContent {
+    background-color: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-width: 400px;
+    width: 100%;
+}
+
+.modalTitle {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 0px;
+    margin-bottom: 16px;
+}
+
+.modalDescription {
+    margin-top: 0px;
+    margin-bottom: 16px;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.modalCancelButton,
+.modalConfirmButton {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.modalCancelButton {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.modalConfirmButton {
+    background-color: #ef4444;
+    color: white;
+}
+
+.modalCancelButton:hover {
+    background-color: #e5e7eb;
+}
+
+.modalConfirmButton:hover {
+    background-color: #dc2626;
+}
