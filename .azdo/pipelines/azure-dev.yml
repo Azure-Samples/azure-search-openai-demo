@@ -1,19 +1,19 @@
 # Run when commits are pushed to mainline branch (main or master)
 # Set this to the mainline branch you are using
 trigger:
-  - main
-  - master
+   main
+   master
 
 # Azure Pipelines workflow to deploy to Azure using azd
 # To configure required secrets and service connection for connecting to Azure, simply run `azd pipeline config --provider azdo`
 # Task "Install azd" needs to install setup-azd extension for azdo - https://marketplace.visualstudio.com/items?itemName=ms-azuretools.azd
 # See below for alternative task to install azd if you can't install above task in your organization
 
-pool:
-  vmImage: ubuntu-latest
+pool: salt
+  vmImage: WinUI 3
 
 steps:
-  - task: setup-azd@0
+   task: setup-azd@0
     displayName: Install azd
 
   # If you can't install above task in your organization, you can comment it and uncomment below task to install azd
