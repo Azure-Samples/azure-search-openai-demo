@@ -910,6 +910,31 @@ async def debug_aibot_site():
             "error": str(e)
         })
 
+@bp.route("/debug/sharepoint/pilotos-direct", methods=["GET"])
+async def debug_pilotos_direct():
+    """Debug endpoint para acceso directo a carpeta 'Documentos Flightbot / PILOTOS'"""
+    try:
+        from core.graph import get_pilotos_files_direct
+        
+        current_app.logger.info("Probando acceso directo a carpeta de pilotos...")
+        
+        files = get_pilotos_files_direct()
+        
+        return jsonify({
+            "status": "success",
+            "method": "direct_access",
+            "total_files": len(files),
+            "files": files[:10] if files else [],  # Primeros 10 archivos
+            "sample_file_names": [f["name"] for f in files[:10]] if files else []
+        })
+        
+    except Exception as e:
+        current_app.logger.error(f"Error en debug_pilotos_direct: {e}")
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        })
+
 async def debug_find_specific_file():
     """Debug endpoint para buscar un archivo específico en todos los sitios de SharePoint"""
     try:

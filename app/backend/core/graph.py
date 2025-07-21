@@ -597,6 +597,141 @@ class GraphClient:
         
 
 # Instancia global del cliente
+    def get_pilotos_files_direct(self) -> List[Dict]:
+        """
+        Función específica para acceder directamente a la carpeta 'Documentos Flightbot / PILOTOS'
+        Basada en el análisis proporcionado por el usuario.
+        """
+        try:
+            logger.info("Accediendo directamente a carpeta 'Documentos Flightbot / PILOTOS'")
+            
+            # Si tenemos Site ID y Drive ID específicos, usarlos
+            if self.specific_site_id and self.specific_drive_id:
+                logger.info(f"Usando Site ID específico: {self.specific_site_id}")
+                logger.info(f"Usando Drive ID específico: {self.specific_drive_id}")
+                return self._get_files_from_pilotos_folder(self.specific_drive_id)
+            
+            # Si no, buscar el sitio y drive
+            site_id = self._get_lumston_site_id()
+            if not site_id:
+                logger.error("No se pudo obtener el Site ID de lumston.sharepoint.com")
+                return []
+            
+            drive_id = self._get_documentos_drive_id(site_id)
+            if not drive_id:
+                logger.error("No se pudo obtener el Drive ID de 'Documentos'")
+                return []
+            
+            return self._get_files_from_pilotos_folder(drive_id)
+            
+        except Exception as e:
+            logger.error(f"Error accediendo a carpeta de pilotos: {e}")
+            return []
+    
+    def _get_lumston_site_id(self) -> Optional[str]:
+        """Obtiene el Site ID específico de lumston.sharepoint.com"""
+        try:
+            # Si ya está configurado como variable de entorno
+            if self.specific_site_id:
+                return self.specific_site_id
+            
+            # Buscar en la lista de sitios
+            sites = self.get_sharepoint_sites()
+            for site in sites:
+                if "lumston.sharepoint.com" in site.get("webUrl", ""):
+                    return site["id"]
+            
+            logger.warning("No se encontró el sitio lumston.sharepoint.com")
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error obteniendo Site ID de lumston: {e}")
+            return None
+    
+    def _get_documentos_drive_id(self, site_id: str) -> Optional[str]:
+        """Obtiene el Drive ID del drive 'Documentos' en el sitio"""
+        try:
+            url = f"{self.base_url}/sites/{site_id}/drives"
+            headers = self._get_headers()
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            
+            drives = response.json().get("value", [])
+            for drive in drives:
+                drive_name = drive.get("name", "").lower()
+                if "documentos" in drive_name or "documents" in drive_name:
+                    logger.info(f"Encontrado drive: {drive['name']} (ID: {drive['id']})")
+                    return drive["id"]
+            
+            logger.warning("No se encontró drive 'Documentos'")
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error obteniendo Drive ID: {e}")
+            return None
+    
+    def _get_files_from_pilotos_folder(self, drive_id: str) -> List[Dict]:
+        """Obtiene archivos específicamente de la carpeta 'Documentos Flightbot / PILOTOS'"""
+        try:
+            # Intentar diferentes rutas posibles
+            possible_paths = [
+                "Documentos%20Flightbot/PILOTOS",  # URL encoded
+                "Documentos Flightbot/PILOTOS",    # Con espacio
+                "DocumentosFlightbot/PILOTOS",     # Sin espacio
+                "Pilotos",                         # Solo la subcarpeta
+                "PILOTOS"                          # Mayúsculas
+            ]
+            
+            for path in possible_paths:
+                logger.info(f"Intentando ruta: {path}")
+                files = self._try_get_files_from_path(drive_id, path)
+                if files:
+                    logger.info(f"¡Éxito! Encontrados {len(files)} archivos en ruta: {path}")
+                    return files
+            
+            logger.warning("No se encontraron archivos en ninguna ruta de pilotos")
+            return []
+            
+        except Exception as e:
+            logger.error(f"Error obteniendo archivos de carpeta pilotos: {e}")
+            return []
+    
+    def _try_get_files_from_path(self, drive_id: str, folder_path: str) -> List[Dict]:
+        """Intenta obtener archivos de una ruta específica"""
+        try:
+            url = f"{self.base_url}/drives/{drive_id}/root:/{folder_path}:/children"
+            headers = self._get_headers()
+            response = requests.get(url, headers=headers)
+            
+            if response.status_code == 404:
+                return []  # Carpeta no encontrada
+            
+            response.raise_for_status()
+            items = response.json().get("value", [])
+            
+            # Filtrar solo archivos (no carpetas)
+            files = []
+            for item in items:
+                if "file" in item:
+                    file_info = {
+                        "id": item["id"],
+                        "name": item["name"],
+                        "webUrl": item["webUrl"],
+                        "downloadUrl": item.get("@microsoft.graph.downloadUrl"),
+                        "size": item.get("size", 0),
+                        "lastModifiedDateTime": item.get("lastModifiedDateTime"),
+                        "folder_path": folder_path,
+                        "source": "direct_pilotos_access"
+                    }
+                    files.append(file_info)
+            
+            return files
+            
+        except Exception as e:
+            logger.debug(f"Error en ruta {folder_path}: {e}")
+            return []
+
+
 graph_client = GraphClient()
 
 
@@ -609,6 +744,14 @@ def get_configured_files(site_name: str = None) -> List[Dict]:
 def get_pilotos_files(site_name: str = None) -> List[Dict]:
     """Función legacy - mantener para compatibilidad"""
     return graph_client.search_files_in_configured_folders(site_name=site_name)
+
+
+def get_pilotos_files_direct() -> List[Dict]:
+    """
+    Función de acceso directo a la carpeta 'Documentos Flightbot / PILOTOS'
+    Basada en el análisis específico del usuario
+    """
+    return graph_client.get_pilotos_files_direct()
 
 
 def get_sharepoint_config_summary() -> Dict:
