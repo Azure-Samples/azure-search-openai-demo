@@ -1,0 +1,34 @@
+FROM python:3.11-slim
+
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar Azure CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos
+COPY requirements.txt .
+COPY *.py ./
+COPY sharepoint.env .env
+
+# Instalar dependencias Python
+RUN pip install -r requirements.txt
+
+# Usuario no-root
+RUN useradd -m -u 1000 scheduler && chown -R scheduler:scheduler /app
+USER scheduler
+
+# Logs
+VOLUME ["/app/logs"]
+
+# Variables de entorno
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# Comando por defecto: cada 6 horas
+CMD ["python3", "scheduler_sharepoint_sync.py", "--interval", "6"]

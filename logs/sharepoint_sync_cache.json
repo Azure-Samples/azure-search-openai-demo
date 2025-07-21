@@ -1,0 +1,47 @@
+{
+  "processed_files": {
+    "01R2HQ3G4J47PCSXLN6JHJ7VTJVJ57RKRW_19870115 AIP AIC0287 Escaneado. Restricción a los virajes de 180 sobre las pistas.pdf": {
+      "file_id": "01R2HQ3G4J47PCSXLN6JHJ7VTJVJ57RKRW",
+      "file_name": "19870115 AIP AIC0287 Escaneado. Restricción a los virajes de 180 sobre las pistas.pdf",
+      "file_size": 199826,
+      "last_modified": "2025-06-16T17:30:31Z",
+      "file_hash": "6ebf4bb95d63bcc7",
+      "processed_at": "2025-07-21T12:07:11.600749",
+      "processing_stats": {
+        "characters_extracted": 1470,
+        "content_preview": "TELEFONO 762-58-77 784-40-99 EXT. 129 y 192 AFIN MMMXYN\nMEXICO SECRETARIA DE COMUNICACIONES Y TRANSP..."
+      }
+    },
+    "01R2HQ3G2FG5JMJ75BLJDJCHFCQ3VNCWEW_19870702 AIP AIC0387 Escaneado. Reporte de incendios forestales.pdf": {
+      "file_id": "01R2HQ3G2FG5JMJ75BLJDJCHFCQ3VNCWEW",
+      "file_name": "19870702 AIP AIC0387 Escaneado. Reporte de incendios forestales.pdf",
+      "file_size": 235798,
+      "last_modified": "2025-06-16T17:30:33Z",
+      "file_hash": "e1c19c600abd9e01",
+      "processed_at": "2025-07-21T12:07:15.114788",
+      "processing_stats": {
+        "characters_extracted": 1813,
+        "content_preview": "MEXICO\nTELEFONO 762-58-77 784 - 40 -99 EXT 129 y 192 AFTN MMMXYN\nAIC\nDIRECCION GENERAL DE AERONAUTIC..."
+      }
+    },
+    "01R2HQ3G5ZVYVO4LV3RZCKGW3Z4GBJKKHJ_20050804 AIP ENR 1.1-1 Reglas y procedimientos generales.pdf": {
+      "file_id": "01R2HQ3G5ZVYVO4LV3RZCKGW3Z4GBJKKHJ",
+      "file_name": "20050804 AIP ENR 1.1-1 Reglas y procedimientos generales.pdf",
+      "file_size": 2620264,
+      "last_modified": "2025-06-16T17:30:37Z",
+      "file_hash": "78b6a92bbbe635c1",
+      "processed_at": "2025-07-21T12:07:33.442515",
+      "processing_stats": {
+        "characters_extracted": 301966,
+        "content_preview": "AIP DE MEXICO\nENR 1.1-1 AGO-04-2005\nEFECTIVO SEP-29-05\nENR 1. REGLAS Y PROCEDIMIENTOS GENERALES REGL..."
+      }
+    }
+  },
+  "last_sync": "2025-07-21T12:07:33.442524",
+  "stats": {
+    "total_processed": 3,
+    "cache_hits": 0,
+    "new_files": 0,
+    "updated_files": 0
+  }
+}

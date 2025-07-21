@@ -1,0 +1,21 @@
+[Unit]
+Description=SharePoint to Azure Search Scheduler
+After=network.target
+
+[Service]
+Type=simple
+User=azureuser
+WorkingDirectory=/opt/azure-search-openai-demo/app/backend
+ExecStart=/usr/bin/python3 /opt/azure-search-openai-demo/app/backend/scheduler_sharepoint_sync.py --interval 6
+Restart=always
+RestartSec=60
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sharepoint-scheduler
+
+# Variables de entorno necesarias
+Environment=PYTHONPATH=/opt/azure-search-openai-demo/app/backend
+Environment=AZURE_ENV_NAME=dev
+
+[Install]
+WantedBy=multi-user.target
