@@ -542,7 +542,7 @@ async def debug_pilot_query():
             # También probar la búsqueda en SharePoint si es relacionada con pilotos
             sharepoint_results = []
             if is_pilot_related:
-                sharepoint_results = await chat_approach._search_sharepoint_files(query, top=3)
+                sharepoint_results = await chat_approach._search_sharepoint_files(query, top=15)
 
             return jsonify(
                 {
@@ -798,7 +798,7 @@ async def debug_sharepoint_search():
             },
             "search_query": search_query,
             "files_found": len(files),
-            "files": files[:10],  # Mostrar primeros 10 archivos
+            "files": files[:25],  # Mostrar primeros 25 archivos
             "drives": drives
         })
 
@@ -841,7 +841,7 @@ async def debug_test_configured_folders():
         
         return {
             "files_found": len(files),
-            "found_files": files[:10],  # Mostrar solo primeros 10 para evitar sobrecarga
+            "found_files": files[:25],  # Mostrar solo primeros 25 para evitar sobrecarga
             "status": "success"
         }
     except Exception as e:
@@ -923,8 +923,8 @@ async def debug_pilotos_direct():
             "status": "success",
             "method": "direct_access",
             "total_files": len(files),
-            "files": files[:10] if files else [],  # Primeros 10 archivos
-            "sample_file_names": [f["name"] for f in files[:10]] if files else []
+            "files": files[:25] if files else [],  # Primeros 25 archivos
+            "sample_file_names": [f["name"] for f in files[:25]] if files else []
         })
         
     except Exception as e:
@@ -937,6 +937,8 @@ async def debug_pilotos_direct():
 async def debug_find_specific_file():
     """Debug endpoint para buscar un archivo específico en todos los sitios de SharePoint"""
     try:
+        from core.graph import GraphClient
+        
         filename = request.args.get('filename', '20051222 AIP AD 1.1-1 Introducción.pdf')
         graph_client = GraphClient()
         

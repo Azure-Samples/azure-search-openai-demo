@@ -126,7 +126,7 @@ class RetrieveThenReadApproach(Approach):
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
-        top = overrides.get("top", 3)
+        top = overrides.get("top", 15)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
@@ -150,6 +150,50 @@ class RetrieveThenReadApproach(Approach):
             minimum_reranker_score,
             use_query_rewriting,
         )
+
+        # Si no hay resultados en Azure Search, intentar SharePoint
+        if not results and self._is_pilot_related_query(q):
+            try:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info("No se encontraron resultados en Azure Search, probando SharePoint...")
+                
+                sharepoint_results = await self._search_sharepoint_files(q, top=overrides.get("top", 15))
+                if sharepoint_results:
+                    # Convertir resultados de SharePoint al formato de text_sources
+                    sharepoint_text_sources = []
+                    for result in sharepoint_results:
+                        if result.get('content'):
+                            sharepoint_text_sources.append(result['content'])
+                    
+                    if sharepoint_text_sources:
+                        return ExtraInfo(
+                            DataPoints(text=sharepoint_text_sources),
+                            thoughts=[
+                                ThoughtStep(
+                                    "Search using user query",
+                                    q,
+                                    {
+                                        "use_semantic_captions": use_semantic_captions,
+                                        "use_semantic_ranker": use_semantic_ranker,
+                                        "use_query_rewriting": use_query_rewriting,
+                                        "top": top,
+                                        "filter": filter,
+                                        "use_vector_search": use_vector_search,
+                                        "use_text_search": use_text_search,
+                                        "fallback_to_sharepoint": True,
+                                    },
+                                ),
+                                ThoughtStep(
+                                    "SharePoint fallback search",
+                                    f"Found {len(sharepoint_results)} documents in SharePoint PILOTOS folder",
+                                    {"query": q, "sources": [r.get('name', 'Unknown') for r in sharepoint_results]}
+                                ),
+                            ],
+                        )
+            except Exception as e:
+                logger.error(f"Error en SharePoint fallback: {e}")
+                # Continuar con resultados vacíos de Azure Search si SharePoint falla
 
         text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
 
@@ -184,7 +228,7 @@ class RetrieveThenReadApproach(Approach):
     ):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides, auth_claims)
-        top = overrides.get("top", 3)
+        top = overrides.get("top", 15)
         max_subqueries = overrides.get("max_subqueries", 10)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         # 50 is the amount of documents that the reranker can process per query
@@ -230,3 +274,103 @@ class RetrieveThenReadApproach(Approach):
             ],
         )
         return extra_info
+
+    def _is_pilot_related_query(self, query: str) -> bool:
+        """
+        Detecta si la consulta está relacionada con pilotos de aerolíneas o documentos de la carpeta Pilotos
+        También detecta consultas generales sobre documentos disponibles
+        """
+        pilot_keywords = [
+            "piloto", "pilotos", "pilot", "pilots",
+            "capitán", "capitan", "captain", "comandante",
+            "aerolínea", "aerolinea", "airline", "aviación", "aviation",
+            "vuelo", "vuelos", "flight", "flights",
+            "cabina", "cockpit", "tripulación", "crew",
+            "aviador", "aviadores", "aviator", "aviators",
+            "licencia de piloto", "certificación", "certificaciones", "entrenamiento",
+            "instructor de vuelo", "flight instructor"
+        ]
+        
+        # Patrones de consultas generales sobre documentos
+        general_document_patterns = [
+            "qué documentos tienes", "que documentos tienes",
+            "documentos disponibles", "documentos que tienes",
+            "archivos disponibles", "archivos que tienes",
+            "qué archivos tienes", "que archivos tienes",
+            "muestra documentos", "muestra archivos",
+            "lista de documentos", "lista de archivos",
+            "documentos de", "archivos de",
+            "qué información tienes", "que información tienes",
+            "información disponible", "datos disponibles",
+            "what documents", "available documents", "show me documents",
+            "list documents", "list files", "available files"
+        ]
+        
+        query_lower = query.lower()
+        
+        # Primero verificar si es una consulta específica sobre pilotos
+        if any(keyword in query_lower for keyword in pilot_keywords):
+            return True
+            
+        # Luego verificar si es una consulta general sobre documentos
+        # (para Volaris, asumir que documentos generales = documentos de pilotos)
+        if any(pattern in query_lower for pattern in general_document_patterns):
+            return True
+            
+        return False
+
+    async def _search_sharepoint_files(self, query: str, top: int = 25) -> list[dict]:
+        """
+        Busca archivos EXCLUSIVAMENTE en la carpeta 'PILOTOS' de SharePoint
+        """
+        try:
+            # Importar las funciones directas de Graph API
+            from core.graph import get_access_token, get_drive_id, list_pilotos_files, get_file_content
+            import os
+            
+            # Paso 1: Obtener token de acceso
+            token = get_access_token()
+            
+            # Paso 2: Obtener el drive ID
+            site_id = os.getenv("SHAREPOINT_SITE_ID")
+            drive_id = get_drive_id(site_id, token)
+            
+            # Paso 3: Listar archivos en la carpeta PILOTOS
+            files = list_pilotos_files(drive_id, token)
+            
+            results = []
+            for file in files[:top]:  # Limitar a top resultados
+                try:
+                    file_name = file.get('name', 'Unknown')
+                    file_id = file.get('id', '')
+                    
+                    # Obtener contenido del archivo para mejor contexto
+                    try:
+                        content = get_file_content(drive_id, file_id, token)
+                        if content and len(content.strip()) > 0:
+                            results.append({
+                                'name': file_name,
+                                'content': content[:2000],  # Limitar contenido
+                                'source': 'SharePoint PILOTOS',
+                                'url': file.get('webUrl', '')
+                            })
+                    except Exception as content_error:
+                        # Si no se puede leer el contenido, al menos incluir el nombre
+                        results.append({
+                            'name': file_name,
+                            'content': f"Documento encontrado: {file_name} (contenido no accesible)",
+                            'source': 'SharePoint PILOTOS',
+                            'url': file.get('webUrl', '')
+                        })
+                        print(f"No se pudo leer contenido de {file_name}: {content_error}")
+                        
+                except Exception as file_error:
+                    print(f"Error procesando archivo: {file_error}")
+                    continue
+            
+            print(f"SharePoint search returned {len(results)} results for query: {query}")
+            return results
+            
+        except Exception as e:
+            print(f"Error en búsqueda SharePoint: {e}")
+            return []
