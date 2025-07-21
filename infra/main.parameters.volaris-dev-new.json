@@ -305,6 +305,9 @@
     "clientAppSecret": {
       "value": "${AZURE_CLIENT_APP_SECRET}"
     },
+    "sharepointSiteId": {
+      "value": "${SHAREPOINT_SITE_ID}"
+    },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
     },

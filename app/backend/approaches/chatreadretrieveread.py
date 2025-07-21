@@ -16,7 +16,6 @@ from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
 from approaches.chatapproach import ChatApproach
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
-from core.graph import GraphClient
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):
@@ -47,7 +46,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_language: str,
         query_speller: str,
         prompt_manager: PromptManager,
-        graph_client: GraphClient,
         reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
@@ -57,7 +55,6 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.agent_client = agent_client
         self.openai_client = openai_client
         self.auth_helper = auth_helper
-        self.graph_client = graph_client
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
@@ -356,60 +353,72 @@ class ChatReadRetrieveReadApproach(ChatApproach):
 
     async def _search_sharepoint_files(self, query: str, top: int = 10) -> list[dict]:
         """
-        Busca archivos en las carpetas configuradas de SharePoint y retorna contenido relevante
+        Busca archivos EXCLUSIVAMENTE en la carpeta 'PILOTOS' de SharePoint
         """
         try:
-            # Usar la nueva funcionalidad configurable
-            files = self.graph_client.search_files_in_configured_folders()
-
+            # Importar las funciones directas de Graph API
+            from core.graph import get_access_token, get_drive_id, list_pilotos_files, get_file_content
+            import os
+            
+            # Paso 1: Obtener token de acceso
+            token = get_access_token()
+            
+            # Paso 2: Obtener el drive ID
+            site_id = os.getenv("SHAREPOINT_SITE_ID")
+            drive_id = get_drive_id(site_id, token)
+            
+            # Paso 3: Listar archivos en la carpeta PILOTOS
+            files = list_pilotos_files(drive_id, token)
+            
             results = []
-            for file in files[:top]:  # Limitar a los mejores resultados
+            for file in files[:top]:  # Limitar a top resultados
                 try:
-                    # Para consultas generales, simplemente mostrar información del archivo
-                    # sin necesidad de descargar el contenido completo
-                    file_info = f"Documento: {file['name']}"
+                    file_name = file.get('name', 'Unknown')
+                    file_id = file.get('id', '')
                     
-                    # Mostrar información adicional sobre dónde se encontró
-                    if file.get('site_name'):
-                        file_info += f" (Sitio: {file['site_name']})"
-                    
-                    if file.get('folder_found'):
-                        file_info += f" (Carpeta: {file['folder_found']})"
-                    elif file.get('found_by_content_search'):
-                        file_info += f" (Encontrado por búsqueda: {file.get('search_query', 'contenido')})"
-                    
-                    if file.get('lastModified'):
-                        file_info += f" (Última modificación: {file['lastModified'][:10]})"
-                    if file.get('size'):
-                        size_kb = file['size'] / 1024
-                        file_info += f" (Tamaño: {size_kb:.1f} KB)"
+                    # Obtener contenido del archivo para mejor contexto
+                    try:
+                        file_content = get_file_content(drive_id, file_id, token)
+                        # Limitar contenido para no saturar el contexto
+                        if len(file_content) > 1000:
+                            file_content = file_content[:1000] + "..."
+                    except:
+                        file_content = f"Archivo disponible: {file_name}"
                     
                     results.append({
-                        'content': file_info,
-                        'source': f"SharePoint: {file['name']}",
+                        'content': file_content,
+                        'source': f"SharePoint PILOTOS: {file_name}",
                         'url': file.get('webUrl', ''),
-                        'filename': file['name'],
-                        'lastModified': file.get('lastModified', ''),
-                        'site_name': file.get('site_name', ''),
-                        'folder_found': file.get('folder_found', ''),
-                        'found_by_content_search': file.get('found_by_content_search', False),
-                        'score': 1.0  # Puntuación alta para archivos de SharePoint
+                        'filename': file_name,
+                        'lastModified': file.get('lastModifiedDateTime', ''),
+                        'score': 1.0  # Puntuación alta para archivos de carpeta PILOTOS
                     })
+                    
                 except Exception as e:
-                    # Si falla, al menos incluir información básica
+                    print(f"Error procesando archivo {file.get('name', 'Unknown')}: {e}")
+                    # Incluir información básica aunque falle
                     results.append({
-                        'content': f"Documento disponible: {file['name']}",
-                        'source': f"SharePoint: {file['name']}",
+                        'content': f"Documento disponible en carpeta PILOTOS: {file.get('name', 'Unknown')}",
+                        'source': f"SharePoint PILOTOS: {file.get('name', 'Unknown')}",
                         'url': file.get('webUrl', ''),
-                        'filename': file['name'],
-                        'lastModified': file.get('lastModified', ''),
+                        'filename': file.get('name', 'Unknown'),
                         'score': 0.8
                     })
 
+            print(f"DEBUG: SharePoint PILOTOS search returned {len(results)} results")
             return results
+            
         except Exception as e:
-            # Si falla la búsqueda en SharePoint, continuar sin ella
+            print(f"ERROR: Error buscando en SharePoint PILOTOS: {e}")
             return []
+
+    def _is_pilot_related_query(self, query: str) -> bool:
+        """
+        Determina si una consulta está relacionada con pilotos
+        Para Volaris: TODAS las consultas van a la carpeta PILOTOS
+        """
+        # Para simplificar: SIEMPRE buscar en PILOTOS
+        return True
 
     def _combine_search_results(self, azure_sources: list[str], sharepoint_results: list[dict]) -> list[str]:
         """

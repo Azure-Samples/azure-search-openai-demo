@@ -230,6 +230,9 @@ param clientAppId string = ''
 @secure()
 param clientAppSecret string = ''
 
+@description('SharePoint Site ID for direct access')
+param sharepointSiteId string = ''
+
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
@@ -455,6 +458,9 @@ var appEnvVariables = {
   AZURE_ENABLE_UNAUTHENTICATED_ACCESS: enableUnauthenticatedAccess
   AZURE_SERVER_APP_ID: serverAppId
   AZURE_CLIENT_APP_ID: clientAppId
+  AZURE_CLIENT_APP_SECRET: clientAppSecret
+  SHAREPOINT_SITE_ID: sharepointSiteId
+  SITE_ID: sharepointSiteId
   AZURE_TENANT_ID: tenantId
   AZURE_AUTH_TENANT_ID: tenantIdForAuth
   AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri

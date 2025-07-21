@@ -57,7 +57,6 @@ from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
 from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
-from core.graph import GraphClient
 from config import (
     CONFIG_AGENT_CLIENT,
     CONFIG_AGENTIC_RETRIEVAL_ENABLED,
@@ -1098,9 +1097,6 @@ async def setup_clients():
         endpoint=AZURE_SEARCH_ENDPOINT, agent_name=AZURE_SEARCH_AGENT, credential=azure_credential
     )
 
-    # Set up SharePoint Graph client for Pilotos folder access
-    graph_client = GraphClient()
-
     blob_container_client = ContainerClient(
         f"https://{AZURE_STORAGE_ACCOUNT}.blob.core.windows.net", AZURE_STORAGE_CONTAINER, credential=azure_credential
     )
@@ -1300,7 +1296,6 @@ async def setup_clients():
         query_language=AZURE_SEARCH_QUERY_LANGUAGE,
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
-        graph_client=graph_client,
         reasoning_effort=OPENAI_REASONING_EFFORT,
     )
 
