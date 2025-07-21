@@ -61,11 +61,41 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
         }
 
         const fileExtension = activeCitation.split(".").pop()?.toLowerCase();
+        const isSharePointFile = activeCitation.includes("sharepoint.com") || activeCitation.includes("SharePoint");
+
         switch (fileExtension) {
             case "png":
                 return <img src={citation} className={styles.citationImg} alt="Citation Image" />;
             case "md":
                 return <MarkdownViewer src={activeCitation} />;
+            case "pdf":
+                if (isSharePointFile) {
+                    // Para PDFs de SharePoint, abrir en nueva ventana con enlace directo
+                    return (
+                        <div style={{ padding: "20px", textAlign: "center" }}>
+                            <h3>Vista previa de PDF de SharePoint</h3>
+                            <p>Este documento está almacenado en SharePoint.</p>
+                            <button
+                                onClick={() => window.open(activeCitation, "_blank")}
+                                style={{
+                                    backgroundColor: "#0078d4",
+                                    color: "white",
+                                    border: "none",
+                                    padding: "10px 20px",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
+                                    fontSize: "14px",
+                                    marginTop: "10px"
+                                }}
+                            >
+                                📄 Abrir PDF en SharePoint
+                            </button>
+                        </div>
+                    );
+                } else {
+                    // Para PDFs regulares, usar iframe
+                    return <iframe title="Citation" src={citation} width="100%" height={citationHeight} />;
+                }
             default:
                 return <iframe title="Citation" src={citation} width="100%" height={citationHeight} />;
         }

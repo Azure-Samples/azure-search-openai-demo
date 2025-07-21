@@ -52,15 +52,7 @@ const Layout = () => {
                                     {t("chat")}
                                 </NavLink>
                             </li>
-                            <li>
-                                <NavLink
-                                    to="/qa"
-                                    className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    {t("qa")}
-                                </NavLink>
-                            </li>
+                            {/* Tab "Haz una pregunta" oculto - solo modo Chat disponible */}
                         </ul>
                     </nav>
                     <div className={styles.loginMenuContainer}>

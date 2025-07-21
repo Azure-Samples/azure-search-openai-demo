@@ -7,8 +7,8 @@ def get_access_token():
     """Obtener token de acceso usando client credentials"""
     url = f"https://login.microsoftonline.com/{os.getenv('AZURE_TENANT_ID')}/oauth2/v2.0/token"
     data = {
-        "client_id": os.getenv("AZURE_CLIENT_APP_ID"),
-        "client_secret": os.getenv("AZURE_CLIENT_APP_SECRET"),
+        "client_id": os.getenv("CLIENT_ID"),
+        "client_secret": os.getenv("CLIENT_SECRET"),
         "scope": "https://graph.microsoft.com/.default",
         "grant_type": "client_credentials"
     }

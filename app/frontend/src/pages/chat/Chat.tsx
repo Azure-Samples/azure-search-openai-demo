@@ -40,12 +40,14 @@ import { Settings } from "../../components/Settings/Settings";
 const Chat = () => {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
     const [isHistoryPanelOpen, setIsHistoryPanelOpen] = useState(false);
+    const [showDeveloperSettings, setShowDeveloperSettings] = useState(false);
+    const [keySequence, setKeySequence] = useState<string[]>([]);
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
     const [seed, setSeed] = useState<number | null>(null);
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
-    const [retrieveCount, setRetrieveCount] = useState<number>(15);
+    const [retrieveCount, setRetrieveCount] = useState<number>(1);
     const [maxSubqueryCount, setMaxSubqueryCount] = useState<number>(10);
     const [resultsMergeStrategy, setResultsMergeStrategy] = useState<string>("interleaved");
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
@@ -57,7 +59,7 @@ const Chat = () => {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
-    const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(true);
     const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
@@ -295,6 +297,71 @@ const Chat = () => {
         getConfig();
     }, []);
 
+    // Manejo de combinación de teclas Ctrl + C + B + M para mostrar opciones de desarrollador
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.ctrlKey) {
+                const key = event.key.toLowerCase();
+
+                if (keySequence.length === 0 && key === "c") {
+                    setKeySequence(["c"]);
+                    event.preventDefault();
+                } else if (keySequence.length === 1 && keySequence[0] === "c" && key === "b") {
+                    setKeySequence(["c", "b"]);
+                    event.preventDefault();
+                } else if (keySequence.length === 2 && keySequence[0] === "c" && keySequence[1] === "b" && key === "m") {
+                    setShowDeveloperSettings(true);
+                    setKeySequence([]);
+
+                    // Mostrar notificación visual temporal
+                    const notification = document.createElement("div");
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background: #0078d4;
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 8px;
+                        z-index: 10000;
+                        font-family: 'Segoe UI', sans-serif;
+                        font-size: 14px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    `;
+                    notification.textContent = "🔧 Opciones de desarrollador activadas";
+                    document.body.appendChild(notification);
+
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 3000);
+
+                    console.log("🔧 Opciones de desarrollador activadas!");
+                    event.preventDefault();
+                } else {
+                    setKeySequence([]); // Reset si la secuencia no coincide
+                }
+            } else {
+                setKeySequence([]); // Reset si no es Ctrl
+            }
+        };
+
+        // Reset de secuencia después de un tiempo
+        const resetTimer = setTimeout(() => {
+            if (keySequence.length > 0) {
+                setKeySequence([]);
+            }
+        }, 2000);
+
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+            clearTimeout(resetTimer);
+        };
+    }, [keySequence]);
+
     const handleSettingsChange = (field: string, value: any) => {
         switch (field) {
             case "promptTemplate":
@@ -410,7 +477,7 @@ const Chat = () => {
                 <div className={styles.commandsContainer}>
                     <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
                     {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
-                    <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                    {showDeveloperSettings && <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />}
                 </div>
             </div>
             <div className={styles.chatRoot} style={{ marginLeft: isHistoryPanelOpen ? "300px" : "0" }}>

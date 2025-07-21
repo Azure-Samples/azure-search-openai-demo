@@ -86,7 +86,11 @@ class RetrieveThenReadApproach(Approach):
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {"user_query": q, "text_sources": extra_info.data_points.text},
+            | {
+                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "user_query": q, 
+                "text_sources": extra_info.data_points.text
+            },
         )
 
         chat_completion = cast(
@@ -126,7 +130,7 @@ class RetrieveThenReadApproach(Approach):
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
-        top = overrides.get("top", 15)
+        top = overrides.get("top", 1)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
@@ -158,7 +162,7 @@ class RetrieveThenReadApproach(Approach):
                 logger = logging.getLogger(__name__)
                 logger.info("No se encontraron resultados en Azure Search, probando SharePoint...")
                 
-                sharepoint_results = await self._search_sharepoint_files(q, top=overrides.get("top", 15))
+                sharepoint_results = await self._search_sharepoint_files(q, top=overrides.get("top", 1))
                 if sharepoint_results:
                     # Convertir resultados de SharePoint al formato de text_sources
                     sharepoint_text_sources = []
@@ -228,7 +232,7 @@ class RetrieveThenReadApproach(Approach):
     ):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides, auth_claims)
-        top = overrides.get("top", 15)
+        top = overrides.get("top", 1)
         max_subqueries = overrides.get("max_subqueries", 10)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         # 50 is the amount of documents that the reranker can process per query
