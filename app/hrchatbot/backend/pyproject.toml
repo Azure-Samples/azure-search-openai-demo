@@ -64,8 +64,11 @@ evals = [
     "evaltools @ git+https://github.com/mattgotteiner/ai-rag-chat-evaluator@patch-1",
 ]
 
+[tool.setuptools]
+packages = ["approaches", "chat_history", "core", "prepdocslib"]
+
 [tool.hatch.build.targets.wheel]
-packages = []
+packages = ["approaches", "chat_history", "core", "prepdocslib"]
 
 [tool.hatch.metadata]
 allow-direct-references = true
