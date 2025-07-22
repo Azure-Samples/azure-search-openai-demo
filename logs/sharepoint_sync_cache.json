@@ -35,11 +35,2339 @@
         "characters_extracted": 301966,
         "content_preview": "AIP DE MEXICO\nENR 1.1-1 AGO-04-2005\nEFECTIVO SEP-29-05\nENR 1. REGLAS Y PROCEDIMIENTOS GENERALES REGL..."
       }
+    },
+    "01R2HQ3G7KRXZL6RGZYBC2FA653BC4OWD4_20051222 AIP AD 1.1-1 Introducción.pdf": {
+      "file_id": "01R2HQ3G7KRXZL6RGZYBC2FA653BC4OWD4",
+      "file_name": "20051222 AIP AD 1.1-1 Introducción.pdf",
+      "file_size": 297095,
+      "last_modified": "2025-06-16T17:30:41Z",
+      "file_hash": "26d29db51d885640",
+      "processed_at": "2025-07-21T23:54:46.931110",
+      "processing_stats": {
+        "characters_extracted": 57652,
+        "content_preview": "AIP DE MEXICO\nAD 1.1-1 DIC-22-2005\nEFECTIVO FEB-16-06\nAD 1. AERODROMOS - INTRODUCCION AD 1.1. DISPON..."
+      }
+    },
+    "01R2HQ3GYXWWFZIIJD4JEYMRL2LZI3LPUL_20051222 AIP AD 2-1 Aeródromo MMSF.pdf": {
+      "file_id": "01R2HQ3GYXWWFZIIJD4JEYMRL2LZI3LPUL",
+      "file_name": "20051222 AIP AD 2-1 Aeródromo MMSF.pdf",
+      "file_size": 225344,
+      "last_modified": "2025-06-16T17:30:42Z",
+      "file_hash": "724d3a7397616f66",
+      "processed_at": "2025-07-21T23:54:51.163676",
+      "processing_stats": {
+        "characters_extracted": 7660,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMSF DIC-22-2005\nEFECTIVO FEB-16-06\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓ..."
+      }
+    },
+    "01R2HQ3G4DA4WOZDKKBFBKVUITDFXIJSRB_20071024 Escaneado. Permiso Num F-90 de funcionamiento y opera.pdf": {
+      "file_id": "01R2HQ3G4DA4WOZDKKBFBKVUITDFXIJSRB",
+      "file_name": "20071024 Escaneado. Permiso Num F-90 de funcionamiento y opera.pdf",
+      "file_size": 902292,
+      "last_modified": "2025-06-16T17:30:44Z",
+      "file_hash": "21fa4ae5c14a2079",
+      "processed_at": "2025-07-21T23:54:58.330157",
+      "processing_stats": {
+        "characters_extracted": 30764,
+        "content_preview": "SUBSECRETARIA DE TRANSPORTE. DIRECCION GENERAL DE AERONAUTICA CIVIL. DEPARTAMENTO DE ESCUELAS 4.1.42..."
+      }
+    },
+    "01R2HQ3G4VWYYLS4MLCREZYYUUCFT3EZDB_20090206 Escaneado. Modificación al Permiso F-90.pdf": {
+      "file_id": "01R2HQ3G4VWYYLS4MLCREZYYUUCFT3EZDB",
+      "file_name": "20090206 Escaneado. Modificación al Permiso F-90.pdf",
+      "file_size": 181639,
+      "last_modified": "2025-06-16T17:30:45Z",
+      "file_hash": "ea8b76f3946e364f",
+      "processed_at": "2025-07-21T23:55:02.363565",
+      "processing_stats": {
+        "characters_extracted": 7027,
+        "content_preview": "1 .\n[\n-\na. Dirección del Centro de Capacitación:\nCALLE RAFAEL ALDUCIN No. 101 COL. REFORMA Y FERROCA..."
+      }
+    },
+    "01R2HQ3G32EK4ZT6LWLVBLLZZOLWIIECJ2_20110825 AIP ENR 0.6-1 Indice.pdf": {
+      "file_id": "01R2HQ3G32EK4ZT6LWLVBLLZZOLWIIECJ2",
+      "file_name": "20110825 AIP ENR 0.6-1 Indice.pdf",
+      "file_size": 46930,
+      "last_modified": "2025-06-16T17:30:46Z",
+      "file_hash": "c20a04a9d0fcfd03",
+      "processed_at": "2025-07-21T23:55:06.241396",
+      "processing_stats": {
+        "characters_extracted": 2690,
+        "content_preview": "AIP DE MEXICO\nENR 0.6-1 25-AGO-2011\nPARTE 2 - EN RUTA (ENR) ENR 0\nENR 0.1 PREFACIO - No aplica ENR 0..."
+      }
+    },
+    "01R2HQ3G264JCDPHETHZGJPZX2W2DZGB24_20120117 Escaneado. Modificación al Permiso F-90.pdf": {
+      "file_id": "01R2HQ3G264JCDPHETHZGJPZX2W2DZGB24",
+      "file_name": "20120117 Escaneado. Modificación al Permiso F-90.pdf",
+      "file_size": 432460,
+      "last_modified": "2025-06-16T17:30:46Z",
+      "file_hash": "5605889f900194a5",
+      "processed_at": "2025-07-21T23:55:12.874834",
+      "processing_stats": {
+        "characters_extracted": 10878,
+        "content_preview": "UNIDOS\nSECRETARIA DE COMUNICACIONES Y TRANSPORTES\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES SUBSECR..."
+      }
+    },
+    "01R2HQ3G6BXB2TGQRMBFAZYWIAYMYUI3UU_20121129 Escaneado. Modificación al Permiso F-90.pdf": {
+      "file_id": "01R2HQ3G6BXB2TGQRMBFAZYWIAYMYUI3UU",
+      "file_name": "20121129 Escaneado. Modificación al Permiso F-90.pdf",
+      "file_size": 266563,
+      "last_modified": "2025-06-16T17:30:46Z",
+      "file_hash": "fe6414b866c46865",
+      "processed_at": "2025-07-21T23:55:19.275482",
+      "processing_stats": {
+        "characters_extracted": 6951,
+        "content_preview": "NIDO\nSECRETARIA DE COMUNICACIONES Y TRANSPORTES\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES SUBSECRET..."
+      }
+    },
+    "01R2HQ3G25FOE3DSVCMRG2H4X5RUINFYKI_20121213 AIP AIC0712 Escaneado. Implementación de rutas de navegación de area (RNAV).pdf": {
+      "file_id": "01R2HQ3G25FOE3DSVCMRG2H4X5RUINFYKI",
+      "file_name": "20121213 AIP AIC0712 Escaneado. Implementación de rutas de navegación de area (RNAV).pdf",
+      "file_size": 2097685,
+      "last_modified": "2025-06-16T17:30:48Z",
+      "file_hash": "4ff4a088def86182",
+      "processed_at": "2025-07-22T00:01:55.094439",
+      "processing_stats": {
+        "characters_extracted": 20282,
+        "content_preview": "2 57-86-55-22\nFAX: 25-98-00-65\nAFTN: MMMXYNYX\nMEXICO\nDIRECCION GENERAL DE AERONAUTICA CIVIL SERVICIO..."
+      }
+    },
+    "01R2HQ3G7TZNUPOMJNNBFZXOHBUJV2SGOD_20130502 Escaneado. Modificación al Permiso F-90.pdf": {
+      "file_id": "01R2HQ3G7TZNUPOMJNNBFZXOHBUJV2SGOD",
+      "file_name": "20130502 Escaneado. Modificación al Permiso F-90.pdf",
+      "file_size": 359010,
+      "last_modified": "2025-06-16T17:30:48Z",
+      "file_hash": "f526556e51550089",
+      "processed_at": "2025-07-22T00:02:01.771124",
+      "processing_stats": {
+        "characters_extracted": 11686,
+        "content_preview": "UNIDOS\nSECRETARIA DE COMUNICACIONES Y TRANSPORTES\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES SUBSECR..."
+      }
+    },
+    "01R2HQ3G445WH42FQU65E37AZ2OQNK52TQ_20130530 AIP ENR 5.1-1 Alertas para la navegación.pdf": {
+      "file_id": "01R2HQ3G445WH42FQU65E37AZ2OQNK52TQ",
+      "file_name": "20130530 AIP ENR 5.1-1 Alertas para la navegación.pdf",
+      "file_size": 1202456,
+      "last_modified": "2025-06-16T17:30:49Z",
+      "file_hash": "5a2a489a5f9aabb5",
+      "processed_at": "2025-07-22T00:02:12.050677",
+      "processing_stats": {
+        "characters_extracted": 47186,
+        "content_preview": "AIP DE MEXICO\nENR 5.1-1 30-MAY-2013\nENR 5. ALERTAS PARA LA NAVEGACION ENR 5.1 ZONAS PROHIBIDAS, REST..."
+      }
+    },
+    "01R2HQ3GZOUCVC6JQSXFF3EQAML3P6HIKM_20150424 POL-TAL-DEO Política de conflicto de intereses por parentesco.pdf": {
+      "file_id": "01R2HQ3GZOUCVC6JQSXFF3EQAML3P6HIKM",
+      "file_name": "20150424 POL-TAL-DEO Política de conflicto de intereses por parentesco.pdf",
+      "file_size": 286399,
+      "last_modified": "2025-06-24T19:29:52Z",
+      "file_hash": "7d81c27d55712da7",
+      "processed_at": "2025-07-22T00:02:16.238091",
+      "processing_stats": {
+        "characters_extracted": 4176,
+        "content_preview": "FECHA\n24/04/2015\nPOLITICA\nCODIGO\nPOL-TAL-DEO-15\nPolítica de Conflicto de Intereses por Parentesco\nVE..."
+      }
+    },
+    "01R2HQ3G6TBOVKJKIBANBISMBYKMKPHDE2_20150626 AIP AIC0515 CIRCULAR OBLIGATORIA QUE ESTABLECE LOS PROCEDIMIENTOS DE FORT..pdf": {
+      "file_id": "01R2HQ3G6TBOVKJKIBANBISMBYKMKPHDE2",
+      "file_name": "20150626 AIP AIC0515 CIRCULAR OBLIGATORIA QUE ESTABLECE LOS PROCEDIMIENTOS DE FORT..pdf",
+      "file_size": 86764,
+      "last_modified": "2025-06-16T17:30:49Z",
+      "file_hash": "722eb43f304d68de",
+      "processed_at": "2025-07-22T00:02:22.516980",
+      "processing_stats": {
+        "characters_extracted": 5651,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx nof_mexico@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G64V3YJNYWIABEKEHJHABZCUZHS_20150723 AIP AIC0615 CIRCULAR DE ASESORAMIENTO QUE ESTABLECE LOS MÉTODOS ACT VOLCANICA.pdf": {
+      "file_id": "01R2HQ3G64V3YJNYWIABEKEHJHABZCUZHS",
+      "file_name": "20150723 AIP AIC0615 CIRCULAR DE ASESORAMIENTO QUE ESTABLECE LOS MÉTODOS ACT VOLCANICA.pdf",
+      "file_size": 458670,
+      "last_modified": "2025-06-16T17:30:51Z",
+      "file_hash": "845a5647454a0cca",
+      "processed_at": "2025-07-22T00:02:34.991048",
+      "processing_stats": {
+        "characters_extracted": 74193,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx nof_mexico@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G6RW42DTSWWAJBK5B7ABUS3T6YA_20150723 AIP AIC0715 DISPOSICIONES EN CASO DE CENIZA VOLCANICA.pdf": {
+      "file_id": "01R2HQ3G6RW42DTSWWAJBK5B7ABUS3T6YA",
+      "file_name": "20150723 AIP AIC0715 DISPOSICIONES EN CASO DE CENIZA VOLCANICA.pdf",
+      "file_size": 181775,
+      "last_modified": "2025-06-16T17:30:51Z",
+      "file_hash": "3fa7597da09dbd12",
+      "processed_at": "2025-07-22T00:02:41.689097",
+      "processing_stats": {
+        "characters_extracted": 16336,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx nof_mexico@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G5I6UORWJP6U5AYTO3UNMP7PFHK_20160818 AIP AIC0216 PUBLICACIÓN DE INFORMACIÓN ENR 6 “CARTAS DE NAVEGACIÓN EN RUTA”.pdf": {
+      "file_id": "01R2HQ3G5I6UORWJP6U5AYTO3UNMP7PFHK",
+      "file_name": "20160818 AIP AIC0216 PUBLICACIÓN DE INFORMACIÓN ENR 6 “CARTAS DE NAVEGACIÓN EN RUTA”.pdf",
+      "file_size": 65733,
+      "last_modified": "2025-06-16T17:30:51Z",
+      "file_hash": "b1a2ac6cbefb3567",
+      "processed_at": "2025-07-22T00:02:45.595883",
+      "processing_stats": {
+        "characters_extracted": 1311,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx nof_mexico@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3GYSAOV7EOD6TVFZUMWD356TMWNE_20170712 PRC-COR-AMT Alta de Materiales en SAP.pdf": {
+      "file_id": "01R2HQ3GYSAOV7EOD6TVFZUMWD356TMWNE",
+      "file_name": "20170712 PRC-COR-AMT Alta de Materiales en SAP.pdf",
+      "file_size": 426120,
+      "last_modified": "2025-06-24T19:16:46Z",
+      "file_hash": "66e35394c87d7aaa",
+      "processed_at": "2025-07-22T00:02:52.234368",
+      "processing_stats": {
+        "characters_extracted": 8942,
+        "content_preview": "FECHA\n12-07-2017\nPROCEDIMIENTO\nCÓDIGO\nPRC-COR-AMT-01\nAlta de Materiales en SAP\nVERSIÓN\n2\nÁREA\nGERENC..."
+      }
+    },
+    "01R2HQ3G3ALZ2CYXAHRJEZHZZNVA242ONI_20171109 AIP AIC0617 PUBLICACIÓN DE INFORMACIÓN AERONÁUTICA EN FORMATO DIGITAL.pdf": {
+      "file_id": "01R2HQ3G3ALZ2CYXAHRJEZHZZNVA242ONI",
+      "file_name": "20171109 AIP AIC0617 PUBLICACIÓN DE INFORMACIÓN AERONÁUTICA EN FORMATO DIGITAL.pdf",
+      "file_size": 15124,
+      "last_modified": "2025-06-16T17:30:51Z",
+      "file_hash": "3f8510ab104c02d7",
+      "processed_at": "2025-07-22T00:02:56.117015",
+      "processing_stats": {
+        "characters_extracted": 1048,
+        "content_preview": "MÉXICO\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES DIRECCIÓN GENERAL DE AERONÁUTICA CIVIL SERVICIOS A..."
+      }
+    },
+    "01R2HQ3G42TR2AKK63ABCJCPDEOLA76D2N_20180219 Escaneado. Modificación al Permiso F-90.pdf": {
+      "file_id": "01R2HQ3G42TR2AKK63ABCJCPDEOLA76D2N",
+      "file_name": "20180219 Escaneado. Modificación al Permiso F-90.pdf",
+      "file_size": 507228,
+      "last_modified": "2025-06-16T17:30:51Z",
+      "file_hash": "4db6a0024539dc35",
+      "processed_at": "2025-07-22T00:03:02.851826",
+      "processing_stats": {
+        "characters_extracted": 12828,
+        "content_preview": "S UNIDOS\nSECRETARIA DE COMUNICACIONES Y TRANSPORTES\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES SUBSE..."
+      }
+    },
+    "01R2HQ3G7TFV4LAVMBRZHY23PEC7PTIOCL_20180426 AIP AIC0118 IMPLEMENTACIÓN DE LA NAVEGACIÓN BASADA EN LA PERFORMANCE (PBN).pdf": {
+      "file_id": "01R2HQ3G7TFV4LAVMBRZHY23PEC7PTIOCL",
+      "file_name": "20180426 AIP AIC0118 IMPLEMENTACIÓN DE LA NAVEGACIÓN BASADA EN LA PERFORMANCE (PBN).pdf",
+      "file_size": 411658,
+      "last_modified": "2025-06-16T17:30:53Z",
+      "file_hash": "34c7a786622e957a",
+      "processed_at": "2025-07-22T00:03:09.331101",
+      "processing_stats": {
+        "characters_extracted": 7066,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx\nSECRETARÍA DE COMUNICACIONES Y TR..."
+      }
+    },
+    "01R2HQ3G6I4ZLE3JUJ2BELEWVSKYID5DKA_20180426 AIP AIC0218 PUBLICACIÓN DE CARTAS DE NAVEGACIÓN BASADA EN LA PERFORMANCE (PBN).pdf": {
+      "file_id": "01R2HQ3G6I4ZLE3JUJ2BELEWVSKYID5DKA",
+      "file_name": "20180426 AIP AIC0218 PUBLICACIÓN DE CARTAS DE NAVEGACIÓN BASADA EN LA PERFORMANCE (PBN).pdf",
+      "file_size": 233383,
+      "last_modified": "2025-06-16T17:30:52Z",
+      "file_hash": "4935541f200c3a24",
+      "processed_at": "2025-07-22T00:03:13.448946",
+      "processing_stats": {
+        "characters_extracted": 5558,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx\nSECRETARÍA DE COMUNICACIONES Y TR..."
+      }
+    },
+    "01R2HQ3G4EJS5Z56WWNFDLSX55FBY5IF6A_20180426 AIP AIC0518 CARTA AERONAUTICA DE APROXIMACION VISUAL.pdf": {
+      "file_id": "01R2HQ3G4EJS5Z56WWNFDLSX55FBY5IF6A",
+      "file_name": "20180426 AIP AIC0518 CARTA AERONAUTICA DE APROXIMACION VISUAL.pdf",
+      "file_size": 18025,
+      "last_modified": "2025-06-16T17:30:53Z",
+      "file_hash": "4ec429ab652d858a",
+      "processed_at": "2025-07-22T00:03:17.383282",
+      "processing_stats": {
+        "characters_extracted": 2452,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx\nSECRETARÍA DE COMUNICACIONES Y TR..."
+      }
+    },
+    "01R2HQ3GYYQHLFKYXV7NAL22UWMWPIQB7R_20180524 AIP AIC0318 LISTA DE VERIFICACIÓN DE SUPLEMENTOS AIP.pdf": {
+      "file_id": "01R2HQ3GYYQHLFKYXV7NAL22UWMWPIQB7R",
+      "file_name": "20180524 AIP AIC0318 LISTA DE VERIFICACIÓN DE SUPLEMENTOS AIP.pdf",
+      "file_size": 122465,
+      "last_modified": "2025-06-16T17:30:53Z",
+      "file_hash": "9af9b2cb59f7bc00",
+      "processed_at": "2025-07-22T00:03:21.323889",
+      "processing_stats": {
+        "characters_extracted": 1785,
+        "content_preview": "MÉXICO\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES DIRECCIÓN GENERAL DE AERONÁUTICA CIVIL SERVICIOS A..."
+      }
+    },
+    "01R2HQ3G5MOFX4XHGBXFDIIIPUIY66XZGU_20180524 AIP AIC0418 SUPLEMENTOS AIP, CIRCULARES DE INFORMACIÓN AERONÁUTICA (AIC).pdf": {
+      "file_id": "01R2HQ3G5MOFX4XHGBXFDIIIPUIY66XZGU",
+      "file_name": "20180524 AIP AIC0418 SUPLEMENTOS AIP, CIRCULARES DE INFORMACIÓN AERONÁUTICA (AIC).pdf",
+      "file_size": 16608,
+      "last_modified": "2025-06-16T17:30:53Z",
+      "file_hash": "84ff63f14aa667bc",
+      "processed_at": "2025-07-22T00:03:25.138002",
+      "processing_stats": {
+        "characters_extracted": 1527,
+        "content_preview": "MÉXICO\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES DIRECCIÓN GENERAL DE AERONÁUTICA CIVIL SERVICIOS A..."
+      }
+    },
+    "01R2HQ3G24EMZLTHIGCVDJ5XYKT5SA7VID_20180904 Flight Crew Training Standards.pdf": {
+      "file_id": "01R2HQ3G24EMZLTHIGCVDJ5XYKT5SA7VID",
+      "file_name": "20180904 Flight Crew Training Standards.pdf",
+      "file_size": 3963936,
+      "last_modified": "2025-06-16T17:31:06Z",
+      "file_hash": "9a48dce627b2477c",
+      "processed_at": "2025-07-22T00:03:43.851218",
+      "processing_stats": {
+        "characters_extracted": 268479,
+        "content_preview": "AIRBUS\nA320\nFLIGHT CREW TRAINING\nSTANDARDS\n· T\nA320AIRBUS\nA320\n@ AIRBUS S.A.S. 2012 - computer rende..."
+      }
+    },
+    "01R2HQ3G6UXK2H5R23WBDYLTHXUGMF7RHV_20180913 AIP AIC0918 NUEVA IDENTIFICACIÓN DE LAS CARTAS PARA LOS PROCEDIMIENTOS DE APROX.pdf": {
+      "file_id": "01R2HQ3G6UXK2H5R23WBDYLTHXUGMF7RHV",
+      "file_name": "20180913 AIP AIC0918 NUEVA IDENTIFICACIÓN DE LAS CARTAS PARA LOS PROCEDIMIENTOS DE APROX.pdf",
+      "file_size": 129076,
+      "last_modified": "2025-06-16T17:30:53Z",
+      "file_hash": "1ac1bb7268c43e4d",
+      "processed_at": "2025-07-22T00:03:47.849407",
+      "processing_stats": {
+        "characters_extracted": 3674,
+        "content_preview": "MÉXICO\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES DIRECCIÓN GENERAL DE AERONÁUTICA CIVIL SERVICIOS A..."
+      }
+    },
+    "01R2HQ3G2XMW5W7URF6FBL2XXVBGNZBYB2_20190131 AIP AD 2-1 Aeródromo MMPR.pdf": {
+      "file_id": "01R2HQ3G2XMW5W7URF6FBL2XXVBGNZBYB2",
+      "file_name": "20190131 AIP AD 2-1 Aeródromo MMPR.pdf",
+      "file_size": 16144453,
+      "last_modified": "2025-06-16T17:31:50Z",
+      "file_hash": "130bfab775cf1223",
+      "processed_at": "2025-07-22T00:04:03.713586",
+      "processing_stats": {
+        "characters_extracted": 110514,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMPR 31-ENE-2019\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMPR - PUERT..."
+      }
+    },
+    "01R2HQ3G7HFQVIUDRZFBGIPLMKE5FFY5EQ_20190417 POL-DEO-CUL Programas de reconocimientos Volaris Nominación, validación y otorgamiento de reconocimientos.pdf": {
+      "file_id": "01R2HQ3G7HFQVIUDRZFBGIPLMKE5FFY5EQ",
+      "file_name": "20190417 POL-DEO-CUL Programas de reconocimientos Volaris Nominación, validación y otorgamiento de reconocimientos.pdf",
+      "file_size": 388071,
+      "last_modified": "2025-06-24T19:29:46Z",
+      "file_hash": "614845c94a0de7a9",
+      "processed_at": "2025-07-22T00:04:10.430810",
+      "processing_stats": {
+        "characters_extracted": 15632,
+        "content_preview": "FECHA\n17/04/2019\nPOLITICA\nCODIGO\nPOL-DEO-CUL-19\nProgramas de Reconocimiento Volaris\nVERSION\n1\nAREA\nG..."
+      }
+    },
+    "01R2HQ3G3KA3NF2XESPVCJQISD6YU7HRCH_20190821 Escaneado. Modificación al Permiso F-90.pdf": {
+      "file_id": "01R2HQ3G3KA3NF2XESPVCJQISD6YU7HRCH",
+      "file_name": "20190821 Escaneado. Modificación al Permiso F-90.pdf",
+      "file_size": 788082,
+      "last_modified": "2025-06-16T17:30:57Z",
+      "file_hash": "05ec81150ba4f833",
+      "processed_at": "2025-07-22T00:04:17.253441",
+      "processing_stats": {
+        "characters_extracted": 20476,
+        "content_preview": "COMUNICACIONES SECRETARIA DE COMUNICACIONES Y TRANSPORTES\n2019 ENDLIANO ZAMATA\nSubsecretaría de Tran..."
+      }
+    },
+    "01R2HQ3GZXQCC263JQNNFLG7PIBRMXQRE6_20191205 AIP AD 2-1 Aeródromo MMES.pdf": {
+      "file_id": "01R2HQ3GZXQCC263JQNNFLG7PIBRMXQRE6",
+      "file_name": "20191205 AIP AD 2-1 Aeródromo MMES.pdf",
+      "file_size": 726891,
+      "last_modified": "2025-06-16T17:31:03Z",
+      "file_hash": "386cd58f39b76a3a",
+      "processed_at": "2025-07-22T00:04:24.118129",
+      "processing_stats": {
+        "characters_extracted": 12123,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMES 05-DIC-2019\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMES - ENSEN..."
+      }
+    },
+    "01R2HQ3GZU4WSBSLDJ3JAKOXXKJQLYE2QD_20200102 AIP AD 2-1 Aeródromo MMMV.pdf": {
+      "file_id": "01R2HQ3GZU4WSBSLDJ3JAKOXXKJQLYE2QD",
+      "file_name": "20200102 AIP AD 2-1 Aeródromo MMMV.pdf",
+      "file_size": 823117,
+      "last_modified": "2025-06-16T17:31:12Z",
+      "file_hash": "43c050b85d5d0186",
+      "processed_at": "2025-07-22T00:04:31.193689",
+      "processing_stats": {
+        "characters_extracted": 17934,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMMV 02-ENE-2020\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMMV - MONCLO..."
+      }
+    },
+    "01R2HQ3G25OZRPUNQEDFHY6IJW6OCX3GQT_20200102 AIP AD 2-1 Aeródromo MMPG.pdf": {
+      "file_id": "01R2HQ3G25OZRPUNQEDFHY6IJW6OCX3GQT",
+      "file_name": "20200102 AIP AD 2-1 Aeródromo MMPG.pdf",
+      "file_size": 1138502,
+      "last_modified": "2025-06-16T17:31:17Z",
+      "file_hash": "71be668c9eb12804",
+      "processed_at": "2025-07-22T00:04:38.375030",
+      "processing_stats": {
+        "characters_extracted": 19769,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMPG 02-ENE-2020\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMPG - PIEDR..."
+      }
+    },
+    "01R2HQ3G64UXS5BOEWEFD2YIRDMQFBTNP4_20200205 AIP AIC0420 IMPLEMENTACIÓN DE LA VIGILANCIA DEPENDIENTE AUTOMÁTICA-RADIODIFUSIÓN.pdf": {
+      "file_id": "01R2HQ3G64UXS5BOEWEFD2YIRDMQFBTNP4",
+      "file_name": "20200205 AIP AIC0420 IMPLEMENTACIÓN DE LA VIGILANCIA DEPENDIENTE AUTOMÁTICA-RADIODIFUSIÓN.pdf",
+      "file_size": 291181,
+      "last_modified": "2025-06-16T17:31:17Z",
+      "file_hash": "96d8057a8ecac596",
+      "processed_at": "2025-07-22T00:04:44.768447",
+      "processing_stats": {
+        "characters_extracted": 6566,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx nof_mexico@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G7KBAUIICHRFRHLXXGL76WCDICD_20200227 AIP AD 2-1 Aeródromo MMCY.pdf": {
+      "file_id": "01R2HQ3G7KBAUIICHRFRHLXXGL76WCDICD",
+      "file_name": "20200227 AIP AD 2-1 Aeródromo MMCY.pdf",
+      "file_size": 195722,
+      "last_modified": "2025-06-16T17:31:20Z",
+      "file_hash": "67d64c8542ad9878",
+      "processed_at": "2025-07-22T00:04:48.725454",
+      "processing_stats": {
+        "characters_extracted": 1158,
+        "content_preview": "PLANO DE AERODROMO AERODROME CHART 20 33 00N 100 54 00W ELEV AD 1740 M\nAFIS\n118.4\nCELAYA, GTO AEROPU..."
+      }
+    },
+    "01R2HQ3G5ID4QPIT5OZRG3KFHXGNFTHW2O_20200227 AIP AD 2-1 Aeródromo MMLC.pdf": {
+      "file_id": "01R2HQ3G5ID4QPIT5OZRG3KFHXGNFTHW2O",
+      "file_name": "20200227 AIP AD 2-1 Aeródromo MMLC.pdf",
+      "file_size": 201698,
+      "last_modified": "2025-06-16T17:31:20Z",
+      "file_hash": "c22be2660ab45f2a",
+      "processed_at": "2025-07-22T00:04:52.605327",
+      "processing_stats": {
+        "characters_extracted": 1419,
+        "content_preview": "PLANO DE AERODROMO AERODROME CHART ELEV AD 12 M\nAERODROMO\nLAZARO CARDENAS, MICH\n-\n8° E\nVAR MAGNETICA..."
+      }
+    },
+    "01R2HQ3G4VT2JGHUWODZEZLATVR6ES2QDS_20200326 AIP AD 2-1 Aeródromo MMHC.pdf": {
+      "file_id": "01R2HQ3G4VT2JGHUWODZEZLATVR6ES2QDS",
+      "file_name": "20200326 AIP AD 2-1 Aeródromo MMHC.pdf",
+      "file_size": 192490,
+      "last_modified": "2025-06-16T17:31:23Z",
+      "file_hash": "1713d7bb15ce9ed3",
+      "processed_at": "2025-07-22T00:04:58.847800",
+      "processing_stats": {
+        "characters_extracted": 1253,
+        "content_preview": "PLANO DE AERODROMO AERODROME CHART 18 30 00 N 097 25 00 W ELEV AD 1679 M\nTEHUACAN, PUE AEROPUERTO NA..."
+      }
+    },
+    "01R2HQ3GZPLWU6UWON7BEYKAZM753XQNU6_20200326 AIP AD 2-1 Aeródromo MMJA.pdf": {
+      "file_id": "01R2HQ3GZPLWU6UWON7BEYKAZM753XQNU6",
+      "file_name": "20200326 AIP AD 2-1 Aeródromo MMJA.pdf",
+      "file_size": 458755,
+      "last_modified": "2025-06-16T17:31:25Z",
+      "file_hash": "157b230689505cfa",
+      "processed_at": "2025-07-22T00:05:03.009476",
+      "processing_stats": {
+        "characters_extracted": 1466,
+        "content_preview": "PLANO DE AERODROMO AERODROME CHART 19 28 30.2015 N 096 47 51.0259 W ELEV AD 956 M\nAFIS\n123.3\nJALAPA,..."
+      }
+    },
+    "01R2HQ3G5DIXKHBS3RTZE22ED3M7N2KFPK_20200326 AIP AD 2-1 Aeródromo MMJC.PDF": {
+      "file_id": "01R2HQ3G5DIXKHBS3RTZE22ED3M7N2KFPK",
+      "file_name": "20200326 AIP AD 2-1 Aeródromo MMJC.PDF",
+      "file_size": 229506,
+      "last_modified": "2025-06-16T17:31:26Z",
+      "file_hash": "8f086596a343d296",
+      "processed_at": "2025-07-22T00:05:09.267296",
+      "processing_stats": {
+        "characters_extracted": 1367,
+        "content_preview": "PLANO DE AERODROMO AERODROME CHART 19 34 29.34N 099 17 20.10W ELEV AD 2475 M\nAFIS 118.4\nATIZAPAN DE ..."
+      }
+    },
+    "01R2HQ3G56LMJQPPDD2VFKABMVGEAHCXEZ_20200326 AIP AD 2-1 Aeródromo MMPC.PDF": {
+      "file_id": "01R2HQ3G56LMJQPPDD2VFKABMVGEAHCXEZ",
+      "file_name": "20200326 AIP AD 2-1 Aeródromo MMPC.PDF",
+      "file_size": 193724,
+      "last_modified": "2025-06-16T17:31:29Z",
+      "file_hash": "2d979d02725db976",
+      "processed_at": "2025-07-22T00:05:13.170325",
+      "processing_stats": {
+        "characters_extracted": 1169,
+        "content_preview": "PLANO DE AERODROMO AERODROME CHART 20 04 25 N 098 47 00 W ELEV AD 2316 M\nAFIS\nVOR/DME/PCA\n122.9 112...."
+      }
+    },
+    "01R2HQ3GYRIGV3VAQ5J5EKI2JAC25IACUN_20200326 AIP AD 2-1 Aeródromo MMZM.pdf": {
+      "file_id": "01R2HQ3GYRIGV3VAQ5J5EKI2JAC25IACUN",
+      "file_name": "20200326 AIP AD 2-1 Aeródromo MMZM.pdf",
+      "file_size": 193595,
+      "last_modified": "2025-06-16T17:31:30Z",
+      "file_hash": "b158fcf73bd96f8e",
+      "processed_at": "2025-07-22T00:05:19.580563",
+      "processing_stats": {
+        "characters_extracted": 1111,
+        "content_preview": "PLANO DE AERODROMO AERODROME CHART 20 02 40 N 102 16 32 W ELEV AD 1567 M\nAFIS 122.8\nZAMORA, MICH AER..."
+      }
+    },
+    "01R2HQ3G7NILFEAEC4EREZVJZSKYI7OVFQ_20200331 AIP AIC0520 INFORMACIÓN SOBRE LAS CONDICIONES DE LOS SERVICIOS DE NAVEGACIÓN.pdf": {
+      "file_id": "01R2HQ3G7NILFEAEC4EREZVJZSKYI7OVFQ",
+      "file_name": "20200331 AIP AIC0520 INFORMACIÓN SOBRE LAS CONDICIONES DE LOS SERVICIOS DE NAVEGACIÓN.pdf",
+      "file_size": 79241,
+      "last_modified": "2025-06-16T17:31:31Z",
+      "file_hash": "662308276f965cef",
+      "processed_at": "2025-07-22T00:05:23.727609",
+      "processing_stats": {
+        "characters_extracted": 5387,
+        "content_preview": "MÉXICO\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES AGENCIA FEDERAL DE AVIACIÓN CIVIL SERVICIOS A LA N..."
+      }
+    },
+    "01R2HQ3G57QKAMBYMC4NAYXAWFQH22D2EZ_20200423 AIP AD 2-1 Aeródromo MMIA.pdf": {
+      "file_id": "01R2HQ3G57QKAMBYMC4NAYXAWFQH22D2EZ",
+      "file_name": "20200423 AIP AD 2-1 Aeródromo MMIA.pdf",
+      "file_size": 2694296,
+      "last_modified": "2025-06-16T17:31:40Z",
+      "file_hash": "4ad00d2c19f08666",
+      "processed_at": "2025-07-22T00:05:31.970794",
+      "processing_stats": {
+        "characters_extracted": 29870,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMIA 23-ABR-2020\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMIA - COLIMA..."
+      }
+    },
+    "01R2HQ3GZZJWDZWNRXMZFJHS6UT7EC4D3P_20200511 Boletín Operacional. Boletín suplementario a la revisión temporal TR 0220 del MOC.pdf": {
+      "file_id": "01R2HQ3GZZJWDZWNRXMZFJHS6UT7EC4D3P",
+      "file_name": "20200511 Boletín Operacional. Boletín suplementario a la revisión temporal TR 0220 del MOC.pdf",
+      "file_size": 1409824,
+      "last_modified": "2025-06-16T17:31:39Z",
+      "file_hash": "b34bb5757088ba47",
+      "processed_at": "2025-07-22T00:05:38.716888",
+      "processing_stats": {
+        "characters_extracted": 11687,
+        "content_preview": "volaris\nCódigo del boletín BOL-MOC-2020-02\nRevisión y fecha R-0, 11-may-2020\nPágina 1 de 7\nBOLETÍN O..."
+      }
+    },
+    "01R2HQ3G6RJNNMU7F75JEYBLCF26XUULAF_20200818 MGO (Manual General de Operaciones). Plan de contingencia de la aviación civil ante eventos de importanc.pdf": {
+      "file_id": "01R2HQ3G6RJNNMU7F75JEYBLCF26XUULAF",
+      "file_name": "20200818 MGO (Manual General de Operaciones). Plan de contingencia de la aviación civil ante eventos de importanc.pdf",
+      "file_size": 1481723,
+      "last_modified": "2025-06-16T17:31:41Z",
+      "file_hash": "ba6fed9c1485addb",
+      "processed_at": "2025-07-22T00:05:46.399351",
+      "processing_stats": {
+        "characters_extracted": 55923,
+        "content_preview": "volaris\nCódigo del boletín BOL-MGO-2020-01\nRevisión y fecha R-2, 18-Ago-2020\nPágina Page 1 of 20\nPla..."
+      }
+    },
+    "01R2HQ3G5JAV7QBCT4EREZG6UCGDKZDHO2_20200921 Escaneado. Procedimiento Impartición de cursos onln.pdf": {
+      "file_id": "01R2HQ3G5JAV7QBCT4EREZG6UCGDKZDHO2",
+      "file_name": "20200921 Escaneado. Procedimiento Impartición de cursos onln.pdf",
+      "file_size": 6170680,
+      "last_modified": "2025-06-16T17:31:56Z",
+      "file_hash": "03c5c4fab690d6aa",
+      "processed_at": "2025-07-22T00:05:53.909146",
+      "processing_stats": {
+        "characters_extracted": 26758,
+        "content_preview": "volaris\nProcedimiento\nImpartición de cursos regulados de forma remota y/o en línea\nCódigo\nPRC-MGC-CR..."
+      }
+    },
+    "01R2HQ3G6F4NZWBCTRK5A3YULECHYA2QMW_20201124 POL-DEO-CUL Administración de regalos y beneficios otorgados a proveedores o terceros.pdf": {
+      "file_id": "01R2HQ3G6F4NZWBCTRK5A3YULECHYA2QMW",
+      "file_name": "20201124 POL-DEO-CUL Administración de regalos y beneficios otorgados a proveedores o terceros.pdf",
+      "file_size": 175706,
+      "last_modified": "2025-06-24T19:29:46Z",
+      "file_hash": "2671ccd8fa3b2029",
+      "processed_at": "2025-07-22T00:06:00.427348",
+      "processing_stats": {
+        "characters_extracted": 10106,
+        "content_preview": "FECHA\n24/11/2020\nPOLITICA\nCODIGO\nPOL-DEO-CUL-05\nAdministración de regalos y beneficios\notorgados a p..."
+      }
+    },
+    "01R2HQ3G2BCET6R2MAAJBKPRUXDYL7CCBL_20201124 POL-DEO-CUL Política de administración de regalos y beneficios provenientes de proveedores o terceros.pdf": {
+      "file_id": "01R2HQ3G2BCET6R2MAAJBKPRUXDYL7CCBL",
+      "file_name": "20201124 POL-DEO-CUL Política de administración de regalos y beneficios provenientes de proveedores o terceros.pdf",
+      "file_size": 291098,
+      "last_modified": "2025-06-24T19:29:47Z",
+      "file_hash": "8038f782585a552e",
+      "processed_at": "2025-07-22T00:06:07.070318",
+      "processing_stats": {
+        "characters_extracted": 12594,
+        "content_preview": "FECHA\n24/11/2020\nPOLITICA\nCODIGO\nPOL-DEO-CUL-04\nPolítica de administración de regalos y beneficios\np..."
+      }
+    },
+    "01R2HQ3GZQQTNUBWZ7MRCKXLFDTAMWF663_20201231 AIP AD 2-1 Aeródromo MMTO.pdf": {
+      "file_id": "01R2HQ3GZQQTNUBWZ7MRCKXLFDTAMWF663",
+      "file_name": "20201231 AIP AD 2-1 Aeródromo MMTO.pdf",
+      "file_size": 6455885,
+      "last_modified": "2025-06-16T17:31:57Z",
+      "file_hash": "990a75073e8398a5",
+      "processed_at": "2025-07-22T00:06:22.958103",
+      "processing_stats": {
+        "characters_extracted": 137989,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMTO 31-DIC-2020\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMTO - TOLUC..."
+      }
+    },
+    "01R2HQ3GZPCHRZAOLSYRDIXBUAMQ5F3GFK_20210211 PRC-JUR-ERC Escaneado. Elaboración o revisión de contratos.pdf": {
+      "file_id": "01R2HQ3GZPCHRZAOLSYRDIXBUAMQ5F3GFK",
+      "file_name": "20210211 PRC-JUR-ERC Escaneado. Elaboración o revisión de contratos.pdf",
+      "file_size": 796241,
+      "last_modified": "2025-06-24T19:16:48Z",
+      "file_hash": "fc8618fbfb868815",
+      "processed_at": "2025-07-22T00:06:31.156016",
+      "processing_stats": {
+        "characters_extracted": 29244,
+        "content_preview": "FECHA\n11/02/2021\nPROCEDIMIENTO\nCODIGO\nPRC-JUR-ERC-01\nElaboración o revisión de contratos\nVERSION\nARE..."
+      }
+    },
+    "01R2HQ3G6SAPOBIFBIDRHLSOICOC3NN2TY_20210218 AIP AIC0621 COORDINACIÓN DE OPERACIONES DE PARACAIDISMO EN EL TMA MÉXICO.pdf": {
+      "file_id": "01R2HQ3G6SAPOBIFBIDRHLSOICOC3NN2TY",
+      "file_name": "20210218 AIP AIC0621 COORDINACIÓN DE OPERACIONES DE PARACAIDISMO EN EL TMA MÉXICO.pdf",
+      "file_size": 23779,
+      "last_modified": "2025-06-16T17:31:52Z",
+      "file_hash": "80c4dd3868071310",
+      "processed_at": "2025-07-22T00:06:35.011667",
+      "processing_stats": {
+        "characters_extracted": 3315,
+        "content_preview": "MÉXICO\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES AGENCIA FEDERAL DE AVIACIÓN CIVIL SERVICIOS A LA N..."
+      }
+    },
+    "01R2HQ3G2CVIKR2EA2PRFYM2ZANJFS5SYO_20210225 AIP AIC0421 RESTRUCTURACIÓN DEL ÁREA TERMINAL MÉXICO. FASE 1.pdf": {
+      "file_id": "01R2HQ3G2CVIKR2EA2PRFYM2ZANJFS5SYO",
+      "file_name": "20210225 AIP AIC0421 RESTRUCTURACIÓN DEL ÁREA TERMINAL MÉXICO. FASE 1.pdf",
+      "file_size": 653623,
+      "last_modified": "2025-06-16T17:31:55Z",
+      "file_hash": "f9fc91efe4e7e111",
+      "processed_at": "2025-07-22T00:06:41.939344",
+      "processing_stats": {
+        "characters_extracted": 24479,
+        "content_preview": "MÉXICO\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES AGENCIA FEDERAL DE AVIACIÓN CIVIL SERVICIOS A LA N..."
+      }
+    },
+    "01R2HQ3GZHMGCI33YV7VFLU5J66NBIMIBU_20210427 AIP AIC0921 PUBLICACIÓN DE INFORMACIÓN AERONÁUTICA (AIP) EN PORTAL WEB..pdf": {
+      "file_id": "01R2HQ3GZHMGCI33YV7VFLU5J66NBIMIBU",
+      "file_name": "20210427 AIP AIC0921 PUBLICACIÓN DE INFORMACIÓN AERONÁUTICA (AIP) EN PORTAL WEB..pdf",
+      "file_size": 270217,
+      "last_modified": "2025-06-16T17:31:56Z",
+      "file_hash": "90d670790ed8eadf",
+      "processed_at": "2025-07-22T00:06:45.937556",
+      "processing_stats": {
+        "characters_extracted": 1572,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx nof_mexico@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G5NO54EHI76UNBIUZKJTCRXPN2Y_20210714 Escaneado. Diferencia en el Panel de Luces Exteriores de las aeronaves XA-VRX y XA-VRY.pdf": {
+      "file_id": "01R2HQ3G5NO54EHI76UNBIUZKJTCRXPN2Y",
+      "file_name": "20210714 Escaneado. Diferencia en el Panel de Luces Exteriores de las aeronaves XA-VRX y XA-VRY.pdf",
+      "file_size": 314619,
+      "last_modified": "2025-06-16T17:31:59Z",
+      "file_hash": "ee8ec48423cd3025",
+      "processed_at": "2025-07-22T00:06:52.636053",
+      "processing_stats": {
+        "characters_extracted": 10119,
+        "content_preview": "volaris\nCódigo del boletín BOL-FCOM-2021-01\nRevisión y fecha R-0, 14-Jul-2021\nPágina Page 1 of 7\nDif..."
+      }
+    },
+    "01R2HQ3GYOMZMRXH5TGBC24WNA4DVATZYJ_20210720 Escaneado. Aprobación BOL-FCOM-2021-01.pdf": {
+      "file_id": "01R2HQ3GYOMZMRXH5TGBC24WNA4DVATZYJ",
+      "file_name": "20210720 Escaneado. Aprobación BOL-FCOM-2021-01.pdf",
+      "file_size": 143892,
+      "last_modified": "2025-06-16T17:31:58Z",
+      "file_hash": "3d65b7522ab68066",
+      "processed_at": "2025-07-22T00:06:56.567949",
+      "processing_stats": {
+        "characters_extracted": 2463,
+        "content_preview": "COMUNICACIONES SECRETARÍA DE COMUNICACIONES Y TRANSPORTES\nAFAC\nAGENCIA FEDERAL DE AVIACIÓN CIVIL\n130..."
+      }
+    },
+    "01R2HQ3G254DS6YMWZHRGI7R7DDLNMPE3W_20211007 AIP AD 2-1 Aeródromo MMBT.pdf": {
+      "file_id": "01R2HQ3G254DS6YMWZHRGI7R7DDLNMPE3W",
+      "file_name": "20211007 AIP AD 2-1 Aeródromo MMBT.pdf",
+      "file_size": 5151826,
+      "last_modified": "2025-06-16T17:32:10Z",
+      "file_hash": "6e5cd618fd318eb9",
+      "processed_at": "2025-07-22T00:07:04.642337",
+      "processing_stats": {
+        "characters_extracted": 39378,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMBT 07-OCT-2021\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMBT - BAHÍA..."
+      }
+    },
+    "01R2HQ3G46WHLKJJ37MBD2Y62Z4URKJTYE_20211007 AIP AD 2-1 Aeródromo MMMZ.pdf": {
+      "file_id": "01R2HQ3G46WHLKJJ37MBD2Y62Z4URKJTYE",
+      "file_name": "20211007 AIP AD 2-1 Aeródromo MMMZ.pdf",
+      "file_size": 4735423,
+      "last_modified": "2025-06-16T17:32:10Z",
+      "file_hash": "fdb70152d03b299a",
+      "processed_at": "2025-07-22T00:07:16.623668",
+      "processing_stats": {
+        "characters_extracted": 49425,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMMZ 07-OCT-2021\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMMZ - MAZATL..."
+      }
+    },
+    "01R2HQ3GYYIMZAO2IYENGZGL3Q73BAT6DJ_20211217 MOT(Manual de Operaciones Terrestres). Base de Datos de Terreno (EGPWS).pdf": {
+      "file_id": "01R2HQ3GYYIMZAO2IYENGZGL3Q73BAT6DJ",
+      "file_name": "20211217 MOT(Manual de Operaciones Terrestres). Base de Datos de Terreno (EGPWS).pdf",
+      "file_size": 256699,
+      "last_modified": "2025-06-16T17:32:02Z",
+      "file_hash": "d58d185e708a10ff",
+      "processed_at": "2025-07-22T00:07:20.730433",
+      "processing_stats": {
+        "characters_extracted": 3081,
+        "content_preview": "volaris\nOperations Engineering Informative\nBOL-MOT-OEI-06-21. Base de Datos de Terreno (EGPWS)\nFecha..."
+      }
+    },
+    "01R2HQ3G6LNPWPTPL7PJBZFDP3AZLINGF2_20220203 AIP AD 2-1 Aeródromo MMZC.pdf": {
+      "file_id": "01R2HQ3G6LNPWPTPL7PJBZFDP3AZLINGF2",
+      "file_name": "20220203 AIP AD 2-1 Aeródromo MMZC.pdf",
+      "file_size": 2708648,
+      "last_modified": "2025-06-16T17:32:09Z",
+      "file_hash": "553faa1be98e0f97",
+      "processed_at": "2025-07-22T00:07:30.514704",
+      "processing_stats": {
+        "characters_extracted": 26280,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMZC 03-NOV-2022\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMZC - ZACAT..."
+      }
+    },
+    "01R2HQ3GYZBSRAELLGSZCIDRDJK3TWNAHN_20220324 AIP AD 2-1 Aeródromo MMLM.pdf": {
+      "file_id": "01R2HQ3GYZBSRAELLGSZCIDRDJK3TWNAHN",
+      "file_name": "20220324 AIP AD 2-1 Aeródromo MMLM.pdf",
+      "file_size": 3370602,
+      "last_modified": "2025-06-16T17:32:14Z",
+      "file_hash": "f65e3d8b734707e7",
+      "processed_at": "2025-07-22T00:07:40.866381",
+      "processing_stats": {
+        "characters_extracted": 38233,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMLM 24-MAR-2022\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMLM - LOS MO..."
+      }
+    },
+    "01R2HQ3G44YZS26ZNGNNF2OGYFA5ZJXHXB_20220324 AIP AIC0222 REGLAMENTACIÓN Y CONTROL DE LA INFORMACIÓN AERONÁUTICA (AIRAC).pdf": {
+      "file_id": "01R2HQ3G44YZS26ZNGNNF2OGYFA5ZJXHXB",
+      "file_name": "20220324 AIP AIC0222 REGLAMENTACIÓN Y CONTROL DE LA INFORMACIÓN AERONÁUTICA (AIRAC).pdf",
+      "file_size": 103260,
+      "last_modified": "2025-06-16T17:32:11Z",
+      "file_hash": "854c47dba73850ba",
+      "processed_at": "2025-07-22T00:07:44.918146",
+      "processing_stats": {
+        "characters_extracted": 8281,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G7X5TRCROHR6NDYFVU6OIT5H5OT_20220328 PRC-COR-APS Administración de Proveedores en Sistema (Alta, Baja y Modificaciones).pdf": {
+      "file_id": "01R2HQ3G7X5TRCROHR6NDYFVU6OIT5H5OT",
+      "file_name": "20220328 PRC-COR-APS Administración de Proveedores en Sistema (Alta, Baja y Modificaciones).pdf",
+      "file_size": 987678,
+      "last_modified": "2025-06-24T19:16:49Z",
+      "file_hash": "9201c7e14ffe113c",
+      "processed_at": "2025-07-22T00:07:55.194634",
+      "processing_stats": {
+        "characters_extracted": 65602,
+        "content_preview": "FECHA\n28/03/2022\nPROCEDIMIENTO\nCODIGO\nPRC-COR-APS-01\nAdministración de Proveedores en Sistema\n(Alta,..."
+      }
+    },
+    "01R2HQ3G7UXMY6LBK7VFAKESIRR4WTBRMX_20220328 PRC-COR-ASO Administración de solicitudes y Órdenes de Compra.pdf": {
+      "file_id": "01R2HQ3G7UXMY6LBK7VFAKESIRR4WTBRMX",
+      "file_name": "20220328 PRC-COR-ASO Administración de solicitudes y Órdenes de Compra.pdf",
+      "file_size": 605498,
+      "last_modified": "2025-06-24T19:16:49Z",
+      "file_hash": "1c7fe942e278caf3",
+      "processed_at": "2025-07-22T00:08:02.054024",
+      "processing_stats": {
+        "characters_extracted": 16755,
+        "content_preview": "FECHA\n28-03-2022\nPROCEDIMIENTO\nCÓDIGO\nPRC-COR-ASO-01\nAdministración de solicitudes y Órdenes de Comp..."
+      }
+    },
+    "01R2HQ3G743GKJ2UQ6ZZD2JWFPFCN7AU3A_20220331 PRC-COR-CGL Compras Generales.pdf": {
+      "file_id": "01R2HQ3G743GKJ2UQ6ZZD2JWFPFCN7AU3A",
+      "file_name": "20220331 PRC-COR-CGL Compras Generales.pdf",
+      "file_size": 790911,
+      "last_modified": "2025-06-24T19:16:49Z",
+      "file_hash": "9ef73fb3c8045d23",
+      "processed_at": "2025-07-22T00:08:09.483099",
+      "processing_stats": {
+        "characters_extracted": 49992,
+        "content_preview": "FECHA\n31-03-2022\nPROCEDIMIENTO\nCÓDIGO\nPRC-COR-CGL-01\nPRC-COR-CGL-01 Compras Generales\nVERSIÓN\n13\nÁRE..."
+      }
+    },
+    "01R2HQ3G44BRL3G6YLCBEICUT3NX5522QS_20220331 PRC-COR-EMS Entrada de Mercancía en SAP.pdf": {
+      "file_id": "01R2HQ3G44BRL3G6YLCBEICUT3NX5522QS",
+      "file_name": "20220331 PRC-COR-EMS Entrada de Mercancía en SAP.pdf",
+      "file_size": 466888,
+      "last_modified": "2025-06-24T19:16:50Z",
+      "file_hash": "9030a8414f1adea1",
+      "processed_at": "2025-07-22T00:08:16.358653",
+      "processing_stats": {
+        "characters_extracted": 20859,
+        "content_preview": "FECHA\n31/03/2022\nPROCEDIMIENTO\nCODIGO\nPRC-COR-EMS-01\nEntrada de Mercancía en SAP\nVERSION\n6\nAREA\nGERE..."
+      }
+    },
+    "01R2HQ3GY6RPSK4A4RQZH2KHSKVCEB6KCG_20220519 AIP AD 2-1 Aeródromo MMRX.pdf": {
+      "file_id": "01R2HQ3GY6RPSK4A4RQZH2KHSKVCEB6KCG",
+      "file_name": "20220519 AIP AD 2-1 Aeródromo MMRX.pdf",
+      "file_size": 3486563,
+      "last_modified": "2025-06-16T17:32:17Z",
+      "file_hash": "84fb989062a8b834",
+      "processed_at": "2025-07-22T00:08:29.633420",
+      "processing_stats": {
+        "characters_extracted": 55657,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMRX 19-MAY-2022\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMRX - REYNOS..."
+      }
+    },
+    "01R2HQ3G23CZBWX2VEDFFZOTU5ZLLWNKIS_20220519 AIP AIC0522 CIRCULAR ATS-SMS PARA CUMPLIR CON LA OBLIGATORIEDAD DE FRASEOLOGIA.pdf": {
+      "file_id": "01R2HQ3G23CZBWX2VEDFFZOTU5ZLLWNKIS",
+      "file_name": "20220519 AIP AIC0522 CIRCULAR ATS-SMS PARA CUMPLIR CON LA OBLIGATORIEDAD DE FRASEOLOGIA.pdf",
+      "file_size": 177338,
+      "last_modified": "2025-06-16T17:32:13Z",
+      "file_hash": "725d052e2e8d6013",
+      "processed_at": "2025-07-22T00:08:36.288368",
+      "processing_stats": {
+        "characters_extracted": 18555,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G5K4VWVMQEHHRGIFVOPOZX6FGLY_20220908 AIP AD 2-1 Aeródromo MMTJ.pdf": {
+      "file_id": "01R2HQ3G5K4VWVMQEHHRGIFVOPOZX6FGLY",
+      "file_name": "20220908 AIP AD 2-1 Aeródromo MMTJ.pdf",
+      "file_size": 16130521,
+      "last_modified": "2025-06-16T17:32:44Z",
+      "file_hash": "65bf13ce2cae5ba2",
+      "processed_at": "2025-07-22T00:08:54.738489",
+      "processing_stats": {
+        "characters_extracted": 116114,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMTJ 08-SEP-2022\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMTJ - TIJUA..."
+      }
+    },
+    "01R2HQ3G5Q7BBGNLN7DNFJTH7DZN7A2V3B_20220908 AIP AD 2-1 Aeródromo MMUN.pdf": {
+      "file_id": "01R2HQ3G5Q7BBGNLN7DNFJTH7DZN7A2V3B",
+      "file_name": "20220908 AIP AD 2-1 Aeródromo MMUN.pdf",
+      "file_size": 11915644,
+      "last_modified": "2025-06-16T17:32:41Z",
+      "file_hash": "7639098c7a9f2a4f",
+      "processed_at": "2025-07-22T00:09:20.640548",
+      "processing_stats": {
+        "characters_extracted": 249790,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMUN 08-SEP-2022\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERODROMO\nMMUN - CANCU..."
+      }
+    },
+    "01R2HQ3G6VSLK76SZETNC3EN2YGHIVLXPG_20230414 MGO (Manual General de Operaciones). Información complementaria al capítulo 05 del MOV.pdf": {
+      "file_id": "01R2HQ3G6VSLK76SZETNC3EN2YGHIVLXPG",
+      "file_name": "20230414 MGO (Manual General de Operaciones). Información complementaria al capítulo 05 del MOV.pdf",
+      "file_size": 314191,
+      "last_modified": "2025-06-16T17:32:18Z",
+      "file_hash": "15c9b464ec0cd7d0",
+      "processed_at": "2025-07-22T00:09:27.132663",
+      "processing_stats": {
+        "characters_extracted": 5579,
+        "content_preview": "volaris\nOperations Engineering Informative\nBOL-MGO-ICP-01-23 .- Información complementaria al capítu..."
+      }
+    },
+    "01R2HQ3G7II6Z5RYRZLNBJGXDSB6VASJ4U_20230420 AIP AD 2-1 Aeródromo MMQT.pdf": {
+      "file_id": "01R2HQ3G7II6Z5RYRZLNBJGXDSB6VASJ4U",
+      "file_name": "20230420 AIP AD 2-1 Aeródromo MMQT.pdf",
+      "file_size": 8955282,
+      "last_modified": "2025-06-16T17:32:40Z",
+      "file_hash": "4aa2d905944f2b7a",
+      "processed_at": "2025-07-22T00:09:40.832640",
+      "processing_stats": {
+        "characters_extracted": 73665,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMQT 20-ABR-2023\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMQT -QUERET..."
+      }
+    },
+    "01R2HQ3GZND3XW3TGSTNFZG6YNYH532X6C_20230518 AIP AD 2-1 Aeródromo MMCE.pdf": {
+      "file_id": "01R2HQ3GZND3XW3TGSTNFZG6YNYH532X6C",
+      "file_name": "20230518 AIP AD 2-1 Aeródromo MMCE.pdf",
+      "file_size": 3295794,
+      "last_modified": "2025-06-16T17:32:48Z",
+      "file_hash": "6582c4a2778eed49",
+      "processed_at": "2025-07-22T00:09:51.853930",
+      "processing_stats": {
+        "characters_extracted": 55535,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCE 18-MAY-2023\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMCE - CIUDAD..."
+      }
+    },
+    "01R2HQ3G5RGQGFAUZHQBF2XSHUNAIEFBZR_20230518 AIP AD 2-1 Aeródromo MMVA.pdf": {
+      "file_id": "01R2HQ3G5RGQGFAUZHQBF2XSHUNAIEFBZR",
+      "file_name": "20230518 AIP AD 2-1 Aeródromo MMVA.pdf",
+      "file_size": 5160522,
+      "last_modified": "2025-06-16T17:32:55Z",
+      "file_hash": "6e844e3b1d6c51ea",
+      "processed_at": "2025-07-22T00:10:03.120735",
+      "processing_stats": {
+        "characters_extracted": 66291,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMVA 18-MAY-2023\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMVA - VILLA..."
+      }
+    },
+    "01R2HQ3G5FPJEHWFICXBEK25FB6DI7ZH4U_20230615 AIP AD 2-1 Aeródromo MMHO.pdf": {
+      "file_id": "01R2HQ3G5FPJEHWFICXBEK25FB6DI7ZH4U",
+      "file_name": "20230615 AIP AD 2-1 Aeródromo MMHO.pdf",
+      "file_size": 10914787,
+      "last_modified": "2025-06-16T17:33:09Z",
+      "file_hash": "f54c4a0b7671a25b",
+      "processed_at": "2025-07-22T00:10:21.348824",
+      "processing_stats": {
+        "characters_extracted": 110285,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMHO 15-JUN-2023\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMHO - HERMOS..."
+      }
+    },
+    "01R2HQ3GYXCPAMBTR6MVAYFEZZIAV72VJE_20230713 AIP AD 2-1 Aeródromo MMSD.pdf": {
+      "file_id": "01R2HQ3GYXCPAMBTR6MVAYFEZZIAV72VJE",
+      "file_name": "20230713 AIP AD 2-1 Aeródromo MMSD.pdf",
+      "file_size": 11902211,
+      "last_modified": "2025-06-16T17:33:15Z",
+      "file_hash": "0d6dea5aaff7c77b",
+      "processed_at": "2025-07-22T00:10:37.178522",
+      "processing_stats": {
+        "characters_extracted": 120627,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMSD 13-JUL-2023\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMSD - SAN J..."
+      }
+    },
+    "01R2HQ3G74YX3PKGEM6REKFBTD53BANKDB_20230731 AIP AD 2-1 Aeródromo MMMA.pdf": {
+      "file_id": "01R2HQ3G74YX3PKGEM6REKFBTD53BANKDB",
+      "file_name": "20230731 AIP AD 2-1 Aeródromo MMMA.pdf",
+      "file_size": 4495096,
+      "last_modified": "2025-06-16T17:33:08Z",
+      "file_hash": "eba088c9f59d5a48",
+      "processed_at": "2025-07-22T00:10:47.749960",
+      "processing_stats": {
+        "characters_extracted": 58194,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMMA 13-JUL-2023\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMMA - MATAMO..."
+      }
+    },
+    "01R2HQ3G3Q42GQMP4S3BGYD5DQYC26Z5AR_20230810 AIP AD 2-1 Aeródromo MMPA.pdf": {
+      "file_id": "01R2HQ3G3Q42GQMP4S3BGYD5DQYC26Z5AR",
+      "file_name": "20230810 AIP AD 2-1 Aeródromo MMPA.pdf",
+      "file_size": 4806020,
+      "last_modified": "2025-06-16T17:33:21Z",
+      "file_hash": "5fc9093fb0da6478",
+      "processed_at": "2025-07-22T00:10:55.692074",
+      "processing_stats": {
+        "characters_extracted": 30395,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMPA 10-AGO-2023\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMPA - POZA R..."
+      }
+    },
+    "01R2HQ3GYWGAAL66KMIZCY5KVX7TBFQAHY_20230810 AIP AD 2-1 Aeródromo MMSP.pdf": {
+      "file_id": "01R2HQ3GYWGAAL66KMIZCY5KVX7TBFQAHY",
+      "file_name": "20230810 AIP AD 2-1 Aeródromo MMSP.pdf",
+      "file_size": 2914785,
+      "last_modified": "2025-06-16T17:33:20Z",
+      "file_hash": "a9aa2931244f5dfa",
+      "processed_at": "2025-07-22T00:11:06.440861",
+      "processing_stats": {
+        "characters_extracted": 47016,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMSP 10-AGO-2023\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMSP - SAN L..."
+      }
+    },
+    "01R2HQ3G5WQMWYFZL2Q5BIWVMYVMOZKP65_20231005 AIP AD 0.6-1 Indice.pdf": {
+      "file_id": "01R2HQ3G5WQMWYFZL2Q5BIWVMYVMOZKP65",
+      "file_name": "20231005 AIP AD 0.6-1 Indice.pdf",
+      "file_size": 57423,
+      "last_modified": "2025-06-16T17:33:17Z",
+      "file_hash": "494d0789941a9732",
+      "processed_at": "2025-07-22T00:11:10.399244",
+      "processing_stats": {
+        "characters_extracted": 2332,
+        "content_preview": "AIP DE MEXICO\nAD 0.6-1 05-OCT-2023\nPARTE 3 - AERODROMOS (AD)\nAD 0\nAD 0.1 PREFACIO - No se aplica AD ..."
+      }
+    },
+    "01R2HQ3G37CSNL6LUHW5BIYQ3NFJRVODKG_20231005 AIP AD 2-1 Aeródromo MMGA.pdf": {
+      "file_id": "01R2HQ3G37CSNL6LUHW5BIYQ3NFJRVODKG",
+      "file_name": "20231005 AIP AD 2-1 Aeródromo MMGA.pdf",
+      "file_size": 3423082,
+      "last_modified": "2025-06-16T17:33:29Z",
+      "file_hash": "31f08c3f3cd1379b",
+      "processed_at": "2025-07-22T00:11:17.961000",
+      "processing_stats": {
+        "characters_extracted": 31136,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMGA 05-OCT-2023\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMGA - CREEL,..."
+      }
+    },
+    "01R2HQ3GZ3LTKR3FNMB5EYCJX53I4K3NII_20231102 AIP AD 2-1 Aeródromo MMPS.pdf": {
+      "file_id": "01R2HQ3GZ3LTKR3FNMB5EYCJX53I4K3NII",
+      "file_name": "20231102 AIP AD 2-1 Aeródromo MMPS.pdf",
+      "file_size": 2963414,
+      "last_modified": "2025-06-16T17:33:31Z",
+      "file_hash": "8775c82b4714e3be",
+      "processed_at": "2025-07-22T00:11:28.002800",
+      "processing_stats": {
+        "characters_extracted": 33827,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMPS 02-NOV-2023\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMPS - PUERTO..."
+      }
+    },
+    "01R2HQ3G3CWKG2QDTRGVD3FHLGZC76EPDR_20231128 Flight Crew Techniques Manual.pdf": {
+      "file_id": "01R2HQ3G3CWKG2QDTRGVD3FHLGZC76EPDR",
+      "file_name": "20231128 Flight Crew Techniques Manual.pdf",
+      "file_size": 10853889,
+      "last_modified": "2025-06-16T17:33:46Z",
+      "file_hash": "96404dea69ea5cf9",
+      "processed_at": "2025-07-22T00:12:06.465158",
+      "processing_stats": {
+        "characters_extracted": 810569,
+        "content_preview": "A318/A319/A320/A321\nvolaris\nFLIGHT CREW TECHNIQUES MANUAL\nREFERENCE: VOI A318/A319/A320/A321 FLEET F..."
+      }
+    },
+    "01R2HQ3G6MSPB4W4DGGJGL3LDDFH6ET3SZ_20231228 AIP AD 2-1 Aeródromo MMDO.pdf": {
+      "file_id": "01R2HQ3G6MSPB4W4DGGJGL3LDDFH6ET3SZ",
+      "file_name": "20231228 AIP AD 2-1 Aeródromo MMDO.pdf",
+      "file_size": 5027237,
+      "last_modified": "2025-06-16T17:33:40Z",
+      "file_hash": "d7dd2d15d62642ce",
+      "processed_at": "2025-07-22T00:12:19.424879",
+      "processing_stats": {
+        "characters_extracted": 42316,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMDO 28-DIC-2023\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMDO - DURANG..."
+      }
+    },
+    "01R2HQ3GYDQADSBZEWEJDY6VRQ3LXUELGT_20231228 AIP AD 2-1 Aeródromo MMTP.pdf": {
+      "file_id": "01R2HQ3GYDQADSBZEWEJDY6VRQ3LXUELGT",
+      "file_name": "20231228 AIP AD 2-1 Aeródromo MMTP.pdf",
+      "file_size": 5708062,
+      "last_modified": "2025-06-16T17:33:43Z",
+      "file_hash": "f112cfab01f1271d",
+      "processed_at": "2025-07-22T00:12:30.417205",
+      "processing_stats": {
+        "characters_extracted": 58227,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMTP 28-DIC-2023\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMTP - TAPAC..."
+      }
+    },
+    "01R2HQ3GZFAGZLWL7LCNEYXNO3YVA4GAJ3_20231229 AIP AD 2-1 Aeródromo MMCZ.pdf": {
+      "file_id": "01R2HQ3GZFAGZLWL7LCNEYXNO3YVA4GAJ3",
+      "file_name": "20231229 AIP AD 2-1 Aeródromo MMCZ.pdf",
+      "file_size": 4838954,
+      "last_modified": "2025-06-16T17:33:46Z",
+      "file_hash": "d5671682a8c62a7f",
+      "processed_at": "2025-07-22T00:12:45.480094",
+      "processing_stats": {
+        "characters_extracted": 94567,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCZ 28-DIC-2023\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMCZ - COZUME..."
+      }
+    },
+    "01R2HQ3G3WHSGCVJZLB5C2UFKO2RDOCFRF_20240115 Acciones de mitigación derivadas de la problemática de la interferencia de banda 5G en los sistemas.pdf": {
+      "file_id": "01R2HQ3G3WHSGCVJZLB5C2UFKO2RDOCFRF",
+      "file_name": "20240115 Acciones de mitigación derivadas de la problemática de la interferencia de banda 5G en los sistemas.pdf",
+      "file_size": 462061,
+      "last_modified": "2025-06-16T17:33:47Z",
+      "file_hash": "5f0b829ed28a0e86",
+      "processed_at": "2025-07-22T00:12:52.337982",
+      "processing_stats": {
+        "characters_extracted": 16327,
+        "content_preview": "volaris\nSistema Integrado de Gestión de Aerolínea (IAMS)\nCódigo del boletín BOL-MGO-2023-001\nRevisió..."
+      }
+    },
+    "01R2HQ3GYUVOPDMFVTSZHLI2V5W2Z6A7UI_20240122 AIP GEN 4.1-1 Derechos por el uso de aeródromos y navegación aérea.pdf": {
+      "file_id": "01R2HQ3GYUVOPDMFVTSZHLI2V5W2Z6A7UI",
+      "file_name": "20240122 AIP GEN 4.1-1 Derechos por el uso de aeródromos y navegación aérea.pdf",
+      "file_size": 144223,
+      "last_modified": "2025-06-16T17:33:47Z",
+      "file_hash": "d6f4deee3e579d68",
+      "processed_at": "2025-07-22T00:12:59.823521",
+      "processing_stats": {
+        "characters_extracted": 15831,
+        "content_preview": "AIP DE MEXICO\nGEN 4.1-1 ENE-22-2004\nEFECTIVO ABR-15-04\nGEN 4. DERECHOS POR EL USO DE AERÓDROMOS Y SE..."
+      }
+    },
+    "01R2HQ3G4DREM26W2YCVBIPPWY44AG6U5B_20240125 AIP AD 2-1 Aeródromo MMAA.pdf": {
+      "file_id": "01R2HQ3G4DREM26W2YCVBIPPWY44AG6U5B",
+      "file_name": "20240125 AIP AD 2-1 Aeródromo MMAA.pdf",
+      "file_size": 10257070,
+      "last_modified": "2025-06-16T17:34:04Z",
+      "file_hash": "c4ff8dbde248e14e",
+      "processed_at": "2025-07-22T00:13:13.331520",
+      "processing_stats": {
+        "characters_extracted": 105714,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMAA 25-ENE-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMAA - ACAPUL..."
+      }
+    },
+    "01R2HQ3GY3HW5LBRF6BJE2WEFW4MSX6K3Y_20240125 AIP AD 2-1 Aeródromo MMCN.pdf": {
+      "file_id": "01R2HQ3GY3HW5LBRF6BJE2WEFW4MSX6K3Y",
+      "file_name": "20240125 AIP AD 2-1 Aeródromo MMCN.pdf",
+      "file_size": 4070377,
+      "last_modified": "2025-06-16T17:33:55Z",
+      "file_hash": "a5d46fda722c0acd",
+      "processed_at": "2025-07-22T00:13:26.613376",
+      "processing_stats": {
+        "characters_extracted": 50427,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCN 25-ENE-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMCN - CD. OB..."
+      }
+    },
+    "01R2HQ3G3W4I2NYPNF45HKHOPJVLEW46B4_20240125 AIP AD 2-1 Aeródromo MMCU.pdf": {
+      "file_id": "01R2HQ3G3W4I2NYPNF45HKHOPJVLEW46B4",
+      "file_name": "20240125 AIP AD 2-1 Aeródromo MMCU.pdf",
+      "file_size": 9861375,
+      "last_modified": "2025-06-16T17:34:05Z",
+      "file_hash": "94f4923e5141737f",
+      "processed_at": "2025-07-22T00:13:45.556901",
+      "processing_stats": {
+        "characters_extracted": 139634,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCU 25-ENE-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMCU - CHIHU..."
+      }
+    },
+    "01R2HQ3G346WBJKMMNLNBZRU6NAYBL7IGB_20240125 AIP AD 2-1 Aeródromo MMLP.pdf": {
+      "file_id": "01R2HQ3G346WBJKMMNLNBZRU6NAYBL7IGB",
+      "file_name": "20240125 AIP AD 2-1 Aeródromo MMLP.pdf",
+      "file_size": 11829256,
+      "last_modified": "2025-06-16T17:34:18Z",
+      "file_hash": "4c3302ef51d9e4ac",
+      "processed_at": "2025-07-22T00:13:57.848304",
+      "processing_stats": {
+        "characters_extracted": 81055,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMLP 25-ENE-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMLP - LA PAZ..."
+      }
+    },
+    "01R2HQ3G6TXONCJN3CNRG27IK422SKLJ6I_20240125 AIP AIC0124 COSTOS DE ADQUISICION Y RENOVACION DE LA PUBLICACIÓN DE INFORMACIÓN.pdf": {
+      "file_id": "01R2HQ3G6TXONCJN3CNRG27IK422SKLJ6I",
+      "file_name": "20240125 AIP AIC0124 COSTOS DE ADQUISICION Y RENOVACION DE LA PUBLICACIÓN DE INFORMACIÓN.pdf",
+      "file_size": 135298,
+      "last_modified": "2025-06-16T17:34:07Z",
+      "file_hash": "d86cb91193811b46",
+      "processed_at": "2025-07-22T00:14:04.260850",
+      "processing_stats": {
+        "characters_extracted": 4079,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3GY7LNF6PSR3WJFZQPVJ7SZDIREH_20240208 AIP AIC0524 PROCEDIMIENTO PARA OBTENER EXTENSION DE SERVICIOS EN LOS AEROPUERTOS.pdf": {
+      "file_id": "01R2HQ3GY7LNF6PSR3WJFZQPVJ7SZDIREH",
+      "file_name": "20240208 AIP AIC0524 PROCEDIMIENTO PARA OBTENER EXTENSION DE SERVICIOS EN LOS AEROPUERTOS.pdf",
+      "file_size": 311008,
+      "last_modified": "2025-06-16T17:34:10Z",
+      "file_hash": "66c5ce4e8886b2f0",
+      "processed_at": "2025-07-22T00:14:10.726043",
+      "processing_stats": {
+        "characters_extracted": 7183,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G3YNNR4C34RVJAZGQ322JNRK4TK_20240212 AIP SUPLEMENTO 02-6124 Boletin de actualización.pdf": {
+      "file_id": "01R2HQ3G3YNNR4C34RVJAZGQ322JNRK4TK",
+      "file_name": "20240212 AIP SUPLEMENTO 02-6124 Boletin de actualización.pdf",
+      "file_size": 167607,
+      "last_modified": "2025-06-16T17:34:11Z",
+      "file_hash": "832df373dc6ea987",
+      "processed_at": "2025-07-22T00:14:17.448539",
+      "processing_stats": {
+        "characters_extracted": 23719,
+        "content_preview": "MEXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e:ais_pcr@sct.gob.mx NOF: luis.munoz@sct.gob.mx\nSECRETA..."
+      }
+    },
+    "01R2HQ3G4E24LHYEAMMVDKW4OC64RQZOMY_20240222 4.1.4.1 OPS-89324 Escaneado. Flight Manual.pdf": {
+      "file_id": "01R2HQ3G4E24LHYEAMMVDKW4OC64RQZOMY",
+      "file_name": "20240222 4.1.4.1 OPS-89324 Escaneado. Flight Manual.pdf",
+      "file_size": 78656,
+      "last_modified": "2025-06-16T17:34:12Z",
+      "file_hash": "2d4cc10f5edeffcf",
+      "processed_at": "2025-07-22T00:14:23.624364",
+      "processing_stats": {
+        "characters_extracted": 2659,
+        "content_preview": "COMUNICACIONES SECRETARÍA DE INFRAESTRUCTURA, COMUNICACIONES Y TRANSPORTES\nAFAC AGENCIA FEDERAL DE A..."
+      }
+    },
+    "01R2HQ3G54RI4IT2RYNBBLNDGIO5CO32LN_20240222 4.1.4.1 OPS-89424 Escaneado. Flight Crew Operations Manual.pdf": {
+      "file_id": "01R2HQ3G54RI4IT2RYNBBLNDGIO5CO32LN",
+      "file_name": "20240222 4.1.4.1 OPS-89424 Escaneado. Flight Crew Operations Manual.pdf",
+      "file_size": 79765,
+      "last_modified": "2025-06-16T17:34:13Z",
+      "file_hash": "f1026bbb8d401757",
+      "processed_at": "2025-07-22T00:14:27.585810",
+      "processing_stats": {
+        "characters_extracted": 3053,
+        "content_preview": "COMUNICACIONES SECRETARÍA DE INFRAESTRUCTURA, COMUNICACIONES Y TRANSPORTES\nAFAC AGENCIA FEDERAL DE A..."
+      }
+    },
+    "01R2HQ3G55YN7BOW3N6JDKKYLFJSZIAOSE_20240222 4.1.4.1 OPS-89524 Escaneado. Flight Crew Operations Manual.pdf": {
+      "file_id": "01R2HQ3G55YN7BOW3N6JDKKYLFJSZIAOSE",
+      "file_name": "20240222 4.1.4.1 OPS-89524 Escaneado. Flight Crew Operations Manual.pdf",
+      "file_size": 85434,
+      "last_modified": "2025-06-16T17:34:14Z",
+      "file_hash": "43fb57384264484c",
+      "processed_at": "2025-07-22T00:14:33.764494",
+      "processing_stats": {
+        "characters_extracted": 2868,
+        "content_preview": "COMUNICACIONES SECRETARÍA DE INFRAESTRUCTURA, COMUNICACIONES Y TRANSPORTES\nAFAC AGENCIA FEDERAL DI A..."
+      }
+    },
+    "01R2HQ3G5OSI72XXTUKBFJJJNVIYOX5MUT_20240222 AIP AD 2-1 Aeródromo MMCP.pdf": {
+      "file_id": "01R2HQ3G5OSI72XXTUKBFJJJNVIYOX5MUT",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMCP.pdf",
+      "file_size": 5232414,
+      "last_modified": "2025-06-16T17:34:28Z",
+      "file_hash": "fa0814a2e690f9ac",
+      "processed_at": "2025-07-22T00:14:44.912218",
+      "processing_stats": {
+        "characters_extracted": 65740,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCP 22-FEB-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMCP - CAMPE..."
+      }
+    },
+    "01R2HQ3GYNUXZKUWA3JFAY7425LMN7CELN_20240222 AIP AD 2-1 Aeródromo MMCV.pdf": {
+      "file_id": "01R2HQ3GYNUXZKUWA3JFAY7425LMN7CELN",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMCV.pdf",
+      "file_size": 4623744,
+      "last_modified": "2025-06-16T17:34:29Z",
+      "file_hash": "2f306db317e5253a",
+      "processed_at": "2025-07-22T00:14:56.173248",
+      "processing_stats": {
+        "characters_extracted": 45449,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCV 22-FEB-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMCV - CIUDAD..."
+      }
+    },
+    "01R2HQ3G5RHTLN5IEVLVH3XGOU4EDVSCU2_20240222 AIP AD 2-1 Aeródromo MMMY.pdf": {
+      "file_id": "01R2HQ3G5RHTLN5IEVLVH3XGOU4EDVSCU2",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMMY.pdf",
+      "file_size": 13285164,
+      "last_modified": "2025-06-16T17:34:56Z",
+      "file_hash": "ae293be1f7aa14e4",
+      "processed_at": "2025-07-22T00:15:15.122286",
+      "processing_stats": {
+        "characters_extracted": 138847,
+        "content_preview": "AD 2-1 MMMY 22-FEB-2024\nAIP DE MEXICO\nAD 2.1 INDICADOR DE LUGAR -\nNOMBRE DEL AERÓDROMO\nMMMY - MONTER..."
+      }
+    },
+    "01R2HQ3G3X2CGLPY5P6JC2JSHJNQYB5WRX_20240222 AIP AD 2-1 Aeródromo MMNG.pdf": {
+      "file_id": "01R2HQ3G3X2CGLPY5P6JC2JSHJNQYB5WRX",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMNG.pdf",
+      "file_size": 525827,
+      "last_modified": "2025-06-16T17:34:32Z",
+      "file_hash": "ca69c904c2044121",
+      "processed_at": "2025-07-22T00:15:19.494192",
+      "processing_stats": {
+        "characters_extracted": 8177,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMNG 22-FEB-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMNG - NOGALE..."
+      }
+    },
+    "01R2HQ3G2FG6M5FHGAOJBIWDKOUPAI7FLE_20240222 AIP AD 2-1 Aeródromo MMNL.pdf": {
+      "file_id": "01R2HQ3G2FG6M5FHGAOJBIWDKOUPAI7FLE",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMNL.pdf",
+      "file_size": 10600005,
+      "last_modified": "2025-06-16T17:34:59Z",
+      "file_hash": "fcc5c8f12f420a50",
+      "processed_at": "2025-07-22T00:15:34.525880",
+      "processing_stats": {
+        "characters_extracted": 102052,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMNL 22-FEB-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMNL - NUEVO ..."
+      }
+    },
+    "01R2HQ3G47RJIK3OLZUNHKDNQYVUL46BTB_20240222 AIP AD 2-1 Aeródromo MMPN.pdf": {
+      "file_id": "01R2HQ3G47RJIK3OLZUNHKDNQYVUL46BTB",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMPN.pdf",
+      "file_size": 2109993,
+      "last_modified": "2025-06-16T17:34:40Z",
+      "file_hash": "dbdb31849511d12d",
+      "processed_at": "2025-07-22T00:15:41.743035",
+      "processing_stats": {
+        "characters_extracted": 17529,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMPN 22-FEB-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMPN - URUAP..."
+      }
+    },
+    "01R2HQ3G662JZPT7Y725DLU6ETVRCKQHM7_20240222 AIP AD 2-1 Aeródromo MMPQ.pdf": {
+      "file_id": "01R2HQ3G662JZPT7Y725DLU6ETVRCKQHM7",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMPQ.pdf",
+      "file_size": 1666397,
+      "last_modified": "2025-06-16T17:34:46Z",
+      "file_hash": "131ab21ad9a3ef39",
+      "processed_at": "2025-07-22T00:15:49.162343",
+      "processing_stats": {
+        "characters_extracted": 37092,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMPQ 22-FEB-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMPQ - PALENQ..."
+      }
+    },
+    "01R2HQ3GY3HXYEUYUNAFEJCDTI6BHEH43L_20240222 AIP AD 2-1 Aeródromo MMTM.pdf": {
+      "file_id": "01R2HQ3GY3HXYEUYUNAFEJCDTI6BHEH43L",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMTM.pdf",
+      "file_size": 6662282,
+      "last_modified": "2025-06-16T17:35:03Z",
+      "file_hash": "06a6ca878b29bd91",
+      "processed_at": "2025-07-22T00:16:02.887467",
+      "processing_stats": {
+        "characters_extracted": 68037,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMTM 22-FEB-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMTM - TAMPI..."
+      }
+    },
+    "01R2HQ3G36YASVTXSSIJC24LWE7ZKP7ME6_20240222 AIP AD 2-1 Aeródromo MMTN.pdf": {
+      "file_id": "01R2HQ3G36YASVTXSSIJC24LWE7ZKP7ME6",
+      "file_name": "20240222 AIP AD 2-1 Aeródromo MMTN.pdf",
+      "file_size": 979561,
+      "last_modified": "2025-06-16T17:35:01Z",
+      "file_hash": "9221fc976cbd6ef9",
+      "processed_at": "2025-07-22T00:16:09.939213",
+      "processing_stats": {
+        "characters_extracted": 17836,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMTN 22-FEB-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMTN - TAMUI..."
+      }
+    },
+    "01R2HQ3GZWXTTZIE3AOVB3OTO4KEXCHPXT_20240225 AIP AIC0224 REGLAMENTACIÓN Y CONTROL DE LA INFORMACIÓN AERONÁUTICA (AIRAC).pdf": {
+      "file_id": "01R2HQ3GZWXTTZIE3AOVB3OTO4KEXCHPXT",
+      "file_name": "20240225 AIP AIC0224 REGLAMENTACIÓN Y CONTROL DE LA INFORMACIÓN AERONÁUTICA (AIRAC).pdf",
+      "file_size": 106114,
+      "last_modified": "2025-06-16T17:35:01Z",
+      "file_hash": "02ae131c8729afea",
+      "processed_at": "2025-07-22T00:16:16.284524",
+      "processing_stats": {
+        "characters_extracted": 8586,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G5HNNY5ARHHEJAZMJJX4FLOG7BE_20240321 AIP AD 2-1 Aeródromo MMGM.pdf": {
+      "file_id": "01R2HQ3G5HNNY5ARHHEJAZMJJX4FLOG7BE",
+      "file_name": "20240321 AIP AD 2-1 Aeródromo MMGM.pdf",
+      "file_size": 7701878,
+      "last_modified": "2025-06-16T17:35:19Z",
+      "file_hash": "3ffaa12e648da8b8",
+      "processed_at": "2025-07-22T00:16:28.779859",
+      "processing_stats": {
+        "characters_extracted": 31556,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMGM 21-MAR-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMGM - GUAYM..."
+      }
+    },
+    "01R2HQ3GYEHHOXKCEKR5D2ALNU4PG7AXLF_20240321 AIP AD 2-1 Aeródromo MMLO.pdf": {
+      "file_id": "01R2HQ3GYEHHOXKCEKR5D2ALNU4PG7AXLF",
+      "file_name": "20240321 AIP AD 2-1 Aeródromo MMLO.pdf",
+      "file_size": 9535886,
+      "last_modified": "2025-06-16T17:35:22Z",
+      "file_hash": "6c51a4ca3b5c7acf",
+      "processed_at": "2025-07-22T00:16:46.061447",
+      "processing_stats": {
+        "characters_extracted": 100900,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMLO 21-MAR-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMLO - LEON A..."
+      }
+    },
+    "01R2HQ3G5KEXF3B4CHVVFZKE4U5YUKCWEJ_20240321 AIP AD 2-1 Aeródromo MMMM.pdf": {
+      "file_id": "01R2HQ3G5KEXF3B4CHVVFZKE4U5YUKCWEJ",
+      "file_name": "20240321 AIP AD 2-1 Aeródromo MMMM.pdf",
+      "file_size": 5642969,
+      "last_modified": "2025-06-16T17:35:19Z",
+      "file_hash": "039eca3d84f44387",
+      "processed_at": "2025-07-22T00:17:01.470091",
+      "processing_stats": {
+        "characters_extracted": 46642,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMMM 21-MAR-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMMM - MORELI..."
+      }
+    },
+    "01R2HQ3GYJIJS5HXN6A5EJJ2SMZJUNCNLF_20240321 AIP AD 2-1 Aeródromo MMVR.pdf": {
+      "file_id": "01R2HQ3GYJIJS5HXN6A5EJJ2SMZJUNCNLF",
+      "file_name": "20240321 AIP AD 2-1 Aeródromo MMVR.pdf",
+      "file_size": 9037569,
+      "last_modified": "2025-06-16T17:35:37Z",
+      "file_hash": "17007b5915f77365",
+      "processed_at": "2025-07-22T00:17:17.555233",
+      "processing_stats": {
+        "characters_extracted": 117245,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMVR 21-MAR-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMVR - VERAC..."
+      }
+    },
+    "01R2HQ3G4HZMRYC6VENVCZPFYNI5IV4SQD_20240418 AIP AD 2-1 Aeródromo MMCB.pdf": {
+      "file_id": "01R2HQ3G4HZMRYC6VENVCZPFYNI5IV4SQD",
+      "file_name": "20240418 AIP AD 2-1 Aeródromo MMCB.pdf",
+      "file_size": 5220527,
+      "last_modified": "2025-06-16T17:35:34Z",
+      "file_hash": "fb9ada9246374bb7",
+      "processed_at": "2025-07-22T00:17:28.900749",
+      "processing_stats": {
+        "characters_extracted": 69240,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCB 18-ABR-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMCB - CUERNA..."
+      }
+    },
+    "01R2HQ3G4YGKLDO7PYV5F25YH4GYR2GGTJ_20240418 AIP AD 2-1 Aeródromo MMLT.pdf": {
+      "file_id": "01R2HQ3G4YGKLDO7PYV5F25YH4GYR2GGTJ",
+      "file_name": "20240418 AIP AD 2-1 Aeródromo MMLT.pdf",
+      "file_size": 3814881,
+      "last_modified": "2025-06-16T17:35:34Z",
+      "file_hash": "048b455d5922f08f",
+      "processed_at": "2025-07-22T00:17:38.852013",
+      "processing_stats": {
+        "characters_extracted": 25554,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMLT 18-ABR-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMLT - LORETO..."
+      }
+    },
+    "01R2HQ3G3CNY5LAOEGBFC2SMRQRFIMNQVS_20240424 POL-DGR-CDG Política de donaciones.pdf": {
+      "file_id": "01R2HQ3G3CNY5LAOEGBFC2SMRQRFIMNQVS",
+      "file_name": "20240424 POL-DGR-CDG Política de donaciones.pdf",
+      "file_size": 720959,
+      "last_modified": "2025-06-24T19:29:49Z",
+      "file_hash": "7e30765d2cedfbc3",
+      "processed_at": "2025-07-22T00:17:48.812512",
+      "processing_stats": {
+        "characters_extracted": 60915,
+        "content_preview": "FECHA\n04/06/2024\nPOLÍTICA\nCODIGO\nPOL-DGR-CDG-01\nPolítica de Donaciones\nVERSION 5\nAREA\nVP DESARROLLO ..."
+      }
+    },
+    "01R2HQ3GYOM5KZYM7UWREI7HRCDT5RD6ND_20240515 Escaneado. Autorización para impartir cursos en líne.pdf": {
+      "file_id": "01R2HQ3GYOM5KZYM7UWREI7HRCDT5RD6ND",
+      "file_name": "20240515 Escaneado. Autorización para impartir cursos en líne.pdf",
+      "file_size": 221039,
+      "last_modified": "2025-06-16T17:35:35Z",
+      "file_hash": "46d1507231381447",
+      "processed_at": "2025-07-22T00:17:55.262824",
+      "processing_stats": {
+        "characters_extracted": 6330,
+        "content_preview": "COMUNICACIONES\nAFAC ACERCA FEDERAL DE AVIACIÓN CIVIL\nAgencia Federal de Aviación Civil Dirección Eje..."
+      }
+    },
+    "01R2HQ3G3GAJOPLJ362RHYA4TCCTECTPZ3_20240516 AIP AD 2-1 Aeródromo MMMT.pdf": {
+      "file_id": "01R2HQ3G3GAJOPLJ362RHYA4TCCTECTPZ3",
+      "file_name": "20240516 AIP AD 2-1 Aeródromo MMMT.pdf",
+      "file_size": 4645149,
+      "last_modified": "2025-06-16T17:35:41Z",
+      "file_hash": "8ee7cfee2d2b8399",
+      "processed_at": "2025-07-22T00:18:03.121560",
+      "processing_stats": {
+        "characters_extracted": 33196,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMMT 16-MAY-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMMT - MINATI..."
+      }
+    },
+    "01R2HQ3G27PTH3QVVKKJFKXND7DFMF3525_20240516 AIP AD 2-1 Aeródromo MMTC.pdf": {
+      "file_id": "01R2HQ3G27PTH3QVVKKJFKXND7DFMF3525",
+      "file_name": "20240516 AIP AD 2-1 Aeródromo MMTC.pdf",
+      "file_size": 7326358,
+      "last_modified": "2025-06-16T17:35:50Z",
+      "file_hash": "b6437ca829a49d21",
+      "processed_at": "2025-07-22T00:18:19.678128",
+      "processing_stats": {
+        "characters_extracted": 71208,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMTC 16-MAY-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMTC - TORRE..."
+      }
+    },
+    "01R2HQ3G36MPWPWSZDCBEIUOF6KNKRZLF3_20240528 Manual de Operaciones de Vuelo (MOV).pdf": {
+      "file_id": "01R2HQ3G36MPWPWSZDCBEIUOF6KNKRZLF3",
+      "file_name": "20240528 Manual de Operaciones de Vuelo (MOV).pdf",
+      "file_size": 18140957,
+      "last_modified": "2025-06-16T17:36:08Z",
+      "file_hash": "f39d37201f01d259",
+      "processed_at": "2025-07-22T00:18:54.389434",
+      "processing_stats": {
+        "characters_extracted": 655759,
+        "content_preview": "COMUNICACIONES SECRETARIA DE INFRAESTRUCTURA, COMUNICACIONES Y TRANSPORTES\nAFAC AGENCIA JEDERAL DE A..."
+      }
+    },
+    "01R2HQ3G7NCZS7AUXJ4RAJCJVU6FLSTADR_20240613 AIP AD 2-1 Aeródromo MMCL.pdf": {
+      "file_id": "01R2HQ3G7NCZS7AUXJ4RAJCJVU6FLSTADR",
+      "file_name": "20240613 AIP AD 2-1 Aeródromo MMCL.pdf",
+      "file_size": 7625194,
+      "last_modified": "2025-06-16T17:35:57Z",
+      "file_hash": "b1e51099c35cf304",
+      "processed_at": "2025-07-22T00:19:09.983611",
+      "processing_stats": {
+        "characters_extracted": 94675,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCL 13-JUN-2024\nAD 2.1 INDICADOR DE LUGAR NOMBRE DEL AERÓDROMO\nMMCL - CULIACAN..."
+      }
+    },
+    "01R2HQ3G5CG4NKMXZC4VA3YMTEQ6QUZEEM_20240613 AIP AIC1324 INFORMACIÓN POSTERIOR AL VUELO.pdf": {
+      "file_id": "01R2HQ3G5CG4NKMXZC4VA3YMTEQ6QUZEEM",
+      "file_name": "20240613 AIP AIC1324 INFORMACIÓN POSTERIOR AL VUELO.pdf",
+      "file_size": 340360,
+      "last_modified": "2025-06-16T17:35:53Z",
+      "file_hash": "2ebcf56e0878c9a4",
+      "processed_at": "2025-07-22T00:19:16.635750",
+      "processing_stats": {
+        "characters_extracted": 15182,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G72MSYW5UND75CIMAWMTFF363GY_20240613 AIP AIC1424 REPORTE DE CIZALLADURA DEL VIENTO A LAS DEPENDENCIAS DE TRANSITO.pdf": {
+      "file_id": "01R2HQ3G72MSYW5UND75CIMAWMTFF363GY",
+      "file_name": "20240613 AIP AIC1424 REPORTE DE CIZALLADURA DEL VIENTO A LAS DEPENDENCIAS DE TRANSITO.pdf",
+      "file_size": 176515,
+      "last_modified": "2025-06-16T17:35:53Z",
+      "file_hash": "c1dda8d5df66056e",
+      "processed_at": "2025-07-22T00:19:23.311323",
+      "processing_stats": {
+        "characters_extracted": 18071,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G3X2GMNPSFCTJAZEXULQRAZFA3U_20240615 Certificate of insurance.pdf": {
+      "file_id": "01R2HQ3G3X2GMNPSFCTJAZEXULQRAZFA3U",
+      "file_name": "20240615 Certificate of insurance.pdf",
+      "file_size": 266733,
+      "last_modified": "2025-06-16T17:35:55Z",
+      "file_hash": "666511db22b8bc1d",
+      "processed_at": "2025-07-22T00:19:30.076085",
+      "processing_stats": {
+        "characters_extracted": 12392,
+        "content_preview": "THIS CERTIFICATE CANCELS AND REPLACES ANY PREDATED CERTIFICATE (OST FORM) ISSUED ON BEHALF OF THE IN..."
+      }
+    },
+    "01R2HQ3G7DJVY6NSLFANCJ4SRTO6JWAH5I_20240615 Escaneado. Autorización Poliza D0O-2-63-163-45.pdf": {
+      "file_id": "01R2HQ3G7DJVY6NSLFANCJ4SRTO6JWAH5I",
+      "file_name": "20240615 Escaneado. Autorización Poliza D0O-2-63-163-45.pdf",
+      "file_size": 2356998,
+      "last_modified": "2025-06-16T17:36:00Z",
+      "file_hash": "42c7dc08fd1a4c98",
+      "processed_at": "2025-07-22T00:19:43.172275",
+      "processing_stats": {
+        "characters_extracted": 160565,
+        "content_preview": "COMUNICACIONES SECRETARÍA DE INGAESTRUCTURA, COMUNICACIONES Y TRANSPORTES\nAFAC AGENCIA FEDERAL DE AV..."
+      }
+    },
+    "01R2HQ3G2OOZCMZRYTJBB2VZHV6KTISMP7_20240711 AIP AD 2-1 Aeródromo MMML.pdf": {
+      "file_id": "01R2HQ3G2OOZCMZRYTJBB2VZHV6KTISMP7",
+      "file_name": "20240711 AIP AD 2-1 Aeródromo MMML.pdf",
+      "file_size": 3842276,
+      "last_modified": "2025-06-16T17:36:06Z",
+      "file_hash": "88b6c07e965decd2",
+      "processed_at": "2025-07-22T00:19:51.665800",
+      "processing_stats": {
+        "characters_extracted": 44763,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMML 11-JUL-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMML - MEXICA..."
+      }
+    },
+    "01R2HQ3GY27NAFRXLKJJC3AZQVTCBAS2CO_20240711 POL-TAL-REL Política uso de instalaciones.pdf": {
+      "file_id": "01R2HQ3GY27NAFRXLKJJC3AZQVTCBAS2CO",
+      "file_name": "20240711 POL-TAL-REL Política uso de instalaciones.pdf",
+      "file_size": 373910,
+      "last_modified": "2025-06-24T19:29:48Z",
+      "file_hash": "5b4a6c2d96c0482e",
+      "processed_at": "2025-07-22T00:19:58.493161",
+      "processing_stats": {
+        "characters_extracted": 17519,
+        "content_preview": "FECHA\n11/07/2024\nPOLITICA\nCODIGO\nPOL-TAL-REL-26\nUso de Instalaciones\nVERSION\n1\nAREA\nGerente Sr Relac..."
+      }
+    },
+    "01R2HQ3G67E5Z35EWSLFG37KN2GJDY7SOQ_20240715 MGO (Manual General de Operaciones). Documentación e implementación y en manuales Y4, Q6 y N3.pdf": {
+      "file_id": "01R2HQ3G67E5Z35EWSLFG37KN2GJDY7SOQ",
+      "file_name": "20240715 MGO (Manual General de Operaciones). Documentación e implementación y en manuales Y4, Q6 y N3.pdf",
+      "file_size": 432178,
+      "last_modified": "2025-06-16T17:36:01Z",
+      "file_hash": "eaf084de31ace714",
+      "processed_at": "2025-07-22T00:20:05.054399",
+      "processing_stats": {
+        "characters_extracted": 4880,
+        "content_preview": "volaris\nSistema Integrado de Gestión de Aerolínea (IAMS)\nRevisión y fecha Páginas\nCódigo del boletín..."
+      }
+    },
+    "01R2HQ3G2EGU5ODGHEAVH2HC75RRVZ65TS_20240725 AIP AIC2124 Actualización del Horario Estándar en el territorio mexicano.pdf": {
+      "file_id": "01R2HQ3G2EGU5ODGHEAVH2HC75RRVZ65TS",
+      "file_name": "20240725 AIP AIC2124 Actualización del Horario Estándar en el territorio mexicano.pdf",
+      "file_size": 842155,
+      "last_modified": "2025-06-16T17:36:04Z",
+      "file_hash": "ab28db6cd005bd01",
+      "processed_at": "2025-07-22T00:20:11.688792",
+      "processing_stats": {
+        "characters_extracted": 9784,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G6HVGB2U2FUERFJBOZ5JUHNHXFY_20240725 AIP AIC2224 Circulares AFAC Agencia Federal de Aviación Civil.pdf": {
+      "file_id": "01R2HQ3G6HVGB2U2FUERFJBOZ5JUHNHXFY",
+      "file_name": "20240725 AIP AIC2224 Circulares AFAC Agencia Federal de Aviación Civil.pdf",
+      "file_size": 226558,
+      "last_modified": "2025-06-16T17:36:07Z",
+      "file_hash": "a5ae1f173b3e5ff0",
+      "processed_at": "2025-07-22T00:20:18.614843",
+      "processing_stats": {
+        "characters_extracted": 29453,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G3Y6FYE7D27PZA2PUR6YS4QEJCC_20240905 AIP AD 2-1 Aeródromo MMAN.pdf": {
+      "file_id": "01R2HQ3G3Y6FYE7D27PZA2PUR6YS4QEJCC",
+      "file_name": "20240905 AIP AD 2-1 Aeródromo MMAN.pdf",
+      "file_size": 4651362,
+      "last_modified": "2025-06-16T17:36:16Z",
+      "file_hash": "fc5f746cab36a106",
+      "processed_at": "2025-07-22T00:20:32.717057",
+      "processing_stats": {
+        "characters_extracted": 69334,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMAN 05-SEP-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMAN - MONTER..."
+      }
+    },
+    "01R2HQ3G56ZAAXZVCP5BC2ZZAMNNMBJXWG_20240905 AIP AD 2-1 Aeródromo MMAS.pdf": {
+      "file_id": "01R2HQ3G56ZAAXZVCP5BC2ZZAMNNMBJXWG",
+      "file_name": "20240905 AIP AD 2-1 Aeródromo MMAS.pdf",
+      "file_size": 7478047,
+      "last_modified": "2025-06-16T17:36:26Z",
+      "file_hash": "5068b0d9fb733cbd",
+      "processed_at": "2025-07-22T00:20:47.670174",
+      "processing_stats": {
+        "characters_extracted": 92871,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMAS 05-SEP-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMAS - AGUASC..."
+      }
+    },
+    "01R2HQ3G4PDFTPLI5W55CI5VP27S7LXEGV_20240905 AIP AD 2-1 Aeródromo MMCS.pdf": {
+      "file_id": "01R2HQ3G4PDFTPLI5W55CI5VP27S7LXEGV",
+      "file_name": "20240905 AIP AD 2-1 Aeródromo MMCS.pdf",
+      "file_size": 5940302,
+      "last_modified": "2025-06-16T17:36:28Z",
+      "file_hash": "18d7d3e8743a40fe",
+      "processed_at": "2025-07-22T00:20:58.832199",
+      "processing_stats": {
+        "characters_extracted": 56221,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCS 05-SEP-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMCS - CIUDA..."
+      }
+    },
+    "01R2HQ3G5ET4OQ5ZI5XNCJE4BRR4ZN2WVJ_20240905 AIP AD 2-1 Aeródromo MMSM.pdf": {
+      "file_id": "01R2HQ3G5ET4OQ5ZI5XNCJE4BRR4ZN2WVJ",
+      "file_name": "20240905 AIP AD 2-1 Aeródromo MMSM.pdf",
+      "file_size": 29960121,
+      "last_modified": "2025-06-16T17:37:23Z",
+      "file_hash": "9b0fd34a4879312e",
+      "processed_at": "2025-07-22T00:21:28.798326",
+      "processing_stats": {
+        "characters_extracted": 358657,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMSM 05-SEP-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMSM - MÉXICO..."
+      }
+    },
+    "01R2HQ3G3DOZ4EOBXI35HJLRSK625OSS5U_20240905 AIP AIC2524 RUTAS PREFERIDAS POR EL USUARIO EN LA FIR MÉXICO.pdf": {
+      "file_id": "01R2HQ3G3DOZ4EOBXI35HJLRSK625OSS5U",
+      "file_name": "20240905 AIP AIC2524 RUTAS PREFERIDAS POR EL USUARIO EN LA FIR MÉXICO.pdf",
+      "file_size": 121591,
+      "last_modified": "2025-06-16T17:36:28Z",
+      "file_hash": "ab10ad0ee613964f",
+      "processed_at": "2025-07-22T00:21:33.009675",
+      "processing_stats": {
+        "characters_extracted": 12261,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G6TAAPRMFW66NHL5WHQGMKMWDXD_20240905 AIP GEN 0.1-1 Generalidades AIP (Aeronautical Information Publication).pdf": {
+      "file_id": "01R2HQ3G6TAAPRMFW66NHL5WHQGMKMWDXD",
+      "file_name": "20240905 AIP GEN 0.1-1 Generalidades AIP (Aeronautical Information Publication).pdf",
+      "file_size": 1543537,
+      "last_modified": "2025-06-16T17:36:32Z",
+      "file_hash": "8aa1a3c525fa36c8",
+      "processed_at": "2025-07-22T00:21:49.894286",
+      "processing_stats": {
+        "characters_extracted": 109531,
+        "content_preview": "AIP DE MEXICO\nGEN 0.1-1 05-SEP-2024\nPARTE 1 GENERALIDADES (GEN) GEN 0.\nGEN 0.1 PREFACIO\n1. Nombre de..."
+      }
+    },
+    "01R2HQ3G6IC25DXZOLUJCYI55Q6CVYC77D_20240905 AIP GEN 1.1-1 Reglamentos y requisitos nacionales.pdf": {
+      "file_id": "01R2HQ3G6IC25DXZOLUJCYI55Q6CVYC77D",
+      "file_name": "20240905 AIP GEN 1.1-1 Reglamentos y requisitos nacionales.pdf",
+      "file_size": 754444,
+      "last_modified": "2025-06-16T17:36:31Z",
+      "file_hash": "b93d407765eaee63",
+      "processed_at": "2025-07-22T00:22:01.476742",
+      "processing_stats": {
+        "characters_extracted": 131094,
+        "content_preview": "AIP DE MEXICO\nGEN 1.1-1 05-SEP-2024\nGEN 1. REGLAMENTOS Y REQUISITOS NACIONALES\nGEN 1.1 AUTORIDADES D..."
+      }
+    },
+    "01R2HQ3GZWV3PJZKTQOVHK33WDOBYRQ5JU_20240906 Información de resistencia al pavimento en aeropuertos de la red Volaris..pdf": {
+      "file_id": "01R2HQ3GZWV3PJZKTQOVHK33WDOBYRQ5JU",
+      "file_name": "20240906 Información de resistencia al pavimento en aeropuertos de la red Volaris..pdf",
+      "file_size": 6817851,
+      "last_modified": "2025-06-16T17:36:52Z",
+      "file_hash": "4f271d06c0edb532",
+      "processed_at": "2025-07-22T00:22:20.121909",
+      "processing_stats": {
+        "characters_extracted": 210773,
+        "content_preview": "volaris\nOperations Engineering Informative\nBoletín 01-21 .- Información de resistencia al pavimento ..."
+      }
+    },
+    "01R2HQ3GZCQFI5QZ2PIFE32JIVRM5A52BH_20240909 AIP AIC2824 RUTAS DE VUELO IFR PREDEFINIDAS EN LA FIR MÉXICO.pdf": {
+      "file_id": "01R2HQ3GZCQFI5QZ2PIFE32JIVRM5A52BH",
+      "file_name": "20240909 AIP AIC2824 RUTAS DE VUELO IFR PREDEFINIDAS EN LA FIR MÉXICO.pdf",
+      "file_size": 458314,
+      "last_modified": "2025-06-16T17:36:34Z",
+      "file_hash": "3cd3e7cf484043e7",
+      "processed_at": "2025-07-22T00:22:26.956314",
+      "processing_stats": {
+        "characters_extracted": 14455,
+        "content_preview": "MÉXICO\nSECRETARÍA DE COMUNICACIONES Y TRANSPORTES AGENCIA FEDERAL DE AVIACIÓN CIVIL SERVICIOS A LA N..."
+      }
+    },
+    "01R2HQ3G4N5S2LX3TS5FCJ6JN7SLBOVJQA_20240909 AIP AIC2924 LISTA DE VERIFICACIÓN DE CIRCULARES DE INFORMACIÓN AERONÁUTICA (AIC).pdf": {
+      "file_id": "01R2HQ3G4N5S2LX3TS5FCJ6JN7SLBOVJQA",
+      "file_name": "20240909 AIP AIC2924 LISTA DE VERIFICACIÓN DE CIRCULARES DE INFORMACIÓN AERONÁUTICA (AIC).pdf",
+      "file_size": 85990,
+      "last_modified": "2025-06-16T17:36:34Z",
+      "file_hash": "515071d3717d1495",
+      "processed_at": "2025-07-22T00:22:30.868856",
+      "processing_stats": {
+        "characters_extracted": 4142,
+        "content_preview": "TEL: 57-86-55-19, 57-86-55-22 FAX: 25-98-00-65 AFS: MMMXYNYX Correo-e: aldo.fiqueroa@seneam.gob.mx q..."
+      }
+    },
+    "01R2HQ3G5XZYCKZDUXV5CISANZV4GZVOYB_20240911 Escaneado. Autorización Manual de Capacitación.pdf": {
+      "file_id": "01R2HQ3G5XZYCKZDUXV5CISANZV4GZVOYB",
+      "file_name": "20240911 Escaneado. Autorización Manual de Capacitación.pdf",
+      "file_size": 8310038,
+      "last_modified": "2025-06-16T17:36:59Z",
+      "file_hash": "777f597abdc8e4e3",
+      "processed_at": "2025-07-22T00:22:55.047749",
+      "processing_stats": {
+        "characters_extracted": 455145,
+        "content_preview": "COMUNICACIONES\nAFAC\n(AFAC-2020-290-018-B/ 12362 / 24) Agencia Federal de Aviación Civil Dirección Ej..."
+      }
+    },
+    "01R2HQ3G4KGXKYGEQJZ5AYVJDEZA2FKNU6_20241003 AIP AD 2-1 Aeródromo MMEP.pdf": {
+      "file_id": "01R2HQ3G4KGXKYGEQJZ5AYVJDEZA2FKNU6",
+      "file_name": "20241003 AIP AD 2-1 Aeródromo MMEP.pdf",
+      "file_size": 4744613,
+      "last_modified": "2025-06-16T17:37:05Z",
+      "file_hash": "2b8d916c49a0fd1a",
+      "processed_at": "2025-07-22T00:23:06.057524",
+      "processing_stats": {
+        "characters_extracted": 57715,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMEP 03-OCT-2024\nAD 2.1 INDICADOR DE LUGAR NOMBRE DEL AERÓDROMO\nMMEP -TEPIC AER..."
+      }
+    },
+    "01R2HQ3GY4AAF3YAALPVAYCCXRNKLZ5YTJ_20241003 AIP AD 2-1 Aeródromo MMZO.pdf": {
+      "file_id": "01R2HQ3GY4AAF3YAALPVAYCCXRNKLZ5YTJ",
+      "file_name": "20241003 AIP AD 2-1 Aeródromo MMZO.pdf",
+      "file_size": 9226226,
+      "last_modified": "2025-06-16T17:37:25Z",
+      "file_hash": "24d80e28d43a2b16",
+      "processed_at": "2025-07-22T00:23:14.446216",
+      "processing_stats": {
+        "characters_extracted": 42532,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMZO 03-OCT-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERODROMO\nMMZO - MANZA..."
+      }
+    },
+    "01R2HQ3G772VZSJVS7ONBZ4CEV6KSKS6P4_20241003 AIP GEN 2.1-1 Tablas y códigos.pdf": {
+      "file_id": "01R2HQ3G772VZSJVS7ONBZ4CEV6KSKS6P4",
+      "file_name": "20241003 AIP GEN 2.1-1 Tablas y códigos.pdf",
+      "file_size": 2914039,
+      "last_modified": "2025-06-16T17:37:20Z",
+      "file_hash": "b7ea35de69f559b0",
+      "processed_at": "2025-07-22T00:23:37.597673",
+      "processing_stats": {
+        "characters_extracted": 261916,
+        "content_preview": "AIP DE MEXICO\nGEN 2.1-1 03-OCT-2024\nGEN. 2 TABLAS Y CÓDIGOS GEN 2.1 SISTEMA DE MEDIDAS, MARCAS DE AE..."
+      }
+    },
+    "01R2HQ3G6J7Q2YVR6LJRHIIZDCXYYKYRCE_20241004 AIP AIC2624 ENRUTAMIENTO DIRECTO ESTRATÉGICO EN LA FIR MÉXICO.pdf": {
+      "file_id": "01R2HQ3G6J7Q2YVR6LJRHIIZDCXYYKYRCE",
+      "file_name": "20241004 AIP AIC2624 ENRUTAMIENTO DIRECTO ESTRATÉGICO EN LA FIR MÉXICO.pdf",
+      "file_size": 674639,
+      "last_modified": "2025-06-16T17:37:23Z",
+      "file_hash": "117b930c314c0716",
+      "processed_at": "2025-07-22T00:23:44.715698",
+      "processing_stats": {
+        "characters_extracted": 25182,
+        "content_preview": "MÉXICO\nTEL: 57-86-55-19 AFS: MMMXYNYX Correo-e: ais_pcr@sct.gob.mx luis.munoz@sct.gob.mx\nSECRETARÍA ..."
+      }
+    },
+    "01R2HQ3G4D62AE4GR75NEIZS37TWWJTDIY_20241008 Minimum Equipment List (MEL), Airbus Industries A321 NX Family.pdf": {
+      "file_id": "01R2HQ3G4D62AE4GR75NEIZS37TWWJTDIY",
+      "file_name": "20241008 Minimum Equipment List (MEL), Airbus Industries A321 NX Family.pdf",
+      "file_size": 12902368,
+      "last_modified": "2025-06-16T17:38:24Z",
+      "file_hash": "29bb9ea3de9ff5f9",
+      "processed_at": "2025-07-22T00:24:09.975466",
+      "processing_stats": {
+        "characters_extracted": 126,
+        "content_preview": "Contenido de 20241008 Minimum Equipment List (MEL), Airbus Industries A321 NX Family.pdf (Document I..."
+      }
+    },
+    "01R2HQ3G3WUUSOTBXW3FBZ77JBHZADX3GO_20241018 Escaneado. Manual General de Capacitación (MGC).pdf": {
+      "file_id": "01R2HQ3G3WUUSOTBXW3FBZ77JBHZADX3GO",
+      "file_name": "20241018 Escaneado. Manual General de Capacitación (MGC).pdf",
+      "file_size": 29935841,
+      "last_modified": "2025-06-16T17:39:21Z",
+      "file_hash": "e0c76dd123b07adf",
+      "processed_at": "2025-07-22T00:24:41.518924",
+      "processing_stats": {
+        "characters_extracted": 494306,
+        "content_preview": "volaris\nManual General de Capacitación (MGC) Centro de Capacitación Técnica VOLARIS\nPermiso AFAC F-9..."
+      }
+    },
+    "01R2HQ3G3BIU3F5O3MCJG2LJGQHK2U7SNO_20241021 Quick Reference Handbook.pdf": {
+      "file_id": "01R2HQ3G3BIU3F5O3MCJG2LJGQHK2U7SNO",
+      "file_name": "20241021 Quick Reference Handbook.pdf",
+      "file_size": 3602380,
+      "last_modified": "2025-06-16T17:38:47Z",
+      "file_hash": "d8b0958858759752",
+      "processed_at": "2025-07-22T00:25:07.841300",
+      "processing_stats": {
+        "characters_extracted": 453717,
+        "content_preview": "AIRBUS\nQUICK REFERENCE HANDBOOK\nvolaris\nVOI A318/A319/A320/A321 FLEET AS PER AIRCRAFT ALLOCATION TAB..."
+      }
+    },
+    "01R2HQ3G553LFBXE4XHFFJQ74BF4PSSCGT_20241028 Manual General de Operaciones (MGO).pdf": {
+      "file_id": "01R2HQ3G553LFBXE4XHFFJQ74BF4PSSCGT",
+      "file_name": "20241028 Manual General de Operaciones (MGO).pdf",
+      "file_size": 47723963,
+      "last_modified": "2025-06-16T17:41:03Z",
+      "file_hash": "180ad9dd73a75baf",
+      "processed_at": "2025-07-22T00:26:02.294910",
+      "processing_stats": {
+        "characters_extracted": 1130995,
+        "content_preview": "AFAC AGENCIA FEDERAS DE AVIACIÓN GIVAL\n[AFAC-2020-290-018-8 / 14667, 15814 / 24) Agencia Federal de ..."
+      }
+    },
+    "01R2HQ3G7A4TYVPHU3V5ELIGMRJCMISZQU_20241031 AIP AD 2-1 Aeródromo MMIT.pdf": {
+      "file_id": "01R2HQ3G7A4TYVPHU3V5ELIGMRJCMISZQU",
+      "file_name": "20241031 AIP AD 2-1 Aeródromo MMIT.pdf",
+      "file_size": 2064583,
+      "last_modified": "2025-06-16T17:39:28Z",
+      "file_hash": "207255c0b25fb8e9",
+      "processed_at": "2025-07-22T00:26:09.709201",
+      "processing_stats": {
+        "characters_extracted": 19660,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMIT 31-OCT-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERODROMO\nMMIT - IXTEP..."
+      }
+    },
+    "01R2HQ3G2VBRTAEPQBCFCLYO4IND5MPQ74_20241031 AIP AD 2-1 Aeródromo MMSL.pdf": {
+      "file_id": "01R2HQ3G2VBRTAEPQBCFCLYO4IND5MPQ74",
+      "file_name": "20241031 AIP AD 2-1 Aeródromo MMSL.pdf",
+      "file_size": 3150857,
+      "last_modified": "2025-06-16T17:39:38Z",
+      "file_hash": "755a604c28613ba4",
+      "processed_at": "2025-07-22T00:26:21.796729",
+      "processing_stats": {
+        "characters_extracted": 66608,
+        "content_preview": "AD 2-1 MMSL 31-OCT-2024\nAIP DE MEXICO\nMMSL AD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMSL - C..."
+      }
+    },
+    "01R2HQ3G7HH6URMQ23XFCJ7HS6YGZ7B7AZ_20241031 AIP ENR 2.1-1 Espacio aéreo de los servicios de tránsito aéreo.pdf": {
+      "file_id": "01R2HQ3G7HH6URMQ23XFCJ7HS6YGZ7B7AZ",
+      "file_name": "20241031 AIP ENR 2.1-1 Espacio aéreo de los servicios de tránsito aéreo.pdf",
+      "file_size": 3460765,
+      "last_modified": "2025-06-16T17:39:51Z",
+      "file_hash": "3a8fe8d7f9b5491e",
+      "processed_at": "2025-07-22T00:26:35.602611",
+      "processing_stats": {
+        "characters_extracted": 132351,
+        "content_preview": "AIP DE MEXICO\nENR 2.1-1 31-OCT-2024\nENR 2. ESPACIO AEREO DE LOS SERVICIOS DE TRANSITO AEREO ENR 2.1 ..."
+      }
+    },
+    "01R2HQ3G4I243WJAVJ3FE3HRMZKQW3XZQU_20241031 AIP ENR 3.1-1 Rutas ATS.pdf": {
+      "file_id": "01R2HQ3G4I243WJAVJ3FE3HRMZKQW3XZQU",
+      "file_name": "20241031 AIP ENR 3.1-1 Rutas ATS.pdf",
+      "file_size": 10137734,
+      "last_modified": "2025-06-16T17:40:29Z",
+      "file_hash": "800e067053ee63e6",
+      "processed_at": "2025-07-22T00:27:05.444522",
+      "processing_stats": {
+        "characters_extracted": 283147,
+        "content_preview": "AIP DE MÉXICO\nENR 3.1-1 31-OCT-2024\nENR 3. RUTAS ATS ENR 3. ATS ROUTES\nENR 3.1 RUTAS ATS INFERIORES ..."
+      }
+    },
+    "01R2HQ3G5U7CUG7S5NLBC26Q5HHDC6MRAZ_20241031 AIP ENR 4.1-1 Radioayudas y sistemas de navegación.pdf": {
+      "file_id": "01R2HQ3G5U7CUG7S5NLBC26Q5HHDC6MRAZ",
+      "file_name": "20241031 AIP ENR 4.1-1 Radioayudas y sistemas de navegación.pdf",
+      "file_size": 1346335,
+      "last_modified": "2025-06-16T17:40:36Z",
+      "file_hash": "ce69d4e665d32976",
+      "processed_at": "2025-07-22T00:27:20.412372",
+      "processing_stats": {
+        "characters_extracted": 55793,
+        "content_preview": "AIP DE MEXICO\nENR 4.1-1 31-OCT-2024\nENR 4. RADIOAYUDAS Y SISTEMAS DE NAVEGACION ENR 4.1 RADIOAYUDAS ..."
+      }
+    },
+    "01R2HQ3GYP5TTPZ34LBFA3ALLGSQYMDHG4_20241106 Airplane Flight Manual EASA.pdf": {
+      "file_id": "01R2HQ3GYP5TTPZ34LBFA3ALLGSQYMDHG4",
+      "file_name": "20241106 Airplane Flight Manual EASA.pdf",
+      "file_size": 38800042,
+      "last_modified": "2025-06-16T17:44:32Z",
+      "file_hash": "c57700c4d352ce06",
+      "processed_at": "2025-07-22T00:27:49.630845",
+      "processing_stats": {
+        "characters_extracted": 91,
+        "content_preview": "Contenido de 20241106 Airplane Flight Manual EASA.pdf (Document Intelligence no disponible)"
+      }
+    },
+    "01R2HQ3G7BB4NF32MYPZHJBVFQH5ESABJV_20241106 Airplane Flight Manual US.pdf": {
+      "file_id": "01R2HQ3G7BB4NF32MYPZHJBVFQH5ESABJV",
+      "file_name": "20241106 Airplane Flight Manual US.pdf",
+      "file_size": 35148862,
+      "last_modified": "2025-06-16T17:42:48Z",
+      "file_hash": "66244a388451b8ff",
+      "processed_at": "2025-07-22T00:28:16.009049",
+      "processing_stats": {
+        "characters_extracted": 89,
+        "content_preview": "Contenido de 20241106 Airplane Flight Manual US.pdf (Document Intelligence no disponible)"
+      }
+    },
+    "01R2HQ3G2DH5BTHZOOWVDI4OEU36YT4MRM_20241106 Configuration Deviation List EASA.pdf": {
+      "file_id": "01R2HQ3G2DH5BTHZOOWVDI4OEU36YT4MRM",
+      "file_name": "20241106 Configuration Deviation List EASA.pdf",
+      "file_size": 14283875,
+      "last_modified": "2025-06-16T17:43:38Z",
+      "file_hash": "8ae28a516ce51edf",
+      "processed_at": "2025-07-22T00:28:39.670043",
+      "processing_stats": {
+        "characters_extracted": 267173,
+        "content_preview": "A318/A319/A320/A321 AIRBUS\nCONFIGURATION DEVIATION LIST\nREFERENCE: VO1 A318/A319/A320/A321 FLEET CDL..."
+      }
+    },
+    "01R2HQ3GYIX45WMYAFGJD34LQWHUV4HQNG_20241106 Configuration Deviation List US.pdf": {
+      "file_id": "01R2HQ3GYIX45WMYAFGJD34LQWHUV4HQNG",
+      "file_name": "20241106 Configuration Deviation List US.pdf",
+      "file_size": 14475036,
+      "last_modified": "2025-06-16T17:44:28Z",
+      "file_hash": "60b4753f62142a56",
+      "processed_at": "2025-07-22T00:29:06.534153",
+      "processing_stats": {
+        "characters_extracted": 294429,
+        "content_preview": "A318/A319/A320/A321 AIRBUS\nCONFIGURATION DEVIATION LIST\nREFERENCE: VOI A318/A319/A320/A321 FLEET CDL..."
+      }
+    },
+    "01R2HQ3G3EWCVL6HSYJNHLAU2L3LXDICIM_20241108 Minimum Equipment List (MEL), Airbus Industries A320 Family AFAC.pdf": {
+      "file_id": "01R2HQ3G3EWCVL6HSYJNHLAU2L3LXDICIM",
+      "file_name": "20241108 Minimum Equipment List (MEL), Airbus Industries A320 Family AFAC.pdf",
+      "file_size": 20314072,
+      "last_modified": "2025-06-16T17:45:35Z",
+      "file_hash": "287bb44757be0a8e",
+      "processed_at": "2025-07-22T00:29:32.203211",
+      "processing_stats": {
+        "characters_extracted": 128,
+        "content_preview": "Contenido de 20241108 Minimum Equipment List (MEL), Airbus Industries A320 Family AFAC.pdf (Document..."
+      }
+    },
+    "01R2HQ3G2QPHD5YNXYNBA3B6VROOO3YHFG_20241108 Minimum Equipment List (MEL), Airbus Industries A320 Family MEL.pdf": {
+      "file_id": "01R2HQ3G2QPHD5YNXYNBA3B6VROOO3YHFG",
+      "file_name": "20241108 Minimum Equipment List (MEL), Airbus Industries A320 Family MEL.pdf",
+      "file_size": 12506546,
+      "last_modified": "2025-06-16T17:45:15Z",
+      "file_hash": "2a1a00e7c2df3698",
+      "processed_at": "2025-07-22T00:29:57.561756",
+      "processing_stats": {
+        "characters_extracted": 127,
+        "content_preview": "Contenido de 20241108 Minimum Equipment List (MEL), Airbus Industries A320 Family MEL.pdf (Document ..."
+      }
+    },
+    "01R2HQ3G4D2K4M6FITWNBLUJCW4ZW25ROL_20241112 Transporte a bordo de straps para sujeción de ayudas a la movilidad accionadas por baterías..pdf": {
+      "file_id": "01R2HQ3G4D2K4M6FITWNBLUJCW4ZW25ROL",
+      "file_name": "20241112 Transporte a bordo de straps para sujeción de ayudas a la movilidad accionadas por baterías..pdf",
+      "file_size": 297160,
+      "last_modified": "2025-06-16T17:45:18Z",
+      "file_hash": "0fddfca6f29df43a",
+      "processed_at": "2025-07-22T00:30:04.188323",
+      "processing_stats": {
+        "characters_extracted": 4981,
+        "content_preview": "volaris\nSistema Integrado de Gestión de Aerolínea (IAMS)\nCódigo del boletín BOL-MGO-TAS-24-01\nRevisi..."
+      }
+    },
+    "01R2HQ3G44UH22VPJNNNDKSDKB5A2DW7XO_20241114 AMDT_AIRAC_13_24 Actualizaciones con entrada en vigor 26-dic-2024.pdf": {
+      "file_id": "01R2HQ3G44UH22VPJNNNDKSDKB5A2DW7XO",
+      "file_name": "20241114 AMDT_AIRAC_13_24 Actualizaciones con entrada en vigor 26-dic-2024.pdf",
+      "file_size": 136556,
+      "last_modified": "2025-06-16T17:45:39Z",
+      "file_hash": "54ceadfe34107f10",
+      "processed_at": "2025-07-22T00:30:10.972640",
+      "processing_stats": {
+        "characters_extracted": 15253,
+        "content_preview": "TEL: 57-86-55-19, 57-86-55-22 FAX: 25-98-00-65 AFS: MMMXYNYX Correo-e: aldo.fiqueroa@seneam.gob.mx q..."
+      }
+    },
+    "01R2HQ3GYOHIYQI75Z5RFIJIBOIY6HZN4L_20241128 AIP AD 2-1 Aeródromo MMCM.pdf": {
+      "file_id": "01R2HQ3GYOHIYQI75Z5RFIJIBOIY6HZN4L",
+      "file_name": "20241128 AIP AD 2-1 Aeródromo MMCM.pdf",
+      "file_size": 3076383,
+      "last_modified": "2025-06-16T17:45:51Z",
+      "file_hash": "c50625e06b0b3c4f",
+      "processed_at": "2025-07-22T00:30:19.436306",
+      "processing_stats": {
+        "characters_extracted": 52640,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMCM 28-NOV-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMCM - CHETU..."
+      }
+    },
+    "01R2HQ3G72URZUWH3OFJALPGZMVLAREPUN_20241128 AIP AD 2-1 Aeródromo MMPE.pdf": {
+      "file_id": "01R2HQ3G72URZUWH3OFJALPGZMVLAREPUN",
+      "file_name": "20241128 AIP AD 2-1 Aeródromo MMPE.pdf",
+      "file_size": 1283821,
+      "last_modified": "2025-06-16T17:45:55Z",
+      "file_hash": "9cd7c227499ef89f",
+      "processed_at": "2025-07-22T00:30:26.630433",
+      "processing_stats": {
+        "characters_extracted": 19324,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMPE 28-NOV-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMPE - PUERTO..."
+      }
+    },
+    "01R2HQ3GYCZLT25FSON5E2GJ623RBPQ3QP_20241128 AIP AD 2-1 Aeródromo MMTG.pdf": {
+      "file_id": "01R2HQ3GYCZLT25FSON5E2GJ623RBPQ3QP",
+      "file_name": "20241128 AIP AD 2-1 Aeródromo MMTG.pdf",
+      "file_size": 8978037,
+      "last_modified": "2025-06-16T17:46:18Z",
+      "file_hash": "bca080b82f83907d",
+      "processed_at": "2025-07-22T00:30:38.363522",
+      "processing_stats": {
+        "characters_extracted": 73123,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMTG 28-NOV-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMTG - TUXTL..."
+      }
+    },
+    "01R2HQ3G7FUS7HPU2HYVFJQABSOIUXSNNE_20241128 AIP AD 2-1 Aeródromo MMTL.pdf": {
+      "file_id": "01R2HQ3G7FUS7HPU2HYVFJQABSOIUXSNNE",
+      "file_name": "20241128 AIP AD 2-1 Aeródromo MMTL.pdf",
+      "file_size": 5911065,
+      "last_modified": "2025-06-16T17:46:32Z",
+      "file_hash": "4d5c2ff1d996b7b2",
+      "processed_at": "2025-07-22T00:30:51.882187",
+      "processing_stats": {
+        "characters_extracted": 106897,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMTL 28-NOV-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMTL - TULUM ..."
+      }
+    },
+    "01R2HQ3G6AZMXZO4TVMNEK4AOOHH6VBCGA_20241128 AIP GEN 3.1-1 Servicios.pdf": {
+      "file_id": "01R2HQ3G6AZMXZO4TVMNEK4AOOHH6VBCGA",
+      "file_name": "20241128 AIP GEN 3.1-1 Servicios.pdf",
+      "file_size": 2818007,
+      "last_modified": "2025-06-16T17:46:38Z",
+      "file_hash": "556130f96684db30",
+      "processed_at": "2025-07-22T00:31:03.902302",
+      "processing_stats": {
+        "characters_extracted": 116253,
+        "content_preview": "AIP DE MEXICO\nGEN 3.1-1 28 NOV 2024\nGEN 3 SERVICIOS GEN 3.1 SERVICIOS DE INFORMACIÓN AERONÁUTICA\n1 S..."
+      }
+    },
+    "01R2HQ3G6YE27WHVCWVRFZYWPLW3JRJGKK_20241201 AIP NOTAM 11 Boletin de actualización.pdf": {
+      "file_id": "01R2HQ3G6YE27WHVCWVRFZYWPLW3JRJGKK",
+      "file_name": "20241201 AIP NOTAM 11 Boletin de actualización.pdf",
+      "file_size": 342457,
+      "last_modified": "2025-06-16T17:46:39Z",
+      "file_hash": "b51ba59d56f03cbf",
+      "processed_at": "2025-07-22T00:31:13.775935",
+      "processing_stats": {
+        "characters_extracted": 59787,
+        "content_preview": "MÉXICO\nAGENCIA FEDERAL DE AVIACIÓN CIVIL SERVICIOS A LA NAVEGACIÓN EN EL ESPACIO AÉREO MEXICANO OFIC..."
+      }
+    },
+    "01R2HQ3G5SLSO3B26WRZAYM6YMQBTPYJOT_20241209 4.1.4.1 OPS-776124 Escaneado. Revisión Manual de Vuelo y Manuales Suplementari.pdf": {
+      "file_id": "01R2HQ3G5SLSO3B26WRZAYM6YMQBTPYJOT",
+      "file_name": "20241209 4.1.4.1 OPS-776124 Escaneado. Revisión Manual de Vuelo y Manuales Suplementari.pdf",
+      "file_size": 2503216,
+      "last_modified": "2025-06-16T17:46:46Z",
+      "file_hash": "313ccdb2cff1b63f",
+      "processed_at": "2025-07-22T00:31:19.139124",
+      "processing_stats": {
+        "characters_extracted": 4199,
+        "content_preview": "Comunicaciones Secretaría de Infraestructura, Comunicaciones y Transportes\nAFAC AGENCIA FEDERAL DE A..."
+      }
+    },
+    "01R2HQ3G6A5HBU7WPG4VCIZQXT2TZVQJNK_20241212 AIP SUPLEMENTO 7524 CARTA DE APROXIMACION VISUAL. HERMOSILLO.pdf": {
+      "file_id": "01R2HQ3G6A5HBU7WPG4VCIZQXT2TZVQJNK",
+      "file_name": "20241212 AIP SUPLEMENTO 7524 CARTA DE APROXIMACION VISUAL. HERMOSILLO.pdf",
+      "file_size": 581935,
+      "last_modified": "2025-06-16T17:46:48Z",
+      "file_hash": "a69eb5ba43502f82",
+      "processed_at": "2025-07-22T00:31:23.337041",
+      "processing_stats": {
+        "characters_extracted": 2167,
+        "content_preview": "TEL: 57-86-55-19, 57-86-55-22 FAX: 25-98-00-65 AFS: MMMXYNYX Correo-e: aldo.figueroa@seneam.gob.mx q..."
+      }
+    },
+    "01R2HQ3G2VLDRL6IHPHVGJ5QXNHNQMDLAX_20241216 Información Técnica de las Aeronaves de grupo Volaris Y4, Q6 y N3. Catálogo de equipos..pdf": {
+      "file_id": "01R2HQ3G2VLDRL6IHPHVGJ5QXNHNQMDLAX",
+      "file_name": "20241216 Información Técnica de las Aeronaves de grupo Volaris Y4, Q6 y N3. Catálogo de equipos..pdf",
+      "file_size": 258074,
+      "last_modified": "2025-06-16T17:46:51Z",
+      "file_hash": "9f842b2d18826924",
+      "processed_at": "2025-07-22T00:31:30.239167",
+      "processing_stats": {
+        "characters_extracted": 12330,
+        "content_preview": "volaris\nSistema Integrado de Gestión de Aerolínea (IAMS)\nCódigo del boletín BOL-MGO-ITA-01-23\nPágina..."
+      }
+    },
+    "01R2HQ3G3DWWFU7P35ARFJQ74KPEMY35XQ_20241226 AIP AD 2-1 Aeródromo MMIO.pdf": {
+      "file_id": "01R2HQ3G3DWWFU7P35ARFJQ74KPEMY35XQ",
+      "file_name": "20241226 AIP AD 2-1 Aeródromo MMIO.pdf",
+      "file_size": 5332222,
+      "last_modified": "2025-06-16T17:46:58Z",
+      "file_hash": "ec7ddcdb5ae4c1ec",
+      "processed_at": "2025-07-22T00:31:42.606550",
+      "processing_stats": {
+        "characters_extracted": 92251,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMIO 26-DIC-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMIO - SALTIL..."
+      }
+    },
+    "01R2HQ3G5VAOB5ZFA7INGZAYYM5R3WRJAM_20241226 AIP AD 2-1 Aeródromo MMMD.pdf": {
+      "file_id": "01R2HQ3G5VAOB5ZFA7INGZAYYM5R3WRJAM",
+      "file_name": "20241226 AIP AD 2-1 Aeródromo MMMD.pdf",
+      "file_size": 10850563,
+      "last_modified": "2025-06-16T17:47:20Z",
+      "file_hash": "12b32540a84cc2de",
+      "processed_at": "2025-07-22T00:32:06.792184",
+      "processing_stats": {
+        "characters_extracted": 202893,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMMD 26-DIC-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMMD - MERID..."
+      }
+    },
+    "01R2HQ3G2RQ6PBIUWJLBCZ5QEZMPU2QRU4_20241226 AIP AD 2-1 Aeródromo MMOX.pdf": {
+      "file_id": "01R2HQ3G2RQ6PBIUWJLBCZ5QEZMPU2QRU4",
+      "file_name": "20241226 AIP AD 2-1 Aeródromo MMOX.pdf",
+      "file_size": 9038007,
+      "last_modified": "2025-06-16T17:47:20Z",
+      "file_hash": "f5281e2fbf2b5467",
+      "processed_at": "2025-07-22T00:32:22.258291",
+      "processing_stats": {
+        "characters_extracted": 51717,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMOX 26-DIC-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMOX -OAXACA..."
+      }
+    },
+    "01R2HQ3GYUUQBPNWS4ZFEKVKBHUMOS47HR_20241226 AIP AD 2-1 Aeródromo MMPB.pdf": {
+      "file_id": "01R2HQ3GYUUQBPNWS4ZFEKVKBHUMOS47HR",
+      "file_name": "20241226 AIP AD 2-1 Aeródromo MMPB.pdf",
+      "file_size": 9578078,
+      "last_modified": "2025-06-16T17:47:20Z",
+      "file_hash": "75f122d780e2339e",
+      "processed_at": "2025-07-22T00:32:37.336128",
+      "processing_stats": {
+        "characters_extracted": 100755,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMPB 26-DIC-2024\nAD 2.1 INDICADOR DE LUGAR - NOMBRE DEL AERÓDROMO\nMMPB - PUEBLA..."
+      }
+    },
+    "01R2HQ3G2VCTU6WM3M6VCI2YDKTOLEH5RD_20241226 AIP AD 2-1 Aeródromo MMZH.pdf": {
+      "file_id": "01R2HQ3G2VCTU6WM3M6VCI2YDKTOLEH5RD",
+      "file_name": "20241226 AIP AD 2-1 Aeródromo MMZH.pdf",
+      "file_size": 8635252,
+      "last_modified": "2025-06-16T17:47:44Z",
+      "file_hash": "66ce21a26e1e62e3",
+      "processed_at": "2025-07-22T00:32:52.105882",
+      "processing_stats": {
+        "characters_extracted": 82072,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMZH 26-DIC-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMZH - IXTAP..."
+      }
+    },
+    "01R2HQ3G4Z53OTYY3ZN5CYDDPQWYXOSDHP_20241228 AIP ENR 6.1-1 Cartas de navegación en ruta espacio aéreo inferior y superior.pdf": {
+      "file_id": "01R2HQ3G4Z53OTYY3ZN5CYDDPQWYXOSDHP",
+      "file_name": "20241228 AIP ENR 6.1-1 Cartas de navegación en ruta espacio aéreo inferior y superior.pdf",
+      "file_size": 8574780,
+      "last_modified": "2025-06-16T17:47:44Z",
+      "file_hash": "4f4a79d542edd126",
+      "processed_at": "2025-07-22T00:33:09.235697",
+      "processing_stats": {
+        "characters_extracted": 25398,
+        "content_preview": "0\nERC-2 ERC-1\nESCALA/SCALE 1:2,735,000 0\n110 MILLAR NAUTICAS (AM)\nERC-1\nAIP DE MEXICO SICT - AFAC - ..."
+      }
+    },
+    "01R2HQ3G5JZCCFUZUHJFAYCCS5IU3HVINL_29240711 AIP AD 2-1 Aeródromo MMGL.pdf": {
+      "file_id": "01R2HQ3G5JZCCFUZUHJFAYCCS5IU3HVINL",
+      "file_name": "29240711 AIP AD 2-1 Aeródromo MMGL.pdf",
+      "file_size": 15701363,
+      "last_modified": "2025-06-16T17:47:55Z",
+      "file_hash": "9be15e4a2d7ec3f3",
+      "processed_at": "2025-07-22T00:33:31.285282",
+      "processing_stats": {
+        "characters_extracted": 222892,
+        "content_preview": "AIP DE MEXICO\nAD 2-1 MMGL 11-JUL-2024\nAD 2.1 INDICADOR DE LUGAR -. NOMBRE DEL AERÓDROMO\nMMGL - GUADA..."
+      }
+    },
+    "01R2HQ3GZIXCWMG5GF55CJZKAYNOUDC5JB_Bienvenido a la familia Volaris.pdf": {
+      "file_id": "01R2HQ3GZIXCWMG5GF55CJZKAYNOUDC5JB",
+      "file_name": "Bienvenido a la familia Volaris.pdf",
+      "file_size": 4295264,
+      "last_modified": "2025-06-24T19:29:57Z",
+      "file_hash": "c75469129912ff23",
+      "processed_at": "2025-07-22T00:33:38.519304",
+      "processing_stats": {
+        "characters_extracted": 14333,
+        "content_preview": "Bienvenidos a la familia Volaris.\n. volaris\n....\nCultura Volaris\nvolaris DESDE MEX\nItinerario de via..."
+      }
+    },
+    "01R2HQ3G7O42WSICV3HRCKAVLLRVM56LS3_Código de ética Volaris.pdf": {
+      "file_id": "01R2HQ3G7O42WSICV3HRCKAVLLRVM56LS3",
+      "file_name": "Código de ética Volaris.pdf",
+      "file_size": 592069,
+      "last_modified": "2025-06-24T19:29:52Z",
+      "file_hash": "ea6404bc10e7f40c",
+      "processed_at": "2025-07-22T00:33:48.821203",
+      "processing_stats": {
+        "characters_extracted": 70863,
+        "content_preview": "volaris\nCódigo de Ética Volaris\nvolaris\n1\nvolaris\nCarta del Presidente Ejecutivo y Director General ..."
+      }
+    },
+    "01R2HQ3G3FH3GBJKIHORBKAWQDZZ3XVWJG_FLT_OPS-ADV_WX-SEQ01 How to use briefing notes. Use of Hyperlinks.pdf": {
+      "file_id": "01R2HQ3G3FH3GBJKIHORBKAWQDZZ3XVWJG",
+      "file_name": "FLT_OPS-ADV_WX-SEQ01 How to use briefing notes. Use of Hyperlinks.pdf",
+      "file_size": 92497,
+      "last_modified": "2025-06-16T17:47:46Z",
+      "file_hash": "e18c2191ac565ee1",
+      "processed_at": "2025-07-22T00:33:52.824246",
+      "processing_stats": {
+        "characters_extracted": 730,
+        "content_preview": "Flight Operations Briefing Notes\nFlight Operations Briefing Notes How to Use Briefing Notes Use of H..."
+      }
+    },
+    "01R2HQ3GZIXMAI6LUENBAINZWIZTABVZTT_FLT_OPS-ADV_WX-SEQ07 Adverse weather operations. Optimum use of weather radar.pdf": {
+      "file_id": "01R2HQ3GZIXMAI6LUENBAINZWIZTABVZTT",
+      "file_name": "FLT_OPS-ADV_WX-SEQ07 Adverse weather operations. Optimum use of weather radar.pdf",
+      "file_size": 925160,
+      "last_modified": "2025-06-16T17:47:49Z",
+      "file_hash": "45b3010feae03882",
+      "processed_at": "2025-07-22T00:33:59.900220",
+      "processing_stats": {
+        "characters_extracted": 24941,
+        "content_preview": "Flight Operations Briefing Notes\nAdverse Weather Operations Optimum Use of the Weather Radar\nFlight ..."
+      }
+    },
+    "01R2HQ3GZAAPB3R7ZHMNGZCM2SJDAVTKJW_FLT_OPS-APPR-SEQ01 Approach techniques. Flying Stabilized Approaches.PDF": {
+      "file_id": "01R2HQ3GZAAPB3R7ZHMNGZCM2SJDAVTKJW",
+      "file_name": "FLT_OPS-APPR-SEQ01 Approach techniques. Flying Stabilized Approaches.PDF",
+      "file_size": 165412,
+      "last_modified": "2025-06-16T17:47:47Z",
+      "file_hash": "5d90103dcba65bd9",
+      "processed_at": "2025-07-22T00:34:06.773900",
+      "processing_stats": {
+        "characters_extracted": 20592,
+        "content_preview": "Flight Operations Briefing Notes\nApproach Techniques Flying Stabilized Approaches\nFlight Operations ..."
+      }
+    },
+    "01R2HQ3G5DRLP3WWI4MJDLOKVCLYZNF5H5_FLT_OPS-APPR-SEQ03 Approach techniques. Aircraft Energy Management during App.pdf": {
+      "file_id": "01R2HQ3G5DRLP3WWI4MJDLOKVCLYZNF5H5",
+      "file_name": "FLT_OPS-APPR-SEQ03 Approach techniques. Aircraft Energy Management during App.pdf",
+      "file_size": 365597,
+      "last_modified": "2025-06-16T17:47:50Z",
+      "file_hash": "1ff3d1414b7248d5",
+      "processed_at": "2025-07-22T00:34:13.431611",
+      "processing_stats": {
+        "characters_extracted": 15696,
+        "content_preview": "Flight Operations Briefing Notes\nApproach Techniques Aircraft Energy Management during Approach\nC\nSP..."
+      }
+    },
+    "01R2HQ3G6CIRXWB24BEJG3YE775UJFD2XK_FLT_OPS-CAB_OPS-SEQ02 How to use briefing notes. Use of Hyperlinks.pdf": {
+      "file_id": "01R2HQ3G6CIRXWB24BEJG3YE775UJFD2XK",
+      "file_name": "FLT_OPS-CAB_OPS-SEQ02 How to use briefing notes. Use of Hyperlinks.pdf",
+      "file_size": 92497,
+      "last_modified": "2025-06-16T17:47:50Z",
+      "file_hash": "4c3d146da6c51dca",
+      "processed_at": "2025-07-22T00:34:17.341357",
+      "processing_stats": {
+        "characters_extracted": 730,
+        "content_preview": "Flight Operations Briefing Notes\nFlight Operations Briefing Notes How to Use Briefing Notes Use of H..."
+      }
+    },
+    "01R2HQ3GZQEPP6CGURKJDKBHFDZZAQOKIB_FLT_OPS-CAB_OPS-SEQ09 Cabin operations. Cabin Decompression Awareness.pdf": {
+      "file_id": "01R2HQ3GZQEPP6CGURKJDKBHFDZZAQOKIB",
+      "file_name": "FLT_OPS-CAB_OPS-SEQ09 Cabin operations. Cabin Decompression Awareness.pdf",
+      "file_size": 116536,
+      "last_modified": "2025-06-16T17:47:51Z",
+      "file_hash": "376f67e910ead86a",
+      "processed_at": "2025-07-22T00:34:24.194886",
+      "processing_stats": {
+        "characters_extracted": 20854,
+        "content_preview": "Flight Operations Briefing Notes\nCabin Operations Cabin Decompression Awareness\nMASK\nOXYGEN\nFlight O..."
+      }
+    },
+    "01R2HQ3GZNNZGR63OKZRDYX4Y5OXQKD7FP_FLT_OPS-CAB_OPS-SEQ11 Cabin operations. Planned Ground Evacuation.pdf": {
+      "file_id": "01R2HQ3GZNNZGR63OKZRDYX4Y5OXQKD7FP",
+      "file_name": "FLT_OPS-CAB_OPS-SEQ11 Cabin operations. Planned Ground Evacuation.pdf",
+      "file_size": 380487,
+      "last_modified": "2025-06-16T17:47:53Z",
+      "file_hash": "2dfb0866a3f20ce4",
+      "processed_at": "2025-07-22T00:34:31.064315",
+      "processing_stats": {
+        "characters_extracted": 21767,
+        "content_preview": "Cabin Operations Planned Ground Evacuation\nFlight Operations Briefing Notes\nFlight Operations Briefi..."
+      }
+    },
+    "01R2HQ3G6ZAEJTNHTB6FC3O7ZZADR2ML3D_FLT_OPS-CAB_OPS-SEQ12 Cabin operations. Unplanned Ground Evacuation.pdf": {
+      "file_id": "01R2HQ3G6ZAEJTNHTB6FC3O7ZZADR2ML3D",
+      "file_name": "FLT_OPS-CAB_OPS-SEQ12 Cabin operations. Unplanned Ground Evacuation.pdf",
+      "file_size": 126807,
+      "last_modified": "2025-06-16T17:47:52Z",
+      "file_hash": "5a50007d6c323520",
+      "processed_at": "2025-07-22T00:34:37.857295",
+      "processing_stats": {
+        "characters_extracted": 25703,
+        "content_preview": "Cabin Operations Unplanned Ground Evacuation\nFlight Operations Briefing Notes\nFlight Operations Brie..."
+      }
+    },
+    "01R2HQ3GYNKYW6YU5J7VCLSMZ6PJZNQC4U_FLT_OPS-CAB_OPS-SEQ14 Cabin operations. Planned DitchingUnplanned Ditching.pdf": {
+      "file_id": "01R2HQ3GYNKYW6YU5J7VCLSMZ6PJZNQC4U",
+      "file_name": "FLT_OPS-CAB_OPS-SEQ14 Cabin operations. Planned DitchingUnplanned Ditching.pdf",
+      "file_size": 127977,
+      "last_modified": "2025-06-16T17:47:55Z",
+      "file_hash": "fd500d9d559bfa98",
+      "processed_at": "2025-07-22T00:34:44.604488",
+      "processing_stats": {
+        "characters_extracted": 22012,
+        "content_preview": "Flight Operations Briefing Notes\nCabin Operations Planned Ditching/Unplanned Ditching\nFOB: 11980 KG\n..."
+      }
+    },
+    "01R2HQ3GZ5F5V2DQQFWZDKAJVP7NRDBRXF_FLT_OPS-CAB_OPS-SEQ15 Cabin operations. Ground Operations Safety.pdf": {
+      "file_id": "01R2HQ3GZ5F5V2DQQFWZDKAJVP7NRDBRXF",
+      "file_name": "FLT_OPS-CAB_OPS-SEQ15 Cabin operations. Ground Operations Safety.pdf",
+      "file_size": 114951,
+      "last_modified": "2025-06-16T17:47:55Z",
+      "file_hash": "9438b75f8ba44100",
+      "processed_at": "2025-07-22T00:34:51.219422",
+      "processing_stats": {
+        "characters_extracted": 15796,
+        "content_preview": "Flight Operations Briefing Notes\nCabin Operations Ground Operations Safety\n87.51\nFOB: 11940 KG\nFLAP\n..."
+      }
+    },
+    "01R2HQ3GZXIAKLLRAWTZHIGHFVIBXAQGQ4_FLT_OPS-DESC-SEQ01 Descent Management. Being Prepared for Go-Around.PDF": {
+      "file_id": "01R2HQ3GZXIAKLLRAWTZHIGHFVIBXAQGQ4",
+      "file_name": "FLT_OPS-DESC-SEQ01 Descent Management. Being Prepared for Go-Around.PDF",
+      "file_size": 63099,
+      "last_modified": "2025-06-16T17:47:55Z",
+      "file_hash": "036616224154e94d",
+      "processed_at": "2025-07-22T00:34:57.623561",
+      "processing_stats": {
+        "characters_extracted": 12061,
+        "content_preview": "Flight Operations Briefing Notes\nDescent Management Being Prepared for Go-Around\nFlight Operations B..."
+      }
+    },
+    "01R2HQ3G7UIHGEEE7S7RDJSNYVFTVQ4BSN_FLT_OPS-DESC-SEQ02 Descent Management. Descent and Approach Profile Managemen.pdf": {
+      "file_id": "01R2HQ3G7UIHGEEE7S7RDJSNYVFTVQ4BSN",
+      "file_name": "FLT_OPS-DESC-SEQ02 Descent Management. Descent and Approach Profile Managemen.pdf",
+      "file_size": 59564,
+      "last_modified": "2025-06-16T17:47:55Z",
+      "file_hash": "d09cdff1a1181744",
+      "processed_at": "2025-07-22T00:35:04.218590",
+      "processing_stats": {
+        "characters_extracted": 11672,
+        "content_preview": "Flight Operations Briefing Notes\nDescent Management Descent and Approach Profile Management\nD\nFlight..."
+      }
+    },
+    "01R2HQ3GYYNGXGE6ABQBALNFDENQN2EU5A_FLT_OPS-GEN-SEQ02 Industry Safety Initiatives. From Non-Precision to Precisio.pdf": {
+      "file_id": "01R2HQ3GYYNGXGE6ABQBALNFDENQN2EU5A",
+      "file_name": "FLT_OPS-GEN-SEQ02 Industry Safety Initiatives. From Non-Precision to Precisio.pdf",
+      "file_size": 3945103,
+      "last_modified": "2025-06-16T17:47:59Z",
+      "file_hash": "818937a17830c6cb",
+      "processed_at": "2025-07-22T00:35:17.569717",
+      "processing_stats": {
+        "characters_extracted": 74475,
+        "content_preview": "Flight Operations Briefing Notes\nIndustry Safety Initiatives From Non-Precision to Precision-like Ap..."
+      }
+    },
+    "01R2HQ3G5FV7HQ3VNGDJBLEBNNWHMEQCV7_FLT_OPS-HUM_PER-SEQ01 Human Performance. Human Factors Aspects in Incidents.pdf": {
+      "file_id": "01R2HQ3G5FV7HQ3VNGDJBLEBNNWHMEQCV7",
+      "file_name": "FLT_OPS-HUM_PER-SEQ01 Human Performance. Human Factors Aspects in Incidents.pdf",
+      "file_size": 121990,
+      "last_modified": "2025-06-16T17:47:56Z",
+      "file_hash": "a3495b47610f3f82",
+      "processed_at": "2025-07-22T00:35:24.184243",
+      "processing_stats": {
+        "characters_extracted": 17795,
+        "content_preview": "Human Performance\nFlight Operations Briefing Notes\nHuman Factors Aspects in Incidents / Accidents\nFl..."
+      }
+    },
+    "01R2HQ3GYAU2G4PQ7A6ZDZN544OUIGUYMO_FLT_OPS-HUM_PER-SEQ02 Human Performance. CRM Aspects in Incidents  Accidents.pdf": {
+      "file_id": "01R2HQ3GYAU2G4PQ7A6ZDZN544OUIGUYMO",
+      "file_name": "FLT_OPS-HUM_PER-SEQ02 Human Performance. CRM Aspects in Incidents  Accidents.pdf",
+      "file_size": 118247,
+      "last_modified": "2025-06-16T17:47:57Z",
+      "file_hash": "b1059434b3e2c1c7",
+      "processed_at": "2025-07-22T00:35:30.757835",
+      "processing_stats": {
+        "characters_extracted": 17947,
+        "content_preview": "Flight Operations Briefing Notes\nHuman Performance CRM Aspects in Incidents / Accidents\nAIRBUS INDUS..."
+      }
+    },
+    "01R2HQ3G6ALC6WWJ55IJFJHUSKVCAJ5LZP_FLT_OPS-HUM_PER-SEQ08 Human Performance. Use of Hyperlinks.PDF": {
+      "file_id": "01R2HQ3G6ALC6WWJ55IJFJHUSKVCAJ5LZP",
+      "file_name": "FLT_OPS-HUM_PER-SEQ08 Human Performance. Use of Hyperlinks.PDF",
+      "file_size": 100364,
+      "last_modified": "2025-06-16T17:47:59Z",
+      "file_hash": "77258204ac8748b2",
+      "processed_at": "2025-07-22T00:35:34.651960",
+      "processing_stats": {
+        "characters_extracted": 724,
+        "content_preview": "Flight Operations Briefing Notes\nHow to Use Briefing Notes Use of Hyperlinks\nFOB: 11940 KG\nS FLAP\nSE..."
+      }
+    },
+    "01R2HQ3G7KLIYGZU7NLNCK2SAYYU7GSDXQ_FLT_OPS-LAND-SEQ01 How to use briefing notes. Use of Hyperlinks.pdf": {
+      "file_id": "01R2HQ3G7KLIYGZU7NLNCK2SAYYU7GSDXQ",
+      "file_name": "FLT_OPS-LAND-SEQ01 How to use briefing notes. Use of Hyperlinks.pdf",
+      "file_size": 90333,
+      "last_modified": "2025-06-16T17:47:59Z",
+      "file_hash": "88caab3255eaf215",
+      "processed_at": "2025-07-22T00:35:38.520171",
+      "processing_stats": {
+        "characters_extracted": 730,
+        "content_preview": "Flight Operations Briefing Notes\nFlight Operations Briefing Notes How to Use Briefing Notes Use of H..."
+      }
+    },
+    "01R2HQ3G463FFHWDU5AVBYJR6BJL7AOWGW_FLT_OPS-LAND-SEQ02 How to use briefing notes. Use of Hyperlinks.pdf": {
+      "file_id": "01R2HQ3G463FFHWDU5AVBYJR6BJL7AOWGW",
+      "file_name": "FLT_OPS-LAND-SEQ02 How to use briefing notes. Use of Hyperlinks.pdf",
+      "file_size": 90333,
+      "last_modified": "2025-06-16T17:47:59Z",
+      "file_hash": "edad9307e781a9d0",
+      "processed_at": "2025-07-22T00:35:42.421277",
+      "processing_stats": {
+        "characters_extracted": 730,
+        "content_preview": "Flight Operations Briefing Notes\nFlight Operations Briefing Notes How to Use Briefing Notes Use of H..."
+      }
     }
   },
-  "last_sync": "2025-07-21T12:07:33.442524",
+  "last_sync": "2025-07-22T00:35:42.421284",
   "stats": {
-    "total_processed": 3,
+    "total_processed": 197,
     "cache_hits": 0,
     "new_files": 0,
     "updated_files": 0

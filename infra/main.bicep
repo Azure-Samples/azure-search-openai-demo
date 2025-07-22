@@ -233,6 +233,16 @@ param clientAppSecret string = ''
 @description('SharePoint Site ID for direct access')
 param sharepointSiteId string = ''
 
+@description('SharePoint Client ID for authentication')
+param sharepointClientId string = ''
+
+@secure()
+@description('SharePoint Client Secret for authentication')
+param sharepointClientSecret string = ''
+
+@description('SharePoint Drive ID for document access')
+param sharepointDriveId string = ''
+
 // Used for optional CORS support for alternate frontends
 param allowedOrigin string = '' // should start with https://, shouldn't end with a /
 
@@ -461,6 +471,10 @@ var appEnvVariables = {
   AZURE_CLIENT_APP_SECRET: clientAppSecret
   SHAREPOINT_SITE_ID: sharepointSiteId
   SITE_ID: sharepointSiteId
+  CLIENT_ID: sharepointClientId
+  CLIENT_SECRET: sharepointClientSecret
+  DRIVE_ID: sharepointDriveId
+  TENANT_ID: tenantId
   AZURE_TENANT_ID: tenantId
   AZURE_AUTH_TENANT_ID: tenantIdForAuth
   AZURE_AUTHENTICATION_ISSUER_URI: authenticationIssuerUri

@@ -305,6 +305,18 @@
     "clientAppSecret": {
       "value": "${AZURE_CLIENT_APP_SECRET}"
     },
+    "sharepointSiteId": {
+      "value": "${SHAREPOINT_SITE_ID}"
+    },
+    "sharepointClientId": {
+      "value": "${CLIENT_ID}"
+    },
+    "sharepointClientSecret": {
+      "value": "${CLIENT_SECRET}"
+    },
+    "sharepointDriveId": {
+      "value": "${DRIVE_ID}"
+    },
     "allowedOrigin": {
       "value": "${ALLOWED_ORIGIN}"
     },

@@ -38,9 +38,73 @@ def list_pilotos_files(drive_id, access_token):
     return response.json()["value"]
 
 def get_file_content(drive_id, file_id, access_token):
-    """Descargar el contenido de un archivo específico"""
+    """Descargar y procesar el contenido de un archivo específico"""
+    import tempfile
+    from azure.identity import DefaultAzureCredential
+    from azure.ai.documentintelligence import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
+    
     url = f"{GRAPH_API}/drives/{drive_id}/items/{file_id}/content"
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
-    return response.text
+    
+    # Verificar si es un archivo PDF o binario
+    content_type = response.headers.get('content-type', '').lower()
+    
+    if 'pdf' in content_type or response.content[:4] == b'%PDF':
+        try:
+            # Procesar PDF con Document Intelligence
+            doc_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
+            if not doc_intelligence_service:
+                return f"Documento PDF disponible en SharePoint (Document Intelligence no configurado)"
+            
+            credential = DefaultAzureCredential()
+            doc_client = DocumentIntelligenceClient(
+                endpoint=f"https://{doc_intelligence_service}.cognitiveservices.azure.com/",
+                credential=credential
+            )
+            
+            # Crear archivo temporal con el PDF
+            with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_file:
+                tmp_file.write(response.content)
+                tmp_file.flush()
+                
+                # Analizar documento
+                with open(tmp_file.name, "rb") as f:
+                    poller = doc_client.begin_analyze_document(
+                        "prebuilt-read", 
+                        analyze_request=AnalyzeDocumentRequest(bytes_source=f.read()),
+                        content_type="application/octet-stream"
+                    )
+                    result = poller.result()
+                    
+                    # Extraer texto
+                    if result.content:
+                        return result.content
+                    else:
+                        return f"Documento PDF procesado pero sin contenido de texto extraído"
+                        
+        except Exception as e:
+            print(f"Error procesando PDF con Document Intelligence: {e}")
+            
+            # Fallback: obtener información del archivo y generar contenido descriptivo
+            try:
+                file_info_url = f"{GRAPH_API}/drives/{drive_id}/items/{file_id}"
+                file_response = requests.get(file_info_url, headers=headers)
+                file_info = file_response.json()
+                filename = file_info.get('name', 'documento.pdf')
+                
+                return f"Documento PDF: {filename}. Contenido no procesable con Document Intelligence, requiere revisión manual. Error: {str(e)}"
+            except:
+                return f"Documento PDF disponible en SharePoint (error en procesamiento: {str(e)})"
+        finally:
+            # Limpiar archivo temporal
+            import os as temp_os
+            try:
+                temp_os.unlink(tmp_file.name)
+            except:
+                pass
+    else:
+        # Para archivos de texto, devolver el contenido
+        return response.text

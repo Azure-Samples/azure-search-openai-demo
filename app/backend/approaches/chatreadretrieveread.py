@@ -433,3 +433,101 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             combined_sources.append(f"{citation}: {content}")
         
         return combined_sources
+
+    async def _process_pdf_from_sharepoint(self, drive_id: str, file_id: str, token: str, file_name: str) -> str:
+        """
+        Procesa un PDF de SharePoint usando Document Intelligence
+        """
+        try:
+            import requests
+            import os
+            import asyncio
+            import json
+            
+            # Descargar archivo PDF como bytes
+            url = f"https://graph.microsoft.com/v1.0/drives/{drive_id}/items/{file_id}/content"
+            headers = {"Authorization": f"Bearer {token}"}
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            pdf_bytes = response.content
+            
+            # Verificar si Document Intelligence está disponible
+            doc_intel_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
+            if not doc_intel_service:
+                return f"[PDF: {file_name}] Document Intelligence no configurado - archivo disponible pero no procesado"
+            
+            # Usar las credenciales de Azure configuradas
+            from azure.identity import DefaultAzureCredential
+            credential = DefaultAzureCredential()
+            token_doc_intel = await credential.get_token("https://cognitiveservices.azure.com/.default")
+            
+            # Endpoint de Document Intelligence
+            endpoint = f"https://{doc_intel_service}.cognitiveservices.azure.com/documentintelligence/documentModels/prebuilt-read:analyze?api-version=2024-02-29-preview"
+            
+            # Headers para Document Intelligence
+            headers_doc_intel = {
+                "Authorization": f"Bearer {token_doc_intel.token}",
+                "Content-Type": "application/pdf"
+            }
+            
+            # Enviar PDF para análisis
+            response = requests.post(endpoint, headers=headers_doc_intel, data=pdf_bytes)
+            
+            if response.status_code == 202:
+                # Obtener URL de resultado
+                operation_location = response.headers.get('Operation-Location')
+                if operation_location:
+                    # Esperar y obtener resultados
+                    await asyncio.sleep(3)  # Espera inicial
+                    
+                    result_headers = {
+                        "Authorization": f"Bearer {token_doc_intel.token}"
+                    }
+                    
+                    for attempt in range(10):  # Máximo 10 intentos
+                        result_response = requests.get(operation_location, headers=result_headers)
+                        if result_response.status_code == 200:
+                            result_data = result_response.json()
+                            if result_data.get('status') == 'succeeded':
+                                # Extraer texto
+                                content_text = ""
+                                if 'analyzeResult' in result_data and 'content' in result_data['analyzeResult']:
+                                    content_text = result_data['analyzeResult']['content']
+                                
+                                if content_text:
+                                    print(f"✅ Document Intelligence procesó {file_name}: {len(content_text)} caracteres")
+                                    return content_text
+                                break
+                            elif result_data.get('status') == 'failed':
+                                break
+                        
+                        await asyncio.sleep(2)  # Esperar antes del siguiente intento
+            
+            # Si Document Intelligence falla, usar texto básico
+            return f"[PDF: {file_name}] Documento disponible en SharePoint - contenido requiere procesamiento manual"
+            
+        except Exception as e:
+            print(f"Error procesando PDF {file_name} con Document Intelligence: {e}")
+            return f"[PDF: {file_name}] Error procesando documento - archivo disponible en SharePoint"
+    
+    async def _get_text_content(self, drive_id: str, file_id: str, token: str) -> str:
+        """
+        Obtiene contenido de texto de archivos no-PDF
+        """
+        try:
+            import requests
+            
+            url = f"https://graph.microsoft.com/v1.0/drives/{drive_id}/items/{file_id}/content"
+            headers = {"Authorization": f"Bearer {token}"}
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            
+            # Intentar decodificar como texto
+            try:
+                return response.text
+            except:
+                return f"Archivo binario disponible en SharePoint"
+                
+        except Exception as e:
+            print(f"Error obteniendo contenido de texto: {e}")
+            return "Contenido no disponible"
