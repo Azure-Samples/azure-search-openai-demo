@@ -542,7 +542,7 @@ async def debug_pilot_query():
             # También probar la búsqueda en SharePoint si es relacionada con pilotos
             sharepoint_results = []
             if is_pilot_related:
-                sharepoint_results = await chat_approach._search_sharepoint_files(query, top=15)
+                sharepoint_results = await chat_approach._search_sharepoint_files(query, top=1)
 
             return jsonify(
                 {
