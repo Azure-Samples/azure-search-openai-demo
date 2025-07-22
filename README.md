@@ -51,7 +51,7 @@ This template, the application code and configuration it contains, has been buil
 
 [📺 Watch a video overview of the app.](https://youtu.be/3acB0OWmLvM)
 
-This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access a GPT model (gpt-4o-mini), and Azure AI Search for data indexing and retrieval.
+This sample demonstrates a few approaches for creating ChatGPT-like experiences over your own data using the Retrieval Augmented Generation pattern. It uses Azure OpenAI Service to access a GPT model (gpt-4.1-mini), and Azure AI Search for data indexing and retrieval.
 
 The repo includes sample data so it's ready to try end to end. In this sample application we use a fictitious company called Contoso Electronics, and the experience allows its employees to ask questions about the benefits, internal policies, as well as job descriptions and roles.
 
@@ -258,9 +258,11 @@ You can find extensive documentation in the [docs](docs/README.md) folder:
     - [GPT-4 Turbo with Vision](docs/gpt4v.md)
     - [Reasoning](docs/reasoning.md)
     - [Private endpoints](docs/deploy_private.md)
+    - [Agentic retrieval](docs/agentic_retrieval.md)
   - [Sharing deployment environments](docs/sharing_environments.md)
 - [Local development](docs/localdev.md)
 - [Customizing the app](docs/customization.md)
+- [HTTP Protocol](docs/http_protocol.md)
 - [Data ingestion](docs/data_ingestion.md)
 - [Evaluation](docs/evaluation.md)
 - [Safety evaluation](docs/safety_evaluation.md)
@@ -277,7 +279,7 @@ You can find extensive documentation in the [docs](docs/README.md) folder:
 - [📖 Docs: Comparing Azure OpenAI and OpenAI](https://learn.microsoft.com/azure/cognitive-services/openai/overview#comparing-azure-openai-and-openai/)
 - [📖 Blog: Access Control in Generative AI applications with Azure AI Search](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/access-control-in-generative-ai-applications-with-azure-ai-search/3956408)
 - [📺 Talk: Quickly build and deploy OpenAI apps on Azure, infused with your own data](https://www.youtube.com/watch?v=j8i-OM5kwiY)
-- [📺 Talks: AI Chat App Hack series](https://www.youtube.com/playlist?list=PL5lwDBUC0ag6_dGZst5m3G72ewfwXLcXV)
+- [📺 Video: RAG Deep Dive Series](https://techcommunity.microsoft.com/blog/azuredevcommunityblog/rag-deep-dive-watch-all-the-recordings/4383171)
 
 ### Getting help
 
@@ -286,6 +288,12 @@ For help with deploying this sample, please post in [GitHub Issues](/issues). If
 
 This repository is supported by the maintainers, _not_ by Microsoft Support,
 so please use the support mechanisms described above, and we will do our best to help you out.
+
+For general questions about developing AI solutions on Azure,
+join the Azure AI Foundry Developer Community:
+
+[![Azure AI Foundry Discord](https://img.shields.io/badge/Discord-Azure_AI_Foundry_Community_Discord-blue?style=for-the-badge&logo=discord&color=5865f2&logoColor=fff)](https://aka.ms/foundry/discord)
+[![Azure AI Foundry Developer Forum](https://img.shields.io/badge/GitHub-Azure_AI_Foundry_Developer_Forum-blue?style=for-the-badge&logo=github&color=000000&logoColor=fff)](https://aka.ms/foundry/forum)
 
 ### Note
 

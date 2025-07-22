@@ -23,7 +23,7 @@ For more details on how this feature works, read [this blog post](https://techco
 * The ability to deploy a gpt-4o model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a gpt-4o deployment from your Azure OpenAI deployments page.
 * Ensure that you can deploy the Azure OpenAI resource group in [a region and deployment SKU where all required components are available](https://learn.microsoft.com/azure/cognitive-services/openai/concepts/models#model-summary-table-and-region-availability):
   * Azure OpenAI models
-    * gpt-4o-mini
+    * gpt-4.1-mini
     * text-embedding-3-large
     * gpt-4o (for vision/evaluation features)
   * [Azure AI Vision](https://learn.microsoft.com/azure/ai-services/computer-vision/)
