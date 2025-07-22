@@ -44,9 +44,7 @@ echo ""
 
 cd ../backend
 
-port=50505
-host=localhost
-uv run quart --app hrchatbot.main:app run --port "$port" --host "$host" --reload
+uv run python -m hrchatbot.main
 out=$?
 if [ $out -ne 0 ]; then
     echo "Failed to start backend"

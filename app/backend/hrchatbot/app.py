@@ -100,7 +100,7 @@ from hrchatbot.prepdocs import (
 from hrchatbot.prepdocslib.filestrategy import UploadUserFileStrategy
 from hrchatbot.prepdocslib.listfilestrategy import File
 
-bp = Blueprint("routes", __name__, static_folder="static")
+bp = Blueprint("routes", __name__, static_folder="../static")
 # Fix Windows registry issue with mimetypes
 mimetypes.add_type("application/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
@@ -126,7 +126,7 @@ async def favicon():
 @bp.route("/assets/<path:path>")
 async def assets(path):
     return await send_from_directory(
-        Path(__file__).resolve().parent / "static" / "assets", path
+        Path(__file__).resolve().parent.parent / "static" / "assets", path
     )
 
 
