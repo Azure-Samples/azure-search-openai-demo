@@ -52,7 +52,12 @@ class OpenAIEmbeddings(ABC):
         "text-embedding-3-large": True,
     }
 
-    def __init__(self, open_ai_model_name: str, open_ai_dimensions: int, disable_batch: bool = False):
+    def __init__(
+        self,
+        open_ai_model_name: str,
+        open_ai_dimensions: int,
+        disable_batch: bool = False,
+    ):
         self.open_ai_model_name = open_ai_model_name
         self.open_ai_dimensions = open_ai_dimensions
         self.disable_batch = disable_batch
@@ -61,14 +66,18 @@ class OpenAIEmbeddings(ABC):
         raise NotImplementedError
 
     def before_retry_sleep(self, retry_state):
-        logger.info("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
+        logger.info(
+            "Rate limited on the OpenAI embeddings API, sleeping before retrying..."
+        )
 
     def calculate_token_length(self, text: str):
         encoding = tiktoken.encoding_for_model(self.open_ai_model_name)
         return len(encoding.encode(text))
 
     def split_text_into_batches(self, texts: list[str]) -> list[EmbeddingBatch]:
-        batch_info = OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL.get(self.open_ai_model_name)
+        batch_info = OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL.get(
+            self.open_ai_model_name
+        )
         if not batch_info:
             raise NotImplementedError(
                 f"Model {self.open_ai_model_name} is not supported with batch embedding operations"
@@ -81,7 +90,10 @@ class OpenAIEmbeddings(ABC):
         batch_token_length = 0
         for text in texts:
             text_token_length = self.calculate_token_length(text)
-            if batch_token_length + text_token_length >= batch_token_limit and len(batch) > 0:
+            if (
+                batch_token_length + text_token_length >= batch_token_limit
+                and len(batch) > 0
+            ):
                 batches.append(EmbeddingBatch(batch, batch_token_length))
                 batch = []
                 batch_token_length = 0
@@ -98,7 +110,9 @@ class OpenAIEmbeddings(ABC):
 
         return batches
 
-    async def create_embedding_batch(self, texts: list[str], dimensions_args: ExtraArgs) -> list[list[float]]:
+    async def create_embedding_batch(
+        self, texts: list[str], dimensions_args: ExtraArgs
+    ) -> list[list[float]]:
         batches = self.split_text_into_batches(texts)
         embeddings = []
         client = await self.create_client()
@@ -111,7 +125,9 @@ class OpenAIEmbeddings(ABC):
             ):
                 with attempt:
                     emb_response = await client.embeddings.create(
-                        model=self.open_ai_model_name, input=batch.texts, **dimensions_args
+                        model=self.open_ai_model_name,
+                        input=batch.texts,
+                        **dimensions_args,
                     )
                     embeddings.extend([data.embedding for data in emb_response.data])
                     logger.info(
@@ -122,7 +138,9 @@ class OpenAIEmbeddings(ABC):
 
         return embeddings
 
-    async def create_embedding_single(self, text: str, dimensions_args: ExtraArgs) -> list[float]:
+    async def create_embedding_single(
+        self, text: str, dimensions_args: ExtraArgs
+    ) -> list[float]:
         client = await self.create_client()
         async for attempt in AsyncRetrying(
             retry=retry_if_exception_type(RateLimitError),
@@ -134,22 +152,29 @@ class OpenAIEmbeddings(ABC):
                 emb_response = await client.embeddings.create(
                     model=self.open_ai_model_name, input=text, **dimensions_args
                 )
-                logger.info("Computed embedding for text section. Character count: %d", len(text))
+                logger.info(
+                    "Computed embedding for text section. Character count: %d",
+                    len(text),
+                )
 
         return emb_response.data[0].embedding
 
     async def create_embeddings(self, texts: list[str]) -> list[list[float]]:
-
         dimensions_args: ExtraArgs = (
             {"dimensions": self.open_ai_dimensions}
             if OpenAIEmbeddings.SUPPORTED_DIMENSIONS_MODEL.get(self.open_ai_model_name)
             else {}
         )
 
-        if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL:
+        if (
+            not self.disable_batch
+            and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL
+        ):
             return await self.create_embedding_batch(texts, dimensions_args)
 
-        return [await self.create_embedding_single(text, dimensions_args) for text in texts]
+        return [
+            await self.create_embedding_single(text, dimensions_args) for text in texts
+        ]
 
 
 class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
@@ -176,7 +201,9 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         elif open_ai_custom_url:
             self.open_ai_endpoint = open_ai_custom_url
         else:
-            raise ValueError("Either open_ai_service or open_ai_custom_url must be provided")
+            raise ValueError(
+                "Either open_ai_service or open_ai_custom_url must be provided"
+            )
         self.open_ai_deployment = open_ai_deployment
         self.open_ai_api_version = open_ai_api_version
         self.credential = credential
@@ -253,11 +280,15 @@ class ImageEmbeddings:
                 ):
                     with attempt:
                         body = {"url": blob_url}
-                        async with session.post(url=endpoint, params=params, json=body) as resp:
+                        async with session.post(
+                            url=endpoint, params=params, json=body
+                        ) as resp:
                             resp_json = await resp.json()
                             embeddings.append(resp_json["vector"])
 
         return embeddings
 
     def before_retry_sleep(self, retry_state):
-        logger.info("Rate limited on the Vision embeddings API, sleeping before retrying...")
+        logger.info(
+            "Rate limited on the Vision embeddings API, sleeping before retrying..."
+        )

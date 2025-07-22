@@ -116,7 +116,9 @@ class TokenUsageProps:
             prompt_tokens=usage.prompt_tokens,
             completion_tokens=usage.completion_tokens,
             reasoning_tokens=(
-                usage.completion_tokens_details.reasoning_tokens if usage.completion_tokens_details else None
+                usage.completion_tokens_details.reasoning_tokens
+                if usage.completion_tokens_details
+                else None
             ),
             total_tokens=usage.total_tokens,
         )
@@ -148,7 +150,9 @@ class Approach(ABC):
         auth_helper: AuthenticationHelper,
         query_language: Optional[str],
         query_speller: Optional[str],
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_deployment: Optional[
+            str
+        ],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
         embedding_field: str,
@@ -174,15 +178,23 @@ class Approach(ABC):
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
 
-    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
+    def build_filter(
+        self, overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ) -> Optional[str]:
         include_category = overrides.get("include_category")
         exclude_category = overrides.get("exclude_category")
-        security_filter = self.auth_helper.build_security_filters(overrides, auth_claims)
+        security_filter = self.auth_helper.build_security_filters(
+            overrides, auth_claims
+        )
         filters = []
         if include_category:
-            filters.append("category eq '{}'".format(include_category.replace("'", "''")))
+            filters.append(
+                "category eq '{}'".format(include_category.replace("'", "''"))
+            )
         if exclude_category:
-            filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
+            filters.append(
+                "category ne '{}'".format(exclude_category.replace("'", "''"))
+            )
         if security_filter:
             filters.append(security_filter)
         return None if len(filters) == 0 else " and ".join(filters)
@@ -208,7 +220,9 @@ class Approach(ABC):
                 search_text=search_text,
                 filter=filter,
                 top=top,
-                query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                query_caption="extractive|highlight-false"
+                if use_semantic_captions
+                else None,
                 query_rewrites="generative" if use_query_rewriting else None,
                 vector_queries=search_vectors,
                 query_type=QueryType.SEMANTIC,
@@ -237,7 +251,9 @@ class Approach(ABC):
                         sourcefile=document.get("sourcefile"),
                         oids=document.get("oids"),
                         groups=document.get("groups"),
-                        captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
+                        captions=cast(
+                            list[QueryCaptionResult], document.get("@search.captions")
+                        ),
                         score=document.get("@search.score"),
                         reranker_score=document.get("@search.reranker_score"),
                     )
@@ -270,7 +286,10 @@ class Approach(ABC):
             retrieval_request=KnowledgeAgentRetrievalRequest(
                 messages=[
                     KnowledgeAgentMessage(
-                        role=str(msg["role"]), content=[KnowledgeAgentMessageTextContent(text=str(msg["content"]))]
+                        role=str(msg["role"]),
+                        content=[
+                            KnowledgeAgentMessageTextContent(text=str(msg["content"]))
+                        ],
                     )
                     for msg in messages
                     if msg["role"] != "system"
@@ -303,18 +322,25 @@ class Approach(ABC):
         if response and response.references:
             if results_merge_strategy == "interleaved":
                 # Use interleaved reference order
-                references = sorted(response.references, key=lambda reference: int(reference.id))
+                references = sorted(
+                    response.references, key=lambda reference: int(reference.id)
+                )
             else:
                 # Default to descending strategy
                 references = response.references
             for reference in references:
-                if isinstance(reference, KnowledgeAgentAzureSearchDocReference) and reference.source_data:
+                if (
+                    isinstance(reference, KnowledgeAgentAzureSearchDocReference)
+                    and reference.source_data
+                ):
                     results.append(
                         Document(
                             id=reference.doc_key,
                             content=reference.source_data["content"],
                             sourcepage=reference.source_data["sourcepage"],
-                            search_agent_query=activity_mapping[reference.activity_source],
+                            search_agent_query=activity_mapping[
+                                reference.activity_source
+                            ],
                         )
                     )
                 if top and len(results) == top:
@@ -323,9 +349,11 @@ class Approach(ABC):
         return response, results
 
     def get_sources_content(
-        self, results: list[Document], use_semantic_captions: bool, use_image_citation: bool
+        self,
+        results: list[Document],
+        use_semantic_captions: bool,
+        use_image_citation: bool,
     ) -> list[str]:
-
         def nonewlines(s: str) -> str:
             return s.replace("\n", " ").replace("\r", " ")
 
@@ -333,12 +361,16 @@ class Approach(ABC):
             return [
                 (self.get_citation((doc.sourcepage or ""), use_image_citation))
                 + ": "
-                + nonewlines(" . ".join([cast(str, c.text) for c in (doc.captions or [])]))
+                + nonewlines(
+                    " . ".join([cast(str, c.text) for c in (doc.captions or [])])
+                )
                 for doc in results
             ]
         else:
             return [
-                (self.get_citation((doc.sourcepage or ""), use_image_citation)) + ": " + nonewlines(doc.content or "")
+                (self.get_citation((doc.sourcepage or ""), use_image_citation))
+                + ": "
+                + nonewlines(doc.content or "")
                 for doc in results
             ]
 
@@ -365,21 +397,29 @@ class Approach(ABC):
             dimensions: int
 
         dimensions_args: ExtraArgs = (
-            {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model] else {}
+            {"dimensions": self.embedding_dimensions}
+            if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model]
+            else {}
         )
         embedding = await self.openai_client.embeddings.create(
             # Azure OpenAI takes the deployment name as the model name
-            model=self.embedding_deployment if self.embedding_deployment else self.embedding_model,
+            model=self.embedding_deployment
+            if self.embedding_deployment
+            else self.embedding_model,
             input=q,
             **dimensions_args,
         )
         query_vector = embedding.data[0].embedding
         # This performs an oversampling due to how the search index was setup,
         # so we do not need to explicitly pass in an oversampling parameter here
-        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
+        return VectorizedQuery(
+            vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field
+        )
 
     async def compute_image_embedding(self, q: str):
-        endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
+        endpoint = urljoin(
+            self.vision_endpoint, "computervision/retrieval:vectorizeText"
+        )
         headers = {"Content-Type": "application/json"}
         params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
         data = {"text": q}
@@ -388,13 +428,21 @@ class Approach(ABC):
 
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                url=endpoint, params=params, headers=headers, json=data, raise_for_status=True
+                url=endpoint,
+                params=params,
+                headers=headers,
+                json=data,
+                raise_for_status=True,
             ) as response:
                 json = await response.json()
                 image_query_vector = json["vector"]
-        return VectorizedQuery(vector=image_query_vector, k_nearest_neighbors=50, fields="imageEmbedding")
+        return VectorizedQuery(
+            vector=image_query_vector, k_nearest_neighbors=50, fields="imageEmbedding"
+        )
 
-    def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
+    def get_system_prompt_variables(
+        self, override_prompt: Optional[str]
+    ) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>
         if override_prompt is None:
             return {}
@@ -433,7 +481,11 @@ class Approach(ABC):
             if supported_features.streaming and should_stream:
                 params["stream"] = True
                 params["stream_options"] = {"include_usage": True}
-            params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
+            params["reasoning_effort"] = (
+                reasoning_effort
+                or overrides.get("reasoning_effort")
+                or self.reasoning_effort
+            )
 
         else:
             # Include parameters that may not be supported for reasoning models

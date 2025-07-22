@@ -37,7 +37,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_deployment: Optional[
+            str
+        ],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
         embedding_field: str,
@@ -66,9 +68,15 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.prompt_manager = prompt_manager
-        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
-        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
-        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt(
+            "chat_query_rewrite.prompty"
+        )
+        self.query_rewrite_tools = self.prompt_manager.load_tools(
+            "chat_query_rewrite_tools.json"
+        )
+        self.answer_prompt = self.prompt_manager.load_prompt(
+            "chat_answer_question.prompty"
+        )
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
 
@@ -78,25 +86,38 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
-        use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
+    ) -> tuple[
+        ExtraInfo,
+        Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+    ]:
+        use_agentic_retrieval = (
+            True if overrides.get("use_agentic_retrieval") else False
+        )
         original_user_query = messages[-1]["content"]
 
         reasoning_model_support = self.GPT_REASONING_MODELS.get(self.chatgpt_model)
-        if reasoning_model_support and (not reasoning_model_support.streaming and should_stream):
+        if reasoning_model_support and (
+            not reasoning_model_support.streaming and should_stream
+        ):
             raise Exception(
                 f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
             )
         if use_agentic_retrieval:
-            extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
+            extra_info = await self.run_agentic_retrieval_approach(
+                messages, overrides, auth_claims
+            )
         else:
-            extra_info = await self.run_search_approach(messages, overrides, auth_claims)
+            extra_info = await self.run_search_approach(
+                messages, overrides, auth_claims
+            )
 
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {
-                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "include_follow_up_questions": bool(
+                    overrides.get("suggest_followup_questions")
+                ),
                 "past_messages": messages[:-1],
                 "user_query": original_user_query,
                 "text_sources": extra_info.data_points.text,
@@ -104,7 +125,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         chat_coroutine = cast(
-            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+            Union[
+                Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]
+            ],
             self.create_chat_completion(
                 self.chatgpt_deployment,
                 self.chatgpt_model,
@@ -127,10 +150,17 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         return (extra_info, chat_coroutine)
 
     async def run_search_approach(
-        self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
     ):
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in [
+            "vectors",
+            "hybrid",
+            None,
+        ]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
@@ -144,7 +174,8 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             raise ValueError("The most recent message content must be a string.")
 
         query_messages = self.prompt_manager.render_prompt(
-            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
+            self.query_rewrite_prompt,
+            {"user_query": original_user_query, "past_messages": messages[:-1]},
         )
         tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
 
@@ -190,7 +221,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         )
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        text_sources = self.get_sources_content(
+            results, use_semantic_captions, use_image_citation=False
+        )
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
@@ -250,7 +283,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+        text_sources = self.get_sources_content(
+            results, use_semantic_captions=False, use_image_citation=False
+        )
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
@@ -270,7 +305,9 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     [result.serialize_for_results() for result in results],
                     {
                         "query_plan": (
-                            [activity.as_dict() for activity in response.activity] if response.activity else None
+                            [activity.as_dict() for activity in response.activity]
+                            if response.activity
+                            else None
                         ),
                         "model": self.agent_model,
                         "deployment": self.agent_deployment,

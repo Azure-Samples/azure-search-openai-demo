@@ -39,7 +39,11 @@ class SearchInfo:
         self.azure_openai_endpoint = azure_openai_endpoint
 
     def create_search_client(self) -> SearchClient:
-        return SearchClient(endpoint=self.endpoint, index_name=self.index_name, credential=self.credential)
+        return SearchClient(
+            endpoint=self.endpoint,
+            index_name=self.index_name,
+            credential=self.credential,
+        )
 
     def create_search_index_client(self) -> SearchIndexClient:
         return SearchIndexClient(endpoint=self.endpoint, credential=self.credential)

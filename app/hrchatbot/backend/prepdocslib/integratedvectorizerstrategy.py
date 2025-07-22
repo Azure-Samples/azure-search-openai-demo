@@ -48,7 +48,6 @@ class IntegratedVectorizerStrategy(Strategy):
         use_acls: bool = False,
         category: Optional[str] = None,
     ):
-
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
         self.document_action = document_action
@@ -104,12 +103,21 @@ class IntegratedVectorizerStrategy(Strategy):
                     parent_key_field_name="parent_id",
                     source_context="/document/pages/*",
                     mappings=[
-                        InputFieldMappingEntry(name="content", source="/document/pages/*"),
-                        InputFieldMappingEntry(name="sourcepage", source="/document/metadata_storage_name"),
-                        InputFieldMappingEntry(name="sourcefile", source="/document/metadata_storage_name"),
-                        InputFieldMappingEntry(name="storageUrl", source="/document/metadata_storage_path"),
                         InputFieldMappingEntry(
-                            name=self.search_field_name_embedding, source="/document/pages/*/vector"
+                            name="content", source="/document/pages/*"
+                        ),
+                        InputFieldMappingEntry(
+                            name="sourcepage", source="/document/metadata_storage_name"
+                        ),
+                        InputFieldMappingEntry(
+                            name="sourcefile", source="/document/metadata_storage_name"
+                        ),
+                        InputFieldMappingEntry(
+                            name="storageUrl", source="/document/metadata_storage_path"
+                        ),
+                        InputFieldMappingEntry(
+                            name=self.search_field_name_embedding,
+                            source="/document/pages/*/vector",
                         ),
                     ],
                 ),
@@ -154,7 +162,9 @@ class IntegratedVectorizerStrategy(Strategy):
 
         await ds_client.create_or_update_data_source_connection(data_source_connection)
 
-        embedding_skillset = await self.create_embedding_skill(self.search_info.index_name)
+        embedding_skillset = await self.create_embedding_skill(
+            self.search_info.index_name
+        )
         await ds_client.create_or_update_skillset(embedding_skillset)
         await ds_client.close()
 

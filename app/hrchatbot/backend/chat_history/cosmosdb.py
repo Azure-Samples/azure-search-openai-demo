@@ -16,7 +16,9 @@ from config import (
 from decorators import authenticated
 from error import error_response
 
-chat_history_cosmosdb_bp = Blueprint("chat_history_cosmos", __name__, static_folder="static")
+chat_history_cosmosdb_bp = Blueprint(
+    "chat_history_cosmos", __name__, static_folder="static"
+)
 
 
 @chat_history_cosmosdb_bp.post("/chat_history")
@@ -70,7 +72,9 @@ async def post_chat_history(auth_claims: dict[str, Any]):
         batch_operations = [("upsert", (session_item,))] + [
             ("upsert", (message_pair_item,)) for message_pair_item in message_pair_items
         ]
-        await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
+        await container.execute_item_batch(
+            batch_operations=batch_operations, partition_key=[entra_oid, session_id]
+        )
         return jsonify({}), 201
     except Exception as error:
         return error_response(error, "/chat_history")
@@ -96,7 +100,10 @@ async def get_chat_history_sessions(auth_claims: dict[str, Any]):
 
         res = container.query_items(
             query="SELECT c.id, c.entra_oid, c.title, c.timestamp FROM c WHERE c.entra_oid = @entra_oid AND c.type = @type ORDER BY c.timestamp DESC",
-            parameters=[dict(name="@entra_oid", value=entra_oid), dict(name="@type", value="session")],
+            parameters=[
+                dict(name="@entra_oid", value=entra_oid),
+                dict(name="@type", value="session"),
+            ],
             partition_key=[entra_oid],
             max_item_count=count,
         )
@@ -123,7 +130,9 @@ async def get_chat_history_sessions(auth_claims: dict[str, Any]):
         except StopAsyncIteration:
             continuation_token = None
 
-        return jsonify({"sessions": sessions, "continuation_token": continuation_token}), 200
+        return jsonify(
+            {"sessions": sessions, "continuation_token": continuation_token}
+        ), 200
 
     except Exception as error:
         return error_response(error, "/chat_history/sessions")
@@ -146,7 +155,10 @@ async def get_chat_history_session(auth_claims: dict[str, Any], session_id: str)
     try:
         res = container.query_items(
             query="SELECT * FROM c WHERE c.session_id = @session_id AND c.type = @type",
-            parameters=[dict(name="@session_id", value=session_id), dict(name="@type", value="message_pair")],
+            parameters=[
+                dict(name="@session_id", value=session_id),
+                dict(name="@type", value="message_pair"),
+            ],
             partition_key=[entra_oid, session_id],
         )
 
@@ -196,7 +208,9 @@ async def delete_chat_history_session(auth_claims: dict[str, Any], session_id: s
                 ids_to_delete.append(item["id"])
 
         batch_operations = [("delete", (id,)) for id in ids_to_delete]
-        await container.execute_item_batch(batch_operations=batch_operations, partition_key=[entra_oid, session_id])
+        await container.execute_item_batch(
+            batch_operations=batch_operations, partition_key=[entra_oid, session_id]
+        )
         return await make_response("", 204)
     except Exception as error:
         return error_response(error, f"/chat_history/sessions/{session_id}")
@@ -209,27 +223,38 @@ async def setup_clients():
     AZURE_CHAT_HISTORY_DATABASE = os.getenv("AZURE_CHAT_HISTORY_DATABASE")
     AZURE_CHAT_HISTORY_CONTAINER = os.getenv("AZURE_CHAT_HISTORY_CONTAINER")
 
-    azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential] = current_app.config[
-        CONFIG_CREDENTIAL
-    ]
+    azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential] = (
+        current_app.config[CONFIG_CREDENTIAL]
+    )
 
     if USE_CHAT_HISTORY_COSMOS:
-        current_app.logger.info("USE_CHAT_HISTORY_COSMOS is true, setting up CosmosDB client")
+        current_app.logger.info(
+            "USE_CHAT_HISTORY_COSMOS is true, setting up CosmosDB client"
+        )
         if not AZURE_COSMOSDB_ACCOUNT:
-            raise ValueError("AZURE_COSMOSDB_ACCOUNT must be set when USE_CHAT_HISTORY_COSMOS is true")
+            raise ValueError(
+                "AZURE_COSMOSDB_ACCOUNT must be set when USE_CHAT_HISTORY_COSMOS is true"
+            )
         if not AZURE_CHAT_HISTORY_DATABASE:
-            raise ValueError("AZURE_CHAT_HISTORY_DATABASE must be set when USE_CHAT_HISTORY_COSMOS is true")
+            raise ValueError(
+                "AZURE_CHAT_HISTORY_DATABASE must be set when USE_CHAT_HISTORY_COSMOS is true"
+            )
         if not AZURE_CHAT_HISTORY_CONTAINER:
-            raise ValueError("AZURE_CHAT_HISTORY_CONTAINER must be set when USE_CHAT_HISTORY_COSMOS is true")
+            raise ValueError(
+                "AZURE_CHAT_HISTORY_CONTAINER must be set when USE_CHAT_HISTORY_COSMOS is true"
+            )
         cosmos_client = CosmosClient(
-            url=f"https://{AZURE_COSMOSDB_ACCOUNT}.documents.azure.com:443/", credential=azure_credential
+            url=f"https://{AZURE_COSMOSDB_ACCOUNT}.documents.azure.com:443/",
+            credential=azure_credential,
         )
         cosmos_db = cosmos_client.get_database_client(AZURE_CHAT_HISTORY_DATABASE)
         cosmos_container = cosmos_db.get_container_client(AZURE_CHAT_HISTORY_CONTAINER)
 
         current_app.config[CONFIG_COSMOS_HISTORY_CLIENT] = cosmos_client
         current_app.config[CONFIG_COSMOS_HISTORY_CONTAINER] = cosmos_container
-        current_app.config[CONFIG_COSMOS_HISTORY_VERSION] = os.environ["AZURE_CHAT_HISTORY_VERSION"]
+        current_app.config[CONFIG_COSMOS_HISTORY_VERSION] = os.environ[
+            "AZURE_CHAT_HISTORY_VERSION"
+        ]
 
 
 @chat_history_cosmosdb_bp.after_app_serving

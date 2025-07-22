@@ -11,7 +11,6 @@ logger = logging.getLogger("scripts")
 
 
 class MediaDescriber(ABC):
-
     async def describe_image(self, image_bytes) -> str:
         raise NotImplementedError  # pragma: no cover
 
@@ -43,8 +42,11 @@ class ContentUnderstandingDescriber:
         self.credential = credential
 
     async def poll_api(self, session, poll_url, headers):
-
-        @retry(stop=stop_after_attempt(60), wait=wait_fixed(2), retry=retry_if_exception_type(ValueError))
+        @retry(
+            stop=stop_after_attempt(60),
+            wait=wait_fixed(2),
+            retry=retry_if_exception_type(ValueError),
+        )
         async def poll():
             async with session.get(poll_url, headers=headers) as response:
                 response.raise_for_status()
@@ -60,15 +62,23 @@ class ContentUnderstandingDescriber:
     async def create_analyzer(self):
         logger.info("Creating analyzer '%s'...", self.analyzer_schema["analyzerId"])
 
-        token_provider = get_bearer_token_provider(self.credential, "https://cognitiveservices.azure.com/.default")
+        token_provider = get_bearer_token_provider(
+            self.credential, "https://cognitiveservices.azure.com/.default"
+        )
         token = await token_provider()
-        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        }
         params = {"api-version": self.CU_API_VERSION}
         analyzer_id = self.analyzer_schema["analyzerId"]
         cu_endpoint = f"{self.endpoint}/contentunderstanding/analyzers/{analyzer_id}"
         async with aiohttp.ClientSession() as session:
             async with session.put(
-                url=cu_endpoint, params=params, headers=headers, json=self.analyzer_schema
+                url=cu_endpoint,
+                params=params,
+                headers=headers,
+                json=self.analyzer_schema,
             ) as response:
                 if response.status == 409:
                     logger.info("Analyzer '%s' already exists.", analyzer_id)
@@ -86,7 +96,9 @@ class ContentUnderstandingDescriber:
     async def describe_image(self, image_bytes: bytes) -> str:
         logger.info("Sending image to Azure Content Understanding service...")
         async with aiohttp.ClientSession() as session:
-            token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
+            token = await self.credential.get_token(
+                "https://cognitiveservices.azure.com/.default"
+            )
             headers = {"Authorization": "Bearer " + token.token}
             params = {"api-version": self.CU_API_VERSION}
             analyzer_name = self.analyzer_schema["analyzerId"]

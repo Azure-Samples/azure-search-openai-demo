@@ -22,7 +22,9 @@ def authenticated_path(route_fn: Callable[[str, dict[str, Any]], Any]):
         authorized = False
         try:
             auth_claims = await auth_helper.get_auth_claims_if_enabled(request.headers)
-            authorized = await auth_helper.check_path_auth(path, auth_claims, search_client)
+            authorized = await auth_helper.check_path_auth(
+                path, auth_claims, search_client
+            )
         except AuthError:
             abort(403)
         except Exception as error:

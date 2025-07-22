@@ -29,9 +29,12 @@ async def parse_file(
     pages = [page async for page in processor.parser.parse(content=file.content)]
     logger.info("Splitting '%s' into sections", file.filename())
     if image_embeddings:
-        logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
+        logger.warning(
+            "Each page will be split into smaller chunks of text, but images will be of the entire page."
+        )
     sections = [
-        Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)
+        Section(split_page, content=file, category=category)
+        for split_page in processor.splitter.split_pages(pages)
     ]
     return sections
 
@@ -88,12 +91,16 @@ class FileStrategy(Strategy):
 
         if self.use_content_understanding:
             if self.content_understanding_endpoint is None:
-                raise ValueError("Content Understanding is enabled but no endpoint was provided")
+                raise ValueError(
+                    "Content Understanding is enabled but no endpoint was provided"
+                )
             if isinstance(self.search_info.credential, AzureKeyCredential):
                 raise ValueError(
                     "AzureKeyCredential is not supported for Content Understanding, use keyless auth instead"
                 )
-            cu_manager = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.search_info.credential)
+            cu_manager = ContentUnderstandingDescriber(
+                self.content_understanding_endpoint, self.search_info.credential
+            )
             await cu_manager.create_analyzer()
 
     async def run(self):
@@ -102,13 +109,21 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
+                    sections = await parse_file(
+                        file, self.file_processors, self.category, self.image_embeddings
+                    )
                     if sections:
                         blob_sas_uris = await self.blob_manager.upload_blob(file)
                         blob_image_embeddings: Optional[list[list[float]]] = None
                         if self.image_embeddings and blob_sas_uris:
-                            blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                        await self.search_manager.update_content(sections, blob_image_embeddings, url=file.url)
+                            blob_image_embeddings = (
+                                await self.image_embeddings.create_embeddings(
+                                    blob_sas_uris
+                                )
+                            )
+                        await self.search_manager.update_content(
+                            sections, blob_image_embeddings, url=file.url
+                        )
                 finally:
                     if file:
                         file.close()
@@ -152,7 +167,9 @@ class UploadUserFileStrategy:
 
     async def add_file(self, file: File):
         if self.image_embeddings:
-            logging.warning("Image embeddings are not currently supported for the user upload feature")
+            logging.warning(
+                "Image embeddings are not currently supported for the user upload feature"
+            )
         sections = await parse_file(file, self.file_processors)
         if sections:
             await self.search_manager.update_content(sections, url=file.url)

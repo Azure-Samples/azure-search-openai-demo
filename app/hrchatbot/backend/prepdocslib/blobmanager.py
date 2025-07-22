@@ -46,9 +46,14 @@ class BlobManager:
         self.user_delegation_key: Optional[UserDelegationKey] = None
 
     async def upload_blob(self, file: File) -> Optional[list[str]]:
-        async with BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential, max_single_put_size=4 * 1024 * 1024
-        ) as service_client, service_client.get_container_client(self.container) as container_client:
+        async with (
+            BlobServiceClient(
+                account_url=self.endpoint,
+                credential=self.credential,
+                max_single_put_size=4 * 1024 * 1024,
+            ) as service_client,
+            service_client.get_container_client(self.container) as container_client,
+        ):
             if not await container_client.exists():
                 await container_client.create_container()
 
@@ -57,14 +62,20 @@ class BlobManager:
                 with open(file.content.name, "rb") as reopened_file:
                     blob_name = BlobManager.blob_name_from_file_name(file.content.name)
                     logger.info("Uploading blob for whole file -> %s", blob_name)
-                    blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
+                    blob_client = await container_client.upload_blob(
+                        blob_name, reopened_file, overwrite=True
+                    )
                     file.url = blob_client.url
 
             if self.store_page_images:
                 if os.path.splitext(file.content.name)[1].lower() == ".pdf":
-                    return await self.upload_pdf_blob_images(service_client, container_client, file)
+                    return await self.upload_pdf_blob_images(
+                        service_client, container_client, file
+                    )
                 else:
-                    logger.info("File %s is not a PDF, skipping image upload", file.content.name)
+                    logger.info(
+                        "File %s is not a PDF, skipping image upload", file.content.name
+                    )
 
         return None
 
@@ -72,7 +83,10 @@ class BlobManager:
         return f"ResourceId=/subscriptions/{self.subscriptionId}/resourceGroups/{self.resourceGroup}/providers/Microsoft.Storage/storageAccounts/{self.account};"
 
     async def upload_pdf_blob_images(
-        self, service_client: BlobServiceClient, container_client: ContainerClient, file: File
+        self,
+        service_client: BlobServiceClient,
+        container_client: ContainerClient,
+        file: File,
     ) -> list[str]:
         with open(file.content.name, "rb") as reopened_file:
             reader = PdfReader(reopened_file)
@@ -87,9 +101,13 @@ class BlobManager:
             font = ImageFont.truetype("arial.ttf", 20)
         except OSError:
             try:
-                font = ImageFont.truetype("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20)
+                font = ImageFont.truetype(
+                    "/usr/share/fonts/truetype/freefont/FreeMono.ttf", 20
+                )
             except OSError:
-                logger.info("Unable to find arial.ttf or FreeMono.ttf, using default font")
+                logger.info(
+                    "Unable to find arial.ttf or FreeMono.ttf, using default font"
+                )
 
         for i in range(page_count):
             blob_name = BlobManager.blob_image_name_from_file_page(file.content.name, i)
@@ -102,7 +120,9 @@ class BlobManager:
 
             # Create a new image with additional space for text
             text_height = 40  # Height of the text area
-            new_img = Image.new("RGB", (original_img.width, original_img.height + text_height), "white")
+            new_img = Image.new(
+                "RGB", (original_img.width, original_img.height + text_height), "white"
+            )
 
             # Paste the original image onto the new image
             new_img.paste(original_img, (0, text_height))
@@ -120,9 +140,13 @@ class BlobManager:
             new_img.save(output, format="PNG")
             output.seek(0)
 
-            blob_client = await container_client.upload_blob(blob_name, output, overwrite=True)
+            blob_client = await container_client.upload_blob(
+                blob_name, output, overwrite=True
+            )
             if not self.user_delegation_key:
-                self.user_delegation_key = await service_client.get_user_delegation_key(start_time, expiry_time)
+                self.user_delegation_key = await service_client.get_user_delegation_key(
+                    start_time, expiry_time
+                )
 
             if blob_client.account_name is not None:
                 sas_token = generate_blob_sas(
@@ -139,9 +163,12 @@ class BlobManager:
         return sas_uris
 
     async def remove_blob(self, path: Optional[str] = None):
-        async with BlobServiceClient(
-            account_url=self.endpoint, credential=self.credential
-        ) as service_client, service_client.get_container_client(self.container) as container_client:
+        async with (
+            BlobServiceClient(
+                account_url=self.endpoint, credential=self.credential
+            ) as service_client,
+            service_client.get_container_client(self.container) as container_client,
+        ):
             if not await container_client.exists():
                 return
             if path is None:
@@ -149,13 +176,16 @@ class BlobManager:
                 blobs = container_client.list_blob_names()
             else:
                 prefix = os.path.splitext(os.path.basename(path))[0]
-                blobs = container_client.list_blob_names(name_starts_with=os.path.splitext(os.path.basename(prefix))[0])
+                blobs = container_client.list_blob_names(
+                    name_starts_with=os.path.splitext(os.path.basename(prefix))[0]
+                )
             async for blob_path in blobs:
                 # This still supports PDFs split into individual pages, but we could remove in future to simplify code
                 if (
                     prefix is not None
                     and (
-                        not re.match(rf"{prefix}-\d+\.pdf", blob_path) or not re.match(rf"{prefix}-\d+\.png", blob_path)
+                        not re.match(rf"{prefix}-\d+\.pdf", blob_path)
+                        or not re.match(rf"{prefix}-\d+\.png", blob_path)
                     )
                 ) or (path is not None and blob_path == os.path.basename(path)):
                     continue
@@ -165,13 +195,13 @@ class BlobManager:
     @classmethod
     def sourcepage_from_file_page(cls, filename, page=0) -> str:
         if os.path.splitext(filename)[1].lower() == ".pdf":
-            return f"{os.path.basename(filename)}#page={page+1}"
+            return f"{os.path.basename(filename)}#page={page + 1}"
         else:
             return os.path.basename(filename)
 
     @classmethod
     def blob_image_name_from_file_page(cls, filename, page=0) -> str:
-        return os.path.splitext(os.path.basename(filename))[0] + f"-{page+1}" + ".png"
+        return os.path.splitext(os.path.basename(filename))[0] + f"-{page + 1}" + ".png"
 
     @classmethod
     def blob_name_from_file_name(cls, filename) -> str:

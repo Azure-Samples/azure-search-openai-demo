@@ -36,7 +36,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         gpt4v_model: str,
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_deployment: Optional[
+            str
+        ],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
         embedding_field: str,
@@ -67,9 +69,15 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
-        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
-        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
-        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question_vision.prompty")
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt(
+            "chat_query_rewrite.prompty"
+        )
+        self.query_rewrite_tools = self.prompt_manager.load_tools(
+            "chat_query_rewrite_tools.json"
+        )
+        self.answer_prompt = self.prompt_manager.load_prompt(
+            "chat_answer_question_vision.prompty"
+        )
         # Currently disabled due to issues with rendering token usage in the UI
         self.include_token_usage = False
 
@@ -79,10 +87,17 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[
+        ExtraInfo,
+        Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+    ]:
         seed = overrides.get("seed", None)
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in [
+            "vectors",
+            "hybrid",
+            None,
+        ]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -92,8 +107,16 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         filter = self.build_filter(overrides, auth_claims)
 
         vector_fields = overrides.get("vector_fields", "textAndImageEmbeddings")
-        send_text_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
-        send_images_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
+        send_text_to_gptvision = overrides.get("gpt4v_input") in [
+            "textAndImages",
+            "texts",
+            None,
+        ]
+        send_images_to_gptvision = overrides.get("gpt4v_input") in [
+            "textAndImages",
+            "images",
+            None,
+        ]
 
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
@@ -101,20 +124,25 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
 
         # Use prompty to prepare the query prompt
         query_messages = self.prompt_manager.render_prompt(
-            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
+            self.query_rewrite_prompt,
+            {"user_query": original_user_query, "past_messages": messages[:-1]},
         )
         tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
-        chat_completion: ChatCompletion = await self.openai_client.chat.completions.create(
-            messages=query_messages,
-            # Azure OpenAI takes the deployment name as the model name
-            model=self.chatgpt_deployment if self.chatgpt_deployment else self.chatgpt_model,
-            temperature=0.0,  # Minimize creativity for search query generation
-            max_tokens=100,
-            n=1,
-            tools=tools,
-            seed=seed,
+        chat_completion: ChatCompletion = (
+            await self.openai_client.chat.completions.create(
+                messages=query_messages,
+                # Azure OpenAI takes the deployment name as the model name
+                model=self.chatgpt_deployment
+                if self.chatgpt_deployment
+                else self.chatgpt_model,
+                temperature=0.0,  # Minimize creativity for search query generation
+                max_tokens=100,
+                n=1,
+                tools=tools,
+                seed=seed,
+            )
         )
 
         query_text = self.get_search_query(chat_completion, original_user_query)
@@ -124,9 +152,15 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors = []
         if use_vector_search:
-            if vector_fields == "textEmbeddingOnly" or vector_fields == "textAndImageEmbeddings":
+            if (
+                vector_fields == "textEmbeddingOnly"
+                or vector_fields == "textAndImageEmbeddings"
+            ):
                 vectors.append(await self.compute_text_embedding(query_text))
-            if vector_fields == "imageEmbeddingOnly" or vector_fields == "textAndImageEmbeddings":
+            if (
+                vector_fields == "imageEmbeddingOnly"
+                or vector_fields == "textAndImageEmbeddings"
+            ):
                 vectors.append(await self.compute_image_embedding(query_text))
 
         results = await self.search(
@@ -147,7 +181,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         text_sources = []
         image_sources = []
         if send_text_to_gptvision:
-            text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
+            text_sources = self.get_sources_content(
+                results, use_semantic_captions, use_image_citation=True
+            )
         if send_images_to_gptvision:
             for result in results:
                 url = await fetch_image(self.blob_container_client, result)
@@ -158,7 +194,9 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {
-                "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
+                "include_follow_up_questions": bool(
+                    overrides.get("suggest_followup_questions")
+                ),
                 "past_messages": messages[:-1],
                 "user_query": original_user_query,
                 "text_sources": text_sources,
@@ -173,7 +211,10 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
                     "Prompt to generate search query",
                     query_messages,
                     (
-                        {"model": self.chatgpt_model, "deployment": self.chatgpt_deployment}
+                        {
+                            "model": self.chatgpt_model,
+                            "deployment": self.chatgpt_deployment,
+                        }
                         if self.chatgpt_deployment
                         else {"model": self.chatgpt_model}
                     ),
@@ -208,9 +249,13 @@ class ChatReadRetrieveReadVisionApproach(ChatApproach):
         )
 
         chat_coroutine = cast(
-            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+            Union[
+                Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]
+            ],
             self.openai_client.chat.completions.create(
-                model=self.gpt4v_deployment if self.gpt4v_deployment else self.gpt4v_model,
+                model=self.gpt4v_deployment
+                if self.gpt4v_deployment
+                else self.gpt4v_model,
                 messages=messages,
                 temperature=overrides.get("temperature", 0.3),
                 max_tokens=1024,

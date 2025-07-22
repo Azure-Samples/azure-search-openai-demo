@@ -18,11 +18,15 @@ class ImageURL(TypedDict, total=False):
     """Specifies the detail level of the image."""
 
 
-async def download_blob_as_base64(blob_container_client: ContainerClient, file_path: str) -> Optional[str]:
+async def download_blob_as_base64(
+    blob_container_client: ContainerClient, file_path: str
+) -> Optional[str]:
     base_name, _ = os.path.splitext(file_path)
     image_filename = base_name + ".png"
     try:
-        blob = await blob_container_client.get_blob_client(image_filename).download_blob()
+        blob = await blob_container_client.get_blob_client(
+            image_filename
+        ).download_blob()
         if not blob.properties:
             logging.warning(f"No blob exists for {image_filename}")
             return None
@@ -33,7 +37,9 @@ async def download_blob_as_base64(blob_container_client: ContainerClient, file_p
         return None
 
 
-async def fetch_image(blob_container_client: ContainerClient, result: Document) -> Optional[str]:
+async def fetch_image(
+    blob_container_client: ContainerClient, result: Document
+) -> Optional[str]:
     if result.sourcepage:
         img = await download_blob_as_base64(blob_container_client, result.sourcepage)
         return img

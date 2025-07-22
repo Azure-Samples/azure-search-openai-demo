@@ -18,13 +18,15 @@ from approaches.approach import (
 
 
 class ChatApproach(Approach, ABC):
-
     NO_RESPONSE = "0"
 
     @abstractmethod
     async def run_until_final_call(
         self, messages, overrides, auth_claims, should_stream
-    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[
+        ExtraInfo,
+        Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+    ]:
         pass
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
@@ -60,14 +62,20 @@ class ChatApproach(Approach, ABC):
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=False
         )
-        chat_completion_response: ChatCompletion = await cast(Awaitable[ChatCompletion], chat_coroutine)
+        chat_completion_response: ChatCompletion = await cast(
+            Awaitable[ChatCompletion], chat_coroutine
+        )
         content = chat_completion_response.choices[0].message.content
         role = chat_completion_response.choices[0].message.role
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
         # Assume last thought is for generating answer
-        if self.include_token_usage and extra_info.thoughts and chat_completion_response.usage:
+        if (
+            self.include_token_usage
+            and extra_info.thoughts
+            and chat_completion_response.usage
+        ):
             extra_info.thoughts[-1].update_token_usage(chat_completion_response.usage)
         chat_app_response = {
             "message": {"content": content, "role": role},
@@ -86,8 +94,14 @@ class ChatApproach(Approach, ABC):
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=True
         )
-        chat_coroutine = cast(Awaitable[AsyncStream[ChatCompletionChunk]], chat_coroutine)
-        yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+        chat_coroutine = cast(
+            Awaitable[AsyncStream[ChatCompletionChunk]], chat_coroutine
+        )
+        yield {
+            "delta": {"role": "assistant"},
+            "context": extra_info,
+            "session_state": session_state,
+        }
 
         followup_questions_started = False
         followup_content = ""
@@ -104,7 +118,9 @@ class ChatApproach(Approach, ABC):
                 }
                 # if event contains << and not >>, it is start of follow-up question, truncate
                 content = completion["delta"].get("content")
-                content = content or ""  # content may either not exist in delta, or explicitly be None
+                content = (
+                    content or ""
+                )  # content may either not exist in delta, or explicitly be None
                 if overrides.get("suggest_followup_questions") and "<<" in content:
                     followup_questions_started = True
                     earlier_content = content[: content.index("<<")]
@@ -119,15 +135,26 @@ class ChatApproach(Approach, ABC):
             else:
                 # Final chunk at end of streaming should contain usage
                 # https://cookbook.openai.com/examples/how_to_stream_completions#4-how-to-get-token-usage-data-for-streamed-chat-completion-response
-                if event_chunk.usage and extra_info.thoughts and self.include_token_usage:
+                if (
+                    event_chunk.usage
+                    and extra_info.thoughts
+                    and self.include_token_usage
+                ):
                     extra_info.thoughts[-1].update_token_usage(event_chunk.usage)
-                    yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+                    yield {
+                        "delta": {"role": "assistant"},
+                        "context": extra_info,
+                        "session_state": session_state,
+                    }
 
         if followup_content:
             _, followup_questions = self.extract_followup_questions(followup_content)
             yield {
                 "delta": {"role": "assistant"},
-                "context": {"context": extra_info, "followup_questions": followup_questions},
+                "context": {
+                    "context": extra_info,
+                    "followup_questions": followup_questions,
+                },
             }
 
     async def run(
@@ -138,7 +165,9 @@ class ChatApproach(Approach, ABC):
     ) -> dict[str, Any]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
-        return await self.run_without_streaming(messages, overrides, auth_claims, session_state)
+        return await self.run_without_streaming(
+            messages, overrides, auth_claims, session_state
+        )
 
     async def run_stream(
         self,

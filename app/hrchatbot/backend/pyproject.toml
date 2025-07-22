@@ -77,7 +77,7 @@ allow-direct-references = true
 target-version = "py311"
 lint.select = ["E", "F", "I", "UP"]
 lint.ignore = ["E501", "E701"] # line too long, multiple statements on one line
-src = ["app/backend", "scripts"]
+src = ["app/hrchatbot/backend", "scripts"]
 
 [tool.ruff.lint.isort]
 known-local-folder = ["scripts"]
@@ -87,7 +87,7 @@ line-length = 120
 
 [tool.pytest.ini_options]
 addopts = "-ra"
-pythonpath = ["app/backend", "scripts"]
+pythonpath = ["app/hrchatbot/backend", "scripts"]
 
 [tool.coverage.paths]
 source = ["scripts", "app"]

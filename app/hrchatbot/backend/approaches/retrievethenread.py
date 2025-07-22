@@ -31,7 +31,9 @@ class RetrieveThenReadApproach(Approach):
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_model: str,
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_deployment: Optional[
+            str
+        ],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_dimensions: int,
         embedding_field: str,
         sourcepage_field: str,
@@ -60,7 +62,9 @@ class RetrieveThenReadApproach(Approach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.prompt_manager = prompt_manager
-        self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
+        self.answer_prompt = self.prompt_manager.load_prompt(
+            "ask_answer_question.prompty"
+        )
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
 
@@ -72,15 +76,21 @@ class RetrieveThenReadApproach(Approach):
     ) -> dict[str, Any]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
-        use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
+        use_agentic_retrieval = (
+            True if overrides.get("use_agentic_retrieval") else False
+        )
         q = messages[-1]["content"]
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
 
         if use_agentic_retrieval:
-            extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
+            extra_info = await self.run_agentic_retrieval_approach(
+                messages, overrides, auth_claims
+            )
         else:
-            extra_info = await self.run_search_approach(messages, overrides, auth_claims)
+            extra_info = await self.run_search_approach(
+                messages, overrides, auth_claims
+            )
 
         # Process results
         messages = self.prompt_manager.render_prompt(
@@ -96,7 +106,9 @@ class RetrieveThenReadApproach(Approach):
                 self.chatgpt_model,
                 messages=messages,
                 overrides=overrides,
-                response_token_limit=self.get_response_token_limit(self.chatgpt_model, 1024),
+                response_token_limit=self.get_response_token_limit(
+                    self.chatgpt_model, 1024
+                ),
             ),
         )
         extra_info.thoughts.append(
@@ -119,10 +131,17 @@ class RetrieveThenReadApproach(Approach):
         }
 
     async def run_search_approach(
-        self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
     ):
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in [
+            "vectors",
+            "hybrid",
+            None,
+        ]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -151,7 +170,9 @@ class RetrieveThenReadApproach(Approach):
             use_query_rewriting,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        text_sources = self.get_sources_content(
+            results, use_semantic_captions, use_image_citation=False
+        )
 
         return ExtraInfo(
             DataPoints(text=text_sources),
@@ -201,7 +222,9 @@ class RetrieveThenReadApproach(Approach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+        text_sources = self.get_sources_content(
+            results, use_semantic_captions=False, use_image_citation=False
+        )
 
         extra_info = ExtraInfo(
             DataPoints(text=text_sources),
@@ -221,7 +244,9 @@ class RetrieveThenReadApproach(Approach):
                     [result.serialize_for_results() for result in results],
                     {
                         "query_plan": (
-                            [activity.as_dict() for activity in response.activity] if response.activity else None
+                            [activity.as_dict() for activity in response.activity]
+                            if response.activity
+                            else None
                         ),
                         "model": self.agent_model,
                         "deployment": self.agent_deployment,

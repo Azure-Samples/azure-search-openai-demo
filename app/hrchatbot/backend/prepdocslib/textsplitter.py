@@ -93,9 +93,13 @@ class SentenceTextSplitter(TextSplitter):
         self.max_section_length = DEFAULT_SECTION_LENGTH
         self.sentence_search_limit = 100
         self.max_tokens_per_section = max_tokens_per_section
-        self.section_overlap = int(self.max_section_length * DEFAULT_OVERLAP_PERCENT / 100)
+        self.section_overlap = int(
+            self.max_section_length * DEFAULT_OVERLAP_PERCENT / 100
+        )
 
-    def split_page_by_max_tokens(self, page_num: int, text: str) -> Generator[SplitPage, None, None]:
+    def split_page_by_max_tokens(
+        self, page_num: int, text: str
+    ) -> Generator[SplitPage, None, None]:
         """
         Recursively splits page by maximum number of tokens to better handle languages with higher token/word ratios.
         """
@@ -147,7 +151,9 @@ class SentenceTextSplitter(TextSplitter):
 
         length = len(all_text)
         if length <= self.max_section_length:
-            yield from self.split_page_by_max_tokens(page_num=find_page(0), text=all_text)
+            yield from self.split_page_by_max_tokens(
+                page_num=find_page(0), text=all_text
+            )
             return
 
         start = 0
@@ -162,13 +168,18 @@ class SentenceTextSplitter(TextSplitter):
                 # Try to find the end of the sentence
                 while (
                     end < length
-                    and (end - start - self.max_section_length) < self.sentence_search_limit
+                    and (end - start - self.max_section_length)
+                    < self.sentence_search_limit
                     and all_text[end] not in self.sentence_endings
                 ):
                     if all_text[end] in self.word_breaks:
                         last_word = end
                     end += 1
-                if end < length and all_text[end] not in self.sentence_endings and last_word > 0:
+                if (
+                    end < length
+                    and all_text[end] not in self.sentence_endings
+                    and last_word > 0
+                ):
                     end = last_word  # Fall back to at least keeping a whole word
             if end < length:
                 end += 1
@@ -177,7 +188,8 @@ class SentenceTextSplitter(TextSplitter):
             last_word = -1
             while (
                 start > 0
-                and start > end - self.max_section_length - 2 * self.sentence_search_limit
+                and start
+                > end - self.max_section_length - 2 * self.sentence_search_limit
                 and all_text[start] not in self.sentence_endings
             ):
                 if all_text[start] in self.word_breaks:
@@ -189,11 +201,14 @@ class SentenceTextSplitter(TextSplitter):
                 start += 1
 
             section_text = all_text[start:end]
-            yield from self.split_page_by_max_tokens(page_num=find_page(start), text=section_text)
+            yield from self.split_page_by_max_tokens(
+                page_num=find_page(start), text=section_text
+            )
 
             last_figure_start = section_text.rfind("<figure")
-            if last_figure_start > 2 * self.sentence_search_limit and last_figure_start > section_text.rfind(
-                "</figure"
+            if (
+                last_figure_start > 2 * self.sentence_search_limit
+                and last_figure_start > section_text.rfind("</figure")
             ):
                 # If the section ends with an unclosed figure, we need to start the next section with the figure.
                 start = min(end - self.section_overlap, start + last_figure_start)
@@ -204,7 +219,9 @@ class SentenceTextSplitter(TextSplitter):
                 start = end - self.section_overlap
 
         if start + self.section_overlap < end:
-            yield from self.split_page_by_max_tokens(page_num=find_page(start), text=all_text[start:end])
+            yield from self.split_page_by_max_tokens(
+                page_num=find_page(start), text=all_text[start:end]
+            )
 
 
 class SimpleTextSplitter(TextSplitter):
@@ -228,5 +245,8 @@ class SimpleTextSplitter(TextSplitter):
 
         # its too big, so we need to split it
         for i in range(0, length, self.max_object_length):
-            yield SplitPage(page_num=i // self.max_object_length, text=all_text[i : i + self.max_object_length])
+            yield SplitPage(
+                page_num=i // self.max_object_length,
+                text=all_text[i : i + self.max_object_length],
+            )
         return

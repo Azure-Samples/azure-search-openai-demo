@@ -63,13 +63,18 @@ class AuthenticationHelper:
         self.key_url = f"{self.authority}/discovery/v2.0/keys"
 
         if self.use_authentication:
-            field_names = [field.name for field in search_index.fields] if search_index else []
+            field_names = (
+                [field.name for field in search_index.fields] if search_index else []
+            )
             self.has_auth_fields = "oids" in field_names and "groups" in field_names
             self.require_access_control = require_access_control
             self.enable_global_documents = enable_global_documents
             self.enable_unauthenticated_access = enable_unauthenticated_access
             self.confidential_client = ConfidentialClientApplication(
-                server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
+                server_app_id,
+                authority=self.authority,
+                client_credential=server_app_secret,
+                token_cache=TokenCache(),
             )
         else:
             self.has_auth_fields = False
@@ -121,11 +126,15 @@ class AuthenticationHelper:
             parts = auth.split()
 
             if parts[0].lower() != "bearer":
-                raise AuthError(error="Authorization header must start with Bearer", status_code=401)
+                raise AuthError(
+                    error="Authorization header must start with Bearer", status_code=401
+                )
             elif len(parts) == 1:
                 raise AuthError(error="Token not found", status_code=401)
             elif len(parts) > 2:
-                raise AuthError(error="Authorization header must be Bearer token", status_code=401)
+                raise AuthError(
+                    error="Authorization header must be Bearer token", status_code=401
+                )
 
             token = parts[1]
             return token
@@ -138,23 +147,36 @@ class AuthenticationHelper:
 
         raise AuthError(error="Authorization header is expected", status_code=401)
 
-    def build_security_filters(self, overrides: dict[str, Any], auth_claims: dict[str, Any]):
+    def build_security_filters(
+        self, overrides: dict[str, Any], auth_claims: dict[str, Any]
+    ):
         # Build different permutations of the oid or groups security filter using OData filters
         # https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search
         # https://learn.microsoft.com/azure/search/search-query-odata-filter
-        use_oid_security_filter = self.require_access_control or overrides.get("use_oid_security_filter")
-        use_groups_security_filter = self.require_access_control or overrides.get("use_groups_security_filter")
+        use_oid_security_filter = self.require_access_control or overrides.get(
+            "use_oid_security_filter"
+        )
+        use_groups_security_filter = self.require_access_control or overrides.get(
+            "use_groups_security_filter"
+        )
 
-        if (use_oid_security_filter or use_groups_security_filter) and not self.has_auth_fields:
+        if (
+            use_oid_security_filter or use_groups_security_filter
+        ) and not self.has_auth_fields:
             raise AuthError(
-                error="oids and groups must be defined in the search index to use authentication", status_code=400
+                error="oids and groups must be defined in the search index to use authentication",
+                status_code=400,
             )
 
         oid_security_filter = (
-            "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid", "")) if use_oid_security_filter else None
+            "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid", ""))
+            if use_oid_security_filter
+            else None
         )
         groups_security_filter = (
-            "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims.get("groups", [])))
+            "groups/any(g:search.in(g, '{}'))".format(
+                ", ".join(auth_claims.get("groups", []))
+            )
             if use_groups_security_filter
             else None
         )
@@ -180,16 +202,22 @@ class AuthenticationHelper:
 
     @staticmethod
     async def list_groups(graph_resource_access_token: dict) -> list[str]:
-        headers = {"Authorization": "Bearer " + graph_resource_access_token["access_token"]}
+        headers = {
+            "Authorization": "Bearer " + graph_resource_access_token["access_token"]
+        }
         groups = []
         async with aiohttp.ClientSession(headers=headers) as session:
             resp_json = None
             resp_status = None
-            async with session.get(url="https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=id") as resp:
+            async with session.get(
+                url="https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=id"
+            ) as resp:
                 resp_json = await resp.json()
                 resp_status = resp.status
                 if resp_status != 200:
-                    raise AuthError(error=json.dumps(resp_json), status_code=resp_status)
+                    raise AuthError(
+                        error=json.dumps(resp_json), status_code=resp_status
+                    )
 
             while resp_status == 200:
                 value = resp_json["value"]
@@ -220,8 +248,11 @@ class AuthenticationHelper:
 
             # Use the on-behalf-of-flow to acquire another token for use with Microsoft Graph
             # See https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow for more information
-            graph_resource_access_token = self.confidential_client.acquire_token_on_behalf_of(
-                user_assertion=auth_token, scopes=["https://graph.microsoft.com/.default"]
+            graph_resource_access_token = (
+                self.confidential_client.acquire_token_on_behalf_of(
+                    user_assertion=auth_token,
+                    scopes=["https://graph.microsoft.com/.default"],
+                )
             )
             if "error" in graph_resource_access_token:
                 raise AuthError(error=str(graph_resource_access_token), status_code=401)
@@ -229,7 +260,10 @@ class AuthenticationHelper:
             # Read the claims from the response. The oid and groups claims are used for security filtering
             # https://learn.microsoft.com/entra/identity-platform/id-token-claims-reference
             id_token_claims = graph_resource_access_token["id_token_claims"]
-            auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups", [])}
+            auth_claims = {
+                "oid": id_token_claims["oid"],
+                "groups": id_token_claims.get("groups", []),
+            }
 
             # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
             # or a groups overage claim may have been emitted.
@@ -242,10 +276,14 @@ class AuthenticationHelper:
             )
             if missing_groups_claim or has_group_overage_claim:
                 # Read the user's groups from Microsoft Graph
-                auth_claims["groups"] = await AuthenticationHelper.list_groups(graph_resource_access_token)
+                auth_claims["groups"] = await AuthenticationHelper.list_groups(
+                    graph_resource_access_token
+                )
             return auth_claims
         except AuthError as e:
-            logging.exception("Exception getting authorization information - " + json.dumps(e.error))
+            logging.exception(
+                "Exception getting authorization information - " + json.dumps(e.error)
+            )
             if self.require_access_control and not self.enable_unauthenticated_access:
                 raise
             return {}
@@ -255,9 +293,13 @@ class AuthenticationHelper:
                 raise
             return {}
 
-    async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
+    async def check_path_auth(
+        self, path: str, auth_claims: dict[str, Any], search_client: SearchClient
+    ) -> bool:
         # Start with the standard security filter for all queries
-        security_filter = self.build_security_filters(overrides={}, auth_claims=auth_claims)
+        security_filter = self.build_security_filters(
+            overrides={}, auth_claims=auth_claims
+        )
         # If there was no security filter or no path, then the path is allowed
         if not security_filter or len(path) == 0:
             return True
@@ -290,14 +332,19 @@ class AuthenticationHelper:
             if key["kid"] == unverified_header["kid"]:
                 # Construct the RSA public key
                 public_numbers = rsa.RSAPublicNumbers(
-                    e=int.from_bytes(base64.urlsafe_b64decode(key["e"] + "=="), byteorder="big"),
-                    n=int.from_bytes(base64.urlsafe_b64decode(key["n"] + "=="), byteorder="big"),
+                    e=int.from_bytes(
+                        base64.urlsafe_b64decode(key["e"] + "=="), byteorder="big"
+                    ),
+                    n=int.from_bytes(
+                        base64.urlsafe_b64decode(key["n"] + "=="), byteorder="big"
+                    ),
                 )
                 public_key = public_numbers.public_key()
 
                 # Convert to PEM format
                 pem_key = public_key.public_bytes(
-                    encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PublicFormat.SubjectPublicKeyInfo,
                 )
                 rsa_key = pem_key
                 return rsa_key
@@ -319,7 +366,8 @@ class AuthenticationHelper:
                         resp_status = resp.status
                         if resp_status in [500, 502, 503, 504]:
                             raise AuthError(
-                                error=f"Failed to get keys info: {await resp.text()}", status_code=resp_status
+                                error=f"Failed to get keys info: {await resp.text()}",
+                                status_code=resp_status,
                             )
                         jwks = await resp.json()
 
@@ -340,7 +388,9 @@ class AuthenticationHelper:
             raise AuthError("Unable to find appropriate key", 401)
 
         if issuer not in self.valid_issuers:
-            raise AuthError(f"Issuer {issuer} not in {','.join(self.valid_issuers)}", 401)
+            raise AuthError(
+                f"Issuer {issuer} not in {','.join(self.valid_issuers)}", 401
+            )
 
         if audience not in self.valid_audiences:
             raise AuthError(
@@ -349,7 +399,9 @@ class AuthenticationHelper:
             )
 
         try:
-            jwt.decode(token, rsa_key, algorithms=["RS256"], audience=audience, issuer=issuer)
+            jwt.decode(
+                token, rsa_key, algorithms=["RS256"], audience=audience, issuer=issuer
+            )
         except jwt.ExpiredSignatureError as jwt_expired_exc:
             raise AuthError("Token is expired", 401) from jwt_expired_exc
         except (jwt.InvalidAudienceError, jwt.InvalidIssuerError) as jwt_claims_exc:

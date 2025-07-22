@@ -33,7 +33,9 @@ class LocalPdfParser(Parser):
     """
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        logger.info("Extracting text from '%s' using local PDF parser (pypdf)", content.name)
+        logger.info(
+            "Extracting text from '%s' using local PDF parser (pypdf)", content.name
+        )
 
         reader = PdfReader(content)
         pages = reader.pages
@@ -65,7 +67,9 @@ class DocumentAnalysisParser(Parser):
         self.content_understanding_endpoint = content_understanding_endpoint
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
-        logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
+        logger.info(
+            "Extracting text from '%s' using Azure Document Intelligence", content.name
+        )
 
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential
@@ -73,17 +77,23 @@ class DocumentAnalysisParser(Parser):
             file_analyzed = False
             if self.use_content_understanding:
                 if self.content_understanding_endpoint is None:
-                    raise ValueError("Content Understanding is enabled but no endpoint was provided")
+                    raise ValueError(
+                        "Content Understanding is enabled but no endpoint was provided"
+                    )
                 if isinstance(self.credential, AzureKeyCredential):
                     raise ValueError(
                         "AzureKeyCredential is not supported for Content Understanding, use keyless auth instead"
                     )
-                cu_describer = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.credential)
+                cu_describer = ContentUnderstandingDescriber(
+                    self.content_understanding_endpoint, self.credential
+                )
                 content_bytes = content.read()
                 try:
                     poller = await document_intelligence_client.begin_analyze_document(
                         model_id="prebuilt-layout",
-                        analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
+                        analyze_request=AnalyzeDocumentRequest(
+                            bytes_source=content_bytes
+                        ),
                         output=["figures"],
                         features=["ocrHighResolution"],
                         output_content_format="markdown",
@@ -104,7 +114,9 @@ class DocumentAnalysisParser(Parser):
 
             if file_analyzed is False:
                 poller = await document_intelligence_client.begin_analyze_document(
-                    model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
+                    model_id=self.model_id,
+                    analyze_request=content,
+                    content_type="application/octet-stream",
                 )
             analyze_result: AnalyzeResult = await poller.result()
 
@@ -113,14 +125,16 @@ class DocumentAnalysisParser(Parser):
                 tables_on_page = [
                     table
                     for table in (analyze_result.tables or [])
-                    if table.bounding_regions and table.bounding_regions[0].page_number == page.page_number
+                    if table.bounding_regions
+                    and table.bounding_regions[0].page_number == page.page_number
                 ]
                 figures_on_page = []
                 if self.use_content_understanding:
                     figures_on_page = [
                         figure
                         for figure in (analyze_result.figures or [])
-                        if figure.bounding_regions and figure.bounding_regions[0].page_number == page.page_number
+                        if figure.bounding_regions
+                        and figure.bounding_regions[0].page_number == page.page_number
                     ]
 
                 class ObjectType(Enum):
@@ -130,7 +144,9 @@ class DocumentAnalysisParser(Parser):
 
                 page_offset = page.spans[0].offset
                 page_length = page.spans[0].length
-                mask_chars: list[tuple[ObjectType, Union[int, None]]] = [(ObjectType.NONE, None)] * page_length
+                mask_chars: list[tuple[ObjectType, Union[int, None]]] = [
+                    (ObjectType.NONE, None)
+                ] * page_length
                 # mark all positions of the table spans in the page
                 for table_idx, table in enumerate(tables_on_page):
                     for span in table.spans:
@@ -159,16 +175,22 @@ class DocumentAnalysisParser(Parser):
                         if object_idx is None:
                             raise ValueError("Expected object_idx to be set")
                         if mask_char not in added_objects:
-                            page_text += DocumentAnalysisParser.table_to_html(tables_on_page[object_idx])
+                            page_text += DocumentAnalysisParser.table_to_html(
+                                tables_on_page[object_idx]
+                            )
                             added_objects.add(mask_char)
                     elif object_type == ObjectType.FIGURE:
                         if cu_describer is None:
-                            raise ValueError("cu_describer should not be None, unable to describe figure")
+                            raise ValueError(
+                                "cu_describer should not be None, unable to describe figure"
+                            )
                         if object_idx is None:
                             raise ValueError("Expected object_idx to be set")
                         if mask_char not in added_objects:
                             figure_html = await DocumentAnalysisParser.figure_to_html(
-                                doc_for_pymupdf, figures_on_page[object_idx], cu_describer
+                                doc_for_pymupdf,
+                                figures_on_page[object_idx],
+                                cu_describer,
                             )
                             page_text += figure_html
                             added_objects.add(mask_char)
@@ -181,14 +203,19 @@ class DocumentAnalysisParser(Parser):
 
     @staticmethod
     async def figure_to_html(
-        doc: pymupdf.Document, figure: DocumentFigure, cu_describer: ContentUnderstandingDescriber
+        doc: pymupdf.Document,
+        figure: DocumentFigure,
+        cu_describer: ContentUnderstandingDescriber,
     ) -> str:
         figure_title = (figure.caption and figure.caption.content) or ""
         logger.info("Describing figure %s with title '%s'", figure.id, figure_title)
         if not figure.bounding_regions:
             return f"<figure><figcaption>{figure_title}</figcaption></figure>"
         if len(figure.bounding_regions) > 1:
-            logger.warning("Figure %s has more than one bounding region, using the first one", figure.id)
+            logger.warning(
+                "Figure %s has more than one bounding region, using the first one",
+                figure.id,
+            )
         first_region = figure.bounding_regions[0]
         # To learn more about bounding regions, see https://aka.ms/bounding-region
         bounding_box = (
@@ -198,7 +225,9 @@ class DocumentAnalysisParser(Parser):
             first_region.polygon[5],  # y1 (bottom)
         )
         page_number = first_region["pageNumber"]  # 1-indexed
-        cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
+        cropped_img = DocumentAnalysisParser.crop_image_from_pdf_page(
+            doc, page_number - 1, bounding_box
+        )
         figure_description = await cu_describer.describe_image(cropped_img)
         return f"<figure><figcaption>{figure_title}<br>{figure_description}</figcaption></figure>"
 
@@ -206,13 +235,20 @@ class DocumentAnalysisParser(Parser):
     def table_to_html(table: DocumentTable):
         table_html = "<figure><table>"
         rows = [
-            sorted([cell for cell in table.cells if cell.row_index == i], key=lambda cell: cell.column_index)
+            sorted(
+                [cell for cell in table.cells if cell.row_index == i],
+                key=lambda cell: cell.column_index,
+            )
             for i in range(table.row_count)
         ]
         for row_cells in rows:
             table_html += "<tr>"
             for cell in row_cells:
-                tag = "th" if (cell.kind == "columnHeader" or cell.kind == "rowHeader") else "td"
+                tag = (
+                    "th"
+                    if (cell.kind == "columnHeader" or cell.kind == "rowHeader")
+                    else "td"
+                )
                 cell_spans = ""
                 if cell.column_span is not None and cell.column_span > 1:
                     cell_spans += f" colSpan={cell.column_span}"
@@ -225,7 +261,9 @@ class DocumentAnalysisParser(Parser):
 
     @staticmethod
     def crop_image_from_pdf_page(
-        doc: pymupdf.Document, page_number: int, bbox_inches: tuple[float, float, float, float]
+        doc: pymupdf.Document,
+        page_number: int,
+        bbox_inches: tuple[float, float, float, float],
     ) -> bytes:
         """
         Crops a region from a given page in a PDF and returns it as an image.
@@ -243,7 +281,9 @@ class DocumentAnalysisParser(Parser):
         # and use the matrix to convert between the 2 DPIs
         page_dpi = 300
         page = doc.load_page(page_number)
-        pix = page.get_pixmap(matrix=pymupdf.Matrix(page_dpi / bbox_dpi, page_dpi / bbox_dpi), clip=rect)
+        pix = page.get_pixmap(
+            matrix=pymupdf.Matrix(page_dpi / bbox_dpi, page_dpi / bbox_dpi), clip=rect
+        )
 
         img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
         bytes_io = io.BytesIO()

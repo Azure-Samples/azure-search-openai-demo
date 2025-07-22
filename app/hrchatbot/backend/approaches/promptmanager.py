@@ -6,7 +6,6 @@ from openai.types.chat import ChatCompletionMessageParam
 
 
 class PromptManager:
-
     def load_prompt(self, path: str):
         raise NotImplementedError
 
@@ -18,7 +17,6 @@ class PromptManager:
 
 
 class PromptyManager(PromptManager):
-
     PROMPTS_DIRECTORY = pathlib.Path(__file__).parent / "prompts"
 
     def load_prompt(self, path: str):

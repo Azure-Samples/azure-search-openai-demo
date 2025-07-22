@@ -23,7 +23,12 @@ class File:
     This file might contain access control information about which users or groups can access it
     """
 
-    def __init__(self, content: IO, acls: Optional[dict[str, list]] = None, url: Optional[str] = None):
+    def __init__(
+        self,
+        content: IO,
+        acls: Optional[dict[str, list]] = None,
+        url: Optional[str] = None,
+    ):
         self.content = content
         self.acls = acls or {}
         self.url = url
@@ -36,7 +41,9 @@ class File:
 
     def filename_to_id(self):
         filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.filename())
-        filename_hash = base64.b16encode(self.filename().encode("utf-8")).decode("ascii")
+        filename_hash = base64.b16encode(self.filename().encode("utf-8")).decode(
+            "ascii"
+        )
         acls_hash = ""
         if self.acls:
             acls_hash = base64.b16encode(str(self.acls).encode("utf-8")).decode("ascii")
@@ -130,21 +137,37 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         self.credential = credential
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
-        async with DataLakeServiceClient(
-            account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
-        ) as service_client, service_client.get_file_system_client(self.data_lake_filesystem) as filesystem_client:
-            async for path in filesystem_client.get_paths(path=self.data_lake_path, recursive=True):
+        async with (
+            DataLakeServiceClient(
+                account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net",
+                credential=self.credential,
+            ) as service_client,
+            service_client.get_file_system_client(
+                self.data_lake_filesystem
+            ) as filesystem_client,
+        ):
+            async for path in filesystem_client.get_paths(
+                path=self.data_lake_path, recursive=True
+            ):
                 if path.is_directory:
                     continue
 
                 yield path.name
 
     async def list(self) -> AsyncGenerator[File, None]:
-        async with DataLakeServiceClient(
-            account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net", credential=self.credential
-        ) as service_client, service_client.get_file_system_client(self.data_lake_filesystem) as filesystem_client:
+        async with (
+            DataLakeServiceClient(
+                account_url=f"https://{self.data_lake_storage_account}.dfs.core.windows.net",
+                credential=self.credential,
+            ) as service_client,
+            service_client.get_file_system_client(
+                self.data_lake_filesystem
+            ) as filesystem_client,
+        ):
             async for path in self.list_paths():
-                temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(path))
+                temp_file_path = os.path.join(
+                    tempfile.gettempdir(), os.path.basename(path)
+                )
                 try:
                     async with filesystem_client.get_file_client(path) as file_client:
                         with open(temp_file_path, "wb") as temp_file:
@@ -169,10 +192,18 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             acls["oids"].append(acl_parts[1])
                         if acl_parts[0] == "group" and "r" in acl_parts[2]:
                             acls["groups"].append(acl_parts[1])
-                    yield File(content=open(temp_file_path, "rb"), acls=acls, url=file_client.url)
+                    yield File(
+                        content=open(temp_file_path, "rb"),
+                        acls=acls,
+                        url=file_client.url,
+                    )
                 except Exception as data_lake_exception:
-                    logger.error(f"\tGot an error while reading {path} -> {data_lake_exception} --> skipping file")
+                    logger.error(
+                        f"\tGot an error while reading {path} -> {data_lake_exception} --> skipping file"
+                    )
                     try:
                         os.remove(temp_file_path)
                     except Exception as file_delete_exception:
-                        logger.error(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")
+                        logger.error(
+                            f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}"
+                        )

@@ -30,7 +30,9 @@ class RetrieveThenReadVisionApproach(Approach):
         auth_helper: AuthenticationHelper,
         gpt4v_deployment: Optional[str],
         gpt4v_model: str,
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_deployment: Optional[
+            str
+        ],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
         embedding_field: str,
@@ -59,7 +61,9 @@ class RetrieveThenReadVisionApproach(Approach):
         self.vision_endpoint = vision_endpoint
         self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
-        self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question_vision.prompty")
+        self.answer_prompt = self.prompt_manager.load_prompt(
+            "ask_answer_question_vision.prompty"
+        )
         # Currently disabled due to issues with rendering token usage in the UI
         self.include_token_usage = False
 
@@ -77,7 +81,11 @@ class RetrieveThenReadVisionApproach(Approach):
         seed = overrides.get("seed", None)
         auth_claims = context.get("auth_claims", {})
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in [
+            "vectors",
+            "hybrid",
+            None,
+        ]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -87,15 +95,29 @@ class RetrieveThenReadVisionApproach(Approach):
         filter = self.build_filter(overrides, auth_claims)
 
         vector_fields = overrides.get("vector_fields", "textAndImageEmbeddings")
-        send_text_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "texts", None]
-        send_images_to_gptvision = overrides.get("gpt4v_input") in ["textAndImages", "images", None]
+        send_text_to_gptvision = overrides.get("gpt4v_input") in [
+            "textAndImages",
+            "texts",
+            None,
+        ]
+        send_images_to_gptvision = overrides.get("gpt4v_input") in [
+            "textAndImages",
+            "images",
+            None,
+        ]
 
         # If retrieval mode includes vectors, compute an embedding for the query
         vectors = []
         if use_vector_search:
-            if vector_fields == "textEmbeddingOnly" or vector_fields == "textAndImageEmbeddings":
+            if (
+                vector_fields == "textEmbeddingOnly"
+                or vector_fields == "textAndImageEmbeddings"
+            ):
                 vectors.append(await self.compute_text_embedding(q))
-            if vector_fields == "imageEmbeddingOnly" or vector_fields == "textAndImageEmbeddings":
+            if (
+                vector_fields == "imageEmbeddingOnly"
+                or vector_fields == "textAndImageEmbeddings"
+            ):
                 vectors.append(await self.compute_image_embedding(q))
 
         results = await self.search(
@@ -116,7 +138,9 @@ class RetrieveThenReadVisionApproach(Approach):
         text_sources = []
         image_sources = []
         if send_text_to_gptvision:
-            text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=True)
+            text_sources = self.get_sources_content(
+                results, use_semantic_captions, use_image_citation=True
+            )
         if send_images_to_gptvision:
             for result in results:
                 url = await fetch_image(self.blob_container_client, result)
@@ -126,7 +150,11 @@ class RetrieveThenReadVisionApproach(Approach):
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {"user_query": q, "text_sources": text_sources, "image_sources": image_sources},
+            | {
+                "user_query": q,
+                "text_sources": text_sources,
+                "image_sources": image_sources,
+            },
         )
 
         chat_completion = await self.openai_client.chat.completions.create(
