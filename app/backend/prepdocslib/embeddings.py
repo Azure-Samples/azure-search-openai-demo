@@ -267,7 +267,7 @@ class ImageEmbeddings:
             ) as response:
                 json = await response.json()
                 return json["vector"]
-        raise ValueError("Failed to get image embedding after multiple retries.")
+        raise ValueError("Failed to get text embedding after multiple retries.")
 
     def before_retry_sleep(self, retry_state):
         logger.info("Rate limited on the Vision embeddings API, sleeping before retrying...")
