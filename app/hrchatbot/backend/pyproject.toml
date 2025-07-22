@@ -1,0 +1,109 @@
+[project]
+name = "HR-Chatbot"
+version = "0.1.0"
+description = "HR Chatbot"
+readme = "README.md"
+requires-python = ">=3.11.8"
+dependencies = [
+    "azure-identity",
+    "quart",
+    "quart-cors",
+    "openai>=1.3.7",
+    "tiktoken",
+    "tenacity",
+    "azure-ai-documentintelligence==1.0.0b4",
+    "azure-cognitiveservices-speech",
+    "azure-cosmos",
+    "azure-search-documents==11.6.0b12",
+    "azure-storage-blob",
+    "azure-storage-file-datalake",
+    "uvicorn",
+    "aiohttp",
+    "azure-monitor-opentelemetry",
+    "opentelemetry-instrumentation-asgi",
+    "opentelemetry-instrumentation-httpx",
+    "opentelemetry-instrumentation-aiohttp-client",
+    "opentelemetry-instrumentation-openai",
+    "msal",
+    "cryptography",
+    "PyJWT",
+    "Pillow",
+    "types-Pillow",
+    "pypdf",
+    "PyMuPDF",
+    "beautifulsoup4",
+    "types-beautifulsoup4",
+    "msgraph-sdk",
+    "python-dotenv",
+    "prompty",
+    "rich",
+    "typing-extensions",
+    "gunicorn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "black",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-snapshot",
+    "coverage",
+    "playwright",
+    "pytest-cov",
+    "pytest-playwright",
+    "pre-commit",
+    "mypy==1.14.1",
+]
+
+evals = [
+    "dotenv-azd==0.3.0",
+    "ragas==0.2.13",
+    "rapidfuzz==3.12.1",
+    "langchain==0.3.17",
+    "evaltools @ git+https://github.com/mattgotteiner/ai-rag-chat-evaluator@patch-1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.ruff]
+target-version = "py311"
+lint.select = ["E", "F", "I", "UP"]
+lint.ignore = ["E501", "E701"] # line too long, multiple statements on one line
+src = ["app/backend", "scripts"]
+
+[tool.ruff.lint.isort]
+known-local-folder = ["scripts"]
+
+[tool.black]
+line-length = 120
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+pythonpath = ["app/backend", "scripts"]
+
+[tool.coverage.paths]
+source = ["scripts", "app"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.mypy]
+check_untyped_defs = true
+python_version = "3.11"
+
+[[tool.mypy.overrides]]
+module = [
+    "msal.*",
+    "msgraph.*",
+    "kiota_abstractions.*",
+    "kiota.*",
+    "azure.cognitiveservices.*",
+    "azure.cognitiveservices.speech.*",
+    "pymupdf.*",
+]
+ignore_missing_imports = true

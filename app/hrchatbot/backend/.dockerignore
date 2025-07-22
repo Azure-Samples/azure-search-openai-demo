@@ -1,0 +1,34 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+.env
+.venv
+*.egg-info/
+.pytest_cache/
+.coverage
+.mypy_cache/
+.ruff_cache/
+
+# Development files
+*.md
+.vscode/
+.idea/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# UV cache (not needed in container)
+.uv-cache/
+
+# OS
+.DS_Store
+Thumbs.db
