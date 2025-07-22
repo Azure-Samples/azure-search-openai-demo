@@ -6,15 +6,15 @@ from azure.cosmos.aio import ContainerProxy, CosmosClient
 from azure.identity.aio import AzureDeveloperCliCredential, ManagedIdentityCredential
 from quart import Blueprint, current_app, jsonify, make_response, request
 
-from config import (
+from hrchatbot.config import (
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
     CONFIG_COSMOS_HISTORY_CLIENT,
     CONFIG_COSMOS_HISTORY_CONTAINER,
     CONFIG_COSMOS_HISTORY_VERSION,
     CONFIG_CREDENTIAL,
 )
-from decorators import authenticated
-from error import error_response
+from hrchatbot.decorators import authenticated
+from hrchatbot.error import error_response
 
 chat_history_cosmosdb_bp = Blueprint(
     "chat_history_cosmos", __name__, static_folder="static"

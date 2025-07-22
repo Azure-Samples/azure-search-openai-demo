@@ -50,14 +50,11 @@ from quart import (
 )
 from quart_cors import cors
 
-from approaches.approach import Approach
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.chatreadretrievereadvision import ChatReadRetrieveReadVisionApproach
-from approaches.promptmanager import PromptyManager
-from approaches.retrievethenread import RetrieveThenReadApproach
-from approaches.retrievethenreadvision import RetrieveThenReadVisionApproach
-from chat_history.cosmosdb import chat_history_cosmosdb_bp
-from config import (
+from hrchatbot.approaches.approach import Approach
+from hrchatbot.approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from hrchatbot.approaches.promptmanager import PromptyManager
+from hrchatbot.chat_history.cosmosdb import chat_history_cosmosdb_bp
+from hrchatbot.config import (
     CONFIG_AGENT_CLIENT,
     CONFIG_AGENTIC_RETRIEVAL_ENABLED,
     CONFIG_ASK_APPROACH,
@@ -90,18 +87,18 @@ from config import (
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
 )
-from core.authentication import AuthenticationHelper
-from core.sessionhelper import create_session_id
-from decorators import authenticated, authenticated_path
-from error import error_dict, error_response
-from prepdocs import (
+from hrchatbot.core.authentication import AuthenticationHelper
+from hrchatbot.core.sessionhelper import create_session_id
+from hrchatbot.decorators import authenticated, authenticated_path
+from hrchatbot.error import error_dict, error_response
+from hrchatbot.prepdocs import (
     clean_key_if_exists,
     setup_embeddings_service,
     setup_file_processors,
     setup_search_info,
 )
-from prepdocslib.filestrategy import UploadUserFileStrategy
-from prepdocslib.listfilestrategy import File
+from hrchatbot.prepdocslib.filestrategy import UploadUserFileStrategy
+from hrchatbot.prepdocslib.listfilestrategy import File
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -828,29 +825,6 @@ async def setup_clients():
 
     prompt_manager = PromptyManager()
 
-    # Set up the two default RAG approaches for /ask and /chat
-    # RetrieveThenReadApproach is used by /ask for single-turn Q&A
-    current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
-        search_client=search_client,
-        search_index_name=AZURE_SEARCH_INDEX,
-        agent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
-        agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
-        agent_client=agent_client,
-        openai_client=openai_client,
-        auth_helper=auth_helper,
-        chatgpt_model=OPENAI_CHATGPT_MODEL,
-        chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-        embedding_model=OPENAI_EMB_MODEL,
-        embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-        embedding_dimensions=OPENAI_EMB_DIMENSIONS,
-        embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
-        sourcepage_field=KB_FIELDS_SOURCEPAGE,
-        content_field=KB_FIELDS_CONTENT,
-        query_language=AZURE_SEARCH_QUERY_LANGUAGE,
-        query_speller=AZURE_SEARCH_QUERY_SPELLER,
-        prompt_manager=prompt_manager,
-        reasoning_effort=OPENAI_REASONING_EFFORT,
-    )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
@@ -896,50 +870,6 @@ async def setup_clients():
 
         token_provider = get_bearer_token_provider(
             azure_credential, "https://cognitiveservices.azure.com/.default"
-        )
-
-        current_app.config[CONFIG_ASK_VISION_APPROACH] = RetrieveThenReadVisionApproach(
-            search_client=search_client,
-            openai_client=openai_client,
-            blob_container_client=blob_container_client,
-            auth_helper=auth_helper,
-            vision_endpoint=AZURE_VISION_ENDPOINT,
-            vision_token_provider=token_provider,
-            gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
-            gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
-            embedding_model=OPENAI_EMB_MODEL,
-            embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-            embedding_dimensions=OPENAI_EMB_DIMENSIONS,
-            embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
-            sourcepage_field=KB_FIELDS_SOURCEPAGE,
-            content_field=KB_FIELDS_CONTENT,
-            query_language=AZURE_SEARCH_QUERY_LANGUAGE,
-            query_speller=AZURE_SEARCH_QUERY_SPELLER,
-            prompt_manager=prompt_manager,
-        )
-
-        current_app.config[CONFIG_CHAT_VISION_APPROACH] = (
-            ChatReadRetrieveReadVisionApproach(
-                search_client=search_client,
-                openai_client=openai_client,
-                blob_container_client=blob_container_client,
-                auth_helper=auth_helper,
-                vision_endpoint=AZURE_VISION_ENDPOINT,
-                vision_token_provider=token_provider,
-                chatgpt_model=OPENAI_CHATGPT_MODEL,
-                chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
-                gpt4v_deployment=AZURE_OPENAI_GPT4V_DEPLOYMENT,
-                gpt4v_model=AZURE_OPENAI_GPT4V_MODEL,
-                embedding_model=OPENAI_EMB_MODEL,
-                embedding_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-                embedding_dimensions=OPENAI_EMB_DIMENSIONS,
-                embedding_field=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
-                sourcepage_field=KB_FIELDS_SOURCEPAGE,
-                content_field=KB_FIELDS_CONTENT,
-                query_language=AZURE_SEARCH_QUERY_LANGUAGE,
-                query_speller=AZURE_SEARCH_QUERY_SPELLER,
-                prompt_manager=prompt_manager,
-            )
         )
 
 

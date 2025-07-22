@@ -4,11 +4,10 @@
 # so that the script generates virtual environments always in the same path.
 cd "${0%/*}" || exit 1
 
-cd ../
 echo 'Setting up backend with uv sync'
 echo ""
 
-cd app/hrchatbot/backend
+cd backend
 uv sync
 out=$?
 if [ $out -ne 0 ]; then
@@ -47,7 +46,7 @@ cd ../backend
 
 port=50505
 host=localhost
-uv run quart --app main:app run --port "$port" --host "$host" --reload
+uv run quart --app hrchatbot.main:app run --port "$port" --host "$host" --reload
 out=$?
 if [ $out -ne 0 ]; then
     echo "Failed to start backend"

@@ -22,7 +22,7 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host 'Setting up backend with uv sync'
 Write-Host ""
 
-Set-Location ./hrchatbot/backend
+Set-Location ./backend
 uv sync
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to restore backend python packages"
@@ -55,7 +55,7 @@ Set-Location ../backend
 
 $port = 50505
 $hostname = "localhost"
-uv run quart --app main:app run --port $port --host $hostname --reload
+uv run quart --app hrchatbot.main:app run --port $port --host $hostname --reload
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Failed to start backend"

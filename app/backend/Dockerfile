@@ -30,9 +30,10 @@ WORKDIR /app
 # Copy application code
 COPY . .
 
-# Ensure we use the venv
+# Ensure we use the venv and set Python path
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app:$PYTHONPATH"
 
 # Run the application
 EXPOSE 8000
-CMD ["python", "-m", "gunicorn", "-b", "0.0.0.0:8000", "main:app"]
+CMD ["python", "-m", "gunicorn", "-c", "gunicorn.conf.py", "hrchatbot.main:app"]

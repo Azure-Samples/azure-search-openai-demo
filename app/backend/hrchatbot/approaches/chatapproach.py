@@ -11,7 +11,7 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
 )
 
-from approaches.approach import (
+from hrchatbot.approaches.approach import (
     Approach,
     ExtraInfo,
 )

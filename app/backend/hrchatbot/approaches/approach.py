@@ -33,8 +33,8 @@ from openai.types.chat import (
     ChatCompletionToolParam,
 )
 
-from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
+from hrchatbot.approaches.promptmanager import PromptManager
+from hrchatbot.core.authentication import AuthenticationHelper
 
 
 @dataclass

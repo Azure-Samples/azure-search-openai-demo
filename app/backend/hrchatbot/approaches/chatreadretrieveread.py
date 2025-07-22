@@ -12,10 +12,10 @@ from openai.types.chat import (
     ChatCompletionToolParam,
 )
 
-from approaches.approach import DataPoints, ExtraInfo, ThoughtStep
-from approaches.chatapproach import ChatApproach
-from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
+from hrchatbot.approaches.approach import DataPoints, ExtraInfo, ThoughtStep
+from hrchatbot.approaches.chatapproach import ChatApproach
+from hrchatbot.approaches.promptmanager import PromptManager
+from hrchatbot.core.authentication import AuthenticationHelper
 
 
 class ChatReadRetrieveReadApproach(ChatApproach):

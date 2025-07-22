@@ -9,31 +9,31 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
 from rich.logging import RichHandler
 
-from load_azd_env import load_azd_env
-from prepdocslib.blobmanager import BlobManager
-from prepdocslib.csvparser import CsvParser
-from prepdocslib.embeddings import (
+from hrchatbot.load_azd_env import load_azd_env
+from hrchatbot.prepdocslib.blobmanager import BlobManager
+from hrchatbot.prepdocslib.csvparser import CsvParser
+from hrchatbot.prepdocslib.embeddings import (
     AzureOpenAIEmbeddingService,
     ImageEmbeddings,
     OpenAIEmbeddingService,
 )
-from prepdocslib.fileprocessor import FileProcessor
-from prepdocslib.filestrategy import FileStrategy
-from prepdocslib.htmlparser import LocalHTMLParser
-from prepdocslib.integratedvectorizerstrategy import (
+from hrchatbot.prepdocslib.fileprocessor import FileProcessor
+from hrchatbot.prepdocslib.filestrategy import FileStrategy
+from hrchatbot.prepdocslib.htmlparser import LocalHTMLParser
+from hrchatbot.prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
-from prepdocslib.jsonparser import JsonParser
-from prepdocslib.listfilestrategy import (
+from hrchatbot.prepdocslib.jsonparser import JsonParser
+from hrchatbot.prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
 )
-from prepdocslib.parser import Parser
-from prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
-from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
-from prepdocslib.textparser import TextParser
-from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
+from hrchatbot.prepdocslib.parser import Parser
+from hrchatbot.prepdocslib.pdfparser import DocumentAnalysisParser, LocalPdfParser
+from hrchatbot.prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
+from hrchatbot.prepdocslib.textparser import TextParser
+from hrchatbot.prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 logger = logging.getLogger("scripts")
 
