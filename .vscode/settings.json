@@ -30,5 +30,17 @@
         "tests"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "remote.portsAttributes": {
+        "8000": {
+            "onAutoForward": "openBrowser",
+            "visibility": "public",
+            "protocol": "http"
+        },
+        "50505": {
+            "onAutoForward": "openBrowser",
+            "visibility": "public",
+            "protocol": "http"
+        }
+    }
 }

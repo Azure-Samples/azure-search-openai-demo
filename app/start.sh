@@ -48,8 +48,8 @@ echo ""
 
 cd ../backend
 
-port=50505
-host=localhost
+port=8000
+host=0.0.0.0
 ../../.venv/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
 out=$?
 if [ $out -ne 0 ]; then
