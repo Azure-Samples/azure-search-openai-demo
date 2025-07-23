@@ -20,6 +20,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import (
     AzureDeveloperCliCredential,
     ManagedIdentityCredential,
+    ClientSecretCredential,
     get_bearer_token_provider,
 )
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -1061,30 +1062,21 @@ async def setup_clients():
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
     RUNNING_ON_AZURE = os.getenv("WEBSITE_HOSTNAME") is not None or os.getenv("RUNNING_IN_PRODUCTION") is not None
 
-    # Use the current user identity for keyless authentication to Azure services.
-    # This assumes you use 'azd auth login' locally, and managed identity when deployed on Azure.
-    # The managed identity is setup in the infra/ folder.
-    azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential]
-    if RUNNING_ON_AZURE:
-        current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
-        if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
-            # ManagedIdentityCredential should use AZURE_CLIENT_ID if set in env, but its not working for some reason,
-            # so we explicitly pass it in as the client ID here. This is necessary for user-assigned managed identities.
-            current_app.logger.info(
-                "Setting up Azure credential using ManagedIdentityCredential with client_id %s", AZURE_CLIENT_ID
-            )
-            azure_credential = ManagedIdentityCredential(client_id=AZURE_CLIENT_ID)
-        else:
-            current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
-            azure_credential = ManagedIdentityCredential()
-    elif AZURE_TENANT_ID:
-        current_app.logger.info(
-            "Setting up Azure credential using AzureDeveloperCliCredential with tenant_id %s", AZURE_TENANT_ID
-        )
-        azure_credential = AzureDeveloperCliCredential(tenant_id=AZURE_TENANT_ID, process_timeout=60)
-    else:
-        current_app.logger.info("Setting up Azure credential using AzureDeveloperCliCredential for home tenant")
-        azure_credential = AzureDeveloperCliCredential(process_timeout=60)
+    # Use our custom credential provider for robust authentication
+    # This automatically selects ClientSecretCredential for local dev or ManagedIdentity for Azure
+    from core.azure_credential import get_azure_credential_async, validate_azure_credentials
+    
+    # Validar configuración para debugging
+    current_app.logger.info("🔍 Iniciando validación de credenciales de Azure...")
+    validate_azure_credentials()
+    
+    # Obtener la credencial correcta para el entorno
+    try:
+        azure_credential = get_azure_credential_async()
+        current_app.logger.info(f"✅ Credencial configurada: {type(azure_credential).__name__}")
+    except Exception as e:
+        current_app.logger.error(f"💥 Error configurando credencial de Azure: {str(e)}")
+        raise
 
     # Set the Azure credential in the app config for use in other parts of the app
     current_app.config[CONFIG_CREDENTIAL] = azure_credential

@@ -292,7 +292,7 @@ param useLocalHtmlParser bool = false
 param useAiProject bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
-var resourceToken = toLower(uniqueString(subscription().id, environmentName))
+var resourceToken = toLower(uniqueString(subscription().id, location, environmentName))
 var tags = { 'azd-env-name': environmentName }
 
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
@@ -552,6 +552,21 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
   }
 }
 
+// Assign AcrPull role to the user-assigned managed identity for Container Registry access
+module acrPullRoleAssignment 'core/security/role.bicep' = if (deploymentTarget == 'containerapps') {
+  name: 'acr-pull-role-assignment'
+  scope: resourceGroup
+  dependsOn: [
+    containerApps
+    acaIdentity
+  ]
+  params: {
+    principalId: acaIdentity.outputs.principalId
+    roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d' // AcrPull role
+    principalType: 'ServicePrincipal'
+  }
+}
+
 // Container Apps for the web application (Python Quart app with JS frontend)
 module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget == 'containerapps') {
   name: 'aca-web'
@@ -569,6 +584,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     containerRegistryName: (deploymentTarget == 'containerapps') ? containerApps.outputs.registryName : ''
     containerAppsEnvironmentName: (deploymentTarget == 'containerapps') ? containerApps.outputs.environmentName : ''
     identityType: 'UserAssigned'
+    imageName: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
     tags: union(tags, { 'azd-service-name': 'backend' })
     targetPort: 8000
     containerCpuCoreCount: '1.0'
@@ -1099,19 +1115,19 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   }
 }
 
-module storageRoleBackend 'core/security/role.bicep' = {
-  scope: storageResourceGroup
-  name: 'storage-role-backend'
-  params: {
-    principalId: (deploymentTarget == 'appservice')
-      ? backend.outputs.identityPrincipalId
-      : acaBackend.outputs.identityPrincipalId
-    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
-    principalType: 'ServicePrincipal'
-  }
-}
+// module storageRoleBackend 'core/security/role.bicep' = {
+//   scope: storageResourceGroup
+//   name: 'storage-role-backend'
+//   params: {
+//     principalId: (deploymentTarget == 'appservice')
+//       ? backend.outputs.identityPrincipalId
+//       : acaBackend.outputs.identityPrincipalId
+//     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+//     principalType: 'ServicePrincipal'
+//   }
+// }
 
-module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
+module storageOwnerRoleBackend 'core/security/role.bicep' = if (false && useUserUpload) {
   scope: storageResourceGroup
   name: 'storage-owner-role-backend'
   params: {
@@ -1135,33 +1151,33 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
 
 // Used to issue search queries
 // https://learn.microsoft.com/azure/search/search-security-rbac
-module searchRoleBackend 'core/security/role.bicep' = {
-  scope: searchServiceResourceGroup
-  name: 'search-role-backend'
-  params: {
-    principalId: (deploymentTarget == 'appservice')
-      ? backend.outputs.identityPrincipalId
-      : acaBackend.outputs.identityPrincipalId
-    roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
-    principalType: 'ServicePrincipal'
-  }
-}
+// module searchRoleBackend 'core/security/role.bicep' = {
+//   scope: searchServiceResourceGroup
+//   name: 'search-role-backend'
+//   params: {
+//     principalId: (deploymentTarget == 'appservice')
+//       ? backend.outputs.identityPrincipalId
+//       : acaBackend.outputs.identityPrincipalId
+//     roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
+//     principalType: 'ServicePrincipal'
+//   }
+// }
 
-module speechRoleBackend 'core/security/role.bicep' = {
-  scope: speechResourceGroup
-  name: 'speech-role-backend'
-  params: {
-    principalId: (deploymentTarget == 'appservice')
-      ? backend.outputs.identityPrincipalId
-      : acaBackend.outputs.identityPrincipalId
-    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
-    principalType: 'ServicePrincipal'
-  }
-}
+// module speechRoleBackend 'core/security/role.bicep' = {
+//   scope: speechResourceGroup
+//   name: 'speech-role-backend'
+//   params: {
+//     principalId: (deploymentTarget == 'appservice')
+//       ? backend.outputs.identityPrincipalId
+//       : acaBackend.outputs.identityPrincipalId
+//     roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
+//     principalType: 'ServicePrincipal'
+//   }
+// }
 
 // RBAC for Cosmos DB
 // https://learn.microsoft.com/azure/cosmos-db/nosql/security/how-to-grant-data-plane-role-based-access
-module cosmosDbRoleBackend 'core/security/documentdb-sql-role.bicep' = if (useAuthentication && useChatHistoryCosmos) {
+module cosmosDbRoleBackend 'core/security/documentdb-sql-role.bicep' = if (false && useAuthentication && useChatHistoryCosmos) {
   scope: cosmosDbResourceGroup
   name: 'cosmosdb-role-backend'
   params: {
@@ -1370,6 +1386,7 @@ output AZURE_AI_PROJECT string = useAiProject ? ai.outputs.projectName : ''
 output AZURE_USE_AUTHENTICATION bool = useAuthentication
 
 output BACKEND_URI string = deploymentTarget == 'appservice' ? backend.outputs.uri : acaBackend.outputs.uri
+output FRONTEND_URI string = deploymentTarget == 'containerapps' ? 'https://${acaBackend.outputs.name}.${acaBackend.outputs.defaultDomain}' : backend.outputs.uri
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = deploymentTarget == 'containerapps'
   ? containerApps.outputs.registryLoginServer
   : ''
