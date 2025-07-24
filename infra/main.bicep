@@ -1155,6 +1155,8 @@ module cosmosDbRoleBackend 'core/security/documentdb-sql-role.bicep' = if (useAu
   }
 }
 
+
+
 module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
   name: 'networks'
   scope: resourceGroup
@@ -1162,7 +1164,6 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     location: location
     tags: tags
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
-    usePrivateEndpoint: usePrivateEndpoint
     deployVpnGateway: useVpnGateway
     deploymentTarget: deploymentTarget
     // Need to check deploymentTarget due to https://github.com/Azure/bicep/issues/3990
@@ -1209,11 +1210,6 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
         resourceIds: [searchService.outputs.id]
       }
       {
-        groupId: 'managedEnvironments'
-        dnsZoneName: 'privatelink.${location}.azurecontainerapps.io'
-        resourceIds: [containerApps.outputs.environmentId]
-      }
-      {
         groupId: 'sql'
         dnsZoneName: 'privatelink.documents.azure.com'
         resourceIds: (useAuthentication && useChatHistoryCosmos) ? [cosmosDb.outputs.resourceId] : []
@@ -1251,6 +1247,53 @@ module dnsResolver 'br/public:avm/res/network/dns-resolver:0.5.4' = if (useVpnGa
       {
         name: 'inboundEndpoint'
         subnetResourceId: useVpnGateway ? isolation.outputs.privateDnsResolverSubnetId : ''
+      }
+    ]
+  }
+}
+
+// Container Apps Private DNS Zone
+module containerAppsPrivateDnsZone 'br/public:avm/res/network/private-dns-zone:0.7.1' = if (usePrivateEndpoint && deploymentTarget == 'containerapps') {
+  name: 'container-apps-dns-zone'
+  scope: resourceGroup
+  params: {
+    name: 'privatelink.${location}.azurecontainerapps.io'
+    tags: tags
+    virtualNetworkLinks: [
+      {
+        registrationEnabled: false
+        virtualNetworkResourceId: isolation.outputs.vnetId
+      }
+    ]
+  }
+}
+
+// Container Apps Environment Private Endpoint
+// https://learn.microsoft.com/azure/container-apps/how-to-use-private-endpoint
+module containerAppsEnvironmentPrivateEndpoint 'br/public:avm/res/network/private-endpoint:0.11.0' = if (usePrivateEndpoint && deploymentTarget == 'containerapps') {
+  name: 'containerAppsEnvironmentPrivateEndpointDeployment'
+  scope: resourceGroup
+  params: {
+    name: 'container-apps-env-pe${resourceToken}'
+    location: location
+    tags: tags
+    subnetResourceId: isolation.outputs.appSubnetId
+    privateDnsZoneGroup: {
+      privateDnsZoneGroupConfigs: [
+        {
+          privateDnsZoneResourceId: containerAppsPrivateDnsZone.outputs.resourceId
+        }
+      ]
+    }
+    privateLinkServiceConnections: [
+      {
+        name: 'containerAppsEnvironmentConnection'
+        properties: {
+          groupIds: [
+            'managedEnvironments'
+          ]
+          privateLinkServiceId: containerApps.outputs.environmentId
+        }
       }
     ]
   }

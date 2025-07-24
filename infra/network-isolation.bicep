@@ -9,8 +9,6 @@ param location string = resourceGroup().location
 @description('The tags to apply to all resources')
 param tags object = {}
 
-param usePrivateEndpoint bool = false
-
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string
 
@@ -26,95 +24,191 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = if (de
   name: appServicePlanName
 }
 
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = if (deploymentTarget == 'containerapps') {
-  name: containerAppsEnvName
+module containerAppsNSG 'br/public:avm/res/network/network-security-group:0.5.1' = if (deploymentTarget == 'containerapps') {
+  name: 'container-apps-nsg'
+  params: {
+    name: '${vnetName}-container-apps-nsg'
+    location: location
+    tags: tags
+    securityRules: [
+          {
+            name: 'AllowHttpsInbound'
+            properties: {
+              protocol: 'Tcp'
+              sourcePortRange: '*'
+              sourceAddressPrefix: 'Internet'
+              destinationPortRange: '443'
+              destinationAddressPrefix: '*'
+              access: 'Allow'
+              priority: 100
+              direction: 'Inbound'
+            }
+          }
+    ]
+  }
 }
 
-// Always need this one
-var backendSubnet =  {
-        name: 'backend-subnet'
+module privateEndpointsNSG 'br/public:avm/res/network/network-security-group:0.5.1' = if (deploymentTarget == 'containerapps') {
+  name: 'private-endpoints-nsg'
+  params: {
+    name: '${vnetName}-private-endpoints-nsg'
+    location: location
+    tags: tags
+    securityRules: [
+      {
+        name: 'AllowVnetInBound'
         properties: {
-          addressPrefix: '10.0.1.0/24'
-          privateEndpointNetworkPolicies: 'Enabled'
-          privateLinkServiceNetworkPolicies: 'Enabled'
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: 'VirtualNetwork'
+          destinationPortRange: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 100
+          direction: 'Inbound'
         }
       }
+      {
+        name: 'AllowAzureLoadBalancerInbound'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: 'AzureLoadBalancer'
+          destinationPortRange: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 110
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'DenyInternetInbound'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: 'Internet'
+          destinationPortRange: '*'
+          destinationAddressPrefix: '*'
+          access: 'Deny'
+          priority: 4096
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'AllowVnetOutbound'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '*'
+          destinationPortRange: '*'
+          destinationAddressPrefix: 'VirtualNetwork'
+          access: 'Allow'
+          priority: 100
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AllowAzureCloudOutbound'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '*'
+          destinationPortRange: '443'
+          destinationAddressPrefix: 'AzureCloud'
+          access: 'Allow'
+          priority: 110
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AllowDnsOutbound'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '*'
+          destinationPortRange: '53'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 120
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'DenyInternetOutbound'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '*'
+          destinationPortRange: '*'
+          destinationAddressPrefix: 'Internet'
+          access: 'Deny'
+          priority: 4096
+          direction: 'Outbound'
+        }
+      }
+    ]
+  }
+}
 
 var appServiceSubnet = {
-      name: 'app-int-subnet'
-      properties: {
-        addressPrefix: '10.0.3.0/24'
-        privateEndpointNetworkPolicies: 'Enabled'
-        privateLinkServiceNetworkPolicies: 'Enabled'
-        delegations: [
-          {
-            id: appServicePlan.id
-            name: appServicePlan.name
-            properties: {
-              serviceName: 'Microsoft.Web/serverFarms'
-            }
-          }
-        ]
+  name: 'app-int-subnet'
+  properties: {
+    addressPrefix: '10.0.3.0/24'
+    privateEndpointNetworkPolicies: 'Enabled'
+    privateLinkServiceNetworkPolicies: 'Enabled'
+    delegations: [
+      {
+        id: appServicePlan.id
+        name: appServicePlan.name
+        properties: {
+          serviceName: 'Microsoft.Web/serverFarms'
+        }
       }
-    }
-
-var containerAppsSubnet = {
-      name: 'app-int-subnet'
-      properties: {
-        addressPrefix: '10.0.4.0/23'
-        privateEndpointNetworkPolicies: 'Enabled'
-        privateLinkServiceNetworkPolicies: 'Enabled'
-        delegations: [
-          {
-            id: containerAppsEnvironment.id
-            name: containerAppsEnvironment.name
-            properties: {
-              serviceName: 'Microsoft.App/environments'
-            }
-          }
-        ]
-      }
+    ]
+  }
 }
 
-var gatewaySubnet = {
-    name: 'GatewaySubnet' // Required name for Gateway subnet
-    properties: {
-      addressPrefix: '10.0.255.0/27' // Using a /27 subnet size which is minimal required size for gateway subnet
-    }
-  }
-
-var privateDnsResolverSubnet = {
-    name: 'dns-resolver-subnet' // Dedicated subnet for Azure Private DNS Resolver
-    properties: {
-      addressPrefix: '10.0.11.0/28' // Original value kept as requested
-      delegations: [
-        {
-          name: 'Microsoft.Network.dnsResolvers'
-          properties: {
-            serviceName: 'Microsoft.Network/dnsResolvers'
-          }
-        }
-      ]
-    }
-  }
-
-var subnets = union(
-  [backendSubnet, deploymentTarget == 'appservice' ? appServiceSubnet : containerAppsSubnet],
-  deployVpnGateway ? [gatewaySubnet, privateDnsResolverSubnet] : [])
-
-module vnet './core/networking/vnet.bicep' = if (usePrivateEndpoint) {
+module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
   name: 'vnet'
   params: {
     name: vnetName
     location: location
     tags: tags
-    subnets: subnets
+    addressPrefixes: [
+      '10.0.0.0/16'
+    ]
+    subnets: [
+      {
+        name: 'backend-subnet'
+        addressPrefix: '10.0.1.0/24'
+        privateEndpointNetworkPolicies: 'Enabled'
+        privateLinkServiceNetworkPolicies: 'Enabled'
+        networkSecurityGroupResourceId: privateEndpointsNSG.outputs.resourceId
+      }
+      {
+        name: 'GatewaySubnet' // Required name for Gateway subnet
+        addressPrefix: '10.0.255.0/27' // Using a /27 subnet size which is minimal required size for gateway subnet
+      }
+      {
+        name: 'dns-resolver-subnet' // Dedicated subnet for Azure Private DNS Resolver
+        addressPrefix: '10.0.11.0/28' // Original value kept as requested
+        delegation: 'Microsoft.Network/dnsResolvers'
+      }
+      {
+        name: 'app-int-subnet'
+        addressPrefix: '10.0.4.0/23'
+        //privateEndpointNetworkPolicies: 'Enabled'
+        //privateLinkServiceNetworkPolicies: 'Enabled'
+        networkSecurityGroupResourceId: containerAppsNSG.outputs.resourceId
+        delegation: 'Microsoft.App/environments'
+      }
+    ]
   }
 }
 
-output appSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[1].id : ''
-output appSubnetName string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[1].name : ''
-output backendSubnetId string = usePrivateEndpoint ? vnet.outputs.vnetSubnets[0].id : ''
-output privateDnsResolverSubnetId string = deployVpnGateway ? vnet.outputs.vnetSubnets[3].id : ''
-output vnetName string = usePrivateEndpoint ? vnet.outputs.name : ''
-output vnetId string = usePrivateEndpoint ? vnet.outputs.id : ''
+
+output backendSubnetId string = vnet.outputs.subnetResourceIds[0]
+output privateDnsResolverSubnetId string = deployVpnGateway ? vnet.outputs.subnetResourceIds[2] : ''
+output appSubnetId string = vnet.outputs.subnetResourceIds[3]
+output vnetName string = vnet.outputs.name
+output vnetId string = vnet.outputs.resourceId
