@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Stack, IconButton } from "@fluentui/react";
 import { useTranslation } from "react-i18next";
 import DOMPurify from "dompurify";
@@ -7,7 +7,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
 import styles from "./Answer.module.css";
-import { ChatAppResponse, getCitationFilePath, SpeechConfig } from "../../api";
+import { ChatAppResponse, getCitationFilePath, SpeechConfig, configApi } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
@@ -43,10 +43,25 @@ export const Answer = ({
     showSpeechOutputBrowser
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
+    const [sharePointBaseUrl, setSharePointBaseUrl] = useState<string>("");
     const parsedAnswer = useMemo(() => parseAnswerToHtml(answer, isStreaming, onCitationClicked), [answer]);
     const { t } = useTranslation();
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
     const [copied, setCopied] = useState(false);
+
+    // Obtener la configuración de SharePoint al montar el componente
+    useEffect(() => {
+        const fetchConfig = async () => {
+            try {
+                const config = await configApi();
+                setSharePointBaseUrl(config.sharePointBaseUrl || "");
+            } catch (error) {
+                console.error("Error fetching config:", error);
+                setSharePointBaseUrl("https://lumston.sharepoint.com/sites/AIBotProjectAutomation"); // fallback
+            }
+        };
+        fetchConfig();
+    }, []);
 
     const handleCopy = () => {
         // Single replace to remove all HTML tags to remove the citations
@@ -110,9 +125,39 @@ export const Answer = ({
                         <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
                         {parsedAnswer.citations.map((x, i) => {
                             const path = getCitationFilePath(x);
+                            // DEBUG: Log para entender qué citaciones están llegando
+                            console.log("DEBUG Citation:", {
+                                original: x,
+                                path: path,
+                                index: i
+                            });
+
+                            // Mejorar la visualización de las citaciones para que sean más prominentes
+                            const isSharePointFile = x.includes("SharePoint") || path.includes("/content/SharePoint/");
+                            const displayName = isSharePointFile ? `📄 ${x.split("/").pop() || x}` : `${++i}. ${x}`;
+
                             return (
-                                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(path)}>
-                                    {`${++i}. ${x}`}
+                                <a
+                                    key={i}
+                                    className={styles.citation}
+                                    title={`Click para ver: ${x}`}
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        console.log("Citation clicked:", x, "Path:", path);
+                                        onCitationClicked(path);
+                                    }}
+                                    style={{
+                                        cursor: "pointer",
+                                        textDecoration: "underline",
+                                        color: "#0078d4",
+                                        fontWeight: isSharePointFile ? "bold" : "normal",
+                                        backgroundColor: isSharePointFile ? "#f3f2f1" : "transparent",
+                                        padding: "2px 6px",
+                                        borderRadius: "3px",
+                                        border: isSharePointFile ? "1px solid #8a8886" : "none"
+                                    }}
+                                >
+                                    {displayName}
                                 </a>
                             );
                         })}

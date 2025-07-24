@@ -100,7 +100,7 @@ AZURE_OPENAI_SERVICE=oai-volaris-dev-eus-001
 
 ## 🎯 **SITIO SHAREPOINT IDENTIFICADO**
 
-**URL**: `https://lumston.sharepoint.com/sites/Softwareengineering/`  
+**URL**: `https://lumston.sharepoint.com/sites/AIBotProjectAutomation/`  
 **Tipo**: Teams Group Site  
 **Nombre**: "DevOps" (no "Software engineering" como aparece en URL)  
 **Estructura**: El sitio tiene biblioteca de documentos con carpetas anidadas
@@ -115,7 +115,7 @@ AZURE_OPENAI_SERVICE=oai-volaris-dev-eus-001
   "files_found": 61,
   "site_info": {
     "name": "DevOps",
-    "webUrl": "https://lumston.sharepoint.com/sites/Softwareengineering"
+    "webUrl": "https://lumston.sharepoint.com/sites/AIBotProjectAutomation"
   },
   "files": [
     "Documento de alcance - ElogBook Pilotos y Mantenimiento Fase 2.docx",

@@ -428,9 +428,21 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         
         # Agregar resultados de SharePoint en el formato esperado (string con citación)
         for result in sharepoint_results:
-            citation = result['source']
+            # Usar la URL real de SharePoint si está disponible, sino usar el source como fallback
+            citation_url = result.get('url', '') or result['source']
+            
+            # Si tenemos una URL real de SharePoint, usarla; sino usar el formato original
+            if citation_url and citation_url.startswith('http'):
+                # Usar la URL real de SharePoint como citación
+                citation = citation_url
+            else:
+                # Fallback al formato original si no hay URL
+                citation = result['source']
+            
             content = result['content'].replace("\n", " ").replace("\r", " ")
             combined_sources.append(f"{citation}: {content}")
+            
+            print(f"DEBUG: SharePoint citation - URL: {citation_url}, Citation: {citation}")
         
         return combined_sources
 

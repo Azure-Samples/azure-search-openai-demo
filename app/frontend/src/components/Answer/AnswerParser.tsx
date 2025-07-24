@@ -74,7 +74,11 @@ export function parseAnswerToHtml(answer: ChatAppResponse, isStreaming: boolean,
             const path = getCitationFilePath(part);
 
             return renderToStaticMarkup(
-                <a className="supContainer" title={part} onClick={() => onCitationClicked(path)}>
+                <a
+                    className="supContainer"
+                    title={`Fuente: ${part} (ver citaciones abajo)`}
+                    style={{ color: "#0078d4", fontWeight: "bold", textDecoration: "none", cursor: "default" }}
+                >
                     <sup>{citationIndex}</sup>
                 </a>
             );

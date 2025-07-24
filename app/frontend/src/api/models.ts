@@ -102,6 +102,7 @@ export type Config = {
     showChatHistoryBrowser: boolean;
     showChatHistoryCosmos: boolean;
     showAgenticRetrievalOption: boolean;
+    sharePointBaseUrl: string;
 };
 
 export type SimpleAPIResponse = {

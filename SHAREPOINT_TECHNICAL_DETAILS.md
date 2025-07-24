@@ -152,7 +152,7 @@ SITE_ID=lumston.sharepoint.com,ba73e177-0099-4952-8581-ad202e66afd9,2a8826e5-808
 {
   "id": "lumston.sharepoint.com,ba73e177-0099-4952-8581-ad202e66afd9,2a8826e5-8087-43c1-b91d-5622136aaa41",
   "displayName": "DevOps",
-  "webUrl": "https://lumston.sharepoint.com/sites/Softwareengineering",
+  "webUrl": "https://lumston.sharepoint.com/sites/AIBotProjectAutomation",
   "isTeamSite": true
 }
 ```
@@ -166,7 +166,7 @@ SITE_ID=lumston.sharepoint.com,ba73e177-0099-4952-8581-ad202e66afd9,2a8826e5-808
       "name": "Documento de alcance - ElogBook Pilotos y Mantenimiento Fase 2.docx",
       "lastModified": "2024-07-15T22:13:56Z",
       "size": 32845760,
-      "webUrl": "https://lumston.sharepoint.com/sites/Softwareengineering/_layouts/15/Doc.aspx?..."
+      "webUrl": "https://lumston.sharepoint.com/sites/AIBotProjectAutomation/_layouts/15/Doc.aspx?..."
     },
     {
       "name": "Elogbook Pilotos offline.docx", 

@@ -78,7 +78,35 @@ export async function getSpeechApi(text: string): Promise<string | null> {
         .then(blob => (blob ? URL.createObjectURL(blob) : null));
 }
 
+let sharePointBaseUrl: string | null = null;
+
+// Función para obtener la configuración de SharePoint
+async function getSharePointBaseUrl(): Promise<string> {
+    if (!sharePointBaseUrl) {
+        try {
+            const config = await configApi();
+            sharePointBaseUrl = config.sharePointBaseUrl || "https://lumston.sharepoint.com/sites/AIBotProjectAutomation";
+        } catch (error) {
+            console.error("Error fetching SharePoint config:", error);
+            sharePointBaseUrl = "https://lumston.sharepoint.com/sites/AIBotProjectAutomation";
+        }
+    }
+    return sharePointBaseUrl;
+}
+
 export function getCitationFilePath(citation: string): string {
+    // Si ya es una URL completa, devolverla tal como está
+    if (citation.startsWith("http://") || citation.startsWith("https://")) {
+        return citation;
+    }
+    // Si es un archivo de SharePoint en formato relativo, convertirlo a URL completa
+    if (citation.startsWith("SharePoint/")) {
+        // Usar la URL base por defecto de forma síncrona
+        // TODO: Hacer esto asíncrono si es necesario
+        const baseUrl = "https://lumston.sharepoint.com/sites/AIBotProjectAutomation";
+        return `${baseUrl}/Documentos%20compartidos/Documentos%20Flightbot/${citation.substring(11)}`;
+    }
+    // Para archivos locales, usar la ruta del backend
     return `${BACKEND_URI}/content/${citation}`;
 }
 

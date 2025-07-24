@@ -86,6 +86,7 @@ from config import (
     CONFIG_SPEECH_SERVICE_LOCATION,
     CONFIG_SPEECH_SERVICE_TOKEN,
     CONFIG_SPEECH_SERVICE_VOICE,
+    CONFIG_SHAREPOINT_BASE_URL,
     CONFIG_STREAMING_ENABLED,
     CONFIG_USER_BLOB_CONTAINER_CLIENT,
     CONFIG_USER_UPLOAD_ENABLED,
@@ -313,6 +314,7 @@ def config():
             "showChatHistoryBrowser": current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
             "showAgenticRetrievalOption": current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED],
+            "sharePointBaseUrl": current_app.config.get(CONFIG_SHAREPOINT_BASE_URL, "https://lumston.sharepoint.com/sites/AIBotProjectAutomation"),
         }
     )
 
@@ -651,7 +653,7 @@ async def debug_sharepoint_search_folders():
         from core.graph import GraphClient
 
         graph_client = GraphClient()
-        site_url = request.args.get('site_url', 'https://lumston.sharepoint.com/sites/Softwareengineering/')
+        site_url = request.args.get('site_url', 'https://lumston.sharepoint.com/sites/AIBotProjectAutomation/')
         search_term = request.args.get('search_term', 'volaris')
         
         # Buscar el sitio por URL
@@ -710,7 +712,7 @@ async def debug_sharepoint_library():
         from core.graph import GraphClient
 
         graph_client = GraphClient()
-        site_url = "https://lumston.sharepoint.com/sites/Softwareengineering/"
+        site_url = "https://lumston.sharepoint.com/sites/AIBotProjectAutomation/"
         
         # Buscar el sitio por URL
         site = graph_client.find_site_by_url(site_url)
@@ -771,7 +773,7 @@ async def debug_sharepoint_search():
         from core.graph import GraphClient
 
         graph_client = GraphClient()
-        site_url = "https://lumston.sharepoint.com/sites/Softwareengineering/"
+        site_url = "https://lumston.sharepoint.com/sites/AIBotProjectAutomation/"
         search_query = request.args.get('query', 'pilotos')
         
         # Buscar el sitio por URL
@@ -1058,6 +1060,7 @@ async def setup_clients():
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
     USE_AGENTIC_RETRIEVAL = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
+    SHAREPOINT_BASE_URL = os.getenv("SHAREPOINT_BASE_URL", "https://lumston.sharepoint.com/sites/AIBotProjectAutomation")
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
     RUNNING_ON_AZURE = os.getenv("WEBSITE_HOSTNAME") is not None or os.getenv("RUNNING_IN_PRODUCTION") is not None
@@ -1243,6 +1246,7 @@ async def setup_clients():
     current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED] = USE_CHAT_HISTORY_BROWSER
     current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED] = USE_CHAT_HISTORY_COSMOS
     current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED] = USE_AGENTIC_RETRIEVAL
+    current_app.config[CONFIG_SHAREPOINT_BASE_URL] = SHAREPOINT_BASE_URL
 
     prompt_manager = PromptyManager()
 
