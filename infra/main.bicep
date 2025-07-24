@@ -297,13 +297,10 @@ param runningOnAdo string = ''
 @description('Used by azd for containerapps deployment')
 param webAppExists bool
 
-@allowed(['Consumption', 'D4', 'D8', 'D16', 'D32', 'E4', 'E8', 'E16', 'E32', 'NC24-A100', 'NC48-A100', 'NC96-A100'])
-param azureContainerAppsWorkloadProfile string
-
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
-param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
+param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env2' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
   ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
@@ -528,10 +525,9 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
     name: 'app'
     tags: tags
     location: location
-    workloadProfile: azureContainerAppsWorkloadProfile
     containerAppsEnvironmentName: acaManagedEnvironmentName
     containerRegistryName: '${containerRegistryName}${resourceToken}'
-    logAnalyticsWorkspaceResourceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
+    logAnalyticsWorkspaceName: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceName : ''
     subnetResourceId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
     usePrivateIngress: usePrivateEndpoint
   }
@@ -547,19 +543,17 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
   ]
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesContainerApps}backend${resourceToken}'
-    location: 'westus2'
+    location: location
     identityName: (deploymentTarget == 'containerapps') ? acaIdentityName : ''
     exists: webAppExists
-    workloadProfile: azureContainerAppsWorkloadProfile
     containerRegistryName: (deploymentTarget == 'containerapps') ? containerApps.outputs.registryName : ''
     containerAppsEnvironmentName: (deploymentTarget == 'containerapps') ? containerApps.outputs.environmentName : ''
-    identityType: 'UserAssigned'
     tags: union(tags, { 'azd-service-name': 'backend' })
     targetPort: 8000
     containerCpuCoreCount: '1.0'
     containerMemory: '2Gi'
     containerMinReplicas: 1
-    allowedOrigins: allowedOrigins
+    //allowedOrigins: allowedOrigins
     env: union(appEnvVariables, {
       // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
       AZURE_CLIENT_ID: (deploymentTarget == 'containerapps') ? acaIdentity.outputs.clientId : ''
@@ -705,6 +699,8 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2'
     name: !empty(documentIntelligenceServiceName)
       ? documentIntelligenceServiceName
       : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
+    location: documentIntelligenceResourceGroupLocation
+    tags: tags
     kind: 'FormRecognizer'
     customSubDomainName: !empty(documentIntelligenceServiceName)
       ? documentIntelligenceServiceName
@@ -713,10 +709,8 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2'
     networkAcls: {
       defaultAction: 'Allow'
     }
-    location: documentIntelligenceResourceGroupLocation
-    disableLocalAuth: true
-    tags: tags
     sku: documentIntelligenceSkuName
+    disableLocalAuth: true
   }
 }
 
@@ -1169,6 +1163,7 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     tags: tags
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
     usePrivateEndpoint: usePrivateEndpoint
+    deployVpnGateway: useVpnGateway
     deploymentTarget: deploymentTarget
     // Need to check deploymentTarget due to https://github.com/Azure/bicep/issues/3990
     appServicePlanName: deploymentTarget == 'appservice' ? appServicePlan.outputs.name : ''
@@ -1183,11 +1178,20 @@ var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi)
       {
         groupId: 'account'
         dnsZoneName: 'privatelink.openai.azure.com'
+        resourceIds: [openAi.outputs.resourceId]
+      }
+    ]
+  : []
+
+var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLocalPdfParser || useGPT4V || useMediaDescriberAzureCU))
+  ? [
+      {
+        groupId: 'account'
+        dnsZoneName: 'privatelink.cognitiveservices.azure.com'
         resourceIds: concat(
-          [openAi.outputs.resourceId],
+          !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : [],
           useGPT4V ? [computerVision.outputs.resourceId] : [],
-          useMediaDescriberAzureCU ? [contentUnderstanding.outputs.resourceId] : [],
-          !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : []
+          useMediaDescriberAzureCU ? [contentUnderstanding.outputs.resourceId] : []
         )
       }
     ]
@@ -1217,7 +1221,7 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
     ]
   : []
 
-var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection)
+var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection)
 
 module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
   name: 'privateEndpoints'
@@ -1236,8 +1240,8 @@ module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
 
 // Based on https://luke.geek.nz/azure/azure-point-to-site-vpn-and-private-dns-resolver/
 // Manual step required of updating azurevpnconfig.xml to use the correct DNS server IP address
-module dnsResolver 'br/public:avm/res/network/dns-resolver:0.5.3' = if (useVpnGateway) {
-  name: 'dnsResolverDeployment'
+module dnsResolver 'br/public:avm/res/network/dns-resolver:0.5.4' = if (useVpnGateway) {
+  name: 'dns-resolver'
   scope: resourceGroup
   params: {
     name: '${abbrs.privateDnsResolver}${resourceToken}'
@@ -1252,8 +1256,8 @@ module dnsResolver 'br/public:avm/res/network/dns-resolver:0.5.3' = if (useVpnGa
   }
 }
 
-module virtualNetworkGateway 'br/public:avm/res/network/virtual-network-gateway:0.6.1' = if (useVpnGateway) {
-  name: 'virtualNetworkGatewayDeployment'
+module virtualNetworkGateway 'br/public:avm/res/network/virtual-network-gateway:0.8.0' = if (useVpnGateway) {
+  name: 'virtual-network-gateway'
   scope: resourceGroup
   params: {
     name: '${abbrs.networkVpnGateways}${resourceToken}'
@@ -1403,3 +1407,5 @@ output BACKEND_URI string = deploymentTarget == 'appservice' ? backend.outputs.u
 output AZURE_CONTAINER_REGISTRY_ENDPOINT string = deploymentTarget == 'containerapps'
   ? containerApps.outputs.registryLoginServer
   : ''
+
+  output AZURE_VPN_CONFIG_DOWNLOAD_LINK string = useVpnGateway ? 'https://portal.azure.com/#@${tenant().tenantId}/resource/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup.name}/providers/Microsoft.Network/virtualNetworkGateways/${virtualNetworkGateway.outputs.name}/pointtositeconfiguration' : ''

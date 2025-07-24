@@ -78,13 +78,24 @@ var containerAppsSubnet = {
 
 var gatewaySubnet = {
     name: 'GatewaySubnet' // Required name for Gateway subnet
-    addressPrefix: '10.0.255.0/27' // Using a /27 subnet size which is minimal required size for gateway subnet
+    properties: {
+      addressPrefix: '10.0.255.0/27' // Using a /27 subnet size which is minimal required size for gateway subnet
+    }
   }
 
 var privateDnsResolverSubnet = {
     name: 'dns-resolver-subnet' // Dedicated subnet for Azure Private DNS Resolver
-    addressPrefix: '10.0.11.0/28' // Original value kept as requested
-    delegation: 'Microsoft.Network/dnsResolvers'
+    properties: {
+      addressPrefix: '10.0.11.0/28' // Original value kept as requested
+      delegations: [
+        {
+          name: 'Microsoft.Network.dnsResolvers'
+          properties: {
+            serviceName: 'Microsoft.Network/dnsResolvers'
+          }
+        }
+      ]
+    }
   }
 
 var subnets = union(

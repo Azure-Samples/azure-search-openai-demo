@@ -46,20 +46,51 @@ Deploying with public access disabled adds additional cost to your deployment. P
 
 ## Recommended deployment strategy for private access
 
-1. Deploy the app with private endpoints enabled and public access enabled.
+1. Deploy the app with private endpoints enabled, public network access disabled, and a VPN gateway configured. This will allow you to connect to the chat app from inside the virtual network.
 
-  ```shell
-  azd env set AZURE_USE_PRIVATE_ENDPOINT true
-  azd env set AZURE_PUBLIC_NETWORK_ACCESS Enabled
-  azd up
-  ```
+    ```shell
+    azd env set AZURE_USE_PRIVATE_ENDPOINT true
+    azd env set AZURE_USE_VPN_GATEWAY true
+    azd env set AZURE_PUBLIC_NETWORK_ACCESS Enabled
+    azd up
+    ```
 
-1. Validate that you can connect to the chat app and it's working as expected from the internet.
-1. Re-provision the app with public access disabled.
+2. First provision all the resources:
 
-  ```shell
-  azd env set AZURE_PUBLIC_NETWORK_ACCESS Disabled
-  azd provision
-  ```
+    ```bash
+    azd provision
+    ```
 
-1. Log into your network using a tool like [Azure VPN Gateway](https://azure.microsoft.com/services/vpn-gateway/) and validate that you can connect to the chat app from inside the network.
+3. Once provisioning is complete, run this command to get the VPN configuration download link:
+
+    ```bash
+    azd env get-value AZURE_VPN_CONFIG_DOWNLOAD_LINK
+    ```
+
+    Select "Download VPN client" to download a ZIP file containing the VPN configuration.
+
+4. Open `AzureVPN/azurevpnconfig.xml`, and replace the `<clientconfig>` empty tag with the following:
+
+    ```xml
+      <clientconfig>
+        <dnsservers>
+          <dnsserver>10.0.11.4</dnsserver>
+        </dnsservers>
+      </clientconfig>
+    ```
+
+5. Open the "Azure VPN" client and select "Import" button. Select the `azurevpnconfig.xml` file you just downloaded and modified.
+
+6. Select "Connect" and the new VPN connection. You will be prompted to select your Microsoft account and login.
+
+7. Once you're successfully connected to VPN, you can run the data ingestion script:
+
+    ```bash
+    azd hooks run postprovision
+    ```
+
+8. Finally, you can deploy the app:
+
+    ```bash
+    azd deploy
+    ```

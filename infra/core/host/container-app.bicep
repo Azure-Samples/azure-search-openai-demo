@@ -1,116 +1,71 @@
-metadata description = 'Creates a container app in an Azure Container App environment.'
 param name string
 param location string = resourceGroup().location
 param tags object = {}
 
-@description('Allowed origins')
-param allowedOrigins array = []
-
-@description('Name of the environment for container apps')
 param containerAppsEnvironmentName string
+param containerName string = 'main'
+param containerRegistryName string
 
-@description('CPU cores allocated to a single container instance, e.g., 0.5')
-param containerCpuCoreCount string = '0.5'
-
-@description('The maximum number of replicas to run. Must be at least 1.')
+@description('Minimum number of replicas to run')
+@minValue(1)
+param containerMinReplicas int = 1
+@description('Maximum number of replicas to run')
 @minValue(1)
 param containerMaxReplicas int = 10
-
-@description('Memory allocated to a single container instance, e.g., 1Gi')
-param containerMemory string = '1.0Gi'
-
-@description('The minimum number of replicas to run. Must be at least 1.')
-param containerMinReplicas int = 0
-
-@description('The name of the container')
-param containerName string = 'main'
-
-@description('The name of the container registry')
-param containerRegistryName string = ''
-
-@description('Hostname suffix for container registry. Set when deploying to sovereign clouds')
-param containerRegistryHostSuffix string = 'azurecr.io'
-
-@description('The protocol used by Dapr to connect to the app, e.g., http or grpc')
-@allowed([ 'http', 'grpc' ])
-param daprAppProtocol string = 'http'
-
-@description('The Dapr app ID')
-param daprAppId string = containerName
-
-@description('Enable Dapr')
-param daprEnabled bool = false
-
-@description('The environment variables for the container')
-param env array = []
-
-@description('Specifies if the resource ingress is exposed externally')
-param external bool = true
-
-@description('The name of the user-assigned identity')
-param identityName string = ''
-
-@description('The type of identity for the resource')
-@allowed([ 'None', 'SystemAssigned', 'UserAssigned' ])
-param identityType string = 'None'
-
-@description('The name of the container image')
-param imageName string = ''
-
-@description('Specifies if Ingress is enabled for the container app')
-param ingressEnabled bool = true
-
-param revisionMode string = 'Single'
 
 @description('The secrets required for the container')
 @secure()
 param secrets object = {}
 
-@description('The keyvault identities required for the container')
-@secure()
-param keyvaultIdentities object = {}
+@description('The environment variables for the container')
+param env array = []
 
-@description('The service binds associated with the container')
-param serviceBinds array = []
-
-@description('The name of the container apps add-on to use. e.g. redis')
-param serviceType string = ''
-
-@description('The target port for the container')
+param external bool = true
+param imageName string
 param targetPort int = 80
 
-param workloadProfile string = 'Consumption'
+@description('User assigned identity name')
+param identityName string
 
-resource userIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = if (!empty(identityName)) {
-  name: identityName
-}
+@description('Enabled Ingress for container app')
+param ingressEnabled bool = true
 
-// Private registry support requires both an ACR name and a User Assigned managed identity
-var usePrivateRegistry = !empty(identityName) && !empty(containerRegistryName)
+// Dapr Options
+@description('Enable Dapr')
+param daprEnabled bool = false
+@description('Dapr app ID')
+param daprAppId string = containerName
+@allowed([ 'http', 'grpc' ])
+@description('Protocol used by Dapr to connect to the app, e.g. http or grpc')
+param daprAppProtocol string = 'http'
 
-// Automatically set to `UserAssigned` when an `identityName` has been set
-var normalizedIdentityType = !empty(identityName) ? 'UserAssigned' : identityType
+@description('CPU cores allocated to a single container instance, e.g. 0.5')
+param containerCpuCoreCount string = '0.5'
+
+@description('Memory allocated to a single container instance, e.g. 1Gi')
+param containerMemory string = '1.0Gi'
+
+@description('Workload profile name to use for the container app when using private ingress')
+param workloadProfileName string = 'Warm'
 
 var keyvalueSecrets = [for secret in items(secrets): {
   name: secret.key
   value: secret.value
 }]
 
-var keyvaultIdentitySecrets = [for secret in items(keyvaultIdentities): {
-  name: secret.key
-  keyVaultUrl: secret.value.keyVaultUrl
-  identity: secret.value.identity
-}]
+resource userIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
+  name: identityName
+}
 
-module containerRegistryAccess '../security/registry-access.bicep' = if (usePrivateRegistry) {
+module containerRegistryAccess '../security/registry-access.bicep' = {
   name: '${deployment().name}-registry-access'
   params: {
     containerRegistryName: containerRegistryName
-    principalId: usePrivateRegistry ? userIdentity.properties.principalId : ''
+    principalId: userIdentity.properties.principalId
   }
 }
 
-resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
+resource app 'Microsoft.App/containerApps@2025-01-01' = {
   name: name
   location: location
   tags: tags
@@ -118,23 +73,19 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
   // otherwise the container app will throw a provision error
   // This also forces us to use an user assigned managed identity since there would no way to
   // provide the system assigned identity with the ACR pull access before the app is created
-  dependsOn: usePrivateRegistry ? [ containerRegistryAccess ] : []
+  dependsOn: [ containerRegistryAccess ]
   identity: {
-    type: normalizedIdentityType
-    userAssignedIdentities: !empty(identityName) && normalizedIdentityType == 'UserAssigned' ? { '${userIdentity.id}': {} } : null
+    type: 'UserAssigned'
+    userAssignedIdentities: { '${userIdentity.id}': {} }
   }
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
-    workloadProfileName: workloadProfile
     configuration: {
-      activeRevisionsMode: revisionMode
+      activeRevisionsMode: 'single'
       ingress: ingressEnabled ? {
         external: external
         targetPort: targetPort
         transport: 'auto'
-        corsPolicy: {
-          allowedOrigins: union([ 'https://portal.azure.com', 'https://ms.portal.azure.com' ], allowedOrigins)
-        }
       } : null
       dapr: daprEnabled ? {
         enabled: true
@@ -142,17 +93,15 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
         appProtocol: daprAppProtocol
         appPort: ingressEnabled ? targetPort : 0
       } : { enabled: false }
-      secrets: concat(keyvalueSecrets, keyvaultIdentitySecrets)
-      service: !empty(serviceType) ? { type: serviceType } : null
-      registries: usePrivateRegistry ? [
+      secrets: keyvalueSecrets
+      registries: [
         {
-          server: '${containerRegistryName}.${containerRegistryHostSuffix}'
+          server: '${containerRegistry.name}.azurecr.io'
           identity: userIdentity.id
         }
-      ] : []
+      ]
     }
     template: {
-      serviceBinds: !empty(serviceBinds) ? serviceBinds : null
       containers: [
         {
           image: !empty(imageName) ? imageName : 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
@@ -172,15 +121,19 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
   }
 }
 
-resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01' existing = {
+resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2022-03-01' existing = {
   name: containerAppsEnvironmentName
 }
 
+// 2022-02-01-preview needed for anonymousPullEnabled
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2022-02-01-preview' existing = {
+  name: containerRegistryName
+}
+
 output defaultDomain string = containerAppsEnvironment.properties.defaultDomain
-output identityPrincipalId string = normalizedIdentityType == 'None' ? '' : (empty(identityName) ? app.identity.principalId : userIdentity.properties.principalId)
-output identityResourceId string = normalizedIdentityType == 'UserAssigned' ? resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', userIdentity.name) : ''
 output imageName string = imageName
 output name string = app.name
-output serviceBind object = !empty(serviceType) ? { serviceId: app.id, name: name } : {}
+output hostName string = app.properties.configuration.ingress.fqdn
 output uri string = ingressEnabled ? 'https://${app.properties.configuration.ingress.fqdn}' : ''
-output id string = app.id
+output identityResourceId string = resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', userIdentity.name)
+output identityPrincipalId string = userIdentity.properties.principalId

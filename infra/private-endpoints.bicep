@@ -32,8 +32,8 @@ param logAnalyticsWorkspaceId string
 var abbrs = loadJsonContent('abbreviations.json')
 
 // DNS Zones
-module dnsZones './core/networking/private-dns-zones.bicep' = [for privateEndpointConnection in privateEndpointConnections: {
-  name: '${privateEndpointConnection.groupId}-dnszone'
+module dnsZones './core/networking/private-dns-zones.bicep' = [for (privateEndpointConnection, i) in privateEndpointConnections: {
+  name: '${privateEndpointConnection.groupId}-${i}-dnszone'
   params: {
     dnsZoneName: privateEndpointConnection.dnsZoneName
     tags: tags
