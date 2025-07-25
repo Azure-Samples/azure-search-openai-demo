@@ -1,3 +1,20 @@
+from dataclasses import dataclass, field
+from typing import Optional
+
+
+@dataclass
+class ImageOnPage:
+    bytes: bytes
+    bbox: tuple[float, float, float, float]  # Pixels
+    filename: str
+    description: str
+    figure_id: str
+    page_num: int  # 0-indexed
+    url: Optional[str] = None
+    embedding: Optional[list[float]] = None
+
+
+@dataclass
 class Page:
     """
     A single page from a document
@@ -8,12 +25,13 @@ class Page:
         text (str): The text of the page
     """
 
-    def __init__(self, page_num: int, offset: int, text: str):
-        self.page_num = page_num
-        self.offset = offset
-        self.text = text
+    page_num: int
+    offset: int
+    text: str
+    images: list[ImageOnPage] = field(default_factory=list)
 
 
+@dataclass
 class SplitPage:
     """
     A section of a page that has been split into a smaller chunk.
@@ -23,6 +41,6 @@ class SplitPage:
         text (str): The text of the section
     """
 
-    def __init__(self, page_num: int, text: str):
-        self.page_num = page_num
-        self.text = text
+    page_num: int
+    text: str
+    images: list[ImageOnPage] = field(default_factory=list)
