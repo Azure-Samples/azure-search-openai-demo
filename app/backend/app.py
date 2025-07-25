@@ -93,6 +93,7 @@ from config import (
     CONFIG_VECTOR_SEARCH_ENABLED,
 )
 from core.authentication import AuthenticationHelper
+from core.init_bot import init_bot_context, validate_runtime_status
 from core.sessionhelper import create_session_id
 from decorators import authenticated, authenticated_path
 from error import error_dict, error_response
@@ -571,6 +572,78 @@ async def debug_pilot_query():
 async def debug_page():
     """Página de debug para probar funcionalidad de SharePoint"""
     return await send_from_directory("../frontend", "debug-sharepoint.html")
+
+
+@bp.route("/debug/managed-identity", methods=["GET"])
+async def debug_managed_identity():
+    """Endpoint para diagnosticar el Managed Identity desde el Container App"""
+    try:
+        from azure.identity.aio import ManagedIdentityCredential
+        from azure.core.exceptions import ClientAuthenticationError
+        
+        # Función auxiliar para validar acceso
+        async def validate_mi_access(resource: str):
+            try:
+                credential = ManagedIdentityCredential()
+                token = await credential.get_token(resource)
+                return {
+                    "resource": resource,
+                    "status": "success",
+                    "token_length": len(token.token) if token.token else 0,
+                    "expires_on": token.expires_on if hasattr(token, 'expires_on') else None
+                }
+            except ClientAuthenticationError as e:
+                return {
+                    "resource": resource,
+                    "status": "auth_error",
+                    "error": str(e)
+                }
+            except Exception as e:
+                return {
+                    "resource": resource,
+                    "status": "error",
+                    "error": str(e)
+                }
+        
+        # Recursos a probar
+        resources_to_test = [
+            "https://search.azure.com/",  # Azure Search scope
+            "https://management.azure.com/",  # Azure Management scope
+            "https://cognitiveservices.azure.com/",  # Cognitive Services
+        ]
+        
+        results = []
+        for resource in resources_to_test:
+            result = await validate_mi_access(resource)
+            results.append(result)
+        
+        # Información adicional del entorno
+        env_info = {
+            "AZURE_CLIENT_ID": os.getenv("AZURE_CLIENT_ID", "No configurado"),
+            "RUNNING_IN_PRODUCTION": os.getenv("RUNNING_IN_PRODUCTION", "No configurado"),
+            "WEBSITE_HOSTNAME": os.getenv("WEBSITE_HOSTNAME", "No configurado"),
+            "MSI_ENDPOINT": os.getenv("MSI_ENDPOINT", "No configurado"),
+            "IDENTITY_ENDPOINT": os.getenv("IDENTITY_ENDPOINT", "No configurado"),
+        }
+        
+        return jsonify({
+            "status": "success",
+            "managed_identity_tests": results,
+            "environment_info": env_info,
+            "summary": {
+                "total_tests": len(results),
+                "successful": len([r for r in results if r["status"] == "success"]),
+                "failed": len([r for r in results if r["status"] != "success"])
+            }
+        })
+        
+    except Exception as e:
+        current_app.logger.error(f"Error en debug de Managed Identity: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "message": "Error al validar Managed Identity"
+        }), 500
 
 
 @bp.route("/debug/sharepoint/explore", methods=["GET"])
@@ -1399,3 +1472,16 @@ def create_app():
             cors(app, allow_origin=allowed_origins, allow_methods=["GET", "POST"])
 
     return app
+
+if __name__ == "__main__":
+    # Validar entorno antes de iniciar el bot
+    try:
+        init_bot_context()
+        print("🎯 Iniciando validación de runtime...")
+        # validate_runtime_status() se ejecutará después de que la app esté corriendo
+    except Exception as e:
+        print(f"🛑 Error crítico en inicialización: {e}")
+        exit(1)
+    
+    app = create_app()
+    app.run(debug=True)

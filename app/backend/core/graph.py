@@ -108,3 +108,28 @@ def get_file_content(drive_id, file_id, access_token):
     else:
         # Para archivos de texto, devolver el contenido
         return response.text
+
+def get_sharepoint_config_summary():
+    """Obtener resumen de configuración de SharePoint - Updated"""
+    try:
+        access_token = get_access_token()
+        
+        # Usar el SITE_ID hardcodeado
+        site_id = os.getenv("SITE_ID", "lumston.sharepoint.com,eb1c1d06-9351-4a7d-ba09-9e1f54a3266d,634751fa-b01f-4197-971b-80c1cf5d18db")
+        drive_id = os.getenv("DRIVE_ID", "b!Bh0c61GTfUq6CZ4fVKMmbfpRR2MfsJdBlxuAwc9dGNuwQn6ELM4KSYbgTdG2Ctzo")
+        
+        # Listar archivos en el drive
+        files = list_pilotos_files(drive_id, access_token)
+        
+        return {
+            "site_id": site_id,
+            "drive_id": drive_id,
+            "files_found": len(files),
+            "sample_files": [f.get("name", "Sin nombre") for f in files[:5]],
+            "authentication": "success"
+        }
+    except Exception as e:
+        return {
+            "error": str(e),
+            "authentication": "failed"
+        }

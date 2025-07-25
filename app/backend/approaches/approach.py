@@ -6,6 +6,7 @@ from typing import Any, Callable, Optional, TypedDict, Union, cast
 from urllib.parse import urljoin
 
 import aiohttp
+from azure.core.exceptions import HttpResponseError
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import (
     KnowledgeAgentAzureSearchDocReference,
@@ -185,6 +186,36 @@ class Approach(ABC):
             filters.append(security_filter)
         return None if len(filters) == 0 else " and ".join(filters)
 
+    def _handle_search_error(self, e: Exception, operation: str = "Azure Search") -> dict[str, Any]:
+        """Manejo robusto de errores para operaciones de Azure Search (método auxiliar)"""
+        if isinstance(e, HttpResponseError):
+            status = getattr(e.response, "status_code", None)
+            reason = getattr(e.response, "reason", "Unknown")
+            error_msg = f"⚠️ {operation} error: status {status} ({reason})"
+            
+            # Mensajes específicos por código de estado
+            status_hints = {
+                403: "Verifica que el Managed Identity tenga el rol 'Search Index Data Reader'.",
+                404: "¿Existe el índice o el documento especificado?",
+                400: "Revisa si el query o el esquema del índice tiene inconsistencias.",
+                401: "Error de autenticación - verifica la configuración de Managed Identity.",
+            }
+            
+            hint = status_hints.get(status, "Consulta los logs detallados para investigar.")
+
+            return {
+                "error": error_msg,
+                "details": str(e),
+                "suggestion": hint,
+                "status_code": status
+            }
+        else:
+            return {
+                "error": f"Error inesperado en {operation}.",
+                "details": str(e),
+                "suggestion": "Revisa la conectividad y configuración del servicio."
+            }
+
     async def search(
         self,
         top: int,
@@ -201,56 +232,88 @@ class Approach(ABC):
     ) -> list[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
-        if use_semantic_ranker:
-            results = await self.search_client.search(
-                search_text=search_text,
-                filter=filter,
-                top=top,
-                query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                query_rewrites="generative" if use_query_rewriting else None,
-                vector_queries=search_vectors,
-                query_type=QueryType.SEMANTIC,
-                query_language=self.query_language,
-                query_speller=self.query_speller,
-                semantic_configuration_name="default",
-                semantic_query=query_text,
-            )
-        else:
-            results = await self.search_client.search(
-                search_text=search_text,
-                filter=filter,
-                top=top,
-                vector_queries=search_vectors,
-            )
+        
+        try:
+            if use_semantic_ranker:
+                results = await self.search_client.search(
+                    search_text=search_text,
+                    filter=filter,
+                    top=top,
+                    query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                    query_rewrites="generative" if use_query_rewriting else None,
+                    vector_queries=search_vectors,
+                    query_type=QueryType.SEMANTIC,
+                    query_language=self.query_language,
+                    query_speller=self.query_speller,
+                    semantic_configuration_name="default",
+                    semantic_query=query_text,
+                )
+            else:
+                results = await self.search_client.search(
+                    search_text=search_text,
+                    filter=filter,
+                    top=top,
+                    vector_queries=search_vectors,
+                )
 
-        documents = []
-        async for page in results.by_page():
-            async for document in page:
-                documents.append(
-                    Document(
-                        id=document.get("id"),
-                        content=document.get("content"),
-                        category=document.get("category"),
-                        sourcepage=document.get("sourcepage"),
-                        sourcefile=document.get("sourcefile"),
-                        oids=document.get("oids"),
-                        groups=document.get("groups"),
-                        captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
-                        score=document.get("@search.score"),
-                        reranker_score=document.get("@search.reranker_score"),
+            documents = []
+            async for page in results.by_page():
+                async for document in page:
+                    documents.append(
+                        Document(
+                            id=document.get("id"),
+                            content=document.get("content"),
+                            category=document.get("category"),
+                            sourcepage=document.get("sourcepage"),
+                            sourcefile=document.get("sourcefile"),
+                            oids=document.get("oids"),
+                            groups=document.get("groups"),
+                            captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
+                            score=document.get("@search.score"),
+                            reranker_score=document.get("@search.reranker_score"),
+                        )
                     )
-                )
 
-            qualified_documents = [
-                doc
-                for doc in documents
-                if (
-                    (doc.score or 0) >= (minimum_search_score or 0)
-                    and (doc.reranker_score or 0) >= (minimum_reranker_score or 0)
-                )
-            ]
+                qualified_documents = [
+                    doc
+                    for doc in documents
+                    if (
+                        (doc.score or 0) >= (minimum_search_score or 0)
+                        and (doc.reranker_score or 0) >= (minimum_reranker_score or 0)
+                    )
+                ]
 
-        return qualified_documents
+            return qualified_documents
+            
+        except HttpResponseError as e:
+            # Manejo específico para errores HTTP de Azure Search
+            if e.status_code == 403:
+                error_msg = "🔒 Error 403: Verifica el rol 'Search Index Data Reader' para esta Managed Identity"
+                print(error_msg)
+                print(f"📋 Detalles: {e}")
+                # Re-lanzar con mensaje específico para el frontend
+                raise Exception(f"Azure Search Permission Error: {error_msg}") from e
+            elif e.status_code == 404:
+                error_msg = "🔍 Error 404: Índice o documento no encontrado en Azure Search"
+                print(error_msg)
+                print(f"� Detalles: {e}")
+                raise Exception(f"Azure Search Not Found: {error_msg}") from e
+            elif e.status_code == 401:
+                error_msg = "🔐 Error 401: Problema de autenticación con Azure Search"
+                print(error_msg)
+                print(f"📋 Detalles: {e}")
+                raise Exception(f"Azure Search Authentication Error: {error_msg}") from e
+            else:
+                error_msg = f"💥 Azure Search falló con status {e.status_code}: {e.reason}"
+                print(error_msg)
+                print(f"📋 Detalles: {e}")
+                raise Exception(f"Azure Search Error: {error_msg}") from e
+                
+        except Exception as e:
+            # Manejo para otros tipos de errores (conexión, timeout, etc.)
+            error_msg = f"🌐 Error de conectividad o configuración en Azure Search: {str(e)}"
+            print(error_msg)
+            raise Exception(f"Azure Search Connection Error: {error_msg}") from e
 
     async def run_agentic_retrieval(
         self,
