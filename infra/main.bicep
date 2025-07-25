@@ -300,7 +300,7 @@ param webAppExists bool
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
-param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env2' : ''
+param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-envnet' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
   ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
@@ -1168,13 +1168,13 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     deploymentTarget: deploymentTarget
     // Need to check deploymentTarget due to https://github.com/Azure/bicep/issues/3990
     appServicePlanName: deploymentTarget == 'appservice' ? appServicePlan.outputs.name : ''
-    containerAppsEnvName: deploymentTarget == 'containerapps' ? acaManagedEnvironmentName : ''
+    //containerAppsEnvName: deploymentTarget == 'containerapps' ? acaManagedEnvironmentName : ''
   }
 }
 
 var environmentData = environment()
 
-var openAiPrivateEndpointConnection = (isAzureOpenAiHost && deployAzureOpenAi)
+var openAiPrivateEndpointConnection = (usePrivateEndpoint && isAzureOpenAiHost && deployAzureOpenAi)
   ? [
       {
         groupId: 'account'
@@ -1277,7 +1277,7 @@ module containerAppsEnvironmentPrivateEndpoint 'br/public:avm/res/network/privat
     name: 'container-apps-env-pe${resourceToken}'
     location: location
     tags: tags
-    subnetResourceId: isolation.outputs.appSubnetId
+    subnetResourceId: isolation.outputs.backendSubnetId
     privateDnsZoneGroup: {
       privateDnsZoneGroupConfigs: [
         {

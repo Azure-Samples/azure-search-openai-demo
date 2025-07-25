@@ -29,7 +29,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-02-02-
     }
     daprAIInstrumentationKey: daprEnabled && !empty(applicationInsightsName) ? applicationInsights.properties.InstrumentationKey : ''
     publicNetworkAccess: usePrivateIngress ? 'Disabled' : 'Enabled'
-    vnetConfiguration: (!empty(vnetName) && !empty(subnetName)) ? {
+    vnetConfiguration: usePrivateIngress ? {
       // Use proper subnet resource ID format
       infrastructureSubnetId: subnetResourceId
       internal: usePrivateIngress

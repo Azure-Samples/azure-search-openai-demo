@@ -15,11 +15,9 @@ param deploymentTarget string
 @description('The name of an existing App Service Plan to connect to the VNet')
 param appServicePlanName string
 
-@description('The name of an existing Container Apps Environment to connect to the VNet')
-param containerAppsEnvName string
-
 param deployVpnGateway bool = false
 
+// TODO: Bring back app service option
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = if (deploymentTarget == 'appservice') {
   name: appServicePlanName
 }
@@ -42,6 +40,45 @@ module containerAppsNSG 'br/public:avm/res/network/network-security-group:0.5.1'
               access: 'Allow'
               priority: 100
               direction: 'Inbound'
+            }
+          }
+          { // TODO: Were any of these rules really needed??
+            name: 'AllowPrivateEndpointsOutbound'
+            properties: {
+              protocol: 'Tcp'
+              sourcePortRange: '*'
+              sourceAddressPrefix: '10.0.0.0/21'
+              destinationPortRange: '443'
+              destinationAddressPrefix: '10.0.8.0/24'
+              access: 'Allow'
+              priority: 200
+              direction: 'Outbound'
+            }
+          }
+          {
+            name: 'AllowDnsOutbound'
+            properties: {
+              protocol: '*'
+              sourcePortRange: '*'
+              sourceAddressPrefix: '*'
+              destinationPortRange: '53'
+              destinationAddressPrefix: '*'
+              access: 'Allow'
+              priority: 210
+              direction: 'Outbound'
+            }
+          }
+          {
+            name: 'AllowVNetOutbound'
+            properties: {
+              protocol: '*'
+              sourcePortRange: '*'
+              sourceAddressPrefix: '*'
+              destinationPortRange: '*'
+              destinationAddressPrefix: 'VirtualNetwork'
+              access: 'Allow'
+              priority: 220
+              direction: 'Outbound'
             }
           }
     ]
@@ -180,7 +217,7 @@ module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
     subnets: [
       {
         name: 'backend-subnet'
-        addressPrefix: '10.0.1.0/24'
+        addressPrefix: '10.0.8.0/24'
         privateEndpointNetworkPolicies: 'Enabled'
         privateLinkServiceNetworkPolicies: 'Enabled'
         networkSecurityGroupResourceId: privateEndpointsNSG.outputs.resourceId
@@ -191,16 +228,16 @@ module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
       }
       {
         name: 'dns-resolver-subnet' // Dedicated subnet for Azure Private DNS Resolver
-        addressPrefix: '10.0.11.0/28' // Original value kept as requested
+        addressPrefix: '10.0.11.0/28'
         delegation: 'Microsoft.Network/dnsResolvers'
       }
       {
         name: 'app-int-subnet'
-        addressPrefix: '10.0.4.0/23'
-        //privateEndpointNetworkPolicies: 'Enabled'
-        //privateLinkServiceNetworkPolicies: 'Enabled'
+        addressPrefix: '10.0.0.0/21'
+        //privateEndpointNetworkPolicies: 'Enabled' // TODO: Needed?
+        //privateLinkServiceNetworkPolicies: 'Enabled' // TODO: Needed?
         networkSecurityGroupResourceId: containerAppsNSG.outputs.resourceId
-        delegation: 'Microsoft.App/environments'
+        delegation: 'Microsoft.App/environments' // TODO: Needed?
       }
     ]
   }
