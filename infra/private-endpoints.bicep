@@ -32,8 +32,8 @@ param logAnalyticsWorkspaceId string
 var abbrs = loadJsonContent('abbreviations.json')
 
 // DNS Zones
-module dnsZones './core/networking/private-dns-zones.bicep' = [for privateEndpointConnection in privateEndpointConnections: {
-  name: '${privateEndpointConnection.groupId}-dnszone'
+module dnsZones './core/networking/private-dns-zones.bicep' = [for (privateEndpointConnection, i) in privateEndpointConnections: {
+  name: '${privateEndpointConnection.groupId}-${i}-dnszone'
   params: {
     dnsZoneName: privateEndpointConnection.dnsZoneName
     tags: tags
@@ -81,7 +81,8 @@ module monitorDnsZones './core/networking/private-dns-zones.bicep' = [for monito
   }
 }]
 // Get blob DNS zone index for monitor private link
-var dnsZoneBlobIndex = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')[0].dnsZoneIndex
+var blobEndpointInfo = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')
+var dnsZoneBlobIndex = empty(blobEndpointInfo) ? 0 : blobEndpointInfo[0].dnsZoneIndex
 
 // Azure Monitor Private Link Scope
 // https://learn.microsoft.com/azure/azure-monitor/logs/private-link-security
