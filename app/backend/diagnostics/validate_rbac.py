@@ -3,6 +3,16 @@ Validación de roles y permisos RBAC en Azure
 """
 
 import os
+
+# Cargar variables de entorno automáticamente
+try:
+    from .env_loader import load_env_file
+except ImportError:
+    # Fallback para ejecución directa
+    import sys
+    sys.path.append(os.path.dirname(__file__))
+    from env_loader import load_env_file
+
 try:
     from .utils_logger import log_ok, log_error, log_info
 except ImportError:
