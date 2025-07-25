@@ -39,7 +39,7 @@ class LocalHTMLParser(Parser):
         Returns:
             Page: The parsed html Page.
         """
-        logger.info("Extracting text from '%s' using local HTML parser (BeautifulSoup)", content.name)
+        logger.info("'%s': Extracting text using local HTML parser (BeautifulSoup)", content.name)
 
         data = content.read()
         soup = BeautifulSoup(data, "html.parser")
