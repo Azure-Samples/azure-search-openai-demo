@@ -5,6 +5,7 @@ import logging
 import mimetypes
 import os
 import time
+from datetime import datetime
 from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any, Union, cast
@@ -755,6 +756,7 @@ async def debug_search_detailed():
             "stdout": result.stdout,
             "stderr": result.stderr,
             "diagnostic_summary": {
+                "rbac_validation": "✅" if "Estado RBAC: success" in result.stdout else "❌",
                 "credentials_test": "✅" if "✅ Token obtenido" in result.stdout else "❌",
                 "rest_api_test": "✅" if "✅ Acceso exitoso a Azure Search" in result.stdout else "❌", 
                 "search_client_test": "✅" if "✅ SearchClient funcionando" in result.stdout else "❌"
@@ -770,6 +772,40 @@ async def debug_search_detailed():
         return jsonify({
             "status": "error",
             "error": str(e)
+        })
+
+
+@bp.route("/debug/rbac-status", methods=["GET"])
+async def debug_rbac_status():
+    """Endpoint específico para consultar el estado RBAC de Azure Search"""
+    try:
+        from healthchecks.rbac_validation import get_rbac_status_dict
+        
+        # Obtener estado RBAC
+        rbac_status = await get_rbac_status_dict()
+        
+        return jsonify({
+            "status": "success",
+            "timestamp": datetime.now().isoformat(),
+            "rbac_status": rbac_status,
+            "recommendations": [] if rbac_status.get("rbac_validation") == "success" else [
+                "Verifica que el Managed Identity del Container App tenga los roles necesarios",
+                "Roles requeridos: Search Index Data Reader, Search Index Data Contributor, Search Service Contributor",
+                "Usa Azure Portal > Azure Search > Access Control (IAM) para asignar roles"
+            ]
+        })
+        
+    except ImportError:
+        return jsonify({
+            "status": "error",
+            "error": "Módulo rbac_validation no disponible",
+            "solution": "Asegúrate de que healthchecks/rbac_validation.py esté en el contenedor"
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat()
         })
 
 
@@ -1190,6 +1226,113 @@ async def debug_find_specific_file():
             "status": "error",
             "error": str(e)
         }), 500
+
+
+@bp.route("/health/full-checklist", methods=["GET"])
+async def health_full_checklist():
+    """
+    Endpoint de health check que ejecuta el checklist completo
+    Se autoejecuta en Container Apps como health probe
+    """
+    try:
+        import sys
+        import os
+        from io import StringIO
+        
+        # Capturar output del checklist
+        old_stdout = sys.stdout
+        sys.stdout = captured_output = StringIO()
+        
+        try:
+            # Importar y ejecutar el checklist simple para contexto web
+            sys.path.append(os.path.dirname(__file__))
+            
+            # Usar el deployment_checklist completo que incluye RBAC
+            try:
+                from diagnostics.deployment_checklist import run_checklist
+                from simple_checklist import load_env_file
+                
+                # Cargar variables de entorno
+                load_env_file()
+                
+                # Ejecutar checklist completo incluyendo RBAC
+                exit_code = run_checklist(['env', 'search', 'openai', 'rbac'])
+                
+                all_ok = (exit_code == 0)
+            except Exception as e:
+                print(f"❌ Error al ejecutar checklist completo: {e}")
+                print("🔄 Fallback a checklist simple...")
+                
+                # Fallback al checklist simple
+                from simple_checklist import (
+                    load_env_file,
+                    simple_check_azure_cli, 
+                    simple_check_search, 
+                    simple_check_openai
+                )
+                
+                # Cargar variables de entorno
+                load_env_file()
+                
+                print("🚀 Health Check (Fallback)")
+                print("=" * 40)
+                
+                cli_ok = simple_check_azure_cli()
+                search_ok = simple_check_search()
+                openai_ok = simple_check_openai()
+                
+                print("\n📋 RESUMEN:")
+                print(f"   ENV: {'✅' if cli_ok else '❌'}")
+                print(f"   SEARCH: {'✅' if search_ok else '❌'}")
+                print(f"   OPENAI: {'✅' if openai_ok else '❌'}")
+                print(f"   RBAC: ⚠️ Error en validación: {str(e)}")
+                
+                all_ok = all([cli_ok, search_ok, openai_ok])
+                exit_code = 1  # Forzar error debido a falla en RBAC
+            
+        finally:
+            sys.stdout = old_stdout
+        
+        output = captured_output.getvalue()
+        
+        # Determinar estado
+        if exit_code == 0:
+            status = "healthy"
+            http_status = 200
+        else:
+            status = "unhealthy" 
+            http_status = 503  # Service Unavailable
+        
+        return jsonify({
+            "status": status,
+            "exit_code": exit_code,
+            "timestamp": datetime.utcnow().isoformat(),
+            "environment": "container-app" if os.getenv("RUNNING_IN_PRODUCTION") else "development",
+            "detailed_output": output,
+            "summary": {
+                "environment_check": "✅" if "ENV: ✅" in output else "❌",
+                "search_check": "✅" if "SEARCH: ✅" in output else "❌", 
+                "openai_check": "✅" if "OPENAI: ✅" in output else "❌",
+                "rbac_check": "✅" if "RBAC: ✅" in output else ("⚠️" if "RBAC: ⚠️" in output else "❌")
+            }
+        }), http_status
+        
+    except Exception as e:
+        current_app.logger.error(f"Error en health_full_checklist: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }), 500
+
+@bp.route("/health", methods=["GET"])
+async def health_simple():
+    """Health check simple para Container Apps"""
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.0.0"
+    }), 200
 
 
 @bp.before_app_serving

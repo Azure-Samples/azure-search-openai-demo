@@ -364,6 +364,15 @@
     },
     "useAgenticRetrieval": {
       "value": "${USE_AGENTIC_RETRIEVAL=false}"
+    },
+    "azureValidateSearch": {
+      "value": "${AZURE_VALIDATE_SEARCH=false}"
+    },
+    "azureValidateRbac": {
+      "value": "${AZURE_VALIDATE_RBAC=false}"
+    },
+    "azureStrictValidation": {
+      "value": "${AZURE_STRICT_VALIDATION=false}"
     }
   }
 }

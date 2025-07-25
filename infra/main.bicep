@@ -291,6 +291,15 @@ param useLocalHtmlParser bool = false
 @description('Use AI project')
 param useAiProject bool = false
 
+@description('Enable automatic Azure Search validation on startup')
+param azureValidateSearch string = 'false'
+
+@description('Enable automatic RBAC validation on startup')
+param azureValidateRbac string = 'false'
+
+@description('Enable strict validation mode with detailed logging')
+param azureStrictValidation string = 'false'
+
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, location, environmentName))
 var tags = { 'azd-env-name': environmentName }
@@ -491,6 +500,10 @@ var appEnvVariables = {
   USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
   AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
   RUNNING_IN_PRODUCTION: 'true'
+  // Enhanced RBAC and Search validation settings
+  AZURE_VALIDATE_SEARCH: azureValidateSearch
+  AZURE_VALIDATE_RBAC: azureValidateRbac
+  AZURE_STRICT_VALIDATION: azureStrictValidation
 }
 
 // App Service for the web application (Python Quart app with JS frontend)

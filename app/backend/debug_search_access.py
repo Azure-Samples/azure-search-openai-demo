@@ -25,6 +25,30 @@ async def detailed_search_diagnosis():
     print(f"Index: {search_index}")
     print()
     
+    # Parte 0: Validación RBAC explícita
+    print("0. VALIDACIÓN RBAC EXPLÍCITA...")
+    try:
+        from healthchecks.rbac_validation import get_rbac_status_dict
+        rbac_status = await get_rbac_status_dict()
+        
+        print(f"   Estado RBAC: {rbac_status.get('rbac_validation', 'unknown')}")
+        if rbac_status.get('principal_id'):
+            print(f"   Principal ID: {rbac_status['principal_id']}")
+        if rbac_status.get('assigned_roles'):
+            print(f"   Roles asignados: {len(rbac_status['assigned_roles'])}")
+            for role in rbac_status['assigned_roles']:
+                print(f"      ✅ {role['name']}")
+        if rbac_status.get('missing_roles'):
+            print(f"   Roles faltantes: {len(rbac_status['missing_roles'])}")
+            for role in rbac_status['missing_roles']:
+                print(f"      ❌ {role['name']}")
+        if rbac_status.get('errors'):
+            print(f"   Errores RBAC: {rbac_status['errors']}")
+    except Exception as e:
+        print(f"   ⚠️ Error en validación RBAC: {e}")
+    
+    print()
+    
     # Parte 1: Test de credential con diferentes métodos Y SCOPES
     print("1. TESTING CREDENTIALS WITH DIFFERENT SCOPES...")
     

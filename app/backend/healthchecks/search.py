@@ -267,6 +267,20 @@ async def main():
     if not scope_valid:
         return False
     
+    # Validación RBAC explícita (opcional, puede fallar sin impedir el funcionamiento)
+    rbac_enabled = os.getenv("AZURE_VALIDATE_RBAC", "false").lower() == "true"
+    if rbac_enabled:
+        try:
+            from .rbac_validation import validate_rbac_for_search
+            logger.info("🔐 Ejecutando validación RBAC explícita...")
+            rbac_valid = await validate_rbac_for_search()
+            if not rbac_valid:
+                logger.warning("⚠️ Validación RBAC explícita falló, pero continuando con validaciones funcionales...")
+        except ImportError:
+            logger.warning("⚠️ Módulo rbac_validation no disponible")
+        except Exception as e:
+            logger.warning(f"⚠️ Error en validación RBAC explícita: {str(e)}")
+    
     access_valid = await validate_search_access(endpoint, credential, index_name)
     
     if access_valid:
