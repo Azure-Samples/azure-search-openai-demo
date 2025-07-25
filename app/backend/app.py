@@ -646,6 +646,133 @@ async def debug_managed_identity():
         }), 500
 
 
+@bp.route("/debug/search-validation", methods=["GET"])
+async def debug_search_validation():
+    """Endpoint para validar completamente el acceso a Azure Search"""
+    try:
+        from healthchecks.search import (
+            validate_search_environment_vars, 
+            validate_search_credential_scope, 
+            validate_search_access
+        )
+        
+        current_app.logger.info("🔍 Iniciando validación completa de Azure Search...")
+        
+        # Paso 1: Validar variables de entorno
+        env_check = validate_search_environment_vars()
+        if env_check["status"] == "error":
+            return jsonify({
+                "status": "error",
+                "step": "environment_variables",
+                "error": "Variables de entorno faltantes",
+                "details": env_check
+            }), 500
+        
+        # Paso 2: Obtener credencial actual
+        azure_credential = current_app.config[CONFIG_CREDENTIAL]
+        
+        # Paso 3: Validar scope de la credencial
+        current_app.logger.info("🔑 Validando scope de credencial...")
+        scope_valid = await validate_search_credential_scope(azure_credential)
+        
+        if not scope_valid:
+            return jsonify({
+                "status": "error",
+                "step": "credential_scope",
+                "error": "Credencial no puede obtener tokens para Azure Search",
+                "environment_check": env_check
+            }), 500
+        
+        # Paso 4: Validar acceso completo a Azure Search
+        endpoint = env_check["endpoint"]
+        index_name = env_check["required_vars"]["AZURE_SEARCH_INDEX"]
+        
+        current_app.logger.info(f"🌐 Validando acceso a {endpoint} con índice {index_name}...")
+        access_valid = await validate_search_access(endpoint, azure_credential, index_name)
+        
+        if access_valid:
+            return jsonify({
+                "status": "success",
+                "message": "✅ Todas las validaciones de Azure Search pasaron exitosamente",
+                "environment_check": env_check,
+                "credential_scope": "valid",
+                "search_access": "valid",
+                "recommendations": [
+                    "Azure Search está configurado correctamente",
+                    "Managed Identity tiene los permisos necesarios",
+                    "El endpoint y el índice son accesibles"
+                ]
+            })
+        else:
+            return jsonify({
+                "status": "error",
+                "step": "search_access",
+                "error": "No se pudo acceder a Azure Search",
+                "environment_check": env_check,
+                "credential_scope": "valid",
+                "search_access": "failed",
+                "recommendations": [
+                    "Verifica los roles RBAC en Azure Search",
+                    "Asegúrate que el Container App tenga System-Assigned Managed Identity",
+                    "Roles necesarios: Search Index Data Reader, Search Service Contributor, Search Index Data Contributor"
+                ]
+            }), 500
+        
+    except Exception as e:
+        current_app.logger.error(f"Error en validación de Azure Search: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "step": "unexpected_error",
+            "error": str(e),
+            "message": "Error inesperado durante la validación"
+        }), 500
+
+
+@bp.route("/debug/search-detailed", methods=["GET"])
+async def debug_search_detailed():
+    """Diagnóstico detallado de Azure Search ejecutando script especializado"""
+    import subprocess
+    import sys
+    import os
+    
+    try:
+        # Ejecutar el script de diagnóstico detallado
+        script_path = os.path.join(os.path.dirname(__file__), "debug_search_access.py")
+        
+        # Ejecutar el script y capturar output
+        result = subprocess.run(
+            [sys.executable, script_path],
+            capture_output=True,
+            text=True,
+            cwd=os.path.dirname(__file__),
+            env=os.environ.copy(),
+            timeout=30  # 30 second timeout
+        )
+        
+        return jsonify({
+            "status": "completed",
+            "returncode": result.returncode,
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "diagnostic_summary": {
+                "credentials_test": "✅" if "✅ Token obtenido" in result.stdout else "❌",
+                "rest_api_test": "✅" if "✅ Acceso exitoso a Azure Search" in result.stdout else "❌", 
+                "search_client_test": "✅" if "✅ SearchClient funcionando" in result.stdout else "❌"
+            }
+        })
+        
+    except subprocess.TimeoutExpired:
+        return jsonify({
+            "status": "timeout",
+            "error": "El diagnóstico excedió el tiempo límite de 30 segundos"
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e)
+        })
+
+
 @bp.route("/debug/sharepoint/explore", methods=["GET"])
 async def debug_sharepoint_explore():
     """Endpoint de debug para explorar la estructura de SharePoint"""
@@ -1163,6 +1290,44 @@ async def setup_clients():
         index_name=AZURE_SEARCH_INDEX,
         credential=azure_credential,
     )
+    
+    # Validación opcional de Azure Search si está habilitada
+    if os.getenv("AZURE_VALIDATE_SEARCH", "").lower() == "true":
+        current_app.logger.info("🔍 AZURE_VALIDATE_SEARCH=true, ejecutando validaciones de Azure Search...")
+        try:
+            from healthchecks.search import (
+                validate_search_environment_vars, 
+                validate_search_credential_scope, 
+                validate_search_access
+            )
+            
+            # Validar variables de entorno
+            env_check = validate_search_environment_vars()
+            if env_check["status"] == "error":
+                current_app.logger.error("❌ Error en variables de entorno de Azure Search")
+                raise ValueError(f"Variables de entorno faltantes: {env_check['missing_required']}")
+            
+            # Validar scope de credencial
+            scope_valid = await validate_search_credential_scope(azure_credential)
+            if not scope_valid:
+                current_app.logger.error("❌ Credencial no puede obtener tokens para Azure Search")
+                raise ValueError("Credencial inválida para Azure Search")
+            
+            # Validar acceso completo
+            access_valid = await validate_search_access(AZURE_SEARCH_ENDPOINT, azure_credential, AZURE_SEARCH_INDEX)
+            if not access_valid:
+                current_app.logger.error("❌ No se pudo validar acceso a Azure Search")
+                raise ValueError("Acceso a Azure Search falló")
+                
+            current_app.logger.info("✅ Validaciones de Azure Search completadas exitosamente")
+            
+        except Exception as e:
+            current_app.logger.error(f"💥 Error crítico en validación de Azure Search: {str(e)}")
+            if os.getenv("AZURE_STRICT_VALIDATION", "").lower() == "true":
+                raise  # Fallar completamente si strict mode está habilitado
+            else:
+                current_app.logger.warning("⚠️ Continuando a pesar del error de validación (AZURE_STRICT_VALIDATION no está habilitado)")
+    
     agent_client = KnowledgeAgentRetrievalClient(
         endpoint=AZURE_SEARCH_ENDPOINT, agent_name=AZURE_SEARCH_AGENT, credential=azure_credential
     )
