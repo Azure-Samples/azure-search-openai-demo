@@ -17,6 +17,7 @@ opentelemetry-instrumentation-asgi
 opentelemetry-instrumentation-httpx
 opentelemetry-instrumentation-aiohttp-client
 opentelemetry-instrumentation-openai
+opentelemetry-instrumentation-urllib<0.53  # Constrain to prevent incompatible upgrades
 msal
 cryptography
 PyJWT
