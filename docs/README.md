@@ -3,8 +3,6 @@
 Consult the main [README](../README.md) for general information about the project.
 These are advanced topics that are not necessary for a basic deployment.
 
-- **[Architecture Overview](architecture.md)** - Detailed diagrams and component descriptions
-
 - Deploying:
   - [Troubleshooting deployment](docs/deploy_troubleshooting.md)
     - [Debugging the app on App Service](appservice.md)
@@ -20,6 +18,7 @@ These are advanced topics that are not necessary for a basic deployment.
   - [Sharing deployment environments](sharing_environments.md)
 - [Local development](localdev.md)
 - [Customizing the app](customization.md)
+- **[Architecture Overview](architecture.md)** - Detailed diagrams and component descriptions
 - [HTTP Protocol](http_protocol.md)
 - [Data ingestion](data_ingestion.md)
 - [Evaluation](docs/evaluation.md)
