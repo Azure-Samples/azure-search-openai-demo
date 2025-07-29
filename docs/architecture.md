@@ -1,6 +1,6 @@
 # RAG Chat: Application Architecture
 
-This document provides a detailed architectural overview of the Azure Search OpenAI demo application. The Azure Search OpenAI demo is a Retrieval Augmented Generation (RAG) application that creates a ChatGPT-like experience over your own documents. It combines Azure OpenAI Service for AI capabilities with Azure AI Search for document indexing and retrieval.
+This document provides a detailed architectural overview of this application, a Retrieval Augmented Generation (RAG) application that creates a ChatGPT-like experience over your own documents. It combines Azure OpenAI Service for AI capabilities with Azure AI Search for document indexing and retrieval.
 
 For getting started with the application, see the main [README](../README.md).
 
@@ -32,7 +32,7 @@ graph TB
 
     subgraph "Azure Services"
         subgraph "AI Services"
-            OpenAI[🤖 Azure OpenAI<br/>- GPT-4 Mini<br/>- Text Embeddings<br/>- GPT-4V (optional)]
+            OpenAI[🤖 Azure OpenAI<br/>- GPT-4 Mini<br/>- Text Embeddings<br/>- GPT-4 Vision]
             Search[🔍 Azure AI Search<br/>- Vector Search<br/>- Semantic Ranking<br/>- Full-text Search]
             DocIntel[📄 Azure Document<br/>Intelligence<br/>- Text Extraction<br/>- Layout Analysis]
             Vision2[👁️ Azure AI Vision<br/>(optional)]

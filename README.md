@@ -262,7 +262,7 @@ You can find extensive documentation in the [docs](docs/README.md) folder:
   - [Sharing deployment environments](docs/sharing_environments.md)
 - [Local development](docs/localdev.md)
 - [Customizing the app](docs/customization.md)
-- **[Architecture documentation with interactive diagrams](docs/architecture.md)**
+- [Architecture documentation with interactive diagrams](docs/architecture.md)
 - [HTTP Protocol](docs/http_protocol.md)
 - [Data ingestion](docs/data_ingestion.md)
 - [Evaluation](docs/evaluation.md)
