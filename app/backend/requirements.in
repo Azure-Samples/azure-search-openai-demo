@@ -12,12 +12,11 @@ azure-storage-blob
 azure-storage-file-datalake
 uvicorn
 aiohttp
-azure-monitor-opentelemetry
+azure-monitor-opentelemetry>=1.6.13
 opentelemetry-instrumentation-asgi
 opentelemetry-instrumentation-httpx
 opentelemetry-instrumentation-aiohttp-client
 opentelemetry-instrumentation-openai
-opentelemetry-instrumentation-urllib<0.53  # Constrain to prevent incompatible upgrades
 msal
 cryptography
 PyJWT
