@@ -3,6 +3,8 @@
 Consult the main [README](../README.md) for general information about the project.
 These are advanced topics that are not necessary for a basic deployment.
 
+- **[Architecture Overview](architecture.md)** - Detailed diagrams and component descriptions
+
 - Deploying:
   - [Troubleshooting deployment](docs/deploy_troubleshooting.md)
     - [Debugging the app on App Service](appservice.md)
