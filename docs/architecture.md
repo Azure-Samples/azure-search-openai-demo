@@ -1,10 +1,8 @@
-# Application Architecture
+# RAG Chat: Application Architecture
 
-This document provides a detailed architectural overview of the Azure Search OpenAI demo application using Mermaid diagrams.
+This document provides a detailed architectural overview of the Azure Search OpenAI demo application. The Azure Search OpenAI demo is a Retrieval Augmented Generation (RAG) application that creates a ChatGPT-like experience over your own documents. It combines Azure OpenAI Service for AI capabilities with Azure AI Search for document indexing and retrieval.
 
-## Overview
-
-The Azure Search OpenAI demo is a Retrieval Augmented Generation (RAG) application that creates a ChatGPT-like experience over your own documents. It combines Azure OpenAI Service for AI capabilities with Azure AI Search for document indexing and retrieval.
+For getting started with the application, see the main [README](../README.md).
 
 ## Architecture Diagram
 
@@ -28,7 +26,6 @@ graph TB
             subgraph "Approaches"
                 CRR[ChatReadRetrieveRead<br/>Approach]
                 RTR[RetrieveThenRead<br/>Approach]
-                Vision[Vision Approaches<br/>GPT-4V Support]
             end
         end
     end
@@ -38,7 +35,7 @@ graph TB
             OpenAI[🤖 Azure OpenAI<br/>- GPT-4 Mini<br/>- Text Embeddings<br/>- GPT-4V (optional)]
             Search[🔍 Azure AI Search<br/>- Vector Search<br/>- Semantic Ranking<br/>- Full-text Search]
             DocIntel[📄 Azure Document<br/>Intelligence<br/>- Text Extraction<br/>- Layout Analysis]
-            Vision2[👁️ Azure Computer Vision<br/>(optional)]
+            Vision2[👁️ Azure AI Vision<br/>(optional)]
             Speech[🎤 Azure Speech<br/>Services (optional)]
         end
         
@@ -66,7 +63,6 @@ graph TB
     %% Backend Processing
     API --> CRR
     API --> RTR
-    API --> Vision
     
     %% Azure Service Connections
     API <--> OpenAI
@@ -80,10 +76,6 @@ graph TB
     PrepDocs --> DocIntel
     PrepDocs --> OpenAI
     PrepDocs --> Search
-    
-    %% Vision Processing
-    Vision --> Vision2
-    Vision --> OpenAI
     
     %% Platform Integration
     ContainerApps --> API
@@ -99,7 +91,7 @@ graph TB
     classDef processing fill:#f1f8e9
     
     class User,Browser userLayer
-    class React,API,CRR,RTR,Vision appLayer
+    class React,API,CRR,RTR appLayer
     class OpenAI,Search,DocIntel,Vision2,Speech azureAI
     class Blob,Cosmos azureStorage
     class ContainerApps,AppInsights,KeyVault azurePlatform
@@ -165,11 +157,10 @@ sequenceDiagram
 
 ### Backend (Python)
 
-- **API Layer**: RESTful endpoints for chat, search, and configuration
+- **API Layer**: RESTful endpoints for chat, search, and configuration. See [HTTP Protocol](http_protocol.md) for detailed API documentation.
 - **Approach Patterns**: Different strategies for processing queries
   - `ChatReadRetrieveRead`: Multi-turn conversation with retrieval
   - `RetrieveThenRead`: Single-turn Q&A with retrieval
-  - `Vision Approaches`: Support for image-based documents
 - **Authentication**: Optional integration with Azure Active Directory
 
 ### Azure Services Integration
@@ -177,12 +168,11 @@ sequenceDiagram
 - **Azure OpenAI**: Powers the conversational AI capabilities
 - **Azure AI Search**: Provides semantic and vector search over documents
 - **Azure Blob Storage**: Stores original documents and processed content
-- **Azure Container Apps**: Hosts the application with automatic scaling
 - **Application Insights**: Provides monitoring and telemetry
 
 ## Optional Features
 
-The architecture supports several optional features that can be enabled:
+The architecture supports several optional features that can be enabled. For detailed configuration instructions, see the [optional features guide](deploy_features.md):
 
 - **GPT-4 with Vision**: Process image-heavy documents
 - **Speech Services**: Voice input/output capabilities
@@ -195,6 +185,6 @@ The architecture supports several optional features that can be enabled:
 The application can be deployed using:
 
 - **Azure Container Apps** (default): Serverless container hosting
-- **Azure App Service**: Traditional PaaS hosting option
+- **Azure App Service**: Traditional PaaS hosting option. See the [App Service hosting guide](appservice.md) for detailed instructions.
 
 Both options support the same feature set and can be configured through the Azure Developer CLI (azd).

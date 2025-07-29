@@ -70,8 +70,6 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ![RAG Architecture](docs/images/appcomponents.png)
 
-📋 **[View detailed architecture documentation with interactive Mermaid diagrams](docs/architecture.md)**
-
 ## Azure account requirements
 
 **IMPORTANT:** In order to deploy and run this example, you'll need:
@@ -264,6 +262,7 @@ You can find extensive documentation in the [docs](docs/README.md) folder:
   - [Sharing deployment environments](docs/sharing_environments.md)
 - [Local development](docs/localdev.md)
 - [Customizing the app](docs/customization.md)
+- **[Architecture documentation with interactive diagrams](docs/architecture.md)**
 - [HTTP Protocol](docs/http_protocol.md)
 - [Data ingestion](docs/data_ingestion.md)
 - [Evaluation](docs/evaluation.md)
