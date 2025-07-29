@@ -234,10 +234,8 @@ module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
       {
         name: 'app-int-subnet'
         addressPrefix: '10.0.0.0/21'
-        //privateEndpointNetworkPolicies: 'Enabled' // TODO: Needed?
-        //privateLinkServiceNetworkPolicies: 'Enabled' // TODO: Needed?
         networkSecurityGroupResourceId: containerAppsNSG.outputs.resourceId
-        delegation: 'Microsoft.App/environments' // TODO: Needed?
+        delegation: 'Microsoft.App/environments'
       }
     ]
   }

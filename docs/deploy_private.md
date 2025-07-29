@@ -51,7 +51,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
     ```shell
     azd env set AZURE_USE_PRIVATE_ENDPOINT true
     azd env set AZURE_USE_VPN_GATEWAY true
-    azd env set AZURE_PUBLIC_NETWORK_ACCESS Enabled
+    azd env set AZURE_PUBLIC_NETWORK_ACCESS Disabled
     azd up
     ```
 
