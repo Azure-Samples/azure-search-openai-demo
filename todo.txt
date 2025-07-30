@@ -1,2 +1,0 @@
-
-* Manually test App Service

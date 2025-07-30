@@ -1206,6 +1206,16 @@ var containerAppsPrivateEndpointConnection = (usePrivateEndpoint && deploymentTa
       }
     ]
   : []
+
+var appServicePrivateEndpointConnection = (usePrivateEndpoint && deploymentTarget == 'appservice')
+  ? [
+      {
+        groupId: 'sites'
+        dnsZoneName: 'privatelink.azurewebsites.net'
+        resourceIds: [backend.outputs.id]
+      }
+    ]
+  : []
 var otherPrivateEndpointConnections = (usePrivateEndpoint)
   ? [
       {
@@ -1226,7 +1236,7 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
     ]
   : []
 
-var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection, containerAppsPrivateEndpointConnection)
+var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection, containerAppsPrivateEndpointConnection, appServicePrivateEndpointConnection)
 
 module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
   name: 'privateEndpoints'

@@ -214,17 +214,16 @@ module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
       deploymentTarget == 'appservice'
         ? [
             {
-              name: 'app-int-subnet'
-              addressPrefix: '10.0.3.0/24'
+              name: 'app-service-subnet'
+              addressPrefix: '10.0.9.0/24'
               privateEndpointNetworkPolicies: 'Enabled'
               privateLinkServiceNetworkPolicies: 'Enabled'
-              // TODO: Are we sure we don't need App Service Plan/ID? Test this.
               delegation: 'Microsoft.Web/serverFarms'
             }
           ]
         : [
             {
-              name: 'app-int-subnet'
+              name: 'container-apps-subnet'
               addressPrefix: '10.0.0.0/21'
               networkSecurityGroupResourceId: containerAppsNSG.outputs.resourceId
               delegation: 'Microsoft.App/environments'
