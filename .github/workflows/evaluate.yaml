@@ -159,7 +159,6 @@ jobs:
             az account set --subscription ${{env.AZURE_SUBSCRIPTION_ID}}
 
       - name: Login to with Azure with azd (Federated Credentials)
-        if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
           azd auth login `
             --client-id "$Env:AZURE_CLIENT_ID" `
