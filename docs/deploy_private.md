@@ -96,3 +96,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
     ```bash
     azd deploy
     ```
+
+## Compatibility with other features
+
+* **GitHub Actions / Azure DevOps**: The private access deployment is not compatible with the built-in CI/CD pipelines, as it requires a VPN connection to deploy the app. You could modify the pipeline to only do provisioning, and set up a different deployment strategy for the app.

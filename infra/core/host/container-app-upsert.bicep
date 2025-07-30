@@ -3,6 +3,7 @@ param name string
 param location string = resourceGroup().location
 param tags object = {}
 
+
 @description('The number of CPU cores allocated to a single container instance, e.g., 0.5')
 param containerCpuCoreCount string = '0.5'
 
@@ -27,7 +28,6 @@ param containerRegistryName string
 
 @description('Hostname suffix for container registry. Set when deploying to sovereign clouds')
 param containerRegistryHostSuffix string = 'azurecr.io'
-
 
 @allowed(['http', 'grpc'])
 @description('The protocol used by Dapr to connect to the app, e.g., HTTP or gRPC')
