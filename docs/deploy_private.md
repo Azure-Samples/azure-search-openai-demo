@@ -46,7 +46,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
 
 ## Recommended deployment strategy for private access
 
-1. Deploy the app with private endpoints enabled, public network access disabled, and a VPN gateway configured. This will allow you to connect to the chat app from inside the virtual network.
+1. Configure the azd environment variables to use private endpoints and a VPN gateway, with public network access disabled. This will allow you to connect to the chat app from inside the virtual network, but not from the public Internet.
 
     ```shell
     azd env set AZURE_USE_PRIVATE_ENDPOINT true
@@ -55,19 +55,19 @@ Deploying with public access disabled adds additional cost to your deployment. P
     azd up
     ```
 
-2. First provision all the resources:
+2. Provision all the Azure resources:
 
     ```bash
     azd provision
     ```
 
-3. Once provisioning is complete, run this command to get the VPN configuration download link:
+3. Once provisioning is complete, you will see an error when it tries to run the data ingestion script, because you are not yet connected to the VPN. That message should provide a URL for the VPN configuration file download. If you don't see that URL, run this command:
 
     ```bash
     azd env get-value AZURE_VPN_CONFIG_DOWNLOAD_LINK
     ```
 
-    Select "Download VPN client" to download a ZIP file containing the VPN configuration.
+    Open that link in your browser. Select "Download VPN client" to download a ZIP file containing the VPN configuration.
 
 4. Open `AzureVPN/azurevpnconfig.xml`, and replace the `<clientconfig>` empty tag with the following:
 
@@ -79,17 +79,19 @@ Deploying with public access disabled adds additional cost to your deployment. P
       </clientconfig>
     ```
 
-5. Open the "Azure VPN" client and select "Import" button. Select the `azurevpnconfig.xml` file you just downloaded and modified.
+5. Install the [Azure VPN Client](https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-vpn-client-install).
 
-6. Select "Connect" and the new VPN connection. You will be prompted to select your Microsoft account and login.
+6. Open the "Azure VPN" client and select "Import" button. Select the `azurevpnconfig.xml` file you just downloaded and modified.
 
-7. Once you're successfully connected to VPN, you can run the data ingestion script:
+7. Select "Connect" and the new VPN connection. You will be prompted to select your Microsoft account and login.
+
+8. Once you're successfully connected to VPN, you can run the data ingestion script:
 
     ```bash
     azd hooks run postprovision
     ```
 
-8. Finally, you can deploy the app:
+9. Finally, you can deploy the app:
 
     ```bash
     azd deploy

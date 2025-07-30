@@ -1,4 +1,2 @@
-* Better error when youre trying to run prepdocs and not connected to VPN.
-   * Hit up /ping and check that it returns 200 OK. Anything else = no bueno.
-   * If they have AZURE_USE_PRIVATE_ENDPOINT and it gets non-200, reminds them to set up VPN.
+
 * Manually test App Service
