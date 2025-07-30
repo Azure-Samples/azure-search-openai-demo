@@ -35,13 +35,13 @@ graph TB
             OpenAI[🤖 Azure OpenAI<br/>- GPT-4 Mini<br/>- Text Embeddings<br/>- GPT-4 Vision]
             Search[🔍 Azure AI Search<br/>- Vector Search<br/>- Semantic Ranking<br/>- Full-text Search]
             DocIntel[📄 Azure Document<br/>Intelligence<br/>- Text Extraction<br/>- Layout Analysis]
-            Vision2[👁️ Azure AI Vision<br/>(optional)]
-            Speech[🎤 Azure Speech<br/>Services (optional)]
+            Vision2[👁️ Azure AI Vision<br/>optional]
+            Speech[🎤 Azure Speech<br/>Services optional]
         end
         
         subgraph "Storage & Data"
             Blob[💾 Azure Blob Storage<br/>- Document Storage<br/>- User Uploads]
-            Cosmos[🗃️ Azure Cosmos DB<br/>- Chat History<br/>(optional)]
+            Cosmos[🗃️ Azure Cosmos DB<br/>- Chat History<br/>optional]
         end
         
         subgraph "Platform Services"
