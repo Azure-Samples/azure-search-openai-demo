@@ -18,7 +18,7 @@ These are advanced topics that are not necessary for a basic deployment.
   - [Sharing deployment environments](sharing_environments.md)
 - [Local development](localdev.md)
 - [Customizing the app](customization.md)
-- **[Architecture Overview](architecture.md)** - Detailed diagrams and component descriptions
+- [App architecture](architecture.md)
 - [HTTP Protocol](http_protocol.md)
 - [Data ingestion](data_ingestion.md)
 - [Evaluation](docs/evaluation.md)
