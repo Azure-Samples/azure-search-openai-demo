@@ -79,9 +79,9 @@ Deploying with public access disabled adds additional cost to your deployment. P
       </clientconfig>
     ```
 
-5. Install the [Azure VPN Client](https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-vpn-client-install).
+5. Install the [Azure VPN Client](https://learn.microsoft.com/azure/vpn-gateway/azure-vpn-client-versions).
 
-6. Open the "Azure VPN" client and select "Import" button. Select the `azurevpnconfig.xml` file you just downloaded and modified.
+6. Open the Azure VPN Client and select "Import" button. Select the `azurevpnconfig.xml` file you just downloaded and modified.
 
 7. Select "Connect" and the new VPN connection. You will be prompted to select your Microsoft account and login.
 
