@@ -1164,11 +1164,13 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     location: location
     tags: tags
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
-    deployVpnGateway: useVpnGateway
+    useVpnGateway: useVpnGateway
     deploymentTarget: deploymentTarget
     // Need to check deploymentTarget due to https://github.com/Azure/bicep/issues/3990
     appServicePlanName: deploymentTarget == 'appservice' ? appServicePlan.outputs.name : ''
     //containerAppsEnvName: deploymentTarget == 'containerapps' ? acaManagedEnvironmentName : ''
+    vpnGatewayName: useVpnGateway ? '${abbrs.networkVpnGateways}${resourceToken}' : ''
+    dnsResolverName: useVpnGateway ? '${abbrs.privateDnsResolver}${resourceToken}' : ''
   }
 }
 
@@ -1197,6 +1199,16 @@ var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLoc
       }
     ]
   : []
+
+var containerAppsPrivateEndpointConnection = (usePrivateEndpoint && deploymentTarget == 'containerapps')
+  ? [
+      {
+        groupId: 'managedEnvironments'
+        dnsZoneName: 'privatelink.${location}.azurecontainerapps.io'
+        resourceIds: [containerApps.outputs.environmentId]
+      }
+    ]
+  : []
 var otherPrivateEndpointConnections = (usePrivateEndpoint)
   ? [
       {
@@ -1217,7 +1229,7 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
     ]
   : []
 
-var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection)
+var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection, containerAppsPrivateEndpointConnection)
 
 module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
   name: 'privateEndpoints'
@@ -1230,99 +1242,7 @@ module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
     applicationInsightsId: useApplicationInsights ? monitoring.outputs.applicationInsightsId : ''
     logAnalyticsWorkspaceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
     vnetName: isolation.outputs.vnetName
-    vnetPeSubnetName: isolation.outputs.backendSubnetId
-  }
-}
-
-// Based on https://luke.geek.nz/azure/azure-point-to-site-vpn-and-private-dns-resolver/
-// Manual step required of updating azurevpnconfig.xml to use the correct DNS server IP address
-module dnsResolver 'br/public:avm/res/network/dns-resolver:0.5.4' = if (useVpnGateway) {
-  name: 'dns-resolver'
-  scope: resourceGroup
-  params: {
-    name: '${abbrs.privateDnsResolver}${resourceToken}'
-    location: location
-    virtualNetworkResourceId: isolation.outputs.vnetId
-    inboundEndpoints: [
-      {
-        name: 'inboundEndpoint'
-        subnetResourceId: useVpnGateway ? isolation.outputs.privateDnsResolverSubnetId : ''
-      }
-    ]
-  }
-}
-
-// Container Apps Private DNS Zone
-module containerAppsPrivateDnsZone 'br/public:avm/res/network/private-dns-zone:0.7.1' = if (usePrivateEndpoint && deploymentTarget == 'containerapps') {
-  name: 'container-apps-dns-zone'
-  scope: resourceGroup
-  params: {
-    name: 'privatelink.${location}.azurecontainerapps.io'
-    tags: tags
-    virtualNetworkLinks: [
-      {
-        registrationEnabled: false
-        virtualNetworkResourceId: isolation.outputs.vnetId
-      }
-    ]
-  }
-}
-
-// Container Apps Environment Private Endpoint
-// https://learn.microsoft.com/azure/container-apps/how-to-use-private-endpoint
-module containerAppsEnvironmentPrivateEndpoint 'br/public:avm/res/network/private-endpoint:0.11.0' = if (usePrivateEndpoint && deploymentTarget == 'containerapps') {
-  name: 'containerAppsEnvironmentPrivateEndpointDeployment'
-  scope: resourceGroup
-  params: {
-    name: 'container-apps-env-pe${resourceToken}'
-    location: location
-    tags: tags
-    subnetResourceId: isolation.outputs.backendSubnetId
-    privateDnsZoneGroup: {
-      privateDnsZoneGroupConfigs: [
-        {
-          privateDnsZoneResourceId: containerAppsPrivateDnsZone.outputs.resourceId
-        }
-      ]
-    }
-    privateLinkServiceConnections: [
-      {
-        name: 'containerAppsEnvironmentConnection'
-        properties: {
-          groupIds: [
-            'managedEnvironments'
-          ]
-          privateLinkServiceId: containerApps.outputs.environmentId
-        }
-      }
-    ]
-  }
-}
-
-module virtualNetworkGateway 'br/public:avm/res/network/virtual-network-gateway:0.8.0' = if (useVpnGateway) {
-  name: 'virtual-network-gateway'
-  scope: resourceGroup
-  params: {
-    name: '${abbrs.networkVpnGateways}${resourceToken}'
-    clusterSettings: {
-      clusterMode: 'activePassiveNoBgp'
-    }
-    gatewayType: 'Vpn'
-    virtualNetworkResourceId: isolation.outputs.vnetId
-    vpnGatewayGeneration: 'Generation2'
-    vpnClientAddressPoolPrefix: '172.16.201.0/24'
-    skuName: 'VpnGw2'
-    vpnClientAadConfiguration: {
-      aadAudience: 'c632b3df-fb67-4d84-bdcf-b95ad541b5c8' // Azure VPN client
-      aadIssuer: 'https://sts.windows.net/${tenant().tenantId}/'
-      aadTenant: '${environment().authentication.loginEndpoint}${tenant().tenantId}'
-      vpnAuthenticationTypes: [
-        'AAD'
-      ]
-      vpnClientProtocols: [
-        'OpenVPN'
-      ]
-    }
+    vnetPeSubnetId: isolation.outputs.backendSubnetId
   }
 }
 
@@ -1451,4 +1371,4 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = deploymentTarget == 'container
   ? containerApps.outputs.registryLoginServer
   : ''
 
-  output AZURE_VPN_CONFIG_DOWNLOAD_LINK string = useVpnGateway ? 'https://portal.azure.com/#@${tenant().tenantId}/resource/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup.name}/providers/Microsoft.Network/virtualNetworkGateways/${virtualNetworkGateway.outputs.name}/pointtositeconfiguration' : ''
+  output AZURE_VPN_CONFIG_DOWNLOAD_LINK string = useVpnGateway ? 'https://portal.azure.com/#@${tenant().tenantId}/resource/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup.name}/providers/Microsoft.Network/virtualNetworkGateways/${isolation.outputs.virtualNetworkGatewayName}/pointtositeconfiguration' : ''

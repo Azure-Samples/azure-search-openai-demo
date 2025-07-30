@@ -15,7 +15,10 @@ param deploymentTarget string
 @description('The name of an existing App Service Plan to connect to the VNet')
 param appServicePlanName string
 
-param deployVpnGateway bool = false
+param useVpnGateway bool = false
+
+param vpnGatewayName string = '${vnetName}-vpn-gateway'
+param dnsResolverName string = '${vnetName}-dns-resolver'
 
 // TODO: Bring back app service option
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' existing = if (deploymentTarget == 'appservice') {
@@ -241,9 +244,52 @@ module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
   }
 }
 
+module virtualNetworkGateway 'br/public:avm/res/network/virtual-network-gateway:0.8.0' = if (useVpnGateway) {
+  name: 'virtual-network-gateway'
+  params: {
+    name: vpnGatewayName
+    clusterSettings: {
+      clusterMode: 'activePassiveNoBgp'
+    }
+    gatewayType: 'Vpn'
+    virtualNetworkResourceId: vnet.outputs.resourceId
+    vpnGatewayGeneration: 'Generation2'
+    vpnClientAddressPoolPrefix: '172.16.201.0/24'
+    skuName: 'VpnGw2'
+    vpnClientAadConfiguration: {
+      aadAudience: 'c632b3df-fb67-4d84-bdcf-b95ad541b5c8' // Azure VPN client
+      aadIssuer: 'https://sts.windows.net/${tenant().tenantId}/'
+      aadTenant: '${environment().authentication.loginEndpoint}${tenant().tenantId}'
+      vpnAuthenticationTypes: [
+        'AAD'
+      ]
+      vpnClientProtocols: [
+        'OpenVPN'
+      ]
+    }
+  }
+}
+
+// Based on https://luke.geek.nz/azure/azure-point-to-site-vpn-and-private-dns-resolver/
+// Manual step required of updating azurevpnconfig.xml to use the correct DNS server IP address
+module dnsResolver 'br/public:avm/res/network/dns-resolver:0.5.4' = if (useVpnGateway) {
+  name: 'dns-resolver'
+  params: {
+    name: dnsResolverName
+    location: location
+    virtualNetworkResourceId: vnet.outputs.resourceId
+    inboundEndpoints: [
+      {
+        name: 'inboundEndpoint'
+        subnetResourceId: useVpnGateway ? vnet.outputs.subnetResourceIds[2] : ''
+      }
+    ]
+  }
+}
 
 output backendSubnetId string = vnet.outputs.subnetResourceIds[0]
-output privateDnsResolverSubnetId string = deployVpnGateway ? vnet.outputs.subnetResourceIds[2] : ''
+output privateDnsResolverSubnetId string = useVpnGateway ? vnet.outputs.subnetResourceIds[2] : ''
 output appSubnetId string = vnet.outputs.subnetResourceIds[3]
 output vnetName string = vnet.outputs.name
 output vnetId string = vnet.outputs.resourceId
+output virtualNetworkGatewayName string = useVpnGateway ? virtualNetworkGateway.outputs.name : ''
