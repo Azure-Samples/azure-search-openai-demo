@@ -344,9 +344,6 @@
     "webAppExists": {
         "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
     },
-    "azureContainerAppsWorkloadProfile": {
-      "value": "${AZURE_CONTAINER_APPS_WORKLOAD_PROFILE=Consumption}"
-    },
     "useMediaDescriberAzureCU": {
       "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
     },

@@ -553,7 +553,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     containerCpuCoreCount: '1.0'
     containerMemory: '2Gi'
     containerMinReplicas: 1
-    //allowedOrigins: allowedOrigins
+    allowedOrigins: allowedOrigins
     env: union(appEnvVariables, {
       // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
       AZURE_CLIENT_ID: (deploymentTarget == 'containerapps') ? acaIdentity.outputs.clientId : ''
@@ -699,8 +699,6 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2'
     name: !empty(documentIntelligenceServiceName)
       ? documentIntelligenceServiceName
       : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
-    location: documentIntelligenceResourceGroupLocation
-    tags: tags
     kind: 'FormRecognizer'
     customSubDomainName: !empty(documentIntelligenceServiceName)
       ? documentIntelligenceServiceName
@@ -709,8 +707,10 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2'
     networkAcls: {
       defaultAction: 'Allow'
     }
-    sku: documentIntelligenceSkuName
+    location: documentIntelligenceResourceGroupLocation
     disableLocalAuth: true
+    tags: tags
+    sku: documentIntelligenceSkuName
   }
 }
 
@@ -1166,9 +1166,6 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
     useVpnGateway: useVpnGateway
     deploymentTarget: deploymentTarget
-    // Need to check deploymentTarget due to https://github.com/Azure/bicep/issues/3990
-    appServicePlanName: deploymentTarget == 'appservice' ? appServicePlan.outputs.name : ''
-    //containerAppsEnvName: deploymentTarget == 'containerapps' ? acaManagedEnvironmentName : ''
     vpnGatewayName: useVpnGateway ? '${abbrs.networkVpnGateways}${resourceToken}' : ''
     dnsResolverName: useVpnGateway ? '${abbrs.privateDnsResolver}${resourceToken}' : ''
   }

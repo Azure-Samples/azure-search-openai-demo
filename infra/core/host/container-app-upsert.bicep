@@ -51,6 +51,8 @@ param containerMemory string = '1.0Gi'
 @description('Workload profile name to use for the container app when using private ingress')
 param workloadProfileName string = 'Warm'
 
+param allowedOrigins array = []
+
 resource existingApp 'Microsoft.App/containerApps@2022-03-01' existing = if (exists) {
   name: name
 }
@@ -81,19 +83,17 @@ module app 'container-app.bicep' = {
     daprAppId: daprAppId
     daprAppProtocol: daprAppProtocol
     secrets: secrets
+    allowedOrigins: allowedOrigins
     external: external
     env: concat(envAsArray, envSecrets)
     imageName: exists ? existingApp.properties.template.containers[0].image : ''
     targetPort: targetPort
-    // Pass workload profile name parameter
-    workloadProfileName: workloadProfileName
   }
 }
 
 output defaultDomain string = app.outputs.defaultDomain
 output imageName string = app.outputs.imageName
 output name string = app.outputs.name
-output hostName string = app.outputs.hostName
 output uri string = app.outputs.uri
 output identityResourceId string = app.outputs.identityResourceId
 output identityPrincipalId string = app.outputs.identityPrincipalId
