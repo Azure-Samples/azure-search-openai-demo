@@ -17,11 +17,11 @@ graph TB
 
     subgraph "Application Layer"
         subgraph "Frontend"
-            React[⚛️ React/TypeScript App<br/>- Chat Interface<br/>- Settings Panel<br/>- Citation Display]
+            React[⚛️ React/TypeScript App<br/>Chat Interface<br/>Settings Panel<br/>Citation Display]
         end
         
         subgraph "Backend"
-            API[🐍 Python API<br/>Flask/Quart<br/>- Chat Endpoints<br/>- Document Upload<br/>- Authentication]
+            API[🐍 Python API<br/>Flask/Quart<br/>Chat Endpoints<br/>Document Upload<br/>Authentication]
             
             subgraph "Approaches"
                 CRR[ChatReadRetrieveRead<br/>Approach]
@@ -32,27 +32,27 @@ graph TB
 
     subgraph "Azure Services"
         subgraph "AI Services"
-            OpenAI[🤖 Azure OpenAI<br/>- GPT-4 Mini<br/>- Text Embeddings<br/>- GPT-4 Vision]
-            Search[🔍 Azure AI Search<br/>- Vector Search<br/>- Semantic Ranking<br/>- Full-text Search]
-            DocIntel[📄 Azure Document<br/>Intelligence<br/>- Text Extraction<br/>- Layout Analysis]
+            OpenAI[🤖 Azure OpenAI<br/>GPT-4 Mini<br/>Text Embeddings<br/>GPT-4 Vision]
+            Search[🔍 Azure AI Search<br/>Vector Search<br/>Semantic Ranking<br/>Full-text Search]
+            DocIntel[📄 Azure Document<br/>Intelligence<br/>Text Extraction<br/>Layout Analysis]
             Vision2[👁️ Azure AI Vision<br/>optional]
             Speech[🎤 Azure Speech<br/>Services optional]
         end
         
         subgraph "Storage & Data"
-            Blob[💾 Azure Blob Storage<br/>- Document Storage<br/>- User Uploads]
-            Cosmos[🗃️ Azure Cosmos DB<br/>- Chat History<br/>optional]
+            Blob[💾 Azure Blob Storage<br/>Document Storage<br/>User Uploads]
+            Cosmos[🗃️ Azure Cosmos DB<br/>Chat History<br/>optional]
         end
         
         subgraph "Platform Services"
-            ContainerApps[📦 Azure Container Apps<br/>or App Service<br/>- Application Hosting]
-            AppInsights[📊 Application Insights<br/>- Monitoring<br/>- Telemetry]
-            KeyVault[🔐 Azure Key Vault<br/>- Secrets Management]
+            ContainerApps[📦 Azure Container Apps<br/>or App Service<br/>Application Hosting]
+            AppInsights[📊 Application Insights<br/>Monitoring<br/>Telemetry]
+            KeyVault[🔐 Azure Key Vault<br/>Secrets Management]
         end
     end
 
     subgraph "Data Processing"
-        PrepDocs[⚙️ Document Preparation<br/>Pipeline<br/>- Text Extraction<br/>- Chunking<br/>- Embedding Generation<br/>- Indexing]
+        PrepDocs[⚙️ Document Preparation<br/>Pipeline<br/>Text Extraction<br/>Chunking<br/>Embedding Generation<br/>Indexing]
     end
 
     %% User Interaction Flow
