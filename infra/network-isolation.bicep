@@ -37,46 +37,6 @@ module containerAppsNSG 'br/public:avm/res/network/network-security-group:0.5.1'
           direction: 'Inbound'
         }
       }
-      {
-        // TODO: Were any of these rules really needed??
-        name: 'AllowPrivateEndpointsOutbound'
-        properties: {
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          sourceAddressPrefix: '10.0.0.0/21'
-          destinationPortRange: '443'
-          destinationAddressPrefix: '10.0.8.0/24'
-          access: 'Allow'
-          priority: 200
-          direction: 'Outbound'
-        }
-      }
-      {
-        name: 'AllowDnsOutbound'
-        properties: {
-          protocol: '*'
-          sourcePortRange: '*'
-          sourceAddressPrefix: '*'
-          destinationPortRange: '53'
-          destinationAddressPrefix: '*'
-          access: 'Allow'
-          priority: 210
-          direction: 'Outbound'
-        }
-      }
-      {
-        name: 'AllowVNetOutbound'
-        properties: {
-          protocol: '*'
-          sourcePortRange: '*'
-          sourceAddressPrefix: '*'
-          destinationPortRange: '*'
-          destinationAddressPrefix: 'VirtualNetwork'
-          access: 'Allow'
-          priority: 220
-          direction: 'Outbound'
-        }
-      }
     ]
   }
 }
