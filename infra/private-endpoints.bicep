@@ -82,7 +82,8 @@ module monitorDnsZones './core/networking/private-dns-zones.bicep' = [for monito
 }]
 // Get blob DNS zone index for monitor private link
 var blobEndpointInfo = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')
-var dnsZoneBlobIndex = empty(blobEndpointInfo) ? 0 : blobEndpointInfo[0].dnsZoneIndex
+// Assert that blob endpoints exist (required for this application)
+var dnsZoneBlobIndex = blobEndpointInfo[0].dnsZoneIndex
 
 // Azure Monitor Private Link Scope
 // https://learn.microsoft.com/azure/azure-monitor/logs/private-link-security

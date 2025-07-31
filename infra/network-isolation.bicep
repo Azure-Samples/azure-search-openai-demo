@@ -17,6 +17,13 @@ param useVpnGateway bool = false
 param vpnGatewayName string = '${vnetName}-vpn-gateway'
 param dnsResolverName string = '${vnetName}-dns-resolver'
 
+// Subnet name constants
+var backendSubnetName = 'backend-subnet'
+var gatewaySubnetName = 'GatewaySubnet' // Required name for Gateway subnet
+var dnsResolverSubnetName = 'dns-resolver-subnet'
+var appServiceSubnetName = 'app-service-subnet'
+var containerAppsSubnetName = 'container-apps-subnet'
+
 module containerAppsNSG 'br/public:avm/res/network/network-security-group:0.5.1' = if (deploymentTarget == 'containerapps') {
   name: 'container-apps-nsg'
   params: {
@@ -41,7 +48,7 @@ module containerAppsNSG 'br/public:avm/res/network/network-security-group:0.5.1'
   }
 }
 
-module privateEndpointsNSG 'br/public:avm/res/network/network-security-group:0.5.1' = if (deploymentTarget == 'containerapps') {
+module privateEndpointsNSG 'br/public:avm/res/network/network-security-group:0.5.1' = {
   name: 'private-endpoints-nsg'
   params: {
     name: '${vnetName}-private-endpoints-nsg'
@@ -155,18 +162,18 @@ module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
     subnets: union(
       [
         {
-          name: 'backend-subnet'
+          name: backendSubnetName
           addressPrefix: '10.0.8.0/24'
           privateEndpointNetworkPolicies: 'Enabled'
           privateLinkServiceNetworkPolicies: 'Enabled'
           networkSecurityGroupResourceId: privateEndpointsNSG.outputs.resourceId
         }
         {
-          name: 'GatewaySubnet' // Required name for Gateway subnet
+          name: gatewaySubnetName // Required name for Gateway subnet
           addressPrefix: '10.0.255.0/27' // Using a /27 subnet size which is minimal required size for gateway subnet
         }
         {
-          name: 'dns-resolver-subnet' // Dedicated subnet for Azure Private DNS Resolver
+          name: dnsResolverSubnetName // Dedicated subnet for Azure Private DNS Resolver
           addressPrefix: '10.0.11.0/28'
           delegation: 'Microsoft.Network/dnsResolvers'
         }
@@ -174,7 +181,7 @@ module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
       deploymentTarget == 'appservice'
         ? [
             {
-              name: 'app-service-subnet'
+              name: appServiceSubnetName
               addressPrefix: '10.0.9.0/24'
               privateEndpointNetworkPolicies: 'Enabled'
               privateLinkServiceNetworkPolicies: 'Enabled'
@@ -183,15 +190,20 @@ module vnet 'br/public:avm/res/network/virtual-network:0.6.1' = {
           ]
         : [
             {
-              name: 'container-apps-subnet'
+              name: containerAppsSubnetName
               addressPrefix: '10.0.0.0/21'
-              networkSecurityGroupResourceId: containerAppsNSG.outputs.resourceId
               delegation: 'Microsoft.App/environments'
+              networkSecurityGroupResourceId: containerAppsNSG!.outputs.resourceId
             }
           ]
     )
   }
 }
+
+// Helper variables to find subnet resource IDs by name instead of hardcoded indices
+var dnsResolverSubnetIndex = indexOf(vnet.outputs.subnetNames, dnsResolverSubnetName)
+var backendSubnetIndex = indexOf(vnet.outputs.subnetNames, backendSubnetName)
+var appSubnetIndex = deploymentTarget == 'appservice' ? indexOf(vnet.outputs.subnetNames, appServiceSubnetName) : indexOf(vnet.outputs.subnetNames, containerAppsSubnetName)
 
 module virtualNetworkGateway 'br/public:avm/res/network/virtual-network-gateway:0.8.0' = if (useVpnGateway) {
   name: 'virtual-network-gateway'
@@ -230,15 +242,15 @@ module dnsResolver 'br/public:avm/res/network/dns-resolver:0.5.4' = if (useVpnGa
     inboundEndpoints: [
       {
         name: 'inboundEndpoint'
-        subnetResourceId: useVpnGateway ? vnet.outputs.subnetResourceIds[2] : ''
+        subnetResourceId: useVpnGateway ? vnet.outputs.subnetResourceIds[dnsResolverSubnetIndex] : ''
       }
     ]
   }
 }
 
-output backendSubnetId string = vnet.outputs.subnetResourceIds[0]
-output privateDnsResolverSubnetId string = useVpnGateway ? vnet.outputs.subnetResourceIds[2] : ''
-output appSubnetId string = vnet.outputs.subnetResourceIds[3]
+output backendSubnetId string = vnet.outputs.subnetResourceIds[backendSubnetIndex]
+output privateDnsResolverSubnetId string = useVpnGateway ? vnet.outputs.subnetResourceIds[dnsResolverSubnetIndex] : ''
+output appSubnetId string = vnet.outputs.subnetResourceIds[appSubnetIndex]
 output vnetName string = vnet.outputs.name
 output vnetId string = vnet.outputs.resourceId
-output virtualNetworkGatewayName string = useVpnGateway ? virtualNetworkGateway.outputs.name : ''
+output virtualNetworkGatewayName string = useVpnGateway ? virtualNetworkGateway!.outputs.name : ''
