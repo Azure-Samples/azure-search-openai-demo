@@ -79,6 +79,8 @@ Deploying with public access disabled adds additional cost to your deployment. P
       </clientconfig>
     ```
 
+    > **Note:** The IP address `10.0.11.4` is the first available IP in the `dns-resolver-subnet`(10.0.11.0/28), as Azure reserves the first four IP addresses in each subnet. Adding this DNS server allows your VPN client to resolve private DNS names for Azure services accessed through private endpoints. See the network configuration in [network-isolation.bicep](../infra/network-isolation.bicep) for details.
+
 5. Install the [Azure VPN Client](https://learn.microsoft.com/azure/vpn-gateway/azure-vpn-client-versions).
 
 6. Open the Azure VPN Client and select "Import" button. Select the `azurevpnconfig.xml` file you just downloaded and modified.
