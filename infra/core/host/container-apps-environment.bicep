@@ -6,10 +6,6 @@ param daprEnabled bool = false
 param logAnalyticsWorkspaceName string = ''
 param applicationInsightsName string = ''
 
-@description('Virtual network name for container apps environment.')
-param vnetName string = ''
-@description('Subnet name for container apps environment integration.')
-param subnetName string = ''
 param subnetResourceId string
 
 param usePrivateIngress bool = true
@@ -30,11 +26,9 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-02-02-
     daprAIInstrumentationKey: daprEnabled && !empty(applicationInsightsName) ? applicationInsights.properties.InstrumentationKey : ''
     publicNetworkAccess: usePrivateIngress ? 'Disabled' : 'Enabled'
     vnetConfiguration: usePrivateIngress ? {
-      // Use proper subnet resource ID format
       infrastructureSubnetId: subnetResourceId
-      internal: usePrivateIngress
+      internal: true
     } : null
-    // Configure workload profile for dedicated environment (not consumption)
     workloadProfiles: usePrivateIngress
     ? [
       {

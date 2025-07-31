@@ -300,7 +300,7 @@ param webAppExists bool
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
-param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-envnet' : ''
+param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
   ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
@@ -542,7 +542,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     acaIdentity
   ]
   params: {
-    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesContainerApps}backend${resourceToken}'
+    name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesContainerApps}backend-${resourceToken}'
     location: location
     identityName: (deploymentTarget == 'containerapps') ? acaIdentityName : ''
     exists: webAppExists
@@ -552,7 +552,7 @@ module acaBackend 'core/host/container-app-upsert.bicep' = if (deploymentTarget 
     targetPort: 8000
     containerCpuCoreCount: '1.0'
     containerMemory: '2Gi'
-    containerMinReplicas: 1
+    containerMinReplicas: usePrivateEndpoint ? 1 : 0
     allowedOrigins: allowedOrigins
     env: union(appEnvVariables, {
       // For using managed identity to access Azure resources. See https://github.com/microsoft/azure-container-apps/issues/442
@@ -1155,8 +1155,6 @@ module cosmosDbRoleBackend 'core/security/documentdb-sql-role.bicep' = if (useAu
   }
 }
 
-
-
 module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
   name: 'networks'
   scope: resourceGroup
@@ -1164,8 +1162,8 @@ module isolation 'network-isolation.bicep' = if (usePrivateEndpoint) {
     location: location
     tags: tags
     vnetName: '${abbrs.virtualNetworks}${resourceToken}'
-    useVpnGateway: useVpnGateway
     deploymentTarget: deploymentTarget
+    useVpnGateway: useVpnGateway
     vpnGatewayName: useVpnGateway ? '${abbrs.networkVpnGateways}${resourceToken}' : ''
     dnsResolverName: useVpnGateway ? '${abbrs.privateDnsResolver}${resourceToken}' : ''
   }

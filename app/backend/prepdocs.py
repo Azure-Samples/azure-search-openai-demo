@@ -337,7 +337,10 @@ if __name__ == "__main__":
 
     load_azd_env()
 
-    if os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled" and os.getenv("AZURE_USE_VPN_GATEWAY") != "true":
+    if (
+        os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled"
+        and os.getenv("AZURE_USE_VPN_GATEWAY", "").lower() != "true"
+    ):
         logger.error("AZURE_PUBLIC_NETWORK_ACCESS is set to Disabled. Exiting.")
         exit(0)
 

@@ -24,8 +24,6 @@ module containerAppsEnvironment 'container-apps-environment.bicep' = {
     tags: tags
     logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
     applicationInsightsName: applicationInsightsName
-    vnetName: vnetName
-    subnetName: subnetName
     usePrivateIngress: usePrivateIngress
     subnetResourceId: subnetResourceId
   }
