@@ -9,8 +9,9 @@ param applicationInsightsName string = ''
 
 @description('Virtual network name for container apps environment.')
 param vnetName string = ''
-@description('Subnet name for container apps environment integration.')
-param subnetName string = ''
+
+@allowed(['Consumption', 'D4', 'D8', 'D16', 'D32', 'E4', 'E8', 'E16', 'E32', 'NC24-A100', 'NC48-A100', 'NC96-A100'])
+param workloadProfile string
 
 param subnetResourceId string = ''
 
@@ -26,6 +27,7 @@ module containerAppsEnvironment 'container-apps-environment.bicep' = {
     applicationInsightsName: applicationInsightsName
     usePrivateIngress: usePrivateIngress
     subnetResourceId: subnetResourceId
+    workloadProfile: workloadProfile
   }
 }
 

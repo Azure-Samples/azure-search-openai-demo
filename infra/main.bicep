@@ -297,6 +297,9 @@ param runningOnAdo string = ''
 @description('Used by azd for containerapps deployment')
 param webAppExists bool
 
+@allowed(['Consumption', 'D4', 'D8', 'D16', 'D32', 'E4', 'E8', 'E16', 'E32', 'NC24-A100', 'NC48-A100', 'NC96-A100'])
+param azureContainerAppsWorkloadProfile string
+
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
@@ -530,6 +533,7 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
     logAnalyticsWorkspaceName: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceName : ''
     subnetResourceId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
     usePrivateIngress: usePrivateEndpoint
+    workloadProfile: azureContainerAppsWorkloadProfile
   }
 }
 

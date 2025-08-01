@@ -32,7 +32,7 @@ If you want to disable public access when deploying the Chat App, you can do so 
 Deploying with public access disabled adds additional cost to your deployment. Please see pricing for the following products:
 
 * [Azure Container Registry](https://azure.microsoft.com/pricing/details/container-registry/): Premium tier is used when virtual network is added (required for private links), which incurs additional costs.
-* [Azure Container Apps](https://azure.microsoft.com/pricing/details/container-apps/): Workload profiles environment is used when virtual network is added (required for private links), which incurs additional costs. Additionally, min replica count is set to 1, so you will be charged for at least one instance. If you need to customize the environment configuration further, edit the container-apps-environment.bicep file.
+* [Azure Container Apps](https://azure.microsoft.com/pricing/details/container-apps/): Workload profiles environment is used when virtual network is added (required for private links), which incurs additional costs. Additionally, min replica count is set to 1, so you will be charged for at least one instance.
 * [VPN Gateway](https://azure.microsoft.com/pricing/details/vpn-gateway/): VpnGw2 SKU. Pricing includes a base monthly cost plus an hourly cost based on the number of connections.
 * [Virtual Network](https://azure.microsoft.com/pricing/details/virtual-network/): Pay-as-you-go tier. Costs based on data processed.
 
