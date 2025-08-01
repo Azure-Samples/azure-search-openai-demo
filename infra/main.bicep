@@ -300,7 +300,7 @@ param webAppExists bool
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
-param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
+param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-envnet' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
   ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
@@ -1376,4 +1376,5 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = deploymentTarget == 'container
   ? containerApps.outputs.registryLoginServer
   : ''
 
-output AZURE_VPN_CONFIG_DOWNLOAD_LINK string = useVpnGateway ? 'https://portal.azure.com/#@${tenant().tenantId}/resource/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup.name}/providers/Microsoft.Network/virtualNetworkGateways/${isolation.outputs.virtualNetworkGatewayName}/pointtositeconfiguration' : ''
+// TODO: test this
+output AZURE_VPN_CONFIG_DOWNLOAD_LINK string = useVpnGateway ? 'https://portal.azure.com/#@${tenant().tenantId}/resource/${isolation.outputs.virtualNetworkGatewayId}/pointtositeconfiguration' : ''

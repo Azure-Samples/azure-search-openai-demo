@@ -22,7 +22,7 @@ var backendSubnetName = 'backend-subnet'
 var gatewaySubnetName = 'GatewaySubnet' // Required name for Gateway subnet
 var dnsResolverSubnetName = 'dns-resolver-subnet'
 var appServiceSubnetName = 'app-service-subnet'
-var containerAppsSubnetName = 'container-apps-subnet'
+var containerAppsSubnetName = 'app-int-subnet'
 
 module containerAppsNSG 'br/public:avm/res/network/network-security-group:0.5.1' = if (deploymentTarget == 'containerapps') {
   name: 'container-apps-nsg'
@@ -31,17 +31,110 @@ module containerAppsNSG 'br/public:avm/res/network/network-security-group:0.5.1'
     location: location
     tags: tags
     securityRules: [
+      // Inbound rules for Container Apps (Workload Profiles)
       {
-        name: 'AllowHttpsInbound'
+        name: 'AllowAzureLoadBalancerInbound'
         properties: {
           protocol: 'Tcp'
           sourcePortRange: '*'
-          sourceAddressPrefix: 'Internet'
-          destinationPortRange: '443'
-          destinationAddressPrefix: '*'
+          sourceAddressPrefix: 'AzureLoadBalancer'
+          destinationPortRange: '30000-32767'
+          destinationAddressPrefix: '10.0.0.0/21' // Container apps subnet
           access: 'Allow'
           priority: 100
           direction: 'Inbound'
+        }
+      }
+      // Outbound rules for Container Apps (Workload Profiles)
+      {
+        name: 'AllowMicrosoftContainerRegistryOutbound'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.0.0.0/21' // Container apps subnet
+          destinationPortRange: '443'
+          destinationAddressPrefix: 'MicrosoftContainerRegistry'
+          access: 'Allow'
+          priority: 100
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AllowAzureFrontDoorOutbound'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.0.0.0/21' // Container apps subnet
+          destinationPortRange: '443'
+          destinationAddressPrefix: 'AzureFrontDoor.FirstParty'
+          access: 'Allow'
+          priority: 110
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AllowContainerAppsSubnetOutbound'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.0.0.0/21' // Container apps subnet
+          destinationPortRange: '*'
+          destinationAddressPrefix: '10.0.0.0/21' // Container apps subnet
+          access: 'Allow'
+          priority: 120
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AllowAzureActiveDirectoryOutbound'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.0.0.0/21' // Container apps subnet
+          destinationPortRange: '443'
+          destinationAddressPrefix: 'AzureActiveDirectory'
+          access: 'Allow'
+          priority: 130
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AllowAzureMonitorOutbound'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.0.0.0/21' // Container apps subnet
+          destinationPortRange: '443'
+          destinationAddressPrefix: 'AzureMonitor'
+          access: 'Allow'
+          priority: 140
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AllowAzureDnsOutbound'
+        properties: {
+          protocol: '*'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.0.0.0/21' // Container apps subnet
+          destinationPortRange: '53'
+          destinationAddressPrefix: '168.63.129.16'
+          access: 'Allow'
+          priority: 150
+          direction: 'Outbound'
+        }
+      }
+      {
+        name: 'AllowStorageRegionOutbound'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          sourceAddressPrefix: '10.0.0.0/21' // Container apps subnet
+          destinationPortRange: '443'
+          destinationAddressPrefix: 'Storage.${location}'
+          access: 'Allow'
+          priority: 160
+          direction: 'Outbound'
         }
       }
     ]
@@ -253,4 +346,4 @@ output privateDnsResolverSubnetId string = useVpnGateway ? vnet.outputs.subnetRe
 output appSubnetId string = vnet.outputs.subnetResourceIds[appSubnetIndex]
 output vnetName string = vnet.outputs.name
 output vnetId string = vnet.outputs.resourceId
-output virtualNetworkGatewayName string = useVpnGateway ? virtualNetworkGateway!.outputs.name : ''
+output virtualNetworkGatewayId string = useVpnGateway ? virtualNetworkGateway!.outputs.resourceId : ''
