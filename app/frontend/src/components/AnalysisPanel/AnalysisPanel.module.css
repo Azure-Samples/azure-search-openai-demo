@@ -55,13 +55,22 @@
     max-height: 18.75em;
 }
 
+.tPropRow {
+    flex-wrap: wrap;
+    gap: 5px;
+    max-width: 100%;
+    margin-bottom: 0.5em;
+}
+
 .tProp {
+    display: inline-block;
     background-color: #d7d7d7;
-    color: #333232;
-    font-size: 0.75em;
+    font-size: 0.95em;
     padding: 0.1875em 0.625em;
     border-radius: 0.625em;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.3em;
+    word-break: break-word;
+    white-space: normal;
 }
 
 .citationImg {

@@ -63,9 +63,8 @@ These are the currently supported properties in the `context` object:
   * `"suggest_followup_questions"`: Whether to suggest follow-up questions for the chat app.
   * `"use_oid_security_filter"`: Whether to use the OID security filter for the Azure AI Search step.
   * `"use_groups_security_filter"`: Whether to use the groups security filter for the Azure AI Search step.
-  * `"vector_fields"`: A list of fields to search for the Azure AI Search step.
-  * `"use_gpt4v"`: Whether to use a GPT-4V approach.
-  * `"gpt4v_input"`: The input type to use for a GPT-4V approach. Can be "text", "textAndImages", or "images".
+  * `"vector_fields"`: Which embedding fields to use for the Azure AI Search step. This is either `textEmbeddingOnly`, `imageEmbeddingOnly`, or `textAndImageEmbeddings`. The default is `textEmbeddingOnly`, but if you have multimodal embeddings enabled, it defaults to `textAndImageEmbeddings`.
+  * `"use_multimodal_answering"`: Whether to send both text and images to the LLM for answering questions.
 
 Example of the overrides object:
 
@@ -78,9 +77,8 @@ Example of the overrides object:
     "suggest_followup_questions": false,
     "use_oid_security_filter": false,
     "use_groups_security_filter": false,
-    "vector_fields": ["embedding"],
-    "use_gpt4v": false,
-    "gpt4v_input": "textAndImages"
+    "vector_fields": "textEmbeddingOnly",
+    "use_multimodal_answering": false,
 }
 ```
 

@@ -79,7 +79,9 @@ export async function getSpeechApi(text: string): Promise<string | null> {
 }
 
 export function getCitationFilePath(citation: string): string {
-    return `${BACKEND_URI}/content/${citation}`;
+    // If there are parentheses at end of citation, remove part in parentheses
+    const cleanedCitation = citation.replace(/\s*\(.*?\)\s*$/, "").trim();
+    return `${BACKEND_URI}/content/${cleanedCitation}`;
 }
 
 export async function uploadFileApi(request: FormData, idToken: string): Promise<SimpleAPIResponse> {
