@@ -1376,5 +1376,4 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = deploymentTarget == 'container
   ? containerApps.outputs.registryLoginServer
   : ''
 
-// TODO: test this
-output AZURE_VPN_CONFIG_DOWNLOAD_LINK string = useVpnGateway ? 'https://portal.azure.com/#@${tenant().tenantId}/resource/${isolation.outputs.virtualNetworkGatewayId}/pointtositeconfiguration' : ''
+output AZURE_VPN_CONFIG_DOWNLOAD_LINK string = useVpnGateway ? 'https://portal.azure.com/#@${tenant().tenantId}/resource${isolation.outputs.virtualNetworkGatewayId}/pointtositeconfiguration' : ''

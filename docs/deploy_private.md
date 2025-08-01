@@ -31,18 +31,20 @@ If you want to disable public access when deploying the Chat App, you can do so 
 
 Deploying with public access disabled adds additional cost to your deployment. Please see pricing for the following products:
 
-1. [Private Endpoints](https://azure.microsoft.com/pricing/details/private-link/)
-    1. The exact number of private endpoints created depends on the [optional features](./deploy_features.md) used.
-1. [Private DNS Zones](https://azure.microsoft.com/pricing/details/dns/)
+* [Azure Container Registry](https://azure.microsoft.com/pricing/details/container-registry/): Premium tier is used when virtual network is added (required for private links), which incurs additional costs.
+* [Azure Container Apps](https://azure.microsoft.com/pricing/details/container-apps/): Workload profiles environment is used when virtual network is added (required for private links), which incurs additional costs. Additionally, min replica count is set to 1, so you will be charged for at least one instance. If you need to customize the environment configuration further, edit the container-apps-environment.bicep file.
+* [VPN Gateway](https://azure.microsoft.com/pricing/details/vpn-gateway/): VpnGw2 SKU. Pricing includes a base monthly cost plus an hourly cost based on the number of connections.
+* [Virtual Network](https://azure.microsoft.com/pricing/details/virtual-network/): Pay-as-you-go tier. Costs based on data processed.
 
-## Environment variables controlling private access
+The pricing for the following features depends on the [optional features](./deploy_features.md) used. Most deployments will have at least 5 private endpoints (Azure OpenAI, Azure Cognitive Services, Azure AI Search, Azure Blob Storage, and either Azure App Service or Azure Container Apps).
 
-1. `AZURE_PUBLIC_NETWORK_ACCESS`: Controls the value of public network access on supported Azure resources. Valid values are 'Enabled' or 'Disabled'.
-    1. When public network access is 'Enabled', Azure resources are open to the internet.
-    1. When public network access is 'Disabled', Azure resources are only accessible over a virtual network.
-1. `AZURE_USE_PRIVATE_ENDPOINT`: Controls deployment of [private endpoints](https://learn.microsoft.com/azure/private-link/private-endpoint-overview) which connect Azure resources to the virtual network.
-    1. When set to 'true', ensures private endpoints are deployed for connectivity even when `AZURE_PUBLIC_NETWORK_ACCESS` is 'Disabled'.
-    1. Note that private endpoints do not make the chat app accessible from the internet. Connections must be initiated from inside the virtual network.
+* [Azure Private Endpoints](https://azure.microsoft.com/pricing/details/private-link/): Pricing is per hour per endpoint.
+* [Private DNS Zones](https://azure.microsoft.com/pricing/details/dns/): Pricing is per month and zones.
+* [Azure Private DNS Resolver](https://azure.microsoft.com/pricing/details/dns/): Pricing is per month and zones.
+
+⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
+either by deleting the resource group in the Portal or running `azd down`.
+You might also decide to delete the VPN Gateway when not in use.
 
 ## Recommended deployment strategy for private access
 
@@ -79,7 +81,7 @@ Deploying with public access disabled adds additional cost to your deployment. P
       </clientconfig>
     ```
 
-    > **Note:** The IP address `10.0.11.4` is the first available IP in the `dns-resolver-subnet`(10.0.11.0/28), as Azure reserves the first four IP addresses in each subnet. Adding this DNS server allows your VPN client to resolve private DNS names for Azure services accessed through private endpoints. See the network configuration in [network-isolation.bicep](../infra/network-isolation.bicep) for details.
+    > **Note:** We use the IP address `10.0.11.4` since it is the first available IP in the `dns-resolver-subnet`(10.0.11.0/28) from the provisioned virtual network, as Azure reserves the first four IP addresses in each subnet. Adding this DNS server allows your VPN client to resolve private DNS names for Azure services accessed through private endpoints. See the network configuration in [network-isolation.bicep](../infra/network-isolation.bicep) for details.
 
 5. Install the [Azure VPN Client](https://learn.microsoft.com/azure/vpn-gateway/azure-vpn-client-versions).
 
@@ -98,6 +100,16 @@ Deploying with public access disabled adds additional cost to your deployment. P
     ```bash
     azd deploy
     ```
+
+## Environment variables controlling private access
+
+1. `AZURE_PUBLIC_NETWORK_ACCESS`: Controls the value of public network access on supported Azure resources. Valid values are 'Enabled' or 'Disabled'.
+    1. When public network access is 'Enabled', Azure resources are open to the internet.
+    1. When public network access is 'Disabled', Azure resources are only accessible over a virtual network.
+1. `AZURE_USE_PRIVATE_ENDPOINT`: Controls deployment of [private endpoints](https://learn.microsoft.com/azure/private-link/private-endpoint-overview) which connect Azure resources to the virtual network.
+    1. When set to 'true', ensures private endpoints are deployed for connectivity even when `AZURE_PUBLIC_NETWORK_ACCESS` is 'Disabled'.
+    1. Note that private endpoints do not make the chat app accessible from the internet. Connections must be initiated from inside the virtual network.
+1. `AZURE_USE_VPN_GATEWAY`: Controls deployment of a VPN gateway for the virtual network. If you do not use this and public access is disabled, you will need a different way to connect to the virtual network.
 
 ## Compatibility with other features
 
