@@ -22,7 +22,7 @@ var backendSubnetName = 'backend-subnet'
 var gatewaySubnetName = 'GatewaySubnet' // Required name for Gateway subnet
 var dnsResolverSubnetName = 'dns-resolver-subnet'
 var appServiceSubnetName = 'app-service-subnet'
-var containerAppsSubnetName = 'app-int-subnet'
+var containerAppsSubnetName = 'container-apps-subnet'
 
 module containerAppsNSG 'br/public:avm/res/network/network-security-group:0.5.1' = if (deploymentTarget == 'containerapps') {
   name: 'container-apps-nsg'

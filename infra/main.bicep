@@ -300,7 +300,7 @@ param webAppExists bool
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
-param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-envnet' : ''
+param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
   ? '${replace(toLower(environmentName), '-', '')}acr'
   : ''
