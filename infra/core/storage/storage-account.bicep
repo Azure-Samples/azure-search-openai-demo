@@ -59,7 +59,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
     resource container 'containers' = [for container in containers: {
       name: container.name
       properties: {
-        publicAccess: contains(container, 'publicAccess') ? container.publicAccess : 'None'
+        publicAccess: container.?publicAccess ?? 'None'
       }
     }]
   }

@@ -4,6 +4,7 @@ import logging
 import os
 from typing import Optional, Union
 
+import aiohttp
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential, get_bearer_token_provider
@@ -43,6 +44,19 @@ def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:
     if key is not None and key.strip() != "":
         return key.strip()
     return None
+
+
+async def check_search_service_connectivity(search_service: str) -> bool:
+    """Check if the search service is accessible by hitting the /ping endpoint."""
+    ping_url = f"https://{search_service}.search.windows.net/ping"
+
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(ping_url, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                return response.status == 200
+    except Exception as e:
+        logger.debug(f"Search service ping failed: {e}")
+        return False
 
 
 async def setup_search_info(
@@ -323,7 +337,10 @@ if __name__ == "__main__":
 
     load_azd_env()
 
-    if os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled":
+    if (
+        os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled"
+        and os.getenv("AZURE_USE_VPN_GATEWAY", "").lower() != "true"
+    ):
         logger.error("AZURE_PUBLIC_NETWORK_ACCESS is set to Disabled. Exiting.")
         exit(0)
 
@@ -372,6 +389,23 @@ if __name__ == "__main__":
             search_key=clean_key_if_exists(args.searchkey),
         )
     )
+
+    # Check search service connectivity
+    search_service = os.environ["AZURE_SEARCH_SERVICE"]
+    is_connected = loop.run_until_complete(check_search_service_connectivity(search_service))
+
+    if not is_connected:
+        if os.getenv("AZURE_USE_PRIVATE_ENDPOINT"):
+            logger.error(
+                "Unable to connect to Azure AI Search service, which indicates either a network issue or a misconfiguration. You have AZURE_USE_PRIVATE_ENDPOINT enabled. Perhaps you're not yet connected to the VPN? Download the VPN configuration from the Azure portal here: %s",
+                os.getenv("AZURE_VPN_CONFIG_DOWNLOAD_LINK"),
+            )
+        else:
+            logger.error(
+                "Unable to connect to Azure AI Search service, which indicates either a network issue or a misconfiguration."
+            )
+        exit(1)
+
     blob_manager = setup_blob_manager(
         azure_credential=azd_credential,
         storage_account=os.environ["AZURE_STORAGE_ACCOUNT"],
