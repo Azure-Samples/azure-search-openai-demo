@@ -23,13 +23,11 @@ urlFragment: azure-search-openai-demo-private-access
 
 The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on configuring private endpoints.
 
-⚠️ This feature is not yet compatible with Azure Container Apps, so you will need to [deploy to Azure App Service](./azure_app_service.md) instead.
-
-If you want to disable public access when deploying the Chat App, you can do so by setting `azd` environment values.
+If you want to disable public access for the application so that it can only be access from a private network, follow this guide.
 
 ## Before you begin
 
-Deploying with public access disabled adds additional cost to your deployment. Please see pricing for the following products:
+Deploying with private networking adds additional cost to your deployment. Please see pricing for the following products:
 
 * [Azure Container Registry](https://azure.microsoft.com/pricing/details/container-registry/): Premium tier is used when virtual network is added (required for private links), which incurs additional costs.
 * [Azure Container Apps](https://azure.microsoft.com/pricing/details/container-apps/): Workload profiles environment is used when virtual network is added (required for private links), which incurs additional costs. Additionally, min replica count is set to 1, so you will be charged for at least one instance.
@@ -46,7 +44,7 @@ The pricing for the following features depends on the [optional features](./depl
 either by deleting the resource group in the Portal or running `azd down`.
 You might also decide to delete the VPN Gateway when not in use.
 
-## Recommended deployment strategy for private access
+## Deployment steps for private access
 
 1. Configure the azd environment variables to use private endpoints and a VPN gateway, with public network access disabled. This will allow you to connect to the chat app from inside the virtual network, but not from the public Internet.
 
