@@ -314,6 +314,9 @@
     "usePrivateEndpoint": {
       "value": "${AZURE_USE_PRIVATE_ENDPOINT=false}"
     },
+    "useVpnGateway": {
+      "value": "${AZURE_USE_VPN_GATEWAY=false}"
+    },
     "bypass": {
       "value": "${AZURE_NETWORK_BYPASS=AzureServices}"
     },
