@@ -1,3 +1,5 @@
+metadata description = 'Creates private endpoints for Azure services and configures Azure Monitor Private Link Scope with DNS zones for secure private networking.'
+
 @description('The tags to apply to all resources')
 param tags object = {}
 
