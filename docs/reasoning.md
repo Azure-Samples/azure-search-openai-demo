@@ -6,6 +6,8 @@ This repository includes an optional feature that uses reasoning models to gener
 
 ### Supported Models
 
+* o4-mini
+* o3
 * o3-mini
 * o1
 
