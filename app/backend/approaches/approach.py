@@ -136,6 +136,9 @@ class Approach(ABC):
         "o3": GPTReasoningModelSupport(streaming=True),
         "o3-mini": GPTReasoningModelSupport(streaming=True),
         "o4-mini": GPTReasoningModelSupport(streaming=True),
+        "gpt-5": GPTReasoningModelSupport(streaming=True),
+        "gpt-5-nano": GPTReasoningModelSupport(streaming=True),
+        "gpt-5-mini": GPTReasoningModelSupport(streaming=True),
     }
     # Set a higher token limit for GPT reasoning models
     RESPONSE_DEFAULT_TOKEN_LIMIT = 1024
