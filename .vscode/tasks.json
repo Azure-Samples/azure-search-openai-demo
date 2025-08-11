@@ -56,6 +56,9 @@
             "label": "Backend: quart run",
             "type": "shell",
             "command": "${workspaceFolder}/.venv/bin/python",
+            "windows": {
+                "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe"
+            },
             "args": ["-m", "quart", "run", "--reload", "-p", "50505"],
             "options": {
                 "cwd": "${workspaceFolder}/app/backend",
