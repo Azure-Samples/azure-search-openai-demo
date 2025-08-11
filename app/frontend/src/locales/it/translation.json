@@ -93,6 +93,7 @@
         "useQueryRewriting": "Usa la riscrittura delle query per il recupero",
         "reasoningEffort": "Sforzo di ragionamento",
         "reasoningEffortOptions": {
+            "minimal": "Minimo (solo GPT-5)",
             "low": "Basso",
             "medium": "Medio",
             "high": "Alto"

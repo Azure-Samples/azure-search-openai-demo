@@ -1,23 +1,23 @@
 {
     "gpt_groundedness": {
-        "pass_count": 49,
-        "pass_rate": 0.98,
-        "mean_rating": 4.96
+        "pass_count": 50,
+        "pass_rate": 1.0,
+        "mean_rating": 5.0
     },
     "gpt_relevance": {
-        "pass_count": 46,
-        "pass_rate": 0.92,
-        "mean_rating": 4.3
+        "pass_count": 45,
+        "pass_rate": 0.9,
+        "mean_rating": 4.2
     },
     "answer_length": {
-        "mean": 827.8,
-        "max": 1914,
-        "min": 164
+        "mean": 844.18,
+        "max": 1429,
+        "min": 165
     },
     "latency": {
-        "mean": 11.21,
-        "max": 23.747079,
-        "min": 5.732844
+        "mean": 9.62,
+        "max": 40.853959,
+        "min": 4.471053
     },
     "citations_matched": {
         "total": 23,

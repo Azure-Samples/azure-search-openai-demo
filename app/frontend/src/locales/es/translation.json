@@ -93,6 +93,7 @@
         "useQueryRewriting": "Utiliza la reescritura de consultas para la recuperación",
         "reasoningEffort": "Esfuerzo de razonamiento",
         "reasoningEffortOptions": {
+            "minimal": "Mínimo (solo GPT-5)",
             "low": "Bajo",
             "medium": "Medio",
             "high": "Alto"
