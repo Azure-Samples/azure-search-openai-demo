@@ -76,7 +76,15 @@ STANDARD_SENTENCE_ENDINGS = [".", "!", "?"]
 CJK_SENTENCE_ENDINGS = ["。", "！", "？", "‼", "⁇", "⁈", "⁉"]
 
 # NB: text-embedding-3-XX is the same BPE as text-embedding-ada-002
-bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
+_bpe = None
+
+
+def get_encoding():
+    """Get the tiktoken encoding, loading it lazily when first needed."""
+    global _bpe
+    if _bpe is None:
+        _bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
+    return _bpe
 
 DEFAULT_OVERLAP_PERCENT = 10  # See semantic search article for 10% overlap performance
 DEFAULT_SECTION_LENGTH = 1000  # Roughly 400-500 tokens for English
@@ -99,7 +107,7 @@ class SentenceTextSplitter(TextSplitter):
         """
         Recursively splits page by maximum number of tokens to better handle languages with higher token/word ratios.
         """
-        tokens = bpe.encode(text)
+        tokens = get_encoding().encode(text)
         if len(tokens) <= self.max_tokens_per_section:
             # Section is already within max tokens, return
             yield SplitPage(page_num=page_num, text=text)
