@@ -4,6 +4,8 @@ After deploying the app to Azure, you may want to continue development locally. 
 
 * [Running development server from the command line](#running-development-server-from-the-command-line)
 * [Hot reloading frontend and backend files](#hot-reloading-frontend-and-backend-files)
+* [Using VS Code "Development" task](#using-vs-code-development-task)
+* [Using Copilot Chat Debug Mode](#using-copilot-chat-debug-mode)
 * [Using VS Code "Run and Debug"](#using-vs-code-run-and-debug)
 * [Using a local OpenAI-compatible API](#using-a-local-openai-compatible-api)
   * [Using Ollama server](#using-ollama-server)
@@ -63,6 +65,56 @@ You should see:
 Navigate to the URL shown in the terminal (in this case, `http://localhost:5173/`).  This local server will watch and reload frontend files. All backend requests will be routed to the Python server according to `vite.config.ts`.
 
 Then, whenever you make changes to frontend files, the changes will be automatically reloaded, without any browser refresh needed.
+
+Alternatively, you can start both servers with hot reloading by using the VS Code "Development" task. See [Using VS Code "Development" task](#using-vs-code-development-task).
+
+## Using VS Code "Development" task
+
+If you prefer VS Code tasks for hot reloading both servers at once, use the "Development" task defined in `.vscode/tasks.json`.
+
+How to run it:
+
+* Run Build Task (Shift+Cmd+B) to start the default build task, which is "Development".
+* Or open the Command Palette (Shift+Cmd+P) and run: "Tasks: Run Task" -> "Development".
+
+What it does:
+
+* Starts two background tasks in dedicated panels:
+  * "Frontend: npm run dev" from `app/frontend` (Vite HMR for instant frontend updates)
+  * "Backend: quart run" from `app/backend` (Quart with `--reload` for backend auto-restarts)
+
+Readiness indicators:
+
+* Frontend is ready when Vite prints a Local URL, for example: `Local: http://localhost:5173/`.
+* Backend is ready when Hypercorn reports: `Running on http://127.0.0.1:50505` (port may vary).
+
+Tips:
+
+* To stop both, run: "Tasks: Terminate Task" and pick the running tasks.
+* If watchers stall, terminate and run "Development" again.
+* Frontend changes apply via HMR; backend Python changes auto-reload. No manual restart needed.
+
+## Using Copilot Chat Debug Mode
+
+You can use GitHub Copilot Chat with a custom "debug" mode to streamline troubleshooting in this repo.
+
+Prerequisites:
+
+* VS Code 1.101+ (custom chat modes are in preview)
+* Access to GitHub Copilot and Copilot Chat
+* Playwright MCP server and GitHub MCP server (optional)
+
+To learn more about the chat modes feature, read [VS Code docs for Chat modes](https://code.visualstudio.com/docs/copilot/chat/chat-modes).
+
+To use the debug mode:
+
+* Open the Chat view.
+* Use the chat mode dropdown at the top of the Chat view to select the "debug" mode.
+* Start chatting in that mode; the instructions and tools from the repo file will be applied automatically.
+* The mode will use the tasks from .vscode/tasks.json to run the frontend and backend server, and should be able to read any errors in the output.
+* The mode may also use tools from the Playwright MCP server and GitHub MCP server, if those servers are installed in your VS Code.
+
+Notably, this mode will not actually use a breakpoint-based debugger. Read on to learn how to use breakpoints while debugging the Python code.
 
 ## Using VS Code "Run and Debug"
 
