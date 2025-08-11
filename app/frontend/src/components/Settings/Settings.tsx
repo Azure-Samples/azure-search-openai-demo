@@ -335,6 +335,7 @@ export const Settings = ({
                     }
                     aria-labelledby={reasoningEffortFieldId}
                     options={[
+                        { key: "minimal", text: t("labels.reasoningEffortOptions.minimal") },
                         { key: "low", text: t("labels.reasoningEffortOptions.low") },
                         { key: "medium", text: t("labels.reasoningEffortOptions.medium") },
                         { key: "high", text: t("labels.reasoningEffortOptions.high") }

@@ -93,6 +93,7 @@
         "useQueryRewriting": "Gebruik de herformulering van zoekopdrachten om informatie op te halen",
         "reasoningEffort": "Redeneerinspanning",
         "reasoningEffortOptions": {
+            "minimal": "Minimaal (alleen GPT-5)",
             "low": "Laag",
             "medium": "Gemiddeld",
             "high": "Hoog"

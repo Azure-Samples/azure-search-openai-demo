@@ -93,6 +93,7 @@
         "useQueryRewriting": "Bilgi erişimi için sorgu yeniden yazımını kullanın",
         "reasoningEffort": "Akıl yürütme çabası",
         "reasoningEffortOptions": {
+            "minimal": "En az (yalnızca GPT-5)",
             "low": "Düşük",
             "medium": "Orta",
             "high": "Yüksek"
