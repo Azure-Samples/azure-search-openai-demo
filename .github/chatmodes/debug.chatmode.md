@@ -1,7 +1,7 @@
 ---
 description: 'Debug application to find and fix a bug'
-model: Claude Sonnet 4
-tools: ['codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'terminalSelection', 'terminalLastCommand', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'runTests', 'editFiles', 'runNotebooks', 'search', 'new', 'runCommands', 'get_issue', 'get_issue_comments', 'pylance mcp server', 'get-library-docs', 'Microsoft Docs', 'playwright']
+model: GPT-5 (Preview)
+tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'terminalSelection', 'terminalLastCommand', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTests', 'runCommands', 'runTasks', 'editFiles', 'runNotebooks', 'search', 'new', 'Microsoft Docs', 'get_issue', 'get_issue_comments', 'get-library-docs', 'playwright', 'pylance mcp server']
 ---
 
 # Debug Mode Instructions
@@ -10,18 +10,27 @@ You are in debug mode. Your primary objective is to systematically identify, ana
 
 ## Debugging process
 
-• **Reproduce first**: Try to reproduce the bug before making changes - run the app with start script, test app with Playwright MCP, capture exact error messages and steps
-• **Gather context**: Read error messages/stack traces, examine recent changes, identify expected vs actual behavior
-• **Root cause analysis**: Trace execution path, check for common issues (null refs, race conditions), use search tools to understand component interactions
+• **Gather context**: Read error messages/stack traces, examine recent changes, identify expected vs actual behavior. If the issue is a GitHub issue link, use 'get_issue' and 'get_issue_comments' tools to fetch the issue and comments.
+• **Root cause analysis**: Trace execution path, check for common issues, use search tools to understand component interactions
 • **Targeted fix**: Make minimal changes addressing root cause, follow existing patterns, consider edge cases
 • **Verify thoroughly**: Run tests to confirm fix, check for regressions, test edge cases
-• **Document**: Summarize what was fixed, explain root cause, suggest preventive measures
+• **Document**: Summarize what was fixed, explain root cause, suggest preventive measures. Do not document this in the repo itself, only in the chat history and commit messages.
 
-## Local server setup:
+## Local server setup
 
-- To run the application, run the "Start app" task
+You MUST check task output readiness before debugging, testing, or declaring work complete.
+
+- Start the app: Run the "Development" compound task (which runs both frontend and backend tasks)
+- Check readiness from task output (both must be ready):
+	- Frontend (task: "Frontend: npm run dev"): look for the Vite URL line. Either of these indicates ready:
+		- "Local: http://127.0.0.1:..." or "➜ Local: http://127.0.0.1:..."
+	- Backend (task: "Backend: quart run"): wait for Hypercorn to bind. Ready when you see:
+		- "INFO:hypercorn.error:Running on http://127.0.0.1:50505" (port may vary if changed)
+- If either readiness line does not appear, the server is not ready. Investigate and fix errors shown in the corresponding task terminal before proceeding.
+- Hot reload behavior:
+	- Frontend: Vite provides HMR; changes in the frontend are picked up automatically without restarting the task.
+	- Backend: Quart is started with --reload; Python changes trigger an automatic restart.
+	- If watchers seem stuck or output stops updating, stop the tasks and run the "Development" task again.
 - To interact with the application, use the Playwright MCP server
-- If you change the JS, rebuild and restart the server by ending the task and running the "Start app" task again.
-- Everytime you change the JS, you MUST restart the app (which will rebuild the JS). Otherwise, the changes will not appear.
 - To run the Python backend pytest tests, use the "run tests" tool
 - To run the Playwright E2E tests of the whole app (with a mocked backend), run `pytest tests/e2e.py --tracing=retain-on-failure`.
