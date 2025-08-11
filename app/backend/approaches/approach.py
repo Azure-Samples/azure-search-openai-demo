@@ -412,6 +412,17 @@ class Approach(ABC):
 
         return default_limit
 
+    def get_lowest_reasoning_effort(self, model: str) -> Optional[ChatCompletionReasoningEffort]:
+        """
+        Return the lowest valid reasoning_effort for the given model.
+
+        Currently, "minimal" is only valid for the gpt-5 family.
+        For other reasoning models, return "low".
+        """
+        if model in {"gpt-5", "gpt-5-mini"}:
+            return "minimal"
+        return "low"
+
     def create_chat_completion(
         self,
         chatgpt_deployment: Optional[str],
