@@ -38,7 +38,7 @@
                 "props": {
                     "deployment": "o3-mini",
                     "model": "o3-mini",
-                    "reasoning_effort": "minimal",
+                    "reasoning_effort": "low",
                     "token_usage": {
                         "completion_tokens": 896,
                         "prompt_tokens": 23,
