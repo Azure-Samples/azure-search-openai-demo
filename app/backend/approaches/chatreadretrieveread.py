@@ -163,6 +163,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 temperature=0.0,  # Minimize creativity for search query generation
                 tools=tools,
                 reasoning_effort="minimal",  # Minimize reasoning for search query generation
+                verbosity="low",
             ),
         )
 

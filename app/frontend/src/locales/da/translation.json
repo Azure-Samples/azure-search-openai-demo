@@ -94,6 +94,12 @@
             "medium": "Medium",
             "high": "Høj"
         },
+        "verbosity": "Ordrigdom (kun GPT-5)",
+        "verbosityOptions": {
+            "low": "Lav",
+            "medium": "Mellem",
+            "high": "Høj"
+        },
         "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
         "useAgenticRetrieval": "Brug agentisk hentning",
         "useGPT4V": "Brug GPT vision model",
@@ -138,6 +144,7 @@
         "useSemanticCaptions": "Sender semantiske billedtekster til LLM'en i stedet for hele søgeresultatet. En semantisk billedtekst udtrækkes fra et søgeresultat under processen med semantisk rangering.",
         "useQueryRewriting": "Aktiverer Azure AI Search forespørgselsomskrivning, en proces der ændrer brugerens forespørgsel for at forbedre søgeresultaterne. Kræver at semantisk ranking er aktiveret.",
         "reasoningEffort": "Indstiller ræsonnementsindsatsen for sprogmodellen. Højere værdier resulterer i mere ræsonnement, men kan tage længere tid om at generere et svar. Standardværdien er medium.",
+    "verbosity": "Styrer hvor ordrige assistentens svar skal være for GPT-5 ræsonneringsmodeller. Højere værdier giver længere og mere detaljerede svar.",
         "suggestFollowupQuestions": "Beder LLM'en om at foreslå opfølgende spørgsmål baseret på brugerens forespørgsel.",
         "useGPT4Vision": "Bruger GPT-4-Turbo med Vision til at generere svar baseret på billeder og tekst fra indekset.",
         "vectorFields": "Angiver hvilke indlejringsfelter i Azure AI Search Index, der vil blive søgt, enten både 'Billeder og tekst' indlejringer, 'Billeder' kun eller 'Tekst' kun.",

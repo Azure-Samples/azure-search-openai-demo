@@ -98,6 +98,12 @@
             "medium": "Orta",
             "high": "Yüksek"
         },
+        "verbosity": "Ayrıntı düzeyi (yalnızca GPT-5)",
+        "verbosityOptions": {
+            "low": "Düşük",
+            "medium": "Orta",
+            "high": "Yüksek"
+        },
         "useSuggestFollowupQuestions": "Takip soruları öner",
         "useAgenticRetrieval": "Ajan temelli getirim kullan",
         "useGPT4V": "GPT vizyon modelini kullan",
@@ -154,6 +160,8 @@
             "Azure AI arama sonuçlarını iyileştirmek için kullanıcı sorgusunu değiştiren bir işlem. Anlamsal sıralayıcının etkin olmasını gerektirir.",
         "reasoningEffort":
             "Dil modeli için akıl yürütme çabasını ayarlar. Daha yüksek değerler daha fazla akıl yürütme ile sonuçlanır, ancak yanıt oluşturmak daha uzun sürebilir. Varsayılan orta seviyedir.",
+        "verbosity":
+            "GPT-5 akıl yürütme modelleri için asistanın yanıtlarının ne kadar detaylı olması gerektiğini kontrol eder. Daha yüksek değerler daha uzun ve daha ayrıntılı yanıtlar üretir.",
         "suggestFollowupQuestions": "Kullanıcının sorusuna dayalı olarak dil modelinden takip soruları önermesini ister.",
         "useGPT4Vision": "Görseller ve metinlerden oluşan indekslere dayalı olarak yanıtlar oluşturmak için GPT-4-Turbo ile Vision kullanır.",
         "vectorFields":

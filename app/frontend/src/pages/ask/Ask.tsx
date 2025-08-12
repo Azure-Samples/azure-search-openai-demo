@@ -36,6 +36,7 @@ export function Component(): JSX.Element {
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
+    const [verbosity, setVerbosity] = useState<string>("");
     const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
     const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
     const [includeCategory, setIncludeCategory] = useState<string>("");
@@ -91,6 +92,8 @@ export function Component(): JSX.Element {
             setShowReasoningEffortOption(config.showReasoningEffortOption);
             if (config.showReasoningEffortOption) {
                 setReasoningEffort(config.defaultReasoningEffort);
+                // Auto-select Medium verbosity by default when reasoning is enabled
+                setVerbosity(prev => prev || "medium");
             }
             setShowVectorOption(config.showVectorOption);
             if (!config.showVectorOption) {
@@ -149,6 +152,7 @@ export function Component(): JSX.Element {
                         semantic_captions: useSemanticCaptions,
                         query_rewriting: useQueryRewriting,
                         reasoning_effort: reasoningEffort,
+                        verbosity: verbosity || undefined,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
                         vector_fields: vectorFields,
@@ -215,6 +219,9 @@ export function Component(): JSX.Element {
                 break;
             case "reasoningEffort":
                 setReasoningEffort(value);
+                break;
+            case "verbosity":
+                setVerbosity(value);
                 break;
             case "excludeCategory":
                 setExcludeCategory(value);
@@ -363,6 +370,7 @@ export function Component(): JSX.Element {
                     useSemanticCaptions={useSemanticCaptions}
                     useQueryRewriting={useQueryRewriting}
                     reasoningEffort={reasoningEffort}
+                    verbosity={verbosity}
                     excludeCategory={excludeCategory}
                     includeCategory={includeCategory}
                     retrievalMode={retrievalMode}

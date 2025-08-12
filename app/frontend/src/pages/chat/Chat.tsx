@@ -52,6 +52,7 @@ const Chat = () => {
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
+    const [verbosity, setVerbosity] = useState<string>("");
     const [streamingEnabled, setStreamingEnabled] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
@@ -122,6 +123,8 @@ const Chat = () => {
             }
             if (config.showReasoningEffortOption) {
                 setReasoningEffort(config.defaultReasoningEffort);
+                // Auto-select Medium verbosity by default when reasoning is enabled
+                setVerbosity(prev => prev || "medium");
             }
             setShowVectorOption(config.showVectorOption);
             if (!config.showVectorOption) {
@@ -229,6 +232,7 @@ const Chat = () => {
                         semantic_captions: useSemanticCaptions,
                         query_rewriting: useQueryRewriting,
                         reasoning_effort: reasoningEffort,
+                        verbosity: verbosity || undefined,
                         suggest_followup_questions: useSuggestFollowupQuestions,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
@@ -329,6 +333,9 @@ const Chat = () => {
                 break;
             case "reasoningEffort":
                 setReasoningEffort(value);
+                break;
+            case "verbosity":
+                setVerbosity(value);
                 break;
             case "useSemanticCaptions":
                 setUseSemanticCaptions(value);
@@ -551,6 +558,7 @@ const Chat = () => {
                         useSemanticCaptions={useSemanticCaptions}
                         useQueryRewriting={useQueryRewriting}
                         reasoningEffort={reasoningEffort}
+                        verbosity={verbosity}
                         excludeCategory={excludeCategory}
                         includeCategory={includeCategory}
                         retrievalMode={retrievalMode}

@@ -98,6 +98,12 @@
             "medium": "中",
             "high": "高"
         },
+        "verbosity": "冗長さ（GPT-5 のみ）",
+        "verbosityOptions": {
+            "low": "低",
+            "medium": "中",
+            "high": "高"
+        },
         "useSuggestFollowupQuestions": "フォローアップの質問を提案",
         "useAgenticRetrieval": "使用主体性检索",
         "useGPT4V": "GPT Visionモデルを使用",
@@ -152,6 +158,8 @@
             "Azure AI Searchのクエリの書き換えを有効にします。これは、ユーザーのクエリを変更して検索結果を改善するプロセスです。セマンティック・ランカーが有効になっている必要があります。",
         "reasoningEffort":
             "LLMの推論労力を設定します。値が高いほど推論が増加しますが、応答の生成に時間がかかる場合があります。デフォルトは中です。",
+        "verbosity":
+            "GPT-5 推論モデルに対して、アシスタントの応答の冗長さを制御します。値が高いほど、より長く詳細な回答になります。",
         "suggestFollowupQuestions": "ユーザーのクエリに基づいて、LLMにフォローアップの質問を提案するように問い合わせます。",
         "useGPT4Vision": "インデックスから画像とテキストを利用して回答を生成するためGPT-4-Turbo with Visionを使用します。",
         "vectorFields":

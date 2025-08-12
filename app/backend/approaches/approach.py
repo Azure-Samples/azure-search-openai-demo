@@ -424,6 +424,7 @@ class Approach(ABC):
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+        verbosity: Optional[str] = None,
     ) -> Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]:
         if chatgpt_model in self.GPT_REASONING_MODELS:
             params: dict[str, Any] = {
@@ -437,6 +438,11 @@ class Approach(ABC):
                 params["stream"] = True
                 params["stream_options"] = {"include_usage": True}
             params["reasoning_effort"] = reasoning_effort or overrides.get("reasoning_effort") or self.reasoning_effort
+
+            # Pass verbosity for reasoning models (default to "medium" if not provided)
+            # Only include the parameter for models that support reasoning features.
+            verbosity_value = verbosity or overrides.get("verbosity") or getattr(self, "verbosity", None) or "medium"
+            params["verbosity"] = verbosity_value
 
         else:
             # Include parameters that may not be supported for reasoning models

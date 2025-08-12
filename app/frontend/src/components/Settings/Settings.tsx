@@ -23,6 +23,7 @@ export interface SettingsProps {
     useSemanticCaptions: boolean;
     useQueryRewriting: boolean;
     reasoningEffort: string;
+    verbosity?: string;
     excludeCategory: string;
     includeCategory: string;
     retrievalMode: RetrievalMode;
@@ -64,6 +65,7 @@ export const Settings = ({
     useSemanticCaptions,
     useQueryRewriting,
     reasoningEffort,
+    verbosity,
     excludeCategory,
     includeCategory,
     retrievalMode,
@@ -119,6 +121,7 @@ export const Settings = ({
     const semanticRankerFieldId = useId("semanticRankerField");
     const queryRewritingFieldId = useId("queryRewritingField");
     const reasoningEffortFieldId = useId("reasoningEffortField");
+    const verbosityFieldId = useId("verbosityField");
     const semanticCaptionsId = useId("semanticCaptions");
     const semanticCaptionsFieldId = useId("semanticCaptionsField");
     const useOidSecurityFilterId = useId("useOidSecurityFilter");
@@ -341,6 +344,22 @@ export const Settings = ({
                         { key: "high", text: t("labels.reasoningEffortOptions.high") }
                     ]}
                     onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
+                />
+            )}
+
+            {showReasoningEffortOption && (
+                <Dropdown
+                    id={verbosityFieldId}
+                    selectedKey={verbosity || ""}
+                    label={t("labels.verbosity")}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) => onChange("verbosity", option?.key || "")}
+                    aria-labelledby={verbosityFieldId}
+                    options={[
+                        { key: "low", text: t("labels.verbosityOptions.low") },
+                        { key: "medium", text: t("labels.verbosityOptions.medium") },
+                        { key: "high", text: t("labels.verbosityOptions.high") }
+                    ]}
+                    onRenderLabel={props => renderLabel(props, verbosityFieldId, verbosityFieldId, t("helpTexts.verbosity"))}
                 />
             )}
 

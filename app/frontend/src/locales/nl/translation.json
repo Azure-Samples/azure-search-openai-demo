@@ -98,6 +98,12 @@
             "medium": "Gemiddeld",
             "high": "Hoog"
         },
+        "verbosity": "Verbositeit (alleen GPT-5)",
+        "verbosityOptions": {
+            "low": "Laag",
+            "medium": "Gemiddeld",
+            "high": "Hoog"
+        },
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
         "useAgenticRetrieval": "Gebruik agentische retrieval",
         "useGPT4V": "GPT-visiemodel gebruiken",
@@ -154,6 +160,8 @@
             "Schakelt Azure AI Search query herformulering in, een proces dat de query van de gebruiker wijzigt om zoekresultaten te verbeteren. Vereist dat semantische rangschikking is ingeschakeld.",
         "reasoningEffort":
             "Stelt de redeneerinspanning voor het taalmodel in. Hogere waarden resulteren in meer redeneren, maar kunnen langer duren om een reactie te genereren. De standaard is gemiddeld.",
+        "verbosity":
+            "Bepaalt hoe uitgebreid de antwoorden van de assistent moeten zijn voor GPT-5 redeneermodellen. Hogere waarden leveren langere, meer gedetailleerde antwoorden op.",
         "suggestFollowupQuestions": "Vraagt het taalmodel om vervolgvragen voor te stellen op basis van de vraag.",
         "useGPT4Vision": "Gebruikt GPT-4-Turbo met Vision om antwoorden te genereren op basis van afbeeldingen en tekst uit de index.",
         "vectorFields":

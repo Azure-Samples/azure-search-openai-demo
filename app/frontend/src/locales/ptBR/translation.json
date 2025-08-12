@@ -100,6 +100,12 @@
             "medium": "Médio",
             "high": "Alto"
         },
+        "verbosity": "Verbosidade (apenas GPT-5)",
+        "verbosityOptions": {
+            "low": "Baixo",
+            "medium": "Médio",
+            "high": "Alto"
+        },
         "useGPT4V": "Usar modelo de visão GPT",
         "gpt4VInput": {
             "label": "Entradas do modelo de visão GPT",
@@ -154,6 +160,8 @@
              "Habilita a reescrita de consultas do Azure AI Search, um processo que modifica a consulta do usuário para melhorar os resultados da pesquisa. Requer que o rankeador semântico esteja habilitado.",
         "reasoningEffort":
              "Define o esforço de raciocínio para o LLM. Valores mais altos resultam em mais raciocínio, mas podem levar mais tempo para gerar uma resposta. O padrão é médio.",
+    "verbosity":
+         "Controla quão verbosas devem ser as respostas do assistente para modelos de raciocínio GPT-5. Valores mais altos produzem respostas mais longas e detalhadas.",
         "suggestFollowupQuestions": "Solicita ao LLM que sugira perguntas de acompanhamento com base na consulta do usuário.",
         "useGPT4Vision": "Usa GPT-4-Turbo com Visão para gerar respostas com base em imagens e texto do índice.",
         "vectorFields":

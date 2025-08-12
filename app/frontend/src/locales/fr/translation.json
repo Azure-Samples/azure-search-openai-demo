@@ -100,6 +100,12 @@
             "medium": "Moyen",
             "high": "Élevé"
         },
+        "verbosity": "Verbosité (GPT-5 uniquement)",
+        "verbosityOptions": {
+            "low": "Faible",
+            "medium": "Moyenne",
+            "high": "Élevée"
+        },
         "useGPT4V": "Utiliser le modèle GPT Vision",
         "gpt4VInput": {
             "label": "Entrées du modèle GPT Vision",
@@ -156,6 +162,8 @@
             "Active la réécriture de requêtes d'Azure AI Search, un processus qui modifie la requête de l'utilisateur pour améliorer les résultats de recherche. Nécessite que le reclasseur sémantique soit activé.",
         "reasoningEffort":
             "Définit l'effort de raisonnement pour le LLM. Des valeurs plus élevées entraînent plus de raisonnement, mais peuvent prendre plus de temps pour générer une réponse. La valeur par défaut est moyenne.",
+        "verbosity":
+            "Contrôle le niveau de détail des réponses pour les modèles de raisonnement GPT-5. Des valeurs plus élevées produisent des réponses plus longues et plus détaillées.",
         "useGPT4Vision": "Utilise GPT-4-Turbo avec Vision pour générer des réponses basées sur des images et du texte de l'index.",
         "vectorFields":
             "Spécifie quels champs d'incorporation dans l'index de recherche Azure AI seront recherchés, à la fois les incorporations 'Images et texte', 'Images' seulement, ou 'Texte' seulement.",
