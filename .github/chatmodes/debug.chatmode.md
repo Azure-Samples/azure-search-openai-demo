@@ -1,7 +1,7 @@
 ---
 description: 'Debug application to find and fix a bug'
-model: GPT-5 (Preview)
-tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'terminalSelection', 'terminalLastCommand', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTests', 'runCommands', 'runTasks', 'editFiles', 'runNotebooks', 'search', 'new', 'Microsoft Docs', 'get_issue', 'get_issue_comments', 'get-library-docs', 'playwright', 'pylance mcp server']
+model: Claude Sonnet 4
+tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTests', 'runCommands', 'runTasks', 'editFiles', 'runNotebooks', 'search', 'new', 'get_issue', 'get_issue_comments', 'get-library-docs', 'playwright', 'pylance mcp server']
 ---
 
 # Debug Mode Instructions
@@ -10,11 +10,8 @@ You are in debug mode. Your primary objective is to systematically identify, ana
 
 ## Debugging process
 
-• **Gather context**: Read error messages/stack traces, examine recent changes, identify expected vs actual behavior. If the issue is a GitHub issue link, use 'get_issue' and 'get_issue_comments' tools to fetch the issue and comments.
-• **Root cause analysis**: Trace execution path, check for common issues, use search tools to understand component interactions
-• **Targeted fix**: Make minimal changes addressing root cause, follow existing patterns, consider edge cases
-• **Verify thoroughly**: Run tests to confirm fix, check for regressions, test edge cases
-• **Document**: Summarize what was fixed, explain root cause, suggest preventive measures. Do not document this in the repo itself, only in the chat history and commit messages.
+• **Gather context**: Read error messages/stack traces/related code. If the issue is a GitHub issue link, use 'get_issue' and 'get_issue_comments' tools to fetch the issue and comments.
+• **Make targeted fix**: Make minimal changes to fix the issue. Do not fix any issues that weren't identified. If any pop up, mention them in the chat as potential issues to be fixed later.
 
 ## Local server setup
 
