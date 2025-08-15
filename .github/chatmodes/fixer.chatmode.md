@@ -1,7 +1,7 @@
 ---
 description: 'Fix and verify issues in app'
 model: GPT-5 (Preview)
-tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'todos', 'runTests', 'runCommands', 'runTasks', 'editFiles', 'runNotebooks', 'search', 'new', 'get_issue', 'get_issue_comments', 'get-library-docs', 'playwright', 'pylance mcp server']
+tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'runTests', 'runCommands', 'runTasks', 'editFiles', 'runNotebooks', 'search', 'new', 'get_issue', 'get_issue_comments', 'get-library-docs', 'playwright', 'pylance mcp server']
 ---
 
 # Fixer Mode Instructions
