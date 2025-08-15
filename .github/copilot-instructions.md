@@ -27,7 +27,7 @@ When adding a new developer setting, update:
 * backend:
   * app/backend/approaches/chatreadretrieveread.py :  Retrieve from overrides parameter
   * app/backend/approaches/retrievethenread.py : Retrieve from overrides parameter
-  * app/backend/app.py: Some settings may need to sent down in the /config route.
+  * app/backend/app.py: Some settings may need to be sent down in the /config route.
 
 # When adding tests for a new feature:
 
