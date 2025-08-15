@@ -190,7 +190,7 @@ async def test_chathistory_newitem_error_runtime(auth_public_documents_client, m
     )
     assert response.status_code == 500
     assert (await response.get_json()) == {
-        "error": "The app encountered an error processing your request.\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\nError type: <class 'IndexError'>\n"
+        "error": "The app encountered an error processing your request.\nIf you are an administrator of the app, check the application logs for a full traceback.\nError type: <class 'IndexError'>\n"
     }
 
 
@@ -261,7 +261,7 @@ async def test_chathistory_query_error_runtime(auth_public_documents_client, mon
     )
     assert response.status_code == 500
     assert (await response.get_json()) == {
-        "error": "The app encountered an error processing your request.\nIf you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.\nError type: <class 'Exception'>\n"
+        "error": "The app encountered an error processing your request.\nIf you are an administrator of the app, check the application logs for a full traceback.\nError type: <class 'Exception'>\n"
     }
 
 
