@@ -4,7 +4,7 @@ from openai import APIError
 from quart import jsonify
 
 ERROR_MESSAGE = """The app encountered an error processing your request.
-If you are an administrator of the app, view the full error in the logs. See aka.ms/appservice-logs for more information.
+If you are an administrator of the app, check the application logs for a full traceback.
 Error type: {error_type}
 """
 ERROR_MESSAGE_FILTER = """Your message contains content that was flagged by the OpenAI content filter."""
