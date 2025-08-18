@@ -24,6 +24,7 @@ const LayoutWrapper = () => {
 
                     // Default to using the first account if no account is active on page load
                     if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0) {
+                        // Account selection logic is app dependent. Adjust as needed for different use cases.
                         msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
                     }
 
@@ -38,13 +39,12 @@ const LayoutWrapper = () => {
                     });
 
                     if (mounted.current) {
-                        try {
-                            const isLoggedIn = await checkLoggedIn(msalInstance);
-                            setLoggedIn(isLoggedIn);
-                        } catch (e) {
+                        const isLoggedIn = await checkLoggedIn(msalInstance).catch(e => {
                             // Swallow check error but still allow app to render
                             console.error("checkLoggedIn failed", e);
-                        }
+                            return false;
+                        });
+                        setLoggedIn(isLoggedIn);
                     }
                 } catch (e) {
                     console.error("MSAL initialize failed", e);
