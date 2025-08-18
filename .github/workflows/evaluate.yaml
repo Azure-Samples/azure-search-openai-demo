@@ -125,7 +125,7 @@ jobs:
             })
 
       - name: Checkout pull request
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
