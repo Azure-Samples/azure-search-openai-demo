@@ -6,6 +6,11 @@ This repository includes an optional feature that uses reasoning models to gener
 
 ### Supported Models
 
+* gpt-5
+* gpt-5-mini
+* gpt-5-nano
+* o4-mini
+* o3
 * o3-mini
 * o1
 
@@ -18,6 +23,36 @@ This repository includes an optional feature that uses reasoning models to gener
 1. **Enable reasoning:**
 
    Set the environment variables for your Azure OpenAI GPT deployments to your reasoning model
+
+   For gpt-5:
+
+   ```shell
+   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-5
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-08-07
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+   azd env set AZURE_OPENAI_API_VERSION 2025-04-01-preview
+   ```
+
+   For gpt-5-mini:
+
+   ```shell
+   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5-mini
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-5-mini
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-08-07
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+   azd env set AZURE_OPENAI_API_VERSION 2025-04-01-preview
+   ```
+
+   For gpt-5-nano:
+
+   ```shell
+   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5-nano
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-5-nano
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-08-07
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
+   azd env set AZURE_OPENAI_API_VERSION 2025-04-01-preview
+   ```
 
    For o4-mini:
 
@@ -61,12 +96,12 @@ This repository includes an optional feature that uses reasoning models to gener
 
 2. **(Optional) Set default reasoning effort**
 
-   You can configure how much effort the reasoning model spends on processing and understanding the user's request. Valid options are `low`, `medium`, and `high`. Reasoning effort defaults to `medium` if not set.
+   You can configure how much effort the reasoning model spends on processing and understanding the user's request. Valid options are `minimal` (for GPT-5 models only), `low`, `medium`, and `high`. Reasoning effort defaults to `medium` if not set.
 
-   Set the environment variable for reasoning effort
+   Set the environment variable for reasoning effort:
 
    ```shell
-   azd env set AZURE_OPENAI_REASONING_EFFORT medium
+   azd env set AZURE_OPENAI_REASONING_EFFORT minimal
    ```
 
 3. **Update the infrastructure and application:**

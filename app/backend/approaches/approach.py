@@ -127,15 +127,19 @@ class TokenUsageProps:
 @dataclass
 class GPTReasoningModelSupport:
     streaming: bool
+    minimal_effort: bool
 
 
 class Approach(ABC):
     # List of GPT reasoning models support
     GPT_REASONING_MODELS = {
-        "o1": GPTReasoningModelSupport(streaming=False),
-        "o3": GPTReasoningModelSupport(streaming=True),
-        "o3-mini": GPTReasoningModelSupport(streaming=True),
-        "o4-mini": GPTReasoningModelSupport(streaming=True),
+        "o1": GPTReasoningModelSupport(streaming=False, minimal_effort=False),
+        "o3": GPTReasoningModelSupport(streaming=True, minimal_effort=False),
+        "o3-mini": GPTReasoningModelSupport(streaming=True, minimal_effort=False),
+        "o4-mini": GPTReasoningModelSupport(streaming=True, minimal_effort=False),
+        "gpt-5": GPTReasoningModelSupport(streaming=True, minimal_effort=True),
+        "gpt-5-nano": GPTReasoningModelSupport(streaming=True, minimal_effort=True),
+        "gpt-5-mini": GPTReasoningModelSupport(streaming=True, minimal_effort=True),
     }
     # Set a higher token limit for GPT reasoning models
     RESPONSE_DEFAULT_TOKEN_LIMIT = 1024
@@ -408,6 +412,16 @@ class Approach(ABC):
             return self.RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT
 
         return default_limit
+
+    def get_lowest_reasoning_effort(self, model: str) -> ChatCompletionReasoningEffort:
+        """
+        Return the lowest valid reasoning_effort for the given model.
+        """
+        if model not in self.GPT_REASONING_MODELS:
+            return None
+        if self.GPT_REASONING_MODELS[model].minimal_effort:
+            return "minimal"
+        return "low"
 
     def create_chat_completion(
         self,

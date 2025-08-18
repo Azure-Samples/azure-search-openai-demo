@@ -118,10 +118,10 @@ jobs:
       USE_AI_PROJECT: ${{ vars.USE_AI_PROJECT }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install azd
-        uses: Azure/setup-azd@v2.1.0
+        uses: Azure/setup-azd@v2.2.0
 
       - name: Install Nodejs
         uses: actions/setup-node@v4

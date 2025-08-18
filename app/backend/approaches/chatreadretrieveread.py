@@ -162,7 +162,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                 ),  # Setting too low risks malformed JSON, setting too high may affect performance
                 temperature=0.0,  # Minimize creativity for search query generation
                 tools=tools,
-                reasoning_effort="low",  # Minimize reasoning for search query generation
+                reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
             ),
         )
 
@@ -202,7 +202,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
                     usage=chat_completion.usage,
-                    reasoning_effort="low",
+                    reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
                 ),
                 ThoughtStep(
                     "Search using generated search query",
