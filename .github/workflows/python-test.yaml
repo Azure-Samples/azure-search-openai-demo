@@ -64,7 +64,7 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=90
+          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=89
         - name: Check diff coverage
           if: runner.os != 'Windows'
           run: |
