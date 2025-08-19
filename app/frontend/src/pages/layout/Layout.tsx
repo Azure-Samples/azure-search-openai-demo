@@ -75,7 +75,7 @@ const Layout = () => {
                 </div>
             </header>
 
-            <main className={styles.main} role="main" id="main-content">
+            <main className={styles.main} id="main-content">
                 <Outlet />
             </main>
         </div>
