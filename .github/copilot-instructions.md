@@ -1,5 +1,6 @@
 # Adding new data
 
+<<<<<<< HEAD
 New files should be added to the `data` folder, and then either run scripts/prepdocs.sh or script/prepdocs.ps1 to ingest the data.
 
 # Overall code layout
@@ -31,6 +32,9 @@ New files should be added to the `data` folder, and then either run scripts/prep
     * app/frontend/src/pages: Contains the main pages of the application
 * infra: Contains the Bicep templates for provisioning Azure resources.
 * tests: Contains the test code, including e2e tests, app integration tests, and unit tests.
+=======
+New files should be added to the `data` folder, and then either run scripts/prepdocs.sh or scripts/prepdocs.ps1 to ingest the data.
+>>>>>>> main
 
 # Adding a new azd environment variable
 
@@ -57,7 +61,11 @@ When adding a new developer setting, update:
 * backend:
   * app/backend/approaches/chatreadretrieveread.py :  Retrieve from overrides parameter
   * app/backend/approaches/retrievethenread.py : Retrieve from overrides parameter
+<<<<<<< HEAD
   * app/backend/app.py: Some settings may need to sent down in the /config route.
+=======
+  * app/backend/app.py: Some settings may need to be sent down in the /config route.
+>>>>>>> main
 
 # When adding tests for a new feature:
 

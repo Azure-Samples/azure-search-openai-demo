@@ -89,6 +89,7 @@
         "useQueryRewriting": "Brug forespørgselsomskrivning til informationsgenfinding",
         "reasoningEffort": "Ræsonnementsindsats",
         "reasoningEffortOptions": {
+            "minimal": "Minimal (kun GPT-5)",
             "low": "Lav",
             "medium": "Medium",
             "high": "Høj"

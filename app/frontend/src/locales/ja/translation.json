@@ -93,6 +93,7 @@
         "useQueryRewriting": "検索のためにクエリの書き換えを使用する",
         "reasoningEffort": "推論の労力",
         "reasoningEffortOptions": {
+            "minimal": "最小（GPT-5 のみ）",
             "low": "低",
             "medium": "中",
             "high": "高"

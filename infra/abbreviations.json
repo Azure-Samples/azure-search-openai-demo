@@ -110,6 +110,7 @@
   "privateEndpoint": "pe-",
   "privateLink": "pl-",
   "purviewAccounts": "pview-",
+  "privateDnsResolver": "pdr-",
   "recoveryServicesVaults": "rsv-",
   "resourcesResourceGroups": "rg-",
   "searchSearchServices": "srch-",

@@ -99,6 +99,7 @@
         "useQueryRewriting": "Use query rewriting for retrieval",
         "reasoningEffort": "Reasoning effort",
         "reasoningEffortOptions": {
+            "minimal": "Minimal (GPT-5 only)",
             "low": "Low",
             "medium": "Medium",
             "high": "High"

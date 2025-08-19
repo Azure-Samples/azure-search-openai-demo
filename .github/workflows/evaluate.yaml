@@ -120,7 +120,7 @@ jobs:
             })
 
       - name: Checkout pull request
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
@@ -138,7 +138,7 @@ jobs:
           node-version: 18
 
       - name: Install azd
-        uses: Azure/setup-azd@v2.1.0
+        uses: Azure/setup-azd@v2.2.0
 
       - name: Login to Azure with az CLI
         uses: azure/login@v2
@@ -154,7 +154,6 @@ jobs:
             az account set --subscription ${{env.AZURE_SUBSCRIPTION_ID}}
 
       - name: Login to with Azure with azd (Federated Credentials)
-        if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
           azd auth login `
             --client-id "$Env:AZURE_CLIENT_ID" `

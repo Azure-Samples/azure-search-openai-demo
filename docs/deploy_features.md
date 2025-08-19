@@ -35,10 +35,16 @@ As of early June 2025, the default chat completion model is `gpt-4.1-mini`. If y
     For example:
 
     ```bash
-    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-4o
+    azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-5-chat
     ```
 
-1. To set the GPT model to a different [available model](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate model name.
+1. To set the GPT model to a different [available model](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate model name. For reasoning models like gpt-5/o3/o4, check [the reasoning guide](./reasoning.md)
+
+   For gpt-5-chat:
+
+   ```shell
+   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5-chat
+   ```
 
     For gpt-4.1-mini:
 
@@ -71,6 +77,12 @@ As of early June 2025, the default chat completion model is `gpt-4.1-mini`. If y
     ```
 
 1. To set the Azure OpenAI model version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version string.
+
+   For gpt-5-chat:
+
+   ```shell
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-08-07
+   ```
 
     For gpt-4.1-mini:
 
