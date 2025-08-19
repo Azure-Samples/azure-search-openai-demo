@@ -61,7 +61,12 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: pytest -s -vv --cov --cov-fail-under=89
+          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=90
+        - name: Check diff coverage
+          if: runner.os != 'Windows'
+          run: |
+            git fetch origin main:refs/remotes/origin/main
+            diff-cover coverage.xml --compare-branch=origin/main --fail-under=90
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
