@@ -5,15 +5,9 @@ from azure.search.documents.indexes._generated.models import (
     NativeBlobSoftDeleteDeletionDetectionPolicy,
 )
 from azure.search.documents.indexes.models import (
-    AIServicesAccountIdentity,
     AzureOpenAIEmbeddingSkill,
-    DocumentIntelligenceLayoutSkill,
-    DocumentIntelligenceLayoutSkillChunkingProperties,
-    IndexingParameters,
-    IndexingParametersConfiguration,
     IndexProjectionMode,
     InputFieldMappingEntry,
-    MergeSkill,
     OutputFieldMappingEntry,
     SearchIndexer,
     SearchIndexerDataContainer,
@@ -22,17 +16,12 @@ from azure.search.documents.indexes.models import (
     SearchIndexerIndexProjection,
     SearchIndexerIndexProjectionSelector,
     SearchIndexerIndexProjectionsParameters,
-    SearchIndexerKnowledgeStore,
-    SearchIndexerKnowledgeStoreFileProjectionSelector,
-    SearchIndexerKnowledgeStoreProjection,
     SearchIndexerSkillset,
-    ShaperSkill,
     SplitSkill,
-    VisionVectorizeSkill,
 )
 
 from .blobmanager import BlobManager
-from .embeddings import AzureOpenAIEmbeddingService, ImageEmbeddings
+from .embeddings import AzureOpenAIEmbeddingService
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
 from .strategy import DocumentAction, SearchInfo, Strategy
@@ -53,20 +42,20 @@ class IntegratedVectorizerStrategy(Strategy):
         embeddings: AzureOpenAIEmbeddingService,
         search_field_name_embedding: str,
         subscription_id: str,
+        search_service_user_assigned_id: str,
         document_action: DocumentAction = DocumentAction.Add,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
         category: Optional[str] = None,
-        use_multimodal: bool = False,
-        image_embeddings: Optional[ImageEmbeddings] = None,
     ):
+
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
         self.document_action = document_action
         self.embeddings = embeddings
-        self.image_embeddings = image_embeddings
         self.search_field_name_embedding = search_field_name_embedding
         self.subscription_id = subscription_id
+        self.search_user_assigned_identity = search_service_user_assigned_id
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
         self.category = category
@@ -75,12 +64,12 @@ class IntegratedVectorizerStrategy(Strategy):
         self.skillset_name = f"{prefix}-skillset"
         self.indexer_name = f"{prefix}-indexer"
         self.data_source_name = f"{prefix}-blob"
-        self.use_multimodal = use_multimodal and image_embeddings is not None
 
-    async def create_skillset(self, index_name: str) -> SearchIndexerSkillset:
+    async def create_embedding_skill(self, index_name: str) -> SearchIndexerSkillset:
         """
         Create a skillset for the indexer to chunk documents and generate embeddings
         """
+
         split_skill = SplitSkill(
             name="split-skill",
             description="Split skill to chunk documents",
@@ -139,152 +128,6 @@ class IntegratedVectorizerStrategy(Strategy):
 
         return skillset
 
-    async def create_multimodal_skillset(self, index_name: str) -> SearchIndexerSkillset:
-        if self.image_embeddings is None:
-            raise ValueError("Image embeddings client must be provided for multimodal skillset creation.")
-        if self.blob_manager.image_container is None:
-            raise ValueError("Blob manager must have an image container set for multimodal skillset creation.")
-
-        document_layout_skill = DocumentIntelligenceLayoutSkill(
-            description="Layout skill to read documents",
-            context="/document",
-            output_mode="oneToMany",
-            output_format="text",
-            markdown_header_depth="",  # Necessary so that SDK doesnt send a header depth
-            extraction_options=["images", "locationMetadata"],
-            chunking_properties=DocumentIntelligenceLayoutSkillChunkingProperties(
-                unit="characters",
-                maximum_length=2000,
-                overlap_length=200,
-            ),
-            inputs=[InputFieldMappingEntry(name="file_data", source="/document/file_data")],
-            outputs=[
-                OutputFieldMappingEntry(name="text_sections", target_name="text_sections"),
-                OutputFieldMappingEntry(name="normalized_images", target_name="normalized_images"),
-            ],
-        )
-
-        split_skill = SplitSkill(
-            description="Split skill to chunk pages of documents",
-            text_split_mode="pages",
-            context="/document/text_sections/*",
-            maximum_page_length=2000,
-            page_overlap_length=500,
-            inputs=[
-                InputFieldMappingEntry(name="text", source="/document/text_sections/*/content"),
-            ],
-            outputs=[OutputFieldMappingEntry(name="textItems", target_name="pages")],
-        )
-
-        embedding_skill = AzureOpenAIEmbeddingSkill(
-            name="embedding-skill",
-            description="Skill to generate embeddings via Azure OpenAI",
-            context="/document/text_sections/*/pages/*",
-            resource_url=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
-            deployment_name=self.embeddings.open_ai_deployment,
-            model_name=self.embeddings.open_ai_model_name,
-            dimensions=self.embeddings.open_ai_dimensions,
-            inputs=[
-                InputFieldMappingEntry(name="text", source="/document/text_sections/*/pages/*"),
-            ],
-            outputs=[OutputFieldMappingEntry(name="embedding", target_name="vector")],
-        )
-
-        vision_embedding_skill = VisionVectorizeSkill(
-            name="vision-embedding-skill",
-            description="Skill to generate image embeddings via Azure AI Vision",
-            context="/document/normalized_images/*",
-            model_version="2023-04-15",
-            inputs=[InputFieldMappingEntry(name="image", source="/document/normalized_images/*")],
-            outputs=[OutputFieldMappingEntry(name="vector", target_name="image_vector")],
-        )
-
-        vision_embedding_shaper_skill = ShaperSkill(
-            name="vision-embedding-shaper-skill",
-            description="Shaper skill to ensure image embeddings are in the correct format",
-            context="/document/normalized_images/*",
-            inputs=[
-                InputFieldMappingEntry(name="embedding", source="/document/normalized_images/*/image_vector"),
-                InputFieldMappingEntry(
-                    name="url",
-                    source=f'="{self.blob_manager.endpoint}/images/"+$(/document/normalized_images/*/imagePath)',
-                ),
-            ],
-            outputs=[OutputFieldMappingEntry(name="output", target_name="images")],
-        )
-
-        merge_skill = MergeSkill(
-            name="merge-skill",
-            description="Merge skill to create source page",
-            insert_post_tag="",
-            insert_pre_tag="",
-            context="/document/text_sections/*/locationMetadata",
-            inputs=[
-                InputFieldMappingEntry(
-                    name="itemsToInsert",
-                    source='=[$(/document/metadata_storage_name), "#page=", $(/document/text_sections/*/locationMetadata/pageNumber)]',
-                )
-            ],
-            outputs=[OutputFieldMappingEntry(name="mergedText", target_name="citation")],
-        )
-
-        indexer_skills = [
-            document_layout_skill,
-            split_skill,
-            embedding_skill,
-            vision_embedding_skill,
-            vision_embedding_shaper_skill,
-            merge_skill,
-        ]
-
-        index_projection = SearchIndexerIndexProjection(
-            selectors=[
-                SearchIndexerIndexProjectionSelector(
-                    target_index_name=index_name,
-                    parent_key_field_name="parent_id",
-                    source_context="/document/text_sections/*/pages/*",
-                    mappings=[
-                        InputFieldMappingEntry(name="content", source="/document/text_sections/*/pages/*"),
-                        InputFieldMappingEntry(name="sourcefile", source="/document/metadata_storage_name"),
-                        InputFieldMappingEntry(
-                            name="sourcepage", source="/document/text_sections/*/locationMetadata/citation"
-                        ),
-                        InputFieldMappingEntry(name="storageUrl", source="/document/metadata_storage_path"),
-                        InputFieldMappingEntry(
-                            name=self.search_field_name_embedding, source="/document/text_sections/*/pages/*/vector"
-                        ),
-                        InputFieldMappingEntry(name="images", source="/document/normalized_images/*/images"),
-                    ],
-                )
-            ],
-            parameters=SearchIndexerIndexProjectionsParameters(
-                projection_mode=IndexProjectionMode.SKIP_INDEXING_PARENT_DOCUMENTS
-            ),
-        )
-
-        skillset = SearchIndexerSkillset(
-            name=self.skillset_name,
-            description="Skillset to chunk documents and generate embeddings",
-            skills=indexer_skills,
-            index_projection=index_projection,
-            cognitive_services_account=AIServicesAccountIdentity(subdomain_url=self.image_embeddings.endpoint),
-            knowledge_store=SearchIndexerKnowledgeStore(
-                storage_connection_string=self.blob_manager.get_managedidentity_connectionstring(),
-                projections=[
-                    SearchIndexerKnowledgeStoreProjection(
-                        files=[
-                            SearchIndexerKnowledgeStoreFileProjectionSelector(
-                                storage_container=self.blob_manager.image_container,
-                                source="/document/normalized_images/*",
-                            )
-                        ]
-                    )
-                ],
-            ),
-        )
-
-        return skillset
-
     async def setup(self):
         logger.info("Setting up search index using integrated vectorization...")
         search_manager = SearchManager(
@@ -294,7 +137,7 @@ class IntegratedVectorizerStrategy(Strategy):
             use_int_vectorization=True,
             embeddings=self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
-            search_images=self.use_multimodal,
+            search_images=False,
         )
 
         await search_manager.create_index()
@@ -311,11 +154,8 @@ class IntegratedVectorizerStrategy(Strategy):
 
         await ds_client.create_or_update_data_source_connection(data_source_connection)
 
-        if self.use_multimodal:
-            skillset = await self.create_multimodal_skillset(self.search_info.index_name)
-        else:
-            skillset = await self.create_skillset(self.search_info.index_name)
-        await ds_client.create_or_update_skillset(skillset)
+        embedding_skillset = await self.create_embedding_skill(self.search_info.index_name)
+        await ds_client.create_or_update_skillset(embedding_skillset)
         await ds_client.close()
 
     async def run(self):
@@ -334,22 +174,13 @@ class IntegratedVectorizerStrategy(Strategy):
         elif self.document_action == DocumentAction.RemoveAll:
             await self.blob_manager.remove_blob()
 
-        indexing_parameters = None
-        if self.use_multimodal:
-            indexing_parameters = IndexingParameters(
-                configuration=IndexingParametersConfiguration(
-                    query_timeout=None, allow_skillset_to_read_file_data=True  # type: ignore
-                ),
-                max_failed_items=-1,
-            )
-
+        # Create an indexer
         indexer = SearchIndexer(
             name=self.indexer_name,
             description="Indexer to index documents and generate embeddings",
             skillset_name=self.skillset_name,
             target_index_name=self.search_info.index_name,
             data_source_name=self.data_source_name,
-            parameters=indexing_parameters,  # Properly pass the parameters
         )
 
         indexer_client = self.search_info.create_search_indexer_client()

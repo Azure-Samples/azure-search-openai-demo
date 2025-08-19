@@ -98,8 +98,8 @@ With this feature enabled, the following changes are made:
 
 ## Compatibility
 
+* This feature is **not** compatible with [integrated vectorization](./deploy_features.md#enabling-integrated-vectorization), as the currently configured built-in skills do not process images or store image embeddings. Azure AI Search does now offer built-in skills for multimodal support, as demonstrated in [azure-ai-search-multimodal-sample](https://github.com/Azure-Samples/azure-ai-search-multimodal-sample), but we were not able to customize them enough to meet the requirements of this feature. Instead, we are working on making a custom skill based off the data ingestion code in this repository, and hosting that skill on Azure Functions. Stay tuned to the releases to find out when that's available.
 * This feature is **not** fully compatible with the [agentic retrieval](./agentic_retrieval.md) feature.
 The agent *will* perform the multimodal vector embedding search, but it will not return images in the response,
 so we cannot send the images to the chat completion model.
 * This feature *is* compatible with the [reasoning models](./reasoning.md) feature, as long as you use a model that [supports image inputs](https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure%2Cpy#api--feature-support).
-* This feature is *mostly* compatible with [integrated vectorization](./deploy_features.md#enabling-integrated-vectorization). The extraction process will not be exactly the same, so the chunks will not be identical, and the extracted images will not contain citations.

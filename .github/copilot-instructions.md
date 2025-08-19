@@ -30,7 +30,7 @@
 
 # Adding new data
 
-New files should be added to the `data` folder, and then either run scripts/prepdocs.sh or script/prepdocs.ps1 to ingest the data.
+New files should be added to the `data` folder, and then either run scripts/prepdocs.sh or scripts/prepdocs.ps1 to ingest the data.
 
 # Adding a new azd environment variable
 

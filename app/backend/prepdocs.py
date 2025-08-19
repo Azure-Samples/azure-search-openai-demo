@@ -559,12 +559,6 @@ if __name__ == "__main__":
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
             use_acls=use_acls,
             category=args.category,
-            use_multimodal=use_multimodal,
-            image_embeddings=setup_image_embeddings_service(
-                azure_credential=azd_credential,
-                vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
-                use_multimodal=use_multimodal,
-            ),
         )
     else:
         file_processors = setup_file_processors(
