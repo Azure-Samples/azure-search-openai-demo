@@ -86,7 +86,7 @@ Example of the overrides object:
 
 ## HTTP responses from RAG chat app endpoints
 
-The HTTP response is JSON for a non-streaming response, or [newline-delimited JSON](https://ndjson.org/home/) ("NDJSON"/"jsonlines") for a streaming response.
+The HTTP response is JSON for a non-streaming response, or [newline-delimited JSON](https://jsonlines.org/) ("NDJSON"/"jsonlines") for a streaming response.
 
 ### Non-streaming response
 
