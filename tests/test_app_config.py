@@ -307,3 +307,9 @@ async def test_app_config_for_reasoning_override_effort(monkeypatch, minimal_env
         assert result["streamingEnabled"] is True
         assert result["showReasoningEffortOption"] is True
         assert result["defaultReasoningEffort"] == "low"
+
+
+def test_app_enables_azure_monitor_when_connection_string_set(monkeypatch):
+    mock_connection_string = "InstrumentationKey=12345678-1234-1234-1234-123456789012"
+    monkeypatch.setenv("APPLICATIONINSIGHTS_CONNECTION_STRING", mock_connection_string)
+    app.create_app()

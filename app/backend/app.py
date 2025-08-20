@@ -809,7 +809,13 @@ def create_app():
 
     if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         app.logger.info("APPLICATIONINSIGHTS_CONNECTION_STRING is set, enabling Azure Monitor")
-        configure_azure_monitor()
+        configure_azure_monitor(
+            instrumentation_options={
+                "django": {"enabled": False},
+                "psycopg2": {"enabled": False},
+                "fastapi": {"enabled": False},
+            }
+        )
         # This tracks HTTP requests made by aiohttp:
         AioHttpClientInstrumentor().instrument()
         # This tracks HTTP requests made by httpx:
