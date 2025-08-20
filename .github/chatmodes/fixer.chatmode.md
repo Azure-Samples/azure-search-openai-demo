@@ -1,7 +1,7 @@
 ---
 description: 'Fix and verify issues in app'
 model: GPT-5 (Preview)
-tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'runTests', 'runCommands', 'runTasks', 'editFiles', 'runNotebooks', 'search', 'new', 'get_issue', 'get_issue_comments', 'get-library-docs', 'playwright', 'pylance mcp server']
+tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'runTests', 'runCommands', 'runTasks', 'editFiles', 'runNotebooks', 'search', 'new', 'create_pull_request', 'get_issue', 'get_issue_comments', 'get-library-docs', 'playwright', 'pylance mcp server']
 ---
 
 # Fixer Mode Instructions
@@ -25,3 +25,8 @@ You MUST check task output readiness before debugging, testing, or declaring wor
 	- Backend: Quart was started with --reload; Python changes trigger an automatic restart.
 	- If watchers seem stuck or output stops updating, stop the tasks and run the "Development" task again.
 - To interact with a running application, use the Playwright MCP server. If testing login, you will need to navigate to 'localhost' instead of '127.0.0.1' since that's the URL allowed by the Entra application.
+
+## Committing the change
+
+When change is complete, offer to make a new branch, git commit, and pull request.
+Make sure the PR follows the PULL_REQUEST_TEMPLATE.md format, with all sections filled out and appropriate checkboxes checked.
