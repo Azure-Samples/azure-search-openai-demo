@@ -4,6 +4,12 @@
     height: 100%;
 }
 
+.main {
+    display: flex;
+    flex: 1;
+    min-height: 0; /* allow inner scroll areas to work inside flex container */
+}
+
 .header {
     background-color: #222222;
     color: #f2f2f2;
