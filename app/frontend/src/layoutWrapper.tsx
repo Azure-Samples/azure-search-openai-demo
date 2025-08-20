@@ -1,78 +1,33 @@
-import { AuthenticationResult, EventType, PublicClientApplication } from "@azure/msal-browser";
-import { checkLoggedIn, msalConfig, useLogin } from "./authConfig";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { MsalProvider } from "@azure/msal-react";
+import { useEffect, useRef, useState } from "react";
+import { useMsal } from "@azure/msal-react";
+import { useLogin, checkLoggedIn } from "./authConfig";
 import { LoginContext } from "./loginContext";
 import Layout from "./pages/layout/Layout";
 
 const LayoutWrapper = () => {
     const [loggedIn, setLoggedIn] = useState(false);
     if (useLogin) {
-        // Create a stable MSAL instance (avoid re-init/duplicate listeners; single shared client for MsalProvider).
-        const msalInstance = useMemo(() => new PublicClientApplication(msalConfig), []);
-        const [initialized, setInitialized] = useState(false);
-        // Track mount state so we don't call setState after unmount if async init resolves late
+        const { instance } = useMsal();
+        // Keep track of the mounted state to avoid setting state in an unmounted component
         const mounted = useRef<boolean>(true);
-
         useEffect(() => {
-            // React StrictMode in development invokes effects twice (mount -> cleanup -> mount).
-            // Reset the flag here so this run is considered mounted.
             mounted.current = true;
-            const init = async () => {
-                try {
-                    await msalInstance.initialize();
-
-                    // Default to using the first account if no account is active on page load
-                    if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0) {
-                        // Account selection logic is app dependent. Adjust as needed for different use cases.
-                        msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
-                    }
-
-                    // Listen for sign-in event and set active account
-                    msalInstance.addEventCallback(event => {
-                        if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
-                            const result = event.payload as AuthenticationResult;
-                            if (result.account) {
-                                msalInstance.setActiveAccount(result.account);
-                            }
-                        }
-                    });
-
-                    if (mounted.current) {
-                        const isLoggedIn = await checkLoggedIn(msalInstance).catch(e => {
-                            // Swallow check error but still allow app to render
-                            console.error("checkLoggedIn failed", e);
-                            return false;
-                        });
-                        setLoggedIn(isLoggedIn);
-                    }
-                } catch (e) {
-                    console.error("MSAL initialize failed", e);
-                } finally {
-                    if (mounted.current) {
-                        setInitialized(true);
-                    }
-                }
-            };
-            init();
+            checkLoggedIn(instance)
+                .then(isLoggedIn => {
+                    if (mounted.current) setLoggedIn(isLoggedIn);
+                })
+                .catch(e => {
+                    console.error("checkLoggedIn failed", e);
+                });
             return () => {
-                // On unmount: flag as unmounted so any pending async in init() doesn't call setState
-                // This avoids React warnings about setting state on an unmounted component.
                 mounted.current = false;
             };
-        }, [msalInstance]);
-
-        if (!initialized) {
-            // Lightweight placeholder while MSAL initializes
-            return <p>Loading authentication…</p>;
-        }
+        }, [instance]);
 
         return (
-            <MsalProvider instance={msalInstance}>
-                <LoginContext.Provider value={{ loggedIn, setLoggedIn }}>
-                    <Layout />
-                </LoginContext.Provider>
-            </MsalProvider>
+            <LoginContext.Provider value={{ loggedIn, setLoggedIn }}>
+                <Layout />
+            </LoginContext.Provider>
         );
     } else {
         return (
