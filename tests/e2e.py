@@ -10,6 +10,7 @@ from unittest import mock
 import pytest
 import requests
 import uvicorn
+from axe_playwright_python.sync_playwright import Axe
 from playwright.sync_api import Page, Route, expect
 
 import app
@@ -109,6 +110,10 @@ def test_chat(sized_page: Page, live_server_url: str):
     expect(page.get_by_role("heading", name="Chat with your data")).to_be_visible()
     expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
+
+    # Check accessibility of page in initial state
+    results = Axe().run(page)
+    assert results.violations_count == 0, results.generate_report()
 
     # Ask a question and wait for the message to appear
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()

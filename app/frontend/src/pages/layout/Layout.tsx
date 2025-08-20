@@ -75,7 +75,9 @@ const Layout = () => {
                 </div>
             </header>
 
-            <Outlet />
+            <main className={styles.main} id="main-content">
+                <Outlet />
+            </main>
         </div>
     );
 };
