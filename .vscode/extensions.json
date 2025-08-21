@@ -4,6 +4,6 @@
         "ms-azuretools.vscode-bicep",
         "ms-python.python",
         "esbenp.prettier-vscode",
-        "DavidAnson.vscode-markdownlint",
+        "DavidAnson.vscode-markdownlint"
     ]
 }

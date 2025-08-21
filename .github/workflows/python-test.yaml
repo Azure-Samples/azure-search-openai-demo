@@ -30,7 +30,8 @@ jobs:
     steps:
         - uses: actions/checkout@v5
           with:
-            fetch-depth: 0  # Fetch all history for diff-cover
+            # Fetch full history so diff-cover can compute a merge base with origin/main
+            fetch-depth: 0
         - name: Install uv
           uses: astral-sh/setup-uv@v6
           with:
@@ -67,8 +68,10 @@ jobs:
         - name: Check diff coverage
           if: runner.os != 'Windows'
           run: |
-            git fetch origin main:refs/remotes/origin/main
-            diff-cover coverage.xml --compare-branch=origin/main --fail-under=90
+            BASE_REF="${{ github.base_ref }}"
+            if [ -z "$BASE_REF" ]; then BASE_REF="main"; fi
+            git fetch origin "$BASE_REF:refs/remotes/origin/$BASE_REF"
+            diff-cover coverage.xml --compare-branch="origin/$BASE_REF" --fail-under=90
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
