@@ -47,6 +47,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        hydrate_references: bool = False,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -70,6 +71,7 @@ class ChatReadRetrieveReadApproach(ChatApproach):
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
+        self.hydrate_references = hydrate_references
         self.include_token_usage = True
 
     async def run_until_final_call(
