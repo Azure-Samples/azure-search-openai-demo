@@ -414,9 +414,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.verbose:
-        logging.basicConfig(
-            format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)], level=logging.WARNING
-        )
+        logging.basicConfig(format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)])
         # We only set the level to INFO for our logger,
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.DEBUG)
