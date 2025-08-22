@@ -340,15 +340,17 @@ class Approach(ABC):
         use_semantic_captions: bool,
         download_image_sources: bool,
         user_oid: Optional[str] = None,
-    ) -> tuple[list[str], list[str], list[str]]:
-        """
-        Extracts text and image sources from the search results.
-        If use_semantic_captions is True, it will use the captions from the results.
-        If use_image_sources is True, it will extract image URLs from the results.
+    ) -> DataPoints:
+        """Extract text/image sources & citations from documents.
+
+        Args:
+            results: List of retrieved Document objects.
+            use_semantic_captions: Whether to use semantic captions instead of full content text.
+            download_image_sources: Whether to attempt downloading & base64 encoding referenced images.
+            user_oid: Optional user object id for per-user storage access (ADLS scenarios).
+
         Returns:
-            - A list of text sources (captions or content).
-            - A list of image sources (base64 encoded).
-            - A list of allowed citations for those sources.
+            DataPoints: with text (list[str]), images (list[str - base64 data URI]), citations (list[str]).
         """
 
         def nonewlines(s: str) -> str:
@@ -380,8 +382,9 @@ class Approach(ABC):
                     if url:
                         image_sources.append(url)
                     citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))
-
-        return text_sources, image_sources, citations
+        if download_image_sources:
+            return DataPoints(text=text_sources, images=image_sources, citations=citations)
+        return DataPoints(text=text_sources, citations=citations)
 
     def get_citation(self, sourcepage: Optional[str]):
         return sourcepage or ""

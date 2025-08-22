@@ -339,12 +339,14 @@ class ChatReadRetrieveReadApproach(Approach):
         )
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        text_sources, image_sources, citations = await self.get_sources_content(
+        data_points = await self.get_sources_content(
             results, use_semantic_captions, download_image_sources=send_image_sources, user_oid=auth_claims.get("oid")
         )
+        if not send_text_sources:
+            data_points = DataPoints(text=[], images=data_points.images, citations=data_points.citations)
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources if send_text_sources else [], images=image_sources, citations=citations),
+            data_points,
             thoughts=[
                 self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate search query",
@@ -405,15 +407,17 @@ class ChatReadRetrieveReadApproach(Approach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        text_sources, image_sources, citations = await self.get_sources_content(
+        data_points = await self.get_sources_content(
             results,
             use_semantic_captions=False,
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
         )
+        if not send_text_sources:
+            data_points = DataPoints(text=[], images=data_points.images, citations=data_points.citations)
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources if send_text_sources else [], images=image_sources, citations=citations),
+            data_points,
             thoughts=[
                 ThoughtStep(
                     "Use agentic retrieval",

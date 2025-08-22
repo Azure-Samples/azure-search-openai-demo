@@ -8,7 +8,6 @@ from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from approaches.approach import (
     Approach,
-    DataPoints,
     ExtraInfo,
     ThoughtStep,
 )
@@ -183,12 +182,12 @@ class RetrieveThenReadApproach(Approach):
             use_query_rewriting,
         )
 
-        text_sources, image_sources, citations = await self.get_sources_content(
+        data_points = await self.get_sources_content(
             results, use_semantic_captions, download_image_sources=send_image_sources, user_oid=auth_claims.get("oid")
         )
 
         return ExtraInfo(
-            DataPoints(text=text_sources, images=image_sources, citations=citations),
+            data_points,
             thoughts=[
                 ThoughtStep(
                     "Search using user query",
@@ -238,7 +237,7 @@ class RetrieveThenReadApproach(Approach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        text_sources, image_sources, citations = await self.get_sources_content(
+        data_points = await self.get_sources_content(
             results,
             use_semantic_captions=False,
             download_image_sources=send_image_sources,
@@ -246,7 +245,7 @@ class RetrieveThenReadApproach(Approach):
         )
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources, images=image_sources, citations=citations),
+            data_points,
             thoughts=[
                 ThoughtStep(
                     "Use agentic retrieval",
