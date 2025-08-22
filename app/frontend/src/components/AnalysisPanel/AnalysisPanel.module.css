@@ -7,8 +7,11 @@
 
 .tList {
     padding: 1.25em 1.25em 0 1.25em;
-    display: inline-block;
+    display: block; /* allow it to shrink within container */
     background: #e9e9e9;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere; /* aggressive wrapping for very long tokens/urls */
 }
 
 .tListItem {
@@ -53,6 +56,12 @@
 
 .tCodeBlock {
     max-height: 18.75em;
+    overflow: auto;
+    white-space: pre-wrap; /* allow wrapping */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tPropRow {
@@ -71,6 +80,7 @@
     margin-bottom: 0.3em;
     word-break: break-word;
     white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 .citationImg {

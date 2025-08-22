@@ -18,11 +18,7 @@ interface Props {
 // Helper to truncate URLs
 function truncateImageUrl(val: string) {
     if (typeof val === "string" && val.startsWith("data:image/")) {
-        // Show only the first 30 chars and add ellipsis
         return val.slice(0, 30) + "...";
-    } else if (typeof val === "string" && val.startsWith("http")) {
-        const blobIndex = val.indexOf(".blob.core.windows.net/");
-        return blobIndex !== -1 ? ".../" + val.slice(blobIndex + ".blob.core.windows.net/".length) : val;
     }
     return val;
 }

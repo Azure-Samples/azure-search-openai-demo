@@ -33,4 +33,5 @@ If you are running Python scripts that depend on installed requirements, you mus
 ## Committing the change
 
 When change is complete, offer to make a new branch, git commit, and pull request.
+(DO NOT check out a new branch unless explicitly confirmed - sometimes user is already in a branch)
 Make sure the PR follows the PULL_REQUEST_TEMPLATE.md format, with all sections filled out and appropriate checkboxes checked.
