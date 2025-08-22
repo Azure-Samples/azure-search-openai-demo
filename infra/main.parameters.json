@@ -355,6 +355,9 @@
     },
     "useAgenticRetrieval": {
       "value": "${USE_AGENTIC_RETRIEVAL=false}"
+    },
+    "enableAgenticRefHydration": {
+      "value": "${ENABLE_AGENTIC_REF_HYDRATION=false}"
     }
   }
 }
