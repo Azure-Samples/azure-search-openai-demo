@@ -596,5 +596,14 @@ if __name__ == "__main__":
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
         )
 
-    loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))
-    loop.close()
+    try:
+        loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))
+    finally:
+        # Gracefully close any async clients/credentials to avoid noisy destructor warnings
+        try:
+            loop.run_until_complete(blob_manager.close_clients())
+            loop.run_until_complete(openai_client.close())
+            loop.run_until_complete(azd_credential.close())
+        except Exception as e:
+            logger.debug(f"Failed to close async clients cleanly: {e}")
+        loop.close()

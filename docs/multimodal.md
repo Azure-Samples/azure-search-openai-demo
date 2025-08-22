@@ -44,7 +44,7 @@ With this feature enabled, the following changes are made:
    azd env set AZURE_SEARCH_INDEX multimodal-index
    ```
 
-   Then run the data ingestion process again to re-index the data:
+   Then delete the `.md5` hash files in the data folder(s) and run the data ingestion process again to re-index the data:
 
    Linux/Mac:
 

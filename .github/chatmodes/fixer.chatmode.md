@@ -26,6 +26,10 @@ You MUST check task output readiness before debugging, testing, or declaring wor
 	- If watchers seem stuck or output stops updating, stop the tasks and run the "Development" task again.
 - To interact with a running application, use the Playwright MCP server
 
+## Running Python scripts
+
+If you are running Python scripts that depend on installed requirements, you must run them using the virtual environment in `.venv`.
+
 ## Committing the change
 
 When change is complete, offer to make a new branch, git commit, and pull request.
