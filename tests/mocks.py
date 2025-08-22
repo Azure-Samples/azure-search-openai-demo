@@ -126,6 +126,72 @@ class MockAsyncSearchResultsIterator:
                     }
                 ]
             ]
+        elif search_text == "hydrated":
+            # Mock search results for hydration testing with complete data
+            self.data = [
+                [
+                    {
+                        "sourcepage": "Benefit_Options-2.pdf",
+                        "sourcefile": "Benefit_Options.pdf",
+                        "content": "There is a whistleblower policy.",
+                        "embedding": [],
+                        "category": "benefits",
+                        "id": "Benefit_Options-2.pdf",
+                        "@search.score": 0.03279569745063782,
+                        "@search.reranker_score": 3.4577205181121826,
+                        "@search.highlights": None,
+                        "@search.captions": [MockCaption("Caption: A whistleblower policy.")],
+                    },
+                ]
+            ]
+        elif search_text == "hydrated_multi":
+            # Mock search results for multiple document hydration
+            self.data = [
+                [
+                    {
+                        "id": "doc1",
+                        "content": "Hydrated content 1",
+                        "sourcepage": "page1.pdf",
+                        "sourcefile": "file1.pdf",
+                        "category": "category1",
+                        "@search.score": 0.9,
+                        "@search.reranker_score": 3.5,
+                        "@search.highlights": None,
+                        "@search.captions": [],
+                    },
+                    {
+                        "id": "doc2", 
+                        "content": "Hydrated content 2",
+                        "sourcepage": "page2.pdf",
+                        "sourcefile": "file2.pdf",
+                        "category": "category2",
+                        "@search.score": 0.8,
+                        "@search.reranker_score": 3.2,
+                        "@search.highlights": None,
+                        "@search.captions": [],
+                    },
+                ]
+            ]
+        elif search_text == "hydrated_single":
+            # Mock search results for single document hydration
+            self.data = [
+                [
+                    {
+                        "id": "doc1",
+                        "content": "Hydrated content 1",
+                        "sourcepage": "page1.pdf",
+                        "sourcefile": "file1.pdf",
+                        "category": "category1",
+                        "@search.score": 0.9,
+                        "@search.reranker_score": 3.5,
+                        "@search.highlights": None,
+                        "@search.captions": [],
+                    },
+                ]
+            ]
+        elif search_text == "hydrated_empty":
+            # Mock search results for empty hydration
+            self.data = [[]]
         else:
             self.data = [
                 [

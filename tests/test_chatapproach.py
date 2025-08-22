@@ -49,6 +49,32 @@ def chat_approach():
     )
 
 
+@pytest.fixture
+def chat_approach_with_hydration():
+    return ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-4.1-mini",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+        hydrate_references=True,
+    )
+
+
+
 def test_get_search_query(chat_approach):
     payload = """
     {
@@ -300,3 +326,63 @@ async def test_agent_retrieval_results(monkeypatch):
     assert results[0].content == "There is a whistleblower policy."
     assert results[0].sourcepage == "Benefit_Options-2.pdf"
     assert results[0].search_agent_query == "whistleblower query"
+
+
+@pytest.mark.asyncio
+async def test_agentic_retrieval_without_hydration(chat_approach, monkeypatch):
+    """Test agentic retrieval without hydration"""
+    
+    agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
+
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
+
+    _, results = await chat_approach.run_agentic_retrieval(
+        messages=[], 
+        agent_client=agent_client, 
+        search_index_name=""
+    )
+
+    assert len(results) == 1
+    assert results[0].id == "Benefit_Options-2.pdf"
+    # Content should be from source_data since no hydration
+    assert results[0].content == "There is a whistleblower policy."
+    assert results[0].sourcepage == "Benefit_Options-2.pdf"
+    assert results[0].search_agent_query == "whistleblower query"
+    # These fields should NOT be present without hydration
+    assert not hasattr(results[0], 'sourcefile') or results[0].sourcefile is None
+    assert not hasattr(results[0], 'category') or results[0].category is None
+    assert not hasattr(results[0], 'score') or results[0].score is None
+
+
+async def mock_search_with_hydration(*args, **kwargs):
+    """Mock search client that returns data with sourcefile and category for hydration testing"""
+    return MockAsyncSearchResultsIterator("hydrated", None)
+
+
+@pytest.mark.asyncio
+async def test_agentic_retrieval_with_hydration(chat_approach_with_hydration, monkeypatch):
+    """Test agentic retrieval with hydration enabled"""
+    
+    agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
+
+    # Mock the agent retrieval and search client
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
+    monkeypatch.setattr(SearchClient, "search", mock_search_with_hydration)
+
+    _, results = await chat_approach_with_hydration.run_agentic_retrieval(
+        messages=[], 
+        agent_client=agent_client, 
+        search_index_name=""
+    )
+
+    assert len(results) == 1
+    assert results[0].id == "Benefit_Options-2.pdf"
+    # Content should be from hydrated search, not source_data
+    assert results[0].content == "There is a whistleblower policy."
+    assert results[0].sourcepage == "Benefit_Options-2.pdf"
+    assert results[0].search_agent_query == "whistleblower query"
+    # These fields should be present from hydration (from search results)
+    assert results[0].sourcefile == "Benefit_Options.pdf"
+    assert results[0].category == "benefits"
+    assert results[0].score == 0.03279569745063782
+    assert results[0].reranker_score == 3.4577205181121826
