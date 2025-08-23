@@ -2,6 +2,7 @@ import logging
 import re
 from abc import ABC
 from collections.abc import Generator
+from typing import Optional
 
 import tiktoken
 
@@ -195,7 +196,7 @@ class SentenceTextSplitter(TextSplitter):
         """
         figure_regex = re.compile(r"<figure.*?</figure>", re.IGNORECASE | re.DOTALL)
 
-        previous_chunk: SplitPage | None = None
+        previous_chunk: Optional[SplitPage] = None
 
         for page in pages:
             raw = page.text or ""
