@@ -2,6 +2,7 @@ import logging
 import re
 from abc import ABC
 from collections.abc import Generator
+from dataclasses import dataclass, field
 from typing import Optional
 
 import tiktoken
@@ -82,6 +83,107 @@ bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
 
 DEFAULT_OVERLAP_PERCENT = 10  # See semantic search article for 10% overlap performance
 DEFAULT_SECTION_LENGTH = 1000  # Roughly 400-500 tokens for English
+
+
+def _safe_concat(a: str, b: str) -> str:
+    """Concatenate two non-empty segments, inserting a space only when both sides
+    end/start with alphanumerics and no natural boundary exists.
+
+    Rules:
+    - Both input strings are expected to be non-empty
+    - Preserve existing whitespace if either side already provides a boundary.
+    - Do not insert a space after a closing HTML tag marker '>'.
+    - If both boundary characters are alphanumeric, insert a single space.
+    - Otherwise concatenate directly.
+    """
+    assert a and b, "_safe_concat expects non-empty strings"
+    a_last = a[-1]
+    b_first = b[0]
+    if a_last.isspace() or b_first.isspace():  # pre-existing boundary
+        return a + b
+    if a_last == ">":  # HTML tag end acts as a boundary
+        return a + b
+    if a_last.isalnum() and b_first.isalnum():  # need explicit separator
+        return a + " " + b
+    return a + b
+
+
+def _normalize_chunk(text: str, max_chars: int) -> str:
+    """Normalize a non-figure chunk that may slightly exceed max_chars.
+
+    Allows overflow for any chunk containing a <figure ...> tag (figures are atomic),
+    trims leading spaces if they alone cause minor overflow, and as a final step
+    removes a trailing space/newline when within a small tolerance (<=3 chars over).
+    """
+    lower = text.lower()
+    if "<figure" in lower:
+        return text  # never trim figure chunks
+    if len(text) <= max_chars:
+        return text
+    trimmed = text
+    while trimmed.startswith(" ") and len(trimmed) > max_chars:
+        trimmed = trimmed[1:]
+    if len(trimmed) > max_chars and len(trimmed) <= max_chars + 3:
+        if trimmed.endswith(" ") or trimmed.endswith("\n"):
+            trimmed = trimmed.rstrip()
+    return trimmed
+
+
+@dataclass
+class _ChunkBuilder:
+    """Accumulates sentence-like units for a single page until size limits are reached.
+
+    Responsibilities:
+    - Track appended text fragments and their approximate token length.
+    - Decide if a new unit can be added without exceeding character or token thresholds.
+    - Flush accumulated content into an output list as a `SplitPage`.
+    - Allow a figure block to be force-appended (even if it overflows) so that headings + figure stay together.
+
+    Notes:
+    - Character limit is soft (exact enforcement + later normalization); token limit is hard.
+    - Token counts are computed by the caller and passed to `add`; this class stays agnostic of the encoder.
+    """
+
+    page_num: int
+    max_chars: int
+    max_tokens: int
+    parts: list[str] = field(default_factory=list)
+    token_len: int = 0
+
+    def can_fit(self, text: str, token_count: int) -> bool:
+        if not self.parts:  # always allow first unit
+            return token_count <= self.max_tokens and len(text) <= self.max_chars
+        # Character + token constraints
+        return (len("".join(self.parts)) + len(text) <= self.max_chars) and (
+            self.token_len + token_count <= self.max_tokens
+        )
+
+    def add(self, text: str, token_count: int) -> bool:
+        if not self.can_fit(text, token_count):
+            return False
+        self.parts.append(text)
+        self.token_len += token_count
+        return True
+
+    def force_append(self, text: str):
+        self.parts.append(text)
+
+    def flush_into(self, out: list[SplitPage]):
+        if self.parts:
+            chunk = "".join(self.parts)
+            if chunk.strip():
+                out.append(SplitPage(page_num=self.page_num, text=chunk))
+        self.parts.clear()
+        self.token_len = 0
+
+    # Convenience helpers for readability at call sites
+    def has_content(self) -> bool:
+        return bool(self.parts)
+
+    def append_figure_and_flush(self, figure_text: str, out: list[SplitPage]):
+        """Append a figure (allowed to overflow) to current accumulation and flush in one step."""
+        self.force_append(figure_text)
+        self.flush_into(out)
 
 
 class SentenceTextSplitter(TextSplitter):
@@ -203,23 +305,6 @@ class SentenceTextSplitter(TextSplitter):
             if not raw.strip():
                 continue
 
-            def _safe_concat(a: str, b: str) -> str:
-                """Concatenate two non-empty segments, inserting a space only when both sides
-                end/start with alphanumerics and no natural boundary exists. (Empty inputs are
-                never passed here by construction.)"""
-                a_last = a[-1]
-                b_first = b[0]
-                # If either already has whitespace boundary, just concat
-                if a_last.isspace() or b_first.isspace():
-                    return a + b
-                # If a ends with '>' (HTML tag) we assume boundary is intentional.
-                if a_last == ">":
-                    return a + b
-                # If both alnum, insert space.
-                if a_last.isalnum() and b_first.isalnum():
-                    return a + " " + b
-                return a + b
-
             # 1. Build ordered list of blocks: (type, text)
             blocks: list[tuple[str, str]] = []
             last = 0
@@ -234,25 +319,18 @@ class SentenceTextSplitter(TextSplitter):
             # Accumulated chunks for this page
             page_chunks: list[SplitPage] = []
 
-            # Builder state for text accumulation
-            builder: list[str] = []
-            builder_token_len = 0
-
-            def flush_builder_to_page():
-                nonlocal builder, builder_token_len
-                if builder:
-                    text_chunk = "".join(builder)
-                    if text_chunk.strip():
-                        page_chunks.append(SplitPage(page_num=page.page_num, text=text_chunk))
-                builder = []
-                builder_token_len = 0
+            # Builder encapsulates accumulation logic
+            builder = _ChunkBuilder(
+                page_num=page.page_num,
+                max_chars=self.max_section_length,
+                max_tokens=self.max_tokens_per_section,
+            )
 
             for btype, btext in blocks:
                 if btype == "figure":
-                    if builder:
+                    if builder.has_content():
                         # Append figure to existing text (allow overflow) and flush
-                        builder.append(btext)
-                        flush_builder_to_page()
+                        builder.append_figure_and_flush(btext, page_chunks)
                     else:
                         # Emit figure standalone
                         if btext.strip():
@@ -274,21 +352,19 @@ class SentenceTextSplitter(TextSplitter):
                     unit_tokens = len(bpe.encode(unit))
                     # If a single unit itself exceeds token limit (rare, very long sentence), split it directly
                     if unit_tokens > self.max_tokens_per_section:
-                        flush_builder_to_page()
+                        builder.flush_into(page_chunks)
                         for sp in self.split_page_by_max_tokens(page.page_num, unit, allow_figure_processing=False):
                             page_chunks.append(sp)
                         continue
-                    if builder and (
-                        len("".join(builder)) + len(unit) > self.max_section_length
-                        or builder_token_len + unit_tokens > self.max_tokens_per_section
-                    ):
-                        # Flush current builder before starting new one with this unit
-                        flush_builder_to_page()
-                    builder.append(unit)
-                    builder_token_len += unit_tokens
+                    if not builder.add(unit, unit_tokens):
+                        # Flush and retry (guaranteed to fit because unit_tokens <= limit)
+                        builder.flush_into(page_chunks)
+                        added = builder.add(unit, unit_tokens)
+                        if not added:  # defensive (should not happen)
+                            page_chunks.append(SplitPage(page_num=page.page_num, text=unit))
 
             # Flush any trailing builder content
-            flush_builder_to_page()
+            builder.flush_into(page_chunks)
 
             # Attempt cross-page merge with previous_chunk (look-behind) if semantic continuation
             if previous_chunk and page_chunks:
@@ -379,27 +455,14 @@ class SentenceTextSplitter(TextSplitter):
 
             # Normalize chunks (non-figure) that barely exceed char limit due to added boundary space
             max_chars = int(self.max_section_length * 1.2)
-
-            def _normalize(text: str) -> str:
-                lower = text.lower()
-                if "<figure" in lower:
-                    return text  # allow overflow for figures
-                if len(text) <= max_chars:
-                    return text
-                # Trim leading spaces first (most common cause after safe concat)
-                trimmed = text
-                while trimmed.startswith(" ") and len(trimmed) > max_chars:
-                    trimmed = trimmed[1:]
-                # As a fallback, if still barely over (<= max_chars+3), try removing a trailing space/newline
-                if len(trimmed) > max_chars and len(trimmed) <= max_chars + 3:
-                    if trimmed.endswith(" ") or trimmed.endswith("\n"):
-                        trimmed = trimmed.rstrip()
-                return trimmed
-
             if previous_chunk:
-                previous_chunk = SplitPage(page_num=previous_chunk.page_num, text=_normalize(previous_chunk.text))
+                previous_chunk = SplitPage(
+                    page_num=previous_chunk.page_num, text=_normalize_chunk(previous_chunk.text, max_chars)
+                )
             if page_chunks:
-                page_chunks = [SplitPage(page_num=sp.page_num, text=_normalize(sp.text)) for sp in page_chunks]
+                page_chunks = [
+                    SplitPage(page_num=sp.page_num, text=_normalize_chunk(sp.text, max_chars)) for sp in page_chunks
+                ]
 
             # Emit previous_chunk now that merge opportunity considered
             if previous_chunk:
