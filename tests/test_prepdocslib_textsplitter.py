@@ -15,14 +15,13 @@ from prepdocslib.textsplitter import (
     SimpleTextSplitter,
 )
 
-# Multi-token deterministic character (2 tokens in current model) used to create
-# token pressure without excessive string length. Guard at import time so failures
-# surface clearly if tokenizer behavior changes.
-TWO_TOKEN_CHAR = "Ѐ"
+# Deterministic single-token character used to create token pressure by repetition
+# while keeping tests readable (1 char = 1 token).
+SINGLE_TOKEN_CHAR = "¢"  # 1 token under cl100k_base
 _bpe_for_guard = tiktoken.encoding_for_model(ENCODING_MODEL)
-assert len(_bpe_for_guard.encode(TWO_TOKEN_CHAR)) == 2, (
-    f"Invariant changed: {TWO_TOKEN_CHAR!r} no longer encodes to 2 tokens under {ENCODING_MODEL}; "
-    "adjust tests to a different stable multi-token char."
+assert len(_bpe_for_guard.encode(SINGLE_TOKEN_CHAR)) == 1, (
+    f"Invariant changed: {SINGLE_TOKEN_CHAR!r} no longer encodes to 1 token under {ENCODING_MODEL}; "
+    "adjust tests to a different stable single-token char."
 )
 
 
@@ -251,8 +250,8 @@ def test_unbalanced_figure_treated_as_text():
 def test_oversize_single_sentence_recursion():
     """A single oversized sentence (no punctuation) should be recursively split by token logic."""
     splitter = SentenceTextSplitter(max_tokens_per_section=50)
-    # Use TWO_TOKEN_CHAR to exceed token limit with fewer characters: 120 chars -> 240 tokens > 50
-    long_run = TWO_TOKEN_CHAR * 120
+    # Use SINGLE_TOKEN_CHAR repetition to exceed token limit: 120 chars -> 120 tokens > 50
+    long_run = SINGLE_TOKEN_CHAR * 120
     page = Page(page_num=0, offset=0, text=long_run + ".")
     chunks = list(splitter.split_pages([page]))
     assert len(chunks) > 1, "Expected recursive splitting for oversized sentence"
@@ -366,16 +365,16 @@ def test_cross_page_merge_fragment_shift_hard_trim():
     """Exercise hard trim branch where fragment must be aggressively shortened (token loop)."""
     splitter = SentenceTextSplitter(max_tokens_per_section=40)
     splitter.max_section_length = 100
-    # Use multi-token char run to create a large fragment (260 * 2 = 520 tokens) with minimal punctuation.
+    # Use repeated single-token char run to create a large fragment (260 tokens) with minimal punctuation.
     fragment_run_len = 260
-    fragment_run = TWO_TOKEN_CHAR * fragment_run_len
+    fragment_run = SINGLE_TOKEN_CHAR * fragment_run_len
     prev_text = "Start. " + fragment_run
     page1 = Page(page_num=0, offset=0, text=prev_text)
     # Next page small continuation
     page2 = Page(page_num=1, offset=0, text="continuation")
     chunks = list(splitter.split_pages([page1, page2]))
     # Ensure that some fragment run has been moved but also trimmed (shorter than original)
-    moved_runs = [c.text for c in chunks if c.text.startswith(TWO_TOKEN_CHAR)]
+    moved_runs = [c.text for c in chunks if c.text.startswith(SINGLE_TOKEN_CHAR)]
     if moved_runs:
         assert all(len(run) < fragment_run_len for run in moved_runs), "Expected hard trim to shorten fragment"
     # Ensure we still have a chunk starting with 'Start.' retained portion
@@ -443,8 +442,8 @@ def test_fragment_shift_token_limit_fits_false():
     # Configure large char allowance so only token constraint matters.
     splitter = SentenceTextSplitter(max_tokens_per_section=50)
     splitter.max_section_length = 5000  # very high to avoid char-based fits() failure
-    # Build fragment via multi-token char repetition (120 chars -> 240 tokens) beyond the 50-token limit.
-    fragment = TWO_TOKEN_CHAR * 120  # no terminating punctuation
+    # Build fragment via single-token char repetition (120 tokens) beyond the 50-token limit.
+    fragment = SINGLE_TOKEN_CHAR * 120  # no terminating punctuation
     prev_text = "Intro sentence." + fragment  # last sentence end ensures fragment_start > 0
     page1 = Page(page_num=0, offset=0, text=prev_text)
     # Next page starts lowercase to trigger merge attempt; small first_new keeps emphasis on fragment tokens.
@@ -452,34 +451,28 @@ def test_fragment_shift_token_limit_fits_false():
     chunks = list(splitter.split_pages([page1, page2]))
     # Retained intro sentence should appear.
     assert any(c.text.startswith("Intro sentence.") for c in chunks)
-    # A moved fragment portion beginning with TWO_TOKEN_CHAR should appear but be trimmed
-    moved = [c.text for c in chunks if c.text.startswith(TWO_TOKEN_CHAR)]
+    # A moved fragment portion beginning with SINGLE_TOKEN_CHAR should appear but be trimmed
+    moved = [c.text for c in chunks if c.text.startswith(SINGLE_TOKEN_CHAR)]
     if moved:
         assert all(len(m) < len(fragment) for m in moved), "Expected trimmed fragment shorter than original"
 
 
-def test_fragment_shift_token_limit_multi_token_char():
-    """Deterministically force token overflow using a multi‑token Unicode char (Ѐ = 2 tokens per char).
-    Repeats of 'Ѐ' rapidly exceed the token limit while keeping char length well below char threshold,
-    exercising the fits() token-limit branch and trimming loop without monkeypatching the encoder.
+def test_fragment_shift_token_limit_single_token_char():
+    """Deterministically force token overflow using the single-token pressure char.
+    Repeats exceed the token limit while keeping 1:1 char/token mapping for simpler assertions.
     """
     splitter = SentenceTextSplitter(max_tokens_per_section=80)
     splitter.max_section_length = 5000  # ensure only token constraint matters
-    multi_token_char = "Ѐ"  # currently 2 tokens in text-embedding-ada-002
-    # Guardrail: fail fast if tokenizer changes and Ѐ stops being 2 tokens (adjust test strategy then)
+    pressure_char = SINGLE_TOKEN_CHAR  # now single-token char
     bpe = tiktoken.encoding_for_model(ENCODING_MODEL)
-    assert len(bpe.encode(multi_token_char)) == 2, (
-        f"Invariant changed: 'Ѐ' is {len(bpe.encode(multi_token_char))} tokens for model {ENCODING_MODEL}; "
-        "update test strategy (choose a different stable multi-token char)."
-    )
-    fragment = multi_token_char * 400  # ~800 tokens > 80 token limit
-    prev_text = "Intro sentence." + fragment  # ensures fragment_start > 0 (there is a prior sentence end)
+    assert len(bpe.encode(pressure_char)) == 1
+    fragment = pressure_char * 400  # 400 tokens > 80 token limit
+    prev_text = "Intro sentence." + fragment  # ensures fragment_start > 0 (prior sentence end)
     page1 = Page(page_num=0, offset=0, text=prev_text)
     page2 = Page(page_num=1, offset=0, text="cont tail")
     chunks = list(splitter.split_pages([page1, page2]))
     assert any(c.text.startswith("Intro sentence.") for c in chunks)
-    moved = [c.text for c in chunks if c.text and c.text[0] == multi_token_char]
-    # Trim loop should reduce moved fragment below original full fragment length
+    moved = [c.text for c in chunks if c.text and c.text[0] == pressure_char]
     if moved:
         assert all(len(m) < len(fragment) for m in moved), "Expected trimmed fragment shorter than original"
 
@@ -538,11 +531,11 @@ def test_cross_page_fragment_hard_trim_iterative():
     splitter = SentenceTextSplitter(max_tokens_per_section=30)
     splitter.max_section_length = 80
     fragment_iter_len = 210  # 420 tokens
-    prev = "Intro. " + (TWO_TOKEN_CHAR * fragment_iter_len)
+    prev = "Intro. " + (SINGLE_TOKEN_CHAR * fragment_iter_len)
     page1 = Page(page_num=0, offset=0, text=prev)
     page2 = Page(page_num=1, offset=0, text="continuation lower start")
     chunks = list(splitter.split_pages([page1, page2]))
     # Some trimmed fragment should appear but much shorter than original
-    trimmed = [c.text for c in chunks if c.text.startswith(TWO_TOKEN_CHAR)]
+    trimmed = [c.text for c in chunks if c.text.startswith(SINGLE_TOKEN_CHAR)]
     if trimmed:
         assert all(len(t) < fragment_iter_len for t in trimmed)
