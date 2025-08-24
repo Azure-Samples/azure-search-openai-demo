@@ -114,12 +114,11 @@ class OpenAIEmbeddings(ABC):
                         model=self.open_ai_model_name, input=batch.texts, **dimensions_args
                     )
                     embeddings.extend([data.embedding for data in emb_response.data])
-                    logger.info(
+                    logger.debug(
                         "Computed embeddings in batch. Batch size: %d, Token count: %d",
                         len(batch.texts),
                         batch.token_length,
                     )
-
         return embeddings
 
     async def create_embedding_single(self, text: str, dimensions_args: ExtraArgs) -> list[float]:
@@ -134,8 +133,7 @@ class OpenAIEmbeddings(ABC):
                 emb_response = await client.embeddings.create(
                     model=self.open_ai_model_name, input=text, **dimensions_args
                 )
-                logger.info("Computed embedding for text section. Character count: %d", len(text))
-
+                logger.debug("Computed embedding for text section. Character count: %d", len(text))
         return emb_response.data[0].embedding
 
     async def create_embeddings(self, texts: list[str]) -> list[list[float]]:
