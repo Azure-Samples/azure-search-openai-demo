@@ -74,7 +74,6 @@ def chat_approach_with_hydration():
     )
 
 
-
 def test_get_search_query(chat_approach):
     payload = """
     {
@@ -331,16 +330,12 @@ async def test_agent_retrieval_results(monkeypatch):
 @pytest.mark.asyncio
 async def test_agentic_retrieval_without_hydration(chat_approach, monkeypatch):
     """Test agentic retrieval without hydration"""
-    
+
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
     monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
 
-    _, results = await chat_approach.run_agentic_retrieval(
-        messages=[], 
-        agent_client=agent_client, 
-        search_index_name=""
-    )
+    _, results = await chat_approach.run_agentic_retrieval(messages=[], agent_client=agent_client, search_index_name="")
 
     assert len(results) == 1
     assert results[0].id == "Benefit_Options-2.pdf"
@@ -349,9 +344,9 @@ async def test_agentic_retrieval_without_hydration(chat_approach, monkeypatch):
     assert results[0].sourcepage == "Benefit_Options-2.pdf"
     assert results[0].search_agent_query == "whistleblower query"
     # These fields should NOT be present without hydration
-    assert not hasattr(results[0], 'sourcefile') or results[0].sourcefile is None
-    assert not hasattr(results[0], 'category') or results[0].category is None
-    assert not hasattr(results[0], 'score') or results[0].score is None
+    assert not hasattr(results[0], "sourcefile") or results[0].sourcefile is None
+    assert not hasattr(results[0], "category") or results[0].category is None
+    assert not hasattr(results[0], "score") or results[0].score is None
 
 
 async def mock_search_with_hydration(*args, **kwargs):
@@ -362,7 +357,7 @@ async def mock_search_with_hydration(*args, **kwargs):
 @pytest.mark.asyncio
 async def test_agentic_retrieval_with_hydration(chat_approach_with_hydration, monkeypatch):
     """Test agentic retrieval with hydration enabled"""
-    
+
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
     # Mock the agent retrieval and search client
@@ -370,9 +365,7 @@ async def test_agentic_retrieval_with_hydration(chat_approach_with_hydration, mo
     monkeypatch.setattr(SearchClient, "search", mock_search_with_hydration)
 
     _, results = await chat_approach_with_hydration.run_agentic_retrieval(
-        messages=[], 
-        agent_client=agent_client, 
-        search_index_name=""
+        messages=[], agent_client=agent_client, search_index_name=""
     )
 
     assert len(results) == 1

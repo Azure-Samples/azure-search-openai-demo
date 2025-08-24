@@ -160,7 +160,7 @@ class MockAsyncSearchResultsIterator:
                         "@search.captions": [],
                     },
                     {
-                        "id": "doc2", 
+                        "id": "doc2",
                         "content": "Hydrated content 2",
                         "sourcepage": "page2.pdf",
                         "sourcefile": "file2.pdf",

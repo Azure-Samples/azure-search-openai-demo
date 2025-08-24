@@ -379,7 +379,7 @@ agent_envs = [
         "AZURE_OPENAI_SEARCHAGENT_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_RETRIEVAL": "true",
-        "ENABLE_AGENTIC_REF_HYDRATION": "true"
+        "ENABLE_AGENTIC_REF_HYDRATION": "true",
     }
 ]
 
