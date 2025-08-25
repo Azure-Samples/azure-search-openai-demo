@@ -73,7 +73,7 @@ Once tests are passing, generate a coverage report to make sure your changes are
 
 ```shell
 pytest --cov --cov-report=xml && \
-diff-cover coverage.xml --format html:coverage_report.html && \
+diff-cover coverage.xml --html-report coverage_report.html && \
 open coverage_report.html
 ```
 

@@ -4,6 +4,8 @@ import os
 from typing import Optional
 
 from azure.search.documents.indexes.models import (
+    AIServicesVisionParameters,
+    AIServicesVisionVectorizer,
     AzureOpenAIVectorizer,
     AzureOpenAIVectorizerParameters,
     BinaryQuantizationCompression,
@@ -35,7 +37,7 @@ from .blobmanager import BlobManager
 from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
-from .textsplitter import SplitPage
+from .textsplitter import Chunk
 
 logger = logging.getLogger("scripts")
 
@@ -45,10 +47,11 @@ class Section:
     A section of a page that is stored in a search service. These sections are used as context by Azure OpenAI service
     """
 
-    def __init__(self, split_page: SplitPage, content: File, category: Optional[str] = None):
-        self.split_page = split_page
-        self.content = content
+    def __init__(self, chunk: Chunk, content: File, category: Optional[str] = None):
+        self.chunk = chunk  # content comes from here
+        self.content = content  # sourcepage and sourcefile come from here
         self.category = category
+        # this also needs images which will become the images field
 
 
 class SearchManager:
@@ -82,7 +85,7 @@ class SearchManager:
         async with self.search_info.create_search_index_client() as search_index_client:
 
             embedding_field = None
-            image_embedding_field = None
+            images_field = None
             text_vector_search_profile = None
             text_vector_algorithm = None
             text_vector_compression = None
@@ -147,24 +150,64 @@ class SearchManager:
                 )
 
             if self.search_images:
+                if not self.search_info.azure_vision_endpoint:
+                    raise ValueError("Azure AI Vision endpoint must be provided to use image embeddings")
                 image_vector_algorithm = HnswAlgorithmConfiguration(
-                    name="image_hnsw_config",
+                    name="images_hnsw_config",
                     parameters=HnswParameters(metric="cosine"),
                 )
-                image_vector_search_profile = VectorSearchProfile(
-                    name="imageEmbedding-profile",
-                    algorithm_configuration_name=image_vector_algorithm.name,
+
+                # Create the AI Vision vectorizer for image embeddings
+                image_vectorizer = AIServicesVisionVectorizer(
+                    vectorizer_name="images-vision-vectorizer",
+                    ai_services_vision_parameters=AIServicesVisionParameters(
+                        resource_uri=self.search_info.azure_vision_endpoint,
+                        model_version="2023-04-15",
+                    ),
                 )
-                image_embedding_field = SearchField(
-                    name="imageEmbedding",
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
-                    hidden=False,
-                    searchable=True,
-                    filterable=False,
-                    sortable=False,
-                    facetable=False,
-                    vector_search_dimensions=1024,
-                    vector_search_profile_name=image_vector_search_profile.name,
+
+                image_vector_search_profile = VectorSearchProfile(
+                    name="images_embedding_profile",
+                    algorithm_configuration_name=image_vector_algorithm.name,
+                    vectorizer_name=image_vectorizer.vectorizer_name,
+                )
+                images_field = SearchField(
+                    name="images",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.ComplexType),
+                    fields=[
+                        SearchField(
+                            name="embedding",
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                            searchable=True,
+                            stored=False,
+                            vector_search_dimensions=1024,
+                            vector_search_profile_name=image_vector_search_profile.name,
+                        ),
+                        SearchField(
+                            name="url",
+                            type=SearchFieldDataType.String,
+                            searchable=False,
+                            filterable=True,
+                            sortable=False,
+                            facetable=True,
+                        ),
+                        SearchField(
+                            name="description",
+                            type=SearchFieldDataType.String,
+                            searchable=True,
+                            filterable=False,
+                            sortable=False,
+                            facetable=False,
+                        ),
+                        SearchField(
+                            name="boundingbox",
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.Double),
+                            searchable=False,
+                            filterable=False,
+                            sortable=False,
+                            facetable=False,
+                        ),
+                    ],
                 )
 
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
@@ -247,13 +290,15 @@ class SearchManager:
                     vector_algorithms.append(text_vector_algorithm)
                     vector_compressions.append(text_vector_compression)
 
-                if image_embedding_field:
-                    logger.info("Including %s field for image vectors in new index", image_embedding_field.name)
-                    fields.append(image_embedding_field)
+                if images_field:
+                    logger.info("Including %s field for image descriptions and vectors in new index", images_field.name)
+                    fields.append(images_field)
                     if image_vector_search_profile is None or image_vector_algorithm is None:
                         raise ValueError("Image search profile and algorithm must be set")
                     vector_search_profiles.append(image_vector_search_profile)
                     vector_algorithms.append(image_vector_algorithm)
+                    # Add image vectorizer to vectorizers list
+                    vectorizers.append(image_vectorizer)
 
                 index = SearchIndex(
                     name=self.search_info.index_name,
@@ -298,6 +343,7 @@ class SearchManager:
                     field.name == self.field_name_embedding for field in existing_index.fields
                 ):
                     logger.info("Adding %s field for text embeddings", self.field_name_embedding)
+                    embedding_field.stored = True
                     existing_index.fields.append(embedding_field)
                     if existing_index.vector_search is None:
                         raise ValueError("Vector search is not enabled for the existing index")
@@ -316,15 +362,20 @@ class SearchManager:
                     existing_index.vector_search.profiles.append(text_vector_search_profile)
                     if existing_index.vector_search.algorithms is None:
                         existing_index.vector_search.algorithms = []
-                    existing_index.vector_search.algorithms.append(text_vector_algorithm)
+                    # existing_index.vector_search.algorithms.append(text_vector_algorithm)
                     if existing_index.vector_search.compressions is None:
                         existing_index.vector_search.compressions = []
                     existing_index.vector_search.compressions.append(text_vector_compression)
                     await search_index_client.create_or_update_index(existing_index)
 
-                if image_embedding_field and not any(field.name == "imageEmbedding" for field in existing_index.fields):
-                    logger.info("Adding %s field for image embeddings", image_embedding_field.name)
-                    existing_index.fields.append(image_embedding_field)
+                if (
+                    images_field
+                    and images_field.fields
+                    and not any(field.name == "images" for field in existing_index.fields)
+                ):
+                    logger.info("Adding %s field for image embeddings", images_field.name)
+                    images_field.fields[0].stored = True
+                    existing_index.fields.append(images_field)
                     if image_vector_search_profile is None or image_vector_algorithm is None:
                         raise ValueError("Image vector search profile and algorithm must be set")
                     if existing_index.vector_search is None:
@@ -335,6 +386,9 @@ class SearchManager:
                     if existing_index.vector_search.algorithms is None:
                         existing_index.vector_search.algorithms = []
                     existing_index.vector_search.algorithms.append(image_vector_algorithm)
+                    if existing_index.vector_search.vectorizers is None:
+                        existing_index.vector_search.vectorizers = []
+                    existing_index.vector_search.vectorizers.append(image_vectorizer)
                     await search_index_client.create_or_update_index(existing_index)
 
                 if existing_index.semantic_search:
@@ -377,6 +431,7 @@ class SearchManager:
                             "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
                             self.search_info,
                         )
+
         if self.search_info.use_agentic_retrieval and self.search_info.agent_name:
             await self.create_agent()
 
@@ -410,9 +465,7 @@ class SearchManager:
 
             logger.info("Agent %s created successfully", self.search_info.agent_name)
 
-    async def update_content(
-        self, sections: list[Section], image_embeddings: Optional[list[list[float]]] = None, url: Optional[str] = None
-    ):
+    async def update_content(self, sections: list[Section], url: Optional[str] = None):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -421,20 +474,21 @@ class SearchManager:
                 documents = [
                     {
                         "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
-                        "content": section.split_page.text,
+                        "content": section.chunk.text,
                         "category": section.category,
-                        "sourcepage": (
-                            BlobManager.blob_image_name_from_file_page(
-                                filename=section.content.filename(),
-                                page=section.split_page.page_num,
-                            )
-                            if image_embeddings
-                            else BlobManager.sourcepage_from_file_page(
-                                filename=section.content.filename(),
-                                page=section.split_page.page_num,
-                            )
+                        "sourcepage": BlobManager.sourcepage_from_file_page(
+                            filename=section.content.filename(), page=section.chunk.page_num
                         ),
                         "sourcefile": section.content.filename(),
+                        "images": [
+                            {
+                                "url": image.url,
+                                "description": image.description,
+                                "boundingbox": image.bbox,
+                                "embedding": image.embedding,
+                            }
+                            for image in section.chunk.images
+                        ],
                         **section.content.acls,
                     }
                     for section_index, section in enumerate(batch)
@@ -446,14 +500,16 @@ class SearchManager:
                     if self.field_name_embedding is None:
                         raise ValueError("Embedding field name must be set")
                     embeddings = await self.embeddings.create_embeddings(
-                        texts=[section.split_page.text for section in batch]
+                        texts=[section.chunk.text for section in batch]
                     )
                     for i, document in enumerate(documents):
                         document[self.field_name_embedding] = embeddings[i]
-                if image_embeddings:
-                    for i, (document, section) in enumerate(zip(documents, batch)):
-                        document["imageEmbedding"] = image_embeddings[section.split_page.page_num]
-
+                logger.info(
+                    "Uploading batch %d with %d sections to search index '%s'",
+                    batch_index + 1,
+                    len(documents),
+                    self.search_info.index_name,
+                )
                 await search_client.upload_documents(documents)
 
     async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):

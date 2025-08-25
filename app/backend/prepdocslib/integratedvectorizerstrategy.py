@@ -42,7 +42,6 @@ class IntegratedVectorizerStrategy(Strategy):
         embeddings: AzureOpenAIEmbeddingService,
         search_field_name_embedding: str,
         subscription_id: str,
-        search_service_user_assigned_id: str,
         document_action: DocumentAction = DocumentAction.Add,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
@@ -55,7 +54,6 @@ class IntegratedVectorizerStrategy(Strategy):
         self.embeddings = embeddings
         self.search_field_name_embedding = search_field_name_embedding
         self.subscription_id = subscription_id
-        self.search_user_assigned_identity = search_service_user_assigned_id
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
         self.category = category

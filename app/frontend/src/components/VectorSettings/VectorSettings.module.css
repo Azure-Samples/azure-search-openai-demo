@@ -1,3 +1,14 @@
 .container {
     margin-top: 0.625em;
 }
+
+.fieldset {
+    border: none;
+    padding: 0;
+}
+
+.legend {
+    font-size: 14px;
+    margin-bottom: 5px;
+    padding: 0;
+}

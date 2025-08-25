@@ -26,17 +26,14 @@
     "openAiSkuName": {
       "value": "S0"
     },
-    "computerVisionServiceName": {
-      "value": "${AZURE_COMPUTER_VISION_SERVICE}"
+    "visionServiceName": {
+      "value": "${AZURE_VISION_SERVICE}"
     },
-    "computerVisionResourceGroupName": {
-      "value": "${AZURE_COMPUTER_VISION_RESOURCE_GROUP}"
+    "visionResourceGroupName": {
+      "value": "${AZURE_VISION_RESOURCE_GROUP}"
     },
-    "computerVisionResourceGroupLocation": {
-      "value": "${AZURE_COMPUTER_VISION_LOCATION=eastus}"
-    },
-    "computerVisionSkuName": {
-      "value": "${AZURE_COMPUTER_VISION_SKU=S1}"
+    "visionResourceGroupLocation": {
+      "value": "${AZURE_VISION_LOCATION=eastus}"
     },
     "contentUnderstandingServiceName": {
       "value": "${AZURE_CONTENT_UNDERSTANDING_SERVICE}"
@@ -140,21 +137,6 @@
     "embeddingDimensions": {
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
     },
-    "gpt4vModelName":{
-      "value": "${AZURE_OPENAI_GPT4V_MODEL}"
-    },
-    "gpt4vDeploymentName": {
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT}"
-    },
-    "gpt4vDeploymentVersion":{
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION}"
-    },
-    "gpt4vDeploymentSkuName":{
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU}"
-    },
-    "gpt4vDeploymentCapacity":{
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY}"
-    },
     "evalModelName":{
       "value": "${AZURE_OPENAI_EVAL_MODEL}"
     },
@@ -221,8 +203,8 @@
     "useVectors": {
       "value": "${USE_VECTORS=true}"
     },
-    "useGPT4V": {
-      "value": "${USE_GPT4V=false}"
+    "useMultimodal": {
+      "value": "${USE_MULTIMODAL=false}"
     },
     "useEval": {
       "value": "${USE_EVAL=false}"
@@ -355,6 +337,18 @@
     },
     "useAgenticRetrieval": {
       "value": "${USE_AGENTIC_RETRIEVAL=false}"
+    },
+    "ragSearchTextEmbeddings": {
+      "value": "${RAG_SEARCH_TEXT_EMBEDDINGS=true}"
+    },
+    "ragSearchImageEmbeddings": {
+      "value": "${RAG_SEARCH_IMAGE_EMBEDDINGS=true}"
+    },
+    "ragSendTextSources": {
+      "value": "${RAG_SEND_TEXT_SOURCES=true}"
+    },
+    "ragSendImageSources": {
+      "value": "${RAG_SEND_IMAGE_SOURCES=true}"
     }
   }
 }

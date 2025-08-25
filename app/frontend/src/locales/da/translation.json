@@ -42,7 +42,7 @@
         "placeholder": "Skriv et nyt spørgsmål (f.eks. dækker min plan årlige øjenundersøgelser?)"
     },
     "askTitle": "Spørg til dine data",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "Sammenlign effekten af renter og BNP på finansmarkederne.",
         "2": "Hvad er den forventede tendens for S&P 500 indekset over de næste fem år? Sammenlign det med tidligere S&P 500 præstation.",
         "3": "Kan du identificere nogen korrelation mellem oliepriser og aktiemarkedets tendenser?",
@@ -96,14 +96,11 @@
         },
         "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
         "useAgenticRetrieval": "Brug agentisk hentning",
-        "useGPT4V": "Brug GPT vision model",
-        "gpt4VInput": {
-            "label": "GPT vision model input",
-            "options": {
-                "textAndImages": "Billeder og tekst",
-                "images": "Billeder",
-                "texts": "Tekst"
-            }
+        "llmInputs": "Input til LLM",
+        "llmInputsOptions": {
+            "texts": "Tekster",
+            "images": "Billeder",
+            "textAndImages": "Tekster og billeder"
         },
         "retrievalMode": {
             "label": "Søgemodus",
@@ -114,11 +111,10 @@
             }
         },
         "vector": {
-            "label": "Vektorfelter (Multi-forespørgsels vektorsøgning)",
+            "label": "Inkluderede vektorfelter",
             "options": {
                 "embedding": "Tekstindlejringer",
-                "imageEmbedding": "Billedindlejringer",
-                "both": "Tekst- og billedindlejringer"
+                "imageEmbedding": "Billedindlejringer"
             }
         },
         "useOidSecurityFilter": "Brug oid sikkerhedsfilter",
@@ -139,13 +135,16 @@
         "useQueryRewriting": "Aktiverer Azure AI Search forespørgselsomskrivning, en proces der ændrer brugerens forespørgsel for at forbedre søgeresultaterne. Kræver at semantisk ranking er aktiveret.",
         "reasoningEffort": "Indstiller ræsonnementsindsatsen for sprogmodellen. Højere værdier resulterer i mere ræsonnement, men kan tage længere tid om at generere et svar. Standardværdien er medium.",
         "suggestFollowupQuestions": "Beder LLM'en om at foreslå opfølgende spørgsmål baseret på brugerens forespørgsel.",
-        "useGPT4Vision": "Bruger GPT-4-Turbo med Vision til at generere svar baseret på billeder og tekst fra indekset.",
-        "vectorFields": "Angiver hvilke indlejringsfelter i Azure AI Search Index, der vil blive søgt, enten både 'Billeder og tekst' indlejringer, 'Billeder' kun eller 'Tekst' kun.",
-        "gpt4VisionInputs": "Indstiller hvad der sendes til visionsmodellen. 'Billeder og tekst' sender både billeder og tekst til modellen, 'Billeder' sender kun billeder og 'Tekst' sender kun tekst.",
+        "textEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra tekst-kun indlejringsmodellen af udtrukne tekstbidder.",
+        "imageEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra den multimodale indlejringsmodel af udtrukne billeder.",
+        "llmInputs": "Indstiller hvad der sendes til visionsmodellen. 'Billeder og tekst' sender både billeder og tekst til modellen, 'Billeder' sender kun billeder og 'Tekst' sender kun tekst.",
         "retrievalMode": "Indstiller søgemodus for forespørgslen i Azure AI Search. `Vektorer + Tekst (Hybrid)` bruger en kombination af vektorsøgning og fuldtekstsøgning, `Vektorer` bruger kun vektorsøgning, og `Tekst` bruger kun fuldtekstsøgning. Hybrid er generelt optimalt.",
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",
         "useOidSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers OID.",
         "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
-    }
+    },
+    "overallSettings": "Overordnede indstillinger",
+    "searchSettings": "Søgeindstillinger",
+    "llmSettings": "LLM-indstillinger"
 }
