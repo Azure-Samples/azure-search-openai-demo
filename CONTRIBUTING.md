@@ -12,14 +12,15 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-- [Submitting a Pull Request (PR)](#submitting-a-pull-request-pr)
-- [Setting up the development environment](#setting-up-the-development-environment)
-- [Running unit tests](#running-unit-tests)
-- [Running E2E tests](#running-e2e-tests)
-- [Code style](#code-style)
-- [Adding new features](#adding-new-features)
-  - [Adding new azd environment variables](#adding-new-azd-environment-variables)
-  - [Adding new UI strings](#adding-new-ui-strings)
+- [Contributing](#contributing)
+  - [Submitting a Pull Request (PR)](#submitting-a-pull-request-pr)
+  - [Setting up the development environment](#setting-up-the-development-environment)
+  - [Running unit tests](#running-unit-tests)
+  - [Running E2E tests](#running-e2e-tests)
+  - [Code style](#code-style)
+  - [Adding new features](#adding-new-features)
+    - [Adding new azd environment variables](#adding-new-azd-environment-variables)
+    - [Adding new UI strings](#adding-new-ui-strings)
 
 ## Submitting a Pull Request (PR)
 
@@ -73,7 +74,7 @@ Once tests are passing, generate a coverage report to make sure your changes are
 
 ```shell
 pytest --cov --cov-report=xml && \
-diff-cover coverage.xml --format html:coverage_report.html && \
+diff-cover coverage.xml --html-report coverage_report.html && \
 open coverage_report.html
 ```
 

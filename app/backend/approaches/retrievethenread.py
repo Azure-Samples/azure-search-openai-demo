@@ -40,6 +40,7 @@ class RetrieveThenReadApproach(Approach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        hydrate_references: bool = False,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -63,6 +64,7 @@ class RetrieveThenReadApproach(Approach):
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
+        self.hydrate_references = hydrate_references
 
     async def run(
         self,
