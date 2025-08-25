@@ -17,7 +17,7 @@ from prepdocslib.embeddings import AzureOpenAIEmbeddingService
 from prepdocslib.listfilestrategy import File
 from prepdocslib.searchmanager import SearchManager, Section
 from prepdocslib.strategy import SearchInfo
-from prepdocslib.textsplitter import SplitPage
+from prepdocslib.textsplitter import Chunk
 
 from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
@@ -198,7 +198,7 @@ async def test_update_content(monkeypatch, search_info):
     await manager.update_content(
         [
             Section(
-                split_page=SplitPage(
+                chunk=Chunk(
                     page_num=0,
                     text="test content",
                 ),
@@ -229,7 +229,7 @@ async def test_update_content_many(monkeypatch, search_info):
         for page_section_num in range(3):
             sections.append(
                 Section(
-                    split_page=SplitPage(
+                    chunk=Chunk(
                         page_num=page_num,
                         text=f"test section {page_section_num}",
                     ),
@@ -298,7 +298,7 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
     await manager.update_content(
         [
             Section(
-                split_page=SplitPage(
+                chunk=Chunk(
                     page_num=0,
                     text="test content",
                 ),

@@ -37,7 +37,7 @@ from .blobmanager import BlobManager
 from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
-from .textsplitter import SplitPage
+from .textsplitter import Chunk
 
 logger = logging.getLogger("scripts")
 
@@ -47,8 +47,8 @@ class Section:
     A section of a page that is stored in a search service. These sections are used as context by Azure OpenAI service
     """
 
-    def __init__(self, split_page: SplitPage, content: File, category: Optional[str] = None):
-        self.split_page = split_page  # content comes from here
+    def __init__(self, chunk: Chunk, content: File, category: Optional[str] = None):
+        self.chunk = chunk  # content comes from here
         self.content = content  # sourcepage and sourcefile come from here
         self.category = category
         # this also needs images which will become the images field
@@ -474,10 +474,10 @@ class SearchManager:
                 documents = [
                     {
                         "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
-                        "content": section.split_page.text,
+                        "content": section.chunk.text,
                         "category": section.category,
                         "sourcepage": BlobManager.sourcepage_from_file_page(
-                            filename=section.content.filename(), page=section.split_page.page_num
+                            filename=section.content.filename(), page=section.chunk.page_num
                         ),
                         "sourcefile": section.content.filename(),
                         "images": [
@@ -487,7 +487,7 @@ class SearchManager:
                                 "boundingbox": image.bbox,
                                 "embedding": image.embedding,
                             }
-                            for image in section.split_page.images
+                            for image in section.chunk.images
                         ],
                         **section.content.acls,
                     }
@@ -500,7 +500,7 @@ class SearchManager:
                     if self.field_name_embedding is None:
                         raise ValueError("Embedding field name must be set")
                     embeddings = await self.embeddings.create_embeddings(
-                        texts=[section.split_page.text for section in batch]
+                        texts=[section.chunk.text for section in batch]
                     )
                     for i, document in enumerate(documents):
                         document[self.field_name_embedding] = embeddings[i]

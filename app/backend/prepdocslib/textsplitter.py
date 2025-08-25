@@ -7,19 +7,19 @@ from typing import Optional
 
 import tiktoken
 
-from .page import Page, SplitPage
+from .page import Chunk, Page
 
 logger = logging.getLogger("scripts")
 
 
 class TextSplitter(ABC):
     """
-    Splits a list of pages into smaller chunks
+    Splits a list of pages into smaller chunks.
     :param pages: The pages to split
-    :return: A generator of SplitPage
+    :return: A generator of Chunk
     """
 
-    def split_pages(self, pages: list[Page]) -> Generator[SplitPage, None, None]:
+    def split_pages(self, pages: list[Page]) -> Generator[Chunk, None, None]:
         if False:  # pragma: no cover - this is necessary for mypy to type check
             yield
 
@@ -131,12 +131,12 @@ def _normalize_chunk(text: str, max_chars: int) -> str:
 
 @dataclass
 class _ChunkBuilder:
-    """Accumulates sentence-like units for a single page until size limits are reached.
+    """Accumulates sentence-like spans for a single page until size limits are reached.
 
     Responsibilities:
     - Track appended text fragments and their approximate token length.
-    - Decide if a new unit can be added without exceeding character or token thresholds.
-    - Flush accumulated content into an output list as a `SplitPage`.
+    - Decide if a new span can be added without exceeding character or token thresholds.
+    - Flush accumulated content into an output list as a `Chunk`.
     - Allow a figure block to be force-appended (even if it overflows) so that headings + figure stay together.
 
     Notes:
@@ -151,7 +151,7 @@ class _ChunkBuilder:
     token_len: int = 0
 
     def can_fit(self, text: str, token_count: int) -> bool:
-        if not self.parts:  # always allow first unit
+        if not self.parts:  # always allow first span
             return token_count <= self.max_tokens and len(text) <= self.max_chars
         # Character + token constraints
         return (len("".join(self.parts)) + len(text) <= self.max_chars) and (
@@ -168,11 +168,11 @@ class _ChunkBuilder:
     def force_append(self, text: str):
         self.parts.append(text)
 
-    def flush_into(self, out: list[SplitPage]):
+    def flush_into(self, out: list[Chunk]):
         if self.parts:
             chunk = "".join(self.parts)
             if chunk.strip():
-                out.append(SplitPage(page_num=self.page_num, text=chunk))
+                out.append(Chunk(page_num=self.page_num, text=chunk))
         self.parts.clear()
         self.token_len = 0
 
@@ -180,7 +180,7 @@ class _ChunkBuilder:
     def has_content(self) -> bool:
         return bool(self.parts)
 
-    def append_figure_and_flush(self, figure_text: str, out: list[SplitPage]):
+    def append_figure_and_flush(self, figure_text: str, out: list[Chunk]):
         """Append a figure (allowed to overflow) to current accumulation and flush in one step."""
         self.force_append(figure_text)
         self.flush_into(out)
@@ -198,98 +198,193 @@ class SentenceTextSplitter(TextSplitter):
         self.sentence_search_limit = 100
         self.max_tokens_per_section = max_tokens_per_section
         self.section_overlap = int(self.max_section_length * DEFAULT_OVERLAP_PERCENT / 100)
+        # Always-on semantic overlap percent (duplicated suffix of previous chunk), applied:
+        # - Between chunks on the same page.
+        # - Across page boundary ONLY if semantic continuation heuristics pass.
+        self.semantic_overlap_percent = 10
 
-    def split_page_by_max_tokens(
-        self, page_num: int, text: str, *, allow_figure_processing: bool = True
-    ) -> Generator[SplitPage, None, None]:
-        """Recursively split text by token count, keeping complete <figure> blocks intact.
+    def _find_split_pos(self, text: str) -> tuple[int, bool]:
+        """Find a good split position near midpoint.
 
-        Rules:
-        - Balanced <figure>...</figure> blocks are emitted whole even if they exceed max_tokens_per_section.
-        - Text outside figures is split normally.
-        - Unbalanced figure markup (e.g. a truncated figure) is treated as normal text to avoid infinite recursion.
+        Returns (index, use_overlap_fallback).
+
+        Priority:
+        1. Sentence-ending punctuation near midpoint (scan outward within central third).
+        2. Word-break character near midpoint (space / punctuation) within same window.
+        3. Fallback: caller should use midpoint + overlap strategy.
         """
-        lower_text = text.lower()
-        if allow_figure_processing and "<figure" in lower_text:
-            figure_pattern = re.compile(r"<figure.*?</figure>", re.IGNORECASE | re.DOTALL)
-            parts: list[str] = []
-            idx = 0
-            for match in figure_pattern.finditer(text):
-                if match.start() > idx:
-                    parts.append(text[idx : match.start()])
-                parts.append(match.group())
-                idx = match.end()
-            if idx < len(text):
-                parts.append(text[idx:])
-            # Merge any balanced figure block into the preceding chunk so headings/intro stay with figure.
-            merged_chunks: list[str] = []
-            current: str = ""
-            for segment in parts:
-                seg_lower = segment.lower()
-                is_balanced_figure = "<figure" in seg_lower and seg_lower.count("<figure") == seg_lower.count(
-                    "</figure>"
-                )
-                # Consolidated handling: always accumulate into current first, then emit/reset if it's a figure block.
-                if current:
-                    current += segment
-                else:
-                    current = segment
-                if is_balanced_figure:
-                    merged_chunks.append(current)
-                    current = ""
-            if current.strip():
-                merged_chunks.append(current)
+        length = len(text)
+        if length < 4:
+            return -1, True
+        mid = length // 2
+        window_limit = length // 3  # defines central region scan boundary
 
-            for chunk in merged_chunks:
-                chunk_lower = chunk.lower()
-                if "<figure" in chunk_lower and chunk_lower.count("<figure") == chunk_lower.count("</figure>"):
-                    # Entire chunk contains (at least one) complete figure; emit ignoring token limit.
-                    yield SplitPage(page_num=page_num, text=chunk)
-                else:
-                    # Recurse to split if still oversized and has no complete figure.
-                    yield from self.split_page_by_max_tokens(page_num, chunk, allow_figure_processing=False)
-            return
-
-        tokens = bpe.encode(text)
-        if len(tokens) <= self.max_tokens_per_section:
-            yield SplitPage(page_num=page_num, text=text)
-            return
-
-        # Find a sentence boundary near the middle
-        start = int(len(text) // 2)
+        # 1. Sentence endings
         pos = 0
-        boundary = int(len(text) // 3)
-        split_position = -1
-        while start - pos > boundary:
-            left = start - pos
-            right = start + pos
+        while mid - pos > window_limit:
+            left = mid - pos
+            right = mid + pos
             if left >= 0 and text[left] in self.sentence_endings:
-                split_position = left
-                break
-            if right < len(text) and text[right] in self.sentence_endings:
-                split_position = right
-                break
+                return left, False
+            if right < length and text[right] in self.sentence_endings:
+                return right, False
             pos += 1
 
-        if split_position > 0:
-            first_half = text[: split_position + 1]
-            second_half = text[split_position + 1 :]
+        # 2. Word breaks
+        pos = 0
+        while mid - pos > window_limit:
+            left = mid - pos
+            right = mid + pos
+            if left >= 0 and text[left] in self.word_breaks:
+                return left, False
+            if right < length and text[right] in self.word_breaks:
+                return right, False
+            pos += 1
+
+        # 3. Fallback
+        return -1, True
+
+    def split_page_by_max_tokens(self, page_num: int, text: str) -> Generator[Chunk, None, None]:
+        """Recursively split plain text by token count.
+
+        Boundary preference order when an oversized span is encountered:
+        1. Sentence-ending punctuation near midpoint.
+        2. Word-break character near midpoint (space/punctuation) to avoid mid-word cuts.
+        3. Midpoint split with symmetric overlap (DEFAULT_OVERLAP_PERCENT).
+        """
+        tokens = bpe.encode(text)
+        if len(tokens) <= self.max_tokens_per_section:
+            yield Chunk(page_num=page_num, text=text)
+            return
+
+        split_pos, use_overlap = self._find_split_pos(text)
+        if not use_overlap and split_pos > 0:
+            first_half = text[: split_pos + 1]
+            second_half = text[split_pos + 1 :]
         else:
-            middle = int(len(text) // 2)
+            middle = len(text) // 2
             overlap = int(len(text) * (DEFAULT_OVERLAP_PERCENT / 100))
             first_half = text[: middle + overlap]
             second_half = text[middle - overlap :]
-        yield from self.split_page_by_max_tokens(page_num, first_half, allow_figure_processing=False)
-        yield from self.split_page_by_max_tokens(page_num, second_half, allow_figure_processing=False)
 
-    def split_pages(self, pages: list[Page]) -> Generator[SplitPage, None, None]:
+        yield from self.split_page_by_max_tokens(page_num, first_half)
+        yield from self.split_page_by_max_tokens(page_num, second_half)
+
+    def _is_heading_like(self, line: str) -> bool:
+        """Heuristic heading detector used to suppress cross-page semantic overlap when a new section starts."""
+        line_str = line.strip()
+        if not line_str:
+            return False
+        if line_str.startswith("#"):
+            return True
+        # Short Title Case or ALL CAPS lines (limited word count) often represent headings
+        if len(line_str) <= 80 and (line_str.isupper() or (line_str.istitle() and len(line_str.split()) <= 12)):
+            return True
+        import re as _re
+
+        # Numbered / roman numeral list or section forms: '1. ', 'II) ', 'III. '
+        if _re.match(r"^(?:\d+|[IVXLCM]+)[.)]\s", line_str):
+            return True
+        if line_str.startswith(("- ", "* ", "• ")):
+            return True
+        return False
+
+    def _should_cross_page_overlap(self, prev: Chunk, nxt: Chunk) -> bool:
+        if not prev or not nxt:
+            return False
+        if "<figure" in prev.text.lower() or "<figure" in nxt.text[:40].lower():
+            return False
+        prev_last = prev.text.rstrip()[-1:] if prev.text.rstrip() else ""
+        if prev_last in self.sentence_endings:  # previous chunk ended cleanly
+            return False
+        nxt_stripped = nxt.text.lstrip()
+        if not nxt_stripped:
+            return False
+        first_char = nxt_stripped[0]
+        if not first_char.islower():  # treat uppercase start as likely new section
+            return False
+        first_line = nxt_stripped.splitlines()[0]
+        if self._is_heading_like(first_line):
+            return False
+        return True
+
+    def _append_overlap(self, prev_chunk: Chunk, next_chunk: Chunk) -> Chunk:
+        """Return a modified copy of prev_chunk whose text has an appended semantic
+        overlap prefix from next_chunk; next_chunk itself is left unchanged so it
+        continues to start at its natural sentence boundary.
+
+        Strategy:
+        - Take ~semantic_overlap_percent tail size (in chars) from the START of next_chunk.
+        - Extend that region forward to the first sentence-ending (preferred) or word break
+          so we end on a natural boundary (avoid chopping mid-word/mid-sentence).
+        - Refuse overlap if either chunk contains a <figure> to avoid duplicating figures.
+        - Enforce hard token + soft char limits; shrink overlap if necessary.
+        """
+        if not prev_chunk or not next_chunk:
+            return prev_chunk
+        if "<figure" in prev_chunk.text.lower() or "<figure" in next_chunk.text[:60].lower():
+            return prev_chunk
+
+        target = int(self.max_section_length * self.semantic_overlap_percent / 100)
+        if target <= 0:
+            return prev_chunk
+
+        base_prefix = next_chunk.text[:target]
+        if not base_prefix.strip():  # nothing meaningful to append
+            return prev_chunk
+
+        # Grow prefix up to 2x target to reach a sentence end / word break boundary
+        extension_limit = min(len(next_chunk.text), target * 2)
+        prefix = base_prefix
+        boundary_found = False
+        for i in range(target, extension_limit):
+            ch = next_chunk.text[i]
+            prefix += ch
+            if ch in self.sentence_endings:
+                boundary_found = True
+                break
+            if ch in self.word_breaks and i - target > 20:  # fallback boundary after some progress
+                boundary_found = True
+                break
+        if not boundary_found:
+            # Trim trailing partial word if we stopped without boundary
+            while prefix and prefix[-1].isalnum() and len(prefix) > target:
+                prefix = prefix[:-1]
+
+        # Avoid appending text that already exists at end (rare but possible due to prior operations)
+        if prev_chunk.text.endswith(prefix):
+            return prev_chunk
+
+        candidate = prev_chunk.text + prefix
+        max_chars = int(self.max_section_length * 1.2)
+        if len(candidate) > max_chars or len(bpe.encode(candidate)) > self.max_tokens_per_section:
+            # Attempt to shrink prefix at word / sentence boundaries from its start
+            shrink = prefix
+            while shrink and (
+                len(prev_chunk.text + shrink) > max_chars
+                or len(bpe.encode(prev_chunk.text + shrink)) > self.max_tokens_per_section
+            ):
+                cut_index = 1
+                for i, ch in enumerate(shrink):
+                    if ch in self.word_breaks or ch in self.sentence_endings:
+                        cut_index = i + 1
+                        break
+                shrink = shrink[:-cut_index] if cut_index < len(shrink) else ""
+            if not shrink:
+                return prev_chunk
+            candidate = prev_chunk.text + shrink
+            if len(candidate) > max_chars or len(bpe.encode(candidate)) > self.max_tokens_per_section:
+                return prev_chunk
+        return Chunk(page_num=prev_chunk.page_num, text=candidate)
+
+    def split_pages(self, pages: list[Page]) -> Generator[Chunk, None, None]:
         """Split each page into semantic chunks using token-aware accumulation with atomic figures.
 
         Strategy (per page):
         1. Extract balanced <figure>...</figure> blocks as atomic "figure" blocks.
         2. Treat intervening text as "text" blocks.
-        3. For text blocks, break into sentence-ish units (using sentence ending chars) and accumulate
-           until adding the next unit would exceed either character or token limit. Flush when needed.
+        3. For text blocks, break into sentence-ish spans (using sentence ending chars) and accumulate
+        until adding the next span would exceed either character or token limit. Flush when needed.
         4. When a figure block arrives:
            - If there is accumulated text (builder), append the figure even if this exceeds token limit and flush.
            - If no accumulated text, emit the figure as its own chunk.
@@ -297,15 +392,14 @@ class SentenceTextSplitter(TextSplitter):
         This avoids partial/duplicated figures and keeps headings with their following figure when space permits.
         """
         figure_regex = re.compile(r"<figure.*?</figure>", re.IGNORECASE | re.DOTALL)
-
-        previous_chunk: Optional[SplitPage] = None
+        previous_chunk: Optional[Chunk] = None
 
         for page in pages:
             raw = page.text or ""
             if not raw.strip():
                 continue
 
-            # 1. Build ordered list of blocks: (type, text)
+            # Build ordered list of blocks: (type, text)
             blocks: list[tuple[str, str]] = []
             last = 0
             for m in figure_regex.finditer(raw):
@@ -316,10 +410,7 @@ class SentenceTextSplitter(TextSplitter):
             if last < len(raw):
                 blocks.append(("text", raw[last:]))
 
-            # Accumulated chunks for this page
-            page_chunks: list[SplitPage] = []
-
-            # Builder encapsulates accumulation logic
+            page_chunks: list[Chunk] = []
             builder = _ChunkBuilder(
                 page_num=page.page_num,
                 max_chars=self.max_section_length,
@@ -334,34 +425,33 @@ class SentenceTextSplitter(TextSplitter):
                     else:
                         # Emit figure standalone
                         if btext.strip():
-                            page_chunks.append(SplitPage(page_num=page.page_num, text=btext))
+                            page_chunks.append(Chunk(page_num=page.page_num, text=btext))
                     continue
 
-                # Process text block: split into sentence-like units
-                units: list[str] = []
+                # Process text block: split into sentence-like spans
+                spans: list[str] = []
                 current_chars: list[str] = []
                 for ch in btext:
                     current_chars.append(ch)
                     if ch in self.sentence_endings:
-                        units.append("".join(current_chars))
+                        spans.append("".join(current_chars))
                         current_chars = []
                 if current_chars:  # remaining tail
-                    units.append("".join(current_chars))
+                    spans.append("".join(current_chars))
 
-                for unit in units:
-                    unit_tokens = len(bpe.encode(unit))
-                    # If a single unit itself exceeds token limit (rare, very long sentence), split it directly
-                    if unit_tokens > self.max_tokens_per_section:
+                for span in spans:
+                    span_tokens = len(bpe.encode(span))
+                    # If a single span itself exceeds token limit (rare, very long sentence), split it directly
+                    if span_tokens > self.max_tokens_per_section:
                         builder.flush_into(page_chunks)
-                        for sp in self.split_page_by_max_tokens(page.page_num, unit, allow_figure_processing=False):
-                            page_chunks.append(sp)
+                        for chunk in self.split_page_by_max_tokens(page.page_num, span):
+                            page_chunks.append(chunk)
                         continue
-                    if not builder.add(unit, unit_tokens):
-                        # Flush and retry (guaranteed to fit because unit_tokens <= limit)
+                    if not builder.add(span, span_tokens):
+                        # Flush and retry (guaranteed to fit because span_tokens <= limit)
                         builder.flush_into(page_chunks)
-                        added = builder.add(unit, unit_tokens)
-                        if not added:  # defensive (should not happen)
-                            page_chunks.append(SplitPage(page_num=page.page_num, text=unit))
+                        if not builder.add(span, span_tokens):
+                            page_chunks.append(Chunk(page_num=page.page_num, text=span))
 
             # Flush any trailing builder content
             builder.flush_into(page_chunks)
@@ -385,7 +475,7 @@ class SentenceTextSplitter(TextSplitter):
                     if len(bpe.encode(combined_text)) <= self.max_tokens_per_section and len(combined_text) <= int(
                         self.max_section_length * 1.2
                     ):
-                        previous_chunk = SplitPage(page_num=previous_chunk.page_num, text=combined_text)
+                        previous_chunk = Chunk(page_num=previous_chunk.page_num, text=combined_text)
                         page_chunks = page_chunks[1:]
                     else:
                         # Cannot merge whole due to token/char limits; attempt to shift trailing partial sentence
@@ -393,13 +483,7 @@ class SentenceTextSplitter(TextSplitter):
                         prev_text = previous_chunk.text
                         # Find last full sentence ending in previous chunk.
                         last_end = max((prev_text.rfind(se) for se in self.sentence_endings), default=-1)
-                        if last_end != -1 and last_end < len(prev_text) - 1:
-                            # Trailing fragment starts after the sentence-ending punctuation.
-                            fragment_start = last_end + 1
-                        else:
-                            # No sentence ending found (very long sentence) -> move entire previous chunk.
-                            fragment_start = 0
-                        # Only shift if this creates a better (non mid-sentence) boundary: ensure fragment is not empty
+                        fragment_start = last_end + 1 if last_end != -1 and last_end < len(prev_text) - 1 else 0
                         if fragment_start < len(prev_text):
                             fragment_full = prev_text[fragment_start:]
                             retained = prev_text[:fragment_start]
@@ -433,22 +517,20 @@ class SentenceTextSplitter(TextSplitter):
                             leftover_fragment = fragment_full[len(move_fragment) :]
                             # Prepend the allowed fragment
                             if move_fragment:
-                                page_chunks[0] = SplitPage(
+                                page_chunks[0] = Chunk(
                                     page_num=page_chunks[0].page_num,
                                     text=_safe_concat(move_fragment, first_new_text),
                                 )
                             # Adjust previous_chunk retained portion
                             if retained.strip():
-                                previous_chunk = SplitPage(page_num=previous_chunk.page_num, text=retained)
+                                previous_chunk = Chunk(page_num=previous_chunk.page_num, text=retained)
                             else:
                                 previous_chunk = None
                             # Insert leftover fragment as its own chunk (split if needed) BEFORE modified first_new
                             if leftover_fragment.strip():
                                 # Ensure leftover respects limits by splitting if needed
                                 leftover_pages = list(
-                                    self.split_page_by_max_tokens(
-                                        page_chunks[0].page_num, leftover_fragment, allow_figure_processing=False
-                                    )
+                                    self.split_page_by_max_tokens(page_chunks[0].page_num, leftover_fragment)
                                 )
                                 # Insert these before current first chunk
                                 page_chunks = leftover_pages + page_chunks
@@ -456,13 +538,30 @@ class SentenceTextSplitter(TextSplitter):
             # Normalize chunks (non-figure) that barely exceed char limit due to added boundary space
             max_chars = int(self.max_section_length * 1.2)
             if previous_chunk:
-                previous_chunk = SplitPage(
+                previous_chunk = Chunk(
                     page_num=previous_chunk.page_num, text=_normalize_chunk(previous_chunk.text, max_chars)
                 )
             if page_chunks:
                 page_chunks = [
-                    SplitPage(page_num=sp.page_num, text=_normalize_chunk(sp.text, max_chars)) for sp in page_chunks
+                    Chunk(page_num=chunk.page_num, text=_normalize_chunk(chunk.text, max_chars))
+                    for chunk in page_chunks
                 ]
+
+            # Apply semantic overlap duplication (append style). We append a small
+            # prefix of the NEXT chunk onto the PREVIOUS chunk, keeping natural starts.
+            if self.semantic_overlap_percent > 0:
+                # Cross-page overlap: modify previous_chunk (look-ahead to first new chunk)
+                if previous_chunk and page_chunks and self._should_cross_page_overlap(previous_chunk, page_chunks[0]):
+                    previous_chunk = self._append_overlap(previous_chunk, page_chunks[0])
+
+                # Intra-page overlaps
+                if len(page_chunks) > 1:
+                    for i in range(1, len(page_chunks)):
+                        prev_c = page_chunks[i - 1]
+                        curr_c = page_chunks[i]
+                        if "<figure" in prev_c.text.lower() or "<figure" in curr_c.text.lower():
+                            continue
+                        page_chunks[i - 1] = self._append_overlap(prev_c, curr_c)
 
             # Emit previous_chunk now that merge opportunity considered
             if previous_chunk:
@@ -493,17 +592,17 @@ class SimpleTextSplitter(TextSplitter):
     def __init__(self, max_object_length: int = 1000):
         self.max_object_length = max_object_length
 
-    def split_pages(self, pages: list[Page]) -> Generator[SplitPage, None, None]:
+    def split_pages(self, pages: list[Page]) -> Generator[Chunk, None, None]:
         all_text = "".join(page.text for page in pages)
         if len(all_text.strip()) == 0:
             return
 
         length = len(all_text)
         if length <= self.max_object_length:
-            yield SplitPage(page_num=0, text=all_text)
+            yield Chunk(page_num=0, text=all_text)
             return
 
         # its too big, so we need to split it
         for i in range(0, length, self.max_object_length):
-            yield SplitPage(page_num=i // self.max_object_length, text=all_text[i : i + self.max_object_length])
+            yield Chunk(page_num=i // self.max_object_length, text=all_text[i : i + self.max_object_length])
         return

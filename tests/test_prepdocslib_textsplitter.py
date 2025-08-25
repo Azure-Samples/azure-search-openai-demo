@@ -34,10 +34,10 @@ def test_sentencetextsplitter_split_empty_pages():
 def test_sentencetextsplitter_split_small_pages():
     t = SentenceTextSplitter()
 
-    split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text="Not a large page")]))
-    assert len(split_pages) == 1
-    assert split_pages[0].page_num == 0
-    assert split_pages[0].text == "Not a large page"
+    chunks = list(t.split_pages(pages=[Page(page_num=0, offset=0, text="Not a large page")]))
+    assert len(chunks) == 1
+    assert chunks[0].page_num == 0
+    assert chunks[0].text == "Not a large page"
 
 
 @pytest.mark.asyncio
@@ -55,11 +55,10 @@ async def test_sentencetextsplitter_list_parse_and_split(tmp_path, snapshot):
         pages = [page async for page in pdf_parser.parse(content=file.content)]
         assert pages
         sections = [
-            Section(split_page, content=file, category="test category")
-            for split_page in text_splitter.split_pages(pages)
+            Section(chunk, content=file, category="test category") for chunk in text_splitter.split_pages(pages)
         ]
         assert sections
-        results[file.filename()] = [section.split_page.text for section in sections]
+        results[file.filename()] = [section.chunk.text for section in sections]
         processed += 1
     assert processed > 1
     # Sort results by key
@@ -76,27 +75,27 @@ def test_simpletextsplitter_split_empty_pages():
 def test_simpletextsplitter_split_small_pages():
     t = SimpleTextSplitter()
 
-    split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text='{"test": "Not a large page"}')]))
-    assert len(split_pages) == 1
-    assert split_pages[0].page_num == 0
-    assert split_pages[0].text == '{"test": "Not a large page"}'
+    chunks = list(t.split_pages(pages=[Page(page_num=0, offset=0, text='{"test": "Not a large page"}')]))
+    assert len(chunks) == 1
+    assert chunks[0].page_num == 0
+    assert chunks[0].text == '{"test": "Not a large page"}'
 
 
 def test_sentencetextsplitter_split_pages():
     max_object_length = 10
     t = SimpleTextSplitter(max_object_length=max_object_length)
 
-    split_pages = list(t.split_pages(pages=[Page(page_num=0, offset=0, text='{"test": "Not a large page"}')]))
-    assert len(split_pages) == 3
-    assert split_pages[0].page_num == 0
-    assert split_pages[0].text == '{"test": "'
-    assert len(split_pages[0].text) <= max_object_length
-    assert split_pages[1].page_num == 1
-    assert split_pages[1].text == "Not a larg"
-    assert len(split_pages[1].text) <= max_object_length
-    assert split_pages[2].page_num == 2
-    assert split_pages[2].text == 'e page"}'
-    assert len(split_pages[2].text) <= max_object_length
+    chunks = list(t.split_pages(pages=[Page(page_num=0, offset=0, text='{"test": "Not a large page"}')]))
+    assert len(chunks) == 3
+    assert chunks[0].page_num == 0
+    assert chunks[0].text == '{"test": "'
+    assert len(chunks[0].text) <= max_object_length
+    assert chunks[1].page_num == 1
+    assert chunks[1].text == "Not a larg"
+    assert len(chunks[1].text) <= max_object_length
+    assert chunks[2].page_num == 2
+    assert chunks[2].text == 'e page"}'
+    assert len(chunks[2].text) <= max_object_length
 
 
 def pytest_generate_tests(metafunc):
@@ -120,8 +119,7 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
         pages = [page async for page in pdf_parser.parse(content=file.content)]
         assert pages
         sections = [
-            Section(split_page, content=file, category="test category")
-            for split_page in text_splitter.split_pages(pages)
+            Section(chunk, content=file, category="test category") for chunk in text_splitter.split_pages(pages)
         ]
         assert sections
         processed += 1
@@ -129,10 +127,10 @@ async def test_sentencetextsplitter_multilang(test_doc, tmp_path):
         # Verify the size of the sections
         token_lengths = []
         for section in sections:
-            assert section.split_page.text != ""
-            assert len(section.split_page.text) <= (text_splitter.max_section_length * 1.2)
+            assert section.chunk.text != ""
+            assert len(section.chunk.text) <= (text_splitter.max_section_length * 1.2)
             # Verify the number of tokens is below 500
-            token_lengths.append((len(bpe.encode(section.split_page.text)), len(section.split_page.text)))
+            token_lengths.append((len(bpe.encode(section.chunk.text)), len(section.chunk.text)))
         # verify that none of the numbers in token_lengths are above 500
         assert all([tok_len <= text_splitter.max_tokens_per_section for tok_len, _ in token_lengths]), (
             test_doc.name,
@@ -166,15 +164,15 @@ an opportunity to discuss your goals and objectives for the upcoming year.
     # Close the figure properly (original text already ends with </table>)
     test_text_with_table = test_text_with_table.replace("</table>", "</table></figure>")
 
-    split_pages_with_table = list(t.split_pages(pages=[Page(page_num=0, offset=0, text=test_text_with_table)]))
-    split_pages_without_table = list(t.split_pages(pages=[Page(page_num=0, offset=0, text=test_text_without_table)]))
+    chunks_with_table = list(t.split_pages(pages=[Page(page_num=0, offset=0, text=test_text_with_table)]))
+    chunks_without_table = list(t.split_pages(pages=[Page(page_num=0, offset=0, text=test_text_without_table)]))
 
     # Ensure table (wrapped in figure) appears exactly once in the with_table variant
-    assert any("<figure><table>" in sp.text for sp in split_pages_with_table)
-    figure_table_occurrences = sum(sp.text.count("<figure><table>") for sp in split_pages_with_table)
+    assert any("<figure><table>" in sp.text for sp in chunks_with_table)
+    figure_table_occurrences = sum(sp.text.count("<figure><table>") for sp in chunks_with_table)
     assert figure_table_occurrences == 1, "Wrapped figure+table should appear exactly once."
     # Placeholder variant should have no <table>
-    assert all("<table" not in sp.text for sp in split_pages_without_table)
+    assert all("<table" not in sp.text for sp in chunks_without_table)
 
 
 # parameterize to check multiple files
@@ -191,12 +189,12 @@ def test_pages_with_figures(snapshot, file_name):
     ]
     # call split_pages on the pages
     t = SentenceTextSplitter()
-    split_pages = list(t.split_pages(pages=pages))
+    chunks = list(t.split_pages(pages=pages))
 
-    # check that the split_pages are the same as the expected split_pages
-    split_pages_dicts = [{"text": split_page.text, "page_num": split_page.page_num} for split_page in split_pages]
-    split_pages_json = json.dumps(split_pages_dicts, indent=2)
-    snapshot.assert_match(split_pages_json, "split_pages_with_figures.json")
+    # check that the chunks are the same as the expected chunks
+    chunks_dicts = [{"text": chunk.text, "page_num": chunk.page_num} for chunk in chunks]
+    chunks_json = json.dumps(chunks_dicts, indent=2)
+    snapshot.assert_match(chunks_json, "split_pages_with_figures.json")
 
 
 def test_large_figure_not_split():
@@ -206,18 +204,18 @@ def test_large_figure_not_split():
     surrounding_text = "Intro paragraph before figure. " + large_figure + " Conclusion after figure." * 2
     pages = [Page(page_num=0, offset=0, text=surrounding_text)]
     t = SentenceTextSplitter(max_tokens_per_section=50)  # Force a low token threshold
-    split_pages = list(t.split_pages(pages=pages))
+    chunks = list(t.split_pages(pages=pages))
 
     # Assert at least one chunk contains the entire figure block intact
-    figure_chunks = [sp for sp in split_pages if "<figure" in sp.text and "</figure>" in sp.text]
+    figure_chunks = [chunk for chunk in chunks if "<figure" in chunk.text and "</figure>" in chunk.text]
     assert figure_chunks, "Expected a chunk containing the whole figure"
     for fc in figure_chunks:
         assert fc.text.count("<figure") == fc.text.count("</figure>"), "Figure tags should be balanced in a chunk"
 
     # Ensure we did not produce any chunk that has an opening figure tag without a closing one
-    for sp in split_pages:
-        if "<figure" in sp.text:
-            assert "</figure>" in sp.text, "Chunk with opening <figure should include closing </figure>"
+    for chunk in chunks:
+        if "<figure" in chunk.text:
+            assert "</figure>" in chunk.text, "Chunk with opening <figure should include closing </figure>"
 
 
 def test_figure_at_start_emitted():
@@ -382,20 +380,32 @@ def test_cross_page_merge_fragment_shift_hard_trim():
 
 
 def test_figure_merge_both_branches():
-    """Ensure figure merge handles preceding text and consecutive figures (branches where current has / lacks text)."""
+    """Ensure figure merge handles preceding text and consecutive figures.
+
+    This test exercises split_pages with a single Page containing both
+    branches: (1) a figure following existing text, (2) a second consecutive figure,
+    then trailing text.
+    """
     splitter = SentenceTextSplitter(max_tokens_per_section=100)
-    text = (
+    page_text = (
         "Heading before."  # preceding text (current non-empty before first figure)
-        + "<figure><img src='a.png'/></figure>"  # first figure attaches to text
-        + "<figure><img src='b.png'/></figure>"  # second figure with empty current
-        + "Tail sentence."
+        + "<figure><img src='a.png'/></figure>"  # first figure attaches to text and flushes
+        + "<figure><img src='b.png'/></figure>"  # second figure emitted standalone
+        + "Tail sentence."  # trailing text emitted after figures
     )
-    chunks = list(splitter.split_page_by_max_tokens(0, text))
-    # Expect first chunk to contain heading + first figure, second chunk just second figure, third tail text
-    assert len(chunks) >= 3
+    pages = [Page(page_num=0, offset=0, text=page_text)]
+    chunks = list(splitter.split_pages(pages))
+    # Expect: chunk0 = heading + first figure, chunk1 = second figure, chunk2 (or later) starts with Tail
+    assert len(chunks) >= 3, f"Unexpected chunk count: {[c.text for c in chunks]}"
     assert chunks[0].text.startswith("Heading before.") and chunks[0].text.count("<figure") == 1
-    assert chunks[1].text.count("<figure") == 1
-    assert chunks[2].text.startswith("Tail")
+    # Find a standalone second figure chunk (could be index 1) containing only the second figure markup
+    figure_only = next(
+        (c for c in chunks[1:] if c.text.count("<figure") == 1 and c.text.strip().startswith("<figure")), None
+    )
+    assert figure_only is not None, "Second figure not emitted standalone"
+    assert any(
+        c.text.startswith("Tail") for c in chunks[chunks.index(figure_only) + 1 :]
+    ), "Tail text chunk missing after figures"
 
 
 def test_sentence_boundary_right_side():
@@ -435,6 +445,49 @@ def test_sentence_boundary_left_midpoint_exact():
     chunks = list(splitter.split_page_by_max_tokens(0, text))
     assert len(chunks) >= 2
     assert chunks[0].text.endswith("."), "First chunk should end with midpoint period"
+
+
+def test_recursive_split_prefers_word_break_over_overlap():
+    """Punctuation-free text with spaces should split at a word break (space) rather than arbitrary midpoint overlap duplication."""
+    # Use deterministic single-token chars to guarantee token overflow.
+    splitter = SentenceTextSplitter(max_tokens_per_section=20)  # Force very low token limit
+    # Create 60 single-token words separated by spaces (approx 120+ tokens including spaces -> >20)
+    word = SINGLE_TOKEN_CHAR * 3  # 3 tokens per word
+    words = [word for _ in range(25)]  # 75 tokens (plus spaces) >> 20 limit
+    text = " ".join(words)
+    page = Page(page_num=0, offset=0, text=text)
+    chunks = list(splitter.split_pages([page]))
+    assert len(chunks) > 1, "Expected multiple chunks due to low token cap forcing recursion"
+    # Ensure we never split inside a word: boundary between chunks should not create alpha-alpha adjacency
+    for i in range(len(chunks) - 1):
+        left = chunks[i].text.rstrip()
+        right = chunks[i + 1].text.lstrip()
+        if left and right:
+            assert not (
+                left[-1].isalpha() and right[0].isalpha()
+            ), f"Mid-word split detected: {left[-10:]}|{right[:10]}"
+
+
+def test_recursive_split_overlap_fallback_when_no_word_breaks():
+    """Long contiguous text without sentence endings or word breaks should fall back to midpoint overlap strategy."""
+    splitter = SentenceTextSplitter(max_tokens_per_section=30)
+    # Use a contiguous run of the single-token char (no spaces / punctuation) to exceed limit.
+    contiguous = SINGLE_TOKEN_CHAR * 120  # 120 tokens > 30 limit, no word breaks or sentence endings
+    page = Page(page_num=0, offset=0, text=contiguous)
+    chunks = list(splitter.split_pages([page]))
+    assert len(chunks) > 1, "Expected recursion via overlap fallback"
+    # Detect some overlap duplication at boundaries (heuristic)
+    found_overlap = False
+    for i in range(len(chunks) - 1):
+        left = chunks[i].text
+        right = chunks[i + 1].text
+        probe = left[-12:]
+        if probe and probe in right[: len(probe) + 4]:
+            found_overlap = True
+            break
+    assert found_overlap, "Expected overlapping duplicated region between chunks"
+    # Confirm no spaces since there are no word breaks
+    assert all(" " not in c.text for c in chunks)
 
 
 def test_fragment_shift_token_limit_fits_false():
@@ -539,3 +592,115 @@ def test_cross_page_fragment_hard_trim_iterative():
     trimmed = [c.text for c in chunks if c.text.startswith(SINGLE_TOKEN_CHAR)]
     if trimmed:
         assert all(len(t) < fragment_iter_len for t in trimmed)
+
+
+def test_intra_page_semantic_overlap_applied():
+    """When multiple chunks arise on the SAME page, the second should begin with duplicated
+    semantic overlap (~10% tail of prior), unless figure or heading prevents it."""
+    splitter = SentenceTextSplitter(max_tokens_per_section=40)
+    splitter.max_section_length = 200  # keep char constraint loose
+    # Build text long enough to force at least two chunks via token limit using many short sentences
+    base_sentence = "alpha beta gamma delta epsilon zeta eta theta iota kappa lambda. "
+    text = base_sentence * 6  # repeated => should exceed token cap for one chunk
+    page = Page(page_num=0, offset=0, text=text)
+    chunks = list(splitter.split_pages([page]))
+    assert len(chunks) >= 2, f"Need >=2 chunks to test overlap: {[c.text for c in chunks]}"
+    first, second = chunks[0], chunks[1]
+    # Overlap suffix length target
+    overlap_len_chars = int(splitter.max_section_length * splitter.semantic_overlap_percent / 100)
+    tail = first.text[-overlap_len_chars:]
+    # The implementation may trim to boundary; accept partial. Take a probe substring from tail.
+    probe = tail.strip()[:25]
+    duplicated = False
+    if probe and probe in second.text[: max(80, len(probe) + 20)]:
+        duplicated = True
+    assert duplicated, (
+        "Expected semantic overlap duplication between first and second intra-page chunks. "
+        f"Tail probe={probe!r} Second start={second.text[:120]!r}"
+    )
+
+
+def test_no_overlap_after_figure_previous():
+    """If previous chunk contains a figure, semantic overlap should not duplicate its suffix."""
+    splitter = SentenceTextSplitter(max_tokens_per_section=60)
+    # Compose page with an early figure chunk; then long continuation forcing another chunk.
+    fig = "<figure><img src='a.png'/><figcaption>Caption text here</figcaption></figure>"
+    continuation = " continuing text that will form another chunk because we repeat it."
+    text = fig + continuation * 10
+    page = Page(page_num=0, offset=0, text=text)
+    chunks = list(splitter.split_pages([page]))
+    # Locate figure chunk
+    figure_index = next((i for i, c in enumerate(chunks) if "<figure" in c.text), None)
+    assert figure_index is not None, "Figure chunk not found"
+    if figure_index < len(chunks) - 1:
+        after = chunks[figure_index + 1]
+        caption_tail = chunks[figure_index].text[-50:].strip()
+        # Take head of tail for stricter start comparison
+        assert not after.text.startswith(
+            caption_tail[:20]
+        ), "Unexpected semantic overlap duplication from figure chunk tail"
+
+
+def test_append_overlap_preserves_next_chunk_start():
+    """Ensure the semantic overlap append to the previous chunk instead of
+    prepending to the next, so each chunk starts at a clean sentence
+    boundary.
+
+    We build text with short sentences forcing multiple chunks due to a low
+    token limit. We then assert:
+    - First and second chunks both start with a capital letter / beginning of a sentence.
+    - Some prefix of the second chunk's starting text is appended to the tail of
+      the first chunk (overlap duplication) without altering the second chunk's
+      own start.
+    - The duplicated region is not the entire first sentence of the second chunk
+      (boundary trimming logic should avoid huge duplication).
+    """
+    splitter = SentenceTextSplitter(max_tokens_per_section=40)
+    splitter.max_section_length = 300  # plenty of char room
+    # Craft many short sentences; ensure > 40 tokens total to create >1 chunk.
+    base_sentences = [
+        "Alpha beta gamma delta epsilon zeta.",
+        "Second sentence with some words.",
+        "Third sentence continues context.",
+        "Fourth sentence ends here.",
+    ]
+    # Repeat to induce splitting while preserving clear sentence boundaries.
+    text = " ".join(base_sentences * 2)
+    page = Page(page_num=0, offset=0, text=text)
+    chunks = list(splitter.split_pages([page]))
+    assert len(chunks) >= 2, f"Need >=2 chunks, got {len(chunks)}: {[c.text for c in chunks]}"
+    first, second = chunks[0], chunks[1]
+
+    # Heuristic: second chunk should start at start of a sentence (capital letter or quote)
+    second_start = second.text.lstrip()[:1]
+    assert second_start and (second_start.isupper() or second_start in "\"'"), (
+        "Second chunk does not appear to start at a sentence boundary",
+        second.text[:60],
+    )
+
+    # Find overlap: take short head of second chunk and ensure it's present at end of first chunk
+    head_probe = second.text.strip()[:25]
+    # Overlap trimming may remove punctuation; search a smaller portion if needed
+    head_probe_min = head_probe[:15]
+    tail_of_first = first.text[-200:]
+    assert any(p for p in [head_probe, head_probe_min] if p and p in tail_of_first), (
+        "Expected some head of second chunk to be appended to first chunk tail",
+        head_probe,
+        first.text[-120:],
+        second.text[:120],
+    )
+
+    # Ensure second chunk did not get the duplicated prefix prepended (i.e., it still starts with its natural beginning)
+    # We compare by checking that the second chunk does NOT start with tail of first (beyond acceptable small duplication)
+    # Accept a small duplication but reject if second start includes obvious mid-sentence continuation (lowercase after space)
+    assert not second.text.startswith(
+        first.text[-50:].lstrip()
+    ), "Second chunk unexpectedly begins with large slice of first chunk tail"
+
+    # Ensure first chunk ends with duplicated region rather than cutting mid-word (no alpha-alpha boundary inside appended probe)
+    boundary_ok = True
+    if tail_of_first and second.text:
+        if tail_of_first[-1].isalnum() and second.text[0].isalnum():
+            # If this occurs, safe_concat would have inserted a space earlier; treat as failure
+            boundary_ok = tail_of_first.endswith(" ")
+    assert boundary_ok, "First chunk tail and second chunk head joined mid-word without boundary handling"

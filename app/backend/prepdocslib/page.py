@@ -32,13 +32,16 @@ class Page:
 
 
 @dataclass
-class SplitPage:
-    """
-    A section of a page that has been split into a smaller chunk.
+class Chunk:
+    """Semantic chunk emitted by the splitter (may originate wholly within one page
+    or be the result of a cross-page merge / fragment shift).
 
     Attributes:
-        page_num (int): Page number (0-indexed)
-        text (str): The text of the section
+        page_num (int): Logical source page number (0-indexed) for the originating
+            portion of content. For merged content spanning pages we keep the earliest
+            contributing page number for stable attribution.
+        text (str): Textual content of the chunk.
+        images (list[ImageOnPage]): Images associated with this chunk, if any.
     """
 
     page_num: int
