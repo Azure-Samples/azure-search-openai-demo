@@ -1,6 +1,6 @@
 # RAG Chat: Text splitting algorithm overview
 
-This document explains the chunking logic implemented in the [data ingestion pipeline](./data_ingestion.md). The [splitter module](../backend/prepdocslib/textsplitter.py) contains both a `SimpleTextSplitter` (used only for JSON files) and a `SentenceTextSplitter` (used for all other formats). This document focuses on the `SentenceTextSplitter` since its approach is far more complicated, and it can be difficult to follow the code.
+This document explains the chunking logic implemented in the [data ingestion pipeline](./data_ingestion.md). The [splitter module](../app/backend/prepdocslib/textsplitter.py) contains both a `SimpleTextSplitter` (used only for JSON files) and a `SentenceTextSplitter` (used for all other formats). This document focuses on the `SentenceTextSplitter` since its approach is far more complicated, and it can be difficult to follow the code.
 
 * [High-level overview](#high-level-overview)
 * [Splitting algorithm](#splitting-algorithm)
@@ -81,7 +81,6 @@ Steps:
 7. Recurse until all pieces are within the token cap.
 
 > Note: The 10% overlap is computed on raw character length (`len(text)`), not tokens, so the duplicated region is 2 × floor(0.10 * character_count) characters. Token counts can differ across the two halves.
-
 > Clarification: Recursion is triggered only when the *span itself* exceeds the token cap. If adding a span to the current accumulator would overflow but the span alone fits, the accumulator is flushed—recursion is not used in that case.
 
 ```mermaid
