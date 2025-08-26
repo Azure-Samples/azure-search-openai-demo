@@ -23,16 +23,11 @@ The `SentenceTextSplitter` is designed to:
 
 The splitter includes these components:
 
-* Segmentation based on sentence-ending punctuation ( `. ! ?` plus CJK equivalents ).
-* An internal accumulator that appends sentence‑like spans until the next addition would breach character or token limits, then flushes a chunk. Default hard token cap is 500 per chunk.
-* Recursive subdivision of oversized individual spans using a boundary preference order:
-    1. Sentence-ending punctuation near the midpoint (scan within the central third of the span).
-    2. If no sentence boundary is found, a word break (space / punctuation from a configured list) near the midpoint to avoid mid‑word cuts.
-    3. If neither boundary type is found, we use a simpler midpoint split with 10% overlap (duplicated region appears at the end of the first part and the start of the second) to preserve continuity.
-* Figure handling is front‑loaded: figure blocks are extracted first and treated as atomic before any span splitting or recursion on plain text.
-* Cross‑page merge of text chunks when combined size fits within the allowed chunk size; otherwise a trailing sentence segment may be shifted forward to the next chunk.
-* A lightweight semantic overlap duplication pass (10% of max section length) that appends a trimmed prefix of the next chunk onto the end of the previous chunk (the next chunk itself is left unchanged). This is always attempted for adjacent non‑figure chunks on the same page and conditionally across a page boundary when the next chunk appears to be a direct lowercase continuation (and not a heading or figure). Figures are never overlapped/duplicated.
-* A safe concatenation rule inserts a space between merged page fragments only when both adjoining characters are alphanumeric and no existing whitespace or HTML tag boundary (`>`) already separates them.
+* Pre-processing of figures: figure blocks are extracted first and treated as atomic before any span splitting or recursion on plain text.
+* An accumulator that appends sentence‑like spans until the next addition would breach character or token limits, then flushes a chunk. Default hard token cap is 500 per chunk. Sentence segmentation is based on sentence-ending punctuation ( `. ! ?` plus CJK equivalents).
+* [Recursive subdivision of oversized individual spans](#recursive-handling-of-oversized-spans) based on first looking for a sentence boundary, then a word break, and falling back to a midpoint split with overlap.
+* [Cross‑page merge of text chunks](#cross-page-boundary-repair) when combined size fits within the allowed chunk size; otherwise a trailing sentence segment may be shifted forward to the next chunk.
+* [A pass that adds semantic overlap](#semantic-overlap) to each chunk by appending a trimmed prefix of the next chunk (10% of max section length) onto the end of the previous chunk. The next chunk itself is left unchanged. Figures are never overlapped or duplicated.
 
 ## Splitting algorithm
 
