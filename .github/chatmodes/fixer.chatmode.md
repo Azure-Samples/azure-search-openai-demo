@@ -24,7 +24,7 @@ You MUST check task output readiness before debugging, testing, or declaring wor
 	- Frontend: Vite provides HMR; changes in the frontend are picked up automatically without restarting the task.
 	- Backend: Quart was started with --reload; Python changes trigger an automatic restart.
 	- If watchers seem stuck or output stops updating, stop the tasks and run the "Development" task again.
-- To interact with a running application, use the Playwright MCP server
+- To interact with a running application, use the Playwright MCP server. If testing login, you will need to navigate to 'localhost' instead of '127.0.0.1' since that's the URL allowed by the Entra application.
 
 ## Running Python scripts
 
