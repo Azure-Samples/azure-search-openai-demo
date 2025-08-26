@@ -86,7 +86,16 @@
         "excludeCategory": "Ekskludér kategori",
         "useSemanticRanker": "Brug semantisk ranking til søgning",
         "useSemanticCaptions": "Brug semantiske billedtekster",
+        "useQueryRewriting": "Brug forespørgselsomskrivning til informationsgenfinding",
+        "reasoningEffort": "Ræsonnementsindsats",
+        "reasoningEffortOptions": {
+            "minimal": "Minimal (kun GPT-5)",
+            "low": "Lav",
+            "medium": "Medium",
+            "high": "Høj"
+        },
         "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
+        "useAgenticRetrieval": "Brug agentisk hentning",
         "useGPT4V": "Brug GPT vision model",
         "gpt4VInput": {
             "label": "GPT vision model input",
@@ -127,6 +136,8 @@
         "excludeCategory": "Angiver en kategori, der skal ekskluderes fra søgeresultaterne. Der er ingen kategorier i det standard datasæt.",
         "useSemanticReranker": "Aktiverer Azure AI Search semantisk omrangør, en model der rangerer søgeresultater baseret på semantisk lighed til brugerens forespørgsel.",
         "useSemanticCaptions": "Sender semantiske billedtekster til LLM'en i stedet for hele søgeresultatet. En semantisk billedtekst udtrækkes fra et søgeresultat under processen med semantisk rangering.",
+        "useQueryRewriting": "Aktiverer Azure AI Search forespørgselsomskrivning, en proces der ændrer brugerens forespørgsel for at forbedre søgeresultaterne. Kræver at semantisk ranking er aktiveret.",
+        "reasoningEffort": "Indstiller ræsonnementsindsatsen for sprogmodellen. Højere værdier resulterer i mere ræsonnement, men kan tage længere tid om at generere et svar. Standardværdien er medium.",
         "suggestFollowupQuestions": "Beder LLM'en om at foreslå opfølgende spørgsmål baseret på brugerens forespørgsel.",
         "useGPT4Vision": "Bruger GPT-4-Turbo med Vision til at generere svar baseret på billeder og tekst fra indekset.",
         "vectorFields": "Angiver hvilke indlejringsfelter i Azure AI Search Index, der vil blive søgt, enten både 'Billeder og tekst' indlejringer, 'Billeder' kun eller 'Tekst' kun.",
@@ -134,6 +145,7 @@
         "retrievalMode": "Indstiller søgemodus for forespørgslen i Azure AI Search. `Vektorer + Tekst (Hybrid)` bruger en kombination af vektorsøgning og fuldtekstsøgning, `Vektorer` bruger kun vektorsøgning, og `Tekst` bruger kun fuldtekstsøgning. Hybrid er generelt optimalt.",
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",
         "useOidSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers OID.",
-        "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper."
+        "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

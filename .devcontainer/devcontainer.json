@@ -4,7 +4,7 @@
     "features": {
         "ghcr.io/devcontainers/features/node:1": {
             // This should match the version of Node.js in Github Actions workflows
-            "version": "18",
+            "version": "22",
             "nodeGypDependencies": false
         },
         "ghcr.io/devcontainers/features/azure-cli:1.2.5": {},
@@ -17,7 +17,8 @@
                 "ms-azuretools.azure-dev",
                 "ms-azuretools.vscode-bicep",
                 "ms-python.python",
-                "esbenp.prettier-vscode"
+                "esbenp.prettier-vscode",
+                "DavidAnson.vscode-markdownlint"
             ]
         }
     },

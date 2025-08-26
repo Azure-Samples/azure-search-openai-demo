@@ -23,7 +23,7 @@ If you cannot answer using the sources below, say you don't know. Use below exam
 {% endif %}
 
 user:
-(EXAMPLE) What is the deductible for the employee plan for a visit to Overlake in Bellevue?
+What is the deductible for the employee plan for a visit to Overlake in Bellevue?
 
 Sources:
 info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.

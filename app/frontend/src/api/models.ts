@@ -10,20 +10,24 @@ export const enum GPT4VInput {
     Texts = "texts"
 }
 
-export const enum VectorFieldOptions {
-    Embedding = "embedding",
-    ImageEmbedding = "imageEmbedding",
-    Both = "both"
+export const enum VectorFields {
+    Embedding = "textEmbeddingOnly",
+    ImageEmbedding = "imageEmbeddingOnly",
+    TextAndImageEmbeddings = "textAndImageEmbeddings"
 }
 
 export type ChatAppRequestOverrides = {
     retrieval_mode?: RetrievalMode;
     semantic_ranker?: boolean;
     semantic_captions?: boolean;
+    query_rewriting?: boolean;
+    reasoning_effort?: string;
     include_category?: string;
     exclude_category?: string;
     seed?: number;
     top?: number;
+    max_subqueries?: number;
+    results_merge_strategy?: string;
     temperature?: number;
     minimum_search_score?: number;
     minimum_reranker_score?: number;
@@ -35,8 +39,9 @@ export type ChatAppRequestOverrides = {
     use_groups_security_filter?: boolean;
     use_gpt4v?: boolean;
     gpt4v_input?: GPT4VInput;
-    vector_fields: VectorFieldOptions[];
+    vector_fields: VectorFields;
     language: string;
+    use_agentic_retrieval: boolean;
 };
 
 export type ResponseMessage = {
@@ -47,7 +52,7 @@ export type ResponseMessage = {
 export type Thoughts = {
     title: string;
     description: any; // It can be any output from the api
-    props?: { [key: string]: string };
+    props?: { [key: string]: any };
 };
 
 export type ResponseContext = {
@@ -82,8 +87,12 @@ export type ChatAppRequest = {
 };
 
 export type Config = {
+    defaultReasoningEffort: string;
     showGPT4VOptions: boolean;
     showSemanticRankerOption: boolean;
+    showQueryRewritingOption: boolean;
+    showReasoningEffortOption: boolean;
+    streamingEnabled: boolean;
     showVectorOption: boolean;
     showUserUpload: boolean;
     showLanguagePicker: boolean;
@@ -92,6 +101,7 @@ export type Config = {
     showSpeechOutputAzure: boolean;
     showChatHistoryBrowser: boolean;
     showChatHistoryCosmos: boolean;
+    showAgenticRetrievalOption: boolean;
 };
 
 export type SimpleAPIResponse = {

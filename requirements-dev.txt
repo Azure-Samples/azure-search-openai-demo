@@ -10,6 +10,7 @@ pytest-cov
 pytest-playwright
 pytest-snapshot
 pre-commit
-locust
 pip-tools
 mypy==1.14.1
+diff_cover
+axe-playwright-python

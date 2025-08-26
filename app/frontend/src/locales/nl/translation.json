@@ -90,7 +90,16 @@
         "excludeCategory": "Categorie uitsluiten",
         "useSemanticRanker": "Semantische rangschikking gebruiken",
         "useSemanticCaptions": "Semantische bijschriften gebruiken",
+        "useQueryRewriting": "Gebruik de herformulering van zoekopdrachten om informatie op te halen",
+        "reasoningEffort": "Redeneerinspanning",
+        "reasoningEffortOptions": {
+            "minimal": "Minimaal (alleen GPT-5)",
+            "low": "Laag",
+            "medium": "Gemiddeld",
+            "high": "Hoog"
+        },
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
+        "useAgenticRetrieval": "Gebruik agentische retrieval",
         "useGPT4V": "GPT-visiemodel gebruiken",
         "gpt4VInput": {
             "label": "Invoer voor GPT-visiemodel",
@@ -141,6 +150,10 @@
             "Activeert de semantische ranker van Azure AI Search, een model dat zoekresultaten rangschikt op basis van semantische overeenkomst met de zoekopdracht.",
         "useSemanticCaptions":
             "Stuurt semantische bijschriften naar het taalmodel in plaats van het volledige zoekresultaat. Een semantisch bijschrift wordt geëxtraheerd voor ieder zoekresultaat tijdens het toepassen van de semantische ranker.",
+        "useQueryRewriting":
+            "Schakelt Azure AI Search query herformulering in, een proces dat de query van de gebruiker wijzigt om zoekresultaten te verbeteren. Vereist dat semantische rangschikking is ingeschakeld.",
+        "reasoningEffort":
+            "Stelt de redeneerinspanning voor het taalmodel in. Hogere waarden resulteren in meer redeneren, maar kunnen langer duren om een reactie te genereren. De standaard is gemiddeld.",
         "suggestFollowupQuestions": "Vraagt het taalmodel om vervolgvragen voor te stellen op basis van de vraag.",
         "useGPT4Vision": "Gebruikt GPT-4-Turbo met Vision om antwoorden te genereren op basis van afbeeldingen en tekst uit de index.",
         "vectorFields":
@@ -151,6 +164,7 @@
             "Stelt de zoekmodus in voor de Azure AI zoekopdracht. `Vectoren + Tekst (Hybride)` gebruikt vector en volledige tekst, `Vectoren` alleen de vector, en `Tekst` alleen de volledige tekst. Hybride is meestal optimaal.",
         "streamChat": "Geeft het antwoord in real-time weer in de chat terwijl het wordt gegenereerd.",
         "useOidSecurityFilter": "Filtert zoekresultaten op basis van de OID van de geauthenticeerde gebruiker.",
-        "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker."
+        "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

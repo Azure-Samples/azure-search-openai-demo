@@ -4,7 +4,7 @@ import logging
 import os
 import pathlib
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 import requests
 from azure.ai.evaluation import ContentSafetyEvaluator
@@ -47,10 +47,10 @@ def get_azure_credential():
 
 
 async def callback(
-    messages: List[Dict],
+    messages: list[dict],
     stream: bool = False,
     session_state: Any = None,
-    context: Optional[Dict[str, Any]] = None,
+    context: Optional[dict[str, Any]] = None,
     target_url: str = "http://localhost:50505/chat",
 ):
     messages_list = messages["messages"]

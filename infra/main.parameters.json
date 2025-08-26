@@ -80,6 +80,15 @@
     "searchServiceSemanticRankerLevel": {
       "value": "${AZURE_SEARCH_SEMANTIC_RANKER=free}"
     },
+    "searchServiceQueryRewriting": {
+      "value": "${AZURE_SEARCH_QUERY_REWRITING=false}"
+    },
+    "searchFieldNameEmbedding": {
+      "value": "${AZURE_SEARCH_FIELD_NAME_EMBEDDING=embedding3}"
+    },
+    "defaultReasoningEffort": {
+      "value": "${AZURE_OPENAI_REASONING_EFFORT=medium}"
+    },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
     },
@@ -160,6 +169,21 @@
     },
     "evalDeploymentCapacity":{
       "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY}"
+    },
+    "searchAgentModelName":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL}"
+    },
+    "searchAgentModelVersion":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION}"
+    },
+    "searchAgentDeploymentName": {
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT}"
+    },
+    "searchAgentDeploymentSkuName":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_SKU}"
+    },
+    "searchAgentDeploymentCapacity":{
+      "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_CAPACITY}"
     },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
@@ -290,6 +314,9 @@
     "usePrivateEndpoint": {
       "value": "${AZURE_USE_PRIVATE_ENDPOINT=false}"
     },
+    "useVpnGateway": {
+      "value": "${AZURE_USE_VPN_GATEWAY=false}"
+    },
     "bypass": {
       "value": "${AZURE_NETWORK_BYPASS=AzureServices}"
     },
@@ -325,6 +352,9 @@
     },
     "useAiProject": {
       "value": "${USE_AI_PROJECT=false}"
+    },
+    "useAgenticRetrieval": {
+      "value": "${USE_AGENTIC_RETRIEVAL=false}"
     }
   }
 }

@@ -19,26 +19,31 @@ on:
 
 jobs:
   test_package:
-    name: Test ${{ matrix.os }} Python ${{ matrix.python_version }}
+    name: Test ${{ matrix.os }} Python ${{ matrix.python_version }} Node ${{ matrix.node_version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-20.04", "windows-latest"]
+        os: ["ubuntu-latest", "windows-latest"]
         python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        node_version: ["20.14", "22"]
     steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
+          with:
+            # Fetch full history so diff-cover can compute a merge base with origin/main
+            fetch-depth: 0
         - name: Install uv
-          uses: astral-sh/setup-uv@v5
+          uses: astral-sh/setup-uv@v6
           with:
             enable-cache: true
             version: "0.4.20"
             cache-dependency-glob: "requirements**.txt"
             python-version: ${{ matrix.python_version }}
+            activate-environment: true
         - name: Setup node
           uses: actions/setup-node@v4
           with:
-            node-version: 18
+            node-version: ${{ matrix.node_version }}
         - name: Build frontend
           run: |
             cd ./app/frontend
@@ -59,7 +64,14 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: pytest -s -vv --cov --cov-fail-under=86
+          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=89
+        - name: Check diff coverage
+          if: runner.os != 'Windows'
+          run: |
+            BASE_REF="${{ github.base_ref }}"
+            if [ -z "$BASE_REF" ]; then BASE_REF="main"; fi
+            git fetch origin "$BASE_REF:refs/remotes/origin/$BASE_REF"
+            diff-cover coverage.xml --compare-branch="origin/$BASE_REF" --fail-under=90
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'

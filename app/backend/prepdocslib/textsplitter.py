@@ -1,6 +1,6 @@
 import logging
 from abc import ABC
-from typing import Generator, List
+from collections.abc import Generator
 
 import tiktoken
 
@@ -16,7 +16,7 @@ class TextSplitter(ABC):
     :return: A generator of SplitPage
     """
 
-    def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
+    def split_pages(self, pages: list[Page]) -> Generator[SplitPage, None, None]:
         if False:
             yield  # pragma: no cover - this is necessary for mypy to type check
 
@@ -133,7 +133,7 @@ class SentenceTextSplitter(TextSplitter):
             yield from self.split_page_by_max_tokens(page_num, first_half)
             yield from self.split_page_by_max_tokens(page_num, second_half)
 
-    def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
+    def split_pages(self, pages: list[Page]) -> Generator[SplitPage, None, None]:
         def find_page(offset):
             num_pages = len(pages)
             for i in range(num_pages - 1):
@@ -216,7 +216,7 @@ class SimpleTextSplitter(TextSplitter):
     def __init__(self, max_object_length: int = 1000):
         self.max_object_length = max_object_length
 
-    def split_pages(self, pages: List[Page]) -> Generator[SplitPage, None, None]:
+    def split_pages(self, pages: list[Page]) -> Generator[SplitPage, None, None]:
         all_text = "".join(page.text for page in pages)
         if len(all_text.strip()) == 0:
             return

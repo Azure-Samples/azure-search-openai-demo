@@ -90,7 +90,16 @@
         "excludeCategory": "Escludi categoria",
         "useSemanticRanker": "Usa il reranker semantico",
         "useSemanticCaptions": "Usa didascalie semantiche",
+        "useQueryRewriting": "Usa la riscrittura delle query per il recupero",
+        "reasoningEffort": "Sforzo di ragionamento",
+        "reasoningEffortOptions": {
+            "minimal": "Minimo (solo GPT-5)",
+            "low": "Basso",
+            "medium": "Medio",
+            "high": "Alto"
+        },
         "useSuggestFollowupQuestions": "Suggerisci domande di follow-up",
+        "useAgenticRetrieval": "Usa il recupero agentico",
         "useGPT4V": "Usa il modello GPT Vision",
         "gpt4VInput": {
             "label": "Input del modello GPT Vision",
@@ -142,6 +151,10 @@
             "Abilita il ranking semantico di Azure AI Search, un modello che riordina i risultati di ricerca in base alla somiglianza semantica con la query dell'utente.",
         "useSemanticCaptions":
             "Invia didascalie semantiche all'LLM invece del risultato di ricerca completo. Una didascalia semantica è estratta da un risultato di ricerca durante il processo di ranking semantico.",
+        "useQueryRewriting":
+            "Abilita la riscrittura delle query di Azure AI Search, un processo che modifica la query dell'utente per migliorare i risultati di ricerca. Richiede che il reranker semantico sia abilitato.",
+        "reasoningEffort":
+            "Imposta lo sforzo di ragionamento per l'LLM. Valori più alti comportano un maggiore ragionamento, ma potrebbero richiedere più tempo per generare una risposta. Il valore predefinito è medio.",
         "suggestFollowupQuestions": "Chiede all'LLM di suggerire domande di follow-up in base alla query dell'utente.",
         "useGPT4Vision": "Utilizza GPT-4-Turbo con Vision per generare risposte basate su immagini e testo dell'indice.",
         "vectorFields":
@@ -152,6 +165,7 @@
             "Imposta la modalità di recupero per la query Azure AI Search. Vettori + Testo (Ibrido) utilizza una combinazione di ricerca vettoriale e ricerca full-text, Vettori utilizza solo la ricerca vettoriale, e Testo utilizza solo la ricerca full-text. Ibrido è generalmente ottimale.",
         "streamChat": "Trasmette in streaming la risposta all'interfaccia utente della chat man mano che viene generata.",
         "useOidSecurityFilter":"Filtra i risultati di ricerca in base all'OID dell'utente autenticato.",
-        "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato."
+        "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato.",
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
     }
 }

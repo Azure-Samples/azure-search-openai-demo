@@ -4,7 +4,7 @@ import { TextField, ITextFieldProps, Checkbox, ICheckboxProps, Dropdown, IDropdo
 import { HelpCallout } from "../HelpCallout";
 import { GPT4VSettings } from "../GPT4VSettings";
 import { VectorSettings } from "../VectorSettings";
-import { RetrievalMode, VectorFieldOptions, GPT4VInput } from "../../api";
+import { RetrievalMode, VectorFields, GPT4VInput } from "../../api";
 import styles from "./Settings.module.css";
 
 // Add type for onRenderLabel
@@ -14,18 +14,24 @@ export interface SettingsProps {
     promptTemplate: string;
     temperature: number;
     retrieveCount: number;
+    maxSubqueryCount: number;
+    resultsMergeStrategy: string;
     seed: number | null;
     minimumSearchScore: number;
     minimumRerankerScore: number;
     useSemanticRanker: boolean;
     useSemanticCaptions: boolean;
+    useQueryRewriting: boolean;
+    reasoningEffort: string;
     excludeCategory: string;
     includeCategory: string;
     retrievalMode: RetrievalMode;
     useGPT4V: boolean;
     gpt4vInput: GPT4VInput;
-    vectorFieldList: VectorFieldOptions[];
+    vectorFields: VectorFields;
     showSemanticRankerOption: boolean;
+    showQueryRewritingOption: boolean;
+    showReasoningEffortOption: boolean;
     showGPT4VOptions: boolean;
     showVectorOption: boolean;
     useOidSecurityFilter: boolean;
@@ -35,29 +41,38 @@ export interface SettingsProps {
     requireAccessControl: boolean;
     className?: string;
     onChange: (field: string, value: any) => void;
+    streamingEnabled?: boolean; // Only used in chat
     shouldStream?: boolean; // Only used in Chat
     useSuggestFollowupQuestions?: boolean; // Only used in Chat
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
     showSuggestFollowupQuestions?: boolean;
+    showAgenticRetrievalOption: boolean;
+    useAgenticRetrieval: boolean;
 }
 
 export const Settings = ({
     promptTemplate,
     temperature,
     retrieveCount,
+    maxSubqueryCount,
+    resultsMergeStrategy,
     seed,
     minimumSearchScore,
     minimumRerankerScore,
     useSemanticRanker,
     useSemanticCaptions,
+    useQueryRewriting,
+    reasoningEffort,
     excludeCategory,
     includeCategory,
     retrievalMode,
     useGPT4V,
     gpt4vInput,
-    vectorFieldList,
+    vectorFields,
     showSemanticRankerOption,
+    showQueryRewritingOption,
+    showReasoningEffortOption,
     showGPT4VOptions,
     showVectorOption,
     useOidSecurityFilter,
@@ -67,11 +82,14 @@ export const Settings = ({
     requireAccessControl,
     className,
     onChange,
+    streamingEnabled,
     shouldStream,
     useSuggestFollowupQuestions,
     promptTemplatePrefix,
     promptTemplateSuffix,
-    showSuggestFollowupQuestions
+    showSuggestFollowupQuestions,
+    showAgenticRetrievalOption,
+    useAgenticRetrieval
 }: SettingsProps) => {
     const { t } = useTranslation();
 
@@ -82,18 +100,25 @@ export const Settings = ({
     const temperatureFieldId = useId("temperatureField");
     const seedId = useId("seed");
     const seedFieldId = useId("seedField");
+    const agenticRetrievalId = useId("agenticRetrieval");
+    const agenticRetrievalFieldId = useId("agenticRetrievalField");
     const searchScoreId = useId("searchScore");
     const searchScoreFieldId = useId("searchScoreField");
     const rerankerScoreId = useId("rerankerScore");
     const rerankerScoreFieldId = useId("rerankerScoreField");
     const retrieveCountId = useId("retrieveCount");
     const retrieveCountFieldId = useId("retrieveCountField");
+    const maxSubqueryCountId = useId("maxSubqueryCount");
+    const maxSubqueryCountFieldId = useId("maxSubqueryCountField");
+    const resultsMergeStrategyFieldId = useId("resultsMergeStrategy");
     const includeCategoryId = useId("includeCategory");
     const includeCategoryFieldId = useId("includeCategoryField");
     const excludeCategoryId = useId("excludeCategory");
     const excludeCategoryFieldId = useId("excludeCategoryField");
     const semanticRankerId = useId("semanticRanker");
     const semanticRankerFieldId = useId("semanticRankerField");
+    const queryRewritingFieldId = useId("queryRewritingField");
+    const reasoningEffortFieldId = useId("reasoningEffortField");
     const semanticCaptionsId = useId("semanticCaptions");
     const semanticCaptionsFieldId = useId("semanticCaptionsField");
     const useOidSecurityFilterId = useId("useOidSecurityFilter");
@@ -148,18 +173,31 @@ export const Settings = ({
                 onRenderLabel={props => renderLabel(props, seedId, seedFieldId, t("helpTexts.seed"))}
             />
 
-            <TextField
-                id={searchScoreFieldId}
-                className={styles.settingsSeparator}
-                label={t("labels.minimumSearchScore")}
-                type="number"
-                min={0}
-                step={0.01}
-                defaultValue={minimumSearchScore.toString()}
-                onChange={(_ev, val) => onChange("minimumSearchScore", parseFloat(val || "0"))}
-                aria-labelledby={searchScoreId}
-                onRenderLabel={props => renderLabel(props, searchScoreId, searchScoreFieldId, t("helpTexts.searchScore"))}
-            />
+            {showAgenticRetrievalOption && (
+                <Checkbox
+                    id={agenticRetrievalFieldId}
+                    className={styles.settingsSeparator}
+                    checked={useAgenticRetrieval}
+                    label={t("labels.useAgenticRetrieval")}
+                    onChange={(_ev, checked) => onChange("useAgenticRetrieval", !!checked)}
+                    aria-labelledby={agenticRetrievalId}
+                    onRenderLabel={props => renderLabel(props, agenticRetrievalId, agenticRetrievalFieldId, t("helpTexts.useAgenticRetrieval"))}
+                />
+            )}
+            {!useAgenticRetrieval && !useGPT4V && (
+                <TextField
+                    id={searchScoreFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.minimumSearchScore")}
+                    type="number"
+                    min={0}
+                    step={0.01}
+                    defaultValue={minimumSearchScore.toString()}
+                    onChange={(_ev, val) => onChange("minimumSearchScore", parseFloat(val || "0"))}
+                    aria-labelledby={searchScoreId}
+                    onRenderLabel={props => renderLabel(props, searchScoreId, searchScoreFieldId, t("helpTexts.searchScore"))}
+                />
+            )}
 
             {showSemanticRankerOption && (
                 <TextField
@@ -174,6 +212,39 @@ export const Settings = ({
                     onChange={(_ev, val) => onChange("minimumRerankerScore", parseFloat(val || "0"))}
                     aria-labelledby={rerankerScoreId}
                     onRenderLabel={props => renderLabel(props, rerankerScoreId, rerankerScoreFieldId, t("helpTexts.rerankerScore"))}
+                />
+            )}
+
+            {showAgenticRetrievalOption && useAgenticRetrieval && (
+                <TextField
+                    id={maxSubqueryCountFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.maxSubqueryCount")}
+                    type="number"
+                    min={2}
+                    max={40}
+                    defaultValue={maxSubqueryCount.toString()}
+                    onChange={(_ev, val) => onChange("maxSubqueryCount", parseInt(val || "10"))}
+                    aria-labelledby={maxSubqueryCountId}
+                    onRenderLabel={props => renderLabel(props, maxSubqueryCountId, maxSubqueryCountFieldId, t("helpTexts.maxSubqueryCount"))}
+                />
+            )}
+
+            {showAgenticRetrievalOption && useAgenticRetrieval && (
+                <Dropdown
+                    id={resultsMergeStrategyFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.resultsMergeStrategy")}
+                    selectedKey={resultsMergeStrategy}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
+                        onChange("resultsMergeStrategy", option?.key)
+                    }
+                    aria-labelledby={includeCategoryId}
+                    options={[
+                        { key: "interleaved", text: t("labels.resultsMergeStrategyOptions.interleaved") },
+                        { key: "descending", text: t("labels.resultsMergeStrategyOptions.descending") }
+                    ]}
+                    onRenderLabel={props => renderLabel(props, includeCategoryId, includeCategoryFieldId, t("helpTexts.resultsMergeStrategy"))}
                 />
             )}
 
@@ -214,7 +285,7 @@ export const Settings = ({
                 onRenderLabel={props => renderLabel(props, excludeCategoryId, excludeCategoryFieldId, t("helpTexts.excludeCategory"))}
             />
 
-            {showSemanticRankerOption && (
+            {showSemanticRankerOption && !useAgenticRetrieval && (
                 <>
                     <Checkbox
                         id={semanticRankerFieldId}
@@ -237,6 +308,40 @@ export const Settings = ({
                         onRenderLabel={props => renderLabel(props, semanticCaptionsId, semanticCaptionsFieldId, t("helpTexts.useSemanticCaptions"))}
                     />
                 </>
+            )}
+
+            {showQueryRewritingOption && !useAgenticRetrieval && (
+                <>
+                    <Checkbox
+                        id={queryRewritingFieldId}
+                        className={styles.settingsSeparator}
+                        checked={useQueryRewriting}
+                        disabled={!useSemanticRanker}
+                        label={t("labels.useQueryRewriting")}
+                        onChange={(_ev, checked) => onChange("useQueryRewriting", !!checked)}
+                        aria-labelledby={queryRewritingFieldId}
+                        onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.useQueryRewriting"))}
+                    />
+                </>
+            )}
+
+            {showReasoningEffortOption && (
+                <Dropdown
+                    id={reasoningEffortFieldId}
+                    selectedKey={reasoningEffort}
+                    label={t("labels.reasoningEffort")}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
+                        onChange("reasoningEffort", option?.key || "")
+                    }
+                    aria-labelledby={reasoningEffortFieldId}
+                    options={[
+                        { key: "minimal", text: t("labels.reasoningEffortOptions.minimal") },
+                        { key: "low", text: t("labels.reasoningEffortOptions.low") },
+                        { key: "medium", text: t("labels.reasoningEffortOptions.medium") },
+                        { key: "high", text: t("labels.reasoningEffortOptions.high") }
+                    ]}
+                    onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
+                />
             )}
 
             {useLogin && (
@@ -266,7 +371,7 @@ export const Settings = ({
                 </>
             )}
 
-            {showGPT4VOptions && (
+            {showGPT4VOptions && !useAgenticRetrieval && (
                 <GPT4VSettings
                     gpt4vInputs={gpt4vInput}
                     isUseGPT4V={useGPT4V}
@@ -275,11 +380,12 @@ export const Settings = ({
                 />
             )}
 
-            {showVectorOption && (
+            {showVectorOption && !useAgenticRetrieval && (
                 <VectorSettings
                     defaultRetrievalMode={retrievalMode}
+                    defaultVectorFields={vectorFields}
                     showImageOptions={useGPT4V && showGPT4VOptions}
-                    updateVectorFields={val => onChange("vectorFieldList", val)}
+                    updateVectorFields={val => onChange("vectorFields", val)}
                     updateRetrievalMode={val => onChange("retrievalMode", val)}
                 />
             )}
@@ -288,6 +394,7 @@ export const Settings = ({
             {shouldStream !== undefined && (
                 <Checkbox
                     id={shouldStreamFieldId}
+                    disabled={!streamingEnabled}
                     className={styles.settingsSeparator}
                     checked={shouldStream}
                     label={t("labels.shouldStream")}

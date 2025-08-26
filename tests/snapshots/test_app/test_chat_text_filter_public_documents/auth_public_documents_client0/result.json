@@ -1,10 +1,12 @@
 {
     "context": {
         "data_points": {
+            "images": null,
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
             ]
         },
+        "followup_questions": null,
         "thoughts": [
             {
                 "description": [
@@ -35,7 +37,13 @@
                 ],
                 "props": {
                     "deployment": "test-chatgpt",
-                    "model": "gpt-35-turbo"
+                    "model": "gpt-4.1-mini",
+                    "token_usage": {
+                        "completion_tokens": 896,
+                        "prompt_tokens": 23,
+                        "reasoning_tokens": 0,
+                        "total_tokens": 919
+                    }
                 },
                 "title": "Prompt to generate search query"
             },
@@ -44,6 +52,7 @@
                 "props": {
                     "filter": "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))",
                     "top": 3,
+                    "use_query_rewriting": false,
                     "use_semantic_captions": false,
                     "use_semantic_ranker": false,
                     "use_text_search": true,
@@ -63,13 +72,12 @@
                         ],
                         "category": null,
                         "content": "There is a whistleblower policy.",
-                        "embedding": null,
                         "groups": null,
                         "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
-                        "imageEmbedding": null,
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": 0.03279569745063782,
+                        "search_agent_query": null,
                         "sourcefile": "Benefit_Options.pdf",
                         "sourcepage": "Benefit_Options-2.pdf"
                     }
@@ -90,7 +98,13 @@
                 ],
                 "props": {
                     "deployment": "test-chatgpt",
-                    "model": "gpt-35-turbo"
+                    "model": "gpt-4.1-mini",
+                    "token_usage": {
+                        "completion_tokens": 896,
+                        "prompt_tokens": 23,
+                        "reasoning_tokens": 0,
+                        "total_tokens": 919
+                    }
                 },
                 "title": "Prompt to generate answer"
             }

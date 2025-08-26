@@ -2,14 +2,15 @@ import json
 import os
 import socket
 import time
+from collections.abc import Generator
 from contextlib import closing
 from multiprocessing import Process
-from typing import Generator
 from unittest import mock
 
 import pytest
 import requests
 import uvicorn
+from axe_playwright_python.sync_playwright import Axe
 from playwright.sync_api import Page, Route, expect
 
 import app
@@ -56,7 +57,9 @@ def run_server(port: int):
             "AZURE_SPEECH_SERVICE_ID": "test-id",
             "AZURE_SPEECH_SERVICE_LOCATION": "eastus",
             "AZURE_OPENAI_SERVICE": "test-openai-service",
-            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-35-turbo",
+            "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4.1-mini",
+            "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+            "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
         },
         clear=True,
     ):
@@ -107,6 +110,10 @@ def test_chat(sized_page: Page, live_server_url: str):
     expect(page.get_by_role("heading", name="Chat with your data")).to_be_visible()
     expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
+
+    # Check accessibility of page in initial state
+    results = Axe().run(page)
+    assert results.violations_count == 0, results.generate_report()
 
     # Ask a question and wait for the message to appear
     page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
@@ -216,7 +223,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
         overrides = route.request.post_data_json["context"]["overrides"]
         assert overrides["gpt4v_input"] == "images"
         assert overrides["use_gpt4v"] is True
-        assert overrides["vector_fields"] == ["imageEmbedding"]
+        assert overrides["vector_fields"] == "imageEmbeddingOnly"
 
         # Read the JSON from our snapshot results and return as the response
         f = open("tests/snapshots/test_app/test_chat_text/client0/result.json")
@@ -232,6 +239,7 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
                     "showSemanticRankerOption": True,
                     "showUserUpload": False,
                     "showVectorOption": True,
+                    "streamingEnabled": True,
                 }
             ),
             status=200,
@@ -246,7 +254,9 @@ def test_chat_customization_gpt4v(page: Page, live_server_url: str):
 
     # Customize the GPT-4-vision settings
     page.get_by_role("button", name="Developer settings").click()
-    page.get_by_text("Use GPT vision model").click()
+    # Check that "Use GPT vision model" is visible and selected
+    expect(page.get_by_text("Use GPT vision model")).to_be_visible()
+    expect(page.get_by_role("checkbox", name="Use GPT vision model")).to_be_checked()
     page.get_by_text("Images and text").click()
     page.get_by_role("option", name="Images", exact=True).click()
     page.get_by_text("Text and Image embeddings").click()

@@ -49,6 +49,8 @@ jobs:
       AZURE_SEARCH_QUERY_LANGUAGE: ${{ vars.AZURE_SEARCH_QUERY_LANGUAGE }}
       AZURE_SEARCH_QUERY_SPELLER: ${{ vars.AZURE_SEARCH_QUERY_SPELLER }}
       AZURE_SEARCH_SEMANTIC_RANKER: ${{ vars.AZURE_SEARCH_SEMANTIC_RANKER }}
+      AZURE_SEARCH_QUERY_REWRITING: ${{ vars.AZURE_SEARCH_QUERY_REWRITING }}
+      AZURE_SEARCH_FIELD_NAME_EMBEDDING: ${{ vars.AZURE_SEARCH_FIELD_NAME_EMBEDDING }}
       AZURE_STORAGE_ACCOUNT: ${{ vars.AZURE_STORAGE_ACCOUNT }}
       AZURE_STORAGE_RESOURCE_GROUP: ${{ vars.AZURE_STORAGE_RESOURCE_GROUP }}
       AZURE_STORAGE_SKU: ${{ vars.AZURE_STORAGE_SKU }}
@@ -59,6 +61,7 @@ jobs:
       AZURE_OPENAI_CHATGPT_DEPLOYMENT: ${{ vars.AZURE_OPENAI_CHATGPT_DEPLOYMENT }}
       AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY }}
       AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION }}
+      AZURE_OPENAI_REASONING_EFFORT: ${{ vars.AZURE_OPENAI_REASONING_EFFORT }}
       AZURE_OPENAI_EMB_MODEL_NAME: ${{ vars.AZURE_OPENAI_EMB_MODEL_NAME }}
       AZURE_OPENAI_EMB_DEPLOYMENT: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT }}
       AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY }}
@@ -115,10 +118,10 @@ jobs:
       USE_AI_PROJECT: ${{ vars.USE_AI_PROJECT }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install azd
-        uses: Azure/setup-azd@v2.1.0
+        uses: Azure/setup-azd@v2.2.0
 
       - name: Install Nodejs
         uses: actions/setup-node@v4
@@ -126,27 +129,12 @@ jobs:
           node-version: 18
 
       - name: Log in with Azure (Federated Credentials)
-        if: ${{ env.AZURE_CLIENT_ID != '' }}
         run: |
           azd auth login `
             --client-id "$Env:AZURE_CLIENT_ID" `
             --federated-credential-provider "github" `
             --tenant-id "$Env:AZURE_TENANT_ID"
         shell: pwsh
-
-      - name: Log in with Azure (Client Credentials)
-        if: ${{ env.AZURE_CREDENTIALS != '' }}
-        run: |
-          $info = $Env:AZURE_CREDENTIALS | ConvertFrom-Json -AsHashtable;
-          Write-Host "::add-mask::$($info.clientSecret)"
-
-          azd auth login `
-            --client-id "$($info.clientId)" `
-            --client-secret "$($info.clientSecret)" `
-            --tenant-id "$($info.tenantId)"
-        shell: pwsh
-        env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Provision Infrastructure
         run: azd provision --no-prompt
