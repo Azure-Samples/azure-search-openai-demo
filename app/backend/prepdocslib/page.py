@@ -34,7 +34,7 @@ class Page:
 @dataclass
 class Chunk:
     """Semantic chunk emitted by the splitter (may originate wholly within one page
-    or be the result of a cross-page merge / fragment shift).
+    or be the result of a cross-page merge / trailing fragment carry-forward).
 
     Attributes:
         page_num (int): Logical source page number (0-indexed) for the originating

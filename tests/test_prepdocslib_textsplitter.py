@@ -319,7 +319,7 @@ def test_recursive_split_uses_sentence_boundary():
 
 
 def test_cross_page_merge_fragment_shift_no_sentence_end():
-    """Cross-page merge failing due to size triggers fragment shift when previous chunk has no sentence ending."""
+    """Cross-page merge failing due to size triggers trailing fragment carry-forward when previous chunk has no sentence ending."""
     splitter = SentenceTextSplitter(max_tokens_per_section=40)
     splitter.max_section_length = 120
     # Previous page produces one chunk without punctuation so last_end = -1 (fragment_start=0).
@@ -330,13 +330,13 @@ def test_cross_page_merge_fragment_shift_no_sentence_end():
     # Ensure we did NOT merge whole (would have uppercase W then lowercase c joined) but did shift some fragment
     joined_texts = "||".join(c.text for c in chunks)
     assert "word word" in joined_texts  # previous content still present somewhere
-    # Because fragment shift moves everything (no sentence end) previous chunk should become None and its content redistributed
+    # Because trailing fragment carry-forward moves everything (no sentence end) previous chunk should become None and its content redistributed
     # Expect at least one chunk starting with a moved fragment part 'word'
     assert any(c.text.startswith("word") for c in chunks)
 
 
 def test_cross_page_merge_fragment_shift_with_sentence_end_and_shortening():
-    """Cross-page merge fragment shift path where a fragment contains an internal sentence boundary allowing shortening."""
+    """Cross-page merge trailing fragment carry-forward path where a fragment contains an internal sentence boundary allowing shortening."""
     splitter = SentenceTextSplitter(max_tokens_per_section=60)
     splitter.max_section_length = 120
     # Previous chunk ends mid-sentence but contains an earlier full stop to anchor retained portion
@@ -347,7 +347,7 @@ def test_cross_page_merge_fragment_shift_with_sentence_end_and_shortening():
     )
     # Force previous page to emit as single chunk
     page1 = Page(page_num=0, offset=0, text=prev_text)
-    # Next page begins lowercase continuation so merge attempted then fragment shift triggered
+    # Next page begins lowercase continuation so merge attempted then trailing fragment carry-forward triggered
     page2 = Page(page_num=1, offset=0, text="continuation that keeps going with additional trailing words.")
     chunks = list(splitter.split_pages([page1, page2]))
     # We expect retained intro sentence as its own (ends with '.') and a following chunk starting with moved fragment
@@ -355,7 +355,7 @@ def test_cross_page_merge_fragment_shift_with_sentence_end_and_shortening():
     moved_fragment_present = any(
         c.text.strip().startswith("Second part") or c.text.strip().startswith("Second part that") for c in chunks
     )
-    assert retained_present, "Retained portion after fragment shift missing"
+    assert retained_present, "Retained portion after trailing fragment carry-forward missing"
     assert moved_fragment_present, "Moved (shortened) fragment not found in any chunk"
 
 
@@ -491,7 +491,7 @@ def test_recursive_split_overlap_fallback_when_no_word_breaks():
 
 
 def test_fragment_shift_token_limit_fits_false():
-    """Trigger fragment shift where fits() fails solely due to token limit (not char length) and trimming loop runs."""
+    """Trigger trailing fragment carry-forward where fits() fails solely due to token limit (not char length) and trimming loop runs."""
     # Configure large char allowance so only token constraint matters.
     splitter = SentenceTextSplitter(max_tokens_per_section=50)
     splitter.max_section_length = 5000  # very high to avoid char-based fits() failure
@@ -565,10 +565,10 @@ def test_normalization_trims_trailing_space_overflow():
 
 
 def test_cross_page_fragment_shortening_path():
-    """Exercise fragment shift after a complete sentence; ensures part of trailing fragment is moved and retained sentence stays."""
+    """Exercise trailing fragment carry-forward after a complete sentence; ensures part of trailing fragment is moved and retained sentence stays."""
     splitter = SentenceTextSplitter(max_tokens_per_section=55)
     splitter.max_section_length = 120
-    # Previous ends with two sentences, second incomplete to encourage fragment shift
+    # Previous ends with two sentences, second incomplete to encourage trailing fragment carry-forward
     prev = "Complete sentence one. Asecondpartthatshouldbeshortened because it is long"
     page1 = Page(page_num=0, offset=0, text=prev)
     nxt = "continues here with lowercase start."  # triggers merge attempt (lowercase)

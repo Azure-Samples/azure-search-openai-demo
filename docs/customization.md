@@ -50,8 +50,10 @@ If you followed the instructions in [the multimodal guide](multimodal.md) to ena
 there are several differences in the chat approach:
 
 1. **Query rewriting**: Unchanged.
-2. **Search**: For this step, it also calculates a vector embedding for the user question using [the Azure AI Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the image embedding fields in the indexed documents. For each matching document, it downloads each associated image from Azure Blob Storage and converts it to a base 64 encoding.
+2. **Search**: For this step, it calculates a vector embedding for the user question using [the Azure AI Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the image embedding fields in the indexed documents. For each matching document, it downloads each associated image from Azure Blob Storage and converts it to a base 64 encoding.
 3. **Answering**: When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the multimodal LLM. The model generates a response that includes citations to the images, and the UI renders the images when a citation is clicked.
+
+The settings can be customized to disable calculating the image vector embeddings or to disable sending image inputs to the LLM, if desired.
 
 #### Ask approach
 
@@ -69,6 +71,8 @@ there are several differences in the ask approach:
 
 1. **Search**: For this step, it also calculates a vector embedding for the user question using [the Azure AI Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the image embedding fields in the indexed documents. For each matching document, it downloads each associated image from Azure Blob Storage and converts it to a base 64 encoding.
 2. **Answering**: When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the multimodal LLM. The model generates a response that includes citations to the images, and the UI renders the images when a citation is clicked.
+
+The settings can be customized to disable calculating the image vector embeddings or to disable sending image inputs to the LLM, if desired.
 
 #### Making settings overrides permanent
 

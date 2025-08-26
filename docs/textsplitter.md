@@ -17,7 +17,7 @@ The `SentenceTextSplitter` is designed to:
 1. Produce semantically coherent chunks that align with sentence boundaries.
 2. Respect a maximum token count per chunk (hard limit of 500 tokens) plus a soft character length guideline (default 1,000 characters with a 20% overflow tolerance for merges / normalization). Size limit does not apply to figure blocks (chunks containing a `<figure>` may exceed the token limit; figures are never split).
 3. Keep structural figure placeholders (`<figure>...</figure>`) atomic: never split internally and always attach them to preceding accumulated text if any exists.
-4. Repair mid‑sentence page breaks when safe via merge or fragment shift heuristics while enforcing token + soft character budgets.
+4. Repair mid‑sentence page breaks when possible, while enforcing token + soft character budgets.
 5. Avoid empty outputs or unclosed figure tags.
 6. Perform a light normalization pass (trim only minimal leading/trailing whitespace that would cause small overflows; do not modify figure chunks).
 
@@ -28,9 +28,9 @@ The splitter includes these components:
 * Recursive subdivision of oversized individual spans using a boundary preference order:
     1. Sentence-ending punctuation near the midpoint (scan within the central third of the span).
     2. If no sentence boundary is found, a word break (space / punctuation from a configured list) near the midpoint to avoid mid‑word cuts.
-    3. If neither boundary type is found, a symmetric 10% overlap midpoint split (duplicated region appears at the end of the first part and the start of the second) preserves continuity.
+    3. If neither boundary type is found, we use a simpler midpoint split with 10% overlap (duplicated region appears at the end of the first part and the start of the second) to preserve continuity.
 * Figure handling is front‑loaded: figure blocks are extracted first and treated as atomic before any span splitting or recursion on plain text.
-* Cross‑page merge of text when all safety checks pass (prior chunk ends mid‑sentence, next chunk starts lowercase, not a heading, no early figure) and combined size fits both token and soft char budgets; otherwise a fragment shift may move the trailing unfinished clause forward.
+* Cross‑page merge of text chunks when combined size fits within the allowed chunk size; otherwise a trailing sentence segment may be shifted forward to the next chunk.
 * A lightweight semantic overlap duplication pass (10% of max section length) that appends a trimmed prefix of the next chunk onto the end of the previous chunk (the next chunk itself is left unchanged). This is always attempted for adjacent non‑figure chunks on the same page and conditionally across a page boundary when the next chunk appears to be a direct lowercase continuation (and not a heading or figure). Figures are never overlapped/duplicated.
 * A safe concatenation rule inserts a space between merged page fragments only when both adjoining characters are alphanumeric and no existing whitespace or HTML tag boundary (`>`) already separates them.
 
@@ -100,15 +100,31 @@ flowchart TD
 
 ## Cross-page boundary repair
 
-To mitigate artificial breaks introduced by page segmentation, the algorithm attempts a merge between the trailing chunk of the previous page and the first chunk of the current page when ALL of the following hold:
+Page boundaries frequently slice a sentence in half, due to the way PDFs and other document formats handle text layout. The repair phase tries to re‑stitch this so downstream retrieval does not see an artificial break.
 
-* Prior chunk does not end with a recognized sentence terminator.
-* New chunk begins with a lowercase letter (suggesting continuation), and does not resemble a heading or list.
-* Combined size (after tentative merge) fits the token cap (500) and soft char budget (<= 1.2 * 1000 chars after normalization); if not, a fragment shift may relocate the unfinished trailing clause to the next chunk instead.
-* The first part of the new chunk is not an immediate `<figure>`.
-* Safe concatenation inserts a single space only if the last character of the prior chunk and the first character of the next are both alphanumeric and there is no existing whitespace boundary (nor a closing `>` tag at the join). Otherwise the texts are directly concatenated.
+There are two strategies, attempted in order:
 
-If merging would exceed limits, a secondary strategy attempts a "fragment shift": locate the last sentence-ending punctuation in the previous chunk, treat everything after it as a trailing fragment, and prepend as much of that fragment to the next chunk as budgets allow (splitting or trimming further if necessary). Residual fragment pieces are inserted as separate chunks if still non-empty.
+1. Full merge (ideal path)
+2. Trailing sentence fragment carry‑forward
+
+### 1. Full merge
+
+We first try to simply glue the last chunk of Page N to the first chunk of Page N+1. This is only allowed when ALL of these hold:
+
+* Previous chunk does not already end in sentence‑terminating punctuation.
+* First new chunk starts with a lowercase letter (heuristic for continuation), is not detected as a heading / list, and does not begin with a `<figure>`.
+* The concatenated text fits BOTH: token limit (500) AND soft length budget (<= 1.2 × 1000 chars after normalization).
+
+If all pass, the two chunks are merged into one, with an injected whitespace between them if necessary.
+
+### 2. Trailing sentence fragment carry‑forward
+
+If a full merge would violate limits, we do a more surgical repair: pull only the dangling sentence fragment from the end of the previous chunk and move it forward so it reunites with its continuation at the start of the next page.
+
+Key differences from semantic overlap:
+
+* Carry‑forward MOVES text (no duplication except any recursive split overlap that may occur later). Semantic overlap DUPLICATES a small preview from the next chunk.
+* Carry‑forward only activates across a page boundary when a full merge is too large. Semantic overlap is routine and size‑capped.
 
 ## Chunk normalization
 
@@ -255,7 +271,7 @@ Follow-up sentence.
 
 Mid-sentence boundary satisfied merge conditions; remainder forms a second chunk.
 
-### Example 5: Fragment shift when merge too large
+### Example 5: Trailing sentence fragment carry‑forward when merge too large
 
 ⬅️ **Page A:**
 
@@ -266,7 +282,7 @@ Intro sentence finishes here. This clause is long but near the limit and the fol
 ⬅️ **Page B:**
 
 ```text
-so a fragment shift moves this trailing portion forward. Remaining context continues here.
+so the trailing fragment carry‑forward moves this trailing portion forward. Remaining context continues here.
 ```
 
 ➡️ **Output:**
@@ -276,7 +292,7 @@ Chunk 0:
 Intro sentence finishes here.
 
 Chunk 1:
-This clause is long but near the limit and the following portion would push it over so a fragment shift moves this trailing portion forward. Remaining context continues here.
+This clause is long but near the limit and the following portion would push it over so the trailing fragment carry‑forward moves this trailing portion forward. Remaining context continues here.
 ```
 
 💬 **Explanation:**
