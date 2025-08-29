@@ -28,11 +28,35 @@ class File:
         self.acls = acls or {}
         self.url = url
 
-    def filename(self):
-        return os.path.basename(self.content.name)
+    def filename(self) -> str:
+        """
+        Get the filename from the content object.
+
+        Different file-like objects store the filename in different attributes:
+        - File objects from open() have a .name attribute
+        - HTTP uploaded files (werkzeug.datastructures.FileStorage) have a .filename attribute
+
+        Returns:
+            str: The basename of the file
+        """
+        content_name = None
+
+        # Try to get filename attribute (common for HTTP uploaded files)
+        if hasattr(self.content, "filename"):
+            content_name = getattr(self.content, "filename")
+            if content_name:
+                return os.path.basename(content_name)
+
+        # Try to get name attribute (common for file objects from open())
+        if hasattr(self.content, "name"):
+            content_name = getattr(self.content, "name")
+            if content_name and content_name != "file":
+                return os.path.basename(content_name)
+
+        raise ValueError("The content object does not have a filename or name attribute. ")
 
     def file_extension(self):
-        return os.path.splitext(self.content.name)[1]
+        return os.path.splitext(self.filename())[1]
 
     def filename_to_id(self):
         filename_ascii = re.sub("[^0-9a-zA-Z_-]", "_", self.filename())
@@ -102,7 +126,7 @@ class LocalListFileStrategy(ListFileStrategy):
                 stored_hash = md5_f.read()
 
         if stored_hash and stored_hash.strip() == existing_hash.strip():
-            logger.info("Skipping %s, no changes detected.", path)
+            logger.info("Skipping '%s', no changes detected.", path)
             return True
 
         # Write the hash

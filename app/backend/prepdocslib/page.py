@@ -1,3 +1,20 @@
+from dataclasses import dataclass, field
+from typing import Optional
+
+
+@dataclass
+class ImageOnPage:
+    bytes: bytes
+    bbox: tuple[float, float, float, float]  # Pixels
+    filename: str
+    description: str
+    figure_id: str
+    page_num: int  # 0-indexed
+    url: Optional[str] = None
+    embedding: Optional[list[float]] = None
+
+
+@dataclass
 class Page:
     """
     A single page from a document
@@ -8,21 +25,25 @@ class Page:
         text (str): The text of the page
     """
 
-    def __init__(self, page_num: int, offset: int, text: str):
-        self.page_num = page_num
-        self.offset = offset
-        self.text = text
+    page_num: int
+    offset: int
+    text: str
+    images: list[ImageOnPage] = field(default_factory=list)
 
 
-class SplitPage:
-    """
-    A section of a page that has been split into a smaller chunk.
+@dataclass
+class Chunk:
+    """Semantic chunk emitted by the splitter (may originate wholly within one page
+    or be the result of a cross-page merge / trailing fragment carry-forward).
 
     Attributes:
-        page_num (int): Page number (0-indexed)
-        text (str): The text of the section
+        page_num (int): Logical source page number (0-indexed) for the originating
+            portion of content. For merged content spanning pages we keep the earliest
+            contributing page number for stable attribution.
+        text (str): Textual content of the chunk.
+        images (list[ImageOnPage]): Images associated with this chunk, if any.
     """
 
-    def __init__(self, page_num: int, text: str):
-        self.page_num = page_num
-        self.text = text
+    page_num: int
+    text: str
+    images: list[ImageOnPage] = field(default_factory=list)
