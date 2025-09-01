@@ -14,11 +14,10 @@ module main 'main.bicep' = {
     environmentName: environmentName
     location: location
     appServiceSkuName: 'B1'
-    computerVisionSkuName: 'S1'
     documentIntelligenceResourceGroupLocation: location
     documentIntelligenceSkuName: 'S0'
     openAiHost: 'azure'
-    openAiResourceGroupLocation: location
+    openAiLocation: location
     searchIndexName: 'gptkbindex'
     searchQueryLanguage: 'en-us'
     searchQuerySpeller: 'lexicon'
@@ -28,7 +27,7 @@ module main 'main.bicep' = {
     storageSkuName: 'Standard_LRS'
     useApplicationInsights: false
     useVectors: true
-    useGPT4V: false
+    useMultimodal: true
     enableLanguagePicker: false
     useSpeechInputBrowser: false
     useSpeechOutputBrowser: false

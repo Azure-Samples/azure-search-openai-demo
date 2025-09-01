@@ -4,10 +4,12 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.models import VectorizedQuery
 from openai.types.chat import ChatCompletion
 
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
+from prepdocslib.embeddings import ImageEmbeddings
 
 from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
@@ -23,55 +25,6 @@ async def mock_search(*args, **kwargs):
 
 async def mock_retrieval(*args, **kwargs):
     return mock_retrieval_response()
-
-
-@pytest.fixture
-def chat_approach():
-    return ChatReadRetrieveReadApproach(
-        search_client=None,
-        search_index_name=None,
-        agent_model=None,
-        agent_deployment=None,
-        agent_client=None,
-        auth_helper=None,
-        openai_client=None,
-        chatgpt_model="gpt-4.1-mini",
-        chatgpt_deployment="chat",
-        embedding_deployment="embeddings",
-        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
-        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        embedding_field="embedding3",
-        sourcepage_field="",
-        content_field="",
-        query_language="en-us",
-        query_speller="lexicon",
-        prompt_manager=PromptyManager(),
-    )
-
-
-@pytest.fixture
-def chat_approach_with_hydration():
-    return ChatReadRetrieveReadApproach(
-        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
-        search_index_name=None,
-        agent_model=None,
-        agent_deployment=None,
-        agent_client=None,
-        auth_helper=None,
-        openai_client=None,
-        chatgpt_model="gpt-4.1-mini",
-        chatgpt_deployment="chat",
-        embedding_deployment="embeddings",
-        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
-        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        embedding_field="embedding3",
-        sourcepage_field="",
-        content_field="",
-        query_language="en-us",
-        query_speller="lexicon",
-        prompt_manager=PromptyManager(),
-        hydrate_references=True,
-    )
 
 
 def test_get_search_query(chat_approach):
@@ -379,3 +332,59 @@ async def test_agentic_retrieval_with_hydration(chat_approach_with_hydration, mo
     assert results[0].category == "benefits"
     assert results[0].score == 0.03279569745063782
     assert results[0].reranker_score == 3.4577205181121826
+
+
+@pytest.mark.asyncio
+async def test_compute_multimodal_embedding(monkeypatch, chat_approach):
+    # Create a mock for the ImageEmbeddings.create_embedding_for_text method
+    async def mock_create_embedding_for_text(self, q: str):
+        # Return a mock vector
+        return [0.1, 0.2, 0.3, 0.4, 0.5]
+
+    monkeypatch.setattr(ImageEmbeddings, "create_embedding_for_text", mock_create_embedding_for_text)
+
+    # Create a mock ImageEmbeddings instance and set it on the chat_approach
+    mock_image_embeddings = ImageEmbeddings(endpoint="https://mock-endpoint", token_provider=lambda: None)
+    chat_approach.image_embeddings_client = mock_image_embeddings
+
+    # Test the compute_multimodal_embedding method
+    query = "What's in this image?"
+    result = await chat_approach.compute_multimodal_embedding(query)
+
+    # Verify the result is a VectorizedQuery with the expected properties
+    assert isinstance(result, VectorizedQuery)
+    assert result.vector == [0.1, 0.2, 0.3, 0.4, 0.5]
+    assert result.k_nearest_neighbors == 50
+    assert result.fields == "images/embedding"
+
+
+@pytest.mark.asyncio
+async def test_compute_multimodal_embedding_no_client():
+    """Test that compute_multimodal_embedding raises ValueError when image_embeddings_client is not set."""
+    # Create a chat approach without an image_embeddings_client
+    chat_approach = ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-35-turbo",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+        # Explicitly set image_embeddings_client to None
+        image_embeddings_client=None,
+    )
+
+    # Test that calling compute_multimodal_embedding raises a ValueError
+    with pytest.raises(ValueError, match="Approach is missing an image embeddings client for multimodal queries"):
+        await chat_approach.compute_multimodal_embedding("What's in this image?")

@@ -6,9 +6,15 @@ from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
-from approaches.approach import Approach, DataPoints, ExtraInfo, ThoughtStep
+from approaches.approach import (
+    Approach,
+    ExtraInfo,
+    ThoughtStep,
+)
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
+from prepdocslib.embeddings import ImageEmbeddings
 
 
 class RetrieveThenReadApproach(Approach):
@@ -41,6 +47,10 @@ class RetrieveThenReadApproach(Approach):
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
         hydrate_references: bool = False,
+        multimodal_enabled: bool = False,
+        image_embeddings_client: Optional[ImageEmbeddings] = None,
+        global_blob_manager: Optional[BlobManager] = None,
+        user_blob_manager: Optional[AdlsBlobManager] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -65,6 +75,10 @@ class RetrieveThenReadApproach(Approach):
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
         self.hydrate_references = hydrate_references
+        self.multimodal_enabled = multimodal_enabled
+        self.image_embeddings_client = image_embeddings_client
+        self.global_blob_manager = global_blob_manager
+        self.user_blob_manager = user_blob_manager
 
     async def run(
         self,
@@ -88,7 +102,12 @@ class RetrieveThenReadApproach(Approach):
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {"user_query": q, "text_sources": extra_info.data_points.text},
+            | {
+                "user_query": q,
+                "text_sources": extra_info.data_points.text,
+                "image_sources": extra_info.data_points.images or [],
+                "citations": extra_info.data_points.citations,
+            },
         )
 
         chat_completion = cast(
@@ -116,13 +135,20 @@ class RetrieveThenReadApproach(Approach):
                 "content": chat_completion.choices[0].message.content,
                 "role": chat_completion.choices[0].message.role,
             },
-            "context": extra_info,
+            "context": {
+                "thoughts": extra_info.thoughts,
+                "data_points": {
+                    "text": extra_info.data_points.text or [],
+                    "images": extra_info.data_points.images or [],
+                    "citations": extra_info.data_points.citations or [],
+                },
+            },
             "session_state": session_state,
         }
 
     async def run_search_approach(
         self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
-    ):
+    ) -> ExtraInfo:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -133,11 +159,16 @@ class RetrieveThenReadApproach(Approach):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides, auth_claims)
         q = str(messages[-1]["content"])
+        send_image_sources = overrides.get("send_image_sources", True)
+        search_text_embeddings = overrides.get("search_text_embeddings", True)
+        search_image_embeddings = overrides.get("search_image_embeddings", self.multimodal_enabled)
 
-        # If retrieval mode includes vectors, compute an embedding for the query
         vectors: list[VectorQuery] = []
         if use_vector_search:
-            vectors.append(await self.compute_text_embedding(q))
+            if search_text_embeddings:
+                vectors.append(await self.compute_text_embedding(q))
+            if search_image_embeddings:
+                vectors.append(await self.compute_multimodal_embedding(q))
 
         results = await self.search(
             top,
@@ -153,10 +184,12 @@ class RetrieveThenReadApproach(Approach):
             use_query_rewriting,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions, use_image_citation=False)
+        data_points = await self.get_sources_content(
+            results, use_semantic_captions, download_image_sources=send_image_sources, user_oid=auth_claims.get("oid")
+        )
 
         return ExtraInfo(
-            DataPoints(text=text_sources),
+            data_points,
             thoughts=[
                 ThoughtStep(
                     "Search using user query",
@@ -169,6 +202,8 @@ class RetrieveThenReadApproach(Approach):
                         "filter": filter,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
+                        "search_text_embeddings": search_text_embeddings,
+                        "search_image_embeddings": search_image_embeddings,
                     },
                 ),
                 ThoughtStep(
@@ -183,7 +218,7 @@ class RetrieveThenReadApproach(Approach):
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
-    ):
+    ) -> ExtraInfo:
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides, auth_claims)
         top = overrides.get("top", 3)
@@ -191,6 +226,7 @@ class RetrieveThenReadApproach(Approach):
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         # 50 is the amount of documents that the reranker can process per query
         max_docs_for_reranker = max_subqueries * 50
+        send_image_sources = overrides.get("send_image_sources", True)
 
         response, results = await self.run_agentic_retrieval(
             messages,
@@ -203,10 +239,15 @@ class RetrieveThenReadApproach(Approach):
             results_merge_strategy=results_merge_strategy,
         )
 
-        text_sources = self.get_sources_content(results, use_semantic_captions=False, use_image_citation=False)
+        data_points = await self.get_sources_content(
+            results,
+            use_semantic_captions=False,
+            download_image_sources=send_image_sources,
+            user_oid=auth_claims.get("oid"),
+        )
 
         extra_info = ExtraInfo(
-            DataPoints(text=text_sources),
+            data_points,
             thoughts=[
                 ThoughtStep(
                     "Use agentic retrieval",

@@ -27,6 +27,7 @@ class SearchInfo:
         azure_openai_searchagent_model: Optional[str] = None,
         azure_openai_searchagent_deployment: Optional[str] = None,
         azure_openai_endpoint: Optional[str] = None,
+        azure_vision_endpoint: Optional[str] = None,
     ):
         self.endpoint = endpoint
         self.credential = credential
@@ -37,6 +38,7 @@ class SearchInfo:
         self.azure_openai_searchagent_model = azure_openai_searchagent_model
         self.azure_openai_searchagent_deployment = azure_openai_searchagent_deployment
         self.azure_openai_endpoint = azure_openai_endpoint
+        self.azure_vision_endpoint = azure_vision_endpoint
 
     def create_search_client(self) -> SearchClient:
         return SearchClient(endpoint=self.endpoint, index_name=self.index_name, credential=self.credential)

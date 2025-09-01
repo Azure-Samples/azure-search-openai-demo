@@ -122,7 +122,7 @@ async def test_app_config_default(monkeypatch, minimal_env):
         response = await client.get("/config")
         assert response.status_code == 200
         result = await response.get_json()
-        assert result["showGPT4VOptions"] is False
+        assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is True
         assert result["showVectorOption"] is True
 
@@ -136,7 +136,7 @@ async def test_app_config_use_vectors_true(monkeypatch, minimal_env):
         response = await client.get("/config")
         assert response.status_code == 200
         result = await response.get_json()
-        assert result["showGPT4VOptions"] is False
+        assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is True
         assert result["showVectorOption"] is True
 
@@ -150,7 +150,7 @@ async def test_app_config_use_vectors_false(monkeypatch, minimal_env):
         response = await client.get("/config")
         assert response.status_code == 200
         result = await response.get_json()
-        assert result["showGPT4VOptions"] is False
+        assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is True
         assert result["showVectorOption"] is False
 
@@ -164,7 +164,7 @@ async def test_app_config_semanticranker_free(monkeypatch, minimal_env):
         response = await client.get("/config")
         assert response.status_code == 200
         result = await response.get_json()
-        assert result["showGPT4VOptions"] is False
+        assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is True
         assert result["showVectorOption"] is True
         assert result["showUserUpload"] is False
@@ -179,7 +179,7 @@ async def test_app_config_semanticranker_disabled(monkeypatch, minimal_env):
         response = await client.get("/config")
         assert response.status_code == 200
         result = await response.get_json()
-        assert result["showGPT4VOptions"] is False
+        assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is False
         assert result["showVectorOption"] is True
         assert result["showUserUpload"] is False
@@ -196,7 +196,7 @@ async def test_app_config_user_upload(monkeypatch, minimal_env):
         response = await client.get("/config")
         assert response.status_code == 200
         result = await response.get_json()
-        assert result["showGPT4VOptions"] is False
+        assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is True
         assert result["showVectorOption"] is True
         assert result["showUserUpload"] is True
@@ -215,7 +215,7 @@ async def test_app_config_user_upload_novectors(monkeypatch, minimal_env):
         response = await client.get("/config")
         assert response.status_code == 200
         result = await response.get_json()
-        assert result["showGPT4VOptions"] is False
+        assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is True
         assert result["showVectorOption"] is False
         assert result["showUserUpload"] is True
@@ -258,7 +258,7 @@ async def test_app_config_for_client(client):
     response = await client.get("/config")
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["showGPT4VOptions"] == (os.getenv("USE_GPT4V") == "true")
+    assert result["showMultimodalOptions"] == (os.getenv("USE_MULTIMODAL") == "true")
     assert result["showSemanticRankerOption"] is True
     assert result["showVectorOption"] is True
     assert result["streamingEnabled"] is True

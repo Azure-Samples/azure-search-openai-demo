@@ -1,11 +1,9 @@
-import os
+import base64
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
-from dataclasses import dataclass
-from typing import Any, Callable, Optional, TypedDict, Union, cast
-from urllib.parse import urljoin
+from dataclasses import dataclass, field
+from typing import Any, Optional, TypedDict, Union, cast
 
-import aiohttp
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import (
     KnowledgeAgentAzureSearchDocReference,
@@ -35,6 +33,8 @@ from openai.types.chat import (
 
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
+from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
+from prepdocslib.embeddings import ImageEmbeddings
 
 
 @dataclass
@@ -50,6 +50,7 @@ class Document:
     score: Optional[float] = None
     reranker_score: Optional[float] = None
     search_agent_query: Optional[str] = None
+    images: Optional[list[dict[str, Any]]] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         result_dict = {
@@ -75,6 +76,7 @@ class Document:
             "score": self.score,
             "reranker_score": self.reranker_score,
             "search_agent_query": self.search_agent_query,
+            "images": self.images,
         }
         return result_dict
 
@@ -94,12 +96,13 @@ class ThoughtStep:
 class DataPoints:
     text: Optional[list[str]] = None
     images: Optional[list] = None
+    citations: Optional[list[str]] = None
 
 
 @dataclass
 class ExtraInfo:
     data_points: DataPoints
-    thoughts: Optional[list[ThoughtStep]] = None
+    thoughts: list[ThoughtStep] = field(default_factory=list)
     followup_questions: Optional[list[Any]] = None
 
 
@@ -157,11 +160,13 @@ class Approach(ABC):
         embedding_dimensions: int,
         embedding_field: str,
         openai_host: str,
-        vision_endpoint: str,
-        vision_token_provider: Callable[[], Awaitable[str]],
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
         hydrate_references: bool = False,
+        multimodal_enabled: bool = False,
+        image_embeddings_client: Optional[ImageEmbeddings] = None,
+        global_blob_manager: Optional[BlobManager] = None,
+        user_blob_manager: Optional[AdlsBlobManager] = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -173,12 +178,14 @@ class Approach(ABC):
         self.embedding_dimensions = embedding_dimensions
         self.embedding_field = embedding_field
         self.openai_host = openai_host
-        self.vision_endpoint = vision_endpoint
-        self.vision_token_provider = vision_token_provider
         self.prompt_manager = prompt_manager
         self.reasoning_effort = reasoning_effort
         self.hydrate_references = hydrate_references
         self.include_token_usage = True
+        self.multimodal_enabled = multimodal_enabled
+        self.image_embeddings_client = image_embeddings_client
+        self.global_blob_manager = global_blob_manager
+        self.user_blob_manager = user_blob_manager
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -246,6 +253,7 @@ class Approach(ABC):
                         captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
                         score=document.get("@search.score"),
                         reranker_score=document.get("@search.reranker_score"),
+                        images=document.get("images"),
                     )
                 )
 
@@ -400,37 +408,103 @@ class Approach(ABC):
 
         return hydrated_docs
 
-    def get_sources_content(
-        self, results: list[Document], use_semantic_captions: bool, use_image_citation: bool
-    ) -> list[str]:
+    async def get_sources_content(
+        self,
+        results: list[Document],
+        use_semantic_captions: bool,
+        download_image_sources: bool,
+        user_oid: Optional[str] = None,
+    ) -> DataPoints:
+        """Extract text/image sources & citations from documents.
+
+        Args:
+            results: List of retrieved Document objects.
+            use_semantic_captions: Whether to use semantic captions instead of full content text.
+            download_image_sources: Whether to attempt downloading & base64 encoding referenced images.
+            user_oid: Optional user object id for per-user storage access (ADLS scenarios).
+
+        Returns:
+            DataPoints: with text (list[str]), images (list[str - base64 data URI]), citations (list[str]).
+        """
 
         def nonewlines(s: str) -> str:
             return s.replace("\n", " ").replace("\r", " ")
 
-        if use_semantic_captions:
-            return [
-                (self.get_citation((doc.sourcepage or ""), use_image_citation))
-                + ": "
-                + nonewlines(" . ".join([cast(str, c.text) for c in (doc.captions or [])]))
-                for doc in results
-            ]
-        else:
-            return [
-                (self.get_citation((doc.sourcepage or ""), use_image_citation)) + ": " + nonewlines(doc.content or "")
-                for doc in results
-            ]
+        citations = []
+        text_sources = []
+        image_sources = []
+        seen_urls = set()
 
-    def get_citation(self, sourcepage: str, use_image_citation: bool) -> str:
-        if use_image_citation:
-            return sourcepage
-        else:
-            path, ext = os.path.splitext(sourcepage)
-            if ext.lower() == ".png":
-                page_idx = path.rfind("-")
-                page_number = int(path[page_idx + 1 :])
-                return f"{path[:page_idx]}.pdf#page={page_number}"
+        for doc in results:
+            # Get the citation for the source page
+            citation = self.get_citation(doc.sourcepage)
+            citations.append(citation)
 
-            return sourcepage
+            # If semantic captions are used, extract captions; otherwise, use content
+            if use_semantic_captions and doc.captions:
+                text_sources.append(f"{citation}: {nonewlines(' . '.join([cast(str, c.text) for c in doc.captions]))}")
+            else:
+                text_sources.append(f"{citation}: {nonewlines(doc.content or '')}")
+
+            if download_image_sources and hasattr(doc, "images") and doc.images:
+                for img in doc.images:
+                    # Skip if we've already processed this URL
+                    if img["url"] in seen_urls or not img["url"]:
+                        continue
+                    seen_urls.add(img["url"])
+                    url = await self.download_blob_as_base64(img["url"], user_oid=user_oid)
+                    if url:
+                        image_sources.append(url)
+                    citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))
+        if download_image_sources:
+            return DataPoints(text=text_sources, images=image_sources, citations=citations)
+        return DataPoints(text=text_sources, citations=citations)
+
+    def get_citation(self, sourcepage: Optional[str]):
+        return sourcepage or ""
+
+    def get_image_citation(self, sourcepage: Optional[str], image_url: str):
+        sourcepage_citation = self.get_citation(sourcepage)
+        image_filename = image_url.split("/")[-1]
+        return f"{sourcepage_citation}({image_filename})"
+
+    async def download_blob_as_base64(self, blob_url: str, user_oid: Optional[str] = None) -> Optional[str]:
+        """
+        Downloads a blob from either Azure Blob Storage or Azure Data Lake Storage and returns it as a base64 encoded string.
+
+        Args:
+            blob_url: The URL or path to the blob to download
+            user_oid: The user's object ID, required for Data Lake Storage operations and access control
+
+        Returns:
+            Optional[str]: The base64 encoded image data with data URI scheme prefix, or None if the blob cannot be downloaded
+        """
+
+        # Handle full URLs for both Blob Storage and Data Lake Storage
+        if blob_url.startswith("http"):
+            url_parts = blob_url.split("/")
+            # Skip the domain parts and container/filesystem name to get the blob path
+            # For blob: https://{account}.blob.core.windows.net/{container}/{blob_path}
+            # For dfs: https://{account}.dfs.core.windows.net/{filesystem}/{path}
+            blob_path = "/".join(url_parts[4:])
+            # If %20 in URL, replace it with a space
+            blob_path = blob_path.replace("%20", " ")
+        else:
+            # Treat as a direct blob path
+            blob_path = blob_url
+
+        # Download the blob using the appropriate client
+        result = None
+        if ".dfs.core.windows.net" in blob_url and self.user_blob_manager:
+            result = await self.user_blob_manager.download_blob(blob_path, user_oid=user_oid)
+        elif self.global_blob_manager:
+            result = await self.global_blob_manager.download_blob(blob_path)
+
+        if result:
+            content, _ = result  # Unpack the tuple, ignoring properties
+            img = base64.b64encode(content).decode("utf-8")
+            return f"data:image/png;base64,{img}"
+        return None
 
     async def compute_text_embedding(self, q: str):
         SUPPORTED_DIMENSIONS_MODEL = {
@@ -456,21 +530,11 @@ class Approach(ABC):
         # so we do not need to explicitly pass in an oversampling parameter here
         return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
 
-    async def compute_image_embedding(self, q: str):
-        endpoint = urljoin(self.vision_endpoint, "computervision/retrieval:vectorizeText")
-        headers = {"Content-Type": "application/json"}
-        params = {"api-version": "2024-02-01", "model-version": "2023-04-15"}
-        data = {"text": q}
-
-        headers["Authorization"] = "Bearer " + await self.vision_token_provider()
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                url=endpoint, params=params, headers=headers, json=data, raise_for_status=True
-            ) as response:
-                json = await response.json()
-                image_query_vector = json["vector"]
-        return VectorizedQuery(vector=image_query_vector, k_nearest_neighbors=50, fields="imageEmbedding")
+    async def compute_multimodal_embedding(self, q: str):
+        if not self.image_embeddings_client:
+            raise ValueError("Approach is missing an image embeddings client for multimodal queries")
+        multimodal_query_vector = await self.image_embeddings_client.create_embedding_for_text(q)
+        return VectorizedQuery(vector=multimodal_query_vector, k_nearest_neighbors=50, fields="images/embedding")
 
     def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>

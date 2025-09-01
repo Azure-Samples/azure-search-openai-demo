@@ -26,17 +26,14 @@
     "openAiSkuName": {
       "value": "S0"
     },
-    "computerVisionServiceName": {
-      "value": "${AZURE_COMPUTER_VISION_SERVICE}"
+    "visionServiceName": {
+      "value": "${AZURE_VISION_SERVICE}"
     },
-    "computerVisionResourceGroupName": {
-      "value": "${AZURE_COMPUTER_VISION_RESOURCE_GROUP}"
+    "visionResourceGroupName": {
+      "value": "${AZURE_VISION_RESOURCE_GROUP}"
     },
-    "computerVisionResourceGroupLocation": {
-      "value": "${AZURE_COMPUTER_VISION_LOCATION=eastus}"
-    },
-    "computerVisionSkuName": {
-      "value": "${AZURE_COMPUTER_VISION_SKU=S1}"
+    "visionResourceGroupLocation": {
+      "value": "${AZURE_VISION_LOCATION=eastus}"
     },
     "contentUnderstandingServiceName": {
       "value": "${AZURE_CONTENT_UNDERSTANDING_SERVICE}"
@@ -107,94 +104,79 @@
     "backendServiceName": {
       "value": "${AZURE_APP_SERVICE}"
     },
-    "chatGptModelName":{
+    "chatGptModelName": {
       "value": "${AZURE_OPENAI_CHATGPT_MODEL}"
     },
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"
     },
-    "chatGptDeploymentVersion":{
+    "chatGptDeploymentVersion": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION}"
     },
-    "chatGptDeploymentSkuName":{
+    "chatGptDeploymentSkuName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU}"
     },
-    "chatGptDeploymentCapacity":{
+    "chatGptDeploymentCapacity": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}"
     },
-    "embeddingModelName":{
+    "embeddingModelName": {
       "value": "${AZURE_OPENAI_EMB_MODEL_NAME}"
     },
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT}"
     },
-    "embeddingDeploymentVersion":{
+    "embeddingDeploymentVersion": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
     },
-    "embeddingDeploymentSkuName":{
+    "embeddingDeploymentSkuName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_SKU}"
     },
-    "embeddingDeploymentCapacity":{
+    "embeddingDeploymentCapacity": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
     },
     "embeddingDimensions": {
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
     },
-    "gpt4vModelName":{
-      "value": "${AZURE_OPENAI_GPT4V_MODEL}"
-    },
-    "gpt4vDeploymentName": {
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT}"
-    },
-    "gpt4vDeploymentVersion":{
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION}"
-    },
-    "gpt4vDeploymentSkuName":{
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU}"
-    },
-    "gpt4vDeploymentCapacity":{
-      "value": "${AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY}"
-    },
-    "evalModelName":{
+    "evalModelName": {
       "value": "${AZURE_OPENAI_EVAL_MODEL}"
     },
-    "evalModelVersion":{
+    "evalModelVersion": {
       "value": "${AZURE_OPENAI_EVAL_MODEL_VERSION}"
     },
     "evalDeploymentName": {
       "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT}"
     },
-    "evalDeploymentSkuName":{
+    "evalDeploymentSkuName": {
       "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_SKU}"
     },
-    "evalDeploymentCapacity":{
+    "evalDeploymentCapacity": {
       "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY}"
     },
-    "searchAgentModelName":{
+    "searchAgentModelName": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL}"
     },
-    "searchAgentModelVersion":{
+    "searchAgentModelVersion": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION}"
     },
     "searchAgentDeploymentName": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT}"
     },
-    "searchAgentDeploymentSkuName":{
+    "searchAgentDeploymentSkuName": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_SKU}"
     },
-    "searchAgentDeploymentCapacity":{
+    "searchAgentDeploymentCapacity": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_CAPACITY}"
     },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
-    "azureOpenAiCustomUrl":{
+    "azureOpenAiCustomUrl": {
       "value": "${AZURE_OPENAI_CUSTOM_URL}"
     },
-    "azureOpenAiApiVersion":{
+    "azureOpenAiApiVersion": {
       "value": "${AZURE_OPENAI_API_VERSION}"
     },
-    "azureOpenAiApiKey":{
+    "azureOpenAiApiKey": {
       "value": "${AZURE_OPENAI_API_KEY_OVERRIDE}"
     },
     "azureOpenAiDisableKeys": {
@@ -221,8 +203,8 @@
     "useVectors": {
       "value": "${USE_VECTORS=true}"
     },
-    "useGPT4V": {
-      "value": "${USE_GPT4V=false}"
+    "useMultimodal": {
+      "value": "${USE_MULTIMODAL=false}"
     },
     "useEval": {
       "value": "${USE_EVAL=false}"
@@ -342,7 +324,7 @@
       "value": "${DEPLOYMENT_TARGET=containerapps}"
     },
     "webAppExists": {
-        "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
+      "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
     },
     "azureContainerAppsWorkloadProfile": {
       "value": "${AZURE_CONTAINER_APPS_WORKLOAD_PROFILE=Consumption}"
@@ -358,6 +340,18 @@
     },
     "enableAgenticRefHydration": {
       "value": "${ENABLE_AGENTIC_REF_HYDRATION=false}"
+    },
+    "ragSearchTextEmbeddings": {
+      "value": "${RAG_SEARCH_TEXT_EMBEDDINGS=true}"
+    },
+    "ragSearchImageEmbeddings": {
+      "value": "${RAG_SEARCH_IMAGE_EMBEDDINGS=true}"
+    },
+    "ragSendTextSources": {
+      "value": "${RAG_SEND_TEXT_SOURCES=true}"
+    },
+    "ragSendImageSources": {
+      "value": "${RAG_SEND_IMAGE_SOURCES=true}"
     }
   }
 }

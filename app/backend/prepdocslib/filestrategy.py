@@ -3,7 +3,7 @@ from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential
 
-from .blobmanager import BlobManager
+from .blobmanager import AdlsBlobManager, BaseBlobManager, BlobManager
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .fileprocessor import FileProcessor
 from .listfilestrategy import File, ListFileStrategy
@@ -18,7 +18,9 @@ async def parse_file(
     file: File,
     file_processors: dict[str, FileProcessor],
     category: Optional[str] = None,
-    image_embeddings: Optional[ImageEmbeddings] = None,
+    blob_manager: Optional[BaseBlobManager] = None,
+    image_embeddings_client: Optional[ImageEmbeddings] = None,
+    user_oid: Optional[str] = None,
 ) -> list[Section]:
     key = file.file_extension().lower()
     processor = file_processors.get(key)
@@ -27,12 +29,23 @@ async def parse_file(
         return []
     logger.info("Ingesting '%s'", file.filename())
     pages = [page async for page in processor.parser.parse(content=file.content)]
+    for page in pages:
+        for image in page.images:
+            if not blob_manager or not image_embeddings_client:
+                raise ValueError("BlobManager and ImageEmbeddingsClient must be provided to parse images in the file.")
+            if image.url is None:
+                image.url = await blob_manager.upload_document_image(
+                    file.filename(), image.bytes, image.filename, image.page_num, user_oid=user_oid
+                )
+            if image_embeddings_client:
+                image.embedding = await image_embeddings_client.create_embedding_for_image(image.bytes)
     logger.info("Splitting '%s' into sections", file.filename())
-    if image_embeddings:
-        logger.warning("Each page will be split into smaller chunks of text, but images will be of the entire page.")
-    sections = [
-        Section(split_page, content=file, category=category) for split_page in processor.splitter.split_pages(pages)
-    ]
+    sections = [Section(chunk, content=file, category=category) for chunk in processor.splitter.split_pages(pages)]
+    # For now, add the images back to each split chunk based off chunk.page_num
+    for section in sections:
+        section.chunk.images = [
+            image for page in pages if page.page_num == section.chunk.page_num for image in page.images
+        ]
     return sections
 
 
@@ -102,13 +115,12 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    sections = await parse_file(file, self.file_processors, self.category, self.image_embeddings)
+                    await self.blob_manager.upload_blob(file)
+                    sections = await parse_file(
+                        file, self.file_processors, self.category, self.blob_manager, self.image_embeddings
+                    )
                     if sections:
-                        blob_sas_uris = await self.blob_manager.upload_blob(file)
-                        blob_image_embeddings: Optional[list[list[float]]] = None
-                        if self.image_embeddings and blob_sas_uris:
-                            blob_image_embeddings = await self.image_embeddings.create_embeddings(blob_sas_uris)
-                        await self.search_manager.update_content(sections, blob_image_embeddings, url=file.url)
+                        await self.search_manager.update_content(sections, url=file.url)
                 finally:
                     if file:
                         file.close()
@@ -131,14 +143,16 @@ class UploadUserFileStrategy:
         self,
         search_info: SearchInfo,
         file_processors: dict[str, FileProcessor],
+        blob_manager: AdlsBlobManager,
+        search_field_name_embedding: Optional[str] = None,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
-        search_field_name_embedding: Optional[str] = None,
     ):
         self.file_processors = file_processors
         self.embeddings = embeddings
         self.image_embeddings = image_embeddings
         self.search_info = search_info
+        self.blob_manager = blob_manager
         self.search_manager = SearchManager(
             search_info=self.search_info,
             search_analyzer_name=None,
@@ -150,10 +164,10 @@ class UploadUserFileStrategy:
         )
         self.search_field_name_embedding = search_field_name_embedding
 
-    async def add_file(self, file: File):
-        if self.image_embeddings:
-            logging.warning("Image embeddings are not currently supported for the user upload feature")
-        sections = await parse_file(file, self.file_processors)
+    async def add_file(self, file: File, user_oid: str):
+        sections = await parse_file(
+            file, self.file_processors, None, self.blob_manager, self.image_embeddings, user_oid=user_oid
+        )
         if sections:
             await self.search_manager.update_content(sections, url=file.url)
 
