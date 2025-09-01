@@ -269,7 +269,6 @@ class MockAsyncSearchResultsIterator:
                 ]
             ]
         elif search_text == "hydrated":
-            # Mock search results for hydration testing with complete data
             self.data = [
                 [
                     {
@@ -287,7 +286,6 @@ class MockAsyncSearchResultsIterator:
                 ]
             ]
         elif search_text == "hydrated_multi":
-            # Mock search results for multiple document hydration
             self.data = [
                 [
                     {
@@ -315,7 +313,6 @@ class MockAsyncSearchResultsIterator:
                 ]
             ]
         elif search_text == "hydrated_single":
-            # Mock search results for single document hydration
             self.data = [
                 [
                     {
@@ -455,6 +452,186 @@ def mock_retrieval_response():
                 source_data={"content": "There is a whistleblower policy.", "sourcepage": "Benefit_Options-2.pdf"},
             )
         ],
+    )
+
+
+def mock_retrieval_response_with_sorting():
+    """Mock response with multiple references for testing sorting"""
+    return KnowledgeAgentRetrievalResponse(
+        response=[
+            KnowledgeAgentMessage(
+                role="assistant",
+                content=[KnowledgeAgentMessageTextContent(text="Test response")],
+            )
+        ],
+        activity=[
+            KnowledgeAgentSearchActivityRecord(
+                id=1,
+                target_index="index",
+                query=KnowledgeAgentSearchActivityRecordQuery(search="first query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+            KnowledgeAgentSearchActivityRecord(
+                id=2,
+                target_index="index",
+                query=KnowledgeAgentSearchActivityRecordQuery(search="second query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+        ],
+        references=[
+            KnowledgeAgentAzureSearchDocReference(
+                id="2",  # Higher ID for testing interleaved sorting
+                activity_source=2,
+                doc_key="doc2",
+                source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
+            ),
+            KnowledgeAgentAzureSearchDocReference(
+                id="1",  # Lower ID for testing interleaved sorting
+                activity_source=1,
+                doc_key="doc1",
+                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
+            ),
+        ],
+    )
+
+
+def mock_retrieval_response_with_duplicates():
+    """Mock response with duplicate doc_keys for testing deduplication"""
+    return KnowledgeAgentRetrievalResponse(
+        response=[
+            KnowledgeAgentMessage(
+                role="assistant",
+                content=[KnowledgeAgentMessageTextContent(text="Test response")],
+            )
+        ],
+        activity=[
+            KnowledgeAgentSearchActivityRecord(
+                id=1,
+                target_index="index",
+                query=KnowledgeAgentSearchActivityRecordQuery(search="query for doc1"),
+                count=10,
+                elapsed_ms=50,
+            ),
+            KnowledgeAgentSearchActivityRecord(
+                id=2,
+                target_index="index",
+                query=KnowledgeAgentSearchActivityRecordQuery(search="another query for doc1"),
+                count=10,
+                elapsed_ms=50,
+            ),
+        ],
+        references=[
+            KnowledgeAgentAzureSearchDocReference(
+                id="1",
+                activity_source=1,
+                doc_key="doc1",  # Same doc_key
+                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
+            ),
+            KnowledgeAgentAzureSearchDocReference(
+                id="2",
+                activity_source=2,
+                doc_key="doc1",  # Duplicate doc_key
+                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
+            ),
+            KnowledgeAgentAzureSearchDocReference(
+                id="3",
+                activity_source=1,
+                doc_key="doc2",  # Different doc_key
+                source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
+            ),
+        ],
+    )
+
+
+async def mock_search_for_hydration(*args, **kwargs):
+    """Mock search that returns documents matching the filter"""
+    filter_param = kwargs.get("filter", "")
+
+    # Create documents based on filter - use search_text to distinguish different calls
+    search_text = ""
+    if "doc1" in filter_param and "doc2" in filter_param:
+        search_text = "hydrated_multi"
+    elif "doc1" in filter_param:
+        search_text = "hydrated_single"
+    else:
+        search_text = "hydrated_empty"
+
+    return MockAsyncSearchResultsIterator(search_text, None)
+
+
+def mock_retrieval_response_with_missing_doc_key():
+    """Mock response with missing doc_key to test continue condition"""
+    return KnowledgeAgentRetrievalResponse(
+        response=[
+            KnowledgeAgentMessage(
+                role="assistant",
+                content=[KnowledgeAgentMessageTextContent(text="Test response")],
+            )
+        ],
+        activity=[
+            KnowledgeAgentSearchActivityRecord(
+                id=1,
+                target_index="index",
+                query=KnowledgeAgentSearchActivityRecordQuery(search="query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+        ],
+        references=[
+            KnowledgeAgentAzureSearchDocReference(
+                id="1",
+                activity_source=1,
+                doc_key=None,  # Missing doc_key
+                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
+            ),
+            KnowledgeAgentAzureSearchDocReference(
+                id="2",
+                activity_source=1,
+                doc_key="",  # Empty doc_key
+                source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
+            ),
+            KnowledgeAgentAzureSearchDocReference(
+                id="3",
+                activity_source=1,
+                doc_key="doc3",  # Valid doc_key
+                source_data={"content": "Content 3", "sourcepage": "page3.pdf"},
+            ),
+        ],
+    )
+
+
+def mock_retrieval_response_with_top_limit():
+    """Mock response with many references to test top limit during document building"""
+    references = []
+    for i in range(15):  # More than any reasonable top limit
+        references.append(
+            KnowledgeAgentAzureSearchDocReference(
+                id=str(i),
+                activity_source=1,
+                doc_key=f"doc{i}",
+                source_data={"content": f"Content {i}", "sourcepage": f"page{i}.pdf"},
+            )
+        )
+
+    return KnowledgeAgentRetrievalResponse(
+        response=[
+            KnowledgeAgentMessage(
+                role="assistant",
+                content=[KnowledgeAgentMessageTextContent(text="Test response")],
+            )
+        ],
+        activity=[
+            KnowledgeAgentSearchActivityRecord(
+                id=1,
+                target_index="index",
+                query=KnowledgeAgentSearchActivityRecordQuery(search="query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+        ],
+        references=references,
     )
 
 

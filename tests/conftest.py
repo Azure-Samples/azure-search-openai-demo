@@ -10,6 +10,7 @@ import azure.storage.filedatalake.aio
 import msal
 import pytest
 import pytest_asyncio
+from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
@@ -1102,7 +1103,7 @@ def mock_user_directory_client(monkeypatch):
 @pytest.fixture
 def chat_approach():
     return ChatReadRetrieveReadApproach(
-        search_client=None,
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
         search_index_name=None,
         agent_model=None,
         agent_deployment=None,
@@ -1120,6 +1121,41 @@ def chat_approach():
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        user_blob_manager=AdlsBlobManager(
+            endpoint="https://test-userstorage-account.dfs.core.windows.net",
+            container="test-userstorage-container",
+            credential=MockAzureCredential(),
+        ),
+        global_blob_manager=BlobManager(  # on normal Azure storage
+            endpoint="https://test-globalstorage-account.blob.core.windows.net",
+            container="test-globalstorage-container",
+            credential=MockAzureCredential(),
+        ),
+    )
+
+
+@pytest.fixture
+def chat_approach_with_hydration():
+    return ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-4.1-mini",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+        hydrate_references=True,
         user_blob_manager=AdlsBlobManager(
             endpoint="https://test-userstorage-account.dfs.core.windows.net",
             container="test-userstorage-container",
