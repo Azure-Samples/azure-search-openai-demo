@@ -4,48 +4,21 @@ from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import (
     KnowledgeAgentAzureSearchDocReference,
     KnowledgeAgentMessage,
-    KnowledgeAgentMessageTextContent,
     KnowledgeAgentRetrievalResponse,
-    KnowledgeAgentSearchActivityRecord,
-    KnowledgeAgentSearchActivityRecordQuery,
 )
 from azure.search.documents.aio import SearchClient
 
+from .conftest import create_mock_retrieve
 from .mocks import (
     MockAsyncSearchResultsIterator,
-    mock_retrieval_response,
-    mock_retrieval_response_with_duplicates,
-    mock_retrieval_response_with_sorting,
 )
-
-
-
-
-async def mock_search(*args, **kwargs):
-    return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
-
-
-async def mock_search_for_hydration(*args, **kwargs):
-    filter_param = kwargs.get("filter", "")
-
-    search_text = ""
-    if "doc1" in filter_param and "doc2" in filter_param:
-        search_text = "hydrated_multi"
-    elif "doc1" in filter_param:
-        search_text = "hydrated_single"
-    else:
-        search_text = "hydrated_empty"
-
-    kwargs["search_text"] = search_text
-
-    return mock_search(*args, **kwargs)
 
 
 @pytest.mark.asyncio
 async def test_agentic_retrieval_non_hydrated_default_sort(chat_approach, monkeypatch):
     """Test non-hydrated path with default sorting (preserve original order)"""
 
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval_response_with_sorting)
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve("sorting"))
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
@@ -71,12 +44,15 @@ async def test_agentic_retrieval_non_hydrated_default_sort(chat_approach, monkey
 async def test_agentic_retrieval_non_hydrated_interleaved_sort(chat_approach, monkeypatch):
     """Test non-hydrated path with interleaved sorting"""
 
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval_response_with_sorting)
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve("sorting"))
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
     _, results = await chat_approach.run_agentic_retrieval(
-        messages=[], agent_client=agent_client, search_index_name="test-index", results_merge_strategy="interleaved"
+        messages=[],
+        agent_client=agent_client,
+        search_index_name="test-index",
+        results_merge_strategy="interleaved",
     )
 
     assert len(results) == 2
@@ -94,13 +70,21 @@ async def test_agentic_retrieval_non_hydrated_interleaved_sort(chat_approach, mo
 async def test_agentic_retrieval_hydrated_with_sorting(chat_approach_with_hydration, monkeypatch):
     """Test hydrated path with sorting"""
 
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval_response_with_sorting)
-    monkeypatch.setattr(SearchClient, "search", mock_search_for_hydration)
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve("sorting"))
+
+    async def mock_search(self, *args, **kwargs):
+        # For hydration, we expect a filter like "search.in(id, 'doc1,doc2', ',')"
+        return MockAsyncSearchResultsIterator("hydrated_multi", None)
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
     _, results = await chat_approach_with_hydration.run_agentic_retrieval(
-        messages=[], agent_client=agent_client, search_index_name="test-index", results_merge_strategy="interleaved"
+        messages=[],
+        agent_client=agent_client,
+        search_index_name="test-index",
+        results_merge_strategy="interleaved",
     )
 
     assert len(results) == 2
@@ -116,8 +100,13 @@ async def test_agentic_retrieval_hydrated_with_sorting(chat_approach_with_hydrat
 async def test_hydrate_agent_references_deduplication(chat_approach_with_hydration, monkeypatch):
     """Test that hydrate_agent_references deduplicates doc_keys"""
 
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval_response_with_duplicates)
-    monkeypatch.setattr(SearchClient, "search", mock_search_for_hydration)
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve("duplicates"))
+
+    async def mock_search(self, *args, **kwargs):
+        # For deduplication test, we expect doc1 and doc2 to be in the filter
+        return MockAsyncSearchResultsIterator("hydrated_multi", None)
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
@@ -138,7 +127,9 @@ async def test_agentic_retrieval_no_references(chat_approach, monkeypatch):
 
     async def mock_retrieval(*args, **kwargs):
         return KnowledgeAgentRetrievalResponse(
-            response=[KnowledgeAgentMessage(role="assistant", content=[])], activity=[], references=[]
+            response=[KnowledgeAgentMessage(role="assistant", content=[])],
+            activity=[],
+            references=[],
         )
 
     monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
@@ -156,10 +147,7 @@ async def test_agentic_retrieval_no_references(chat_approach, monkeypatch):
 async def test_activity_mapping_injection(chat_approach, monkeypatch):
     """Test that search_agent_query is properly injected from activity mapping"""
 
-    async def mock_retrieval(*args, **kwargs):
-        return mock_retrieval_response_with_sorting()
-
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve("sorting"))
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
@@ -178,93 +166,20 @@ async def test_activity_mapping_injection(chat_approach, monkeypatch):
     assert doc2.search_agent_query == "second query"  # From activity_source=2
 
 
-def mock_retrieval_response_with_missing_doc_key():
-    """Mock response with missing doc_key to test continue condition"""
-    return KnowledgeAgentRetrievalResponse(
-        response=[
-            KnowledgeAgentMessage(
-                role="assistant",
-                content=[KnowledgeAgentMessageTextContent(text="Test response")],
-            )
-        ],
-        activity=[
-            KnowledgeAgentSearchActivityRecord(
-                id=1,
-                target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="query"),
-                count=10,
-                elapsed_ms=50,
-            ),
-        ],
-        references=[
-            KnowledgeAgentAzureSearchDocReference(
-                id="1",
-                activity_source=1,
-                doc_key=None,  # Missing doc_key
-                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
-            ),
-            KnowledgeAgentAzureSearchDocReference(
-                id="2",
-                activity_source=1,
-                doc_key="",  # Empty doc_key
-                source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
-            ),
-            KnowledgeAgentAzureSearchDocReference(
-                id="3",
-                activity_source=1,
-                doc_key="doc3",  # Valid doc_key
-                source_data={"content": "Content 3", "sourcepage": "page3.pdf"},
-            ),
-        ],
-    )
-
-
-def mock_retrieval_response_with_top_limit():
-    """Mock response with many references to test top limit during document building"""
-    references = []
-    for i in range(15):  # More than any reasonable top limit
-        references.append(
-            KnowledgeAgentAzureSearchDocReference(
-                id=str(i),
-                activity_source=1,
-                doc_key=f"doc{i}",
-                source_data={"content": f"Content {i}", "sourcepage": f"page{i}.pdf"},
-            )
-        )
-
-    return KnowledgeAgentRetrievalResponse(
-        response=[
-            KnowledgeAgentMessage(
-                role="assistant",
-                content=[KnowledgeAgentMessageTextContent(text="Test response")],
-            )
-        ],
-        activity=[
-            KnowledgeAgentSearchActivityRecord(
-                id=1,
-                target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="query"),
-                count=10,
-                elapsed_ms=50,
-            ),
-        ],
-        references=references,
-    )
-
-
 @pytest.mark.asyncio
 async def test_hydrate_agent_references_missing_doc_keys(chat_approach_with_hydration, monkeypatch):
     """Test that hydrate_agent_references handles missing/empty doc_keys correctly"""
 
-    async def mock_retrieval(*args, **kwargs):
-        return mock_retrieval_response_with_missing_doc_key()
+    monkeypatch.setattr(
+        KnowledgeAgentRetrievalClient,
+        "retrieve",
+        create_mock_retrieve("missing_doc_key"),
+    )
 
-    # Mock search to return single document for doc3
-    async def mock_search_single(*args, **kwargs):
+    async def mock_search(self, *args, **kwargs):
         return MockAsyncSearchResultsIterator("hydrated_single", None)
 
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
-    monkeypatch.setattr(SearchClient, "search", mock_search_single)
+    monkeypatch.setattr(SearchClient, "search", mock_search)
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
@@ -327,12 +242,12 @@ async def test_hydrate_agent_references_search_returns_empty(chat_approach_with_
             ],
         )
 
-    # Mock search to return empty results (no documents found)
-    async def mock_search_returns_empty(*args, **kwargs):
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval_valid_keys)
+
+    async def mock_search(self, *args, **kwargs):
         return MockAsyncSearchResultsIterator("hydrated_empty", None)
 
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval_valid_keys)
-    monkeypatch.setattr(SearchClient, "search", mock_search_returns_empty)
+    monkeypatch.setattr(SearchClient, "search", mock_search)
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
@@ -346,18 +261,18 @@ async def test_hydrate_agent_references_search_returns_empty(chat_approach_with_
 
 
 @pytest.mark.asyncio
-async def test_agentic_retrieval_with_top_limit_during_building(chat_approach_with_hydration, monkeypatch):
-    """Test that document building respects top limit and breaks early"""
+async def test_agentic_retrieval_with_top_limit_during_building(chat_approach, monkeypatch):
+    """Test that document building respects top limit and breaks early (non-hydrated path)"""
 
-    async def mock_retrieval(*args, **kwargs):
-        return mock_retrieval_response_with_top_limit()
-
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve("top_limit"))
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
-    _, results = await chat_approach_with_hydration.run_agentic_retrieval(
-        messages=[], agent_client=agent_client, search_index_name="test-index", top=5  # Limit to 5 documents
+    _, results = await chat_approach.run_agentic_retrieval(
+        messages=[],
+        agent_client=agent_client,
+        search_index_name="test-index",
+        top=5,  # Limit to 5 documents
     )
 
     # Should get exactly 5 documents due to top limit during building
@@ -371,20 +286,20 @@ async def test_agentic_retrieval_with_top_limit_during_building(chat_approach_wi
 async def test_hydrate_agent_references_with_top_limit_during_collection(chat_approach_with_hydration, monkeypatch):
     """Test that hydration respects top limit when collecting doc_keys"""
 
-    async def mock_retrieval(*args, **kwargs):
-        return mock_retrieval_response_with_top_limit()
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve("top_limit"))
 
-    # Mock search to return multi results (more than our top limit)
-    async def mock_search_multi(*args, **kwargs):
+    async def mock_search(self, *args, **kwargs):
         return MockAsyncSearchResultsIterator("hydrated_multi", None)
 
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
-    monkeypatch.setattr(SearchClient, "search", mock_search_multi)
+    monkeypatch.setattr(SearchClient, "search", mock_search)
 
     agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
 
     _, results = await chat_approach_with_hydration.run_agentic_retrieval(
-        messages=[], agent_client=agent_client, search_index_name="test-index", top=2  # Limit to 2 documents
+        messages=[],
+        agent_client=agent_client,
+        search_index_name="test-index",
+        top=2,  # Limit to 2 documents
     )
 
     # Should get exactly 2 documents due to top limit during doc_keys collection

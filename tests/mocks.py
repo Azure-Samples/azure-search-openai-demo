@@ -545,22 +545,6 @@ def mock_retrieval_response_with_duplicates():
     )
 
 
-async def mock_search_for_hydration(*args, **kwargs):
-    """Mock search that returns documents matching the filter"""
-    filter_param = kwargs.get("filter", "")
-
-    # Create documents based on filter - use search_text to distinguish different calls
-    search_text = ""
-    if "doc1" in filter_param and "doc2" in filter_param:
-        search_text = "hydrated_multi"
-    elif "doc1" in filter_param:
-        search_text = "hydrated_single"
-    else:
-        search_text = "hydrated_empty"
-
-    return MockAsyncSearchResultsIterator(search_text, None)
-
-
 def mock_retrieval_response_with_missing_doc_key():
     """Mock response with missing doc_key to test continue condition"""
     return KnowledgeAgentRetrievalResponse(

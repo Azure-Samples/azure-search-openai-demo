@@ -47,6 +47,10 @@ from .mocks import (
     MockResponse,
     MockTransport,
     mock_retrieval_response,
+    mock_retrieval_response_with_duplicates,
+    mock_retrieval_response_with_missing_doc_key,
+    mock_retrieval_response_with_sorting,
+    mock_retrieval_response_with_top_limit,
     mock_speak_text_cancelled,
     mock_speak_text_failed,
     mock_speak_text_success,
@@ -68,13 +72,37 @@ async def mock_search(self, *args, **kwargs):
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
 
-async def mock_retrieve(self, *args, **kwargs):
-    retrieval_request = kwargs.get("retrieval_request")
-    assert retrieval_request is not None
-    assert retrieval_request.target_index_params is not None
-    assert len(retrieval_request.target_index_params) == 1
-    self.filter = retrieval_request.target_index_params[0].filter_add_on
-    return mock_retrieval_response()
+def create_mock_retrieve(response_type="default"):
+    """Create a mock_retrieve function that returns different response types.
+
+    Args:
+        response_type: Type of response to return. Options:
+            - "default": mock_retrieval_response()
+            - "sorting": mock_retrieval_response_with_sorting()
+            - "duplicates": mock_retrieval_response_with_duplicates()
+            - "missing_doc_key": mock_retrieval_response_with_missing_doc_key()
+            - "top_limit": mock_retrieval_response_with_top_limit()
+    """
+
+    async def mock_retrieve_parameterized(self, *args, **kwargs):
+        retrieval_request = kwargs.get("retrieval_request")
+        assert retrieval_request is not None
+        assert retrieval_request.target_index_params is not None
+        assert len(retrieval_request.target_index_params) == 1
+        self.filter = retrieval_request.target_index_params[0].filter_add_on
+
+        if response_type == "sorting":
+            return mock_retrieval_response_with_sorting()
+        elif response_type == "duplicates":
+            return mock_retrieval_response_with_duplicates()
+        elif response_type == "missing_doc_key":
+            return mock_retrieval_response_with_missing_doc_key()
+        elif response_type == "top_limit":
+            return mock_retrieval_response_with_top_limit()
+        else:  # default
+            return mock_retrieval_response()
+
+    return mock_retrieve_parameterized
 
 
 @pytest.fixture
@@ -281,7 +309,7 @@ def mock_acs_search(monkeypatch):
 
 @pytest.fixture
 def mock_acs_agent(monkeypatch):
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieve)
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve())
 
     async def mock_get_agent(*args, **kwargs):
         return MockAgent
