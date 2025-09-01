@@ -3,9 +3,15 @@ from collections import namedtuple
 from io import BytesIO
 from typing import Optional
 
+import aiohttp
 import openai.types
 from azure.cognitiveservices.speech import ResultReason
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline.transport import (
+    AioHttpTransportResponse,
+    AsyncHttpTransport,
+    HttpRequest,
+)
 from azure.search.documents.agent.models import (
     KnowledgeAgentAzureSearchDocReference,
     KnowledgeAgentMessage,
@@ -63,6 +69,51 @@ class MockBlob:
         buffer.write(b"test")
 
 
+class MockAiohttpClientResponse404(aiohttp.ClientResponse):
+    def __init__(self, url, body_bytes, headers=None):
+        self._body = body_bytes
+        self._headers = headers
+        self._cache = {}
+        self.status = 404
+        self.reason = "Not Found"
+        self._url = url
+
+
+class MockAiohttpClientResponse(aiohttp.ClientResponse):
+    def __init__(self, url, body_bytes, headers=None):
+        self._body = body_bytes
+        self._headers = headers
+        self._cache = {}
+        self.status = 200
+        self.reason = "OK"
+        self._url = url
+
+
+class MockTransport(AsyncHttpTransport):
+    async def send(self, request: HttpRequest, **kwargs) -> AioHttpTransportResponse:
+        return AioHttpTransportResponse(
+            request,
+            MockAiohttpClientResponse(
+                request.url,
+                b"test content",
+                {
+                    "Content-Type": "application/octet-stream",
+                    "Content-Range": "bytes 0-27/28",
+                    "Content-Length": "28",
+                },
+            ),
+        )
+
+    async def __aexit__(self, *args):
+        pass
+
+    async def open(self):
+        pass  # pragma: no cover
+
+    async def close(self):
+        pass  # pragma: no cover
+
+
 class MockAsyncPageIterator:
     def __init__(self, data):
         self.data = data
@@ -85,45 +136,136 @@ class MockCaption:
 
 class MockAsyncSearchResultsIterator:
     def __init__(self, search_text, vector_queries: Optional[list[VectorQuery]]):
-        if search_text == "interest rates" or (
-            vector_queries and any([vector.fields == "imageEmbedding" for vector in vector_queries])
+        if search_text == "westbrae nursery logo" and (
+            vector_queries and any([vector.fields == "images/embedding" for vector in vector_queries])
         ):
             self.data = [
                 [
                     {
+                        "id": "file-westbrae_jun28_pdf-77657374627261655F6A756E32382E7064667B276F696473273A205B2766653437353262612D623565652D343531632D623065312D393332316664663365353962275D7D-page-0",
+                        "content": '<figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter "M" with four colors: red, blue, green, and yellow. To the right of the "M" is the word "Gmail" written in gray text. The design is modern and clean. The colors used are characteristic of Google\'s branding.</figcaption></figure>\n\n\nPamela Fox <pamela.fox@gmail.com>\n\nReceipt / Tax invoice (#2-108442)\n\nWestbrae Nursery <no-reply@email.lightspeedhq.com>\nReply-To: jeff@westbrae-nursery.com\nTo: pamela.fox@gmail.com\n\nSat, Jun 28, 2025 at 1:21 PM\n\n\n<figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text "Westbrae" is positioned to the right of the flowers. Below "Westbrae" is the word "Nursery." The design is simple and rendered in black and white.</figcaption></figure>\n\n\nAn Employee-Owned Co-op\n1272 Gilman St, Berkeley, CA 94706\n510-526-5517\n\nMain Outlet\n\nReceipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm\n\n\n<figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.',
                         "category": None,
+                        "sourcepage": "westbrae_jun28.pdf#page=1",
+                        "sourcefile": "westbrae_jun28.pdf",
+                        "oids": ["OID_X"],
+                        "groups": [],
+                        "captions": [],
+                        "score": 0.05000000447034836,
+                        "reranker_score": 3.2427687644958496,
+                        "search_agent_query": None,
+                        "images": [
+                            {
+                                "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_1.png",
+                                "description": '<figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter "M" with four colors: red, blue, green, and yellow. To the right of the "M" is the word "Gmail" written in gray text. The design is modern and clean. The colors used are characteristic of Google\'s branding.</figcaption></figure>',
+                                "boundingbox": [32.99, 43.65, 126.14, 67.72],
+                            },
+                            {
+                                "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_2.png",
+                                "description": '<figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text "Westbrae" is positioned to the right of the flowers. Below "Westbrae" is the word "Nursery." The design is simple and rendered in black and white.</figcaption></figure>',
+                                "boundingbox": [40.76, 163.42, 347.1, 354.15],
+                            },
+                        ],
+                    },
+                    {
+                        "id": "file-westbrae_jun28_pdf-77657374627261655F6A756E32382E7064667B276F696473273A205B2766653437353262612D623565652D343531632D623065312D393332316664663365353962275D7D-page-1",
+                        "content": "</figcaption></figure>\n\n\nAn Employee-Owned Co-op\n1272 Gilman St, Berkeley, CA 94706\n510-526-5517\n\nMain Outlet\n\nReceipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm\n\n\n<figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.99</td><td>$7.99</td></tr><tr><td>1 qt</td><td></td><td></td></tr><tr><td rowSpan=2>1 Gopher Baskets 1 gal</td><td>@ $14.99</td><td>$14.99</td></tr><tr><td></td><td></td></tr><tr><td>1 Edible 4.99</td><td>@ $4.99</td><td>$4.99</td></tr><tr><td>4 Color 11.99</td><td>@ $11.99</td><td>$47.96</td></tr><tr><td>1 Edible $6.99</td><td>@ $6.99</td><td>$6.99</td></tr><tr><td>Subtotal</td><td></td><td>$82.",
+                        "category": None,
+                        "sourcepage": "westbrae_jun28.pdf#page=1",
+                        "sourcefile": "westbrae_jun28.pdf",
+                        "oids": ["OID_X"],
+                        "groups": [],
+                        "captions": [],
+                        "score": 0.04696394503116608,
+                        "reranker_score": 1.8582123517990112,
+                        "search_agent_query": None,
+                        "images": [
+                            {
+                                "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_1.png",
+                                "description": '<figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter "M" with four colors: red, blue, green, and yellow. To the right of the "M" is the word "Gmail" written in gray text. The design is modern and clean. The colors used are characteristic of Google\'s branding.</figcaption></figure>',
+                                "boundingbox": [32.99, 43.65, 126.14, 67.72],
+                            },
+                            {
+                                "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_2.png",
+                                "description": '<figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text "Westbrae" is positioned to the right of the flowers. Below "Westbrae" is the word "Nursery." The design is simple and rendered in black and white.</figcaption></figure>',
+                                "boundingbox": [40.76, 163.42, 347.1, 354.15],
+                            },
+                        ],
+                    },
+                    {
+                        "id": "file-westbrae_jun28_pdf-77657374627261655F6A756E32382E7064667B276F696473273A205B2766653437353262612D623565652D343531632D623065312D393332316664663365353962275D7D-page-4",
+                        "content": "\n\nIf you have any questions about how to take care of the plants you purchase\nor if they start to show symptoms of ill health, please, give us a call (510-526-\n5517)\n\nreceipt.pdf\n50K",
+                        "category": None,
+                        "sourcepage": "westbrae_jun28.pdf#page=2",
+                        "sourcefile": "westbrae_jun28.pdf",
+                        "oids": ["OID_X"],
+                        "groups": [],
+                        "captions": [],
+                        "score": 0.016393441706895828,
+                        "reranker_score": 1.7518715858459473,
+                        "search_agent_query": None,
+                        "images": [],
+                    },
+                ]
+            ]
+        elif search_text == "interest rates" or (
+            vector_queries and any([vector.fields == "images/embedding" for vector in vector_queries])
+        ):
+            self.data = [
+                [
+                    {
+                        "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-7",
+                        "content": ' This\nsection examines the correlations between stock indices, cryptocurrency prices, and commodity prices,\nrevealing how changes in one market can have ripple effects across the financial ecosystem.### Impact of Macroeconomic Factors\n\n\n<figure><figcaption>Impact of Interest Rates, Inflation, and GDP Growth on Financial Markets<br>The image is a line graph titled "on Financial Markets" displaying data from 2018 to 2023. It tracks three variables: Interest Rates %, Inflation Data %, and GDP Growth %, each represented by a different colored line (blue for Interest Rates, orange for Inflation Data, and gray for GDP Growth). Interest Rates % start around 2% in 2018, dip to about 0.25% in 2021, then rise to 1.5% in 2023. Inflation Data % begin at approximately 1.9% in 2018, rise to a peak near 3.4% in 2022, and then decrease to 2.5% in 2023. GDP Growth % shows significant fluctuations, starting at 3% in 2018, plunging to almost -4% in 2020, then rebounding to around 4.5% in 2021 before gradually declining to around 2.8% in 2023.</figcaption></figure>\n\n\nMacroeconomic factors such as interest\nrates, inflation, and GDP growth play a\npivotal role in shaping financial markets.',
+                        "category": None,
+                        "sourcepage": "Financial Market Analysis Report 2023.pdf#page=7",
                         "sourcefile": "Financial Market Analysis Report 2023.pdf",
-                        "image_embedding": [
-                            -0.86035156,
-                            1.3310547,
-                            3.9804688,
-                            -0.6425781,
-                            -2.7246094,
-                            -1.6308594,
-                            -0.69091797,
-                            -2.2539062,
-                            -0.09942627,
+                        "oids": None,
+                        "groups": None,
+                        "captions": [],
+                        "score": 0.03333333507180214,
+                        "reranker_score": 3.207321882247925,
+                        "search_agent_query": None,
+                        "images": [],
+                    },
+                    {
+                        "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-8",
+                        "content": "</figcaption></figure>\n\n\nMacroeconomic factors such as interest\nrates, inflation, and GDP growth play a\npivotal role in shaping financial markets.\nThis section analyzes how these factors\nhave influenced stock, cryptocurrency,\nand commodity markets over recent\nyears, providing insights into the\ncomplex relationship between the\neconomy and financial market\nperformance.## Future Predictions and Trends\n\n\n<figure><figcaption>Relative Growth Trends for S&P 500, Bitcoin, and Oil Prices (2024 Indexed to 100)<br>This horizontal bar chart shows prices indexed to 100 for the years 2024 to 2028. It compares the prices of Oil, Bitcoin, and the S&P 500 across these years. In 2024, all three have an index value of 100. From 2025 to 2028, all three generally increase, with Bitcoin consistently having the highest index value, followed closely by the S&P 500 and then Oil. The chart uses grey bars for Oil, orange bars for Bitcoin, and blue bars for the S&P 500.</figcaption></figure>\n\n\nBased on historical data, current trends,\nand economic indicators, this section\npresents predictions for the future of\nfinancial markets.",
+                        "category": None,
+                        "sourcepage": "Financial Market Analysis Report 2023.pdf#page=8",
+                        "sourcefile": "Financial Market Analysis Report 2023.pdf",
+                        "oids": None,
+                        "groups": None,
+                        "captions": [],
+                        "score": 0.04945354908704758,
+                        "reranker_score": 2.573531150817871,
+                        "search_agent_query": None,
+                        "images": [
+                            {
+                                "url": "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png",
+                                "description": '<figure><figcaption>Impact of Interest Rates, Inflation, and GDP Growth on Financial Markets<br>The image is a line graph titled "on Financial Markets" displaying data from 2018 to 2023. It tracks three variables: Interest Rates %, Inflation Data %, and GDP Growth %, each represented by a different colored line (blue for Interest Rates, orange for Inflation Data, and gray for GDP Growth). Interest Rates % start around 2% in 2018, dip to about 0.25% in 2021, then rise to 1.5% in 2023. Inflation Data % begin at approximately 1.9% in 2018, rise to a peak near 3.4% in 2022, and then decrease to 2.5% in 2023. GDP Growth % shows significant fluctuations, starting at 3% in 2018, plunging to almost -4% in 2020, then rebounding to around 4.5% in 2021 before gradually declining to around 2.8% in 2023.</figcaption></figure>',
+                                "boundingbox": [63.1008, 187.9416, 561.3408000000001, 483.5088],
+                            }
                         ],
-                        "content": "3</td><td>1</td></tr></table>\nFinancial markets are interconnected, with movements in one segment often influencing others. This section examines the correlations between stock indices, cryptocurrency prices, and commodity prices, revealing how changes in one market can have ripple effects across the financial ecosystem.Impact of Macroeconomic Factors\nImpact of Interest Rates, Inflation, and GDP Growth on Financial Markets\n5\n4\n3\n2\n1\n0\n-1 2018 2019\n-2\n-3\n-4\n-5\n2020\n2021 2022 2023\nMacroeconomic factors such as interest rates, inflation, and GDP growth play a pivotal role in shaping financial markets. This section analyzes how these factors have influenced stock, cryptocurrency, and commodity markets over recent years, providing insights into the complex relationship between the economy and financial market performance.\n-Interest Rates % -Inflation Data % GDP Growth % :unselected: :unselected:Future Predictions and Trends\nRelative Growth Trends for S&P 500, Bitcoin, and Oil Prices (2024 Indexed to 100)\n2028\nBased on historical data, current trends, and economic indicators, this section presents predictions ",
-                        "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-14",
-                        "sourcepage": "Financial Market Analysis Report 2023-6.png",
-                        "embedding": [
-                            -0.012668486,
-                            -0.02251158,
-                            0.008822813,
-                            -0.02531081,
-                            -0.014493219,
-                            -0.019503059,
-                            -0.015605063,
-                            -0.0141138835,
-                            -0.019699266,
-                            ...,
+                    },
+                    {
+                        "id": "file-Financial_Market_Analysis_Report_2023_pdf-46696E616E6369616C204D61726B657420416E616C79736973205265706F727420323032332E706466-page-1",
+                        "content": 'advanced data\nanalytics to present a clear picture of the complex interplay between\ndifferent financial markets and their potential trajectories## Introduction to Financial Markets\n\n\n<figure><figcaption>Global Financial Market Distribution (2023)<br>The pie chart features four categories: Stocks, Bonds, Cryptocurrencies, and Commodities. Stocks take up the largest portion of the chart, represented in blue, accounting for 40%. Bonds are the second largest, shown in orange, making up 25%. Cryptocurrencies are depicted in gray and cover 20% of the chart. Commodities are the smallest segment, shown in yellow, comprising 15%.</figcaption></figure>\n\n\nThe global financial market is a vast and intricate network of\nexchanges, instruments, and assets, ranging from traditional stocks\nand bonds to modern cryptocurrencies and commodities. Each\nsegment plays a crucial role in the overall economy, and their\ninteractions can have profound effects on global financial stability.\nThis section provides an overview of these segments and sets the\nstage for a detailed analysis## Stock Market Overview\n\n\n<figure><figcaption><br>The image is a line graph titled "5-Year Trend of the S&P 500 Index.',
+                        "category": None,
+                        "sourcepage": "Financial Market Analysis Report 2023.pdf#page=2",
+                        "sourcefile": "Financial Market Analysis Report 2023.pdf",
+                        "oids": None,
+                        "groups": None,
+                        "captions": [],
+                        "score": 0.0317540317773819,
+                        "reranker_score": 1.8846203088760376,
+                        "search_agent_query": None,
+                        "images": [
+                            {
+                                "url": "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png",
+                                "description": '<figure><figcaption>Impact of Interest Rates, Inflation, and GDP Growth on Financial Markets<br>The image is a line graph titled "on Financial Markets" displaying data from 2018 to 2023. It tracks three variables: Interest Rates %, Inflation Data %, and GDP Growth %, each represented by a different colored line (blue for Interest Rates, orange for Inflation Data, and gray for GDP Growth). Interest Rates % start around 2% in 2018, dip to about 0.25% in 2021, then rise to 1.5% in 2023. Inflation Data % begin at approximately 1.9% in 2018, rise to a peak near 3.4% in 2022, and then decrease to 2.5% in 2023. GDP Growth % shows significant fluctuations, starting at 3% in 2018, plunging to almost -4% in 2020, then rebounding to around 4.5% in 2021 before gradually declining to around 2.8% in 2023.</figcaption></figure>',
+                                "boundingbox": [63.1008, 187.9416, 561.3408000000001, 483.5088],
+                            }
                         ],
-                        "@search.score": 0.04972677677869797,
-                        "@search.reranker_score": 3.1704962253570557,
-                        "@search.highlights": None,
-                        "@search.captions": None,
-                    }
+                    },
                 ]
             ]
         elif search_text == "hydrated":
@@ -261,7 +403,7 @@ class MockClient:
         self.embeddings = embeddings_client
 
 
-def mock_computervision_response():
+def mock_vision_response():
     return MockResponse(
         status=200,
         text=json.dumps(
@@ -356,6 +498,30 @@ class MockSynthesisResult:
 
     def get(self):
         return self.__result
+
+
+# Mock DirectoryClient used in blobmanager.py:AdlsBlobManager
+class MockDirectoryClient:
+    async def get_directory_properties(self):
+        # Return dummy properties to indicate directory exists
+        return {"name": "test-directory"}
+
+    async def get_access_control(self):
+        # Return a dictionary with the owner matching the auth_client's user_oid
+        return {"owner": "OID_X"}  # This should match the user_oid in auth_client
+
+    def get_file_client(self, filename):
+        # Return a file client for the given filename
+        return MockFileClient(filename)
+
+
+# Mock FileClient used in blobmanager.py:AdlsBlobManager
+class MockFileClient:
+    def __init__(self, path_name):
+        self.path_name = path_name
+
+    async def download_file(self):
+        return MockBlob()
 
 
 def mock_speak_text_success(self, text):
