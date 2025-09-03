@@ -39,9 +39,11 @@ See the agentic retrieval documentation.
    By default, agentic retrieval only returns fields included in the semantic configuration.
 
    You can enable this optional feature below, to include all fields from the search index in the result.
+   ⚠️ This feature is currently only compatible with indexes set up with integrated vectorization,
+   or indexes that otherwise have an "id" field marked as filterable.
 
    ```shell
-   azd env set ENABLE_AGENTIC_REF_HYDRATION true
+   azd env set ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA true
    ```
 
 4. **Update the infrastructure and application:**
