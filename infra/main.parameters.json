@@ -104,79 +104,79 @@
     "backendServiceName": {
       "value": "${AZURE_APP_SERVICE}"
     },
-    "chatGptModelName":{
+    "chatGptModelName": {
       "value": "${AZURE_OPENAI_CHATGPT_MODEL}"
     },
     "chatGptDeploymentName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT}"
     },
-    "chatGptDeploymentVersion":{
+    "chatGptDeploymentVersion": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION}"
     },
-    "chatGptDeploymentSkuName":{
+    "chatGptDeploymentSkuName": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU}"
     },
-    "chatGptDeploymentCapacity":{
+    "chatGptDeploymentCapacity": {
       "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT_CAPACITY}"
     },
-    "embeddingModelName":{
+    "embeddingModelName": {
       "value": "${AZURE_OPENAI_EMB_MODEL_NAME}"
     },
     "embeddingDeploymentName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT}"
     },
-    "embeddingDeploymentVersion":{
+    "embeddingDeploymentVersion": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_VERSION}"
     },
-    "embeddingDeploymentSkuName":{
+    "embeddingDeploymentSkuName": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_SKU}"
     },
-    "embeddingDeploymentCapacity":{
+    "embeddingDeploymentCapacity": {
       "value": "${AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY}"
     },
     "embeddingDimensions": {
       "value": "${AZURE_OPENAI_EMB_DIMENSIONS}"
     },
-    "evalModelName":{
+    "evalModelName": {
       "value": "${AZURE_OPENAI_EVAL_MODEL}"
     },
-    "evalModelVersion":{
+    "evalModelVersion": {
       "value": "${AZURE_OPENAI_EVAL_MODEL_VERSION}"
     },
     "evalDeploymentName": {
       "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT}"
     },
-    "evalDeploymentSkuName":{
+    "evalDeploymentSkuName": {
       "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_SKU}"
     },
-    "evalDeploymentCapacity":{
+    "evalDeploymentCapacity": {
       "value": "${AZURE_OPENAI_EVAL_DEPLOYMENT_CAPACITY}"
     },
-    "searchAgentModelName":{
+    "searchAgentModelName": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL}"
     },
-    "searchAgentModelVersion":{
+    "searchAgentModelVersion": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION}"
     },
     "searchAgentDeploymentName": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT}"
     },
-    "searchAgentDeploymentSkuName":{
+    "searchAgentDeploymentSkuName": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_SKU}"
     },
-    "searchAgentDeploymentCapacity":{
+    "searchAgentDeploymentCapacity": {
       "value": "${AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT_CAPACITY}"
     },
     "openAiHost": {
       "value": "${OPENAI_HOST=azure}"
     },
-    "azureOpenAiCustomUrl":{
+    "azureOpenAiCustomUrl": {
       "value": "${AZURE_OPENAI_CUSTOM_URL}"
     },
-    "azureOpenAiApiVersion":{
+    "azureOpenAiApiVersion": {
       "value": "${AZURE_OPENAI_API_VERSION}"
     },
-    "azureOpenAiApiKey":{
+    "azureOpenAiApiKey": {
       "value": "${AZURE_OPENAI_API_KEY_OVERRIDE}"
     },
     "azureOpenAiDisableKeys": {
@@ -324,7 +324,7 @@
       "value": "${DEPLOYMENT_TARGET=containerapps}"
     },
     "webAppExists": {
-        "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
+      "value": "${SERVICE_WEB_RESOURCE_EXISTS=false}"
     },
     "azureContainerAppsWorkloadProfile": {
       "value": "${AZURE_CONTAINER_APPS_WORKLOAD_PROFILE=Consumption}"
@@ -337,6 +337,9 @@
     },
     "useAgenticRetrieval": {
       "value": "${USE_AGENTIC_RETRIEVAL=false}"
+    },
+    "enableAgenticRetrievalSourceData": {
+      "value": "${ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA=false}"
     },
     "ragSearchTextEmbeddings": {
       "value": "${RAG_SEARCH_TEXT_EMBEDDINGS=true}"
