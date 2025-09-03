@@ -34,15 +34,15 @@
     },
     "developerSettings": "Developer settings",
 
-    "chatEmptyStateTitle": "Chat with your data",
+    "chatEmptyStateTitle": "Ask about wildlife tours in Rwanda",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
     "defaultExamples": {
-        "1": "What is included in my Northwind Health Plus plan that is not in standard?",
-        "2": "What happens in a performance review?",
-        "3": "What does a Product Manager do?",
-        "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
+        "1": "When is the best time to visit Rwanda for wildlife tours?",
+        "2": "What’s the difference between gorilla and chimpanzee trekking?",
+        "3": "How does the tour support local communities?",
+        "placeholder": "Ask anything about wildlife tours in Rwanda"
     },
-    "askTitle": "Ask your data",
+    "askTitle": "Ask about wildlife tours in Rwanda",
     "gpt4vExamples": {
         "1": "Compare the impact of interest rates and GDP in financial markets.",
         "2": "What is the expected trend for the S&P 500 index over the next five years? Compare it to the past S&P 500 performance",
