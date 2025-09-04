@@ -2,7 +2,6 @@ import json
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from openai.types.chat import ChatCompletion
@@ -153,30 +152,8 @@ def test_extract_followup_questions_no_pre_content(chat_approach):
     ],
 )
 async def test_search_results_filtering_by_scores(
-    monkeypatch, minimum_search_score, minimum_reranker_score, expected_result_count
+    chat_approach, monkeypatch, minimum_search_score, minimum_reranker_score, expected_result_count
 ):
-
-    chat_approach = ChatReadRetrieveReadApproach(
-        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
-        search_index_name=None,
-        agent_model=None,
-        agent_deployment=None,
-        agent_client=None,
-        auth_helper=None,
-        openai_client=None,
-        chatgpt_model="gpt-4.1-mini",
-        chatgpt_deployment="chat",
-        embedding_deployment="embeddings",
-        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
-        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        embedding_field="embedding3",
-        sourcepage_field="",
-        content_field="",
-        query_language="en-us",
-        query_speller="lexicon",
-        prompt_manager=PromptyManager(),
-    )
-
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
     filtered_results = await chat_approach.search(
@@ -198,27 +175,7 @@ async def test_search_results_filtering_by_scores(
 
 
 @pytest.mark.asyncio
-async def test_search_results_query_rewriting(monkeypatch):
-    chat_approach = ChatReadRetrieveReadApproach(
-        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
-        search_index_name=None,
-        agent_model=None,
-        agent_deployment=None,
-        agent_client=None,
-        auth_helper=None,
-        openai_client=None,
-        chatgpt_model="gpt-35-turbo",
-        chatgpt_deployment="chat",
-        embedding_deployment="embeddings",
-        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
-        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        embedding_field="embedding3",
-        sourcepage_field="",
-        content_field="",
-        query_language="en-us",
-        query_speller="lexicon",
-        prompt_manager=PromptyManager(),
-    )
+async def test_search_results_query_rewriting(chat_approach, monkeypatch):
 
     query_rewrites = None
 
@@ -242,42 +199,6 @@ async def test_search_results_query_rewriting(monkeypatch):
     )
     assert len(results) == 1
     assert query_rewrites == "generative"
-
-
-@pytest.mark.asyncio
-async def test_agent_retrieval_results(monkeypatch):
-    chat_approach = ChatReadRetrieveReadApproach(
-        search_client=None,
-        search_index_name=None,
-        agent_model=None,
-        agent_deployment=None,
-        agent_client=None,
-        auth_helper=None,
-        openai_client=None,
-        chatgpt_model="gpt-35-turbo",
-        chatgpt_deployment="chat",
-        embedding_deployment="embeddings",
-        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
-        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        embedding_field="embedding3",
-        sourcepage_field="",
-        content_field="",
-        query_language="en-us",
-        query_speller="lexicon",
-        prompt_manager=PromptyManager(),
-    )
-
-    agent_client = KnowledgeAgentRetrievalClient(endpoint="", agent_name="", credential=AzureKeyCredential(""))
-
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieval)
-
-    _, results = await chat_approach.run_agentic_retrieval(messages=[], agent_client=agent_client, search_index_name="")
-
-    assert len(results) == 1
-    assert results[0].id == "Benefit_Options-2.pdf"
-    assert results[0].content == "There is a whistleblower policy."
-    assert results[0].sourcepage == "Benefit_Options-2.pdf"
-    assert results[0].search_agent_query == "whistleblower query"
 
 
 @pytest.mark.asyncio

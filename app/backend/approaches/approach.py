@@ -162,6 +162,7 @@ class Approach(ABC):
         openai_host: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        hydrate_references: bool = False,
         multimodal_enabled: bool = False,
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
@@ -179,6 +180,7 @@ class Approach(ABC):
         self.openai_host = openai_host
         self.prompt_manager = prompt_manager
         self.reasoning_effort = reasoning_effort
+        self.hydrate_references = hydrate_references
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
         self.image_embeddings_client = image_embeddings_client
@@ -236,7 +238,7 @@ class Approach(ABC):
                 vector_queries=search_vectors,
             )
 
-        documents = []
+        documents: list[Document] = []
         async for page in results.by_page():
             async for document in page:
                 documents.append(
@@ -299,40 +301,112 @@ class Approach(ABC):
             )
         )
 
-        # STEP 2: Generate a contextual and content specific answer using the search results and chat history
+        # Map activity id -> agent's internal search query
         activities = response.activity
-        activity_mapping = (
+        activity_mapping: dict[int, str] = (
             {
-                activity.id: activity.query.search if activity.query else ""
+                activity.id: activity.query.search
                 for activity in activities
-                if isinstance(activity, KnowledgeAgentSearchActivityRecord)
+                if (
+                    isinstance(activity, KnowledgeAgentSearchActivityRecord)
+                    and activity.query
+                    and activity.query.search is not None
+                )
             }
             if activities
             else {}
         )
 
-        results = []
-        if response and response.references:
-            if results_merge_strategy == "interleaved":
-                # Use interleaved reference order
-                references = sorted(response.references, key=lambda reference: int(reference.id))
-            else:
-                # Default to descending strategy
-                references = response.references
-            for reference in references:
-                if isinstance(reference, KnowledgeAgentAzureSearchDocReference) and reference.source_data:
-                    results.append(
+        # No refs? we're done
+        if not (response and response.references):
+            return response, []
+
+        # Extract references
+        refs = [r for r in response.references if isinstance(r, KnowledgeAgentAzureSearchDocReference)]
+
+        documents: list[Document] = []
+
+        if self.hydrate_references:
+            # Hydrate references to get full documents
+            documents = await self.hydrate_agent_references(
+                references=refs,
+                top=top,
+            )
+        else:
+            # Create documents from reference source data
+            for ref in refs:
+                if ref.source_data:
+                    documents.append(
                         Document(
-                            id=reference.doc_key,
-                            content=reference.source_data["content"],
-                            sourcepage=reference.source_data["sourcepage"],
-                            search_agent_query=activity_mapping[reference.activity_source],
+                            id=ref.doc_key,
+                            content=ref.source_data.get("content"),
+                            sourcepage=ref.source_data.get("sourcepage"),
                         )
                     )
-                if top and len(results) == top:
-                    break
+                    if top and len(documents) >= top:
+                        break
 
-        return response, results
+        # Build mappings for agent queries and sorting
+        ref_to_activity: dict[str, int] = {}
+        doc_to_ref_id: dict[str, str] = {}
+        for ref in refs:
+            if ref.doc_key:
+                ref_to_activity[ref.doc_key] = ref.activity_source
+                doc_to_ref_id[ref.doc_key] = ref.id
+
+        # Inject agent search queries into all documents
+        for doc in documents:
+            if doc.id and doc.id in ref_to_activity:
+                activity_id = ref_to_activity[doc.id]
+                doc.search_agent_query = activity_mapping.get(activity_id, "")
+
+        # Apply sorting strategy to the documents
+        if results_merge_strategy == "interleaved":  # Use interleaved reference order
+            documents = sorted(
+                documents,
+                key=lambda d: int(doc_to_ref_id.get(d.id, 0)) if d.id and doc_to_ref_id.get(d.id) else 0,
+            )
+        # else: Default - preserve original order
+
+        return response, documents
+
+    async def hydrate_agent_references(
+        self,
+        references: list[KnowledgeAgentAzureSearchDocReference],
+        top: Optional[int],
+    ) -> list[Document]:
+        doc_keys: set[str] = set()
+
+        for ref in references:
+            if not ref.doc_key:
+                continue
+            doc_keys.add(ref.doc_key)
+            if top and len(doc_keys) >= top:
+                break
+
+        if not doc_keys:
+            return []
+
+        # Build search filter only on unique doc IDs
+        id_csv = ",".join(doc_keys)
+        id_filter = f"search.in(id, '{id_csv}', ',')"
+
+        # Fetch full documents
+        hydrated_docs: list[Document] = await self.search(
+            top=len(doc_keys),
+            query_text=None,
+            filter=id_filter,
+            vectors=[],
+            use_text_search=False,
+            use_vector_search=False,
+            use_semantic_ranker=False,
+            use_semantic_captions=False,
+            minimum_search_score=None,
+            minimum_reranker_score=None,
+            use_query_rewriting=False,
+        )
+
+        return hydrated_docs
 
     async def get_sources_content(
         self,
