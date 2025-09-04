@@ -61,7 +61,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 - Renders citations and thought process for each answer
 - Includes settings directly in the UI to tweak the behavior and experiment with options
 - Integrates Azure AI Search for indexing and retrieval of documents, with support for [many document formats](/docs/data_ingestion.md#supported-document-formats) as well as [integrated vectorization](/docs/data_ingestion.md#overview-of-integrated-vectorization)
-- Optional usage of [GPT-4 with vision](/docs/gpt4v.md) to reason over image-heavy documents
+- Optional usage of [multimodal models](/docs/multimodal.md) to reason over image-heavy documents
 - Optional addition of [speech input/output](/docs/deploy_features.md#enabling-speech-inputoutput) for accessibility
 - Optional automation of [user login and data access](/docs/login_and_acl.md) via Microsoft Entra
 - Performance tracing and monitoring with Application Insights
@@ -92,7 +92,7 @@ However, you can try the [Azure pricing calculator](https://azure.com/e/e3490de2
 - Azure AI Search: Basic tier, 1 replica, free level of semantic search. Pricing per hour. [Pricing](https://azure.microsoft.com/pricing/details/search/)
 - Azure Blob Storage: Standard tier with ZRS (Zone-redundant storage). Pricing per storage and read operations. [Pricing](https://azure.microsoft.com/pricing/details/storage/blobs/)
 - Azure Cosmos DB: Only provisioned if you enabled [chat history with Cosmos DB](docs/deploy_features.md#enabling-persistent-chat-history-with-azure-cosmos-db). Serverless tier. Pricing per request unit and storage. [Pricing](https://azure.microsoft.com/pricing/details/cosmos-db/)
-- Azure AI Vision: Only provisioned if you enabled [GPT-4 with vision](docs/gpt4v.md). Pricing per 1K transactions. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/computer-vision/)
+- Azure AI Vision: Only provisioned if you enabled [multimodal approach](docs/multimodal.md). Pricing per 1K transactions. [Pricing](https://azure.microsoft.com/pricing/details/cognitive-services/computer-vision/)
 - Azure AI Content Understanding: Only provisioned if you enabled [media description](docs/deploy_features.md#enabling-media-description-with-azure-content-understanding). Pricing per 1K images. [Pricing](https://azure.microsoft.com/pricing/details/content-understanding/)
 - Azure Monitor: Pay-as-you-go tier. Costs based on data ingested. [Pricing](https://azure.microsoft.com/pricing/details/monitor/)
 
@@ -255,7 +255,7 @@ You can find extensive documentation in the [docs](docs/README.md) folder:
   - [Enabling optional features](docs/deploy_features.md)
     - [All features](docs/deploy_features.md)
     - [Login and access control](docs/login_and_acl.md)
-    - [GPT-4 Turbo with Vision](docs/gpt4v.md)
+    - [Multimodal](docs/multimodal.md)
     - [Reasoning](docs/reasoning.md)
     - [Private endpoints](docs/deploy_private.md)
     - [Agentic retrieval](docs/agentic_retrieval.md)
