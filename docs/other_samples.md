@@ -2,9 +2,13 @@
 
 There are an increasingly large number of ways to build RAG chat apps.
 
-## Other language samples
+* [Most similar to this repo](#most-similar-to-this-repo)
+* [azurechat](#azurechat)
+* [sample-app-aoai-chatGPT](#sample-app-aoai-chatgpt)
 
-Inspired by this repo, there are similar apps for other languages:
+## Most similar to this repo
+
+Inspired by this repo, there are similar RAG chat apps for other languages:
 
 * [**JavaScript**](https://aka.ms/azai/js/code)
 * [**.NET**](https://aka.ms/azai/net/code)
@@ -12,33 +16,26 @@ Inspired by this repo, there are similar apps for other languages:
 
 They do not all support the same features as this repo, but they provide a good starting point for building a RAG chat app in your preferred language.
 
-## JavaScript/TypeScript samples
+## azurechat
 
-### AzureChat
-
-Another popular repository for chat applications is:
+Another popular sample is the Azure Chat Solution Accelerator:
 [https://github.com/microsoft/azurechat](https://github.com/microsoft/azurechat)
 
-AzureChat is a JavaScript/TypeScript-based application that focuses on providing a personal ChatGPT-like experience. While it uses similar Azure services, it differs significantly in technology stack and use case focus.
+AzureChat deploys a private chat app with a ChatGPT-like UX on Azure, with built‑in capabilities for chatting over internal data and files and optional extensions.
 
-The primary differences:
+Key differences versus this repository:
 
-* **Technology Stack**: AzureChat uses a JavaScript/TypeScript codebase with a Node.js backend, while this repository uses Python (Quart) for the backend.
-* **Use Case Focus**: AzureChat is designed more like a ChatGPT clone for personal use, whereas this repository focuses on chat-on-business-data scenarios for enterprise use.
-* **Security Approach**: AzureChat stores secrets in Key Vault, while this repository uses keyless authentication with managed identities.
-* **Feature Set**: AzureChat has more personal-use features but fewer enterprise features compared to this repository.
+* **Technology stack**: AzureChat uses a full JavaScript/TypeScript stack with a Node.js backend; this repo uses Python (Quart) for backend services.
+* **Use case emphasis**: AzureChat offers more features around user personalization, while this repo offers more features needed for enterprise scenarios like data ACLs and evaluation.
 
 Feature comparison:
 
 | Feature | azure-search-openai-demo | azurechat |
 | --- | --- | --- |
-| Use case focus | Enterprise chat-on-business-data | Personal ChatGPT-like experience |
-| RAG approach | Multiple approaches | ChatGPT-style with RAG |
 | Vector support | ✅ Yes | ✅ Yes |
 | Data ingestion | ✅ Yes ([Many formats](data_ingestion.md#supported-document-formats)) | ✅ Yes |
 | Persistent chat history | ✅ Yes | ✅ Yes |
-| User feedback | ❌ No | ✅ Yes |
-| GPT-4-vision | ✅ Yes | ✅ Yes |
+| Multimodal | ✅ Yes | ✅ Yes |
 | Voice/Speech I/O | ✅ Yes | ✅ Yes |
 | File upload | ✅ Yes | ✅ Yes |
 | Auth + ACL | ✅ Yes (Enterprise-focused) | ✅ Yes (Personal-focused) |
@@ -51,12 +48,11 @@ Technology comparison:
 | Frontend | React (TypeScript) | React (TypeScript) |
 | Backend | Python (Quart) | Node.js (TypeScript) |
 | Database | Azure AI Search | Azure AI Search |
-| Authentication | Managed Identity (Keyless) | Key Vault |
 | Deployment | Azure Developer CLI (azd) | Azure Developer CLI (azd) |
 
-## Other Python samples
+## sample-app-aoai-chatGPT
 
-Another popular repository for this use case is here:
+Another popular repository for this use case is:
 [https://github.com/Microsoft/sample-app-aoai-chatGPT/](https://github.com/Microsoft/sample-app-aoai-chatGPT/)
 
 That repository is designed for use by customers using Azure OpenAI studio and Azure Portal for setup. It also includes `azd` support for folks who want to deploy it completely from scratch.
@@ -70,7 +66,6 @@ Feature comparison:
 
 | Feature | azure-search-openai-demo | sample-app-aoai-chatGPT |
 | --- | --- | --- |
-| RAG approach | Multiple approaches | Only via ChatCompletion API data_sources |
 | Vector support | ✅ Yes | ✅ Yes |
 | Data ingestion | ✅ Yes ([Many formats](data_ingestion.md#supported-document-formats)) | ✅ Yes ([Many formats](https://learn.microsoft.com/azure/ai-services/openai/concepts/use-your-data?tabs=ai-search#data-formats-and-file-types)) |
 | Persistent chat history | ✅ Yes | ✅ Yes |
