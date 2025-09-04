@@ -21,8 +21,12 @@ from azure.ai.documentintelligence.models import (
 from azure.core.exceptions import HttpResponseError
 from PIL import Image, ImageChops
 
-from prepdocslib.mediadescriber import ContentUnderstandingDescriber
-from prepdocslib.pdfparser import DocumentAnalysisParser
+from prepdocslib.mediadescriber import (
+    ContentUnderstandingDescriber,
+    MultimodalModelDescriber,
+)
+from prepdocslib.page import ImageOnPage
+from prepdocslib.pdfparser import DocumentAnalysisParser, MediaDescriptionStrategy
 
 from .mocks import MockAzureCredential
 
@@ -44,11 +48,14 @@ def test_crop_image_from_pdf_page():
     page_number = 2
     bounding_box = (1.4703, 2.8371, 5.5381, 6.6022)  # Coordinates in inches
 
-    cropped_image_bytes = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number, bounding_box)
+    cropped_image_bytes, bbox_pixels = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number, bounding_box)
 
     # Verify the output is not empty
     assert cropped_image_bytes is not None
     assert len(cropped_image_bytes) > 0
+    assert bbox_pixels is not None
+    assert len(bbox_pixels) == 4
+    assert bbox_pixels == (105.86, 204.27, 398.74, 475.36)  # Coordinates in pixels
 
     # Verify the output is a valid image
     cropped_image = Image.open(io.BytesIO(cropped_image_bytes))
@@ -106,47 +113,55 @@ def test_table_to_html_with_spans():
 
 
 @pytest.mark.asyncio
-async def test_figure_to_html_without_bounding_regions():
+async def test_process_figure_without_bounding_regions():
     doc = MagicMock()
     figure = DocumentFigure(id="1", caption=None, bounding_regions=None)
-    cu_describer = MagicMock()
+    media_describer = MagicMock()
 
-    result_html = await DocumentAnalysisParser.figure_to_html(doc, figure, cu_describer)
-    expected_html = "<figure><figcaption></figcaption></figure>"
+    result = await DocumentAnalysisParser.process_figure(doc, figure, media_describer)
+    expected_html = "<figure><figcaption>1 </figcaption></figure>"
 
-    assert result_html == expected_html
+    assert isinstance(result, ImageOnPage)
+    assert result.description == expected_html
 
 
 @pytest.mark.asyncio
-async def test_figure_to_html_with_bounding_regions(monkeypatch, caplog):
+async def test_process_figure_with_bounding_regions(monkeypatch, caplog):
     doc = MagicMock()
     figure = DocumentFigure(
         id="1",
-        caption=DocumentCaption(content="Figure 1"),
+        caption=DocumentCaption(content="Logo"),
         bounding_regions=[
             BoundingRegion(page_number=1, polygon=[1.4703, 2.8371, 5.5409, 2.8415, 5.5381, 6.6022, 1.4681, 6.5978]),
             BoundingRegion(page_number=2, polygon=[1.4703, 2.8371, 5.5409, 2.8415, 5.5381, 6.6022, 1.4681, 6.5978]),
         ],
     )
-    cu_describer = AsyncMock()
+    media_describer = AsyncMock()
 
     async def mock_describe_image(image_bytes):
         assert image_bytes == b"image_bytes"
         return "Described Image"
 
-    monkeypatch.setattr(cu_describer, "describe_image", mock_describe_image)
+    monkeypatch.setattr(media_describer, "describe_image", mock_describe_image)
 
-    def mock_crop_image_from_pdf_page(doc, page_number, bounding_box) -> bytes:
+    def mock_crop_image_from_pdf_page(doc, page_number, bounding_box):
         assert page_number == 0
         assert bounding_box == (1.4703, 2.8371, 5.5381, 6.6022)
-        return b"image_bytes"
+        return b"image_bytes", [10, 20, 30, 40]
 
     monkeypatch.setattr(DocumentAnalysisParser, "crop_image_from_pdf_page", mock_crop_image_from_pdf_page)
 
     with caplog.at_level(logging.WARNING):
-        result_html = await DocumentAnalysisParser.figure_to_html(doc, figure, cu_describer)
-        expected_html = "<figure><figcaption>Figure 1<br>Described Image</figcaption></figure>"
-        assert result_html == expected_html
+        result = await DocumentAnalysisParser.process_figure(doc, figure, media_describer)
+        expected_html = "<figure><figcaption>1 Logo<br>Described Image</figcaption></figure>"
+
+        assert isinstance(result, ImageOnPage)
+        assert result.description == expected_html
+        assert result.bytes == b"image_bytes"
+        assert result.page_num == 0
+        assert result.figure_id == "1"
+        assert result.bbox == [10, 20, 30, 40]
+        assert result.filename == "figure1.png"
         assert "Figure 1 has more than one bounding region, using the first one" in caplog.text
 
 
@@ -169,7 +184,9 @@ async def test_parse_simple(monkeypatch):
     monkeypatch.setattr(mock_poller, "result", mock_poller_result)
 
     parser = DocumentAnalysisParser(
-        endpoint="https://example.com", credential=MockAzureCredential(), use_content_understanding=False
+        endpoint="https://example.com",
+        credential=MockAzureCredential(),
+        media_description_strategy=MediaDescriptionStrategy.NONE,
     )
     content = io.BytesIO(b"pdf content bytes")
     content.name = "test.pdf"
@@ -240,7 +257,9 @@ async def test_parse_doc_with_tables(monkeypatch):
     monkeypatch.setattr(mock_poller, "result", mock_poller_result)
 
     parser = DocumentAnalysisParser(
-        endpoint="https://example.com", credential=MockAzureCredential(), use_content_understanding=False
+        endpoint="https://example.com",
+        credential=MockAzureCredential(),
+        media_description_strategy=MediaDescriptionStrategy.NONE,
     )
     with open(TEST_DATA_DIR / "Simple Table.pdf", "rb") as f:
         content = io.BytesIO(f.read())
@@ -293,7 +312,7 @@ async def test_parse_doc_with_figures(monkeypatch):
     parser = DocumentAnalysisParser(
         endpoint="https://example.com",
         credential=MockAzureCredential(),
-        use_content_understanding=True,
+        media_description_strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
         content_understanding_endpoint="https://example.com",
     )
 
@@ -308,7 +327,7 @@ async def test_parse_doc_with_figures(monkeypatch):
     assert pages[0].offset == 0
     assert (
         pages[0].text
-        == "# Simple Figure\n\nThis text is before the figure and NOT part of it.\n\n\n<figure><figcaption>Figure 1<br>Pie chart</figcaption></figure>\n\n\nThis is text after the figure that's not part of it."
+        == "# Simple Figure\n\nThis text is before the figure and NOT part of it.\n\n\n<figure><figcaption>1.1 Figure 1<br>Pie chart</figcaption></figure>\n\n\nThis is text after the figure that's not part of it."
     )
 
 
@@ -357,7 +376,7 @@ async def test_parse_unsupportedformat(monkeypatch, caplog):
     parser = DocumentAnalysisParser(
         endpoint="https://example.com",
         credential=MockAzureCredential(),
-        use_content_understanding=True,
+        media_description_strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
         content_understanding_endpoint="https://example.com",
     )
     content = io.BytesIO(b"pdf content bytes")
@@ -370,3 +389,78 @@ async def test_parse_unsupportedformat(monkeypatch, caplog):
     assert pages[0].page_num == 0
     assert pages[0].offset == 0
     assert pages[0].text == "Page content"
+
+
+@pytest.mark.asyncio
+async def test_parse_doc_with_openai(monkeypatch):
+    mock_poller = MagicMock()
+
+    async def mock_begin_analyze_document(self, model_id, analyze_request, **kwargs):
+        return mock_poller
+
+    async def mock_poller_result():
+        content = open(TEST_DATA_DIR / "Simple Figure_content.txt").read()
+        return AnalyzeResult(
+            content=content,
+            pages=[DocumentPage(page_number=1, spans=[DocumentSpan(offset=0, length=148)])],
+            figures=[
+                DocumentFigure(
+                    id="1.1",
+                    caption=DocumentCaption(content="Figure 1"),
+                    bounding_regions=[
+                        BoundingRegion(
+                            page_number=1, polygon=[0.4295, 1.3072, 1.7071, 1.3076, 1.7067, 2.6088, 0.4291, 2.6085]
+                        )
+                    ],
+                    spans=[DocumentSpan(offset=70, length=22)],
+                )
+            ],
+        )
+
+    monkeypatch.setattr(DocumentIntelligenceClient, "begin_analyze_document", mock_begin_analyze_document)
+    monkeypatch.setattr(mock_poller, "result", mock_poller_result)
+
+    async def mock_describe_image(self, image_bytes):
+        return "Pie chart"
+
+    monkeypatch.setattr(MultimodalModelDescriber, "describe_image", mock_describe_image)
+
+    parser = DocumentAnalysisParser(
+        endpoint="https://example.com",
+        credential=MockAzureCredential(),
+        media_description_strategy=MediaDescriptionStrategy.OPENAI,
+        openai_client=Mock(),
+        openai_model="gpt-4o",
+        openai_deployment="gpt-4o",
+    )
+
+    with open(TEST_DATA_DIR / "Simple Figure.pdf", "rb") as f:
+        content = io.BytesIO(f.read())
+        content.name = "Simple Figure.pdf"
+
+    pages = [page async for page in parser.parse(content)]
+
+    assert len(pages) == 1
+    assert pages[0].page_num == 0
+    assert pages[0].offset == 0
+    assert (
+        pages[0].text
+        == "# Simple Figure\n\nThis text is before the figure and NOT part of it.\n\n\n<figure><figcaption>1.1 Figure 1<br>Pie chart</figcaption></figure>\n\n\nThis is text after the figure that's not part of it."
+    )
+
+
+@pytest.mark.asyncio
+async def test_parse_doc_with_openai_missing_parameters():
+    parser = DocumentAnalysisParser(
+        endpoint="https://example.com",
+        credential=MockAzureCredential(),
+        media_description_strategy=MediaDescriptionStrategy.OPENAI,
+        # Intentionally not providing openai_client and openai_model
+    )
+
+    content = io.BytesIO(b"pdf content bytes")
+    content.name = "test.pdf"
+
+    with pytest.raises(ValueError, match="OpenAI client must be provided when using OpenAI media description strategy"):
+        # Call the first iteration of the generator without using async for
+        await parser.parse(content).__anext__()
