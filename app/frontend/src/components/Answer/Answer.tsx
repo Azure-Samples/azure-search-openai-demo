@@ -110,8 +110,10 @@ export const Answer = ({
                         <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
                         {parsedAnswer.citations.map((x, i) => {
                             const path = getCitationFilePath(x);
+                            // Strip out the image filename in parentheses if it exists
+                            const strippedPath = path.replace(/\([^)]*\)$/, "");
                             return (
-                                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(path)}>
+                                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(strippedPath)}>
                                     {`${++i}. ${x}`}
                                 </a>
                             );
