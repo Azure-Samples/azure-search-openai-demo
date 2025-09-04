@@ -41,11 +41,14 @@ param storageSkuName string // Set in main.parameters.json
 
 param defaultReasoningEffort string // Set in main.parameters.json
 param useAgenticRetrieval bool // Set in main.parameters.json
+param enableAgenticRetrievalSourceData bool // Set in main.parameters.json
 
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
 
 param tokenStorageContainerName string = 'tokens'
+
+param imageStorageContainerName string = 'images'
 
 param appServiceSkuName string // Set in main.parameters.json
 
@@ -66,7 +69,7 @@ param speechServiceLocation string = ''
 param speechServiceName string = ''
 param speechServiceSkuName string // Set in main.parameters.json
 param speechServiceVoice string = ''
-param useGPT4V bool = false
+param useMultimodal bool = false
 param useEval bool = false
 
 @allowed(['free', 'provisioned', 'serverless'])
@@ -135,10 +138,9 @@ param documentIntelligenceResourceGroupLocation string
 
 param documentIntelligenceSkuName string // Set in main.parameters.json
 
-param computerVisionServiceName string = '' // Set in main.parameters.json
-param computerVisionResourceGroupName string = '' // Set in main.parameters.json
-param computerVisionResourceGroupLocation string = '' // Set in main.parameters.json
-param computerVisionSkuName string // Set in main.parameters.json
+param visionServiceName string = '' // Set in main.parameters.json
+param visionResourceGroupName string = '' // Set in main.parameters.json
+param visionResourceGroupLocation string = '' // Set in main.parameters.json
 
 param contentUnderstandingServiceName string = '' // Set in main.parameters.json
 param contentUnderstandingResourceGroupName string = '' // Set in main.parameters.json
@@ -170,19 +172,6 @@ var embedding = {
   deploymentSkuName: !empty(embeddingDeploymentSkuName) ? embeddingDeploymentSkuName : (embeddingModelName == 'text-embedding-ada-002' ? 'Standard' : 'GlobalStandard')
   deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 3072
-}
-
-param gpt4vModelName string = ''
-param gpt4vDeploymentName string = ''
-param gpt4vModelVersion string = ''
-param gpt4vDeploymentSkuName string = ''
-param gpt4vDeploymentCapacity int = 0
-var gpt4v = {
-  modelName: !empty(gpt4vModelName) ? gpt4vModelName : 'gpt-4o'
-  deploymentName: !empty(gpt4vDeploymentName) ? gpt4vDeploymentName : 'vision'
-  deploymentVersion: !empty(gpt4vModelVersion) ? gpt4vModelVersion : '2024-08-06'
-  deploymentSkuName: !empty(gpt4vDeploymentSkuName) ? gpt4vDeploymentSkuName : 'GlobalStandard' // Not-backward compatible
-  deploymentCapacity: gpt4vDeploymentCapacity != 0 ? gpt4vDeploymentCapacity : 10
 }
 
 param evalModelName string = ''
@@ -302,6 +291,17 @@ param azureContainerAppsWorkloadProfile string
 
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
+
+// RAG Configuration Parameters
+@description('Whether to use text embeddings for RAG search')
+param ragSearchTextEmbeddings bool = true
+@description('Whether to use image embeddings for RAG search')
+param ragSearchImageEmbeddings bool = true
+@description('Whether to send text sources to LLM for RAG responses')
+param ragSendTextSources bool = true
+@description('Whether to send image sources to LLM for RAG responses')
+param ragSendImageSources bool = true
+
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
 param containerRegistryName string = deploymentTarget == 'containerapps'
@@ -332,8 +332,8 @@ resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2
   name: !empty(documentIntelligenceResourceGroupName) ? documentIntelligenceResourceGroupName : resourceGroup.name
 }
 
-resource computerVisionResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(computerVisionResourceGroupName)) {
-  name: !empty(computerVisionResourceGroupName) ? computerVisionResourceGroupName : resourceGroup.name
+resource visionResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(visionResourceGroupName)) {
+  name: !empty(visionResourceGroupName) ? visionResourceGroupName : resourceGroup.name
 }
 
 resource contentUnderstandingResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(contentUnderstandingResourceGroupName)) {
@@ -409,7 +409,7 @@ var appEnvVariables = {
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
   AZURE_SEARCH_QUERY_REWRITING: searchServiceQueryRewriting
-  AZURE_VISION_ENDPOINT: useGPT4V ? computerVision.outputs.endpoint : ''
+  AZURE_VISION_ENDPOINT: useMultimodal ? vision.outputs.endpoint : ''
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
   AZURE_SEARCH_FIELD_NAME_EMBEDDING: searchFieldNameEmbedding
@@ -424,6 +424,7 @@ var appEnvVariables = {
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
   USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
   USE_AGENTIC_RETRIEVAL: useAgenticRetrieval
+  ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA: enableAgenticRetrievalSourceData
   // Chat history settings
   USE_CHAT_HISTORY_BROWSER: useChatHistoryBrowser
   USE_CHAT_HISTORY_COSMOS: useChatHistoryCosmos
@@ -436,13 +437,11 @@ var appEnvVariables = {
   AZURE_OPENAI_EMB_MODEL_NAME: embedding.modelName
   AZURE_OPENAI_EMB_DIMENSIONS: embedding.dimensions
   AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
-  AZURE_OPENAI_GPT4V_MODEL: gpt4v.modelName
   AZURE_OPENAI_REASONING_EFFORT: defaultReasoningEffort
   // Specific to Azure OpenAI
   AZURE_OPENAI_SERVICE: isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
   AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
-  AZURE_OPENAI_GPT4V_DEPLOYMENT: useGPT4V ? gpt4v.deploymentName : ''
   AZURE_OPENAI_SEARCHAGENT_MODEL: searchAgent.modelName
   AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT: searchAgent.deploymentName
   AZURE_OPENAI_API_VERSION: azureOpenAiApiVersion
@@ -464,16 +463,22 @@ var appEnvVariables = {
   // CORS support, for frontends on other hosts
   ALLOWED_ORIGIN: join(allowedOrigins, ';')
   USE_VECTORS: useVectors
-  USE_GPT4V: useGPT4V
+  USE_MULTIMODAL: useMultimodal
   USE_USER_UPLOAD: useUserUpload
   AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage.outputs.name : ''
   AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
+  AZURE_IMAGESTORAGE_CONTAINER: useMultimodal ? imageStorageContainerName : ''
   AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
   USE_LOCAL_PDF_PARSER: useLocalPdfParser
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
   USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
   AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
   RUNNING_IN_PRODUCTION: 'true'
+  // RAG Configuration
+  RAG_SEARCH_TEXT_EMBEDDINGS: ragSearchTextEmbeddings
+  RAG_SEARCH_IMAGE_EMBEDDINGS: ragSearchImageEmbeddings
+  RAG_SEND_TEXT_SOURCES: ragSendTextSources
+  RAG_SEND_IMAGE_SOURCES: ragSendImageSources
 }
 
 // App Service for the web application (Python Quart app with JS frontend)
@@ -638,22 +643,6 @@ var openAiDeployments = concat(
         }
       }
     ] : [],
-  useGPT4V
-    ? [
-        {
-          name: gpt4v.deploymentName
-          model: {
-            format: 'OpenAI'
-            name: gpt4v.modelName
-            version: gpt4v.deploymentVersion
-          }
-          sku: {
-            name: gpt4v.deploymentSkuName
-            capacity: gpt4v.deploymentCapacity
-          }
-        }
-      ]
-    : [],
   useAgenticRetrieval
     ? [
         {
@@ -718,23 +707,23 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2'
   }
 }
 
-module computerVision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useGPT4V) {
-  name: 'computerVision'
-  scope: computerVisionResourceGroup
+module vision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMultimodal) {
+  name: 'vision'
+  scope: visionResourceGroup
   params: {
-    name: !empty(computerVisionServiceName)
-      ? computerVisionServiceName
-      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
-    kind: 'ComputerVision'
+    name: !empty(visionServiceName)
+      ? visionServiceName
+      : '${abbrs.cognitiveServicesVision}${resourceToken}'
+    kind: 'CognitiveServices'
     networkAcls: {
       defaultAction: 'Allow'
     }
-    customSubDomainName: !empty(computerVisionServiceName)
-      ? computerVisionServiceName
-      : '${abbrs.cognitiveServicesComputerVision}${resourceToken}'
-    location: computerVisionResourceGroupLocation
+    customSubDomainName: !empty(visionServiceName)
+      ? visionServiceName
+      : '${abbrs.cognitiveServicesVision}${resourceToken}'
+    location: visionResourceGroupLocation
     tags: tags
-    sku: computerVisionSkuName
+    sku: 'S0'
   }
 }
 
@@ -826,6 +815,10 @@ module storage 'core/storage/storage-account.bicep' = {
     containers: [
       {
         name: storageContainerName
+        publicAccess: 'None'
+      }
+      {
+        name: imageStorageContainerName
         publicAccess: 'None'
       }
       {
@@ -953,7 +946,7 @@ module openAiRoleUser 'core/security/role.bicep' = if (isAzureOpenAiHost && depl
   }
 }
 
-// For both document intelligence and computer vision
+// For both Document Intelligence and AI vision
 module cognitiveServicesRoleUser 'core/security/role.bicep' = {
   scope: resourceGroup
   name: 'cognitiveservices-role-user'
@@ -1072,12 +1065,22 @@ module openAiRoleBackend 'core/security/role.bicep' = if (isAzureOpenAiHost && d
   }
 }
 
-module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi && (useIntegratedVectorization || useAgenticRetrieval)) {
+module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi) {
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
     principalId: searchService.outputs.principalId
     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal) {
+  scope: visionResourceGroup
+  name: 'vision-role-searchservice'
+  params: {
+    principalId: searchService.outputs.principalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
     principalType: 'ServicePrincipal'
   }
 }
@@ -1112,6 +1115,16 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
   params: {
     principalId: searchService.outputs.principalId
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+module storageRoleContributorSearchService 'core/security/role.bicep' = if (useIntegratedVectorization && useMultimodal) {
+  scope: storageResourceGroup
+  name: 'storage-role-contributor-searchservice'
+  params: {
+    principalId: searchService.outputs.principalId
+    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
     principalType: 'ServicePrincipal'
   }
 }
@@ -1185,14 +1198,15 @@ var openAiPrivateEndpointConnection = (usePrivateEndpoint && isAzureOpenAiHost &
     ]
   : []
 
-var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLocalPdfParser || useGPT4V || useMediaDescriberAzureCU))
+var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLocalPdfParser || useMultimodal || useMediaDescriberAzureCU))
   ? [
       {
         groupId: 'account'
         dnsZoneName: 'privatelink.cognitiveservices.azure.com'
         resourceIds: concat(
+          [openAi.outputs.resourceId],
           !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : [],
-          useGPT4V ? [computerVision.outputs.resourceId] : [],
+          useMultimodal ? [vision.outputs.resourceId] : [],
           useMediaDescriberAzureCU ? [contentUnderstanding.outputs.resourceId] : []
         )
       }
@@ -1282,10 +1296,10 @@ module searchContribRoleBackend 'core/security/role.bicep' = if (useUserUpload) 
   }
 }
 
-// For computer vision access by the backend
-module computerVisionRoleBackend 'core/security/role.bicep' = if (useGPT4V) {
-  scope: computerVisionResourceGroup
-  name: 'computervision-role-backend'
+// For Azure AI Vision access by the backend
+module visionRoleBackend 'core/security/role.bicep' = if (useMultimodal) {
+  scope: visionResourceGroup
+  name: 'vision-role-backend'
   params: {
     principalId: (deploymentTarget == 'appservice')
       ? backend.outputs.identityPrincipalId
@@ -1318,7 +1332,6 @@ output OPENAI_HOST string = openAiHost
 output AZURE_OPENAI_EMB_MODEL_NAME string = embedding.modelName
 output AZURE_OPENAI_EMB_DIMENSIONS int = embedding.dimensions
 output AZURE_OPENAI_CHATGPT_MODEL string = chatGpt.modelName
-output AZURE_OPENAI_GPT4V_MODEL string = gpt4v.modelName
 
 // Specific to Azure OpenAI
 output AZURE_OPENAI_SERVICE string = isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
@@ -1331,9 +1344,6 @@ output AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU string = isAzureOpenAiHost ? chatGpt.
 output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embedding.deploymentName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT_VERSION string = isAzureOpenAiHost ? embedding.deploymentVersion : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT_SKU string = isAzureOpenAiHost ? embedding.deploymentSkuName : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentName : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentVersion : ''
-output AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU string = isAzureOpenAiHost && useGPT4V ? gpt4v.deploymentSkuName : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT string = isAzureOpenAiHost && useEval ? eval.deploymentName : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT_VERSION string = isAzureOpenAiHost && useEval ? eval.deploymentVersion : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT_SKU string = isAzureOpenAiHost && useEval ? eval.deploymentSkuName : ''
@@ -1344,7 +1354,7 @@ output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
-output AZURE_VISION_ENDPOINT string = useGPT4V ? computerVision.outputs.endpoint : ''
+output AZURE_VISION_ENDPOINT string = useMultimodal ? vision.outputs.endpoint : ''
 output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
@@ -1370,6 +1380,8 @@ output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage.outputs.name : ''
 output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
 output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_IMAGESTORAGE_CONTAINER string = useMultimodal ? imageStorageContainerName : ''
 
 output AZURE_AI_PROJECT string = useAiProject ? ai.outputs.projectName : ''
 

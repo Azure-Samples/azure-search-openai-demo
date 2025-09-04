@@ -26,7 +26,12 @@ You MUST check task output readiness before debugging, testing, or declaring wor
 	- If watchers seem stuck or output stops updating, stop the tasks and run the "Development" task again.
 - To interact with a running application, use the Playwright MCP server. If testing login, you will need to navigate to 'localhost' instead of '127.0.0.1' since that's the URL allowed by the Entra application.
 
+## Running Python scripts
+
+If you are running Python scripts that depend on installed requirements, you must run them using the virtual environment in `.venv`.
+
 ## Committing the change
 
 When change is complete, offer to make a new branch, git commit, and pull request.
+(DO NOT check out a new branch unless explicitly confirmed - sometimes user is already in a branch)
 Make sure the PR follows the PULL_REQUEST_TEMPLATE.md format, with all sections filled out and appropriate checkboxes checked.

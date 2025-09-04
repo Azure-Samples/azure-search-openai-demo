@@ -2,16 +2,16 @@
 
 [📺 Watch: (RAG Deep Dive series) Customizing the app](https://www.youtube.com/watch?v=D3slfMqydHc)
 
+> **Tip:** We recommend using GitHub Copilot Agent mode when adding new features or making code changes. This project includes a [.github/copilot-instructions.md](../.github/copilot-instructions.md) file that guides Copilot to generate code following project conventions.
+
 This guide provides more details for customizing the RAG chat app.
 
 - [Using your own data](#using-your-own-data)
 - [Customizing the UI](#customizing-the-ui)
 - [Customizing the backend](#customizing-the-backend)
-  - [Chat/Ask tabs](#chatask-tabs)
+  - [Chat/Ask approaches](#chatask-approaches)
     - [Chat approach](#chat-approach)
-      - [Chat with vision](#chat-with-vision)
-    - [Ask tab](#ask-tab)
-      - [Ask with vision](#ask-with-vision)
+    - [Ask approach](#ask-approach)
 - [Improving answer quality](#improving-answer-quality)
   - [Identify the problem point](#identify-the-problem-point)
   - [Improving OpenAI ChatCompletion results](#improving-openai-chatcompletion-results)
@@ -30,7 +30,7 @@ The frontend is built using [React](https://reactjs.org/) and [Fluent UI compone
 
 The backend is built using [Quart](https://quart.palletsprojects.com/), a Python framework for asynchronous web applications. The backend code is stored in the `app/backend` folder. The frontend and backend communicate over HTTP using JSON or streamed NDJSON responses. Learn more in the [HTTP Protocol guide](http_protocol.md).
 
-### Chat/Ask tabs
+### Chat/Ask approaches
 
 Typically, the primary backend code you'll want to customize is the `app/backend/approaches` folder, which contains the classes powering the Chat and Ask tabs. Each class uses a different RAG (Retrieval Augmented Generation) approach, which include system messages that should be changed to match your data
 
@@ -38,39 +38,41 @@ Typically, the primary backend code you'll want to customize is the `app/backend
 
 The chat tab uses the approach programmed in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
 
-1. It calls the OpenAI ChatCompletion API to turn the user question into a good search query, using the prompt and tools from [chat_query_rewrite.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_query_rewrite.prompty).
-2. It queries Azure AI Search for search results for that query (optionally using the vector embeddings for that query).
-3. It then calls the OpenAI ChatCompletion API to answer the question based on the sources, using the prompt from [chat_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_answer_question.prompty). That call includes the past message history as well (or as many messages fit inside the model's token limit).
+1. **Query rewriting**: It calls the OpenAI ChatCompletion API to turn the user question into a good search query, using the prompt and tools from [chat_query_rewrite.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_query_rewrite.prompty).
+2. **Search**: It queries Azure AI Search for search results for that query (optionally using the vector embeddings for that query).
+3. **Answering**: It then calls the OpenAI ChatCompletion API to answer the question based on the sources, using the prompt from [chat_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_answer_question.prompty). That call includes the past message history as well (or as many messages fit inside the model's token limit).
 
 The prompts are currently tailored to the sample data since they start with "Assistant helps the company employees with their healthcare plan questions, and questions about the employee handbook." Modify the [chat_query_rewrite.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_query_rewrite.prompty) and [chat_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_answer_question.prompty) prompts to match your data.
 
-##### Chat with vision
+##### Chat with multimodal feature
 
-If you followed the instructions in [the GPT vision guide](gpt4v.md) to enable the vision approach and the "Use GPT vision model" option is selected, then the chat tab will use the `chatreadretrievereadvision.py` approach instead. This approach is similar to the `chatreadretrieveread.py` approach, with a few differences:
+If you followed the instructions in [the multimodal guide](multimodal.md) to enable multimodal RAG,
+there are several differences in the chat approach:
 
-1. Step 1 is the same as before, except it uses the GPT-4 Vision model instead of the default GPT-3.5 model.
-2. For this step, it also calculates a vector embedding for the user question using [the Computer Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the `imageEmbeddings` fields in the indexed documents. For each matching document, it downloads the image blob and converts it to a base 64 encoding.
-3. When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the GPT4 Vision model (similar to this [documentation example](https://platform.openai.com/docs/guides/vision/quick-start)). The model generates a response that includes citations to the images, and the UI renders the base64 encoded images when a citation is clicked.
+1. **Query rewriting**: Unchanged.
+2. **Search**: For this step, it calculates a vector embedding for the user question using [the Azure AI Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the image embedding fields in the indexed documents. For each matching document, it downloads each associated image from Azure Blob Storage and converts it to a base 64 encoding.
+3. **Answering**: When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the multimodal LLM. The model generates a response that includes citations to the images, and the UI renders the images when a citation is clicked.
 
-The prompt for step 2 is currently tailored to the sample data since it starts with "You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd.". Modify the [chat_answer_question_vision.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_answer_question_vision.prompty) prompt to match your data.
+The settings can be customized to disable calculating the image vector embeddings or to disable sending image inputs to the LLM, if desired.
 
-#### Ask tab
+#### Ask approach
 
 The ask tab uses the approach programmed in [retrievethenread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/retrievethenread.py).
 
-1. It queries Azure AI Search for search results for the user question (optionally using the vector embeddings for that question).
-2. It then combines the search results and user question, and calls the OpenAI ChatCompletion API to answer the question based on the sources, using the prompt from [ask_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question.prompty).
+1. **Search**: It queries Azure AI Search for search results for the user question (optionally using the vector embeddings for that question).
+2. **Answering**: It then combines the search results and user question, and calls the OpenAI ChatCompletion API to answer the question based on the sources, using the prompt from [ask_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question.prompty).
 
 The prompt for step 2 is currently tailored to the sample data since it starts with "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions." Modify [ask_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question.prompty) to match your data.
 
-#### Ask with vision
+#### Ask with multimodal feature
 
-If you followed the instructions in [the GPT vision guide](gpt4v.md) to enable the vision approach and the "Use GPT vision model" option is selected, then the ask tab will use the `retrievethenreadvision.py` approach instead. This approach is similar to the `retrievethenread.py` approach, with a few differences:
+If you followed the instructions in [the multimodal guide](multimodal.md) to enable multimodal RAG,
+there are several differences in the ask approach:
 
-1. For this step, it also calculates a vector embedding for the user question using [the Computer Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the `imageEmbeddings` fields in the indexed documents. For each matching document, it downloads the image blob and converts it to a base 64 encoding.
-2. When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the GPT4 Vision model (similar to this [documentation example](https://platform.openai.com/docs/guides/vision/quick-start)). The model generates a response that includes citations to the images, and the UI renders the base64 encoded images when a citation is clicked.
+1. **Search**: For this step, it also calculates a vector embedding for the user question using [the Azure AI Vision vectorize text API](https://learn.microsoft.com/azure/ai-services/computer-vision/how-to/image-retrieval#call-the-vectorize-text-api), and passes that to the Azure AI Search to compare against the image embedding fields in the indexed documents. For each matching document, it downloads each associated image from Azure Blob Storage and converts it to a base 64 encoding.
+2. **Answering**: When it combines the search results and user question, it includes the base 64 encoded images, and sends along both the text and images to the multimodal LLM. The model generates a response that includes citations to the images, and the UI renders the images when a citation is clicked.
 
-The prompt for step 2 is currently tailored to the sample data since it starts with "You are an intelligent assistant helping analyze the Annual Financial Report of Contoso Ltd". Modify the [ask_answer_question_vision.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question_vision.prompty) prompt to match your data.
+The settings can be customized to disable calculating the image vector embeddings or to disable sending image inputs to the LLM, if desired.
 
 #### Making settings overrides permanent
 
