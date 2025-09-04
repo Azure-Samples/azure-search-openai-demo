@@ -1,6 +1,6 @@
 {
-    "testdata_path": "ground_truth.jsonl",
-    "results_dir": "results/experiment<TIMESTAMP>",
+    "testdata_path": "ground_truth_multimodal.jsonl",
+    "results_dir": "results_multimodal/experiment<TIMESTAMP>",
     "requested_metrics": ["gpt_groundedness", "gpt_relevance", "answer_length", "latency", "citations_matched", "any_citation"],
     "target_url": "http://localhost:50505/chat",
     "target_parameters": {
@@ -19,10 +19,10 @@
             "suggest_followup_questions": false,
             "use_oid_security_filter": false,
             "use_groups_security_filter": false,
-            "search_text_embeddings": true,
-            "search_image_embeddings": true,
-            "send_text_sources": true,
-            "send_image_sources": true,
+            "search_text_embeddings":true,
+            "search_image_embeddings":true,
+            "send_text_sources":true,
+            "send_image_sources":true,
             "language": "en",
             "use_agentic_retrieval": false,
             "seed": 1

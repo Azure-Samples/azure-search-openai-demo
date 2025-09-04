@@ -54,7 +54,7 @@ Make sure the last question ends with ">>".
 
 user:
 {{ user_query }}
-{% if image_sources is defined %}{% for image_source in image_sources %}
+{% if image_sources %}{% for image_source in image_sources %}
 ![Image]({{image_source}})
 {% endfor %}{% endif %}
 {% if text_sources is defined %}

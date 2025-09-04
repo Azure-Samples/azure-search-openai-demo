@@ -45,7 +45,7 @@ In-network deductibles are $500 for employee and $1000 for family [info1.txt] an
 
 user:
 {{ user_query }}
-{% if image_sources is defined %}{% for image_source in image_sources %}
+{% if image_sources %}{% for image_source in image_sources %}
 ![Image]({{image_source}})
 {% endfor %}{% endif %}
 {% if text_sources is defined %}Sources:{% for text_source in text_sources %}
