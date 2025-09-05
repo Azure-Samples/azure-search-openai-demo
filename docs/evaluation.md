@@ -72,7 +72,7 @@ Review the generated data in `evals/ground_truth.jsonl` after running that scrip
 
 ## Run bulk evaluation
 
-Review the configuration in `evals/eval_config.json` to ensure that everything is correctly setup. You may want to adjust the metrics used. See [the ai-rag-chat-evaluator README](https://github.com/Azure-Samples/ai-rag-chat-evaluator) for more information on the available metrics.
+Review the configuration in `evals/evaluate_config.json` to ensure that everything is correctly setup. You may want to adjust the metrics used. See [the ai-rag-chat-evaluator README](https://github.com/Azure-Samples/ai-rag-chat-evaluator) for more information on the available metrics.
 
 By default, the evaluation script will evaluate every question in the ground truth data.
 Run the evaluation script by running the following command:
@@ -84,10 +84,10 @@ python evals/evaluate.py
 The options are:
 
 * `numquestions`: The number of questions to evaluate. By default, this is all questions in the ground truth data.
-* `resultsdir`: The directory to write the evaluation results. By default, this is a timestamped folder in `evals/results`. This option can also be specified in `eval_config.json`.
-* `targeturl`: The URL of the running application to evaluate. By default, this is `http://localhost:50505`. This option can also be specified in `eval_config.json`.
+* `resultsdir`: The directory to write the evaluation results. By default, this is a timestamped folder in `evals/results`. This option can also be specified in `evaluate_config.json`.
+* `targeturl`: The URL of the running application to evaluate. By default, this is `http://localhost:50505`. This option can also be specified in `evaluate_config.json`.
 
-🕰️ This may take a long time, possibly several hours, depending on the number of ground truth questions, and the TPM capacity of the evaluation model, and the number of GPT metrics requested.
+🕰️ This may take a long time, possibly several hours, depending on the number of ground truth questions, the TPM capacity of the evaluation model, and the number of LLM-based metrics requested.
 
 ## Review the evaluation results
 
@@ -118,3 +118,9 @@ This repository includes a GitHub Action workflow `evaluate.yaml` that can be us
 In order for the workflow to run successfully, you must first set up [continuous integration](./azd.md#github-actions) for the repository.
 
 To run the evaluation on the changes in a PR, a repository member can post a `/evaluate` comment to the PR. This will trigger the evaluation workflow to run the evaluation on the PR changes and will post the results to the PR.
+
+## Evaluate multimodal RAG answers
+
+The repository also includes an `evaluate_config_multimodal.json` file specifically for evaluating multimodal RAG answers. This configuration uses a different ground truth file, `ground_truth_multimodal.jsonl`, which includes questions based off the sample data that require both text and image sources to answer.
+
+Note that the "groundedness" evaluator is not reliable for multimodal RAG, since it does not currently incorporate the image sources. We still include it in the metrics, but the more reliable metrics are "relevance" and "citations matched".

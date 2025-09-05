@@ -702,7 +702,9 @@ async def test_ask_prompt_template_concat(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["context"]["thoughts"][2]["description"][0]["content"].startswith("You are an intelligent assistant")
+    assert result["context"]["thoughts"][2]["description"][0]["content"].startswith(
+        "Assistant helps the company employees"
+    )
     assert result["context"]["thoughts"][2]["description"][0]["content"].endswith("Meow like a cat.")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 

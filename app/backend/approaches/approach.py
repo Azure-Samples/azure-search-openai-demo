@@ -438,7 +438,8 @@ class Approach(ABC):
         for doc in results:
             # Get the citation for the source page
             citation = self.get_citation(doc.sourcepage)
-            citations.append(citation)
+            if citation not in citations:
+                citations.append(citation)
 
             # If semantic captions are used, extract captions; otherwise, use content
             if use_semantic_captions and doc.captions:
