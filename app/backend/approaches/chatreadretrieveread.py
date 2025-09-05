@@ -57,6 +57,7 @@ class ChatReadRetrieveReadApproach(Approach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
+        hydrate_references: bool = False,
         multimodal_enabled: bool = False,
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
@@ -84,6 +85,7 @@ class ChatReadRetrieveReadApproach(Approach):
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
+        self.hydrate_references = hydrate_references
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
         self.image_embeddings_client = image_embeddings_client

@@ -10,6 +10,7 @@ import azure.storage.filedatalake.aio
 import msal
 import pytest
 import pytest_asyncio
+from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
@@ -46,6 +47,10 @@ from .mocks import (
     MockResponse,
     MockTransport,
     mock_retrieval_response,
+    mock_retrieval_response_with_duplicates,
+    mock_retrieval_response_with_missing_doc_key,
+    mock_retrieval_response_with_sorting,
+    mock_retrieval_response_with_top_limit,
     mock_speak_text_cancelled,
     mock_speak_text_failed,
     mock_speak_text_success,
@@ -67,13 +72,37 @@ async def mock_search(self, *args, **kwargs):
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
 
-async def mock_retrieve(self, *args, **kwargs):
-    retrieval_request = kwargs.get("retrieval_request")
-    assert retrieval_request is not None
-    assert retrieval_request.target_index_params is not None
-    assert len(retrieval_request.target_index_params) == 1
-    self.filter = retrieval_request.target_index_params[0].filter_add_on
-    return mock_retrieval_response()
+def create_mock_retrieve(response_type="default"):
+    """Create a mock_retrieve function that returns different response types.
+
+    Args:
+        response_type: Type of response to return. Options:
+            - "default": mock_retrieval_response()
+            - "sorting": mock_retrieval_response_with_sorting()
+            - "duplicates": mock_retrieval_response_with_duplicates()
+            - "missing_doc_key": mock_retrieval_response_with_missing_doc_key()
+            - "top_limit": mock_retrieval_response_with_top_limit()
+    """
+
+    async def mock_retrieve_parameterized(self, *args, **kwargs):
+        retrieval_request = kwargs.get("retrieval_request")
+        assert retrieval_request is not None
+        assert retrieval_request.target_index_params is not None
+        assert len(retrieval_request.target_index_params) == 1
+        self.filter = retrieval_request.target_index_params[0].filter_add_on
+
+        if response_type == "sorting":
+            return mock_retrieval_response_with_sorting()
+        elif response_type == "duplicates":
+            return mock_retrieval_response_with_duplicates()
+        elif response_type == "missing_doc_key":
+            return mock_retrieval_response_with_missing_doc_key()
+        elif response_type == "top_limit":
+            return mock_retrieval_response_with_top_limit()
+        else:  # default
+            return mock_retrieval_response()
+
+    return mock_retrieve_parameterized
 
 
 @pytest.fixture
@@ -280,7 +309,7 @@ def mock_acs_search(monkeypatch):
 
 @pytest.fixture
 def mock_acs_agent(monkeypatch):
-    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", mock_retrieve)
+    monkeypatch.setattr(KnowledgeAgentRetrievalClient, "retrieve", create_mock_retrieve())
 
     async def mock_get_agent(*args, **kwargs):
         return MockAgent
@@ -418,6 +447,7 @@ agent_envs = [
         "AZURE_OPENAI_SEARCHAGENT_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_RETRIEVAL": "true",
+        "ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA": "true",
     }
 ]
 
@@ -431,6 +461,7 @@ agent_auth_envs = [
         "AZURE_OPENAI_SEARCHAGENT_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_RETRIEVAL": "true",
+        "ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA": "true",
         "AZURE_USE_AUTHENTICATION": "true",
         "AZURE_SERVER_APP_ID": "SERVER_APP",
         "AZURE_SERVER_APP_SECRET": "SECRET",
@@ -1100,7 +1131,7 @@ def mock_user_directory_client(monkeypatch):
 @pytest.fixture
 def chat_approach():
     return ChatReadRetrieveReadApproach(
-        search_client=None,
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
         search_index_name=None,
         agent_model=None,
         agent_deployment=None,
@@ -1118,6 +1149,41 @@ def chat_approach():
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
+        user_blob_manager=AdlsBlobManager(
+            endpoint="https://test-userstorage-account.dfs.core.windows.net",
+            container="test-userstorage-container",
+            credential=MockAzureCredential(),
+        ),
+        global_blob_manager=BlobManager(  # on normal Azure storage
+            endpoint="https://test-globalstorage-account.blob.core.windows.net",
+            container="test-globalstorage-container",
+            credential=MockAzureCredential(),
+        ),
+    )
+
+
+@pytest.fixture
+def chat_approach_with_hydration():
+    return ChatReadRetrieveReadApproach(
+        search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
+        search_index_name=None,
+        agent_model=None,
+        agent_deployment=None,
+        agent_client=None,
+        auth_helper=None,
+        openai_client=None,
+        chatgpt_model="gpt-4.1-mini",
+        chatgpt_deployment="chat",
+        embedding_deployment="embeddings",
+        embedding_model=MOCK_EMBEDDING_MODEL_NAME,
+        embedding_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        embedding_field="embedding3",
+        sourcepage_field="",
+        content_field="",
+        query_language="en-us",
+        query_speller="lexicon",
+        prompt_manager=PromptyManager(),
+        hydrate_references=True,
         user_blob_manager=AdlsBlobManager(
             endpoint="https://test-userstorage-account.dfs.core.windows.net",
             container="test-userstorage-container",
