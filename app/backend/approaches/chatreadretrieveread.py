@@ -398,7 +398,7 @@ class ChatReadRetrieveReadApproach(Approach):
         # 50 is the amount of documents that the reranker can process per query
         max_docs_for_reranker = max_subqueries * 50
         send_text_sources = overrides.get("send_text_sources", True)
-        send_image_sources = overrides.get("send_image_sources", False) and self.multimodal_enabled
+        send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
 
         response, results = await self.run_agentic_retrieval(
             messages=messages,
