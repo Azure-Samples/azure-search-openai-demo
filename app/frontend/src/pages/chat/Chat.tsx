@@ -48,11 +48,11 @@ const Chat = () => {
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
     const [searchTextEmbeddings, setSearchTextEmbeddings] = useState<boolean>(true);
-    const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(true);
+    const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(false);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [sendTextSources, setSendTextSources] = useState<boolean>(true);
-    const [sendImageSources, setSendImageSources] = useState<boolean>(true);
+    const [sendImageSources, setSendImageSources] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -99,7 +99,7 @@ const Chat = () => {
         configApi().then(config => {
             setShowMultimodalOptions(config.showMultimodalOptions);
             if (config.showMultimodalOptions) {
-                // Always have at least one source enabled, default to text if none specified
+                // Initialize from server config so defaults match deployment settings
                 setSendTextSources(config.ragSendTextSources !== undefined ? config.ragSendTextSources : true);
                 setSendImageSources(config.ragSendImageSources);
                 setSearchTextEmbeddings(config.ragSearchTextEmbeddings);

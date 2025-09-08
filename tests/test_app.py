@@ -297,6 +297,44 @@ async def test_ask_rtr_text_semanticcaptions(client, snapshot):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("route", ["/ask", "/chat"])
+async def test_send_text_sources_false(client, route):
+    """When send_text_sources is False, text sources should be omitted while citations remain."""
+    response = await client.post(
+        route,
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {"overrides": {"retrieval_mode": "text", "send_text_sources": False}},
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    data_points = result["context"]["data_points"]
+    assert data_points["text"] == []
+    assert "citations" in data_points and len(data_points["citations"]) > 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("route", ["/ask", "/chat"])
+async def test_search_image_embeddings_ignored_without_multimodal(client, route):
+    """Sending search_image_embeddings=True when USE_MULTIMODAL is false should be ignored and still succeed (200)."""
+    response = await client.post(
+        route,
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {"overrides": {"search_image_embeddings": True, "send_image_sources": True}},
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    # Ensure the thought step recorded search_image_embeddings as False
+    search_thought = [
+        thought for thought in result["context"]["thoughts"] if thought["title"].startswith("Search using")
+    ][0]
+    assert search_thought["props"]["search_image_embeddings"] is False
+
+
+@pytest.mark.asyncio
 async def test_ask_rtr_hybrid(client, snapshot):
     response = await client.post(
         "/ask",

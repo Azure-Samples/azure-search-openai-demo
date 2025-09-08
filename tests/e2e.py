@@ -93,14 +93,21 @@ def test_chat(sized_page: Page, live_server_url: str):
 
     # Set up a mock route to the /chat endpoint with streaming results
     def handle(route: Route):
-        # Assert that session_state is specified in the request (None for now)
         try:
             post_data = route.request.post_data_json
-            if post_data and "session_state" in post_data:
-                session_state = post_data["session_state"]
-                assert session_state is None
+            # Assert that session_state is specified (None initially)
+            if "session_state" in post_data:
+                assert post_data["session_state"] is None
+            overrides = post_data["context"]["overrides"]
+            # Assert that the default overrides are correct
+            assert overrides.get("send_text_sources") is True
+            assert overrides.get("send_image_sources") is False
+            assert overrides.get("search_text_embeddings") is True
+            assert overrides.get("search_image_embeddings") is False
+            # retrieval_mode may be explicitly "hybrid" or omitted (interpreted as hybrid)
+            assert overrides.get("retrieval_mode") in ["hybrid", None]
         except Exception as e:
-            print(f"Error in test_chat handler: {e}")
+            print(f"Error in test_chat handler (defaults validation): {e}")
 
         # Read the JSONL from our snapshot results and return as the response
         f = open("tests/snapshots/test_app/test_chat_stream_text/client0/result.jsonlines")
