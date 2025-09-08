@@ -374,7 +374,7 @@ requests==2.32.4
     #   tiktoken
 requests-oauthlib==2.0.0
     # via msrest
-rich==13.9.4
+rich==14.1.0
     # via -r requirements.in
 six==1.16.0
     # via
