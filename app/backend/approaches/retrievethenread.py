@@ -145,17 +145,10 @@ class RetrieveThenReadApproach(Approach):
         }
 
     async def run_search_approach(
-        self,
-        messages: list[ChatCompletionMessageParam],
-        overrides: dict[str, Any],
-        auth_claims: dict[str, Any],
+        self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
     ) -> ExtraInfo:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        use_vector_search = overrides.get("retrieval_mode") in [
-            "vectors",
-            "hybrid",
-            None,
-        ]
+        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -190,10 +183,7 @@ class RetrieveThenReadApproach(Approach):
         )
 
         data_points = await self.get_sources_content(
-            results,
-            use_semantic_captions,
-            download_image_sources=send_image_sources,
-            user_oid=auth_claims.get("oid"),
+            results, use_semantic_captions, download_image_sources=send_image_sources, user_oid=auth_claims.get("oid")
         )
 
         return ExtraInfo(
