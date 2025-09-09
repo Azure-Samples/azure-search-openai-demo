@@ -37,13 +37,13 @@
     "chatEmptyStateTitle": "Chat with your data",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
     "defaultExamples": {
-        "1": "What building codes apply to a mid-rise concrete structure?",
-        "2": "How do I calculate the load-bearing capacity of a steel beam?",
-        "3": "What is the difference between a structural engineer and a civil engineer?",
+        "1": "What problem does the buckling-restrained brace solve compared to traditional braces?",
+        "2": "How does the seismic isolation system maintain stability during normal use while still allowing movement in an earthquake?",
+        "3": "What materials are suggested for the support pads in a seismic isolation device?",
         "placeholder": "Type a new question (e.g. what is the maximum span for a reinforced concrete slab?)"
     },
     "askTitle": "Ask your data",
-   "multimodalExamples": {
+    "multimodalExamples": {
         "1": "Compare the structural performance of steel vs. reinforced concrete for high-rise construction.",
         "2": "What are the seismic design considerations for bridges compared to tall buildings?",
         "3": "Can you identify any correlation between soil type and foundation settlement issues?",
