@@ -15,6 +15,7 @@ from openai.types.create_embedding_response import Usage
 
 from prepdocslib.embeddings import AzureOpenAIEmbeddingService
 from prepdocslib.listfilestrategy import File
+from prepdocslib.page import ImageOnPage
 from prepdocslib.searchmanager import SearchManager, Section
 from prepdocslib.strategy import SearchInfo
 from prepdocslib.textsplitter import Chunk
@@ -343,6 +344,54 @@ async def test_update_content_no_images_when_disabled(monkeypatch, search_info):
 
     assert len(documents_uploaded) == 1, "Exactly one document should be uploaded"
     assert "images" not in documents_uploaded[0], "'images' field should not be present when search_images is False"
+
+
+@pytest.mark.asyncio
+async def test_update_content_with_images_when_enabled(monkeypatch, search_info):
+    """Ensure 'images' field is added with image metadata when search_images is True and chunk has images."""
+
+    documents_uploaded: list[dict] = []
+
+    async def mock_upload_documents(self, documents):
+        documents_uploaded.extend(documents)
+
+    monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
+
+    # Enable image ingestion
+    manager = SearchManager(search_info, search_images=True)
+
+    test_io = io.BytesIO(b"img content")
+    test_io.name = "test/foo.pdf"
+    file = File(test_io)
+
+    image = ImageOnPage(
+        bytes=b"",  # raw image bytes not needed for this test
+        bbox=(1.0, 2.0, 3.0, 4.0),
+        filename="img1.png",
+        description="Test image",
+        figure_id="fig1",
+        page_num=0,
+        url="http://example.com/img1.png",
+        embedding=[0.01, 0.02],
+    )
+
+    section = Section(
+        chunk=Chunk(page_num=0, text="chunk text with image", images=[image]),
+        content=file,
+        category="test",
+    )
+
+    await manager.update_content([section])
+
+    assert len(documents_uploaded) == 1, "Exactly one document should be uploaded"
+    doc = documents_uploaded[0]
+    assert "images" in doc, "'images' field should be present when search_images is True"
+    assert isinstance(doc["images"], list) and len(doc["images"]) == 1, "Should have one image entry"
+    img_entry = doc["images"][0]
+    assert img_entry["url"] == image.url
+    assert img_entry["description"] == image.description
+    assert img_entry["boundingbox"] == image.bbox
+    assert img_entry["embedding"] == image.embedding
 
 
 class AsyncSearchResultsIterator:
