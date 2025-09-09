@@ -54,13 +54,7 @@ See the agentic retrieval documentation.
 
    Open the web app and start a new chat. Agentic retrieval will be used to find all sources.
 
-6. **Experiment with max subqueries:**
-
-   Select the developer options in the web app and change max subqueries to any value between 1 and 20. This controls the maximum amount of subqueries that can be created in the query plan.
-
-   ![Max subqueries screenshot](./images/max-subqueries.png)
-
-7. **Review the query plan**
+6. **Review the query plan**
 
    Agentic retrieval use additional billed tokens behind the scenes for the planning process.
    To see the token usage, select the lightbulb icon on a chat answer. This will open the "Thought process" tab, which shows the amount of tokens used by and the queries produced by the planning process

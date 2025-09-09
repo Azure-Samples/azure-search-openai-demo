@@ -6,7 +6,6 @@
     "target_parameters": {
         "overrides": {
             "top": 3,
-            "max_subqueries": 10,
             "results_merge_strategy": "interleaved",
             "temperature": 0.3,
             "minimum_reranker_score": 0,

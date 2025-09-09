@@ -10,6 +10,7 @@ from azure.search.documents.agent.models import (
     KnowledgeAgentMessageTextContent,
     KnowledgeAgentRetrievalRequest,
     KnowledgeAgentRetrievalResponse,
+    KnowledgeAgentSearchIndexActivityRecord,
     KnowledgeAgentSearchIndexReference,
     SearchIndexKnowledgeSourceParams,
 )
@@ -287,11 +288,27 @@ class Approach(ABC):
                 ],
                 knowledge_source_params=[
                     SearchIndexKnowledgeSourceParams(
-                        knowledge_source_name="default-knowledge-source",
+                        knowledge_source_name=search_index_name,
                         filter_add_on=filter_add_on,
                     )
                 ],
             )
+        )
+
+        # Map activity id -> agent's internal search query
+        activities = response.activity
+        activity_mapping: dict[int, str] = (
+            {
+                activity.id: activity.search_index_arguments.search
+                for activity in activities
+                if (
+                    isinstance(activity, KnowledgeAgentSearchIndexActivityRecord)
+                    and activity.search_index_arguments
+                    and activity.search_index_arguments.search is not None
+                )
+            }
+            if activities
+            else {}
         )
 
         # No refs? we're done
@@ -300,8 +317,8 @@ class Approach(ABC):
 
         # Extract references
         refs = [r for r in response.references if isinstance(r, KnowledgeAgentSearchIndexReference)]
-
         documents: list[Document] = []
+        doc_to_ref_id: dict[str, str] = {}
 
         # Create documents from reference source data
         for ref in refs:
@@ -317,11 +334,18 @@ class Approach(ABC):
                         groups=ref.source_data.get("groups"),
                         reranker_score=ref.reranker_score,
                         images=ref.source_data.get("images"),
+                        search_agent_query=activity_mapping[ref.activity_source],
                     )
                 )
+                doc_to_ref_id[ref.source_data.get("id")] = ref.id
                 if top and len(documents) >= top:
                     break
 
+        if results_merge_strategy == "interleaved":
+            documents = sorted(
+                documents,
+                key=lambda d: int(doc_to_ref_id.get(d.id, 0)) if d.id and doc_to_ref_id.get(d.id) else 0,
+            )
         return response, documents
 
     async def get_sources_content(

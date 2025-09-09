@@ -470,7 +470,7 @@ class SearchManager:
                 field_names.append("images")
             async with self.search_info.create_search_index_client() as search_index_client:
                 knowledge_source = SearchIndexKnowledgeSource(
-                    name="default-knowledge-source",
+                    name=self.search_info.index_name,  # Use the same name for convenience
                     description="Default knowledge source using the main search index",
                     search_index_parameters=SearchIndexKnowledgeSourceParameters(
                         search_index_name=self.search_info.index_name,
