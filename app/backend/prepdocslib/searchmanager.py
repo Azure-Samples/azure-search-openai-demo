@@ -83,7 +83,6 @@ class SearchManager:
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
-
             embedding_field = None
             images_field = None
             text_vector_search_profile = None
@@ -231,7 +230,12 @@ class SearchManager:
                         type="Edm.String",
                         analyzer_name=self.search_analyzer_name,
                     ),
-                    SimpleField(name="category", type="Edm.String", filterable=True, facetable=True),
+                    SimpleField(
+                        name="category",
+                        type="Edm.String",
+                        filterable=True,
+                        facetable=True,
+                    ),
                     SimpleField(
                         name="sourcepage",
                         type="Edm.String",
@@ -276,7 +280,10 @@ class SearchManager:
                 vector_algorithms: list[VectorSearchAlgorithmConfiguration] = []
                 vector_compressions: list[VectorSearchCompression] = []
                 if embedding_field:
-                    logger.info("Including %s field for text vectors in new index", embedding_field.name)
+                    logger.info(
+                        "Including %s field for text vectors in new index",
+                        embedding_field.name,
+                    )
                     fields.append(embedding_field)
                     if text_vectorizer is not None:
                         vectorizers.append(text_vectorizer)
@@ -291,7 +298,10 @@ class SearchManager:
                     vector_compressions.append(text_vector_compression)
 
                 if images_field:
-                    logger.info("Including %s field for image descriptions and vectors in new index", images_field.name)
+                    logger.info(
+                        "Including %s field for image descriptions and vectors in new index",
+                        images_field.name,
+                    )
                     fields.append(images_field)
                     if image_vector_search_profile is None or image_vector_algorithm is None:
                         raise ValueError("Image search profile and algorithm must be set")
@@ -328,7 +338,10 @@ class SearchManager:
                 logger.info("Search index %s already exists", self.search_info.index_name)
                 existing_index = await search_index_client.get_index(self.search_info.index_name)
                 if not any(field.name == "storageUrl" for field in existing_index.fields):
-                    logger.info("Adding storageUrl field to index %s", self.search_info.index_name)
+                    logger.info(
+                        "Adding storageUrl field to index %s",
+                        self.search_info.index_name,
+                    )
                     existing_index.fields.append(
                         SimpleField(
                             name="storageUrl",
@@ -393,7 +406,10 @@ class SearchManager:
 
                 if existing_index.semantic_search:
                     if not existing_index.semantic_search.default_configuration_name:
-                        logger.info("Adding default semantic configuration to index %s", self.search_info.index_name)
+                        logger.info(
+                            "Adding default semantic configuration to index %s",
+                            self.search_info.index_name,
+                        )
                         existing_index.semantic_search.default_configuration_name = "default"
 
                     if existing_index.semantic_search.configurations:
@@ -403,7 +419,10 @@ class SearchManager:
                             and existing_semantic_config.prioritized_fields.title_field
                             and not existing_semantic_config.prioritized_fields.title_field.field_name == "sourcepage"
                         ):
-                            logger.info("Updating semantic configuration for index %s", self.search_info.index_name)
+                            logger.info(
+                                "Updating semantic configuration for index %s",
+                                self.search_info.index_name,
+                            )
                             existing_semantic_config.prioritized_fields.title_field = SemanticField(
                                 field_name="sourcepage"
                             )
@@ -413,7 +432,10 @@ class SearchManager:
                     or len(existing_index.vector_search.vectorizers) == 0
                 ):
                     if self.embeddings is not None and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
-                        logger.info("Adding vectorizer to search index %s", self.search_info.index_name)
+                        logger.info(
+                            "Adding vectorizer to search index %s",
+                            self.search_info.index_name,
+                        )
                         existing_index.vector_search.vectorizers = [
                             AzureOpenAIVectorizer(
                                 vectorizer_name=f"{self.search_info.index_name}-vectorizer",
@@ -445,7 +467,8 @@ class SearchManager:
                         name=self.search_info.agent_name,
                         target_indexes=[
                             KnowledgeAgentTargetIndex(
-                                index_name=self.search_info.index_name, default_include_reference_source_data=True
+                                index_name=self.search_info.index_name,
+                                default_include_reference_source_data=True,
                             )
                         ],
                         models=[
@@ -471,15 +494,9 @@ class SearchManager:
 
         async with self.search_info.create_search_client() as search_client:
             for batch_index, batch in enumerate(section_batches):
-                documents = [
-                    {
-                        "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
-                        "content": section.chunk.text,
-                        "category": section.category,
-                        "sourcepage": BlobManager.sourcepage_from_file_page(
-                            filename=section.content.filename(), page=section.chunk.page_num
-                        ),
-                        "sourcefile": section.content.filename(),
+                image_fields = {}
+                if self.search_images:
+                    image_fields = {
                         "images": [
                             {
                                 "url": image.url,
@@ -487,8 +504,21 @@ class SearchManager:
                                 "boundingbox": image.bbox,
                                 "embedding": image.embedding,
                             }
+                            for section in batch
                             for image in section.chunk.images
-                        ],
+                        ]
+                    }
+                documents = [
+                    {
+                        "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
+                        "content": section.chunk.text,
+                        "category": section.category,
+                        "sourcepage": BlobManager.sourcepage_from_file_page(
+                            filename=section.content.filename(),
+                            page=section.chunk.page_num,
+                        ),
+                        "sourcefile": section.content.filename(),
+                        **image_fields,
                         **section.content.acls,
                     }
                     for section_index, section in enumerate(batch)
@@ -514,7 +544,9 @@ class SearchManager:
 
     async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
         logger.info(
-            "Removing sections from '{%s or '<all>'}' from search index '%s'", path, self.search_info.index_name
+            "Removing sections from '{%s or '<all>'}' from search index '%s'",
+            path,
+            self.search_info.index_name,
         )
         async with self.search_info.create_search_client() as search_client:
             while True:
@@ -526,7 +558,10 @@ class SearchManager:
                     filter = f"sourcefile eq '{path_for_filter}'"
                 max_results = 1000
                 result = await search_client.search(
-                    search_text="", filter=filter, top=max_results, include_total_count=True
+                    search_text="",
+                    filter=filter,
+                    top=max_results,
+                    include_total_count=True,
                 )
                 result_count = await result.get_count()
                 if result_count == 0:
