@@ -123,9 +123,9 @@ jobs:
         uses: Azure/setup-azd@v2.2.0
 
       - name: Install Nodejs
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Log in with Azure (Federated Credentials)
         run: |

@@ -41,7 +41,7 @@ jobs:
             python-version: ${{ matrix.python_version }}
             activate-environment: true
         - name: Setup node
-          uses: actions/setup-node@v4
+          uses: actions/setup-node@v5
           with:
             node-version: ${{ matrix.node_version }}
         - name: Build frontend
