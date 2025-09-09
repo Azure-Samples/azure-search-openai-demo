@@ -46,7 +46,6 @@ class RetrieveThenReadApproach(Approach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
-        hydrate_references: bool = False,
         multimodal_enabled: bool = False,
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
@@ -74,7 +73,6 @@ class RetrieveThenReadApproach(Approach):
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
-        self.hydrate_references = hydrate_references
         self.multimodal_enabled = multimodal_enabled
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
@@ -147,10 +145,17 @@ class RetrieveThenReadApproach(Approach):
         }
 
     async def run_search_approach(
-        self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
+        self,
+        messages: list[ChatCompletionMessageParam],
+        overrides: dict[str, Any],
+        auth_claims: dict[str, Any],
     ) -> ExtraInfo:
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
-        use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
+        use_vector_search = overrides.get("retrieval_mode") in [
+            "vectors",
+            "hybrid",
+            None,
+        ]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
@@ -185,7 +190,10 @@ class RetrieveThenReadApproach(Approach):
         )
 
         data_points = await self.get_sources_content(
-            results, use_semantic_captions, download_image_sources=send_image_sources, user_oid=auth_claims.get("oid")
+            results,
+            use_semantic_captions,
+            download_image_sources=send_image_sources,
+            user_oid=auth_claims.get("oid"),
         )
 
         return ExtraInfo(
@@ -219,13 +227,9 @@ class RetrieveThenReadApproach(Approach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
     ) -> ExtraInfo:
-        minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides, auth_claims)
         top = overrides.get("top", 3)
-        max_subqueries = overrides.get("max_subqueries", 10)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
-        # 50 is the amount of documents that the reranker can process per query
-        max_docs_for_reranker = max_subqueries * 50
         send_image_sources = overrides.get("send_image_sources", True)
 
         response, results = await self.run_agentic_retrieval(
@@ -234,8 +238,6 @@ class RetrieveThenReadApproach(Approach):
             search_index_name=self.search_index_name,
             top=top,
             filter_add_on=search_index_filter,
-            minimum_reranker_score=minimum_reranker_score,
-            max_docs_for_reranker=max_docs_for_reranker,
             results_merge_strategy=results_merge_strategy,
         )
 
@@ -253,8 +255,6 @@ class RetrieveThenReadApproach(Approach):
                     "Use agentic retrieval",
                     messages,
                     {
-                        "reranker_threshold": minimum_reranker_score,
-                        "max_docs_for_reranker": max_docs_for_reranker,
                         "results_merge_strategy": results_merge_strategy,
                         "filter": search_index_filter,
                     },

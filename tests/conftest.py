@@ -18,6 +18,8 @@ from azure.search.documents.indexes.models import (
     KnowledgeAgent,
     SearchField,
     SearchIndex,
+    SearchIndexKnowledgeSource,
+    SearchIndexKnowledgeSourceParameters,
 )
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from openai.types import CompletionUsage, CreateEmbeddingResponse, Embedding
@@ -64,7 +66,20 @@ MockSearchIndex = SearchIndex(
         SearchField(name="groups", type="Collection(Edm.String)"),
     ],
 )
-MockAgent = KnowledgeAgent(name="test", models=[], target_indexes=[], request_limits=[])
+MockAgent = KnowledgeAgent(
+    name="test",
+    models=[],
+    knowledge_sources=[
+        SearchIndexKnowledgeSource(
+            name="test",
+            description="The default index for searching",
+            search_index_parameters=SearchIndexKnowledgeSourceParameters(
+                search_index_name="test", include_reference_source_data=True
+            ),
+        )
+    ],
+    request_limits=[],
+)
 
 
 async def mock_search(self, *args, **kwargs):
@@ -87,9 +102,12 @@ def create_mock_retrieve(response_type="default"):
     async def mock_retrieve_parameterized(self, *args, **kwargs):
         retrieval_request = kwargs.get("retrieval_request")
         assert retrieval_request is not None
-        assert retrieval_request.target_index_params is not None
-        assert len(retrieval_request.target_index_params) == 1
-        self.filter = retrieval_request.target_index_params[0].filter_add_on
+        # New API uses knowledge_sources instead of target_index_params
+        assert retrieval_request.knowledge_source_params is not None
+        assert len(retrieval_request.knowledge_source_params) == 1
+        params = retrieval_request.knowledge_source_params
+        # parameters may have filter_add_on attribute in new SDK
+        self.filter = getattr(params, "filter_add_on", None)
 
         if response_type == "sorting":
             return mock_retrieval_response_with_sorting()
@@ -1183,7 +1201,6 @@ def chat_approach_with_hydration():
         query_language="en-us",
         query_speller="lexicon",
         prompt_manager=PromptyManager(),
-        hydrate_references=True,
         user_blob_manager=AdlsBlobManager(
             endpoint="https://test-userstorage-account.dfs.core.windows.net",
             container="test-userstorage-container",

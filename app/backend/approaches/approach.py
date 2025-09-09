@@ -6,13 +6,12 @@ from typing import Any, Optional, TypedDict, Union, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import (
-    KnowledgeAgentAzureSearchDocReference,
-    KnowledgeAgentIndexParams,
     KnowledgeAgentMessage,
     KnowledgeAgentMessageTextContent,
     KnowledgeAgentRetrievalRequest,
     KnowledgeAgentRetrievalResponse,
-    KnowledgeAgentSearchActivityRecord,
+    KnowledgeAgentSearchIndexReference,
+    SearchIndexKnowledgeSourceParams,
 )
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import (
@@ -162,7 +161,6 @@ class Approach(ABC):
         openai_host: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
-        hydrate_references: bool = False,
         multimodal_enabled: bool = False,
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
@@ -180,7 +178,6 @@ class Approach(ABC):
         self.openai_host = openai_host
         self.prompt_manager = prompt_manager
         self.reasoning_effort = reasoning_effort
-        self.hydrate_references = hydrate_references
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
         self.image_embeddings_client = image_embeddings_client
@@ -275,8 +272,6 @@ class Approach(ABC):
         search_index_name: str,
         top: Optional[int] = None,
         filter_add_on: Optional[str] = None,
-        minimum_reranker_score: Optional[float] = None,
-        max_docs_for_reranker: Optional[int] = None,
         results_merge_strategy: Optional[str] = None,
     ) -> tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
         # STEP 1: Invoke agentic retrieval
@@ -284,37 +279,19 @@ class Approach(ABC):
             retrieval_request=KnowledgeAgentRetrievalRequest(
                 messages=[
                     KnowledgeAgentMessage(
-                        role=str(msg["role"]), content=[KnowledgeAgentMessageTextContent(text=str(msg["content"]))]
+                        role=str(msg["role"]),
+                        content=[KnowledgeAgentMessageTextContent(text=str(msg["content"]))],
                     )
                     for msg in messages
                     if msg["role"] != "system"
                 ],
-                target_index_params=[
-                    KnowledgeAgentIndexParams(
-                        index_name=search_index_name,
-                        reranker_threshold=minimum_reranker_score,
-                        max_docs_for_reranker=max_docs_for_reranker,
+                knowledge_source_params=[
+                    SearchIndexKnowledgeSourceParams(
+                        knowledge_source_name="default-knowledge-source",
                         filter_add_on=filter_add_on,
-                        include_reference_source_data=True,
                     )
                 ],
             )
-        )
-
-        # Map activity id -> agent's internal search query
-        activities = response.activity
-        activity_mapping: dict[int, str] = (
-            {
-                activity.id: activity.query.search
-                for activity in activities
-                if (
-                    isinstance(activity, KnowledgeAgentSearchActivityRecord)
-                    and activity.query
-                    and activity.query.search is not None
-                )
-            }
-            if activities
-            else {}
         )
 
         # No refs? we're done
@@ -322,91 +299,30 @@ class Approach(ABC):
             return response, []
 
         # Extract references
-        refs = [r for r in response.references if isinstance(r, KnowledgeAgentAzureSearchDocReference)]
+        refs = [r for r in response.references if isinstance(r, KnowledgeAgentSearchIndexReference)]
 
         documents: list[Document] = []
 
-        if self.hydrate_references:
-            # Hydrate references to get full documents
-            documents = await self.hydrate_agent_references(
-                references=refs,
-                top=top,
-            )
-        else:
-            # Create documents from reference source data
-            for ref in refs:
-                if ref.source_data:
-                    documents.append(
-                        Document(
-                            id=ref.doc_key,
-                            content=ref.source_data.get("content"),
-                            sourcepage=ref.source_data.get("sourcepage"),
-                        )
-                    )
-                    if top and len(documents) >= top:
-                        break
-
-        # Build mappings for agent queries and sorting
-        ref_to_activity: dict[str, int] = {}
-        doc_to_ref_id: dict[str, str] = {}
+        # Create documents from reference source data
         for ref in refs:
-            if ref.doc_key:
-                ref_to_activity[ref.doc_key] = ref.activity_source
-                doc_to_ref_id[ref.doc_key] = ref.id
-
-        # Inject agent search queries into all documents
-        for doc in documents:
-            if doc.id and doc.id in ref_to_activity:
-                activity_id = ref_to_activity[doc.id]
-                doc.search_agent_query = activity_mapping.get(activity_id, "")
-
-        # Apply sorting strategy to the documents
-        if results_merge_strategy == "interleaved":  # Use interleaved reference order
-            documents = sorted(
-                documents,
-                key=lambda d: int(doc_to_ref_id.get(d.id, 0)) if d.id and doc_to_ref_id.get(d.id) else 0,
-            )
-        # else: Default - preserve original order
+            if ref.source_data:
+                documents.append(
+                    Document(
+                        id=ref.source_data.get("id"),
+                        content=ref.source_data.get("content"),
+                        category=ref.source_data.get("category"),
+                        sourcepage=ref.source_data.get("sourcepage"),
+                        sourcefile=ref.source_data.get("sourcefile"),
+                        oids=ref.source_data.get("oids"),
+                        groups=ref.source_data.get("groups"),
+                        reranker_score=ref.reranker_score,
+                        images=ref.source_data.get("images"),
+                    )
+                )
+                if top and len(documents) >= top:
+                    break
 
         return response, documents
-
-    async def hydrate_agent_references(
-        self,
-        references: list[KnowledgeAgentAzureSearchDocReference],
-        top: Optional[int],
-    ) -> list[Document]:
-        doc_keys: set[str] = set()
-
-        for ref in references:
-            if not ref.doc_key:
-                continue
-            doc_keys.add(ref.doc_key)
-            if top and len(doc_keys) >= top:
-                break
-
-        if not doc_keys:
-            return []
-
-        # Build search filter only on unique doc IDs
-        id_csv = ",".join(doc_keys)
-        id_filter = f"search.in(id, '{id_csv}', ',')"
-
-        # Fetch full documents
-        hydrated_docs: list[Document] = await self.search(
-            top=len(doc_keys),
-            query_text=None,
-            filter=id_filter,
-            vectors=[],
-            use_text_search=False,
-            use_vector_search=False,
-            use_semantic_ranker=False,
-            use_semantic_captions=False,
-            minimum_search_score=None,
-            minimum_reranker_score=None,
-            use_query_rewriting=False,
-        )
-
-        return hydrated_docs
 
     async def get_sources_content(
         self,
@@ -535,7 +451,11 @@ class Approach(ABC):
         if not self.image_embeddings_client:
             raise ValueError("Approach is missing an image embeddings client for multimodal queries")
         multimodal_query_vector = await self.image_embeddings_client.create_embedding_for_text(q)
-        return VectorizedQuery(vector=multimodal_query_vector, k_nearest_neighbors=50, fields="images/embedding")
+        return VectorizedQuery(
+            vector=multimodal_query_vector,
+            k_nearest_neighbors=50,
+            fields="images/embedding",
+        )
 
     def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>

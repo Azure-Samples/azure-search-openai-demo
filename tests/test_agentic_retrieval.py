@@ -2,9 +2,9 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import (
-    KnowledgeAgentAzureSearchDocReference,
     KnowledgeAgentMessage,
     KnowledgeAgentRetrievalResponse,
+    KnowledgeAgentSearchIndexReference,
 )
 from azure.search.documents.aio import SearchClient
 
@@ -202,7 +202,7 @@ async def test_hydrate_agent_references_empty_doc_keys(chat_approach_with_hydrat
             response=[KnowledgeAgentMessage(role="assistant", content=[])],
             activity=[],
             references=[
-                KnowledgeAgentAzureSearchDocReference(
+                KnowledgeAgentSearchIndexReference(
                     id="1",
                     activity_source=1,
                     doc_key=None,  # No valid doc_key
@@ -233,7 +233,7 @@ async def test_hydrate_agent_references_search_returns_empty(chat_approach_with_
             response=[KnowledgeAgentMessage(role="assistant", content=[])],
             activity=[],
             references=[
-                KnowledgeAgentAzureSearchDocReference(
+                KnowledgeAgentSearchIndexReference(
                     id="1",
                     activity_source=1,
                     doc_key="nonexistent_doc",  # Valid doc_key but document doesn't exist

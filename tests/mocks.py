@@ -13,13 +13,13 @@ from azure.core.pipeline.transport import (
     HttpRequest,
 )
 from azure.search.documents.agent.models import (
-    KnowledgeAgentAzureSearchDocReference,
     KnowledgeAgentMessage,
     KnowledgeAgentMessageTextContent,
     KnowledgeAgentModelQueryPlanningActivityRecord,
     KnowledgeAgentRetrievalResponse,
-    KnowledgeAgentSearchActivityRecord,
-    KnowledgeAgentSearchActivityRecordQuery,
+    KnowledgeAgentSearchIndexActivityArguments,
+    KnowledgeAgentSearchIndexActivityRecord,
+    KnowledgeAgentSearchIndexReference,
 )
 from azure.search.documents.models import (
     VectorQuery,
@@ -436,16 +436,16 @@ def mock_retrieval_response():
         ],
         activity=[
             KnowledgeAgentModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
-            KnowledgeAgentSearchActivityRecord(
+            KnowledgeAgentSearchIndexActivityRecord(
                 id=1,
                 target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="whistleblower query"),
+                arguments=KnowledgeAgentSearchIndexActivityArguments(search="whistleblower query"),
                 count=10,
                 elapsed_ms=50,
             ),
         ],
         references=[
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id=0,
                 activity_source=1,
                 doc_key="Benefit_Options-2.pdf",
@@ -465,29 +465,29 @@ def mock_retrieval_response_with_sorting():
             )
         ],
         activity=[
-            KnowledgeAgentSearchActivityRecord(
+            KnowledgeAgentSearchIndexActivityRecord(
                 id=1,
                 target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="first query"),
+                arguments=KnowledgeAgentSearchIndexActivityArguments(search="first query"),
                 count=10,
                 elapsed_ms=50,
             ),
-            KnowledgeAgentSearchActivityRecord(
+            KnowledgeAgentSearchIndexActivityRecord(
                 id=2,
                 target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="second query"),
+                arguments=KnowledgeAgentSearchIndexActivityArguments(search="second query"),
                 count=10,
                 elapsed_ms=50,
             ),
         ],
         references=[
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id="2",  # Higher ID for testing interleaved sorting
                 activity_source=2,
                 doc_key="doc2",
                 source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
             ),
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id="1",  # Lower ID for testing interleaved sorting
                 activity_source=1,
                 doc_key="doc1",
@@ -507,35 +507,35 @@ def mock_retrieval_response_with_duplicates():
             )
         ],
         activity=[
-            KnowledgeAgentSearchActivityRecord(
+            KnowledgeAgentSearchIndexActivityRecord(
                 id=1,
                 target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="query for doc1"),
+                arguments=KnowledgeAgentSearchIndexActivityArguments(search="query for doc1"),
                 count=10,
                 elapsed_ms=50,
             ),
-            KnowledgeAgentSearchActivityRecord(
+            KnowledgeAgentSearchIndexActivityRecord(
                 id=2,
                 target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="another query for doc1"),
+                arguments=KnowledgeAgentSearchIndexActivityArguments(search="another query for doc1"),
                 count=10,
                 elapsed_ms=50,
             ),
         ],
         references=[
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id="1",
                 activity_source=1,
                 doc_key="doc1",  # Same doc_key
                 source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
             ),
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id="2",
                 activity_source=2,
                 doc_key="doc1",  # Duplicate doc_key
                 source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
             ),
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id="3",
                 activity_source=1,
                 doc_key="doc2",  # Different doc_key
@@ -555,28 +555,28 @@ def mock_retrieval_response_with_missing_doc_key():
             )
         ],
         activity=[
-            KnowledgeAgentSearchActivityRecord(
+            KnowledgeAgentSearchIndexActivityRecord(
                 id=1,
                 target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="query"),
+                arguments=KnowledgeAgentSearchIndexActivityArguments(search="query"),
                 count=10,
                 elapsed_ms=50,
             ),
         ],
         references=[
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id="1",
                 activity_source=1,
                 doc_key=None,  # Missing doc_key
                 source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
             ),
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id="2",
                 activity_source=1,
                 doc_key="",  # Empty doc_key
                 source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
             ),
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id="3",
                 activity_source=1,
                 doc_key="doc3",  # Valid doc_key
@@ -591,7 +591,7 @@ def mock_retrieval_response_with_top_limit():
     references = []
     for i in range(15):  # More than any reasonable top limit
         references.append(
-            KnowledgeAgentAzureSearchDocReference(
+            KnowledgeAgentSearchIndexReference(
                 id=str(i),
                 activity_source=1,
                 doc_key=f"doc{i}",
@@ -607,10 +607,10 @@ def mock_retrieval_response_with_top_limit():
             )
         ],
         activity=[
-            KnowledgeAgentSearchActivityRecord(
+            KnowledgeAgentSearchIndexActivityRecord(
                 id=1,
                 target_index="index",
-                query=KnowledgeAgentSearchActivityRecordQuery(search="query"),
+                arguments=KnowledgeAgentSearchIndexActivityArguments(search="query"),
                 count=10,
                 elapsed_ms=50,
             ),

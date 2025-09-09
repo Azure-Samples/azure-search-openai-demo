@@ -188,7 +188,9 @@ async def ask(auth_claims: dict[str, Any]):
     try:
         approach: Approach = cast(Approach, current_app.config[CONFIG_ASK_APPROACH])
         r = await approach.run(
-            request_json["messages"], context=context, session_state=request_json.get("session_state")
+            request_json["messages"],
+            context=context,
+            session_state=request_json.get("session_state"),
         )
         return jsonify(r)
     except Exception as error:
@@ -329,7 +331,10 @@ async def speech():
             + "#"
             + current_app.config[CONFIG_SPEECH_SERVICE_TOKEN].token
         )
-        speech_config = SpeechConfig(auth_token=auth_token, region=current_app.config[CONFIG_SPEECH_SERVICE_LOCATION])
+        speech_config = SpeechConfig(
+            auth_token=auth_token,
+            region=current_app.config[CONFIG_SPEECH_SERVICE_LOCATION],
+        )
         speech_config.speech_synthesis_voice_name = current_app.config[CONFIG_SPEECH_SERVICE_VOICE]
         speech_config.speech_synthesis_output_format = SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3
         synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=None)
@@ -339,7 +344,9 @@ async def speech():
         elif result.reason == ResultReason.Canceled:
             cancellation_details = result.cancellation_details
             current_app.logger.error(
-                "Speech synthesis canceled: %s %s", cancellation_details.reason, cancellation_details.error_details
+                "Speech synthesis canceled: %s %s",
+                cancellation_details.reason,
+                cancellation_details.error_details,
             )
             raise Exception("Speech synthesis canceled. Check logs for details.")
         else:
@@ -363,11 +370,22 @@ async def upload(auth_claims: dict[str, Any]):
         adls_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
         file_url = await adls_manager.upload_blob(file, file.filename, user_oid)
         ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
-        await ingester.add_file(File(content=file, url=file_url, acls={"oids": [user_oid]}), user_oid=user_oid)
+        await ingester.add_file(
+            File(content=file, url=file_url, acls={"oids": [user_oid]}),
+            user_oid=user_oid,
+        )
         return jsonify({"message": "File uploaded successfully"}), 200
     except Exception as error:
         current_app.logger.error("Error uploading file: %s", error)
-        return jsonify({"message": "Error uploading file, check server logs for details.", "status": "failed"}), 500
+        return (
+            jsonify(
+                {
+                    "message": "Error uploading file, check server logs for details.",
+                    "status": "failed",
+                }
+            ),
+            500,
+        )
 
 
 @bp.post("/delete_uploaded")
@@ -471,7 +489,7 @@ async def setup_clients():
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
     USE_AGENTIC_RETRIEVAL = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
-    ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA = os.getenv("ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA", "").lower() == "true"
+    # TODO: ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA = os.getenv("ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA", "").lower() == "true"
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
     RUNNING_ON_AZURE = os.getenv("WEBSITE_HOSTNAME") is not None or os.getenv("RUNNING_IN_PRODUCTION") is not None
@@ -487,7 +505,8 @@ async def setup_clients():
             # ManagedIdentityCredential should use AZURE_CLIENT_ID if set in env, but its not working for some reason,
             # so we explicitly pass it in as the client ID here. This is necessary for user-assigned managed identities.
             current_app.logger.info(
-                "Setting up Azure credential using ManagedIdentityCredential with client_id %s", AZURE_CLIENT_ID
+                "Setting up Azure credential using ManagedIdentityCredential with client_id %s",
+                AZURE_CLIENT_ID,
             )
             azure_credential = ManagedIdentityCredential(client_id=AZURE_CLIENT_ID)
         else:
@@ -495,7 +514,8 @@ async def setup_clients():
             azure_credential = ManagedIdentityCredential()
     elif AZURE_TENANT_ID:
         current_app.logger.info(
-            "Setting up Azure credential using AzureDeveloperCliCredential with tenant_id %s", AZURE_TENANT_ID
+            "Setting up Azure credential using AzureDeveloperCliCredential with tenant_id %s",
+            AZURE_TENANT_ID,
         )
         azure_credential = AzureDeveloperCliCredential(tenant_id=AZURE_TENANT_ID, process_timeout=60)
     else:
@@ -515,7 +535,9 @@ async def setup_clients():
         credential=azure_credential,
     )
     agent_client = KnowledgeAgentRetrievalClient(
-        endpoint=AZURE_SEARCH_ENDPOINT, agent_name=AZURE_SEARCH_AGENT, credential=azure_credential
+        endpoint=AZURE_SEARCH_ENDPOINT,
+        agent_name=AZURE_SEARCH_AGENT,
+        credential=azure_credential,
     )
 
     # Set up the global blob storage manager (used for global content/images, but not user uploads)
@@ -600,7 +622,9 @@ async def setup_clients():
             openai_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT if OPENAI_HOST == OpenAIHost.AZURE else None,
         )
         search_info = await setup_search_info(
-            search_service=AZURE_SEARCH_SERVICE, index_name=AZURE_SEARCH_INDEX, azure_credential=azure_credential
+            search_service=AZURE_SEARCH_SERVICE,
+            index_name=AZURE_SEARCH_INDEX,
+            azure_credential=azure_credential,
         )
         text_embeddings_service = setup_embeddings_service(
             azure_credential=azure_credential,
@@ -690,7 +714,6 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
         reasoning_effort=OPENAI_REASONING_EFFORT,
-        hydrate_references=ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA,
         multimodal_enabled=USE_MULTIMODAL,
         image_embeddings_client=image_embeddings_client,
         global_blob_manager=global_blob_manager,
@@ -718,7 +741,6 @@ async def setup_clients():
         query_speller=AZURE_SEARCH_QUERY_SPELLER,
         prompt_manager=prompt_manager,
         reasoning_effort=OPENAI_REASONING_EFFORT,
-        hydrate_references=ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA,
         multimodal_enabled=USE_MULTIMODAL,
         image_embeddings_client=image_embeddings_client,
         global_blob_manager=global_blob_manager,
