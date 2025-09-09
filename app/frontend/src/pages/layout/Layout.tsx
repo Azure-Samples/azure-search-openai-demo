@@ -7,6 +7,7 @@ import { useLogin } from "../../authConfig";
 
 import { LoginButton } from "../../components/LoginButton";
 import { IconButton } from "@fluentui/react";
+import ssoeLogo from "../../assets/ssoe_logo.svg";
 
 const Layout = () => {
     const { t } = useTranslation();
@@ -39,7 +40,7 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer} ref={menuRef}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>{t("headerTitle")}</h3>
+                        <img src={ssoeLogo} alt="SSOE" className={styles.headerLogo} style={{ height: "32px", width: "auto" }} />
                     </Link>
                     <nav>
                         <ul className={`${styles.headerNavList} ${menuOpen ? styles.show : ""}`}>
