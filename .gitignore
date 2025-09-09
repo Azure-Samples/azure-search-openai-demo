@@ -149,5 +149,8 @@ node_modules
 static/
 
 data/**/*.md5
+/data/*
+!/data/.gitkeep
+!/data/README.md
 
 .DS_Store
