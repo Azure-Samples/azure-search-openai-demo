@@ -2,7 +2,9 @@
 
 name: azure-search-openai-demo
 metadata:
-  template: azure-search-openai-demo@0.0.2-beta
+  template: azure-search-openai-demo@0.0.3
+requiredVersions:
+  azd: ">= 1.17.0"
 services:
   backend:
     project: ./app/backend
