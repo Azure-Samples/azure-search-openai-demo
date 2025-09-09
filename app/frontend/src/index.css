@@ -29,6 +29,8 @@ body {
 
 #root {
     height: 100%;
+    --company-primary: #af252e;
+    --company-secondary: #ffffff;
 }
 
 @media (min-width: 480px) {
