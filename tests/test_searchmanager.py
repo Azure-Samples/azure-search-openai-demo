@@ -316,6 +316,35 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
     ]
 
 
+@pytest.mark.asyncio
+async def test_update_content_no_images_when_disabled(monkeypatch, search_info):
+    """Ensure no 'images' field is added when search_images is False (baseline case without any images)."""
+
+    documents_uploaded: list[dict] = []
+
+    async def mock_upload_documents(self, documents):
+        documents_uploaded.extend(documents)
+
+    monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
+
+    manager = SearchManager(search_info, search_images=False)
+
+    test_io = io.BytesIO(b"test file")
+    test_io.name = "test/foo.pdf"
+    file = File(test_io)
+
+    section = Section(
+        chunk=Chunk(page_num=0, text="chunk text"),
+        content=file,
+        category="test",
+    )
+
+    await manager.update_content([section])
+
+    assert len(documents_uploaded) == 1, "Exactly one document should be uploaded"
+    assert "images" not in documents_uploaded[0], "'images' field should not be present when search_images is False"
+
+
 class AsyncSearchResultsIterator:
     def __init__(self, results):
         self.results = results
