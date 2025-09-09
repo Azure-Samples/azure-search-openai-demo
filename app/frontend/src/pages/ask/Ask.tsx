@@ -36,13 +36,13 @@ export function Component(): JSX.Element {
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
     const [sendTextSources, setSendTextSources] = useState<boolean>(true);
-    const [sendImageSources, setSendImageSources] = useState<boolean>(true);
+    const [sendImageSources, setSendImageSources] = useState<boolean>(false);
     const [includeCategory, setIncludeCategory] = useState<string>("");
 
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [question, setQuestion] = useState<string>("");
     const [searchTextEmbeddings, setSearchTextEmbeddings] = useState<boolean>(true);
-    const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(true);
+    const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(false);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [showMultimodalOptions, setShowMultimodalOptions] = useState<boolean>(false);
@@ -86,12 +86,11 @@ export function Component(): JSX.Element {
         configApi().then(config => {
             setShowMultimodalOptions(config.showMultimodalOptions);
             if (config.showMultimodalOptions) {
-                // Set default LLM inputs based on config override or fallback to Texts
-                setSendTextSources(true);
-                setSendImageSources(true);
-                // Set default vector field settings
-                setSearchTextEmbeddings(true);
-                setSearchImageEmbeddings(true);
+                // Initialize from server config so defaults follow deployment settings
+                setSendTextSources(config.ragSendTextSources !== undefined ? config.ragSendTextSources : true);
+                setSendImageSources(config.ragSendImageSources);
+                setSearchTextEmbeddings(config.ragSearchTextEmbeddings);
+                setSearchImageEmbeddings(config.ragSearchImageEmbeddings);
             }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);

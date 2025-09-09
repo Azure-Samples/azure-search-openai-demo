@@ -491,35 +491,33 @@ class SearchManager:
 
         async with self.search_info.create_search_client() as search_client:
             for batch_index, batch in enumerate(section_batches):
-                image_fields = {}
-                if self.search_images:
-                    image_fields = {
-                        "images": [
-                            {
-                                "url": image.url,
-                                "description": image.description,
-                                "boundingbox": image.bbox,
-                                "embedding": image.embedding,
-                            }
-                            for section in batch
-                            for image in section.chunk.images
-                        ]
-                    }
-                documents = [
-                    {
+                documents = []
+                for section_index, section in enumerate(batch):
+                    image_fields = {}
+                    if self.search_images:
+                        image_fields = {
+                            "images": [
+                                {
+                                    "url": image.url,
+                                    "description": image.description,
+                                    "boundingbox": image.bbox,
+                                    "embedding": image.embedding,
+                                }
+                                for image in section.chunk.images
+                            ]
+                        }
+                    document = {
                         "id": f"{section.content.filename_to_id()}-page-{section_index + batch_index * MAX_BATCH_SIZE}",
                         "content": section.chunk.text,
                         "category": section.category,
                         "sourcepage": BlobManager.sourcepage_from_file_page(
-                            filename=section.content.filename(),
-                            page=section.chunk.page_num,
+                            filename=section.content.filename(), page=section.chunk.page_num
                         ),
                         "sourcefile": section.content.filename(),
                         **image_fields,
                         **section.content.acls,
                     }
-                    for section_index, section in enumerate(batch)
-                ]
+                    documents.append(document)
                 if url:
                     for document in documents:
                         document["storageUrl"] = url

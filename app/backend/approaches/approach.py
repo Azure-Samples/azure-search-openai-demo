@@ -352,6 +352,7 @@ class Approach(ABC):
         self,
         results: list[Document],
         use_semantic_captions: bool,
+        include_text_sources: bool,
         download_image_sources: bool,
         user_oid: Optional[str] = None,
     ) -> DataPoints:
@@ -382,10 +383,13 @@ class Approach(ABC):
                 citations.append(citation)
 
             # If semantic captions are used, extract captions; otherwise, use content
-            if use_semantic_captions and doc.captions:
-                text_sources.append(f"{citation}: {nonewlines(' . '.join([cast(str, c.text) for c in doc.captions]))}")
-            else:
-                text_sources.append(f"{citation}: {nonewlines(doc.content or '')}")
+            if include_text_sources:
+                if use_semantic_captions and doc.captions:
+                    text_sources.append(
+                        f"{citation}: {nonewlines(' . '.join([cast(str, c.text) for c in doc.captions]))}"
+                    )
+                else:
+                    text_sources.append(f"{citation}: {nonewlines(doc.content or '')}")
 
             if download_image_sources and hasattr(doc, "images") and doc.images:
                 for img in doc.images:
@@ -397,9 +401,7 @@ class Approach(ABC):
                     if url:
                         image_sources.append(url)
                     citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))
-        if download_image_sources:
-            return DataPoints(text=text_sources, images=image_sources, citations=citations)
-        return DataPoints(text=text_sources, citations=citations)
+        return DataPoints(text=text_sources, images=image_sources, citations=citations)
 
     def get_citation(self, sourcepage: Optional[str]):
         return sourcepage or ""
