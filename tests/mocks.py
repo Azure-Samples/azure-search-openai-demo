@@ -268,69 +268,6 @@ class MockAsyncSearchResultsIterator:
                     },
                 ]
             ]
-        elif search_text == "hydrated":
-            self.data = [
-                [
-                    {
-                        "sourcepage": "Benefit_Options-2.pdf",
-                        "sourcefile": "Benefit_Options.pdf",
-                        "content": "There is a whistleblower policy.",
-                        "embedding": [],
-                        "category": "benefits",
-                        "id": "Benefit_Options-2.pdf",
-                        "@search.score": 0.03279569745063782,
-                        "@search.reranker_score": 3.4577205181121826,
-                        "@search.highlights": None,
-                        "@search.captions": [MockCaption("Caption: A whistleblower policy.")],
-                    },
-                ]
-            ]
-        elif search_text == "hydrated_multi":
-            self.data = [
-                [
-                    {
-                        "id": "doc1",
-                        "content": "Hydrated content 1",
-                        "sourcepage": "page1.pdf",
-                        "sourcefile": "file1.pdf",
-                        "category": "category1",
-                        "@search.score": 0.9,
-                        "@search.reranker_score": 3.5,
-                        "@search.highlights": None,
-                        "@search.captions": [],
-                    },
-                    {
-                        "id": "doc2",
-                        "content": "Hydrated content 2",
-                        "sourcepage": "page2.pdf",
-                        "sourcefile": "file2.pdf",
-                        "category": "category2",
-                        "@search.score": 0.8,
-                        "@search.reranker_score": 3.2,
-                        "@search.highlights": None,
-                        "@search.captions": [],
-                    },
-                ]
-            ]
-        elif search_text == "hydrated_single":
-            self.data = [
-                [
-                    {
-                        "id": "doc1",
-                        "content": "Hydrated content 1",
-                        "sourcepage": "page1.pdf",
-                        "sourcefile": "file1.pdf",
-                        "category": "category1",
-                        "@search.score": 0.9,
-                        "@search.reranker_score": 3.5,
-                        "@search.highlights": None,
-                        "@search.captions": [],
-                    },
-                ]
-            ]
-        elif search_text == "hydrated_empty":
-            # Mock search results for empty hydration
-            self.data = [[]]
         else:
             self.data = [
                 [
@@ -438,8 +375,8 @@ def mock_retrieval_response():
             KnowledgeAgentModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
             KnowledgeAgentSearchIndexActivityRecord(
                 id=1,
-                target_index="index",
-                arguments=KnowledgeAgentSearchIndexActivityArguments(search="whistleblower query"),
+                knowledge_source_name="index",
+                search_index_arguments=KnowledgeAgentSearchIndexActivityArguments(search="whistleblower query"),
                 count=10,
                 elapsed_ms=50,
             ),
@@ -448,8 +385,15 @@ def mock_retrieval_response():
             KnowledgeAgentSearchIndexReference(
                 id=0,
                 activity_source=1,
-                doc_key="Benefit_Options-2.pdf",
-                source_data={"content": "There is a whistleblower policy.", "sourcepage": "Benefit_Options-2.pdf"},
+                doc_key="file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                reranker_score=3.4577205181121826,
+                source_data={
+                    "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                    "content": "There is a whistleblower policy.",
+                    "sourcepage": "Benefit_Options-2.pdf",
+                    "sourcefile": "Benefit_Options.pdf",
+                    "captions": [MockCaption("Caption: A whistleblower policy.")],
+                },
             )
         ],
     )
@@ -467,15 +411,15 @@ def mock_retrieval_response_with_sorting():
         activity=[
             KnowledgeAgentSearchIndexActivityRecord(
                 id=1,
-                target_index="index",
-                arguments=KnowledgeAgentSearchIndexActivityArguments(search="first query"),
+                knowledge_source_name="index",
+                search_index_arguments=KnowledgeAgentSearchIndexActivityArguments(search="first query"),
                 count=10,
                 elapsed_ms=50,
             ),
             KnowledgeAgentSearchIndexActivityRecord(
                 id=2,
-                target_index="index",
-                arguments=KnowledgeAgentSearchIndexActivityArguments(search="second query"),
+                knowledge_source_name="index",
+                search_index_arguments=KnowledgeAgentSearchIndexActivityArguments(search="second query"),
                 count=10,
                 elapsed_ms=50,
             ),
@@ -485,102 +429,15 @@ def mock_retrieval_response_with_sorting():
                 id="2",  # Higher ID for testing interleaved sorting
                 activity_source=2,
                 doc_key="doc2",
-                source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
+                source_data={"id": "doc2", "content": "Content 2", "sourcepage": "page2.pdf"},
+                reranker_score=3.7,
             ),
             KnowledgeAgentSearchIndexReference(
                 id="1",  # Lower ID for testing interleaved sorting
                 activity_source=1,
                 doc_key="doc1",
-                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
-            ),
-        ],
-    )
-
-
-def mock_retrieval_response_with_duplicates():
-    """Mock response with duplicate doc_keys for testing deduplication"""
-    return KnowledgeAgentRetrievalResponse(
-        response=[
-            KnowledgeAgentMessage(
-                role="assistant",
-                content=[KnowledgeAgentMessageTextContent(text="Test response")],
-            )
-        ],
-        activity=[
-            KnowledgeAgentSearchIndexActivityRecord(
-                id=1,
-                target_index="index",
-                arguments=KnowledgeAgentSearchIndexActivityArguments(search="query for doc1"),
-                count=10,
-                elapsed_ms=50,
-            ),
-            KnowledgeAgentSearchIndexActivityRecord(
-                id=2,
-                target_index="index",
-                arguments=KnowledgeAgentSearchIndexActivityArguments(search="another query for doc1"),
-                count=10,
-                elapsed_ms=50,
-            ),
-        ],
-        references=[
-            KnowledgeAgentSearchIndexReference(
-                id="1",
-                activity_source=1,
-                doc_key="doc1",  # Same doc_key
-                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
-            ),
-            KnowledgeAgentSearchIndexReference(
-                id="2",
-                activity_source=2,
-                doc_key="doc1",  # Duplicate doc_key
-                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
-            ),
-            KnowledgeAgentSearchIndexReference(
-                id="3",
-                activity_source=1,
-                doc_key="doc2",  # Different doc_key
-                source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
-            ),
-        ],
-    )
-
-
-def mock_retrieval_response_with_missing_doc_key():
-    """Mock response with missing doc_key to test continue condition"""
-    return KnowledgeAgentRetrievalResponse(
-        response=[
-            KnowledgeAgentMessage(
-                role="assistant",
-                content=[KnowledgeAgentMessageTextContent(text="Test response")],
-            )
-        ],
-        activity=[
-            KnowledgeAgentSearchIndexActivityRecord(
-                id=1,
-                target_index="index",
-                arguments=KnowledgeAgentSearchIndexActivityArguments(search="query"),
-                count=10,
-                elapsed_ms=50,
-            ),
-        ],
-        references=[
-            KnowledgeAgentSearchIndexReference(
-                id="1",
-                activity_source=1,
-                doc_key=None,  # Missing doc_key
-                source_data={"content": "Content 1", "sourcepage": "page1.pdf"},
-            ),
-            KnowledgeAgentSearchIndexReference(
-                id="2",
-                activity_source=1,
-                doc_key="",  # Empty doc_key
-                source_data={"content": "Content 2", "sourcepage": "page2.pdf"},
-            ),
-            KnowledgeAgentSearchIndexReference(
-                id="3",
-                activity_source=1,
-                doc_key="doc3",  # Valid doc_key
-                source_data={"content": "Content 3", "sourcepage": "page3.pdf"},
+                source_data={"id": "doc1", "content": "Content 1", "sourcepage": "page1.pdf"},
+                reranker_score=3.5,
             ),
         ],
     )
@@ -595,7 +452,7 @@ def mock_retrieval_response_with_top_limit():
                 id=str(i),
                 activity_source=1,
                 doc_key=f"doc{i}",
-                source_data={"content": f"Content {i}", "sourcepage": f"page{i}.pdf"},
+                source_data={"id": f"doc{i}", "content": f"Content {i}", "sourcepage": f"page{i}.pdf"},
             )
         )
 
@@ -609,8 +466,8 @@ def mock_retrieval_response_with_top_limit():
         activity=[
             KnowledgeAgentSearchIndexActivityRecord(
                 id=1,
-                target_index="index",
-                arguments=KnowledgeAgentSearchIndexActivityArguments(search="query"),
+                knowledge_source_name="index",
+                search_index_arguments=KnowledgeAgentSearchIndexActivityArguments(search="query"),
                 count=10,
                 elapsed_ms=50,
             ),

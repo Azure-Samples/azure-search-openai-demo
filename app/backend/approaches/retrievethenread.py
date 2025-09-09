@@ -224,6 +224,7 @@ class RetrieveThenReadApproach(Approach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
     ) -> ExtraInfo:
+        minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides, auth_claims)
         top = overrides.get("top", 3)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
@@ -236,6 +237,7 @@ class RetrieveThenReadApproach(Approach):
             search_index_name=self.search_index_name,
             top=top,
             filter_add_on=search_index_filter,
+            minimum_reranker_score=minimum_reranker_score,
             results_merge_strategy=results_merge_strategy,
         )
 
@@ -254,6 +256,7 @@ class RetrieveThenReadApproach(Approach):
                     "Use agentic retrieval",
                     messages,
                     {
+                        "reranker_threshold": minimum_reranker_score,
                         "results_merge_strategy": results_merge_strategy,
                         "filter": search_index_filter,
                     },

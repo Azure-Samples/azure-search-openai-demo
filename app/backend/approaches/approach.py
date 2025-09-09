@@ -273,6 +273,7 @@ class Approach(ABC):
         search_index_name: str,
         top: Optional[int] = None,
         filter_add_on: Optional[str] = None,
+        minimum_reranker_score: Optional[float] = None,
         results_merge_strategy: Optional[str] = None,
     ) -> tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
         # STEP 1: Invoke agentic retrieval
@@ -280,8 +281,7 @@ class Approach(ABC):
             retrieval_request=KnowledgeAgentRetrievalRequest(
                 messages=[
                     KnowledgeAgentMessage(
-                        role=str(msg["role"]),
-                        content=[KnowledgeAgentMessageTextContent(text=str(msg["content"]))],
+                        role=str(msg["role"]), content=[KnowledgeAgentMessageTextContent(text=str(msg["content"]))]
                     )
                     for msg in messages
                     if msg["role"] != "system"
@@ -340,6 +340,9 @@ class Approach(ABC):
                 doc_to_ref_id[ref.source_data.get("id")] = ref.id
                 if top and len(documents) >= top:
                     break
+
+        if minimum_reranker_score is not None:
+            documents = [doc for doc in documents if (doc.reranker_score or 0) >= minimum_reranker_score]
 
         if results_merge_strategy == "interleaved":
             documents = sorted(

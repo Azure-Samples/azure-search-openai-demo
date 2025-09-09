@@ -462,10 +462,7 @@ class SearchManager:
                         name=self.search_info.agent_name,
                         knowledge_sources=[
                             KnowledgeSourceReference(
-                                name=knowledge_source.name,
-                                include_reference_source_data=True,  # TODO: base on env var
-                                include_references=True,
-                                reranker_threshold=1.5,
+                                name=knowledge_source.name, include_references=True, include_reference_source_data=True
                             )
                         ],
                         models=[

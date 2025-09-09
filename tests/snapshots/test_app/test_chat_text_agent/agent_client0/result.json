@@ -20,7 +20,6 @@
                 ],
                 "props": {
                     "filter": null,
-                    "max_docs_for_reranker": 500,
                     "reranker_threshold": 0,
                     "results_merge_strategy": "interleaved"
                 },
@@ -29,13 +28,7 @@
             {
                 "description": [
                     {
-                        "captions": [
-                            {
-                                "additional_properties": {},
-                                "highlights": [],
-                                "text": "Caption: A whistleblower policy."
-                            }
-                        ],
+                        "captions": [],
                         "category": null,
                         "content": "There is a whistleblower policy.",
                         "groups": null,
@@ -43,8 +36,8 @@
                         "images": null,
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
-                        "score": 0.03279569745063782,
-                        "search_agent_query": null,
+                        "score": null,
+                        "search_agent_query": "whistleblower query",
                         "sourcefile": "Benefit_Options.pdf",
                         "sourcepage": "Benefit_Options-2.pdf"
                     }
@@ -58,17 +51,17 @@
                             "id": 0,
                             "input_tokens": 10,
                             "output_tokens": 20,
-                            "type": "ModelQueryPlanning"
+                            "type": "modelQueryPlanning"
                         },
                         {
                             "count": 10,
                             "elapsed_ms": 50,
                             "id": 1,
-                            "query": {
+                            "knowledge_source_name": "index",
+                            "search_index_arguments": {
                                 "search": "whistleblower query"
                             },
-                            "target_index": "index",
-                            "type": "AzureSearchQuery"
+                            "type": "searchIndex"
                         }
                     ]
                 },
