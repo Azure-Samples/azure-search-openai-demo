@@ -7,6 +7,7 @@ import { useLogin } from "../../authConfig";
 
 import { LoginButton } from "../../components/LoginButton";
 import { IconButton } from "@fluentui/react";
+import ssoeLogo from "../../assets/ssoe_logo.svg";
 
 const Layout = () => {
     const { t } = useTranslation();
@@ -39,38 +40,40 @@ const Layout = () => {
             <header className={styles.header} role={"banner"}>
                 <div className={styles.headerContainer} ref={menuRef}>
                     <Link to="/" className={styles.headerTitleContainer}>
-                        <h3 className={styles.headerTitle}>{t("headerTitle")}</h3>
+                        <img src={ssoeLogo} alt="SSOE" className={styles.headerLogo} style={{ height: "32px", width: "auto" }} />
                     </Link>
-                    <nav>
-                        <ul className={`${styles.headerNavList} ${menuOpen ? styles.show : ""}`}>
-                            <li>
-                                <NavLink
-                                    to="/"
-                                    className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    {t("chat")}
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink
-                                    to="/qa"
-                                    className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    {t("qa")}
-                                </NavLink>
-                            </li>
-                        </ul>
-                    </nav>
-                    <div className={styles.loginMenuContainer}>
-                        {useLogin && <LoginButton />}
-                        <IconButton
-                            iconProps={{ iconName: "GlobalNavButton" }}
-                            className={styles.menuToggle}
-                            onClick={toggleMenu}
-                            ariaLabel={t("labels.toggleMenu")}
-                        />
+                    <div className={styles.rightContainer}>
+                        <nav>
+                            <ul className={`${styles.headerNavList} ${menuOpen ? styles.show : ""}`}>
+                                <li>
+                                    <NavLink
+                                        to="/"
+                                        className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        {t("chat")}
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink
+                                        to="/qa"
+                                        className={({ isActive }) => (isActive ? styles.headerNavPageLinkActive : styles.headerNavPageLink)}
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        {t("qa")}
+                                    </NavLink>
+                                </li>
+                            </ul>
+                        </nav>
+                        <div className={styles.loginMenuContainer}>
+                            {useLogin && <LoginButton />}
+                            <IconButton
+                                iconProps={{ iconName: "GlobalNavButton" }}
+                                className={styles.menuToggle}
+                                onClick={toggleMenu}
+                                ariaLabel={t("labels.toggleMenu")}
+                            />
+                        </div>
                     </div>
                 </div>
             </header>

@@ -6,12 +6,12 @@ model:
     parameters:
         tools: ${file:chat_query_rewrite_tools.json}
 sample:
-    user_query: Does it include hearing?
+    user_query: Does it apply to seismic zones?
     past_messages:
         - role: user
-          content: "What is included in my Northwind Health Plus plan that is not in standard?"
+          content: "What are the special detailing requirements for moment connections?"
         - role: assistant
-          content: "The Northwind Health Plus plan includes coverage for emergency services, mental health and substance abuse coverage, and out-of-network services, which are not included in the Northwind Standard plan. [Benefit_Options.pdf#page=3]"
+          content: "Special detailing requirements for moment connections include reduced beam sections (RBS), welded flange-bolted web connections, and extended end-plate connections. These connections must satisfy both strength and ductility requirements per AISC 341. [seismic_design.pdf#page=15]"
 ---
 system:
 Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
@@ -24,16 +24,16 @@ If the question is not in English, translate the question to English before gene
 If you cannot generate a search query, return just the number 0.
 
 user:
-How did crypto do last year?
+What are the wind load requirements for high-rise buildings?
 
 assistant:
-Summarize Cryptocurrency Market Dynamics from last year
+Wind load requirements high-rise buildings structural design
 
 user:
-What are my health plans?
+What is the minimum concrete strength for footings?
 
 assistant:
-Show available health plans
+Minimum concrete strength footings foundation design requirements
 
 {% for message in past_messages %}
 {{ message["role"] }}:
