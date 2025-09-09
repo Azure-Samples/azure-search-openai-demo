@@ -539,9 +539,7 @@ class SearchManager:
 
     async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
         logger.info(
-            "Removing sections from '{%s or '<all>'}' from search index '%s'",
-            path,
-            self.search_info.index_name,
+            "Removing sections from '{%s or '<all>'}' from search index '%s'", path, self.search_info.index_name
         )
         async with self.search_info.create_search_client() as search_client:
             while True:
