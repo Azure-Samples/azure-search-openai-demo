@@ -16,7 +16,6 @@ from openai.types.chat import (
 
 from approaches.approach import (
     Approach,
-    DataPoints,
     ExtraInfo,
     ThoughtStep,
 )
@@ -284,9 +283,11 @@ class ChatReadRetrieveReadApproach(Approach):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         search_index_filter = self.build_filter(overrides, auth_claims)
         send_text_sources = overrides.get("send_text_sources", True)
-        send_image_sources = overrides.get("send_image_sources", True)
+        send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
         search_text_embeddings = overrides.get("search_text_embeddings", True)
-        search_image_embeddings = overrides.get("search_image_embeddings", self.multimodal_enabled)
+        search_image_embeddings = (
+            overrides.get("search_image_embeddings", self.multimodal_enabled) and self.multimodal_enabled
+        )
 
         original_user_query = messages[-1]["content"]
         if not isinstance(original_user_query, str):
@@ -342,11 +343,12 @@ class ChatReadRetrieveReadApproach(Approach):
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
         data_points = await self.get_sources_content(
-            results, use_semantic_captions, download_image_sources=send_image_sources, user_oid=auth_claims.get("oid")
+            results,
+            use_semantic_captions,
+            include_text_sources=send_text_sources,
+            download_image_sources=send_image_sources,
+            user_oid=auth_claims.get("oid"),
         )
-        if not send_text_sources:
-            data_points = DataPoints(text=[], images=data_points.images, citations=data_points.citations)
-
         extra_info = ExtraInfo(
             data_points,
             thoughts=[
@@ -396,7 +398,7 @@ class ChatReadRetrieveReadApproach(Approach):
         # 50 is the amount of documents that the reranker can process per query
         max_docs_for_reranker = max_subqueries * 50
         send_text_sources = overrides.get("send_text_sources", True)
-        send_image_sources = overrides.get("send_image_sources", True)
+        send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
 
         response, results = await self.run_agentic_retrieval(
             messages=messages,
@@ -412,12 +414,10 @@ class ChatReadRetrieveReadApproach(Approach):
         data_points = await self.get_sources_content(
             results,
             use_semantic_captions=False,
+            include_text_sources=send_text_sources,
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
         )
-        if not send_text_sources:
-            data_points = DataPoints(text=[], images=data_points.images, citations=data_points.citations)
-
         extra_info = ExtraInfo(
             data_points,
             thoughts=[
