@@ -4,17 +4,17 @@ description: Answer a single question (with no chat history) using solely text s
 model:
     api: chat
 sample:
-    user_query: What does a product manager do?
+    user_query: What are the load requirements for steel beam connections?
     text_sources:
-        - "role_library.pdf#page=29:  The Manager of Product Management will collaborate with internal teams, such as engineering, sales, marketing, and finance, as well as external partners, suppliers, and customers to ensure successful product execution. Responsibilities: · Lead the product management team and provide guidance on product strategy, design, development, and launch. · Develop and implement product life-cycle management processes. · Monitor and analyze industry trends to identify opportunities for new products. · Develop product marketing plans and go-to-market strategies. · Research customer needs and develop customer-centric product roadmaps. · Collaborate with internal teams to ensure product execution and successful launch. · Develop pricing strategies and cost models. · Oversee product portfolio and performance metrics. · Manage product development budget. · Analyze product performance and customer feedback to identify areas for improvement. Qualifications: · Bachelor's degree in business, engineering, or a related field. · At least 5 years of experience in product management. · Proven track record of successful product launches."
-        - "role_library.pdf#page=23: Company: Contoso Electronics Location: Anywhere Job Type: Full-Time Salary: Competitive, commensurate with experience Job Summary: The Senior Manager of Product Management will be responsible for leading the product management team at Contoso Electronics. This role includes developing strategies, plans and objectives for the product management team and managing the day-to-day operations. The Senior Manager of Product Management will be responsible for the successful launch of new products and the optimization of existing products. Responsibilities: · Develop and implement product management strategies, plans and objectives to maximize team performance. · Analyze competitive landscape and market trends to develop product strategies. · Lead the product management team in the development of product plans, roadmaps and launch plans. · Monitor the performance of product management team, analyze results and implement corrective action as needed. · Manage the product lifecycle, including product development, launch, and end of life. · Ensure product features and benefits meet customer requirements. · Establish and maintain relationships with key customers, partners, and vendors."
-        - "role_library.pdf#page=28:  · 7+ years of experience in research and development in the electronics sector. · Proven track record of successfully designing, testing, and optimizing products. · Experience leading a team of researchers and engineers. · Excellent problem-solving and analytical skills. · Ability to work in a fast-paced environment and meet tight deadlines.· Knowledge of industry trends, technologies, and regulations. · Excellent communication and presentation skills. Manager of Product Management Job Title: Manager of Product Management, Contoso Electronics Job Summary: The Manager of Product Management is responsible for overseeing the product management team, driving product development and marketing strategy for Contoso Electronics. This individual will be accountable for the successful launch of new products and the implementation of product life-cycle management processes. The Manager of Product Management will collaborate with internal teams, such as engineering, sales, marketing, and finance, as well as external partners, suppliers, and customers to ensure successful product execution."
+        - "structural_standards.pdf#page=15: Steel beam connections must be designed to resist the applied loads including dead loads, live loads, wind loads, and seismic forces. Connection design shall follow AISC 360 specifications. Bolted connections: Use high-strength bolts (A325 or A490) with proper edge distances and spacing. Minimum edge distance shall be 1.25 times bolt diameter. Maximum spacing between bolts shall not exceed 24 times the thickness of the thinner connected part. Welded connections: Use E70XX electrodes for A992 steel. Fillet welds shall have minimum size per AISC Table J2.4. Full penetration welds required for moment connections."
+        - "design_manual.pdf#page=42: Company: SteelWorks Engineering Location: Multiple Offices Job Summary: Structural Engineer responsibilities include analyzing structural systems, designing steel and concrete members, preparing construction documents, and ensuring compliance with building codes. The engineer will collaborate with architects, contractors, and other disciplines to deliver safe and economical structural solutions. Responsibilities: · Perform structural analysis using software such as SAP2000, ETABS, or STAAD.Pro · Design structural members per AISC, ACI, and IBC codes · Prepare detailed drawings and specifications · Conduct site visits and construction administration · Review shop drawings and submittals · Coordinate with MEP engineers and architects"
+        - "project_specs.pdf#page=8: Seismic Design Requirements: All structures in Seismic Design Category D must include special moment-resisting frames or braced frames. Base shear calculations shall use the equivalent lateral force procedure per ASCE 7. Response modification factor R shall be selected based on structural system type. Special detailing requirements apply to beam-column connections in high seismic zones. Drift limits: Story drift shall not exceed 0.020hsx for Risk Category I and II buildings."
 ---
 system:
 {% if override_prompt %}
 {{ override_prompt }}
 {% else %}
-Assistant helps the company employees with their questions about internal documents. Be brief in your answers.
+Assistant helps structural engineering company employees with their questions about technical documents, design standards, project specifications, and engineering practices. Be brief and technically accurate in your answers.
 Answer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below.
 You CANNOT ask clarifying questions to the user, since the user will have no way to reply.
 If the question is not in English, answer in the language used in the question.
@@ -32,16 +32,16 @@ Possible citations for current question: {% for citation in citations %} [{{ cit
 {% endif %}
 
 user:
-What is the deductible for the employee plan for a visit to Overlake in Bellevue?
+What is the maximum allowable deflection for a steel beam under live load?
 
 Sources:
-info1.txt: deductibles depend on whether you are in-network or out-of-network. In-network deductibles are $500 for employee and $1000 for family. Out-of-network deductibles are $1000 for employee and $2000 for family.
-info2.pdf: Overlake is in-network for the employee plan.
-info3.pdf: Overlake is the name of the area that includes a park and ride near Bellevue.
-info4.pdf: In-network institutions include Overlake, Swedish and others in the region.
+code_requirements.pdf: Maximum deflection limits for structural members under live load shall not exceed L/360 for floors supporting plaster ceilings, L/300 for floors not supporting plaster ceilings, and L/240 for roof members.
+design_guide.pdf: Steel beam deflection calculations must include both immediate deflection and long-term deflection effects.
+project_manual.pdf: Special deflection limits may apply to equipment-sensitive areas where L/480 or stricter limits are required.
+aisc_manual.pdf: Deflection limits are specified in IBC Table 1604.3 and should be verified during design phase.
 
 assistant:
-In-network deductibles are $500 for employee and $1000 for family [info1.txt] and Overlake is in-network for the employee plan [info2.pdf][info4.pdf].
+Maximum deflection limits for steel beams under live load are L/360 for floors supporting plaster ceilings, L/300 for floors not supporting plaster ceilings, and L/240 for roof members [code_requirements.pdf]. Special deflection limits may apply to equipment-sensitive areas where L/480 or stricter limits are required [project_manual.pdf].
 
 user:
 {{ user_query }}
