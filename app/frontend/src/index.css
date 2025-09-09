@@ -31,6 +31,9 @@ body {
     height: 100%;
     --company-primary: #af252e;
     --company-secondary: #ffffff;
+    --text-color: #222222;
+    --surface-bg: #ffffff;
+    --surface-border: #e0e0e0;
 }
 
 @media (min-width: 480px) {
