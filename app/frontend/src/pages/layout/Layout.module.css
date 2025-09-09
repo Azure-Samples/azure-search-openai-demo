@@ -11,8 +11,9 @@
 }
 
 .header {
-    background-color: #222222;
+    background-color: #ffffff;
     color: #f2f2f2;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .headerContainer {
@@ -27,7 +28,7 @@
 .headerTitleContainer {
     display: flex;
     align-items: center;
-    color: #f2f2f2;
+    color: #222222;
     text-decoration: none;
 }
 
@@ -45,7 +46,7 @@
     z-index: 100;
     display: none;
     flex-direction: column;
-    background-color: #222222;
+    background-color: #ffffff;
     position: absolute;
     top: 2.7rem;
     right: 0;
@@ -53,6 +54,7 @@
     list-style: none;
     padding: 1.1rem;
     align-items: flex-end;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .headerNavList.show {
@@ -61,9 +63,9 @@
 
 .headerNavPageLink {
     padding: 1rem;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #e0e0e0;
     text-align: right;
-    color: #f2f2f2;
+    color: #222222;
     text-decoration: none;
     opacity: 0.75;
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
@@ -74,10 +76,11 @@
 
 .headerNavPageLink:hover {
     opacity: 1;
+    background-color: #f5f5f5;
 }
 
 .headerNavPageLinkActive {
-    color: #f2f2f2;
+    color: #222222;
     text-decoration: none;
     font-size: 1.2rem;
     text-align: right;
@@ -92,10 +95,16 @@
     display: block;
     background: none;
     border: none;
-    color: #f2f2f2;
+    color: #222222;
     font-size: 1.5rem;
     cursor: pointer;
     z-index: 101;
+}
+
+.rightContainer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .loginMenuContainer {
@@ -116,6 +125,7 @@
         padding: 0;
         position: static;
         width: auto;
+        gap: 1.5rem;
     }
 
     .headerNavPageLink {
@@ -129,8 +139,9 @@
     }
 
     .headerNavPageLinkActive {
-        color: #f2f2f2;
+        color: #222222;
         text-decoration: none;
+        padding: 0;
     }
 
     .headerNavLeftMargin {
@@ -142,6 +153,10 @@
         font-weight: normal;
         display: inline-block;
         vertical-align: middle;
+    }
+
+    .rightContainer {
+        gap: 2rem;
     }
 
     .menuToggle {
