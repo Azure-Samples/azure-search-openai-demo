@@ -1,0 +1,24 @@
+name: Report Failure to Azure DevOps
+
+on:
+  workflow_run:
+    workflows: ["ci.yml"]  # Replace with actual workflow name
+    types:
+      - completed
+
+jobs:
+  create_bug:
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Azure DevOps Bug
+        uses: stefanstranger/azuredevops-bug-action@1.1
+        with:
+          OrganizationName: "your-org-name"
+          ProjectName: "your-project-name"
+          AreaPath: "your-project\\your-area"
+          IterationPath: "your-project\\your-iteration"
+          GithubToken: "${{ secrets.GITHUB_TOKEN }}"
+          WorkflowFileName: "ci.yml"
+        env:
+          PAT: ${{ secrets.ADO_PAT }}
