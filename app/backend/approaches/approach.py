@@ -322,7 +322,8 @@ class Approach(ABC):
 
         # Create documents from reference source data
         for ref in refs:
-            if ref.source_data:
+            if ref.source_data and ref.doc_key:
+                # Note that ref.doc_key is the same as source_data["id"]
                 documents.append(
                     Document(
                         id=ref.source_data.get("id"),
@@ -337,7 +338,7 @@ class Approach(ABC):
                         search_agent_query=activity_mapping[ref.activity_source],
                     )
                 )
-                doc_to_ref_id[ref.source_data.get("id")] = ref.id
+                doc_to_ref_id[ref.doc_key] = ref.id
                 if top and len(documents) >= top:
                     break
 
