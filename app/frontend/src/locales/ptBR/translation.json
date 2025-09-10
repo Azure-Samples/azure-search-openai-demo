@@ -83,6 +83,11 @@
         "minimumSearchScore": "Pontuação mínima de pesquisa",
         "minimumRerankerScore": "Pontuação mínima de reclassificação",
         "retrieveCount": "Recuperar esta quantidade de resultados de pesquisa:",
+        "resultsMergeStrategy": "Estratégia de mesclagem de resultados",
+        "resultsMergeStrategyOptions": {
+            "interleaved": "Intercalada",
+            "descending": "Descendente"
+        },
         "includeCategory": "Incluir categoria",
         "includeCategoryOptions": {
             "all": "Todos"
@@ -138,6 +143,8 @@
              "Define uma pontuação mínima para os resultados da pesquisa retornados pelo ranker semântico. A pontuação varia de 0 a 4. Quanto maior a pontuação, mais relevante é o resultado em relação à pergunta.",
         "retrieveNumber":
              "Define o número de resultados de pesquisa a serem recuperados na pesquisa do Azure AI. Mais resultados podem aumentar a chance de encontrar a resposta correta, mas podem fazer com que o modelo se 'perca'.",
+       "resultsMergeStrategy":
+           "Define a estratégia para mesclar resultados de várias subconsultas. 'Intercalada' escolhe os melhores resultados de cada subconsulta em ordem rotativa, enquanto 'Descendente' ordena todos os resultados pela pontuação do reranker.",
         "includeCategory":
             "Especifica uma categoria para incluir nos resultados da pesquisa. Não há categorias usadas no conjunto de dados padrão.",
          "excludeCategory":
@@ -153,6 +160,8 @@
         "suggestFollowupQuestions": "Solicita ao LLM que sugira perguntas de acompanhamento com base na consulta do usuário.",
         "textEmbeddings": "Quando selecionado, a pesquisa usará incorporações do modelo de incorporações apenas de texto para os trechos de texto extraídos.",
         "imageEmbeddings": "Quando selecionado, a pesquisa usará incorporações do modelo de incorporações multimodal para as imagens extraídas.",
+       "llmTextInputs": "Quando selecionado, o conteúdo de texto dos resultados de pesquisa é enviado ao LLM como contexto.",
+       "llmImageInputs": "Quando selecionado, as imagens dos resultados de pesquisa são enviadas ao LLM como contexto.",
         "llmInputs":
             "Define o que será enviado ao modelo de visão. 'Imagens e texto' envia ambos, 'Imagens' envia apenas imagens e 'Texto' envia apenas texto.",
         "retrievalMode":
