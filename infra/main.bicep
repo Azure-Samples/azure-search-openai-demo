@@ -1129,7 +1129,7 @@ module storageRoleContributorSearchService 'core/security/role.bicep' = if (useI
   }
 }
 
-// Necessary for the Container Apps backend to store tokens in the container
+// Necessary for the Container Apps backend to store authentication tokens in the blob storage container
 module storageRoleContributorBackend 'core/security/role.bicep' = if (deploymentTarget == 'containerapps' && !empty(clientAppId)) {
   scope: storageResourceGroup
   name: 'storage-role-contributor-aca-backend'
