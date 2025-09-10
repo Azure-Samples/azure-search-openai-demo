@@ -2,7 +2,7 @@ name: Report Failure to Azure DevOps
 
 on:
   workflow_run:
-    workflows: ["ci.yml"]  # Replace with actual workflow name
+    workflows: ["azure-dev.yml"]  # Replace with actual workflow name
     types:
       - completed
 
