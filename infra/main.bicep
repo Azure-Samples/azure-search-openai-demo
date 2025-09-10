@@ -972,7 +972,7 @@ module storageRoleUser 'core/security/role.bicep' = {
   name: 'storage-role-user'
   params: {
     principalId: principalId
-    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
     principalType: principalType
   }
 }
@@ -982,7 +982,7 @@ module storageContribRoleUser 'core/security/role.bicep' = {
   name: 'storage-contrib-role-user'
   params: {
     principalId: principalId
-    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
     principalType: principalType
   }
 }
@@ -992,7 +992,7 @@ module storageOwnerRoleUser 'core/security/role.bicep' = if (useUserUpload) {
   name: 'storage-owner-role-user'
   params: {
     principalId: principalId
-    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b' // Storage Blob Data Owner
     principalType: principalType
   }
 }
@@ -1092,7 +1092,7 @@ module storageRoleBackend 'core/security/role.bicep' = {
     principalId: (deploymentTarget == 'appservice')
       ? backend.outputs.identityPrincipalId
       : acaBackend.outputs.identityPrincipalId
-    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
     principalType: 'ServicePrincipal'
   }
 }
@@ -1104,7 +1104,7 @@ module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
     principalId: (deploymentTarget == 'appservice')
       ? backend.outputs.identityPrincipalId
       : acaBackend.outputs.identityPrincipalId
-    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b' // Storage Blob Data Owner
     principalType: 'ServicePrincipal'
   }
 }
@@ -1114,7 +1114,7 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
   name: 'storage-role-searchservice'
   params: {
     principalId: searchService.outputs.principalId
-    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
     principalType: 'ServicePrincipal'
   }
 }
