@@ -444,7 +444,7 @@ class SearchManager:
             if self.use_acls:
                 field_names.extend(["oids", "groups"])
             if self.search_images:
-                field_names.append("images")
+                field_names.append("images/url")
             async with self.search_info.create_search_index_client() as search_index_client:
                 knowledge_source = SearchIndexKnowledgeSource(
                     name=self.search_info.index_name,  # Use the same name for convenience
