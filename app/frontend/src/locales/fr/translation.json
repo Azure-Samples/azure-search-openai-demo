@@ -161,8 +161,8 @@
             "Définit l'effort de raisonnement pour le LLM. Des valeurs plus élevées entraînent plus de raisonnement, mais peuvent prendre plus de temps pour générer une réponse. La valeur par défaut est moyenne.",
         "textEmbeddings": "Lorsque sélectionné, la recherche utilisera les incorporations du modèle d'incorporations de texte uniquement pour les fragments de texte extraits.",
         "imageEmbeddings": "Lorsque sélectionné, la recherche utilisera les incorporations du modèle d'incorporations multimodal pour les images extraites.",
-        "llmTextInputs": "Lorsque sélectionné, le contenu textuel des résultats de recherche est envoyé à l'LLM comme contexte.",
-        "llmImageInputs": "Lorsque sélectionné, les images des résultats de recherche sont envoyées à l'LLM comme contexte.",
+        "llmTextInputs": "Lorsque sélectionné, le contenu textuel des résultats de recherche est envoyé au LLM comme contexte.",
+        "llmImageInputs": "Lorsque sélectionné, les images des résultats de recherche sont envoyées au LLM comme contexte.",
         "llmInputs":
             "Définit ce qui sera envoyé au modèle de vision. 'Images et texte' envoie à la fois des images et du texte au modèle, 'Images' envoie seulement des images, et 'Texte' envoie seulement du texte.",
         "retrievalMode":
