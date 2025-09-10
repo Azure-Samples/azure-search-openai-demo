@@ -14,11 +14,11 @@ jobs:
       - name: Create Azure DevOps Bug
         uses: stefanstranger/azuredevops-bug-action@1.1
         with:
-          OrganizationName: "your-org-name"
-          ProjectName: "your-project-name"
-          AreaPath: "your-project\\your-area"
-          IterationPath: "your-project\\your-iteration"
+          OrganizationName: "https://dev.azure.com/rleme-001/"
+          ProjectName: "azure-search-openai-demo"
+          AreaPath: "azure-search-openai-demo\\General"
+          IterationPath: "azure-search-openai-demo\\Sprint 1"
           GithubToken: "${{ secrets.GITHUB_TOKEN }}"
-          WorkflowFileName: "ci.yml"
+          WorkflowFileName: "azure-dev.yml"
         env:
           PAT: ${{ secrets.ADO_PAT }}
