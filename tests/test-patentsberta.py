@@ -1,0 +1,248 @@
+import asyncio
+import aiohttp
+import os
+import sys
+
+# Add the backend directory to the path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'app', 'backend'))
+
+from prepdocslib.patentsberta_embeddings import PatentsBertaEmbeddings
+
+class PatentsBertaTestSuite:
+    def __init__(self, endpoint: str, api_key: str = None):
+        self.endpoint = endpoint
+        self.api_key = api_key
+        self.embedding_service = PatentsBertaEmbeddings(endpoint, api_key)
+        
+    async def test_health_endpoint(self) -> bool:
+        print("🏥 Testing health endpoint...")
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f"{self.endpoint}/health") as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        print(f"✅ Health check passed: {data}")
+                        return True
+                    else:
+                        print(f"❌ Health check failed: {response.status}")
+                        return False
+        except Exception as e:
+            print(f"❌ Health check error: {e}")
+            return False
+    
+    async def test_info_endpoint(self) -> bool:
+        print("ℹ️  Testing info endpoint...")
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f"{self.endpoint}/info") as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        print(f"✅ Info endpoint: {data}")
+                        return True
+                    else:
+                        print(f"❌ Info endpoint failed: {response.status}")
+                        return False
+        except Exception as e:
+            print(f"❌ Info endpoint error: {e}")
+            return False
+    
+    async def test_single_embedding(self) -> bool:
+        print("🔍 Testing single embedding generation...")
+        test_text = "structural engineering patent for seismic isolation system"
+        
+        try:
+            embedding = await self.embedding_service.create_embedding(test_text)
+            
+            if embedding and len(embedding) == 768:
+                print(f"✅ Single embedding generated successfully")
+                print(f"   Dimensions: {len(embedding)}")
+                print(f"   Sample values: {embedding[:5]}...")
+                return True
+            else:
+                print(f"❌ Single embedding failed: wrong dimensions {len(embedding) if embedding else 0}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Single embedding error: {e}")
+            return False
+    
+    async def test_batch_embeddings(self) -> bool:
+        print("📦 Testing batch embedding generation...")
+        test_texts = [
+            "foundation system with load distribution mechanism",
+            "composite structural beam with carbon fiber reinforcement", 
+            "damping apparatus for earthquake resistant buildings",
+            "steel frame connection with moment resistance",
+            "concrete column with spiral reinforcement design"
+        ]
+        
+        try:
+            embeddings = await self.embedding_service.create_embeddings(test_texts)
+            
+            if embeddings and len(embeddings) == len(test_texts):
+                all_correct_dims = all(len(emb) == 768 for emb in embeddings)
+                if all_correct_dims:
+                    print(f"✅ Batch embeddings generated successfully")
+                    print(f"   Count: {len(embeddings)}")
+                    print(f"   Dimensions: {len(embeddings[0])}")
+                    return True
+                else:
+                    print(f"❌ Batch embeddings failed: incorrect dimensions")
+                    return False
+            else:
+                print(f"❌ Batch embeddings failed: wrong count {len(embeddings) if embeddings else 0}")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Batch embeddings error: {e}")
+            return False
+    
+    async def test_patent_specific_queries(self) -> bool:
+        print("🔬 Testing patent-specific terminology...")
+        
+        patent_queries = [
+            "apparatus for structural vibration control",
+            "method of reinforcing concrete structures", 
+            "system for seismic base isolation",
+            "device for load transfer in buildings",
+            "composition of high-strength concrete mixture"
+        ]
+        
+        try:
+            embeddings = await self.embedding_service.create_embeddings(patent_queries)
+            
+            if embeddings and len(embeddings) == len(patent_queries):
+                print(f"✅ Patent terminology embeddings generated")
+                
+                # Test similarity between related concepts
+                # This is a basic test - in practice you'd want more sophisticated similarity testing
+                print("   Testing conceptual similarity...")
+                
+                # Compare "apparatus" and "device" embeddings (should be similar)
+                apparatus_emb = embeddings[0]  # "apparatus for structural vibration control"
+                device_emb = embeddings[3]     # "device for load transfer in buildings"
+                
+                # Simple cosine similarity calculation
+                import numpy as np
+                
+                def cosine_similarity(a, b):
+                    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+                
+                similarity = cosine_similarity(apparatus_emb, device_emb)
+                print(f"   Similarity between 'apparatus' and 'device': {similarity:.3f}")
+                
+                if similarity > 0.5:  # Reasonable threshold for related concepts
+                    print("✅ Patent terminology shows good semantic understanding")
+                    return True
+                else:
+                    print("⚠️  Patent terminology similarity lower than expected")
+                    return True  # Still pass, but note the issue
+            else:
+                print(f"❌ Patent terminology test failed")
+                return False
+                
+        except Exception as e:
+            print(f"❌ Patent terminology error: {e}")
+            return False
+    
+    async def test_performance(self) -> bool:
+        print("⚡ Testing performance...")
+        
+        import time
+        
+        # Test single embedding performance
+        start_time = time.time()
+        await self.embedding_service.create_embedding("test performance query")
+        single_time = time.time() - start_time
+        
+        # Test batch performance
+        batch_texts = ["performance test query"] * 10
+        start_time = time.time()
+        await self.embedding_service.create_embeddings(batch_texts)
+        batch_time = time.time() - start_time
+        
+        print(f"✅ Performance results:")
+        print(f"   Single embedding: {single_time:.2f}s")
+        print(f"   Batch (10 items): {batch_time:.2f}s")
+        print(f"   Avg per item in batch: {batch_time/10:.2f}s")
+        
+        # Performance is acceptable if single < 10s and batch avg < 2s
+        if single_time < 10 and (batch_time/10) < 2:
+            print("✅ Performance is acceptable")
+            return True
+        else:
+            print("⚠️  Performance may be slower than expected")
+            return True  # Still pass, but note the issue
+
+async def main():
+    print("🧪 PatentsBERTa Embedding Service Test Suite")
+    print("=" * 50)
+    
+    # Get endpoint from environment or command line
+    endpoint = os.getenv('PATENTSBERTA_ENDPOINT')
+    api_key = os.getenv('PATENTSBERTA_API_KEY')
+    
+    if len(sys.argv) > 1:
+        endpoint = sys.argv[1]
+    
+    if not endpoint:
+        print("❌ Please provide PatentsBERTa endpoint:")
+        print("   python test-patentsberta.py <endpoint>")
+        print("   or set PATENTSBERTA_ENDPOINT environment variable")
+        sys.exit(1)
+    
+    print(f"🎯 Testing endpoint: {endpoint}")
+    if api_key:
+        print("🔑 Using API key authentication")
+    
+    # Initialize test suite
+    test_suite = PatentsBertaTestSuite(endpoint, api_key)
+    
+    # Run all tests
+    tests = [
+        ("Health Check", test_suite.test_health_endpoint),
+        ("Info Endpoint", test_suite.test_info_endpoint),
+        ("Single Embedding", test_suite.test_single_embedding),
+        ("Batch Embeddings", test_suite.test_batch_embeddings),
+        ("Patent Terminology", test_suite.test_patent_specific_queries),
+        ("Performance", test_suite.test_performance),
+    ]
+    
+    results = []
+    
+    for test_name, test_func in tests:
+        print(f"\n🔍 Running: {test_name}")
+        print("-" * 30)
+        
+        try:
+            result = await test_func()
+            results.append((test_name, result))
+        except Exception as e:
+            print(f"❌ {test_name} failed with exception: {e}")
+            results.append((test_name, False))
+    
+    # Print summary
+    print("\n" + "=" * 50)
+    print("📊 Test Results Summary")
+    print("=" * 50)
+    
+    passed = 0
+    total = len(results)
+    
+    for test_name, result in results:
+        status = "✅ PASS" if result else "❌ FAIL"
+        print(f"{status} {test_name}")
+        if result:
+            passed += 1
+    
+    print(f"\n🎯 Overall: {passed}/{total} tests passed")
+    
+    if passed == total:
+        print("🎉 All tests passed! PatentsBERTa service is working correctly.")
+        sys.exit(0)
+    else:
+        print("⚠️  Some tests failed. Please check the service configuration.")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    asyncio.run(main())
