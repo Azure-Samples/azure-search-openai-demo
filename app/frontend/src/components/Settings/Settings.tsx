@@ -13,7 +13,6 @@ export interface SettingsProps {
     promptTemplate: string;
     temperature: number;
     retrieveCount: number;
-    maxSubqueryCount: number;
     resultsMergeStrategy: string;
     seed: number | null;
     minimumSearchScore: number;
@@ -55,7 +54,6 @@ export const Settings = ({
     promptTemplate,
     temperature,
     retrieveCount,
-    maxSubqueryCount,
     resultsMergeStrategy,
     seed,
     minimumSearchScore,
@@ -109,8 +107,6 @@ export const Settings = ({
     const rerankerScoreFieldId = useId("rerankerScoreField");
     const retrieveCountId = useId("retrieveCount");
     const retrieveCountFieldId = useId("retrieveCountField");
-    const maxSubqueryCountId = useId("maxSubqueryCount");
-    const maxSubqueryCountFieldId = useId("maxSubqueryCountField");
     const resultsMergeStrategyFieldId = useId("resultsMergeStrategy");
     const includeCategoryId = useId("includeCategory");
     const includeCategoryFieldId = useId("includeCategoryField");
@@ -207,20 +203,6 @@ export const Settings = ({
                     onChange={(_ev, val) => onChange("minimumRerankerScore", parseFloat(val || "0"))}
                     aria-labelledby={rerankerScoreId}
                     onRenderLabel={props => renderLabel(props, rerankerScoreId, rerankerScoreFieldId, t("helpTexts.rerankerScore"))}
-                />
-            )}
-            {showAgenticRetrievalOption && useAgenticRetrieval && (
-                <TextField
-                    id={maxSubqueryCountFieldId}
-                    className={styles.settingsSeparator}
-                    label={t("labels.maxSubqueryCount")}
-                    type="number"
-                    min={2}
-                    max={40}
-                    defaultValue={maxSubqueryCount.toString()}
-                    onChange={(_ev, val) => onChange("maxSubqueryCount", parseInt(val || "10"))}
-                    aria-labelledby={maxSubqueryCountId}
-                    onRenderLabel={props => renderLabel(props, maxSubqueryCountId, maxSubqueryCountFieldId, t("helpTexts.maxSubqueryCount"))}
                 />
             )}
             {showAgenticRetrievalOption && useAgenticRetrieval && (

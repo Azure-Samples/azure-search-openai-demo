@@ -152,8 +152,6 @@ To enable reasoning models, follow the steps in [the reasoning models guide](./r
 
 ## Using agentic retrieval
 
-⚠️ This feature is not fully compatible with [multimodal feature](./multimodal.md).
-
 This feature allows you to use agentic retrieval in place of the Search API. To enable agentic retrieval, follow the steps in [the agentic retrieval guide](./agentic_retrieval.md)
 
 ## Using different embedding models
@@ -230,8 +228,6 @@ If you have already deployed:
 * You'll need to create a new index, and re-index all of the data using the new model. You can either delete the current index in the Azure Portal, or create an index with a different name by running `azd env set AZURE_SEARCH_INDEX new-index-name`. When you next run `azd up`, the new index will be created. See the [data ingestion guide](./data_ingestion.md) for more details.
 
 ## Enabling multimodal embeddings and answering
-
-⚠️ This feature is not currently compatible with [agentic retrieval](./agentic_retrieval.md).
 
 When your documents include images, you can optionally enable this feature that can
 use image embeddings when searching and also use images when answering questions.
