@@ -392,7 +392,6 @@ def mock_retrieval_response():
                     "content": "There is a whistleblower policy.",
                     "sourcepage": "Benefit_Options-2.pdf",
                     "sourcefile": "Benefit_Options.pdf",
-                    "captions": [MockCaption("Caption: A whistleblower policy.")],
                 },
             )
         ],
