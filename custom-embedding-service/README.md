@@ -92,6 +92,19 @@ This document summarizes the completed PatentsBERTa embedding integration for th
 ## 🧪 Testing
 
 ### Test the PatentsBERTa Service
+
+#### Option 1: Comprehensive Test Suite
+
+```bash
+azd env get-values | grep PATENTSBERTA_ENDPOINT
+```
+
+```bash
+# Run the full test suite
+python tests/test-patentsberta.py PATENTSBERTA_ENDPOINT
+```
+
+#### Option 2: Manual Testing with curl
 ```bash
 # Get endpoint from environment
 ENDPOINT=$(azd env get-values | grep PATENTSBERTA_ENDPOINT | cut -d'=' -f2 | tr -d '"')
