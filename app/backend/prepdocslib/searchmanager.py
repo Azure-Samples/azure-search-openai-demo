@@ -75,7 +75,18 @@ class SearchManager:
         self.use_acls = use_acls
         self.use_int_vectorization = use_int_vectorization
         self.embeddings = embeddings
-        self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else None
+        # Handle different embedding service types
+        if self.embeddings:
+            if hasattr(self.embeddings, 'open_ai_dimensions'):
+                # OpenAI-based embeddings
+                self.embedding_dimensions = self.embeddings.open_ai_dimensions
+            elif hasattr(self.embeddings, 'get_embedding_dimensions'):
+                # PatentsBERTa embeddings
+                self.embedding_dimensions = self.embeddings.get_embedding_dimensions()
+            else:
+                self.embedding_dimensions = None
+        else:
+            self.embedding_dimensions = None
         self.field_name_embedding = field_name_embedding
         self.search_images = search_images
 
@@ -117,9 +128,11 @@ class SearchManager:
                     name="hnsw_config",
                     parameters=HnswParameters(metric="cosine"),
                 )
+                # Truncation dimension must be less than the embedding dimensions
+                truncation_dim = min(512, max(256, self.embedding_dimensions - 1))
                 text_vector_compression = BinaryQuantizationCompression(
                     compression_name=f"{self.field_name_embedding}-compression",
-                    truncation_dimension=1024,  # should this be a parameter? maybe not yet?
+                    truncation_dimension=truncation_dim,
                     rescoring_options=RescoringOptions(
                         enable_rescoring=True,
                         default_oversampling=10,
