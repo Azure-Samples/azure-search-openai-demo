@@ -1129,6 +1129,17 @@ module storageRoleContributorSearchService 'core/security/role.bicep' = if (useI
   }
 }
 
+// Necessary for the Container Apps backend to store tokens in the container
+module storageRoleContributorBackend 'core/security/role.bicep' = if (deploymentTarget == 'containerapps' && !empty(clientAppId)) {
+  scope: storageResourceGroup
+  name: 'storage-role-contributor-aca-backend'
+  params: {
+    principalId: acaBackend.outputs.identityPrincipalId
+    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
+    principalType: 'ServicePrincipal'
+  }
+}
+
 // Used to issue search queries
 // https://learn.microsoft.com/azure/search/search-security-rbac
 module searchRoleBackend 'core/security/role.bicep' = {
