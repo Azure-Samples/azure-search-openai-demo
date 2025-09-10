@@ -326,7 +326,7 @@ class Approach(ABC):
                 # Note that ref.doc_key is the same as source_data["id"]
                 documents.append(
                     Document(
-                        id=ref.source_data.get("id"),
+                        id=ref.doc_key,
                         content=ref.source_data.get("content"),
                         category=ref.source_data.get("category"),
                         sourcepage=ref.source_data.get("sourcepage"),
