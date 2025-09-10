@@ -10,7 +10,7 @@
 
 .questionInputTextArea {
     width: 100%;
-    line-height: 2.5rem;
+    line-height: 1.5rem;
 }
 
 .questionInputButtonsContainer {
@@ -21,6 +21,13 @@
 
 @media (min-width: 992px) {
     .questionInputContainer {
-        height: 5.625rem;
+        /* Allow container to expand with growing multiline input (was fixed height) */
+        min-height: 5.625rem;
     }
+}
+
+/* Limit uncontrolled growth while still allowing larger prompts; enable scrolling inside textarea if very large */
+.questionInputTextArea textarea {
+    max-height: 20rem;
+    overflow-y: auto !important;
 }
