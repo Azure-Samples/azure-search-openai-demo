@@ -79,6 +79,11 @@
         "minimumSearchScore": "Minimum søgescore",
         "minimumRerankerScore": "Minimum reranker score",
         "retrieveCount": "Hent dette antal søgeresultater:",
+        "resultsMergeStrategy": "Strategi for sammenfletning af resultater",
+        "resultsMergeStrategyOptions": {
+            "interleaved": "Interleaved",
+            "descending": "Faldende"
+        },
         "includeCategory": "Inkludér kategori",
         "includeCategoryOptions": {
             "all": "Alle"
@@ -128,6 +133,7 @@
         "searchScore": "Indstiller en minimumscore for søgeresultater fra Azure AI Search. Scoreområdet afhænger af, om du bruger hybrid (standard), kun vektorer eller kun tekst.",
         "rerankerScore": "Indstiller en minimumscore for søgeresultater fra den semantiske omrangør. Scoren ligger altid mellem 0-4. Jo højere score, jo mere semantisk relevant er resultatet for spørgsmålet.",
         "retrieveNumber": "Indstiller antallet af søgeresultater, der skal hentes fra Azure AI Search. Flere resultater kan øge sandsynligheden for at finde det korrekte svar, men kan få modellen til at 'fare vild i midten' (eng: lost in the middle).",
+    "resultsMergeStrategy": "Indstiller strategien for at sammenflette resultater fra flere underforespørgsler. 'Interleaved' vælger topresultater fra hver underforespørgsel på skift, mens 'Faldende' sorterer alle resultater efter reranker-score.",
         "includeCategory": "Angiver en kategori, der skal inkluderes i søgeresultaterne. Der er ingen kategorier i det standard datasæt.",
         "excludeCategory": "Angiver en kategori, der skal ekskluderes fra søgeresultaterne. Der er ingen kategorier i det standard datasæt.",
         "useSemanticReranker": "Aktiverer Azure AI Search semantisk omrangør, en model der rangerer søgeresultater baseret på semantisk lighed til brugerens forespørgsel.",
@@ -137,6 +143,8 @@
         "suggestFollowupQuestions": "Beder LLM'en om at foreslå opfølgende spørgsmål baseret på brugerens forespørgsel.",
         "textEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra tekst-kun indlejringsmodellen af udtrukne tekstbidder.",
         "imageEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra den multimodale indlejringsmodel af udtrukne billeder.",
+    "llmTextInputs": "Når valgt, sendes tekstindhold fra søgeresultaterne til LLM'en som kontekst.",
+    "llmImageInputs": "Når valgt, sendes billeder fra søgeresultaterne til LLM'en som kontekst.",
         "llmInputs": "Indstiller hvad der sendes til visionsmodellen. 'Billeder og tekst' sender både billeder og tekst til modellen, 'Billeder' sender kun billeder og 'Tekst' sender kun tekst.",
         "retrievalMode": "Indstiller søgemodus for forespørgslen i Azure AI Search. `Vektorer + Tekst (Hybrid)` bruger en kombination af vektorsøgning og fuldtekstsøgning, `Vektorer` bruger kun vektorsøgning, og `Tekst` bruger kun fuldtekstsøgning. Hybrid er generelt optimalt.",
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",

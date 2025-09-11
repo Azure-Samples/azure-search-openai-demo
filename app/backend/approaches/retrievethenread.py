@@ -46,7 +46,6 @@ class RetrieveThenReadApproach(Approach):
         query_speller: str,
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
-        hydrate_references: bool = False,
         multimodal_enabled: bool = False,
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
@@ -74,7 +73,6 @@ class RetrieveThenReadApproach(Approach):
         self.answer_prompt = self.prompt_manager.load_prompt("ask_answer_question.prompty")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
-        self.hydrate_references = hydrate_references
         self.multimodal_enabled = multimodal_enabled
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
@@ -229,10 +227,7 @@ class RetrieveThenReadApproach(Approach):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides, auth_claims)
         top = overrides.get("top", 3)
-        max_subqueries = overrides.get("max_subqueries", 10)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
-        # 50 is the amount of documents that the reranker can process per query
-        max_docs_for_reranker = max_subqueries * 50
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
 
@@ -243,7 +238,6 @@ class RetrieveThenReadApproach(Approach):
             top=top,
             filter_add_on=search_index_filter,
             minimum_reranker_score=minimum_reranker_score,
-            max_docs_for_reranker=max_docs_for_reranker,
             results_merge_strategy=results_merge_strategy,
         )
 
@@ -263,7 +257,6 @@ class RetrieveThenReadApproach(Approach):
                     messages,
                     {
                         "reranker_threshold": minimum_reranker_score,
-                        "max_docs_for_reranker": max_docs_for_reranker,
                         "results_merge_strategy": results_merge_strategy,
                         "filter": search_index_filter,
                     },

@@ -8,16 +8,16 @@ SyntaxHighlighter.registerLanguage("json", json);
 
 type ModelQueryPlanningStep = {
     id: number;
-    type: "ModelQueryPlanning";
+    type: "modelQueryPlanning";
     input_tokens: number;
     output_tokens: number;
 };
 
 type AzureSearchQueryStep = {
     id: number;
-    type: "AzureSearchQuery";
-    target_index: string;
-    query: { search: string };
+    type: "searchIndex";
+    knowledge_source_name: string;
+    search_index_arguments: { search: string };
     query_time: string;
     count: number;
     elapsed_ms: number;
@@ -32,10 +32,10 @@ interface Props {
 
 export const AgentPlan: React.FC<Props> = ({ query_plan, description }) => {
     // find the planning step
-    const planning = query_plan.find((step): step is ModelQueryPlanningStep => step.type === "ModelQueryPlanning");
+    const planning = query_plan.find((step): step is ModelQueryPlanningStep => step.type === "modelQueryPlanning");
 
     // collect all search query steps
-    const queries = query_plan.filter((step): step is AzureSearchQueryStep => step.type === "AzureSearchQuery");
+    const queries = query_plan.filter((step): step is AzureSearchQueryStep => step.type === "searchIndex");
 
     return (
         <div>
@@ -65,7 +65,7 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, description }) => {
                     <tbody>
                         {queries.map(q => (
                             <tr key={q.id}>
-                                <td>{q.query.search}</td>
+                                <td>{q.search_index_arguments.search}</td>
                                 <td>{q.count}</td>
                                 <td>{q.elapsed_ms}</td>
                             </tr>

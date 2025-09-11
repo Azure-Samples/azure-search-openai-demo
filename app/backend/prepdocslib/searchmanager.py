@@ -14,12 +14,14 @@ from azure.search.documents.indexes.models import (
     KnowledgeAgent,
     KnowledgeAgentAzureOpenAIModel,
     KnowledgeAgentRequestLimits,
-    KnowledgeAgentTargetIndex,
+    KnowledgeSourceReference,
     RescoringOptions,
     SearchableField,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
+    SearchIndexKnowledgeSource,
+    SearchIndexKnowledgeSourceParameters,
     SemanticConfiguration,
     SemanticField,
     SemanticPrioritizedFields,
@@ -94,7 +96,6 @@ class SearchManager:
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
 
         async with self.search_info.create_search_index_client() as search_index_client:
-
             embedding_field = None
             images_field = None
             text_vector_search_profile = None
@@ -452,13 +453,29 @@ class SearchManager:
         if self.search_info.agent_name:
             logger.info(f"Creating search agent named {self.search_info.agent_name}")
 
+            field_names = ["id", "sourcepage", "sourcefile", "content", "category"]
+            if self.use_acls:
+                field_names.extend(["oids", "groups"])
+            if self.search_images:
+                field_names.append("images/url")
             async with self.search_info.create_search_index_client() as search_index_client:
+                knowledge_source = SearchIndexKnowledgeSource(
+                    name=self.search_info.index_name,  # Use the same name for convenience
+                    description="Default knowledge source using the main search index",
+                    search_index_parameters=SearchIndexKnowledgeSourceParameters(
+                        search_index_name=self.search_info.index_name,
+                        source_data_select=",".join(field_names),
+                    ),
+                )
+                await search_index_client.create_or_update_knowledge_source(
+                    knowledge_source=knowledge_source, api_version="2025-08-01-preview"
+                )
                 await search_index_client.create_or_update_agent(
                     agent=KnowledgeAgent(
                         name=self.search_info.agent_name,
-                        target_indexes=[
-                            KnowledgeAgentTargetIndex(
-                                index_name=self.search_info.index_name, default_include_reference_source_data=True
+                        knowledge_sources=[
+                            KnowledgeSourceReference(
+                                name=knowledge_source.name, include_references=True, include_reference_source_data=True
                             )
                         ],
                         models=[
