@@ -717,3 +717,73 @@ async def test_create_index_with_search_images_and_embeddings(monkeypatch, searc
     profiles = indexes[0].vector_search.profiles
     assert any(p.name == "images_embedding_profile" for p in profiles), "Should have an image embedding profile"
     assert any(p.name == "embedding3-profile" for p in profiles), "Should have a text embedding profile"
+
+
+@pytest.mark.asyncio
+async def test_create_agent_field_names_with_acls_and_images(monkeypatch, search_info):
+    """Covers create_agent logic adding oids/groups/images and creating knowledge source (lines 443-447,449,457)."""
+
+    # Provide a SearchInfo configured for agentic retrieval and image search
+    search_info_agent = SearchInfo(
+        endpoint=search_info.endpoint,
+        credential=search_info.credential,
+        index_name=search_info.index_name,
+        use_agentic_retrieval=True,
+        agent_name="test-agent",
+        agent_max_output_tokens=1024,
+        azure_openai_searchagent_model="gpt-4o-mini",
+        azure_openai_searchagent_deployment="gpt-4o-mini",
+        azure_openai_endpoint="https://openaidummy.openai.azure.com/",
+        azure_vision_endpoint="https://visiondummy.cognitiveservices.azure.com/",
+    )
+
+    created_indexes = []
+    knowledge_sources = []
+    agents = []
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index  # pragma: no cover
+
+    async def mock_create_index(self, index):
+        created_indexes.append(index)
+
+    async def mock_create_or_update_knowledge_source(self, knowledge_source, *args, **kwargs):
+        knowledge_sources.append(knowledge_source)
+        return knowledge_source
+
+    async def mock_create_or_update_agent(self, agent, *args, **kwargs):
+        agents.append(agent)
+        return agent
+
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_knowledge_source", mock_create_or_update_knowledge_source)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_agent", mock_create_or_update_agent)
+
+    manager = SearchManager(search_info_agent, use_acls=True, search_images=True)
+
+    # Act
+    await manager.create_index()
+
+    # Assert index created
+    assert len(created_indexes) == 1, "Index should be created before agent creation"
+    # Assert index has images and ACL fields
+    index = created_indexes[0]
+    assert any(field.name == "images" for field in index.fields), "Index should have images field"
+    assert any(field.name == "oids" for field in index.fields), "Index should have oids field"
+    assert any(field.name == "groups" for field in index.fields), "Index should have groups field"
+
+    # Assert knowledge source was created with expected selected fields
+    assert len(knowledge_sources) == 1, "Knowledge source should be created"
+    ks = knowledge_sources[0]
+    selected = ks.search_index_parameters.source_data_select.split(",")
+    # Required baseline fields
+    for f in ["id", "sourcepage", "sourcefile", "content", "category", "oids", "groups", "images/url"]:
+        assert f in selected, f"Missing field {f} in knowledge source selection"
+
+    # Assert agent created referencing the knowledge source
+    assert len(agents) == 1, "Agent should be created"
+    agent = agents[0]
+    assert agent.name == "test-agent"
+    assert any(ks_ref.name == ks.name for ks_ref in agent.knowledge_sources), "Agent should reference knowledge source"
