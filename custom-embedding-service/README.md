@@ -30,10 +30,21 @@ This document summarizes the completed PatentsBERTa embedding integration for th
 1. Ensure `OPENAI_HOST=patentsberta` is set in your environment
 2. Azure CLI logged in with appropriate permissions
 3. Docker not required (uses Azure Container Registry build)
+4. Generate a secure API key for PatentsBERTa authentication
 
 ### Step-by-Step Deployment
 
-1. **Build and Push Container to ACR**
+1. **Generate Secure API Key**
+   ```bash
+   # Generate a cryptographically secure API key
+   API_KEY=$(openssl rand -base64 32)
+   echo "Generated API Key: $API_KEY"
+   
+   # Set the API key in your environment
+   azd env set PATENTSBERTA_API_KEY "$API_KEY"
+   ```
+
+2. **Build and Push Container to ACR**
    ```bash
    # Get your container registry name
    REGISTRY_NAME=$(az acr list --resource-group rg-ai-master-engineer --query "[0].name" -o tsv)
@@ -44,12 +55,12 @@ This document summarizes the completed PatentsBERTa embedding integration for th
    cd ..
    ```
 
-2. **Deploy Infrastructure**
+3. **Deploy Infrastructure**
    ```bash
    azd up --no-prompt
    ```
 
-3. **Grant Container Registry Access** (if deployment fails)
+4. **Grant Container Registry Access** (if deployment fails)
    ```bash
    # Get container app identity
    PRINCIPAL_ID=$(az containerapp show --name patentsberta-* --resource-group rg-ai-master-engineer --query "identity.principalId" -o tsv)
@@ -64,21 +75,23 @@ This document summarizes the completed PatentsBERTa embedding integration for th
    azd up --no-prompt
    ```
 
-4. **Verify Deployment**
+5. **Verify Deployment**
    ```bash
-   # Get PatentsBERTa endpoint
+   # Get PatentsBERTa endpoint and API key
    ENDPOINT=$(azd env get-values | grep PATENTSBERTA_ENDPOINT | cut -d'=' -f2 | tr -d '"')
+   API_KEY=$(azd env get-values | grep PATENTSBERTA_API_KEY | cut -d'=' -f2 | tr -d '"')
    
-   # Test health
+   # Test health (no auth required)
    curl "$ENDPOINT/health"
    
-   # Test embeddings
+   # Test embeddings with API key
    curl -X POST "$ENDPOINT/embeddings" \
      -H "Content-Type: application/json" \
+     -H "X-API-Key: $API_KEY" \
      -d '{"texts": ["semiconductor wafer processing"]}' | jq '.embeddings[0] | length'
    ```
 
-5. **Reindex Documents** (if switching from existing deployment)
+6. **Reindex Documents** (if switching from existing deployment)
    ```bash
    # Process documents with PatentsBERTa embeddings
    cd app/backend
@@ -96,29 +109,36 @@ This document summarizes the completed PatentsBERTa embedding integration for th
 #### Option 1: Comprehensive Test Suite
 
 ```bash
-azd env get-values | grep PATENTSBERTA_ENDPOINT
-```
+# Export environment variables from Azure deployment
+export PATENTSBERTA_ENDPOINT=$(azd env get-values | grep PATENTSBERTA_ENDPOINT | cut -d'=' -f2 | tr -d '"')
+export PATENTSBERTA_API_KEY=$(azd env get-values | grep PATENTSBERTA_API_KEY | cut -d'=' -f2 | tr -d '"')
 
-```bash
-# Run the full test suite
-python tests/test-patentsberta.py PATENTSBERTA_ENDPOINT
+# Run the full test suite (includes authentication test)
+python tests/test-patentsberta.py
 ```
 
 #### Option 2: Manual Testing with curl
 ```bash
-# Get endpoint from environment
+# Get endpoint and API key from environment
 ENDPOINT=$(azd env get-values | grep PATENTSBERTA_ENDPOINT | cut -d'=' -f2 | tr -d '"')
+API_KEY=$(azd env get-values | grep PATENTSBERTA_API_KEY | cut -d'=' -f2 | tr -d '"')
 
-# Test health
+# Test health (no auth required)
 curl "$ENDPOINT/health"
 
-# Test embeddings (should return 768)
+# Test embeddings with API key (should return 768)
 curl -X POST "$ENDPOINT/embeddings" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: $API_KEY" \
   -d '{"texts": ["semiconductor wafer processing"]}' | jq '.embeddings[0] | length'
 
-# Test info endpoint
+# Test info endpoint (no auth required)
 curl "$ENDPOINT/info"
+
+# Test authentication (should fail without API key)
+curl -X POST "$ENDPOINT/embeddings" \
+  -H "Content-Type: application/json" \
+  -d '{"texts": ["test"]}' | jq '.detail'
 ```
 
 ## ⚙️ Configuration
@@ -128,6 +148,7 @@ curl "$ENDPOINT/info"
 # Core PatentsBERTa configuration
 OPENAI_HOST=patentsberta
 PATENTSBERTA_ENDPOINT=https://your-endpoint.azurecontainerapps.io
+PATENTSBERTA_API_KEY=your-secure-api-key-here  # Required for API authentication
 AZURE_OPENAI_EMB_DIMENSIONS=768
 AZURE_SEARCH_FIELD_NAME_EMBEDDING=embedding_patentsberta
 ```
@@ -138,6 +159,13 @@ AZURE_SEARCH_FIELD_NAME_EMBEDDING=embedding_patentsberta
 - **Self-hosted** for cost control and customization
 - **Auto-scaling** Container App deployment
 - **Health monitoring** and performance testing
+- **API key authentication** for secure access to embeddings endpoint
+
+### Security
+- **Protected /embeddings endpoint** with X-API-Key header authentication
+- **Public health and info endpoints** for monitoring
+- **No-op authentication** if PATENTSBERTA_API_KEY is not configured
+- **Secure parameter handling** in Azure deployment
 
 ## 🔄 Switching Between Embedding Services
 
