@@ -173,6 +173,50 @@ class PatentsBertaTestSuite:
         else:
             print("⚠️  Performance may be slower than expected")
             return True  # Still pass, but note the issue
+    
+    async def test_authentication(self) -> bool:
+        print("🔐 Testing API key authentication...")
+        
+        try:
+            # Test with correct API key (should work)
+            if self.api_key:
+                headers = {'Content-Type': 'application/json', 'X-API-Key': self.api_key}
+                payload = {'texts': ['test authentication'], 'normalize': True}
+                
+                async with aiohttp.ClientSession() as session:
+                    async with session.post(
+                        f"{self.endpoint}/embeddings",
+                        json=payload,
+                        headers=headers,
+                        timeout=aiohttp.ClientTimeout(total=30)
+                    ) as response:
+                        if response.status == 200:
+                            print("✅ Authentication with correct API key works")
+                        else:
+                            print(f"❌ Authentication failed with correct key: {response.status}")
+                            return False
+                    
+                    # Test without API key (should fail if key is required)
+                    headers_no_key = {'Content-Type': 'application/json'}
+                    async with session.post(
+                        f"{self.endpoint}/embeddings",
+                        json=payload,
+                        headers=headers_no_key,
+                        timeout=aiohttp.ClientTimeout(total=30)
+                    ) as response:
+                        if response.status == 401:
+                            print("✅ Authentication properly blocks requests without API key")
+                            return True
+                        else:
+                            print(f"⚠️  No API key required (status: {response.status}) - service may be in no-auth mode")
+                            return True  # Still pass if no auth is configured
+            else:
+                print("⚠️  No API key configured - skipping authentication test")
+                return True
+                
+        except Exception as e:
+            print(f"❌ Authentication test error: {e}")
+            return False
 
 async def main():
     print("🧪 PatentsBERTa Embedding Service Test Suite")
@@ -202,6 +246,7 @@ async def main():
     tests = [
         ("Health Check", test_suite.test_health_endpoint),
         ("Info Endpoint", test_suite.test_info_endpoint),
+        ("Authentication", test_suite.test_authentication),
         ("Single Embedding", test_suite.test_single_embedding),
         ("Batch Embeddings", test_suite.test_batch_embeddings),
         ("Patent Terminology", test_suite.test_patent_specific_queries),
