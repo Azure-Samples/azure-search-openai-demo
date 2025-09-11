@@ -130,8 +130,8 @@ If you followed the steps above to install the pre-commit hooks, then you can ju
 ## Adding new features
 
 We recommend using GitHub Copilot Agent mode when adding new features,
-as this project includes [.github/copilot-instructions.md](.github/copilot-instructions.md) file
-that instructs Copilot on how to generate code for common code changes.
+as this project includes an [AGENTS.md](AGENTS.md) file
+that instructs Copilot (and other coding agents) about how to generate code for common code changes.
 
 If you are not using Copilot Agent mode, consult both that file and suggestions below.
 

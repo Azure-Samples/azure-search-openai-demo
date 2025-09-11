@@ -2,7 +2,7 @@
 
 [📺 Watch: (RAG Deep Dive series) Customizing the app](https://www.youtube.com/watch?v=D3slfMqydHc)
 
-> **Tip:** We recommend using GitHub Copilot Agent mode when adding new features or making code changes. This project includes a [.github/copilot-instructions.md](../.github/copilot-instructions.md) file that guides Copilot to generate code following project conventions.
+> **Tip:** We recommend using GitHub Copilot Agent mode when adding new features or making code changes. This project includes an [AGENTS.md](../AGENTS.md) file that guides Copilot to generate code following project conventions.
 
 This guide provides more details for customizing the RAG chat app.
 
