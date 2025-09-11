@@ -2,6 +2,9 @@
 
 This file contains instructions for developers working on the Azure Search and OpenAI demo application. It covers the overall code layout, how to add new data, how to add new azd environment variables, how to add new developer settings, and how to add tests for new features.
 
+Always keep this file up to date with any changes to the codebase or development process.
+If necessary, edit this file to ensure it accurately reflects the current state of the project.
+
 ## Overall code layout
 
 * app: Contains the main application code, including frontend and backend.
