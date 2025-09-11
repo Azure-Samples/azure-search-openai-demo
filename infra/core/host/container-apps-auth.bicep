@@ -56,7 +56,7 @@ resource auth 'Microsoft.App/containerApps/authConfigs@2024-10-02-preview' = {
       }
     }
     login: {
-      // https://learn.microsoft.com/en-us/azure/container-apps/token-store
+      // https://learn.microsoft.com/azure/container-apps/token-store
       tokenStore: {
         enabled: true
         azureBlobStorage: {
