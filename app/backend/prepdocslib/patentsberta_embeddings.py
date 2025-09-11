@@ -19,11 +19,17 @@ class PatentsBertaEmbeddings:
         max_retries: int = 3
     ):
         self.endpoint = endpoint.rstrip('/')
-        self.api_key = api_key
+        # Clean up API key (remove any trailing whitespace/newlines)
+        self.api_key = api_key.strip() if api_key else None
         self.batch_size = batch_size
         self.max_retries = max_retries
         self.embedding_dimensions = 768  # PatentsBERTa dimension size
         
+    async def create_embedding(self, text: str) -> List[float]:
+        """Create embedding for a single text using PatentsBERTa service"""
+        embeddings = await self.create_embeddings([text])
+        return embeddings[0] if embeddings else []
+    
     async def create_embeddings(self, texts: List[str]) -> List[List[float]]:
         """Create embeddings for a list of texts using PatentsBERTa service"""
         all_embeddings = []

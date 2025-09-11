@@ -14,7 +14,7 @@ class PatentsBertaTestSuite:
         self.api_key = api_key
         self.embedding_service = PatentsBertaEmbeddings(endpoint, api_key)
         
-    async def test_health_endpoint(self) -> bool:
+    async def test_health(self) -> bool:
         print("🏥 Testing health endpoint...")
         try:
             async with aiohttp.ClientSession() as session:
@@ -30,7 +30,7 @@ class PatentsBertaTestSuite:
             print(f"❌ Health check error: {e}")
             return False
     
-    async def test_info_endpoint(self) -> bool:
+    async def test_info(self) -> bool:
         print("ℹ️  Testing info endpoint...")
         try:
             async with aiohttp.ClientSession() as session:
@@ -97,7 +97,7 @@ class PatentsBertaTestSuite:
             print(f"❌ Batch embeddings error: {e}")
             return False
     
-    async def test_patent_specific_queries(self) -> bool:
+    async def test_patent_terminology(self) -> bool:
         print("🔬 Testing patent-specific terminology...")
         
         patent_queries = [
@@ -175,6 +175,7 @@ class PatentsBertaTestSuite:
             return True  # Still pass, but note the issue
     
     async def test_authentication(self) -> bool:
+        """Test API key authentication"""
         print("🔐 Testing API key authentication...")
         
         try:
@@ -218,6 +219,89 @@ class PatentsBertaTestSuite:
             print(f"❌ Authentication test error: {e}")
             return False
 
+    async def test_input_validation(self):
+        """Test input validation and size limits"""
+        print("🛡️  Testing input validation and size limits...")
+        
+        try:
+            headers = {'Content-Type': 'application/json'}
+            if self.api_key:
+                headers['X-API-Key'] = self.api_key
+            
+            async with aiohttp.ClientSession() as session:
+                # Test empty texts array
+                payload = {'texts': [], 'normalize': True}
+                async with session.post(
+                    f"{self.endpoint}/embeddings",
+                    json=payload,
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    if response.status == 422:
+                        print("✅ Empty texts array properly rejected")
+                    else:
+                        print(f"⚠️  Empty texts array not rejected (status: {response.status})")
+                
+                # Test empty string
+                payload = {'texts': [''], 'normalize': True}
+                async with session.post(
+                    f"{self.endpoint}/embeddings",
+                    json=payload,
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    if response.status == 422:
+                        print("✅ Empty string properly rejected")
+                    else:
+                        print(f"⚠️  Empty string not rejected (status: {response.status})")
+                
+                # Test oversized batch (51 items, limit is 50)
+                large_batch = ['test text'] * 51
+                payload = {'texts': large_batch, 'normalize': True}
+                async with session.post(
+                    f"{self.endpoint}/embeddings",
+                    json=payload,
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    if response.status == 422:
+                        print("✅ Oversized batch properly rejected")
+                    else:
+                        print(f"⚠️  Oversized batch not rejected (status: {response.status})")
+                
+                # Test oversized text (8193 chars, limit is 8192)
+                large_text = 'x' * 8193
+                payload = {'texts': [large_text], 'normalize': True}
+                async with session.post(
+                    f"{self.endpoint}/embeddings",
+                    json=payload,
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    if response.status == 422:
+                        print("✅ Oversized text properly rejected")
+                    else:
+                        print(f"⚠️  Oversized text not rejected (status: {response.status})")
+                
+                # Test valid input within limits
+                payload = {'texts': ['Valid patent text for embedding'], 'normalize': True}
+                async with session.post(
+                    f"{self.endpoint}/embeddings",
+                    json=payload,
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    if response.status == 200:
+                        print("✅ Valid input accepted")
+                        return True
+                    else:
+                        print(f"❌ Valid input rejected (status: {response.status})")
+                        return False
+                        
+        except Exception as e:
+            print(f"❌ Input validation test error: {e}")
+            return False
+
 async def main():
     print("🧪 PatentsBERTa Embedding Service Test Suite")
     print("=" * 50)
@@ -225,6 +309,10 @@ async def main():
     # Get endpoint from environment or command line
     endpoint = os.getenv('PATENTSBERTA_ENDPOINT')
     api_key = os.getenv('PATENTSBERTA_API_KEY')
+    
+    # Clean up API key (remove any trailing whitespace/newlines but preserve base64 padding)
+    if api_key:
+        api_key = api_key.strip()
     
     if len(sys.argv) > 1:
         endpoint = sys.argv[1]
@@ -238,19 +326,22 @@ async def main():
     print(f"🎯 Testing endpoint: {endpoint}")
     if api_key:
         print("🔑 Using API key authentication")
+        print(f"🔍 API key length: {len(api_key)} chars")
+        print(f"🔍 API key (first 10 chars): {api_key[:10]}...")
     
     # Initialize test suite
-    test_suite = PatentsBertaTestSuite(endpoint, api_key)
+    tester = PatentsBertaTestSuite(endpoint, api_key)
     
-    # Run all tests
+    # Run tests
     tests = [
-        ("Health Check", test_suite.test_health_endpoint),
-        ("Info Endpoint", test_suite.test_info_endpoint),
-        ("Authentication", test_suite.test_authentication),
-        ("Single Embedding", test_suite.test_single_embedding),
-        ("Batch Embeddings", test_suite.test_batch_embeddings),
-        ("Patent Terminology", test_suite.test_patent_specific_queries),
-        ("Performance", test_suite.test_performance),
+        ("Health Check", tester.test_health),
+        ("Info Endpoint", tester.test_info),
+        ("Authentication", tester.test_authentication),
+        ("Input Validation", tester.test_input_validation),
+        ("Single Embedding", tester.test_single_embedding),
+        ("Batch Embeddings", tester.test_batch_embeddings),
+        ("Patent Terminology", tester.test_patent_terminology),
+        ("Performance", tester.test_performance)
     ]
     
     results = []

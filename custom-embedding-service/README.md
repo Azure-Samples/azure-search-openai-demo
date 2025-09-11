@@ -111,7 +111,7 @@ This document summarizes the completed PatentsBERTa embedding integration for th
 ```bash
 # Export environment variables from Azure deployment
 export PATENTSBERTA_ENDPOINT=$(azd env get-values | grep PATENTSBERTA_ENDPOINT | cut -d'=' -f2 | tr -d '"')
-export PATENTSBERTA_API_KEY=$(azd env get-values | grep PATENTSBERTA_API_KEY | cut -d'=' -f2 | tr -d '"')
+export PATENTSBERTA_API_KEY=$(azd env get-values | grep PATENTSBERTA_API_KEY | cut -d'=' -f2- | tr -d '"')
 
 # Run the full test suite (includes authentication test)
 python tests/test-patentsberta.py
@@ -121,7 +121,7 @@ python tests/test-patentsberta.py
 ```bash
 # Get endpoint and API key from environment
 ENDPOINT=$(azd env get-values | grep PATENTSBERTA_ENDPOINT | cut -d'=' -f2 | tr -d '"')
-API_KEY=$(azd env get-values | grep PATENTSBERTA_API_KEY | cut -d'=' -f2 | tr -d '"')
+API_KEY=$(azd env get-values | grep PATENTSBERTA_API_KEY | cut -d'=' -f2- | tr -d '"')
 
 # Test health (no auth required)
 curl "$ENDPOINT/health"

@@ -1,33 +1,71 @@
 from fastapi import FastAPI, HTTPException, Depends, Header
-from pydantic import BaseModel
-from transformers import AutoTokenizer, AutoModel
+from pydantic import BaseModel, Field, field_validator
+from typing import List, Optional
 import torch
-import numpy as np
-from typing import List
+from transformers import AutoTokenizer, AutoModel
 import logging
-import os
+import numpy as np
+
+from constants import (
+    API_KEY,
+    MAX_BATCH_SIZE,
+    MAX_TEXT_LENGTH,
+    MIN_TEXT_LENGTH,
+    MAX_TOTAL_CHARS,
+    MODEL_NAME,
+    MODEL_MAX_LENGTH,
+    EMBEDDING_DIMENSIONS,
+    MODEL_DESCRIPTION
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="PatentsBERTa Embedding Service", version="1.0.0")
-
-# API Key authentication
-API_KEY = os.getenv("PATENTSBERTA_API_KEY")
-
 def api_key_auth(x_api_key: str | None = Header(default=None)):
+    """API key authentication dependency"""
     if API_KEY and x_api_key != API_KEY:
         raise HTTPException(status_code=401, detail="Invalid or missing API key")
 
+app = FastAPI(
+    title="PatentsBERTa Embedding Service",
+    description="Patent-specific BERT embeddings for technical documents",
+    version="1.0.0"
+)
+
 class EmbeddingRequest(BaseModel):
-    texts: List[str]
+    texts: List[str] = Field(..., min_items=1, max_items=MAX_BATCH_SIZE)
     normalize: bool = True
+    
+    @field_validator('texts')
+    @classmethod
+    def validate_texts(cls, v):
+        if not v:
+            raise ValueError("texts cannot be empty")
+        
+        total_chars = 0
+        for i, text in enumerate(v):
+            if not isinstance(text, str):
+                raise ValueError(f"Text at index {i} must be a string")
+            
+            text_len = len(text.strip())
+            if text_len < MIN_TEXT_LENGTH:
+                raise ValueError(f"Text at index {i} is too short (minimum {MIN_TEXT_LENGTH} characters)")
+            
+            if text_len > MAX_TEXT_LENGTH:
+                raise ValueError(f"Text at index {i} is too long (maximum {MAX_TEXT_LENGTH} characters)")
+            
+            total_chars += text_len
+        
+        if total_chars > MAX_TOTAL_CHARS:
+            raise ValueError(f"Total request size too large ({total_chars} chars, maximum {MAX_TOTAL_CHARS})")
+        
+        return v
 
 class EmbeddingResponse(BaseModel):
     embeddings: List[List[float]]
-    model: str
-    dimensions: int
+    model: str = MODEL_NAME
+    dimensions: int = EMBEDDING_DIMENSIONS
 
 # Global model variables
 tokenizer = None
@@ -38,8 +76,8 @@ async def load_model():
     global tokenizer, model
     try:
         logger.info("Loading PatentsBERTa model...")
-        tokenizer = AutoTokenizer.from_pretrained("AI-Growth-Lab/PatentSBERTa")
-        model = AutoModel.from_pretrained("AI-Growth-Lab/PatentSBERTa")
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+        model = AutoModel.from_pretrained(MODEL_NAME)
         
         # Set to evaluation mode
         model.eval()
@@ -73,7 +111,7 @@ async def create_embeddings(request: EmbeddingRequest):
             request.texts, 
             padding=True, 
             truncation=True, 
-            max_length=512,
+            max_length=MODEL_MAX_LENGTH,
             return_tensors='pt'
         )
         
@@ -95,7 +133,7 @@ async def create_embeddings(request: EmbeddingRequest):
         
         return EmbeddingResponse(
             embeddings=embeddings_list,
-            model="AI-Growth-Lab/PatentSBERTa",
+            model=MODEL_NAME,
             dimensions=len(embeddings_list[0]) if embeddings_list else 0
         )
         
@@ -114,11 +152,17 @@ async def health_check():
 @app.get("/info")
 async def model_info():
     return {
-        "model_name": "AI-Growth-Lab/PatentSBERTa",
-        "description": "Patent-specific BERT model for technical document embeddings",
-        "max_input_length": 512,
-        "embedding_dimensions": 768,
-        "gpu_enabled": torch.cuda.is_available()
+        "model_name": MODEL_NAME,
+        "description": MODEL_DESCRIPTION,
+        "max_input_length": MODEL_MAX_LENGTH,
+        "embedding_dimensions": EMBEDDING_DIMENSIONS,
+        "gpu_enabled": torch.cuda.is_available(),
+        "limits": {
+            "max_batch_size": MAX_BATCH_SIZE,
+            "max_text_length": MAX_TEXT_LENGTH,
+            "min_text_length": MIN_TEXT_LENGTH,
+            "max_total_chars": MAX_TOTAL_CHARS
+        }
     }
 
 if __name__ == "__main__":
