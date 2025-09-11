@@ -2,6 +2,8 @@ param environmentName string
 param location string
 param containerAppsEnvironmentName string
 param containerRegistryName string
+@secure()
+param patentsbertaApiKey string = ''
 
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 
@@ -42,6 +44,12 @@ resource patentsbertaApp 'Microsoft.App/containerApps@2023-05-01' = {
         {
           name: 'patentsberta'
           image: '${containerRegistry.properties.loginServer}/patentsberta-embeddings:latest'
+          env: [
+            {
+              name: 'PATENTSBERTA_API_KEY'
+              value: patentsbertaApiKey
+            }
+          ]
           resources: {
             cpu: json('2.0')
             memory: '4Gi'

@@ -40,7 +40,7 @@ class PatentsBertaEmbeddings:
         """Create embeddings for a batch of texts with retry logic"""
         headers = {'Content-Type': 'application/json'}
         if self.api_key:
-            headers['Authorization'] = f'Bearer {self.api_key}'
+            headers['X-API-Key'] = self.api_key
             
         payload = {
             'texts': texts,

@@ -122,6 +122,9 @@ param openAiSkuName string = 'S0'
 param openAiApiKey string = ''
 param openAiApiOrganization string = ''
 
+@secure()
+param patentsbertaApiKey string = ''
+
 param documentIntelligenceServiceName string = '' // Set in main.parameters.json
 param documentIntelligenceResourceGroupName string = '' // Set in main.parameters.json
 
@@ -554,6 +557,7 @@ module patentsbertaService 'modules/patentsberta.bicep' = if (deploymentTarget =
     location: location
     containerAppsEnvironmentName: containerApps.outputs.environmentName
     containerRegistryName: containerApps.outputs.registryName
+    patentsbertaApiKey: patentsbertaApiKey
   }
 }
 

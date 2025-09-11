@@ -1,16 +1,24 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModel
 import torch
 import numpy as np
 from typing import List
 import logging
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="PatentsBERTa Embedding Service", version="1.0.0")
+
+# API Key authentication
+API_KEY = os.getenv("PATENTSBERTA_API_KEY")
+
+def api_key_auth(x_api_key: str | None = Header(default=None)):
+    if API_KEY and x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key")
 
 class EmbeddingRequest(BaseModel):
     texts: List[str]
@@ -54,7 +62,7 @@ def mean_pooling(model_output, attention_mask):
     input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
     return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
-@app.post("/embeddings", response_model=EmbeddingResponse)
+@app.post("/embeddings", response_model=EmbeddingResponse, dependencies=[Depends(api_key_auth)])
 async def create_embeddings(request: EmbeddingRequest):
     try:
         if not tokenizer or not model:
