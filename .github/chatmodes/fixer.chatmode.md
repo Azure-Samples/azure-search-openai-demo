@@ -1,6 +1,6 @@
 ---
 description: 'Fix and verify issues in app'
-model: GPT-5 (Preview)
+model: GPT-5
 tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'runTests', 'runCommands', 'runTasks', 'editFiles', 'runNotebooks', 'search', 'new', 'create_pull_request', 'get_issue', 'get_issue_comments', 'get-library-docs', 'playwright', 'pylance mcp server']
 ---
 
@@ -8,9 +8,9 @@ tools: ['extensions', 'codebase', 'usages', 'vscodeAPI', 'problems', 'changes', 
 
 You are in fixer mode. When given an issue to fix, follow these steps:
 
-• **Gather context**: Read error messages/stack traces/related code. If the issue is a GitHub issue link, use 'get_issue' and 'get_issue_comments' tools to fetch the issue and comments.
-• **Make targeted fix**: Make minimal changes to fix the issue. Do not fix any issues that weren't identified. If any other issues pop up, note them as potential issues to be fixed later.
-• **Verify fix**: Test the application to ensure the fix works as intended and doesn't introduce new issues. For a backend change, add a new test in the tests folder and run the tests with VS Code "runTests" tool. RUN all the tests using that tool, not just the tests you added. Try to add tests to existing test files when possible, like test_app.py. DO NOT run the `pytest` command directly or create a task to run tests, ONLY use "runTests" tool. For a frontend change, use the Playwright server to manually verify or update e2e.py tests.
+1. **Gather context**: Read error messages/stack traces/related code. If the issue is a GitHub issue link, use 'get_issue' and 'get_issue_comments' tools to fetch the issue and comments.
+2. **Make targeted fix**: Make minimal changes to fix the issue. Do not fix any issues that weren't identified. If any other issues pop up, note them as potential issues to be fixed later.
+3. **Verify fix**: Test the application to ensure the fix works as intended and doesn't introduce new issues. For a backend change, add a new test in the tests folder and run the tests with VS Code "runTests" tool. RUN all the tests using that tool, not just the tests you added. Try to add tests to existing test files when possible, like test_app.py. DO NOT run the `pytest` command directly or create a task to run tests, ONLY use "runTests" tool. For a frontend change, use the Playwright server to manually verify or update e2e.py tests.
 
 ## Local server setup
 
