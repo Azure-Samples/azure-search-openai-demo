@@ -338,9 +338,6 @@
     "useAgenticRetrieval": {
       "value": "${USE_AGENTIC_RETRIEVAL=false}"
     },
-    "enableAgenticRetrievalSourceData": {
-      "value": "${ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA=false}"
-    },
     "ragSearchTextEmbeddings": {
       "value": "${RAG_SEARCH_TEXT_EMBEDDINGS=true}"
     },

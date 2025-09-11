@@ -83,6 +83,11 @@
         "minimumSearchScore": "Minimale zoekscore",
         "minimumRerankerScore": "Minimale reranker score",
         "retrieveCount": "Dit aantal zoekresultaten ophalen:",
+        "resultsMergeStrategy": "Strategie voor het samenvoegen van resultaten",
+        "resultsMergeStrategyOptions": {
+            "interleaved": "Afgewisseld",
+            "descending": "Aflopend"
+        },
         "includeCategory": "Categorie opnemen",
         "includeCategoryOptions": {
             "all": "Alle"
@@ -138,6 +143,8 @@
              "Stelt een minimale score in voor zoekresultaten van de semantische ranker. De score varieert van 0 tot 4, waarbij een hogere score aangeeft dat het resultaat semantisch relevanter is voor de vraag.",
         "retrieveNumber":
              "Stelt het aantal zoekresultaten in om op te halen van Azure AI zoekfunctie. Meer resultaten vergroten de kans op het juiste antwoord, maar kunnen ook leiden tot het 'lost in the middle' probleem.",
+        "resultsMergeStrategy":
+            "Stelt de strategie in voor het samenvoegen van resultaten van meerdere subquery's. 'Afgewisseld' kiest om de beurt de beste resultaten van elke subquery, terwijl 'Aflopend' alle resultaten sorteert op reranker-score.",
         "includeCategory":
             "Specificeert een categorie om op te nemen in de zoekresultaten. Er zijn geen categorieën in de standaard dataset.",
         "excludeCategory":
@@ -153,6 +160,8 @@
         "suggestFollowupQuestions": "Vraagt het taalmodel om vervolgvragen voor te stellen op basis van de vraag.",
         "textEmbeddings": "Wanneer geselecteerd, zal de zoekopdracht embeddings gebruiken van het tekstgebaseerde embeddings model voor geëxtraheerde tekststukken.",
         "imageEmbeddings": "Wanneer geselecteerd, zal de zoekopdracht embeddings gebruiken van het multimodale embeddings model voor geëxtraheerde afbeeldingen.",
+        "llmTextInputs": "Wanneer geselecteerd, wordt tekstuele inhoud uit de zoekresultaten als context naar het taalmodel gestuurd.",
+        "llmImageInputs": "Wanneer geselecteerd, worden afbeeldingen uit de zoekresultaten als context naar het taalmodel gestuurd.",
         "llmInputs":
             "Stelt in wat er naar het visiemodel wordt verzonden. 'Afbeeldingen en tekst' verzendt beide, 'Afbeeldingen' alleen afbeeldingen, en 'Tekst' alleen tekst.",
         "retrievalMode":

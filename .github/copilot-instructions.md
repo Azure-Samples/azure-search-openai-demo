@@ -39,7 +39,6 @@ When adding new azd environment variables, update:
 
 1. infra/main.parameters.json : Add the new parameter with a Bicep-friendly variable name and map to the new environment variable
 1. infra/main.bicep: Add the new Bicep parameter at the top, and add it to the `appEnvVariables` object
-1. azure.yaml: Add the new environment variable under pipeline config section
 1. .azdo/pipelines/azure-dev.yml: Add the new environment variable under `env` section
 1. .github/workflows/azure-dev.yml: Add the new environment variable under `env` section
 

@@ -83,6 +83,11 @@
         "minimumSearchScore": "Minimum arama skoru",
         "minimumRerankerScore": "Minimum yeniden sıralayıcı skoru",
         "retrieveCount": "Bu kadar arama sonucu getir:",
+        "resultsMergeStrategy": "Sonuç birleştirme stratejisi",
+        "resultsMergeStrategyOptions": {
+            "interleaved": "Sırayla karışık",
+            "descending": "Azalan"
+        },
         "includeCategory": "Kategori dahil et",
         "includeCategoryOptions": {
             "all": "Hepsi"
@@ -138,6 +143,8 @@
              "Anlamsal sıralayıcıdan gelen arama sonuçları için minimum skoru ayarlar. Skor her zaman 0-4 arasında değişir. Daha yüksek skor, sonucun soruya daha anlamsal olarak uygun olduğunu gösterir.",
         "retrieveNumber":
              "Azure AI arama sonuçlarından getirilecek sonuç sayısını ayarlar. Daha fazla sonuç doğru cevabı bulma olasılığını artırabilir, ancak modelin 'ortada kaybolmasına' da neden olabilir.",
+        "resultsMergeStrategy":
+             "Birden fazla alt sorgudan gelen sonuçları birleştirme stratejisini ayarlar. 'Sırayla karışık' her alt sorgudan en iyi sonuçları dönüşümlü olarak seçer, 'Azalan' ise tüm sonuçları yeniden sıralayıcı skoruna göre sıralar.",
         "includeCategory":
             "Arama sonuçlarına dahil edilecek bir kategoriyi belirtir. Varsayılan veri setinde kategori yoktur.",
         "excludeCategory":
@@ -153,6 +160,8 @@
         "suggestFollowupQuestions": "Kullanıcının sorusuna dayalı olarak dil modelinden takip soruları önermesini ister.",
         "textEmbeddings": "Seçildiğinde, arama çıkarılan metin parçalarının yalnızca metin gömme modelinden gömmeleri kullanacaktır.",
         "imageEmbeddings": "Seçildiğinde, arama çıkarılan görsellerin çoklu ortam gömme modelinden gömmeleri kullanacaktır.",
+        "llmTextInputs": "Seçildiğinde, arama sonuçlarındaki metin içeriği bağlam olarak LLM'e gönderilir.",
+        "llmImageInputs": "Seçildiğinde, arama sonuçlarındaki görseller bağlam olarak LLM'e gönderilir.",
         "llmInputs":
             "Vizyon modeline ne gönderileceğini ayarlar. 'Görseller ve metin' her ikisini de gönderir, 'Görseller' yalnızca görselleri, 'Metin' yalnızca metni gönderir.",
         "retrievalMode":

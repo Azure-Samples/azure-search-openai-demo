@@ -24,7 +24,7 @@ param searchServiceLocation string = '' // Set in main.parameters.json
 @allowed(['free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
 param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
-param searchAgentName string = useAgenticRetrieval ? '${searchIndexName}-agent' : ''
+param searchAgentName string = useAgenticRetrieval ? '${searchIndexName}-agent-upgrade' : ''
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 param searchServiceSemanticRankerLevel string // Set in main.parameters.json
@@ -41,7 +41,6 @@ param storageSkuName string // Set in main.parameters.json
 
 param defaultReasoningEffort string // Set in main.parameters.json
 param useAgenticRetrieval bool // Set in main.parameters.json
-param enableAgenticRetrievalSourceData bool // Set in main.parameters.json
 
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
@@ -424,7 +423,6 @@ var appEnvVariables = {
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
   USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
   USE_AGENTIC_RETRIEVAL: useAgenticRetrieval
-  ENABLE_AGENTIC_RETRIEVAL_SOURCE_DATA: enableAgenticRetrievalSourceData
   // Chat history settings
   USE_CHAT_HISTORY_BROWSER: useChatHistoryBrowser
   USE_CHAT_HISTORY_COSMOS: useChatHistoryCosmos
