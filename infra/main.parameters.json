@@ -352,6 +352,12 @@
     },
     "ragSendImageSources": {
       "value": "${RAG_SEND_IMAGE_SOURCES=true}"
+    },
+    "patentsbertaApiKey": {
+      "value": "${PATENTSBERTA_API_KEY}"
+    },
+    "patentsbertaImageTag": {
+      "value": "${PATENTSBERTA_IMAGE_TAG=v1.0.0}"
     }
   }
 }

@@ -5,6 +5,11 @@
 
 set -e
 
+# Default image tag - uses immutable versioning for deterministic deployments
+# Format: v1.0.0-YYYYMMDD (can be overridden with IMAGE_TAG environment variable)
+# This ensures reproducible deployments and allows for proper rollback capabilities
+IMAGE_TAG=${IMAGE_TAG:-"v1.0.0-$(date +%Y%m%d)"}
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -38,6 +43,7 @@ echo -e "${GREEN}✅ Environment variables loaded${NC}"
 echo "  Resource Group: $RESOURCE_GROUP"
 echo "  Registry: $REGISTRY_NAME"
 echo "  Subscription: $SUBSCRIPTION_ID"
+echo "  Image Tag: $IMAGE_TAG"
 
 # Build and push the PatentsBERTa container
 echo -e "${YELLOW}🔨 Building and pushing PatentsBERTa container...${NC}"
@@ -47,7 +53,7 @@ cd custom-embedding-service
 # Build and push using Azure Container Registry
 az acr build \
     --registry "$REGISTRY_NAME" \
-    --image patentsberta-embeddings:latest \
+    --image patentsberta-embeddings:$IMAGE_TAG \
     --file Dockerfile \
     .
 
@@ -71,6 +77,9 @@ azd env set AZURE_OPENAI_EMB_DIMENSIONS "768"
 
 # Set the embedding field name
 azd env set AZURE_SEARCH_FIELD_NAME_EMBEDDING "embedding_patentsberta"
+
+# Set the image tag for deployment
+azd env set PATENTSBERTA_IMAGE_TAG "$IMAGE_TAG"
 
 echo -e "${GREEN}✅ Environment configured for PatentsBERTa${NC}"
 
@@ -133,6 +142,11 @@ echo "   azd env get-value AZURE_SEARCH_SERVICE | xargs -I {} curl -X DELETE \"h
 echo "3. Run document processing to reindex with PatentsBERTa embeddings:"
 echo "   python app/backend/prepdocs.py './data/*'"
 echo "4. Test search quality with patent-specific queries"
+echo ""
+echo -e "${YELLOW}🏷️  Image Tag Management:${NC}"
+echo "  Current tag: $IMAGE_TAG"
+echo "  To deploy a specific version: IMAGE_TAG=v1.0.0-20241201 ./scripts/deploy-patentsberta.sh"
+echo "  To rollback: Set PATENTSBERTA_IMAGE_TAG in azd environment and run 'azd up'"
 echo ""
 echo -e "${GREEN}🔗 Useful endpoints:${NC}"
 echo "  Health: $PATENTSBERTA_ENDPOINT/health"

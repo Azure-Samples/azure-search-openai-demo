@@ -4,6 +4,8 @@ param containerAppsEnvironmentName string
 param containerRegistryName string
 @secure()
 param patentsbertaApiKey string = ''
+@description('Immutable image tag for deterministic deployments (e.g., v1.0.0-20241201)')
+param imageTag string = 'v1.0.0'
 
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 
@@ -43,7 +45,7 @@ resource patentsbertaApp 'Microsoft.App/containerApps@2023-05-01' = {
       containers: [
         {
           name: 'patentsberta'
-          image: '${containerRegistry.properties.loginServer}/patentsberta-embeddings:latest'
+          image: '${containerRegistry.properties.loginServer}/patentsberta-embeddings:${imageTag}'
           env: [
             {
               name: 'PATENTSBERTA_API_KEY'
@@ -85,6 +87,17 @@ resource patentsbertaApp 'Microsoft.App/containerApps@2023-05-01' = {
   }
   identity: {
     type: 'SystemAssigned'
+  }
+}
+
+// Grant AcrPull permission to the container app's system-assigned identity
+resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(containerRegistry.id, patentsbertaApp.id, 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+  scope: containerRegistry
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d') // AcrPull role
+    principalId: patentsbertaApp.identity.principalId
+    principalType: 'ServicePrincipal'
   }
 }
 

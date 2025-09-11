@@ -124,6 +124,8 @@ param openAiApiOrganization string = ''
 
 @secure()
 param patentsbertaApiKey string = ''
+@description('Immutable image tag for PatentsBERTa container (e.g., v1.0.0-20241201)')
+param patentsbertaImageTag string = 'v1.0.0'
 
 param documentIntelligenceServiceName string = '' // Set in main.parameters.json
 param documentIntelligenceResourceGroupName string = '' // Set in main.parameters.json
@@ -558,6 +560,7 @@ module patentsbertaService 'modules/patentsberta.bicep' = if (deploymentTarget =
     containerAppsEnvironmentName: containerApps.outputs.environmentName
     containerRegistryName: containerApps.outputs.registryName
     patentsbertaApiKey: patentsbertaApiKey
+    imageTag: patentsbertaImageTag
   }
 }
 
