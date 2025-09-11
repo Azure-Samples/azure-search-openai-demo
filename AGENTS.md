@@ -1,4 +1,8 @@
-# Overall code layout
+# Instructions for Coding Agents
+
+This file contains instructions for developers working on the Azure Search and OpenAI demo application. It covers the overall code layout, how to add new data, how to add new azd environment variables, how to add new developer settings, and how to add tests for new features.
+
+## Overall code layout
 
 * app: Contains the main application code, including frontend and backend.
   * app/backend: Contains the Python backend code, written with Quart framework.
@@ -28,11 +32,11 @@
 * infra: Contains the Bicep templates for provisioning Azure resources.
 * tests: Contains the test code, including e2e tests, app integration tests, and unit tests.
 
-# Adding new data
+## Adding new data
 
 New files should be added to the `data` folder, and then either run scripts/prepdocs.sh or scripts/prepdocs.ps1 to ingest the data.
 
-# Adding a new azd environment variable
+## Adding a new azd environment variable
 
 An azd environment variable is stored by the azd CLI for each environment. It is passed to the "azd up" command and can configure both provisioning options and application settings.
 When adding new azd environment variables, update:
@@ -43,7 +47,7 @@ When adding new azd environment variables, update:
 1. .azdo/pipelines/azure-dev.yml: Add the new environment variable under `env` section
 1. .github/workflows/azure-dev.yml: Add the new environment variable under `env` section
 
-# Adding a new setting to "Developer Settings" in RAG app
+## Adding a new setting to "Developer Settings" in RAG app
 
 When adding a new developer setting, update:
 
@@ -59,7 +63,7 @@ When adding a new developer setting, update:
   * app/backend/approaches/retrievethenread.py : Retrieve from overrides parameter
   * app/backend/app.py: Some settings may need to be sent down in the /config route.
 
-# When adding tests for a new feature:
+## When adding tests for a new feature:
 
 All tests are in the `tests` folder and use the pytest framework.
 There are three styles of tests:
@@ -79,3 +83,7 @@ When you're running tests, make sure you activate the .venv virtual environment 
 ```bash
 source .venv/bin/activate
 ```
+
+## Sending pull requests
+
+When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md format.
