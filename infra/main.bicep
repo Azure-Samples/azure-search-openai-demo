@@ -52,7 +52,7 @@ param imageStorageContainerName string = 'images'
 
 param appServiceSkuName string // Set in main.parameters.json
 
-@allowed(['azure', 'openai', 'azure_custom'])
+@allowed(['azure', 'openai', 'azure_custom', 'patentsberta'])
 param openAiHost string // Set in main.parameters.json
 param isAzureOpenAiHost bool = startsWith(openAiHost, 'azure')
 param deployAzureOpenAi bool = openAiHost == 'azure'
@@ -121,6 +121,11 @@ param openAiSkuName string = 'S0'
 @secure()
 param openAiApiKey string = ''
 param openAiApiOrganization string = ''
+
+@secure()
+param patentsbertaApiKey string = ''
+@description('Immutable image tag for PatentsBERTa container (e.g., v1.0.0-20241201)')
+param patentsbertaImageTag string = 'v1.0.0'
 
 param documentIntelligenceServiceName string = '' // Set in main.parameters.json
 param documentIntelligenceResourceGroupName string = '' // Set in main.parameters.json
@@ -539,6 +544,23 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
     subnetResourceId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
     usePrivateIngress: usePrivateEndpoint
     workloadProfile: azureContainerAppsWorkloadProfile
+  }
+}
+
+// PatentsBERTa Container App for custom embeddings
+module patentsbertaService 'modules/patentsberta.bicep' = if (deploymentTarget == 'containerapps') {
+  name: 'patentsberta-service'
+  scope: resourceGroup
+  dependsOn: [
+    containerApps
+  ]
+  params: {
+    environmentName: environmentName
+    location: location
+    containerAppsEnvironmentName: containerApps.outputs.environmentName
+    containerRegistryName: containerApps.outputs.registryName
+    patentsbertaApiKey: patentsbertaApiKey
+    imageTag: patentsbertaImageTag
   }
 }
 
@@ -1393,3 +1415,5 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = deploymentTarget == 'container
   : ''
 
 output AZURE_VPN_CONFIG_DOWNLOAD_LINK string = useVpnGateway ? 'https://portal.azure.com/#@${tenant().tenantId}/resource${isolation.outputs.virtualNetworkGatewayId}/pointtositeconfiguration' : ''
+
+output PATENTSBERTA_ENDPOINT string = deploymentTarget == 'containerapps' ? patentsbertaService.outputs.endpoint : ''

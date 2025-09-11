@@ -20,6 +20,7 @@ from prepdocslib.embeddings import (
     ImageEmbeddings,
     OpenAIEmbeddingService,
 )
+from prepdocslib.patentsberta_embeddings import PatentsBertaEmbeddings
 from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import FileStrategy
 from prepdocslib.htmlparser import LocalHTMLParser
@@ -153,6 +154,7 @@ class OpenAIHost(str, Enum):
     AZURE = "azure"
     AZURE_CUSTOM = "azure_custom"
     LOCAL = "local"
+    PATENTSBERTA = "patentsberta"
 
 
 def setup_embeddings_service(
@@ -169,12 +171,24 @@ def setup_embeddings_service(
     openai_org: Union[str, None],
     disable_vectors: bool = False,
     disable_batch_vectors: bool = False,
+    patentsberta_endpoint: Union[str, None] = None,
+    patentsberta_api_key: Union[str, None] = None,
 ):
     if disable_vectors:
         logger.info("Not setting up embeddings service")
         return None
 
-    if openai_host in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
+    if openai_host == OpenAIHost.PATENTSBERTA:
+        if patentsberta_endpoint is None:
+            raise ValueError("PATENTSBERTA_ENDPOINT environment variable required for PatentsBERTa embeddings")
+        logger.info("Setting up PatentsBERTa embedding service")
+        return PatentsBertaEmbeddings(
+            endpoint=patentsberta_endpoint,
+            api_key=patentsberta_api_key,
+            batch_size=16,
+            max_retries=3
+        )
+    elif openai_host in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
         azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
             azure_credential if azure_openai_key is None else AzureKeyCredential(azure_openai_key)
         )
@@ -244,6 +258,14 @@ def setup_openai_client(
         openai_client = AsyncOpenAI(
             base_url=os.environ["OPENAI_BASE_URL"],
             api_key="no-key-required",
+        )
+    elif openai_host == OpenAIHost.PATENTSBERTA:
+        logger.info("OPENAI_HOST is patentsberta, using PatentsBERTa for embeddings only - no OpenAI client needed for chat")
+        # For PatentsBERTa, we only use the embedding service, but we still need a dummy OpenAI client
+        # for any potential chat completions (though they won't be used in embedding-only scenarios)
+        openai_client = AsyncOpenAI(
+            api_key="not-needed-for-patentsberta",
+            base_url="https://api.openai.com/v1",  # Dummy URL, won't be used
         )
     else:
         logger.info(
@@ -517,7 +539,7 @@ if __name__ == "__main__":
     openai_embeddings_service = setup_embeddings_service(
         azure_credential=azd_credential,
         openai_host=OPENAI_HOST,
-        emb_model_name=os.environ["AZURE_OPENAI_EMB_MODEL_NAME"],
+        emb_model_name=os.environ.get("AZURE_OPENAI_EMB_MODEL_NAME", "PatentSBERTa"),
         emb_model_dimensions=emb_model_dimensions,
         azure_openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
         azure_openai_custom_url=os.getenv("AZURE_OPENAI_CUSTOM_URL"),
@@ -528,6 +550,8 @@ if __name__ == "__main__":
         openai_org=os.getenv("OPENAI_ORGANIZATION"),
         disable_vectors=dont_use_vectors,
         disable_batch_vectors=args.disablebatchvectors,
+        patentsberta_endpoint=os.getenv("PATENTSBERTA_ENDPOINT"),
+        patentsberta_api_key=os.getenv("PATENTSBERTA_API_KEY"),
     )
     openai_client = setup_openai_client(
         openai_host=OPENAI_HOST,
