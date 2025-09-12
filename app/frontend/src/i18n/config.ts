@@ -12,6 +12,7 @@ import nlTranslation from "../locales/nl/translation.json";
 import ptBRTranslation from "../locales/ptBR/translation.json";
 import trTranslation from "../locales/tr/translation.json";
 import itTranslation from "../locales/it/translation.json";
+import plTranslation from "../locales/pl/translation.json";
 
 export const supportedLngs: { [key: string]: { name: string; locale: string } } = {
     da: {
@@ -49,6 +50,10 @@ export const supportedLngs: { [key: string]: { name: string; locale: string } } 
     it: {
         name: "Italiano",
         locale: "it-IT"
+    },
+    pl: {
+        name: "Polski",
+        locale: "pl-PL"
     }
 };
 
@@ -68,7 +73,8 @@ i18next
             nl: { translation: nlTranslation },
             ptBR: { translation: ptBRTranslation },
             tr: { translation: trTranslation },
-            it: { translation: itTranslation }
+            it: { translation: itTranslation },
+            pl: { translation: plTranslation }
         },
         fallbackLng: "en",
         supportedLngs: Object.keys(supportedLngs),

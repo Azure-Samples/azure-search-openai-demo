@@ -282,7 +282,7 @@ When both the browser-stored and Cosmos DB options are enabled, Cosmos DB will t
 
 ## Enabling language picker
 
-You can optionally enable the language picker to allow users to switch between different languages. Currently, it supports English, Spanish, French, and Japanese.
+You can optionally enable the language picker to allow users to switch between different languages. Currently, it supports English, Spanish, French, Japanese, Danish, Dutch, Brasilian Portugese, Turkish, Italian and Polish.
 
 To add support for additional languages, create new locale files and update `app/frontend/src/i18n/config.ts` accordingly. To enable language picker, run:
 
