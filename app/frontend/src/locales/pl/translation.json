@@ -43,7 +43,7 @@
         "placeholder": "Wpisz nowe pytanie (np. czy mój plan obejmuje coroczne badania wzroku?)"
     },
     "askTitle": "Zapytaj swoje dane",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "Porównaj wpływ stóp procentowych i PKB na rynki finansowe.",
         "2": "Jaki jest oczekiwany trend indeksu S&P 500 w ciągu najbliższych pięciu lat? Porównaj go z wcześniejszymi wynikami S&P 500",
         "3": "Czy możesz zidentyfikować jakąkolwiek korelację między cenami ropy a trendami na rynku akcji?",
@@ -99,20 +99,18 @@
         "useQueryRewriting": "Użyj przepisywania zapytań do pobierania",
         "reasoningEffort": "Poziom rozumowania",
         "reasoningEffortOptions": {
+            "minimal": "Minimal (tylko GPT-5)",
             "low": "Niski",
             "medium": "Średni",
             "high": "Wysoki"
         },
         "useSuggestFollowupQuestions": "Sugeruj pytania uzupełniające",
         "useAgenticRetrieval": "Użyj agentowego pobierania",
-        "useGPT4V": "Użyj modelu GPT z widzeniem",
-        "gpt4VInput": {
-            "label": "Dane wejściowe modelu GPT z widzeniem",
-            "options": {
-                "textAndImages": "Obrazy i tekst",
+        "llmInputs": "Źródła danych wejściowych LLM",
+        "llmInputsOptions": {
+                "texts": "Tekst",
                 "images": "Obrazy",
-                "texts": "Tekst"
-            }
+                "textAndImages": "Obrazy i tekst"
         },
         "retrievalMode": {
             "label": "Tryb pobierania",
@@ -147,8 +145,6 @@
              "Ustawia minimalny wynik dla wyników wyszukiwania z sortowania semantycznego. Wynik zawsze mieści się w zakresie od 0 do 4. Im wyższy, tym bardziej semantycznie dopasowany wynik do pytania.",
         "retrieveNumber":
              "Ustawia liczbę wyników wyszukiwania do pobrania z Azure AI Search. Więcej wyników może zwiększyć szansę znalezienia poprawnej odpowiedzi, ale może sprawić, że model się „zgubi w środku”.",
-        "maxSubqueryCount":
-            "Ustawia maksymalną liczbę zapytań podrzędnych do użycia w planie zapytań agentowego pobierania.",
         "resultsMergeStrategy":
             "Ustawia strategię łączenia wyników z wielu zapytań podrzędnych. „Przeplatane” wybiera najlepsze wyniki z każdego zapytania w kolejności okrężnej, a „Malejąco” sortuje wszystkie wyniki według wyniku sortowania semantycznego.",
         "includeCategory":
@@ -164,16 +160,19 @@
         "useSemanticCaptions":
              "Wysyła do LLM semantyczne podpisy zamiast pełnych wyników wyszukiwania. Semantyczny podpis jest wyodrębniany z wyniku wyszukiwania podczas procesu sortowania semantycznego.",
         "suggestFollowupQuestions": "Prosi LLM o sugerowanie pytań uzupełniających na podstawie zapytania użytkownika.",
-         "useGPT4Vision": "Używa GPT-4-Turbo z widzeniem do generowania odpowiedzi na podstawie obrazów i tekstu z indeksu.",
-        "vectorFields":
-            "Określa, które pola osadzeń w indeksie Azure AI Search będą przeszukiwane: zarówno 'Obrazy i tekst', tylko 'Obrazy', jak i tylko 'Tekst'.",
-        "gpt4VisionInputs":
-            "Ustawia, co zostanie wysłane do modelu z widzeniem. 'Obrazy i tekst' wysyła zarówno obrazy, jak i tekst, 'Obrazy' wysyła tylko obrazy, a 'Tekst' wysyła tylko tekst.",
+        "textEmbeddings": "Po wybraniu, wyszukiwanie będzie korzystać z osadzeń z modelu tekstowego dla wyodrębnionych fragmentów tekstu.",
+        "imageEmbeddings": "Po wybraniu, wyszukiwanie będzie korzystać z osadzeń z modelu multimodalnego dla wyodrębnionych obrazów.",
+        "llmTextInputs": "Po wybraniu, treść tekstowa z wyników wyszukiwania zostanie przesłana do LLM jako kontekst.",
+        "llmImageInputs": "Po wybraniu, obrazy z wyników wyszukiwania zostaną przesłane do LLM jako kontekst.",
         "retrievalMode":
             "Ustawia tryb pobierania dla zapytania Azure AI Search. `Wektory + Tekst (Hybrydowy)` łączy wyszukiwanie wektorowe i pełnotekstowe, `Wektory` używa tylko wyszukiwania wektorowego, a `Tekst` tylko pełnotekstowego. Hybrydowy jest zazwyczaj optymalny.",
         "streamChat": "Ciągle przesyła odpowiedź do interfejsu czatu w miarę jej generowania.",
         "useOidSecurityFilter": "Filtruj wyniki wyszukiwania na podstawie OID uwierzytelnionego użytkownika.",
         "useGroupsSecurityFilter": "Filtruj wyniki wyszukiwania na podstawie grup uwierzytelnionego użytkownika.",
         "useAgenticRetrieval": "Użyj agentowego pobierania z Azure AI Search do planowania wielozapytaniowego. Zawsze używa semantycznego rankera."
-    }
+    },
+
+    "overallSettings": "Overall settings",
+    "searchSettings": "Search settings",
+    "llmSettings": "LLM settings"
 }
