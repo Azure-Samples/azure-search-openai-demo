@@ -162,3 +162,5 @@ Here are community contributors that can review translations:
 | Spanish  | @miguelmsft         |
 | Turkish  | @mertcakdogan       |
 | Italian  | @ivanvaccarics      |
+| Dutch    |                     |
+| Polish   | @michuhu            |
