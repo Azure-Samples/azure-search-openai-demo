@@ -104,23 +104,23 @@ export const Answer = ({
                 </div>
             </Stack.Item>
 
-            {!!parsedAnswer.citations.length && (
-                <Stack.Item>
-                    <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
-                        <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
-                        {parsedAnswer.citations.map((x, i) => {
-                            const path = getCitationFilePath(x);
-                            // Strip out the image filename in parentheses if it exists
-                            const strippedPath = path.replace(/\([^)]*\)$/, "");
-                            return (
-                                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(strippedPath)}>
-                                    {`${++i}. ${x}`}
-                                </a>
-                            );
-                        })}
-                    </Stack>
-                </Stack.Item>
-            )}
+//  {!!parsedAnswer.citations.length && (
+//                <Stack.Item>
+  //                  <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
+    //                    <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
+      //                  {parsedAnswer.citations.map((x, i) => {
+        //                    const path = getCitationFilePath(x);
+          //                  // Strip out the image filename in parentheses if it exists
+            //                const strippedPath = path.replace(/\([^)]*\)$/, "");
+              //              return (
+                //                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(strippedPath)}>
+   //                                 {`${++i}. ${x}`}
+     //                           </a>
+       //                     );
+    //                    })}
+      //              </Stack>
+        //        </Stack.Item>
+        //    )}
 
             {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
                 <Stack.Item>
