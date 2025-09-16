@@ -13,6 +13,7 @@ line-length = 120
 [tool.pytest.ini_options]
 addopts = "-ra"
 pythonpath = ["app/backend", "scripts"]
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.paths]
 source = ["scripts", "app"]

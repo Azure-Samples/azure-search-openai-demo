@@ -1,6 +1,6 @@
 {
     "name": "Azure Search OpenAI Demo",
-    "image": "mcr.microsoft.com/devcontainers/python:3.11",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
     "features": {
         "ghcr.io/devcontainers/features/node:1": {
             // This should match the version of Node.js in Github Actions workflows
@@ -17,7 +17,8 @@
                 "ms-azuretools.azure-dev",
                 "ms-azuretools.vscode-bicep",
                 "ms-python.python",
-                "esbenp.prettier-vscode"
+                "esbenp.prettier-vscode",
+                "DavidAnson.vscode-markdownlint"
             ]
         }
     },

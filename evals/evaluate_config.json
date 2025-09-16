@@ -1,12 +1,11 @@
 {
     "testdata_path": "ground_truth.jsonl",
-    "results_dir": "results/experiment<TIMESTAMP>",
+    "results_dir": "results/baseline-ask",
     "requested_metrics": ["gpt_groundedness", "gpt_relevance", "answer_length", "latency", "citations_matched", "any_citation"],
-    "target_url": "http://localhost:50505/chat",
+    "target_url": "http://localhost:50505/ask",
     "target_parameters": {
         "overrides": {
             "top": 3,
-            "max_subqueries": 10,
             "results_merge_strategy": "interleaved",
             "temperature": 0.3,
             "minimum_reranker_score": 0,
@@ -19,9 +18,10 @@
             "suggest_followup_questions": false,
             "use_oid_security_filter": false,
             "use_groups_security_filter": false,
-            "vector_fields": "textEmbeddingOnly",
-            "use_gpt4v": false,
-            "gpt4v_input": "textAndImages",
+            "search_text_embeddings": true,
+            "search_image_embeddings": true,
+            "send_text_sources": true,
+            "send_image_sources": true,
             "language": "en",
             "use_agentic_retrieval": false,
             "seed": 1

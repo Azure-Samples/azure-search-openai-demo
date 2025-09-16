@@ -297,6 +297,44 @@ async def test_ask_rtr_text_semanticcaptions(client, snapshot):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("route", ["/ask", "/chat"])
+async def test_send_text_sources_false(client, route):
+    """When send_text_sources is False, text sources should be omitted while citations remain."""
+    response = await client.post(
+        route,
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {"overrides": {"retrieval_mode": "text", "send_text_sources": False}},
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    data_points = result["context"]["data_points"]
+    assert data_points["text"] == []
+    assert "citations" in data_points and len(data_points["citations"]) > 0
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("route", ["/ask", "/chat"])
+async def test_search_image_embeddings_ignored_without_multimodal(client, route):
+    """Sending search_image_embeddings=True when USE_MULTIMODAL is false should be ignored and still succeed (200)."""
+    response = await client.post(
+        route,
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {"overrides": {"search_image_embeddings": True, "send_image_sources": True}},
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    # Ensure the thought step recorded search_image_embeddings as False
+    search_thought = [
+        thought for thought in result["context"]["thoughts"] if thought["title"].startswith("Search using")
+    ][0]
+    assert search_thought["props"]["search_image_embeddings"] is False
+
+
+@pytest.mark.asyncio
 async def test_ask_rtr_hybrid(client, snapshot):
     response = await client.post(
         "/ask",
@@ -520,7 +558,6 @@ async def test_chat_text_agent(agent_client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["context"]["thoughts"][0]["props"]["max_docs_for_reranker"] == 500
     assert result["context"]["thoughts"][0]["props"]["reranker_threshold"] == 0
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -702,7 +739,9 @@ async def test_ask_prompt_template_concat(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["context"]["thoughts"][2]["description"][0]["content"].startswith("You are an intelligent assistant")
+    assert result["context"]["thoughts"][2]["description"][0]["content"].startswith(
+        "Assistant helps the company employees"
+    )
     assert result["context"]["thoughts"][2]["description"][0]["content"].endswith("Meow like a cat.")
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -750,7 +789,10 @@ async def test_chat_hybrid_semantic_ranker(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True},
+                "overrides": {
+                    "retrieval_mode": "hybrid",
+                    "semantic_ranker": True,
+                },
             },
         },
     )
@@ -770,7 +812,11 @@ async def test_chat_hybrid_semantic_captions(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "hybrid", "semantic_ranker": True, "semantic_captions": True},
+                "overrides": {
+                    "retrieval_mode": "hybrid",
+                    "semantic_ranker": True,
+                    "semantic_captions": True,
+                },
             },
         },
     )
@@ -809,7 +855,10 @@ async def test_chat_vector_semantic_ranker(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "vectors", "semantic_ranker": True},
+                "overrides": {
+                    "retrieval_mode": "vectors",
+                    "semantic_ranker": True,
+                },
             },
         },
     )
@@ -985,7 +1034,9 @@ async def test_chat_followup(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"suggest_followup_questions": True},
+                "overrides": {
+                    "suggest_followup_questions": True,
+                },
             },
         },
     )
@@ -1003,7 +1054,9 @@ async def test_chat_stream_followup(client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"suggest_followup_questions": True},
+                "overrides": {
+                    "suggest_followup_questions": True,
+                },
             },
         },
     )
@@ -1013,19 +1066,10 @@ async def test_chat_stream_followup(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_vision(client, snapshot):
-    response = await client.post(
+async def test_chat_vision(monkeypatch, vision_client, snapshot):
+    response = await vision_client.post(
         "/chat",
-        json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
-            "context": {
-                "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
-                    "vector_fields": "textAndImageEmbeddings",
-                },
-            },
-        },
+        json={"messages": [{"content": "Are interest rates high?", "role": "user"}]},
     )
     assert response.status_code == 200
     result = await response.get_json()
@@ -1033,19 +1077,10 @@ async def test_chat_vision(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_stream_vision(client, snapshot):
-    response = await client.post(
+async def test_chat_stream_vision(vision_client, snapshot):
+    response = await vision_client.post(
         "/chat/stream",
-        json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
-            "context": {
-                "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
-                    "vector_fields": "textAndImageEmbeddings",
-                },
-            },
-        },
+        json={"messages": [{"content": "Are interest rates high?", "role": "user"}]},
     )
     assert response.status_code == 200
     result = await response.get_data()
@@ -1053,40 +1088,23 @@ async def test_chat_stream_vision(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_vision_vectors(client, snapshot):
-    response = await client.post(
+async def test_chat_vision_user(monkeypatch, auth_client, mock_user_directory_client, snapshot):
+    response = await auth_client.post(
         "/chat",
-        json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
-            "context": {
-                "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
-                    "vector_fields": "textAndImageEmbeddings",
-                    "retrieval_mode": "vectors",
-                },
-            },
-        },
+        headers={"Authorization": "Bearer MockToken"},
+        json={"messages": [{"content": "Flowers in westbrae nursery logo?", "role": "user"}]},
     )
+
     assert response.status_code == 200
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
-async def test_ask_vision(client, snapshot):
-    response = await client.post(
+async def test_ask_vision(vision_client, snapshot):
+    response = await vision_client.post(
         "/ask",
-        json={
-            "messages": [{"content": "Are interest rates high?", "role": "user"}],
-            "context": {
-                "overrides": {
-                    "use_gpt4v": True,
-                    "gpt4v_input": "textAndImages",
-                    "vector_fields": "textAndImageEmbeddings",
-                },
-            },
-        },
+        json={"messages": [{"content": "Are interest rates high?", "role": "user"}]},
     )
     assert response.status_code == 200
     result = await response.get_json()

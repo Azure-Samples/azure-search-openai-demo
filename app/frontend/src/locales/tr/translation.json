@@ -43,7 +43,7 @@
         "placeholder": "Yeni bir soru yazın (ör. planım yıllık göz muayenelerini kapsıyor mu?)"
     },
     "askTitle": "Verilerinize sorun",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "Faiz oranları ve GSYİH'nin finansal piyasalar üzerindeki etkisini karşılaştırın.",
         "2": "Önümüzdeki beş yıl için S&P 500 endeksinin beklenen trendi nedir? Geçmiş S&P 500 performansı ile karşılaştırın",
         "3": "Petrol fiyatları ile borsa trendleri arasında herhangi bir korelasyon bulabilir misiniz?",
@@ -83,6 +83,11 @@
         "minimumSearchScore": "Minimum arama skoru",
         "minimumRerankerScore": "Minimum yeniden sıralayıcı skoru",
         "retrieveCount": "Bu kadar arama sonucu getir:",
+        "resultsMergeStrategy": "Sonuç birleştirme stratejisi",
+        "resultsMergeStrategyOptions": {
+            "interleaved": "Sırayla karışık",
+            "descending": "Azalan"
+        },
         "includeCategory": "Kategori dahil et",
         "includeCategoryOptions": {
             "all": "Hepsi"
@@ -100,14 +105,11 @@
         },
         "useSuggestFollowupQuestions": "Takip soruları öner",
         "useAgenticRetrieval": "Ajan temelli getirim kullan",
-        "useGPT4V": "GPT vizyon modelini kullan",
-        "gpt4VInput": {
-            "label": "GPT vizyon modeli girdileri",
-            "options": {
-                "textAndImages": "Görseller ve metin",
-                "images": "Görseller",
-                "texts": "Metin"
-            }
+        "llmInputs": "LLM için Girdiler",
+        "llmInputsOptions": {
+            "texts": "Metinler",
+            "images": "Görseller",
+            "textAndImages": "Metinler ve Görseller"
         },
         "retrievalMode": {
             "label": "Getirme modu",
@@ -118,11 +120,10 @@
             }
         },
         "vector": {
-            "label": "Vektör alanları (Çoklu sorgu vektör araması)",
+            "label": "Dahil edilen vektör alanları",
             "options": {
                 "embedding": "Metin Gömüleri",
-                "imageEmbedding": "Görsel Gömüleri",
-                "both": "Metin ve Görsel gömüleri"
+                "imageEmbedding": "Görsel Gömüleri"
             }
         },
         "useOidSecurityFilter": "OID güvenlik filtresini kullan",
@@ -142,6 +143,8 @@
              "Anlamsal sıralayıcıdan gelen arama sonuçları için minimum skoru ayarlar. Skor her zaman 0-4 arasında değişir. Daha yüksek skor, sonucun soruya daha anlamsal olarak uygun olduğunu gösterir.",
         "retrieveNumber":
              "Azure AI arama sonuçlarından getirilecek sonuç sayısını ayarlar. Daha fazla sonuç doğru cevabı bulma olasılığını artırabilir, ancak modelin 'ortada kaybolmasına' da neden olabilir.",
+        "resultsMergeStrategy":
+             "Birden fazla alt sorgudan gelen sonuçları birleştirme stratejisini ayarlar. 'Sırayla karışık' her alt sorgudan en iyi sonuçları dönüşümlü olarak seçer, 'Azalan' ise tüm sonuçları yeniden sıralayıcı skoruna göre sıralar.",
         "includeCategory":
             "Arama sonuçlarına dahil edilecek bir kategoriyi belirtir. Varsayılan veri setinde kategori yoktur.",
         "excludeCategory":
@@ -155,10 +158,11 @@
         "reasoningEffort":
             "Dil modeli için akıl yürütme çabasını ayarlar. Daha yüksek değerler daha fazla akıl yürütme ile sonuçlanır, ancak yanıt oluşturmak daha uzun sürebilir. Varsayılan orta seviyedir.",
         "suggestFollowupQuestions": "Kullanıcının sorusuna dayalı olarak dil modelinden takip soruları önermesini ister.",
-        "useGPT4Vision": "Görseller ve metinlerden oluşan indekslere dayalı olarak yanıtlar oluşturmak için GPT-4-Turbo ile Vision kullanır.",
-        "vectorFields":
-            "Azure AI Arama İndeksinde hangi gömme alanlarının aranacağını belirtir: 'Görseller ve metin', yalnızca 'Görseller' veya yalnızca 'Metin'.",
-        "gpt4VisionInputs":
+        "textEmbeddings": "Seçildiğinde, arama çıkarılan metin parçalarının yalnızca metin gömme modelinden gömmeleri kullanacaktır.",
+        "imageEmbeddings": "Seçildiğinde, arama çıkarılan görsellerin çoklu ortam gömme modelinden gömmeleri kullanacaktır.",
+        "llmTextInputs": "Seçildiğinde, arama sonuçlarındaki metin içeriği bağlam olarak LLM'e gönderilir.",
+        "llmImageInputs": "Seçildiğinde, arama sonuçlarındaki görseller bağlam olarak LLM'e gönderilir.",
+        "llmInputs":
             "Vizyon modeline ne gönderileceğini ayarlar. 'Görseller ve metin' her ikisini de gönderir, 'Görseller' yalnızca görselleri, 'Metin' yalnızca metni gönderir.",
         "retrievalMode":
             "Azure AI arama sorgusu için getirme modunu ayarlar. `Vektörler + Metin (Hibrit)` vektör araması ve tam metin aramasını kullanır, `Vektörler` yalnızca vektör aramasını, `Metin` yalnızca tam metin aramasını kullanır. Hibrit genellikle en iyisidir.",
@@ -166,5 +170,9 @@
         "useOidSecurityFilter": "Kimliği doğrulanmış kullanıcının OID'sine göre arama sonuçlarını filtreler.",
         "useGroupsSecurityFilter": "Kimliği doğrulanmış kullanıcının gruplarına göre arama sonuçlarını filtreler.",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
-    }
+    },
+
+    "overallSettings": "Genel ayarlar",
+    "searchSettings": "Arama ayarları",
+    "llmSettings": "LLM ayarları"
 }

@@ -17,8 +17,9 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 - [Running unit tests](#running-unit-tests)
 - [Running E2E tests](#running-e2e-tests)
 - [Code style](#code-style)
-- [Adding new azd environment variables](#adding-new-azd-environment-variables)
-- [Adding new UI strings](#adding-new-ui-strings)
+- [Adding new features](#adding-new-features)
+  - [Adding new azd environment variables](#adding-new-azd-environment-variables)
+  - [Adding new UI strings](#adding-new-ui-strings)
 
 ## Submitting a Pull Request (PR)
 
@@ -62,10 +63,18 @@ Run the tests:
 python -m pytest
 ```
 
-Check the coverage report to make sure your changes are covered.
+If test snapshots need updating (and the changes are expected), you can update them by running:
 
 ```shell
-python -m pytest --cov
+python -m pytest --snapshot-update
+```
+
+Once tests are passing, generate a coverage report to make sure your changes are covered:
+
+```shell
+pytest --cov --cov-report=xml && \
+diff-cover coverage.xml --html-report coverage_report.html && \
+open coverage_report.html
 ```
 
 ## Running E2E tests
@@ -118,17 +127,24 @@ python -m black <path-to-file>
 
 If you followed the steps above to install the pre-commit hooks, then you can just wait for those hooks to run `ruff` and `black` for you.
 
-## Adding new azd environment variables
+## Adding new features
+
+We recommend using GitHub Copilot Agent mode when adding new features,
+as this project includes an [AGENTS.md](AGENTS.md) file
+that instructs Copilot (and other coding agents) about how to generate code for common code changes.
+
+If you are not using Copilot Agent mode, consult both that file and suggestions below.
+
+### Adding new azd environment variables
 
 When adding new azd environment variables, please remember to update:
 
 1. [main.parameters.json](./infra/main.parameters.json)
 1. [appEnvVariables in main.bicep](./infra/main.bicep)
-1. App Service's [azure.yaml](./azure.yaml)
 1. [ADO pipeline](.azdo/pipelines/azure-dev.yml).
 1. [Github workflows](.github/workflows/azure-dev.yml)
 
-## Adding new UI strings
+### Adding new UI strings
 
 When adding new UI strings, please remember to update all translations.
 For any translations that you generate with an AI tool,
@@ -146,3 +162,5 @@ Here are community contributors that can review translations:
 | Spanish  | @miguelmsft         |
 | Turkish  | @mertcakdogan       |
 | Italian  | @ivanvaccarics      |
+| Dutch    |                     |
+| Polish   | @michuhu            |

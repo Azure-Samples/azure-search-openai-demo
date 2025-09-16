@@ -7,18 +7,7 @@ import readNDJSONStream from "ndjson-readablestream";
 import appLogo from "../../assets/applogo.svg";
 import styles from "./Chat.module.css";
 
-import {
-    chatApi,
-    configApi,
-    RetrievalMode,
-    ChatAppResponse,
-    ChatAppResponseOrError,
-    ChatAppRequest,
-    ResponseMessage,
-    VectorFields,
-    GPT4VInput,
-    SpeechConfig
-} from "../../api";
+import { chatApi, configApi, RetrievalMode, ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, ResponseMessage, SpeechConfig } from "../../api";
 import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
 import { QuestionInput } from "../../components/QuestionInput";
 import { ExampleList } from "../../components/Example";
@@ -46,7 +35,6 @@ const Chat = () => {
     const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
-    const [maxSubqueryCount, setMaxSubqueryCount] = useState<number>(10);
     const [resultsMergeStrategy, setResultsMergeStrategy] = useState<string>("interleaved");
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
@@ -58,11 +46,12 @@ const Chat = () => {
     const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
     const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
-    const [vectorFields, setVectorFields] = useState<VectorFields>(VectorFields.TextAndImageEmbeddings);
+    const [searchTextEmbeddings, setSearchTextEmbeddings] = useState<boolean>(true);
+    const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(false);
     const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
     const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
-    const [gpt4vInput, setGPT4VInput] = useState<GPT4VInput>(GPT4VInput.TextAndImages);
-    const [useGPT4V, setUseGPT4V] = useState<boolean>(false);
+    const [sendTextSources, setSendTextSources] = useState<boolean>(true);
+    const [sendImageSources, setSendImageSources] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
     const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
@@ -79,7 +68,7 @@ const Chat = () => {
     const [streamedAnswers, setStreamedAnswers] = useState<[user: string, response: ChatAppResponse][]>([]);
     const [speechUrls, setSpeechUrls] = useState<(string | null)[]>([]);
 
-    const [showGPT4VOptions, setShowGPT4VOptions] = useState<boolean>(false);
+    const [showMultimodalOptions, setShowMultimodalOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
     const [showReasoningEffortOption, setShowReasoningEffortOption] = useState<boolean>(false);
@@ -107,9 +96,13 @@ const Chat = () => {
 
     const getConfig = async () => {
         configApi().then(config => {
-            setShowGPT4VOptions(config.showGPT4VOptions);
-            if (config.showGPT4VOptions) {
-                setUseGPT4V(true);
+            setShowMultimodalOptions(config.showMultimodalOptions);
+            if (config.showMultimodalOptions) {
+                // Initialize from server config so defaults match deployment settings
+                setSendTextSources(config.ragSendTextSources !== undefined ? config.ragSendTextSources : true);
+                setSendImageSources(config.ragSendImageSources);
+                setSearchTextEmbeddings(config.ragSearchTextEmbeddings);
+                setSearchImageEmbeddings(config.ragSearchImageEmbeddings);
             }
             setUseSemanticRanker(config.showSemanticRankerOption);
             setShowSemanticRankerOption(config.showSemanticRankerOption);
@@ -219,7 +212,6 @@ const Chat = () => {
                         include_category: includeCategory.length === 0 ? undefined : includeCategory,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
-                        max_subqueries: maxSubqueryCount,
                         results_merge_strategy: resultsMergeStrategy,
                         temperature: temperature,
                         minimum_reranker_score: minimumRerankerScore,
@@ -232,9 +224,10 @@ const Chat = () => {
                         suggest_followup_questions: useSuggestFollowupQuestions,
                         use_oid_security_filter: useOidSecurityFilter,
                         use_groups_security_filter: useGroupsSecurityFilter,
-                        vector_fields: vectorFields,
-                        use_gpt4v: useGPT4V,
-                        gpt4v_input: gpt4vInput,
+                        search_text_embeddings: searchTextEmbeddings,
+                        search_image_embeddings: searchImageEmbeddings,
+                        send_text_sources: sendTextSources,
+                        send_image_sources: sendImageSources,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
                         ...(seed !== null ? { seed: seed } : {})
@@ -315,9 +308,6 @@ const Chat = () => {
             case "retrieveCount":
                 setRetrieveCount(value);
                 break;
-            case "maxSubqueryCount":
-                setMaxSubqueryCount(value);
-                break;
             case "resultsMergeStrategy":
                 setResultsMergeStrategy(value);
                 break;
@@ -351,20 +341,26 @@ const Chat = () => {
             case "useSuggestFollowupQuestions":
                 setUseSuggestFollowupQuestions(value);
                 break;
-            case "useGPT4V":
-                setUseGPT4V(value);
+            case "llmInputs":
                 break;
-            case "gpt4vInput":
-                setGPT4VInput(value);
+            case "sendTextSources":
+                setSendTextSources(value);
                 break;
-            case "vectorFields":
-                setVectorFields(value);
+            case "sendImageSources":
+                setSendImageSources(value);
+                break;
+            case "searchTextEmbeddings":
+                setSearchTextEmbeddings(value);
+                break;
+            case "searchImageEmbeddings":
+                setSearchImageEmbeddings(value);
                 break;
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
             case "useAgenticRetrieval":
                 setUseAgenticRetrieval(value);
+                break;
         }
     };
 
@@ -423,7 +419,7 @@ const Chat = () => {
                             <h2 className={styles.chatEmptyStateSubtitle}>{t("chatEmptyStateSubtitle")}</h2>
                             {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
 
-                            <ExampleList onExampleClicked={onExampleClicked} useGPT4V={useGPT4V} />
+                            <ExampleList onExampleClicked={onExampleClicked} useMultimodalAnswering={showMultimodalOptions} />
                         </div>
                     ) : (
                         <div className={styles.chatMessageStream}>
@@ -542,7 +538,6 @@ const Chat = () => {
                         promptTemplate={promptTemplate}
                         temperature={temperature}
                         retrieveCount={retrieveCount}
-                        maxSubqueryCount={maxSubqueryCount}
                         resultsMergeStrategy={resultsMergeStrategy}
                         seed={seed}
                         minimumSearchScore={minimumSearchScore}
@@ -554,13 +549,14 @@ const Chat = () => {
                         excludeCategory={excludeCategory}
                         includeCategory={includeCategory}
                         retrievalMode={retrievalMode}
-                        useGPT4V={useGPT4V}
-                        gpt4vInput={gpt4vInput}
-                        vectorFields={vectorFields}
+                        showMultimodalOptions={showMultimodalOptions}
+                        sendTextSources={sendTextSources}
+                        sendImageSources={sendImageSources}
+                        searchTextEmbeddings={searchTextEmbeddings}
+                        searchImageEmbeddings={searchImageEmbeddings}
                         showSemanticRankerOption={showSemanticRankerOption}
                         showQueryRewritingOption={showQueryRewritingOption}
                         showReasoningEffortOption={showReasoningEffortOption}
-                        showGPT4VOptions={showGPT4VOptions}
                         showVectorOption={showVectorOption}
                         useOidSecurityFilter={useOidSecurityFilter}
                         useGroupsSecurityFilter={useGroupsSecurityFilter}

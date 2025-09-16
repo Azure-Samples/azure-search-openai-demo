@@ -43,7 +43,7 @@
         "placeholder": "Tapez une nouvelle question (par exemple, mon plan couvre-t-il les examens oculaires annuels?)"
     },
     "askTitle": "Demandez à vos données",
-    "gpt4vExamples": {
+    "multimodalExamples": {
         "1": "Comparez l'impact des taux d'intérêt et du PIB sur les marchés financiers.",
         "2": "Quelle est la tendance prévue pour l'indice S&P 500 au cours des cinq prochaines années? Comparez-le aux performances passées de l'S&P 500",
         "3": "Pouvez-vous identifier une corrélation entre les prix du pétrole et les tendances du marché boursier?",
@@ -83,6 +83,11 @@
         "minimumSearchScore": "Score de recherche minimum",
         "minimumRerankerScore": "Score minimum du reclasseur sémantique",
         "retrieveCount": "Récupérer ce nombre de résultats de recherche :",
+        "resultsMergeStrategy": "Stratégie de fusion des résultats",
+        "resultsMergeStrategyOptions": {
+            "interleaved": "Entrelacée",
+            "descending": "Descendante"
+        },
         "includeCategory": "Inclure la catégorie",
         "includeCategoryOptions": {
             "all": "Toutes"
@@ -100,14 +105,11 @@
             "medium": "Moyen",
             "high": "Élevé"
         },
-        "useGPT4V": "Utiliser le modèle GPT Vision",
-        "gpt4VInput": {
-            "label": "Entrées du modèle GPT Vision",
-            "options": {
-                "textAndImages": "Images et texte",
-                "images": "Images",
-                "texts": "Texte"
-            }
+        "llmInputs": "Entrées pour LLM",
+        "llmInputsOptions": {
+            "texts": "Textes",
+            "images": "Images",
+            "textAndImages": "Textes et images"
         },
         "retrievalMode": {
             "label": "Mode de récupération",
@@ -118,11 +120,10 @@
             }
         },
         "vector": {
-            "label": "Champs de vecteur (recherche de vecteur multi-requête)",
+            "label": "Champs de vecteur inclus",
             "options": {
                 "embedding": "Incorporations de texte",
-                "imageEmbedding": "Incorporations d'images",
-                "both": "Incorporations de texte et d'images"
+                "imageEmbedding": "Incorporations d'images"
             }
         },
         "useOidSecurityFilter": "Utiliser le filtre de sécurité oid",
@@ -143,6 +144,8 @@
             "Définit un score minimum pour les résultats de recherche provenant du reranker sémantique. Le score varie toujours entre 0 et 4. Plus le score est élevé, plus le résultat est sémantiquement pertinent par rapport à la question.",
         "retrieveNumber":
             "Définit le nombre de résultats de recherche à récupérer d'Azure AI Search. Plus de résultats peuvent augmenter la probabilité de trouver la bonne réponse, mais peuvent amener le modèle à se 'perdre au milieu'.",
+        "resultsMergeStrategy":
+            "Définit la stratégie de fusion des résultats provenant de plusieurs sous-requêtes. 'Entrelacée' sélectionne les meilleurs résultats de chaque sous-requête à tour de rôle, tandis que 'Descendante' trie tous les résultats par score de reranking.",
         "includeCategory":
             "Spécifie une catégorie à inclure dans les résultats de recherche. Il n'y a aucune catégorie utilisée dans l'ensemble de données par défaut.",
         "excludeCategory":
@@ -156,10 +159,11 @@
             "Active la réécriture de requêtes d'Azure AI Search, un processus qui modifie la requête de l'utilisateur pour améliorer les résultats de recherche. Nécessite que le reclasseur sémantique soit activé.",
         "reasoningEffort":
             "Définit l'effort de raisonnement pour le LLM. Des valeurs plus élevées entraînent plus de raisonnement, mais peuvent prendre plus de temps pour générer une réponse. La valeur par défaut est moyenne.",
-        "useGPT4Vision": "Utilise GPT-4-Turbo avec Vision pour générer des réponses basées sur des images et du texte de l'index.",
-        "vectorFields":
-            "Spécifie quels champs d'incorporation dans l'index de recherche Azure AI seront recherchés, à la fois les incorporations 'Images et texte', 'Images' seulement, ou 'Texte' seulement.",
-        "gpt4VisionInputs":
+        "textEmbeddings": "Lorsque sélectionné, la recherche utilisera les incorporations du modèle d'incorporations de texte uniquement pour les fragments de texte extraits.",
+        "imageEmbeddings": "Lorsque sélectionné, la recherche utilisera les incorporations du modèle d'incorporations multimodal pour les images extraites.",
+        "llmTextInputs": "Lorsque sélectionné, le contenu textuel des résultats de recherche est envoyé au LLM comme contexte.",
+        "llmImageInputs": "Lorsque sélectionné, les images des résultats de recherche sont envoyées au LLM comme contexte.",
+        "llmInputs":
             "Définit ce qui sera envoyé au modèle de vision. 'Images et texte' envoie à la fois des images et du texte au modèle, 'Images' envoie seulement des images, et 'Texte' envoie seulement du texte.",
         "retrievalMode":
             "Définit le mode de récupération pour la requête Azure AI Search. Vecteurs + Texte (Hybride) utilise une combinaison de recherche vectorielle et de recherche en texte intégral, Vecteurs utilise uniquement la recherche vectorielle, et Texte utilise uniquement la recherche en texte intégral. Hybride est généralement optimal.",
@@ -167,5 +171,9 @@
         "useOidSecurityFilter":"Filtrez les résultats de recherche en fonction de l'OID de l'utilisateur authentifié.",
         "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié.",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
-    }
+    },
+
+    "overallSettings": "Paramètres généraux",
+    "searchSettings": "Paramètres de recherche",
+    "llmSettings": "Paramètres LLM"
 }

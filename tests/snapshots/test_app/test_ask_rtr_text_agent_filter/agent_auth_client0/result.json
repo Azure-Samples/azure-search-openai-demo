@@ -1,12 +1,14 @@
 {
     "context": {
         "data_points": {
-            "images": null,
+            "citations": [
+                "Benefit_Options-2.pdf"
+            ],
+            "images": [],
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
             ]
         },
-        "followup_questions": null,
         "thoughts": [
             {
                 "description": [
@@ -17,7 +19,6 @@
                 ],
                 "props": {
                     "filter": "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))",
-                    "max_docs_for_reranker": 500,
                     "reranker_threshold": 0,
                     "results_merge_strategy": "interleaved"
                 },
@@ -30,12 +31,13 @@
                         "category": null,
                         "content": "There is a whistleblower policy.",
                         "groups": null,
-                        "id": "Benefit_Options-2.pdf",
+                        "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                        "images": null,
                         "oids": null,
-                        "reranker_score": null,
+                        "reranker_score": 3.4577205181121826,
                         "score": null,
                         "search_agent_query": "whistleblower query",
-                        "sourcefile": null,
+                        "sourcefile": "Benefit_Options.pdf",
                         "sourcepage": "Benefit_Options-2.pdf"
                     }
                 ],
@@ -48,17 +50,17 @@
                             "id": 0,
                             "input_tokens": 10,
                             "output_tokens": 20,
-                            "type": "ModelQueryPlanning"
+                            "type": "modelQueryPlanning"
                         },
                         {
                             "count": 10,
                             "elapsed_ms": 50,
                             "id": 1,
-                            "query": {
+                            "knowledge_source_name": "index",
+                            "search_index_arguments": {
                                 "search": "whistleblower query"
                             },
-                            "target_index": "index",
-                            "type": "AzureSearchQuery"
+                            "type": "searchIndex"
                         }
                     ]
                 },
@@ -67,7 +69,7 @@
             {
                 "description": [
                     {
-                        "content": "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions.\nUse 'you' to refer to the individual asking the questions even if they ask with 'I'.\nAnswer the following question using only the data provided in the sources below.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response.\nIf you cannot answer using the sources below, say you don't know. Use below example to answer",
+                        "content": "Assistant helps the company employees with their questions about internal documents. Be brief in your answers.\nAnswer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below.\nYou CANNOT ask clarifying questions to the user, since the user will have no way to reply.\nIf the question is not in English, answer in the language used in the question.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].\n\nPossible citations for current question:  [Benefit_Options-2.pdf]",
                         "role": "system"
                     },
                     {
@@ -79,7 +81,7 @@
                         "role": "assistant"
                     },
                     {
-                        "content": "What is the capital of France?\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
+                        "content": "What is the capital of France?\n\nSources:\nBenefit_Options-2.pdf: There is a whistleblower policy.",
                         "role": "user"
                     }
                 ],

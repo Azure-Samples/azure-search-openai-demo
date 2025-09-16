@@ -35,10 +35,10 @@ jobs:
       AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP }}
       AZURE_DOCUMENTINTELLIGENCE_SKU: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_SKU }}
       AZURE_DOCUMENTINTELLIGENCE_LOCATION: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_LOCATION }}
-      AZURE_COMPUTER_VISION_SERVICE: ${{ vars.AZURE_COMPUTER_VISION_SERVICE }}
-      AZURE_COMPUTER_VISION_RESOURCE_GROUP: ${{ vars.AZURE_COMPUTER_VISION_RESOURCE_GROUP }}
-      AZURE_COMPUTER_VISION_LOCATION: ${{ vars.AZURE_COMPUTER_VISION_LOCATION }}
-      AZURE_COMPUTER_VISION_SKU: ${{ vars.AZURE_COMPUTER_VISION_SKU }}
+      AZURE_VISION_SERVICE: ${{ vars.AZURE_VISION_SERVICE }}
+      AZURE_VISION_RESOURCE_GROUP: ${{ vars.AZURE_VISION_RESOURCE_GROUP }}
+      AZURE_VISION_LOCATION: ${{ vars.AZURE_VISION_LOCATION }}
+      AZURE_VISION_SKU: ${{ vars.AZURE_VISION_SKU }}
       AZURE_SEARCH_INDEX: ${{ vars.AZURE_SEARCH_INDEX }}
       AZURE_SEARCH_SERVICE: ${{ vars.AZURE_SEARCH_SERVICE }}
       AZURE_SEARCH_SERVICE_RESOURCE_GROUP: ${{ vars.AZURE_SEARCH_SERVICE_RESOURCE_GROUP }}
@@ -62,11 +62,6 @@ jobs:
       AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY }}
       AZURE_OPENAI_EMB_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_EMB_DEPLOYMENT_VERSION }}
       AZURE_OPENAI_EMB_DIMENSIONS: ${{ vars.AZURE_OPENAI_EMB_DIMENSIONS }}
-      AZURE_OPENAI_GPT4V_MODEL: ${{ vars.AZURE_OPENAI_GPT4V_MODEL }}
-      AZURE_OPENAI_GPT4V_DEPLOYMENT: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT }}
-      AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_CAPACITY }}
-      AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_VERSION }}
-      AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU: ${{ vars.AZURE_OPENAI_GPT4V_DEPLOYMENT_SKU }}
       USE_EVAL: ${{ vars.USE_EVAL }}
       AZURE_OPENAI_EVAL_MODEL: ${{ vars.AZURE_OPENAI_EVAL_MODEL }}
       AZURE_OPENAI_EVAL_MODEL_VERSION: ${{ vars.AZURE_OPENAI_EVAL_MODEL_VERSION }}
@@ -82,7 +77,7 @@ jobs:
       AZURE_APPLICATION_INSIGHTS_DASHBOARD: ${{ vars.AZURE_APPLICATION_INSIGHTS_DASHBOARD }}
       AZURE_LOG_ANALYTICS: ${{ vars.AZURE_LOG_ANALYTICS }}
       USE_VECTORS: ${{ vars.USE_VECTORS }}
-      USE_GPT4V: ${{ vars.USE_GPT4V }}
+      USE_MULTIMODAL: ${{ vars.USE_MULTIMODAL }}
       AZURE_VISION_ENDPOINT: ${{ vars.AZURE_VISION_ENDPOINT }}
       VISION_SECRET_NAME: ${{ vars.VISION_SECRET_NAME }}
       ENABLE_LANGUAGE_PICKER: ${{ vars.ENABLE_LANGUAGE_PICKER }}
@@ -114,7 +109,7 @@ jobs:
     steps:
 
       - name: Comment on pull request
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.createComment({
@@ -125,7 +120,7 @@ jobs:
             })
 
       - name: Checkout pull request
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
@@ -138,12 +133,12 @@ jobs:
           python-version: "3.11"
 
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install azd
-        uses: Azure/setup-azd@v2.1.0
+        uses: Azure/setup-azd@v2.2.0
 
       - name: Login to Azure with az CLI
         uses: azure/login@v2
@@ -226,7 +221,7 @@ jobs:
           cat run-diff.md >> $GITHUB_STEP_SUMMARY
 
       - name: Comment on pull request
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');

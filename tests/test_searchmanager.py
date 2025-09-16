@@ -15,9 +15,10 @@ from openai.types.create_embedding_response import Usage
 
 from prepdocslib.embeddings import AzureOpenAIEmbeddingService
 from prepdocslib.listfilestrategy import File
+from prepdocslib.page import ImageOnPage
 from prepdocslib.searchmanager import SearchManager, Section
 from prepdocslib.strategy import SearchInfo
-from prepdocslib.textsplitter import SplitPage
+from prepdocslib.textsplitter import Chunk
 
 from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
@@ -198,7 +199,7 @@ async def test_update_content(monkeypatch, search_info):
     await manager.update_content(
         [
             Section(
-                split_page=SplitPage(
+                chunk=Chunk(
                     page_num=0,
                     text="test content",
                 ),
@@ -229,7 +230,7 @@ async def test_update_content_many(monkeypatch, search_info):
         for page_section_num in range(3):
             sections.append(
                 Section(
-                    split_page=SplitPage(
+                    chunk=Chunk(
                         page_num=page_num,
                         text=f"test section {page_section_num}",
                     ),
@@ -298,7 +299,7 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
     await manager.update_content(
         [
             Section(
-                split_page=SplitPage(
+                chunk=Chunk(
                     page_num=0,
                     text="test content",
                 ),
@@ -314,6 +315,83 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
         -0.009327292,
         -0.0028842222,
     ]
+
+
+@pytest.mark.asyncio
+async def test_update_content_no_images_when_disabled(monkeypatch, search_info):
+    """Ensure no 'images' field is added when search_images is False (baseline case without any images)."""
+
+    documents_uploaded: list[dict] = []
+
+    async def mock_upload_documents(self, documents):
+        documents_uploaded.extend(documents)
+
+    monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
+
+    manager = SearchManager(search_info, search_images=False)
+
+    test_io = io.BytesIO(b"test file")
+    test_io.name = "test/foo.pdf"
+    file = File(test_io)
+
+    section = Section(
+        chunk=Chunk(page_num=0, text="chunk text"),
+        content=file,
+        category="test",
+    )
+
+    await manager.update_content([section])
+
+    assert len(documents_uploaded) == 1, "Exactly one document should be uploaded"
+    assert "images" not in documents_uploaded[0], "'images' field should not be present when search_images is False"
+
+
+@pytest.mark.asyncio
+async def test_update_content_with_images_when_enabled(monkeypatch, search_info):
+    """Ensure 'images' field is added with image metadata when search_images is True and chunk has images."""
+
+    documents_uploaded: list[dict] = []
+
+    async def mock_upload_documents(self, documents):
+        documents_uploaded.extend(documents)
+
+    monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
+
+    # Enable image ingestion
+    manager = SearchManager(search_info, search_images=True)
+
+    test_io = io.BytesIO(b"img content")
+    test_io.name = "test/foo.pdf"
+    file = File(test_io)
+
+    image = ImageOnPage(
+        bytes=b"",  # raw image bytes not needed for this test
+        bbox=(1.0, 2.0, 3.0, 4.0),
+        filename="img1.png",
+        description="Test image",
+        figure_id="fig1",
+        page_num=0,
+        url="http://example.com/img1.png",
+        embedding=[0.01, 0.02],
+    )
+
+    section = Section(
+        chunk=Chunk(page_num=0, text="chunk text with image", images=[image]),
+        content=file,
+        category="test",
+    )
+
+    await manager.update_content([section])
+
+    assert len(documents_uploaded) == 1, "Exactly one document should be uploaded"
+    doc = documents_uploaded[0]
+    assert "images" in doc, "'images' field should be present when search_images is True"
+    assert isinstance(doc["images"], list) and len(doc["images"]) == 1, "Should have one image entry"
+    img_entry = doc["images"][0]
+    assert img_entry["url"] == image.url
+    assert img_entry["description"] == image.description
+    assert img_entry["boundingbox"] == image.bbox
+    assert img_entry["embedding"] == image.embedding
 
 
 class AsyncSearchResultsIterator:
@@ -496,3 +574,216 @@ async def test_remove_content_no_inf_loop(monkeypatch, search_info):
     assert len(searched_filters) == 1, "It should have searched once"
     assert searched_filters[0] == "sourcefile eq 'foo.pdf'"
     assert len(deleted_documents) == 0, "It should have deleted no documents"
+
+
+@pytest.mark.asyncio
+async def test_create_index_with_search_images(monkeypatch, search_info):
+    """Test that SearchManager correctly creates an index with image search capabilities."""
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index  # pragma: no cover
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    # Create a SearchInfo with an Azure Vision endpoint
+    search_info_with_vision = SearchInfo(
+        endpoint=search_info.endpoint,
+        credential=search_info.credential,
+        index_name=search_info.index_name,
+        azure_vision_endpoint="https://testvision.cognitiveservices.azure.com/",
+    )
+
+    # Create a SearchManager with search_images=True
+    manager = SearchManager(search_info_with_vision, search_images=True, field_name_embedding="embedding")
+    await manager.create_index()
+
+    # Verify the index was created correctly
+    assert len(indexes) == 1, "It should have created one index"
+    assert indexes[0].name == "test"
+
+    # Find the "images" field in the index
+    images_field = next((field for field in indexes[0].fields if field.name == "images"), None)
+    assert images_field is not None, "The index should include an 'images' field"
+
+    # Verify the "images" field structure
+    assert images_field.type.startswith(
+        "Collection(Edm.ComplexType)"
+    ), "The 'images' field should be a collection of complex type"
+
+    # Check subfields of the images field
+    image_subfields = images_field.fields
+    assert len(image_subfields) == 4, "The 'images' field should have 4 subfields"
+
+    # Verify specific subfields
+    assert any(field.name == "embedding" for field in image_subfields), "Should have an 'embedding' subfield"
+    assert any(field.name == "url" for field in image_subfields), "Should have a 'url' subfield"
+    assert any(field.name == "description" for field in image_subfields), "Should have a 'description' subfield"
+    assert any(field.name == "boundingbox" for field in image_subfields), "Should have a 'boundingbox' subfield"
+
+    # Verify vector search configuration
+    vectorizers = indexes[0].vector_search.vectorizers
+    assert any(
+        v.vectorizer_name == "images-vision-vectorizer" for v in vectorizers
+    ), "Should have an AI Vision vectorizer"
+
+    # Verify vector search profile
+    profiles = indexes[0].vector_search.profiles
+    assert any(p.name == "images_embedding_profile" for p in profiles), "Should have an image embedding profile"
+
+
+@pytest.mark.asyncio
+async def test_create_index_with_search_images_no_endpoint(monkeypatch, search_info):
+    """Test that SearchManager raises an error when search_images=True but no Azure Vision endpoint is provided."""
+
+    # Create a SearchManager with search_images=True but no Azure Vision endpoint
+    manager = SearchManager(
+        search_info,  # search_info doesn't have azure_vision_endpoint
+        search_images=True,
+        field_name_embedding="embedding",
+    )
+
+    # Verify that create_index raises a ValueError
+    with pytest.raises(ValueError) as excinfo:
+        await manager.create_index()
+
+    # Check the error message
+    assert "Azure AI Vision endpoint must be provided to use image embeddings" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_create_index_with_search_images_and_embeddings(monkeypatch, search_info):
+    """Test that SearchManager correctly creates an index with both image search and embeddings."""
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index  # pragma: no cover
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    # Create a SearchInfo with an Azure Vision endpoint
+    search_info_with_vision = SearchInfo(
+        endpoint=search_info.endpoint,
+        credential=search_info.credential,
+        index_name=search_info.index_name,
+        azure_vision_endpoint="https://testvision.cognitiveservices.azure.com/",
+    )
+
+    # Create embeddings service
+    embeddings = AzureOpenAIEmbeddingService(
+        open_ai_service="x",
+        open_ai_deployment="x",
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        open_ai_api_version="test-api-version",
+        credential=AzureKeyCredential("test"),
+        disable_batch=True,
+    )
+
+    # Create a SearchManager with both search_images and embeddings
+    manager = SearchManager(
+        search_info_with_vision, search_images=True, embeddings=embeddings, field_name_embedding="embedding3"
+    )
+    await manager.create_index()
+
+    # Verify the index was created correctly
+    assert len(indexes) == 1, "It should have created one index"
+
+    # Find both the embeddings field and images field
+    embedding_field = next((field for field in indexes[0].fields if field.name == "embedding3"), None)
+    images_field = next((field for field in indexes[0].fields if field.name == "images"), None)
+
+    assert embedding_field is not None, "The index should include an 'embedding3' field"
+    assert images_field is not None, "The index should include an 'images' field"
+
+    # Verify vector search configuration includes both text and image vectorizers
+    vectorizers = indexes[0].vector_search.vectorizers
+    assert any(
+        v.vectorizer_name == "images-vision-vectorizer" for v in vectorizers
+    ), "Should have an AI Vision vectorizer"
+    assert any(hasattr(v, "ai_services_vision_parameters") for v in vectorizers), "Should have AI vision parameters"
+
+    # Verify vector search profiles for both text and images
+    profiles = indexes[0].vector_search.profiles
+    assert any(p.name == "images_embedding_profile" for p in profiles), "Should have an image embedding profile"
+    assert any(p.name == "embedding3-profile" for p in profiles), "Should have a text embedding profile"
+
+
+@pytest.mark.asyncio
+async def test_create_agent_field_names_with_acls_and_images(monkeypatch, search_info):
+    """Covers create_agent logic adding oids/groups/images and creating knowledge source (lines 443-447,449,457)."""
+
+    # Provide a SearchInfo configured for agentic retrieval and image search
+    search_info_agent = SearchInfo(
+        endpoint=search_info.endpoint,
+        credential=search_info.credential,
+        index_name=search_info.index_name,
+        use_agentic_retrieval=True,
+        agent_name="test-agent",
+        agent_max_output_tokens=1024,
+        azure_openai_searchagent_model="gpt-4o-mini",
+        azure_openai_searchagent_deployment="gpt-4o-mini",
+        azure_openai_endpoint="https://openaidummy.openai.azure.com/",
+        azure_vision_endpoint="https://visiondummy.cognitiveservices.azure.com/",
+    )
+
+    created_indexes = []
+    knowledge_sources = []
+    agents = []
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index  # pragma: no cover
+
+    async def mock_create_index(self, index):
+        created_indexes.append(index)
+
+    async def mock_create_or_update_knowledge_source(self, knowledge_source, *args, **kwargs):
+        knowledge_sources.append(knowledge_source)
+        return knowledge_source
+
+    async def mock_create_or_update_agent(self, agent, *args, **kwargs):
+        agents.append(agent)
+        return agent
+
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_knowledge_source", mock_create_or_update_knowledge_source)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_agent", mock_create_or_update_agent)
+
+    manager = SearchManager(search_info_agent, use_acls=True, search_images=True)
+
+    # Act
+    await manager.create_index()
+
+    # Assert index created
+    assert len(created_indexes) == 1, "Index should be created before agent creation"
+    # Assert index has images and ACL fields
+    index = created_indexes[0]
+    assert any(field.name == "images" for field in index.fields), "Index should have images field"
+    assert any(field.name == "oids" for field in index.fields), "Index should have oids field"
+    assert any(field.name == "groups" for field in index.fields), "Index should have groups field"
+
+    # Assert knowledge source was created with expected selected fields
+    assert len(knowledge_sources) == 1, "Knowledge source should be created"
+    ks = knowledge_sources[0]
+    selected = ks.search_index_parameters.source_data_select.split(",")
+    # Required baseline fields
+    for f in ["id", "sourcepage", "sourcefile", "content", "category", "oids", "groups", "images/url"]:
+        assert f in selected, f"Missing field {f} in knowledge source selection"
+
+    # Assert agent created referencing the knowledge source
+    assert len(agents) == 1, "Agent should be created"
+    agent = agents[0]
+    assert agent.name == "test-agent"
+    assert any(ks_ref.name == ks.name for ks_ref in agent.knowledge_sources), "Agent should reference knowledge source"

@@ -28,7 +28,10 @@ jobs:
         python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         node_version: ["20.14", "22"]
     steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v5
+          with:
+            # Fetch full history so diff-cover can compute a merge base with origin/main
+            fetch-depth: 0
         - name: Install uv
           uses: astral-sh/setup-uv@v6
           with:
@@ -38,7 +41,7 @@ jobs:
             python-version: ${{ matrix.python_version }}
             activate-environment: true
         - name: Setup node
-          uses: actions/setup-node@v4
+          uses: actions/setup-node@v5
           with:
             node-version: ${{ matrix.node_version }}
         - name: Build frontend
@@ -46,6 +49,8 @@ jobs:
             cd ./app/frontend
             npm install
             npm run build
+        - name: Check i18n translations
+          run: npx -y @lingual/i18n-check --locales app/frontend/src/locales -s en -f i18next -r summary
         - name: Install dependencies
           run: |
             uv pip install -r requirements-dev.txt
@@ -61,7 +66,14 @@ jobs:
           run: black . --check --verbose
         - name: Run Python tests
           if: runner.os != 'Windows'
-          run: pytest -s -vv --cov --cov-fail-under=89
+          run: pytest -s -vv --cov --cov-report=xml --cov-fail-under=90
+        - name: Check diff coverage
+          if: runner.os != 'Windows'
+          run: |
+            BASE_REF="${{ github.base_ref }}"
+            if [ -z "$BASE_REF" ]; then BASE_REF="main"; fi
+            git fetch origin "$BASE_REF:refs/remotes/origin/$BASE_REF"
+            diff-cover coverage.xml --compare-branch="origin/$BASE_REF" --fail-under=90
         - name: Run E2E tests with Playwright
           id: e2e
           if: runner.os != 'Windows'
