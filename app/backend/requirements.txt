@@ -158,7 +158,7 @@ jinja2==3.1.6
     #   flask
     #   prompty
     #   quart
-jiter==0.8.2
+jiter==0.11.0
     # via openai
 markdown-it-py==3.0.0
     # via rich
