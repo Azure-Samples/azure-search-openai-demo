@@ -71,7 +71,7 @@ async def create_or_update_application_with_secret(
         update_azd_env(app_id_env_var, app_id)
         created_app = True
 
-    if object_id and os.getenv(app_secret_env_var, "no-secret") == "no-secret":
+    if object_id and (os.getenv(app_secret_env_var, "no-secret") == "no-secret" or created_app):
         print(f"Adding client secret to {app_id}")
         client_secret = await add_client_secret(graph_client, object_id)
         update_azd_env(app_secret_env_var, client_secret)
