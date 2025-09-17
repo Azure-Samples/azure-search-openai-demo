@@ -10,8 +10,7 @@ import pytest
 # Add the scripts directory to the path so we can import the modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
 
-from auth_init import create_or_update_application_with_secret, update_azd_env
-from auth_common import get_application
+from auth_init import create_or_update_application_with_secret
 
 
 class MockApplication:
