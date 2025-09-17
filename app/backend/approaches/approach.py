@@ -219,7 +219,7 @@ class Approach(ABC):
         if query_text and query_text.startswith("filename:"):
             raw_filename = query_text[len("filename:") :].strip()
             safe_filename = raw_filename.replace("'", "''")
-            filename_filter = f"sourcepage eq '{safe_filename}'"
+            filename_filter = f"sourcefile eq '{safe_filename}'"
             effective_filter = f"{filter} and {filename_filter}" if filter else filename_filter
             results = await self.search_client.search(
                 search_text="",  # empty since we rely solely on filter
