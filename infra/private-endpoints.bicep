@@ -52,8 +52,9 @@ var privateEndpointInfo = [
     resourceId: resourceId
   })
 ]
-module privateEndpoints './core/networking/private-endpoint.bicep' = [for privateEndpointInfo in flatten(privateEndpointInfo): {
-  name: '${privateEndpointInfo.name}-privateendpoint'
+
+module privateEndpoints './core/networking/private-endpoint.bicep' = [for (privateEndpointInfo, i) in flatten(privateEndpointInfo): {
+  name: '${privateEndpointInfo.name}-${i}-privateendpoint'
   params: {
     location: location
     name: '${privateEndpointInfo.name}${abbrs.privateEndpoint}${resourceToken}'
@@ -82,6 +83,7 @@ module monitorDnsZones './core/networking/private-dns-zones.bicep' = [for monito
     virtualNetworkName: vnetName
   }
 }]
+
 // Get blob DNS zone index for monitor private link
 var blobEndpointInfo = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')
 // Assert that blob endpoints exist (required for this application)
