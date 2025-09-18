@@ -66,9 +66,9 @@ def graph_client(monkeypatch):
     # Patch the adapter
     monkeypatch.setattr(client.request_adapter, "send_async", fake_send_async)
 
-    client._test_calls = calls  # type: ignore[attr-defined]
-    client._test_secret_text_value = secret_text_value  # type: ignore[attr-defined]
-    client._test_ids = created_ids  # type: ignore[attr-defined]
+    client._test_calls = calls
+    client._test_secret_text_value = secret_text_value
+    client._test_ids = created_ids
     return client
 
 
@@ -88,7 +88,7 @@ async def test_create_application_missing_ids(graph_client, monkeypatch):
 
     original_send_async = graph.request_adapter.send_async
 
-    async def bad_send_async(request_info, return_type, error_mapping=None):  # type: ignore[unused-argument]
+    async def bad_send_async(request_info, return_type, error_mapping=None):
         url = request_info.url or ""
         method = (
             request_info.http_method.value
@@ -115,7 +115,7 @@ async def test_add_client_secret_success(graph_client):
 @pytest.mark.asyncio
 async def test_add_client_secret_missing_secret(graph_client):
     graph = graph_client
-    graph._test_secret_text_value["value"] = None  # type: ignore
+    graph._test_secret_text_value["value"] = None
     with pytest.raises(ValueError):
         await add_client_secret(graph, "OBJ123")
 
@@ -210,14 +210,14 @@ async def test_create_or_update_application_existing_with_secret(graph_client, m
 def test_client_app_validation_errors():
     # Server app without api
     server_app = server_app_initial(1)
-    server_app.api = None  # type: ignore
+    server_app.api = None
     with pytest.raises(ValueError):
         client_app("server_app_id", server_app, 2)
 
     # Server app with empty scopes
     # attach empty api
     server_app_permission = server_app_permission_setup("server_app")
-    server_app_permission.api.oauth2_permission_scopes = []  # type: ignore
+    server_app_permission.api.oauth2_permission_scopes = []
     with pytest.raises(ValueError):
         client_app("server_app_id", server_app_permission, 2)
 

@@ -97,3 +97,18 @@ To upgrade a particular package in the backend, use the following command, repla
 ```shell
 cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.9 --upgrade-package package-name
 ```
+
+## Checking Python type hints
+
+To check Python type hints, use the following command:
+
+```shell
+cd app/backend && mypy . --config-file=../pyproject.toml
+```
+
+```shell
+cd scripts && mypy . --config-file=../pyproject.toml
+```
+
+Note that we do not currently enforce type hints in the tests folder, as it would require adding a lot of `# type: ignore` comments to the existing tests.
+We only enforce type hints in the main application code and scripts.
