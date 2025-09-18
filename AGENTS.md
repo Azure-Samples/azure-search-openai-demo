@@ -78,14 +78,22 @@ When adding a new feature, add tests for it in the appropriate file.
 If the feature is a UI element, add an e2e test for it.
 If it is an API endpoint, add an app integration test for it.
 If it is a function or method, add a unit test for it.
-Use mocks from conftest.py to mock external services.
+Use mocks from tests/conftest.py to mock external services. Prefer mocking at the HTTP/requests level when possible.
 
 When you're running tests, make sure you activate the .venv virtual environment first:
 
-```bash
+```shell
 source .venv/bin/activate
 ```
 
 ## Sending pull requests
 
 When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md format.
+
+## Upgrading dependencies
+
+To upgrade a particular package in the backend, use the following command, replacing `<package-name>` with the name of the package you want to upgrade:
+
+```shell
+cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.9 --upgrade-package package-name
+```

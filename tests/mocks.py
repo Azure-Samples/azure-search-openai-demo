@@ -34,8 +34,9 @@ MockToken = namedtuple("MockToken", ["token", "expires_on", "value"])
 
 class MockAzureCredential(AsyncTokenCredential):
 
-    async def get_token(self, uri):
-        return MockToken("", 9999999999, "")
+    async def get_token(self, *scopes, **kwargs):  # accept claims, enable_cae, etc.
+        # Return a simple mock token structure with required attributes
+        return MockToken("mock-token", 9999999999, "mock-token")
 
 
 class MockAzureCredentialExpired(AsyncTokenCredential):
@@ -43,7 +44,7 @@ class MockAzureCredentialExpired(AsyncTokenCredential):
     def __init__(self):
         self.access_number = 0
 
-    async def get_token(self, uri):
+    async def get_token(self, *scopes, **kwargs):
         self.access_number += 1
         if self.access_number == 1:
             return MockToken("", 0, "")
