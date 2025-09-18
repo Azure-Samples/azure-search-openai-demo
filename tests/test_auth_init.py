@@ -18,6 +18,11 @@ from scripts.auth_init import (
     server_app_permission_setup,
 )
 
+MOCK_OBJECT_ID = "OBJ123"
+MOCK_APP_ID = "APP123"
+MOCK_SECRET = "SECRET_VALUE"
+EXISTING_MOCK_OBJECT_ID = "OBJ999"
+
 
 @pytest.fixture
 def graph_client(monkeypatch):
@@ -34,22 +39,18 @@ def graph_client(monkeypatch):
         "applications.add_password.post": [],
         "service_principals.post": [],
     }
-    created_ids = {"object_id": "OBJ123", "client_id": "APP123"}
-    secret_text_value = {"value": "SECRET_VALUE"}
+    created_ids = {"object_id": MOCK_OBJECT_ID, "app_id": MOCK_APP_ID}
+    secret_text_value = {"value": MOCK_SECRET}
 
     async def fake_send_async(request_info, return_type, error_mapping=None):
         url = request_info.url or ""
-        method = (
-            request_info.http_method.value
-            if hasattr(request_info.http_method, "value")
-            else str(request_info.http_method)
-        )
+        method = request_info.http_method.value
         if method == "POST" and url.endswith("/applications"):
             body = request_info.content
             calls["applications.post"].append(body)
             return Application(
                 id=created_ids["object_id"],
-                app_id=created_ids["client_id"],
+                app_id=created_ids["app_id"],
                 display_name=getattr(body, "display_name", None),
             )
         if method == "POST" and url.endswith("/servicePrincipals"):
@@ -76,9 +77,9 @@ def graph_client(monkeypatch):
 async def test_create_application_success(graph_client):
     graph = graph_client
     request = server_app_initial(42)
-    object_id, client_id = await create_application(graph, request)
-    assert object_id == "OBJ123"
-    assert client_id == "APP123"
+    object_id, app_id = await create_application(graph, request)
+    assert object_id == MOCK_OBJECT_ID
+    assert app_id == MOCK_APP_ID
     assert len(graph._test_calls["service_principals.post"]) == 1
 
 
@@ -90,11 +91,7 @@ async def test_create_application_missing_ids(graph_client, monkeypatch):
 
     async def bad_send_async(request_info, return_type, error_mapping=None):
         url = request_info.url or ""
-        method = (
-            request_info.http_method.value
-            if hasattr(request_info.http_method, "value")
-            else str(request_info.http_method)
-        )
+        method = request_info.http_method.value
         if method == "POST" and url.endswith("/applications"):
             return Application(id=None, app_id=None)
         return await original_send_async(request_info, return_type, error_mapping)
@@ -107,8 +104,8 @@ async def test_create_application_missing_ids(graph_client, monkeypatch):
 @pytest.mark.asyncio
 async def test_add_client_secret_success(graph_client):
     graph = graph_client
-    secret = await add_client_secret(graph, "OBJ123")
-    assert secret == "SECRET_VALUE"
+    secret = await add_client_secret(graph, MOCK_OBJECT_ID)
+    assert secret == MOCK_SECRET
     assert len(graph._test_calls["applications.add_password.post"]) == 1
 
 
@@ -117,7 +114,7 @@ async def test_add_client_secret_missing_secret(graph_client):
     graph = graph_client
     graph._test_secret_text_value["value"] = None
     with pytest.raises(ValueError):
-        await add_client_secret(graph, "OBJ123")
+        await add_client_secret(graph, MOCK_OBJECT_ID)
 
 
 @pytest.mark.asyncio
@@ -144,8 +141,8 @@ async def test_create_or_update_application_creates_and_adds_secret(graph_client
             request_app=server_app_initial(55),
         )
         assert created is True
-        assert object_id == "OBJ123"
-        assert app_id == "APP123"
+        assert object_id == MOCK_OBJECT_ID
+        assert app_id == MOCK_APP_ID
         # Two updates: app id and secret
         assert {u[0] for u in updates} == {"AZURE_SERVER_APP_ID", "AZURE_SERVER_APP_SECRET"}
     assert len(graph._test_calls["applications.add_password.post"]) == 1
@@ -159,12 +156,11 @@ async def test_create_or_update_application_existing_adds_secret(graph_client, m
     def fake_update_env(name, val):
         updates.append((name, val))
 
-    with mock.patch.dict(os.environ, {"AZURE_SERVER_APP_ID": "APP123"}, clear=True):
+    with mock.patch.dict(os.environ, {"AZURE_SERVER_APP_ID": MOCK_APP_ID}, clear=True):
         monkeypatch.setattr(auth_init, "update_azd_env", fake_update_env)
 
         async def fake_get_application(graph_client, client_id):
-            # Return existing object id for provided app id
-            return "OBJ999"
+            return EXISTING_MOCK_OBJECT_ID
 
         monkeypatch.setattr("scripts.auth_init.get_application", fake_get_application)
         object_id, app_id, created = await create_or_update_application_with_secret(
@@ -174,8 +170,8 @@ async def test_create_or_update_application_existing_adds_secret(graph_client, m
             request_app=server_app_initial(77),
         )
         assert created is False
-        assert object_id == "OBJ999"
-        assert app_id == "APP123"
+        assert object_id == EXISTING_MOCK_OBJECT_ID
+        assert app_id == MOCK_APP_ID
         # Secret should be added since not in env
         assert any(name == "AZURE_SERVER_APP_SECRET" for name, _ in updates)
         # Application patch should have been called
@@ -187,11 +183,11 @@ async def test_create_or_update_application_existing_adds_secret(graph_client, m
 async def test_create_or_update_application_existing_with_secret(graph_client, monkeypatch):
     graph = graph_client
     with mock.patch.dict(
-        os.environ, {"AZURE_SERVER_APP_ID": "APP123", "AZURE_SERVER_APP_SECRET": "EXISTING"}, clear=True
+        os.environ, {"AZURE_SERVER_APP_ID": MOCK_APP_ID, "AZURE_SERVER_APP_SECRET": "EXISTING"}, clear=True
     ):
 
         async def fake_get_application(graph_client, client_id):
-            return "OBJ999"
+            return EXISTING_MOCK_OBJECT_ID
 
         monkeypatch.setattr("scripts.auth_init.get_application", fake_get_application)
         object_id, app_id, created = await create_or_update_application_with_secret(
@@ -201,8 +197,8 @@ async def test_create_or_update_application_existing_with_secret(graph_client, m
             request_app=server_app_initial(88),
         )
         assert created is False
-        assert object_id == "OBJ999"
-        assert app_id == "APP123"
+        assert object_id == EXISTING_MOCK_OBJECT_ID
+        assert app_id == MOCK_APP_ID
         # No secret added
     assert len(graph._test_calls["applications.add_password.post"]) == 0
 
