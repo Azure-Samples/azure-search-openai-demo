@@ -74,18 +74,24 @@ class TeamsResponseAdapter:
         Format a welcome response for Teams.
         """
         try:
+            # Get bot name and description from environment
+            bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
+            bot_description = os.getenv("AGENT_DESCRIPTION", "AI-powered structural engineering document search and analysis assistant")
+            
             card_json = self.teams_components.create_welcome_card()
             attachment = self.teams_components.create_attachment_from_card(card_json)
             
             activity = MessageFactory.attachment(attachment)
-            activity.text = "Welcome to RAG Assistant! I'm here to help you search through your documents and answer questions."
+            activity.text = f"Welcome to {bot_name}! {bot_description}"
             
             return activity
             
         except Exception as e:
             logger.error(f"Error formatting welcome response: {e}")
+            bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
+            bot_description = os.getenv("AGENT_DESCRIPTION", "AI-powered structural engineering document search and analysis assistant")
             return MessageFactory.text(
-                "Welcome to RAG Assistant! I'm here to help you search through your documents and answer questions."
+                f"Welcome to {bot_name}! {bot_description}"
             )
     
     def format_help_response(self, turn_context: TurnContext) -> Activity:
