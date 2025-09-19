@@ -4,6 +4,7 @@ This module contains reusable Teams UI components for the agent.
 """
 
 import logging
+import os
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 
@@ -35,6 +36,10 @@ class TeamsComponents:
     @staticmethod
     def create_welcome_card() -> Dict[str, Any]:
         """Create a welcome card for new users."""
+        # Get bot configuration from environment
+        bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
+        bot_description = os.getenv("AGENT_DESCRIPTION", "AI-powered structural engineering document search and analysis assistant")
+        
         return {
             "type": "AdaptiveCard",
             "version": "1.4",
@@ -45,7 +50,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "🤖 Welcome to RAG Assistant",
+                            "text": f"🏗️ Welcome to {bot_name}",
                             "weight": "Bolder",
                             "size": "Large",
                             "color": "Accent"
@@ -54,7 +59,7 @@ class TeamsComponents:
                 },
                 {
                     "type": "TextBlock",
-                    "text": "I'm your AI-powered document search and chat assistant. I can help you find information from your documents and answer questions.",
+                    "text": f"{bot_description}. I can help you analyze structural engineering documents, answer technical questions, and provide insights from your project files.",
                     "wrap": True,
                     "size": "Medium",
                     "spacing": "Medium"
@@ -65,7 +70,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "🚀 What I can do:",
+                            "text": "🔧 What I can do:",
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent",
@@ -73,28 +78,35 @@ class TeamsComponents:
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Search through your documents",
+                            "text": "• Analyze structural drawings and specifications",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Answer questions about your content",
+                            "text": "• Answer questions about building codes and standards",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Provide summaries and insights",
+                            "text": "• Review calculations and design reports",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Help with follow-up questions",
+                            "text": "• Provide technical insights and recommendations",
+                            "wrap": True,
+                            "size": "Small",
+                            "spacing": "Small"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "• Help with material specifications and load calculations",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
@@ -115,21 +127,21 @@ class TeamsComponents:
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Mention me with @RAG Assistant",
+                            "text": f"• Mention me with @{bot_name}",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Or just type your question directly",
+                            "text": "• Upload structural drawings, specs, or reports",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Upload documents for me to search through",
+                            "text": "• Ask technical questions about your projects",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
@@ -151,8 +163,7 @@ class TeamsComponents:
                     "title": "❓ Help",
                     "data": {
                         "action": "help"
-                    },
-                    "style": "default"
+                    }
                 }
             ]
         }
@@ -160,6 +171,9 @@ class TeamsComponents:
     @staticmethod
     def create_help_card() -> Dict[str, Any]:
         """Create a help card with usage instructions."""
+        # Get bot configuration from environment
+        bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
+        
         return {
             "type": "AdaptiveCard",
             "version": "1.4",
@@ -170,7 +184,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "❓ RAG Assistant Help",
+                            "text": f"❓ {bot_name} Help",
                             "weight": "Bolder",
                             "size": "Large",
                             "color": "Accent"
@@ -183,7 +197,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "📚 Document Search",
+                            "text": "📐 Structural Analysis",
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent",
@@ -191,21 +205,21 @@ class TeamsComponents:
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Ask questions about your documents",
+                            "text": "• Analyze structural drawings and specifications",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Search for specific information",
+                            "text": "• Review load calculations and design reports",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Get summaries and insights",
+                            "text": "• Check compliance with building codes",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
@@ -218,7 +232,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "💬 Chat Features",
+                            "text": "💬 Technical Chat",
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent",
@@ -226,21 +240,21 @@ class TeamsComponents:
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Have conversations about your documents",
+                            "text": "• Ask questions about structural engineering concepts",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Ask follow-up questions",
+                            "text": "• Get explanations of design principles",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• Get detailed explanations",
+                            "text": "• Request material and code recommendations",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
@@ -261,21 +275,21 @@ class TeamsComponents:
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• 'What are the main benefits mentioned in the policy document?'",
+                            "text": "• 'What are the load requirements for this beam design?'",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• 'Can you summarize the key points from the meeting notes?'",
+                            "text": "• 'Can you review this foundation calculation?'",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "• 'Find information about the new procedures'",
+                            "text": "• 'What building code applies to this steel structure?'",
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
@@ -294,11 +308,10 @@ class TeamsComponents:
                 },
                 {
                     "type": "Action.Submit",
-                    "title": "📚 Upload Document",
+                    "title": "📐 Upload Drawing",
                     "data": {
                         "action": "upload_document"
-                    },
-                    "style": "default"
+                    }
                 }
             ]
         }

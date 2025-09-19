@@ -40,13 +40,13 @@ async def test_teams_components():
         # Test welcome card
         welcome_card = TeamsComponents.create_welcome_card()
         assert welcome_card["type"] == "AdaptiveCard"
-        assert "Welcome to RAG Assistant" in welcome_card["body"][0]["items"][0]["text"]
+        assert "Welcome to Structural Engineering Assistant" in welcome_card["body"][0]["items"][0]["text"]
         logger.info("✅ Welcome card created successfully")
         
         # Test help card
         help_card = TeamsComponents.create_help_card()
         assert help_card["type"] == "AdaptiveCard"
-        assert "RAG Assistant Help" in help_card["body"][0]["items"][0]["text"]
+        assert "Structural Engineering Assistant Help" in help_card["body"][0]["items"][0]["text"]
         logger.info("✅ Help card created successfully")
         
         # Test error card

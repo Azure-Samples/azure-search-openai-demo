@@ -4,6 +4,7 @@ This adapter handles Teams-specific UI components and formatting.
 """
 
 import logging
+import os
 from typing import Dict, Any, List, Optional
 
 from botbuilder.core import TurnContext, MessageFactory
@@ -402,9 +403,9 @@ class TeamsResponseAdapter:
         Create suggested actions for Teams.
         """
         return self.teams_components.create_suggested_actions([
-            "🔍 Search Documents",
-            "📋 Get Summary",
-            "❓ Ask Question",
-            "📚 Upload File",
+            "🔍 Analyze Drawing",
+            "📐 Review Calculation",
+            "❓ Ask Technical Question",
+            "📋 Upload Specification",
             "❓ Help"
         ])
