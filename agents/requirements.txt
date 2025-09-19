@@ -1,9 +1,6 @@
-# Microsoft 365 Agents SDK and Bot Framework dependencies
-microsoft-365-agents-sdk
+# Bot Framework dependencies
 botbuilder-core>=4.15.0
 botbuilder-schema>=4.15.0
-botbuilder-adapter-teams>=4.15.0
-botbuilder-adapter-azure>=4.15.0
 
 # Web framework
 quart>=0.18.0
