@@ -1,8 +1,42 @@
 # Microsoft 365 RAG Agent
 
-This directory contains the Microsoft 365 Agents SDK integration for the RAG chat application. The agent provides AI-powered document search and chat capabilities across Microsoft 365 channels including Teams, Copilot, and web chat.
+This directory contains the Microsoft 365 Agents SDK client that replaces the web frontend. The agent provides AI-powered document search and chat capabilities across Microsoft 365 channels including Teams, Copilot, and web chat by calling the existing backend API.
 
 ## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Microsoft 365 Channels                   │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+│  │    Teams    │  │   Copilot   │  │  Web Chat   │        │
+│  └─────────────┘  └─────────────┘  └─────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│              Microsoft 365 Agents SDK                      │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              Agent Application                      │   │
+│  │  • Message Handlers                                │   │
+│  │  • Channel Adapters                                │   │
+│  │  • Response Formatting                             │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Existing Backend                        │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              Quart API Server                       │   │
+│  │  • /chat endpoint                                  │   │
+│  │  • /ask endpoint                                   │   │
+│  │  • RAG Approaches                                  │   │
+│  │  • Azure Services                                  │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Project Structure
 
 ```
 agents/
@@ -11,7 +45,7 @@ agents/
 ├── config/
 │   └── agent_config.py    # Configuration management
 ├── services/
-│   ├── rag_service.py     # RAG service integration
+│   ├── rag_service.py     # Backend API client
 │   └── auth_service.py    # Authentication service
 ├── handlers/
 │   ├── message_handler.py # General message handler
@@ -24,11 +58,12 @@ agents/
 ## Features
 
 - **Multi-Channel Support**: Works with Teams, Copilot, and web chat
-- **RAG Integration**: Leverages existing RAG capabilities
+- **Backend Integration**: Calls existing RAG backend API
 - **Authentication**: Microsoft 365 authentication and authorization
 - **Rich Responses**: Adaptive cards, citations, and interactive elements
 - **Conversation State**: Maintains context across conversations
 - **Error Handling**: Robust error handling and logging
+- **No Duplication**: Reuses existing backend logic and services
 
 ## Setup
 
@@ -50,8 +85,7 @@ cp .env.example .env
 
 - **Bot Framework**: App ID and password from Azure Bot Service
 - **Microsoft 365**: Tenant ID, client ID, and client secret
-- **Azure OpenAI**: Endpoint, API key, and deployment name
-- **Azure AI Search**: Endpoint, key, and index name
+- **Backend API**: URL of the existing RAG backend (e.g., http://localhost:50505)
 
 ### 4. Run the Agent
 
@@ -70,12 +104,7 @@ python main.py
 | `AZURE_TENANT_ID` | Microsoft 365 tenant ID | Yes |
 | `AZURE_CLIENT_ID` | Microsoft 365 client ID | Yes |
 | `AZURE_CLIENT_SECRET` | Microsoft 365 client secret | Yes |
-| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint | Yes |
-| `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | Yes |
-| `AZURE_OPENAI_CHATGPT_DEPLOYMENT` | ChatGPT deployment name | Yes |
-| `AZURE_SEARCH_ENDPOINT` | Azure AI Search endpoint | Yes |
-| `AZURE_SEARCH_KEY` | Azure AI Search key | Yes |
-| `AZURE_SEARCH_INDEX` | Search index name | Yes |
+| `BACKEND_URL` | URL of the existing RAG backend | Yes |
 
 ### Agent Settings
 
@@ -116,19 +145,19 @@ python main.py
 3. Configure Teams channel
 4. Test in Teams
 
-## Integration with Main App
+## Integration with Backend
 
-The agent integrates with the existing RAG application by:
+The agent integrates with the existing RAG backend by:
 
-1. **Shared Services**: Uses the same Azure OpenAI and Search services
-2. **Authentication**: Leverages existing authentication system
-3. **RAG Logic**: Integrates with existing RAG approaches
-4. **Configuration**: Shares configuration with main application
+1. **API Calls**: Calls existing `/chat` and `/chat/stream` endpoints
+2. **No Duplication**: Reuses all existing RAG logic and services
+3. **Authentication**: Passes through user context to backend
+4. **Response Formatting**: Adapts backend responses for Microsoft 365 channels
 
 ## Next Steps
 
-1. **Phase 2**: Integrate with existing RAG approaches
-2. **Phase 3**: Add Teams-specific features
+1. **Phase 2**: Test backend integration and response formatting
+2. **Phase 3**: Add Teams-specific features (adaptive cards, file handling)
 3. **Phase 4**: Implement Copilot integration
 4. **Phase 5**: Add advanced features and monitoring
 

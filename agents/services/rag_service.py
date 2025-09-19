@@ -1,17 +1,14 @@
 """
 RAG Service for Microsoft 365 Agent.
-This service integrates the existing RAG functionality with the agent framework.
+This service calls the existing backend API instead of duplicating RAG logic.
 """
 
 import asyncio
 import logging
 from typing import Dict, Any, List, Optional, AsyncGenerator
 from dataclasses import dataclass
-
-from openai import AsyncOpenAI
-from azure.search.documents.aio import SearchClient
-from azure.search.documents.indexes.aio import SearchIndexClient
-from azure.identity.aio import DefaultAzureCredential
+import aiohttp
+import json
 
 from config.agent_config import AgentConfig
 
@@ -42,37 +39,25 @@ class RAGResponse:
 
 class RAGService:
     """
-    RAG Service that integrates existing RAG functionality with the agent framework.
-    This service acts as a bridge between the Microsoft 365 Agent and the existing RAG system.
+    RAG Service that calls the existing backend API.
+    This service acts as a bridge between the Microsoft 365 Agent and the existing backend.
     """
     
     def __init__(self, config: AgentConfig):
         self.config = config
-        self._openai_client: Optional[AsyncOpenAI] = None
-        self._search_client: Optional[SearchClient] = None
-        self._search_index_client: Optional[SearchIndexClient] = None
+        self._http_session: Optional[aiohttp.ClientSession] = None
+        self._backend_url = config.backend_url
     
     async def initialize(self) -> None:
-        """Initialize the RAG service with Azure clients."""
+        """Initialize the RAG service with HTTP client."""
         try:
-            # Initialize OpenAI client
-            self._openai_client = AsyncOpenAI(
-                api_key=self.config.azure_openai_api_key,
-                azure_endpoint=self.config.azure_openai_endpoint,
-                api_version="2024-10-21"
-            )
-            
-            # Initialize Azure Search clients
-            credential = DefaultAzureCredential()
-            self._search_client = SearchClient(
-                endpoint=self.config.azure_search_endpoint,
-                index_name=self.config.azure_search_index,
-                credential=credential
-            )
-            
-            self._search_index_client = SearchIndexClient(
-                endpoint=self.config.azure_search_endpoint,
-                credential=credential
+            # Initialize HTTP session for calling backend
+            self._http_session = aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=30),
+                headers={
+                    "Content-Type": "application/json",
+                    "User-Agent": "Microsoft365Agent/1.0"
+                }
             )
             
             logger.info("RAG Service initialized successfully")
@@ -83,14 +68,13 @@ class RAGService:
     
     async def process_query(self, request: RAGRequest) -> RAGResponse:
         """
-        Process a RAG query and return a response.
-        This method integrates with the existing RAG approaches.
+        Process a RAG query by calling the existing backend API.
         """
         try:
-            if not self._openai_client or not self._search_client:
+            if not self._http_session:
                 await self.initialize()
             
-            # Convert conversation history to the format expected by existing approaches
+            # Convert conversation history to the format expected by backend
             messages = self._format_messages(request.message, request.conversation_history)
             
             # Create context for the RAG processing
@@ -100,9 +84,8 @@ class RAGService:
                 **(request.context or {})
             }
             
-            # For now, we'll use a simplified RAG approach
-            # In the next phase, we'll integrate with the existing Approach classes
-            response = await self._simple_rag_query(messages, context)
+            # Call the existing backend /chat endpoint
+            response = await self._call_backend_chat(messages, context)
             
             return response
             
@@ -117,13 +100,13 @@ class RAGService:
     
     async def process_query_stream(self, request: RAGRequest) -> AsyncGenerator[Dict[str, Any], None]:
         """
-        Process a RAG query with streaming response.
+        Process a RAG query with streaming response by calling backend.
         """
         try:
-            if not self._openai_client or not self._search_client:
+            if not self._http_session:
                 await self.initialize()
             
-            # Convert conversation history to the format expected by existing approaches
+            # Convert conversation history to the format expected by backend
             messages = self._format_messages(request.message, request.conversation_history)
             
             # Create context for the RAG processing
@@ -133,8 +116,8 @@ class RAGService:
                 **(request.context or {})
             }
             
-            # Stream the response
-            async for chunk in self._simple_rag_query_stream(messages, context):
+            # Stream the response from backend
+            async for chunk in self._call_backend_chat_stream(messages, context):
                 yield chunk
                 
         except Exception as e:
@@ -164,71 +147,81 @@ class RAGService:
         
         return messages
     
-    async def _simple_rag_query(self, messages: List[Dict[str, str]], context: Dict[str, Any]) -> RAGResponse:
+    async def _call_backend_chat(self, messages: List[Dict[str, str]], context: Dict[str, Any]) -> RAGResponse:
         """
-        Simplified RAG query implementation.
-        This will be replaced with integration to existing Approach classes in the next phase.
+        Call the existing backend /chat endpoint.
         """
         try:
-            # For now, we'll use a simple OpenAI completion
-            # This will be replaced with the full RAG implementation
-            response = await self._openai_client.chat.completions.create(
-                model=self.config.azure_openai_deployment,
-                messages=[
-                    {"role": "system", "content": "You are a helpful AI assistant that can answer questions about documents. Provide accurate, helpful responses based on the available information."},
-                    *messages
-                ],
-                max_tokens=1000,
-                temperature=0.3
-            )
+            # Prepare the request payload
+            payload = {
+                "messages": messages,
+                "context": context,
+                "session_state": None  # Will be managed by the agent
+            }
             
-            answer = response.choices[0].message.content or "I couldn't generate a response."
-            
-            return RAGResponse(
-                answer=answer,
-                sources=[],
-                citations=[],
-                thoughts=[{"title": "Response Generated", "description": "Generated response using OpenAI"}],
-                token_usage={
-                    "prompt_tokens": response.usage.prompt_tokens,
-                    "completion_tokens": response.usage.completion_tokens,
-                    "total_tokens": response.usage.total_tokens
-                } if response.usage else None,
-                model_info={
-                    "model": self.config.azure_openai_deployment,
-                    "temperature": "0.3"
-                }
-            )
-            
+            # Make the request to the backend
+            async with self._http_session.post(
+                f"{self._backend_url}/chat",
+                json=payload
+            ) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    # Convert backend response to RAGResponse
+                    return RAGResponse(
+                        answer=data.get("answer", ""),
+                        sources=data.get("data_points", {}).get("text", []),
+                        citations=data.get("data_points", {}).get("citations", []),
+                        thoughts=data.get("thoughts", []),
+                        token_usage=data.get("token_usage"),
+                        model_info=data.get("model_info")
+                    )
+                else:
+                    error_text = await response.text()
+                    logger.error(f"Backend API error {response.status}: {error_text}")
+                    raise Exception(f"Backend API error: {response.status}")
+                    
         except Exception as e:
-            logger.error(f"Error in simple RAG query: {e}")
+            logger.error(f"Error calling backend chat API: {e}")
             raise
     
-    async def _simple_rag_query_stream(self, messages: List[Dict[str, str]], context: Dict[str, Any]) -> AsyncGenerator[Dict[str, Any], None]:
+    async def _call_backend_chat_stream(self, messages: List[Dict[str, str]], context: Dict[str, Any]) -> AsyncGenerator[Dict[str, Any], None]:
         """
-        Simplified streaming RAG query implementation.
+        Call the existing backend /chat/stream endpoint.
         """
         try:
-            stream = await self._openai_client.chat.completions.create(
-                model=self.config.azure_openai_deployment,
-                messages=[
-                    {"role": "system", "content": "You are a helpful AI assistant that can answer questions about documents. Provide accurate, helpful responses based on the available information."},
-                    *messages
-                ],
-                max_tokens=1000,
-                temperature=0.3,
-                stream=True
-            )
+            # Prepare the request payload
+            payload = {
+                "messages": messages,
+                "context": context,
+                "session_state": None  # Will be managed by the agent
+            }
             
-            async for chunk in stream:
-                if chunk.choices and chunk.choices[0].delta.content:
+            # Make the streaming request to the backend
+            async with self._http_session.post(
+                f"{self._backend_url}/chat/stream",
+                json=payload
+            ) as response:
+                if response.status == 200:
+                    async for line in response.content:
+                        if line:
+                            try:
+                                # Parse NDJSON line
+                                chunk_data = json.loads(line.decode('utf-8'))
+                                yield chunk_data
+                            except json.JSONDecodeError:
+                                # Skip invalid JSON lines
+                                continue
+                else:
+                    error_text = await response.text()
+                    logger.error(f"Backend streaming API error {response.status}: {error_text}")
                     yield {
-                        "type": "content",
-                        "content": chunk.choices[0].delta.content
+                        "type": "error",
+                        "content": f"Backend API error: {response.status}"
                     }
-            
+                    
         except Exception as e:
-            logger.error(f"Error in streaming RAG query: {e}")
+            logger.error(f"Error calling backend streaming API: {e}")
             yield {
                 "type": "error",
                 "content": f"Error: {str(e)}"
@@ -236,9 +229,5 @@ class RAGService:
     
     async def close(self) -> None:
         """Close the RAG service and clean up resources."""
-        if self._openai_client:
-            await self._openai_client.close()
-        if self._search_client:
-            await self._search_client.close()
-        if self._search_index_client:
-            await self._search_index_client.close()
+        if self._http_session:
+            await self._http_session.close()

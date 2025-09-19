@@ -21,6 +21,9 @@ class AgentConfig:
     client_id: str
     client_secret: str
     
+    # Backend API Configuration
+    backend_url: str
+    
     # Azure Services (reuse from existing app)
     azure_openai_endpoint: str
     azure_openai_api_key: str
@@ -53,6 +56,9 @@ class AgentConfig:
             client_id=os.getenv("AZURE_CLIENT_ID", ""),
             client_secret=os.getenv("AZURE_CLIENT_SECRET", ""),
             
+            # Backend API
+            backend_url=os.getenv("BACKEND_URL", "http://localhost:50505"),
+            
             # Azure Services
             azure_openai_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT", ""),
             azure_openai_api_key=os.getenv("AZURE_OPENAI_API_KEY", ""),
@@ -77,8 +83,7 @@ class AgentConfig:
         """Validate configuration."""
         required_fields = [
             "app_id", "app_password", "tenant_id", "client_id", "client_secret",
-            "azure_openai_endpoint", "azure_openai_api_key", "azure_openai_deployment",
-            "azure_search_endpoint", "azure_search_key", "azure_search_index"
+            "backend_url"
         ]
         
         missing_fields = []

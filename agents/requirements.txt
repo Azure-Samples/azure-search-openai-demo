@@ -9,10 +9,8 @@ botbuilder-adapter-azure>=4.15.0
 quart>=0.18.0
 quart-cors>=0.7.0
 
-# Azure services (reuse from main app)
-azure-identity>=1.17.0
-azure-search-documents>=11.7.0
-openai>=1.3.7
+# HTTP client for calling backend
+aiohttp>=3.8.0
 
 # Authentication
 msal>=1.24.0
