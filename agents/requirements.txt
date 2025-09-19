@@ -1,6 +1,7 @@
 # Bot Framework dependencies
 botbuilder-core>=4.15.0
 botbuilder-schema>=4.15.0
+botbuilder-adapters-teams>=4.15.0
 
 # Web framework
 quart>=0.18.0

@@ -14,6 +14,8 @@ from botbuilder.adapters.teams import TeamsActivityHandler, TeamsInfo
 from services.rag_service import RAGService, RAGRequest, RAGResponse
 from services.auth_service import AuthService
 from adapters.response_adapter import ResponseAdapter
+from adapters.teams_response_adapter import TeamsResponseAdapter
+from components.teams_components import TeamsComponents, TeamsCardConfig
 
 
 logger = logging.getLogger(__name__)
@@ -40,6 +42,8 @@ class TeamsHandler(TeamsActivityHandler):
         self.rag_service = rag_service
         self.auth_service = auth_service
         self.response_adapter = ResponseAdapter()
+        self.teams_response_adapter = TeamsResponseAdapter()
+        self.teams_components = TeamsComponents()
     
     async def handle_message(
         self,
@@ -52,6 +56,12 @@ class TeamsHandler(TeamsActivityHandler):
         Handle an incoming Teams message and generate a response.
         """
         try:
+            # Check if this is an adaptive card action
+            if turn_context.activity.value:
+                return await self._handle_adaptive_card_action(
+                    turn_context, conversation_data, user_data, auth_claims
+                )
+            
             # Check if the bot was mentioned
             if await self._is_bot_mentioned(turn_context):
                 # Remove the mention from the message
@@ -110,6 +120,94 @@ class TeamsHandler(TeamsActivityHandler):
             return MessageFactory.text(
                 "I'm sorry, I encountered an error processing your request. Please try again."
             )
+    
+    async def _handle_adaptive_card_action(
+        self,
+        turn_context: TurnContext,
+        conversation_data: ConversationData,
+        user_data: Dict[str, Any],
+        auth_claims: Dict[str, Any]
+    ) -> Optional[Activity]:
+        """
+        Handle adaptive card button actions.
+        """
+        try:
+            action_data = turn_context.activity.value
+            action_type = action_data.get("action", "")
+            
+            if action_type == "follow_up":
+                return await self._handle_follow_up_action(
+                    turn_context, conversation_data, user_data, auth_claims
+                )
+            elif action_type == "search_related":
+                return await self._handle_search_related_action(
+                    turn_context, conversation_data, user_data, auth_claims
+                )
+            elif action_type == "summarize":
+                return await self._handle_summarize_action(
+                    turn_context, conversation_data, user_data, auth_claims
+                )
+            else:
+                return MessageFactory.text(
+                    f"I received an action '{action_type}' but I'm not sure how to handle it. Please try asking me a question directly."
+                )
+                
+        except Exception as e:
+            logger.error(f"Error handling adaptive card action: {e}")
+            return MessageFactory.text(
+                "I encountered an error processing your action. Please try asking me a question directly."
+            )
+    
+    async def _handle_follow_up_action(
+        self,
+        turn_context: TurnContext,
+        conversation_data: ConversationData,
+        user_data: Dict[str, Any],
+        auth_claims: Dict[str, Any]
+    ) -> Activity:
+        """Handle follow-up action."""
+        return MessageFactory.text(
+            "I'd be happy to provide more details! What specific aspect would you like me to elaborate on? You can ask me to:\n\n"
+            "• Explain any part in more detail\n"
+            "• Provide examples\n"
+            "• Compare different options\n"
+            "• Answer related questions\n\n"
+            "Just type your question and I'll help you out!"
+        )
+    
+    async def _handle_search_related_action(
+        self,
+        turn_context: TurnContext,
+        conversation_data: ConversationData,
+        user_data: Dict[str, Any],
+        auth_claims: Dict[str, Any]
+    ) -> Activity:
+        """Handle search related action."""
+        return MessageFactory.text(
+            "I can help you find more information about this topic! Try asking me:\n\n"
+            "• 'What are the requirements for...?'\n"
+            "• 'How do I apply for...?'\n"
+            "• 'What are the steps to...?'\n"
+            "• 'Tell me more about...'\n\n"
+            "Or just describe what you're looking for and I'll search through the documents for you!"
+        )
+    
+    async def _handle_summarize_action(
+        self,
+        turn_context: TurnContext,
+        conversation_data: ConversationData,
+        user_data: Dict[str, Any],
+        auth_claims: Dict[str, Any]
+    ) -> Activity:
+        """Handle summarize action."""
+        return MessageFactory.text(
+            "I can help you summarize information! You can ask me to:\n\n"
+            "• 'Summarize the key points'\n"
+            "• 'Give me a brief overview'\n"
+            "• 'What are the main takeaways?'\n"
+            "• 'Create a bullet point summary'\n\n"
+            "Just let me know what you'd like me to summarize!"
+        )
     
     async def _is_bot_mentioned(self, turn_context: TurnContext) -> bool:
         """Check if the bot was mentioned in the message."""
@@ -196,60 +294,186 @@ class TeamsHandler(TeamsActivityHandler):
         conversation_data: ConversationData
     ) -> Activity:
         """
-        Create an adaptive card response for Teams.
+        Create an adaptive card response for Teams with rich formatting.
         """
         try:
-            # Create adaptive card JSON
+            # Create adaptive card JSON with enhanced styling
             card_json = {
                 "type": "AdaptiveCard",
                 "version": "1.4",
                 "body": [
                     {
+                        "type": "Container",
+                        "style": "emphasis",
+                        "items": [
+                            {
+                                "type": "TextBlock",
+                                "text": "🤖 RAG Assistant",
+                                "weight": "Bolder",
+                                "size": "Medium",
+                                "color": "Accent"
+                            }
+                        ]
+                    },
+                    {
                         "type": "TextBlock",
                         "text": rag_response.answer,
                         "wrap": True,
-                        "size": "Medium"
+                        "size": "Medium",
+                        "spacing": "Medium"
                     }
                 ],
                 "actions": [
                     {
                         "type": "Action.Submit",
-                        "title": "Ask Follow-up",
+                        "title": "💬 Ask Follow-up",
                         "data": {
                             "action": "follow_up",
                             "conversation_id": conversation_data.conversation_id
-                        }
+                        },
+                        "style": "positive"
+                    },
+                    {
+                        "type": "Action.Submit",
+                        "title": "🔍 Search Related",
+                        "data": {
+                            "action": "search_related",
+                            "conversation_id": conversation_data.conversation_id
+                        },
+                        "style": "default"
+                    },
+                    {
+                        "type": "Action.Submit",
+                        "title": "📋 Summarize",
+                        "data": {
+                            "action": "summarize",
+                            "conversation_id": conversation_data.conversation_id
+                        },
+                        "style": "default"
                     }
                 ]
             }
             
-            # Add sources if available
+            # Add sources section if available
             if rag_response.sources:
-                sources_text = "**Sources:**\n"
+                sources_container = {
+                    "type": "Container",
+                    "style": "default",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "📚 Sources",
+                            "weight": "Bolder",
+                            "size": "Small",
+                            "color": "Accent",
+                            "spacing": "Medium"
+                        }
+                    ]
+                }
+                
                 for i, source in enumerate(rag_response.sources[:3], 1):
-                    sources_text += f"{i}. {source.get('title', 'Unknown Source')}\n"
+                    source_text = source.get('title', 'Unknown Source')
+                    source_url = source.get('url', '')
+                    
+                    if source_url:
+                        sources_container["items"].append({
+                            "type": "TextBlock",
+                            "text": f"{i}. [{source_text}]({source_url})",
+                            "wrap": True,
+                            "size": "Small",
+                            "spacing": "Small"
+                        })
+                    else:
+                        sources_container["items"].append({
+                            "type": "TextBlock",
+                            "text": f"{i}. {source_text}",
+                            "wrap": True,
+                            "size": "Small",
+                            "spacing": "Small"
+                        })
                 
-                card_json["body"].append({
-                    "type": "TextBlock",
-                    "text": sources_text,
-                    "wrap": True,
-                    "size": "Small",
-                    "color": "Accent"
-                })
+                card_json["body"].append(sources_container)
             
-            # Add citations if available
+            # Add citations section if available
             if rag_response.citations:
-                citations_text = "**Citations:**\n"
-                for i, citation in enumerate(rag_response.citations[:3], 1):
-                    citations_text += f"{i}. {citation}\n"
+                citations_container = {
+                    "type": "Container",
+                    "style": "default",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "🔗 Citations",
+                            "weight": "Bolder",
+                            "size": "Small",
+                            "color": "Accent",
+                            "spacing": "Medium"
+                        }
+                    ]
+                }
                 
-                card_json["body"].append({
-                    "type": "TextBlock",
-                    "text": citations_text,
-                    "wrap": True,
-                    "size": "Small",
-                    "color": "Default"
-                })
+                for i, citation in enumerate(rag_response.citations[:3], 1):
+                    citations_container["items"].append({
+                        "type": "TextBlock",
+                        "text": f"{i}. {citation}",
+                        "wrap": True,
+                        "size": "Small",
+                        "spacing": "Small"
+                    })
+                
+                card_json["body"].append(citations_container)
+            
+            # Add thoughts section if available (for transparency)
+            if rag_response.thoughts:
+                thoughts_container = {
+                    "type": "Container",
+                    "style": "default",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "💭 Process",
+                            "weight": "Bolder",
+                            "size": "Small",
+                            "color": "Accent",
+                            "spacing": "Medium"
+                        }
+                    ]
+                }
+                
+                for thought in rag_response.thoughts[:2]:  # Limit to 2 thoughts
+                    thoughts_container["items"].append({
+                        "type": "TextBlock",
+                        "text": f"• {thought.get('title', 'Step')}: {thought.get('description', '')}",
+                        "wrap": True,
+                        "size": "Small",
+                        "spacing": "Small"
+                    })
+                
+                card_json["body"].append(thoughts_container)
+            
+            # Add token usage if available
+            if rag_response.token_usage:
+                usage_container = {
+                    "type": "Container",
+                    "style": "default",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "📊 Usage",
+                            "weight": "Bolder",
+                            "size": "Small",
+                            "color": "Accent",
+                            "spacing": "Medium"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": f"Tokens: {rag_response.token_usage.get('total_tokens', 'N/A')} (Prompt: {rag_response.token_usage.get('prompt_tokens', 'N/A')}, Completion: {rag_response.token_usage.get('completion_tokens', 'N/A')})",
+                            "wrap": True,
+                            "size": "Small",
+                            "spacing": "Small"
+                        }
+                    ]
+                }
+                card_json["body"].append(usage_container)
             
             # Create attachment
             attachment = Attachment(
