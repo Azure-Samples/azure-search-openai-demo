@@ -47,7 +47,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-02-01' = {
     properties: {
       privateDnsZoneConfigs: !empty(dnsZoneId) ? [
         {
-          name: 'config1'
+          name: 'config-${name}-${dnsZoneId}'
           properties: {
             privateDnsZoneId: dnsZoneId
           }
