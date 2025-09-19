@@ -1,6 +1,7 @@
 # Bot Framework dependencies
 botbuilder-core>=4.15.0
 botbuilder-schema>=4.15.0
+botbuilder-adapters-teams>=4.15.0
 
 # Web framework
 quart>=0.18.0
@@ -18,3 +19,14 @@ typing-extensions>=4.0.0
 
 # Logging and monitoring
 azure-monitor-opentelemetry>=1.6.0
+
+# Bot Framework internal dependencies
+botframework-connector==4.17.0
+botframework-streaming==4.17.0
+jsonpickle<1.5,>=1.2
+
+# Testing dependencies
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
