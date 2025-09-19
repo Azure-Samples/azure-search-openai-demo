@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 from botbuilder.core import TurnContext, MessageFactory
 from botbuilder.schema import Activity, Attachment, CardAction, ActionTypes
-from botbuilder.adapters.teams import TeamsActivityHandler, TeamsInfo
+# from botbuilder.adapters.teams import TeamsActivityHandler, TeamsInfo
 
 from services.rag_service import RAGService, RAGRequest, RAGResponse
 from services.auth_service import AuthService
@@ -32,7 +32,7 @@ class ConversationData:
     last_activity: Optional[str] = None
 
 
-class TeamsHandler(TeamsActivityHandler):
+class TeamsHandler:
     """
     Teams-specific handler that extends the base message handler
     with Teams-specific functionality like adaptive cards, mentions, and file handling.
