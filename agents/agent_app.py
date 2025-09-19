@@ -29,7 +29,7 @@ from botbuilder.adapters.azure import AzureServiceClientCredentials
 
 from config.agent_config import AgentConfig
 from services.rag_service import RAGService
-from services.auth_service import AuthService
+from services.auth_service import AuthService, UserClaims
 from handlers.message_handler import MessageHandler
 from handlers.teams_handler import TeamsHandler
 from adapters.response_adapter import ResponseAdapter
@@ -99,8 +99,33 @@ class RAGAgent(ActivityHandler):
             conversation_data.message_count += 1
             conversation_data.last_activity = turn_context.activity.text
             
-            # Get user authentication claims
-            auth_claims = await self.auth_service.get_user_claims(turn_context)
+            # Get enhanced user authentication claims
+            user_claims = await self.auth_service.get_enhanced_user_claims(turn_context)
+            auth_claims = {
+                "oid": user_claims.user_id,
+                "name": user_claims.user_name,
+                "email": user_claims.email,
+                "tenant_id": user_claims.tenant_id,
+                "groups": user_claims.groups,
+                "roles": user_claims.roles,
+                "is_authenticated": user_claims.is_authenticated,
+                "additional_claims": user_claims.additional_claims
+            }
+            
+            # Check user permissions
+            if not user_claims.is_authenticated:
+                await turn_context.send_activity(
+                    MessageFactory.text("I'm sorry, I need to verify your identity before I can help you. Please ensure you're properly authenticated.")
+                )
+                return
+            
+            # Check if user has basic read permission
+            has_read_permission = await self.auth_service.check_user_permission(user_claims, "read_documents")
+            if not has_read_permission:
+                await turn_context.send_activity(
+                    MessageFactory.text("I'm sorry, you don't have permission to access the document search functionality. Please contact your administrator.")
+                )
+                return
             
             # Process the message based on channel
             if turn_context.activity.channel_id == "msteams":
