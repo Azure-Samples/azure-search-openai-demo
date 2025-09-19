@@ -4,7 +4,6 @@ This adapter handles Teams-specific UI components and formatting.
 """
 
 import logging
-import os
 from typing import Dict, Any, List, Optional
 
 from botbuilder.core import TurnContext, MessageFactory
@@ -12,6 +11,7 @@ from botbuilder.schema import Activity, ActivityTypes, Attachment, CardAction, A
 
 from services.rag_service import RAGResponse
 from components.teams_components import TeamsComponents, TeamsCardConfig
+from constants.teams_text import TeamsTextConstants
 
 
 logger = logging.getLogger(__name__)
@@ -75,25 +75,17 @@ class TeamsResponseAdapter:
         Format a welcome response for Teams.
         """
         try:
-            # Get bot name and description from environment
-            bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
-            bot_description = os.getenv("AGENT_DESCRIPTION", "AI-powered structural engineering document search and analysis assistant")
-            
             card_json = self.teams_components.create_welcome_card()
             attachment = self.teams_components.create_attachment_from_card(card_json)
             
             activity = MessageFactory.attachment(attachment)
-            activity.text = f"Welcome to {bot_name}! {bot_description}"
+            activity.text = f"Welcome to {TeamsTextConstants.get_bot_name()}! {TeamsTextConstants.get_bot_description()}"
             
             return activity
             
         except Exception as e:
             logger.error(f"Error formatting welcome response: {e}")
-            bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
-            bot_description = os.getenv("AGENT_DESCRIPTION", "AI-powered structural engineering document search and analysis assistant")
-            return MessageFactory.text(
-                f"Welcome to {bot_name}! {bot_description}. I can help you analyze structural engineering documents, answer technical questions, and provide insights from your project files."
-            )
+            return MessageFactory.text(TeamsTextConstants.format_welcome_fallback())
     
     def format_help_response(self, turn_context: TurnContext) -> Activity:
         """
@@ -104,21 +96,13 @@ class TeamsResponseAdapter:
             attachment = self.teams_components.create_attachment_from_card(card_json)
             
             activity = MessageFactory.attachment(attachment)
-            bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
-            activity.text = f"Here's how to use {bot_name}:"
+            activity.text = TeamsTextConstants.format_help_main_text()
             
             return activity
             
         except Exception as e:
             logger.error(f"Error formatting help response: {e}")
-            bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
-            return MessageFactory.text(
-                f"Here's how to use {bot_name}:\n\n"
-                f"• Mention me with @{bot_name}\n"
-                "• Upload structural drawings, specs, or reports\n"
-                "• Ask technical questions about your projects\n"
-                "• Use the buttons in my responses for quick actions"
-            )
+            return MessageFactory.text(TeamsTextConstants.format_help_fallback())
     
     def format_error_response(
         self,
@@ -404,10 +388,4 @@ class TeamsResponseAdapter:
         """
         Create suggested actions for Teams.
         """
-        return self.teams_components.create_suggested_actions([
-            "🔍 Analyze Drawing",
-            "📐 Review Calculation",
-            "❓ Ask Technical Question",
-            "📋 Upload Specification",
-            "❓ Help"
-        ])
+        return self.teams_components.get_default_suggested_actions()

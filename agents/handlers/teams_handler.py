@@ -16,6 +16,7 @@ from services.auth_service import AuthService
 from adapters.response_adapter import ResponseAdapter
 from adapters.teams_response_adapter import TeamsResponseAdapter
 from components.teams_components import TeamsComponents, TeamsCardConfig
+from constants.teams_text import TeamsTextConstants
 
 
 logger = logging.getLogger(__name__)
@@ -166,14 +167,7 @@ class TeamsHandler(TeamsActivityHandler):
         auth_claims: Dict[str, Any]
     ) -> Activity:
         """Handle follow-up action."""
-        return MessageFactory.text(
-            "I'd be happy to provide more details! What specific aspect would you like me to elaborate on? You can ask me to:\n\n"
-            "• Explain any part in more detail\n"
-            "• Provide examples\n"
-            "• Compare different options\n"
-            "• Answer related questions\n\n"
-            "Just type your question and I'll help you out!"
-        )
+        return MessageFactory.text(TeamsTextConstants.FOLLOW_UP_RESPONSE)
     
     async def _handle_search_related_action(
         self,
@@ -183,14 +177,7 @@ class TeamsHandler(TeamsActivityHandler):
         auth_claims: Dict[str, Any]
     ) -> Activity:
         """Handle search related action."""
-        return MessageFactory.text(
-            "I can help you find more information about this topic! Try asking me:\n\n"
-            "• 'What are the requirements for...?'\n"
-            "• 'How do I apply for...?'\n"
-            "• 'What are the steps to...?'\n"
-            "• 'Tell me more about...'\n\n"
-            "Or just describe what you're looking for and I'll search through the documents for you!"
-        )
+        return MessageFactory.text(TeamsTextConstants.SEARCH_RELATED_RESPONSE)
     
     async def _handle_summarize_action(
         self,
@@ -200,14 +187,7 @@ class TeamsHandler(TeamsActivityHandler):
         auth_claims: Dict[str, Any]
     ) -> Activity:
         """Handle summarize action."""
-        return MessageFactory.text(
-            "I can help you summarize information! You can ask me to:\n\n"
-            "• 'Summarize the key points'\n"
-            "• 'Give me a brief overview'\n"
-            "• 'What are the main takeaways?'\n"
-            "• 'Create a bullet point summary'\n\n"
-            "Just let me know what you'd like me to summarize!"
-        )
+        return MessageFactory.text(TeamsTextConstants.SUMMARIZE_RESPONSE)
     
     async def _is_bot_mentioned(self, turn_context: TurnContext) -> bool:
         """Check if the bot was mentioned in the message."""
@@ -493,17 +473,7 @@ class TeamsHandler(TeamsActivityHandler):
     
     async def _create_mention_reminder(self, turn_context: TurnContext) -> Activity:
         """Create a reminder to mention the bot."""
-        reminder_text = """
-👋 Hi! I'm your AI assistant. To ask me a question, please mention me using @RAG Assistant or type your question directly.
-
-**What I can help with:**
-• Search through your documents
-• Answer questions about your content
-• Provide summaries and insights
-
-Try asking me something like: "What are the main points in the latest policy document?"
-        """
-        
+        reminder_text = TeamsTextConstants.format_mention_reminder()
         return MessageFactory.text(reminder_text)
     
     async def handle_file_upload(

@@ -325,7 +325,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "📎 File Uploaded",
+                            "text": TeamsTextConstants.FILE_UPLOAD_TITLE,
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent"
@@ -334,21 +334,21 @@ class TeamsComponents:
                 },
                 {
                     "type": "TextBlock",
-                    "text": f"I've received your file: **{file_name}**",
+                    "text": TeamsTextConstants.format_file_upload_message(file_name),
                     "wrap": True,
                     "size": "Medium",
                     "spacing": "Medium"
                 },
                 {
                     "type": "TextBlock",
-                    "text": f"File type: {file_type}",
+                    "text": TeamsTextConstants.format_file_upload_type(file_type),
                     "wrap": True,
                     "size": "Small",
                     "spacing": "Small"
                 },
                 {
                     "type": "TextBlock",
-                    "text": "I can help you search through this document and answer questions about its content. What would you like to know?",
+                    "text": TeamsTextConstants.FILE_UPLOAD_HELP,
                     "wrap": True,
                     "size": "Medium",
                     "spacing": "Medium"
@@ -370,8 +370,7 @@ class TeamsComponents:
                     "data": {
                         "action": "summarize_document",
                         "file_name": file_name
-                    },
-                    "style": "default"
+                    }
                 }
             ]
         }
@@ -389,7 +388,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "⚡ Quick Actions",
+                            "text": TeamsTextConstants.QUICK_ACTIONS_TITLE,
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent"
@@ -398,7 +397,7 @@ class TeamsComponents:
                 },
                 {
                     "type": "TextBlock",
-                    "text": "Choose a quick action to get started:",
+                    "text": TeamsTextConstants.QUICK_ACTIONS_MESSAGE,
                     "wrap": True,
                     "size": "Medium",
                     "spacing": "Medium"
@@ -418,24 +417,21 @@ class TeamsComponents:
                     "title": "📋 Get Summary",
                     "data": {
                         "action": "quick_summary"
-                    },
-                    "style": "default"
+                    }
                 },
                 {
                     "type": "Action.Submit",
                     "title": "❓ Ask Question",
                     "data": {
                         "action": "quick_question"
-                    },
-                    "style": "default"
+                    }
                 },
                 {
                     "type": "Action.Submit",
                     "title": "📚 Upload File",
                     "data": {
                         "action": "quick_upload"
-                    },
-                    "style": "default"
+                    }
                 }
             ]
         }
@@ -459,3 +455,8 @@ class TeamsComponents:
             )
             for action in actions
         ]
+    
+    @staticmethod
+    def get_default_suggested_actions() -> List[CardAction]:
+        """Get default suggested actions for Teams."""
+        return TeamsComponents.create_suggested_actions(TeamsTextConstants.SUGGESTED_ACTIONS)
