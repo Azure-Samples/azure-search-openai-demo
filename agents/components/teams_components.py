@@ -4,12 +4,12 @@ This module contains reusable Teams UI components for the agent.
 """
 
 import logging
-import os
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 
 from botbuilder.schema import Attachment, CardAction, ActionTypes
 from services.rag_service import RAGResponse
+from constants.teams_text import TeamsTextConstants
 
 
 logger = logging.getLogger(__name__)
@@ -36,10 +36,6 @@ class TeamsComponents:
     @staticmethod
     def create_welcome_card() -> Dict[str, Any]:
         """Create a welcome card for new users."""
-        # Get bot configuration from environment
-        bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
-        bot_description = os.getenv("AGENT_DESCRIPTION", "AI-powered structural engineering document search and analysis assistant")
-        
         return {
             "type": "AdaptiveCard",
             "version": "1.4",
@@ -50,7 +46,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": f"🏗️ Welcome to {bot_name}",
+                            "text": TeamsTextConstants.format_welcome_title(),
                             "weight": "Bolder",
                             "size": "Large",
                             "color": "Accent"
@@ -59,7 +55,7 @@ class TeamsComponents:
                 },
                 {
                     "type": "TextBlock",
-                    "text": f"{bot_description}. I can help you analyze structural engineering documents, answer technical questions, and provide insights from your project files.",
+                    "text": TeamsTextConstants.format_welcome_description(),
                     "wrap": True,
                     "size": "Medium",
                     "spacing": "Medium"
@@ -70,47 +66,21 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "🔧 What I can do:",
+                            "text": TeamsTextConstants.CAPABILITIES_TITLE,
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent",
                             "spacing": "Medium"
-                        },
+                        }
+                    ] + [
                         {
                             "type": "TextBlock",
-                            "text": "• Analyze structural drawings and specifications",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Answer questions about building codes and standards",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Review calculations and design reports",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Provide technical insights and recommendations",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Help with material specifications and load calculations",
+                            "text": capability,
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         }
+                        for capability in TeamsTextConstants.CAPABILITIES
                     ]
                 },
                 {
@@ -119,40 +89,28 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "💡 How to use:",
+                            "text": TeamsTextConstants.USAGE_TITLE,
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent",
                             "spacing": "Medium"
-                        },
+                        }
+                    ] + [
                         {
                             "type": "TextBlock",
-                            "text": f"• Mention me with @{bot_name}",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Upload structural drawings, specs, or reports",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Ask technical questions about your projects",
+                            "text": instruction,
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         }
+                        for instruction in TeamsTextConstants.format_usage_instructions()
                     ]
                 }
             ],
             "actions": [
                 {
                     "type": "Action.Submit",
-                    "title": "🚀 Get Started",
+                    "title": TeamsTextConstants.ACTION_GET_STARTED,
                     "data": {
                         "action": "get_started"
                     },
@@ -160,7 +118,7 @@ class TeamsComponents:
                 },
                 {
                     "type": "Action.Submit",
-                    "title": "❓ Help",
+                    "title": TeamsTextConstants.ACTION_HELP,
                     "data": {
                         "action": "help"
                     }
@@ -171,9 +129,6 @@ class TeamsComponents:
     @staticmethod
     def create_help_card() -> Dict[str, Any]:
         """Create a help card with usage instructions."""
-        # Get bot configuration from environment
-        bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
-        
         return {
             "type": "AdaptiveCard",
             "version": "1.4",
@@ -184,7 +139,7 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": f"❓ {bot_name} Help",
+                            "text": TeamsTextConstants.format_help_title(),
                             "weight": "Bolder",
                             "size": "Large",
                             "color": "Accent"
@@ -197,33 +152,21 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "📐 Structural Analysis",
+                            "text": TeamsTextConstants.STRUCTURAL_ANALYSIS_TITLE,
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent",
                             "spacing": "Medium"
-                        },
+                        }
+                    ] + [
                         {
                             "type": "TextBlock",
-                            "text": "• Analyze structural drawings and specifications",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Review load calculations and design reports",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Check compliance with building codes",
+                            "text": item,
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         }
+                        for item in TeamsTextConstants.STRUCTURAL_ANALYSIS_ITEMS
                     ]
                 },
                 {
@@ -232,33 +175,21 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "💬 Technical Chat",
+                            "text": TeamsTextConstants.TECHNICAL_CHAT_TITLE,
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent",
                             "spacing": "Medium"
-                        },
+                        }
+                    ] + [
                         {
                             "type": "TextBlock",
-                            "text": "• Ask questions about structural engineering concepts",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Get explanations of design principles",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• Request material and code recommendations",
+                            "text": item,
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         }
+                        for item in TeamsTextConstants.TECHNICAL_CHAT_ITEMS
                     ]
                 },
                 {
@@ -267,40 +198,28 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "🔍 Example Questions",
+                            "text": TeamsTextConstants.EXAMPLE_QUESTIONS_TITLE,
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent",
                             "spacing": "Medium"
-                        },
+                        }
+                    ] + [
                         {
                             "type": "TextBlock",
-                            "text": "• 'What are the load requirements for this beam design?'",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• 'Can you review this foundation calculation?'",
-                            "wrap": True,
-                            "size": "Small",
-                            "spacing": "Small"
-                        },
-                        {
-                            "type": "TextBlock",
-                            "text": "• 'What building code applies to this steel structure?'",
+                            "text": question,
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Small"
                         }
+                        for question in TeamsTextConstants.EXAMPLE_QUESTIONS
                     ]
                 }
             ],
             "actions": [
                 {
                     "type": "Action.Submit",
-                    "title": "🚀 Try It Now",
+                    "title": TeamsTextConstants.ACTION_TRY_NOW,
                     "data": {
                         "action": "try_example"
                     },
@@ -308,7 +227,7 @@ class TeamsComponents:
                 },
                 {
                     "type": "Action.Submit",
-                    "title": "📐 Upload Drawing",
+                    "title": TeamsTextConstants.ACTION_UPLOAD_DRAWING,
                     "data": {
                         "action": "upload_document"
                     }
@@ -355,11 +274,10 @@ class TeamsComponents:
                 },
                 {
                     "type": "Action.Submit",
-                    "title": "❓ Get Help",
+                    "title": TeamsTextConstants.ACTION_HELP,
                     "data": {
                         "action": "help"
-                    },
-                    "style": "default"
+                    }
                 }
             ]
         }
@@ -377,14 +295,14 @@ class TeamsComponents:
                     "items": [
                         {
                             "type": "TextBlock",
-                            "text": "🔄 Processing your request...",
+                            "text": TeamsTextConstants.LOADING_TITLE,
                             "weight": "Bolder",
                             "size": "Medium",
                             "color": "Accent"
                         },
                         {
                             "type": "TextBlock",
-                            "text": "Please wait while I search through your documents and generate a response.",
+                            "text": TeamsTextConstants.LOADING_MESSAGE,
                             "wrap": True,
                             "size": "Small",
                             "spacing": "Medium"
