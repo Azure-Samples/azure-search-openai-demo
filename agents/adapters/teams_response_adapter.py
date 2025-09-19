@@ -92,7 +92,7 @@ class TeamsResponseAdapter:
             bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
             bot_description = os.getenv("AGENT_DESCRIPTION", "AI-powered structural engineering document search and analysis assistant")
             return MessageFactory.text(
-                f"Welcome to {bot_name}! {bot_description}"
+                f"Welcome to {bot_name}! {bot_description}. I can help you analyze structural engineering documents, answer technical questions, and provide insights from your project files."
             )
     
     def format_help_response(self, turn_context: TurnContext) -> Activity:
@@ -104,17 +104,19 @@ class TeamsResponseAdapter:
             attachment = self.teams_components.create_attachment_from_card(card_json)
             
             activity = MessageFactory.attachment(attachment)
-            activity.text = "Here's how to use RAG Assistant:"
+            bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
+            activity.text = f"Here's how to use {bot_name}:"
             
             return activity
             
         except Exception as e:
             logger.error(f"Error formatting help response: {e}")
+            bot_name = os.getenv("AGENT_NAME", "Structural Engineering Assistant")
             return MessageFactory.text(
-                "Here's how to use RAG Assistant:\n\n"
-                "• Mention me with @RAG Assistant\n"
-                "• Ask questions about your documents\n"
-                "• Upload files for me to search through\n"
+                f"Here's how to use {bot_name}:\n\n"
+                f"• Mention me with @{bot_name}\n"
+                "• Upload structural drawings, specs, or reports\n"
+                "• Ask technical questions about your projects\n"
                 "• Use the buttons in my responses for quick actions"
             )
     
