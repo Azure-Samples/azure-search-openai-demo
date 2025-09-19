@@ -31,3 +31,9 @@ python-dotenv
 prompty
 rich
 typing-extensions
+# Microsoft 365 Agents SDK dependencies
+microsoft-365-agents-sdk
+botbuilder-core
+botbuilder-schema
+botbuilder-adapter-teams
+botbuilder-adapter-azure

@@ -1,0 +1,20 @@
+# Bot Framework dependencies
+botbuilder-core>=4.15.0
+botbuilder-schema>=4.15.0
+
+# Web framework
+quart>=0.18.0
+quart-cors>=0.7.0
+
+# HTTP client for calling backend
+aiohttp>=3.8.0
+
+# Authentication
+msal>=1.24.0
+
+# Utilities
+python-dotenv>=1.0.0
+typing-extensions>=4.0.0
+
+# Logging and monitoring
+azure-monitor-opentelemetry>=1.6.0
