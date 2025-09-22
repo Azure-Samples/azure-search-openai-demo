@@ -46,7 +46,7 @@ To deploy to Azure Container Apps, please follow the following steps:
 The default workload profile is Consumption. If you want to use a dedicated workload profile like D4, please run:
 
 ```bash
-azd env AZURE_CONTAINER_APPS_WORKLOAD_PROFILE D4
+azd env set AZURE_CONTAINER_APPS_WORKLOAD_PROFILE D4
 ```
 
 For a full list of workload profiles, please check [the workload profile documentation](https://learn.microsoft.com/azure/container-apps/workload-profiles-overview#profile-types).
