@@ -226,13 +226,13 @@ def setup_openai_client(
         if azure_openai_api_key:
             logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
             openai_client = AsyncOpenAI(
-                base_url=endpoint, api_key=azure_openai_api_key
+                base_url=f"{endpoint}/openai/v1", api_key=azure_openai_api_key
             )
         else:
             logger.info("Using Azure credential (passwordless authentication) for Azure OpenAI client")
             token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
             openai_client = AsyncOpenAI(
-                base_url=endpoint,
+                base_url=f"{endpoint}/openai/v1",
                 api_key=token_provider,
             )
     elif openai_host == OpenAIHost.LOCAL:
