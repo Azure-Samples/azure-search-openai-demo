@@ -9,7 +9,7 @@ import tiktoken
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
-from openai import AsyncAzureOpenAI, AsyncOpenAI, RateLimitError
+from openai import AsyncOpenAI, RateLimitError
 from tenacity import (
     AsyncRetrying,
     retry_if_exception_type,
