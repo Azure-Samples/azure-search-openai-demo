@@ -164,7 +164,6 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         open_ai_deployment: Union[str, None],
         open_ai_model_name: str,
         open_ai_dimensions: int,
-        open_ai_api_version: str,
         credential: Union[AsyncTokenCredential, AzureKeyCredential],
         open_ai_custom_url: Union[str, None] = None,
         disable_batch: bool = False,
@@ -178,28 +177,28 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         else:
             raise ValueError("Either open_ai_service or open_ai_custom_url must be provided")
         self.open_ai_deployment = open_ai_deployment
-        self.open_ai_api_version = open_ai_api_version
         self.credential = credential
 
     async def create_client(self) -> AsyncOpenAI:
         class AuthArgs(TypedDict, total=False):
             api_key: str
-            azure_ad_token_provider: Callable[[], Union[str, Awaitable[str]]]
 
         auth_args = AuthArgs()
         if isinstance(self.credential, AzureKeyCredential):
             auth_args["api_key"] = self.credential.key
         elif isinstance(self.credential, AsyncTokenCredential):
-            auth_args["azure_ad_token_provider"] = get_bearer_token_provider(
+            token_provider = get_bearer_token_provider(
                 self.credential, "https://cognitiveservices.azure.com/.default"
             )
+            auth_args["api_key"] = token_provider
         else:
             raise TypeError("Invalid credential type")
 
-        return AsyncAzureOpenAI(
-            azure_endpoint=self.open_ai_endpoint,
-            azure_deployment=self.open_ai_deployment,
-            api_version=self.open_ai_api_version,
+        # For Azure OpenAI, we need to include the deployment in the URL
+        base_url = f"{self.open_ai_endpoint}/openai/deployments/{self.open_ai_deployment}"
+        
+        return AsyncOpenAI(
+            base_url=base_url,
             **auth_args,
         )
 

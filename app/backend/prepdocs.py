@@ -164,7 +164,6 @@ def setup_embeddings_service(
     azure_openai_custom_url: Union[str, None],
     azure_openai_deployment: Union[str, None],
     azure_openai_key: Union[str, None],
-    azure_openai_api_version: str,
     openai_key: Union[str, None],
     openai_org: Union[str, None],
     disable_vectors: bool = False,
@@ -184,7 +183,6 @@ def setup_embeddings_service(
             open_ai_deployment=azure_openai_deployment,
             open_ai_model_name=emb_model_name,
             open_ai_dimensions=emb_model_dimensions,
-            open_ai_api_version=azure_openai_api_version,
             credential=azure_open_ai_credential,
             disable_batch=disable_batch_vectors,
         )
@@ -204,7 +202,6 @@ def setup_openai_client(
     openai_host: OpenAIHost,
     azure_credential: AsyncTokenCredential,
     azure_openai_api_key: Union[str, None] = None,
-    azure_openai_api_version: Union[str, None] = None,
     azure_openai_service: Union[str, None] = None,
     azure_openai_custom_url: Union[str, None] = None,
     openai_api_key: Union[str, None] = None,
@@ -228,16 +225,15 @@ def setup_openai_client(
             endpoint = f"https://{azure_openai_service}.openai.azure.com"
         if azure_openai_api_key:
             logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
-            openai_client = AsyncAzureOpenAI(
-                api_version=azure_openai_api_version, azure_endpoint=endpoint, api_key=azure_openai_api_key
+            openai_client = AsyncOpenAI(
+                base_url=endpoint, api_key=azure_openai_api_key
             )
         else:
             logger.info("Using Azure credential (passwordless authentication) for Azure OpenAI client")
             token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
-            openai_client = AsyncAzureOpenAI(
-                api_version=azure_openai_api_version,
-                azure_endpoint=endpoint,
-                azure_ad_token_provider=token_provider,
+            openai_client = AsyncOpenAI(
+                base_url=endpoint,
+                api_key=token_provider,
             )
     elif openai_host == OpenAIHost.LOCAL:
         logger.info("OPENAI_HOST is local, setting up local OpenAI client for OPENAI_BASE_URL with no key")
@@ -509,8 +505,6 @@ if __name__ == "__main__":
         datalake_key=clean_key_if_exists(args.datalakekey),
     )
 
-    # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
-    azure_openai_api_version = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-06-01"
     emb_model_dimensions = 1536
     if os.getenv("AZURE_OPENAI_EMB_DIMENSIONS"):
         emb_model_dimensions = int(os.environ["AZURE_OPENAI_EMB_DIMENSIONS"])
@@ -522,7 +516,6 @@ if __name__ == "__main__":
         azure_openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
         azure_openai_custom_url=os.getenv("AZURE_OPENAI_CUSTOM_URL"),
         azure_openai_deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
-        azure_openai_api_version=azure_openai_api_version,
         azure_openai_key=os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"),
         openai_key=clean_key_if_exists(os.getenv("OPENAI_API_KEY")),
         openai_org=os.getenv("OPENAI_ORGANIZATION"),
@@ -532,7 +525,6 @@ if __name__ == "__main__":
     openai_client = setup_openai_client(
         openai_host=OPENAI_HOST,
         azure_credential=azd_credential,
-        azure_openai_api_version=azure_openai_api_version,
         azure_openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
         azure_openai_custom_url=os.getenv("AZURE_OPENAI_CUSTOM_URL"),
         azure_openai_api_key=os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"),
