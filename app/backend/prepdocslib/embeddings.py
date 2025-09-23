@@ -168,7 +168,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         open_ai_custom_url: Union[str, None] = None,
         disable_batch: bool = False,
     ):
-        super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)
+        super().__init__(open_ai_deployment or open_ai_model_name, open_ai_dimensions, disable_batch)
         self.open_ai_service = open_ai_service
         if open_ai_service:
             self.open_ai_endpoint = f"https://{open_ai_service}.openai.azure.com"
@@ -194,8 +194,8 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
         else:
             raise TypeError("Invalid credential type")
 
-        # For Azure OpenAI, we need to include the deployment in the URL
-        base_url = f"{self.open_ai_endpoint}/openai/deployments/{self.open_ai_deployment}"
+        # For Azure OpenAI, we need to use the v1 endpoint
+        base_url = f"{self.open_ai_endpoint}/openai/v1"
         
         return AsyncOpenAI(
             base_url=base_url,
