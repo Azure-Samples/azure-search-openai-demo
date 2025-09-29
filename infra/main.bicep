@@ -1212,8 +1212,9 @@ var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLoc
       {
         groupId: 'account'
         dnsZoneName: 'privatelink.cognitiveservices.azure.com'
+        // Only include generic Cognitive Services-based resources (Form Recognizer / Vision / Content Understanding)
+        // Azure OpenAI uses its own privatelink.openai.azure.com zone and already has a separate private endpoint above.
         resourceIds: concat(
-          [openAi.outputs.resourceId],
           !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : [],
           useMultimodal ? [vision.outputs.resourceId] : [],
           useMediaDescriberAzureCU ? [contentUnderstanding.outputs.resourceId] : []
