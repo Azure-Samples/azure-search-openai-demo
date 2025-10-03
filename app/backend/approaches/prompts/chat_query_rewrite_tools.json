@@ -32,5 +32,26 @@
                 "required": ["filename"]
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "Get current weather summary for given latitude and longitude using NOAA (National Weather Service) API",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "latitude": {
+                        "type": "number",
+                        "description": "Latitude in decimal degrees (e.g. 37.7749)"
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "description": "Longitude in decimal degrees (e.g. -122.4194)"
+                    }
+                },
+                "required": ["latitude", "longitude"]
+            }
+        }
     }
 ]

@@ -3,6 +3,7 @@ import re
 from collections.abc import AsyncGenerator, Awaitable
 from typing import Any, Optional, Union, cast
 
+import aiohttp
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
@@ -16,6 +17,7 @@ from openai.types.chat import (
 
 from approaches.approach import (
     Approach,
+    DataPoints,
     ExtraInfo,
     ThoughtStep,
 )
@@ -89,28 +91,53 @@ class ChatReadRetrieveReadApproach(Approach):
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
 
-    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
-        response_message = chat_completion.choices[0].message
+    def get_tool_details(self, chat_completion: ChatCompletion, user_query: str) -> tuple[str, dict[str, Any]]:
+        """Determine selected tool and return normalized arguments.
 
+        Always returns a tuple (tool_name, args) where tool_name is one of
+        "search_sources", "search_by_filename", or "get_weather". The args
+        dict ALWAYS includes a 'search_query' key that can be used directly
+        for downstream retrieval (for filename, the value is prefixed with
+        'filename:', for weather it is the original or inferred user query).
+
+        This normalization keeps downstream logic simple: callers can just
+        use args['search_query'] without additional branching.
+        """
+        response_message = chat_completion.choices[0].message
         if response_message.tool_calls:
             for tool in response_message.tool_calls:
-                if tool.type != "function":
+                if tool.type != "function":  # Skip non-function tool calls
                     continue
                 function = tool.function
+                try:
+                    parsed = json.loads(function.arguments) if function.arguments else {}
+                except Exception:
+                    parsed = {}
                 if function.name == "search_sources":
-                    arg = json.loads(function.arguments)
-                    search_query = arg.get("search_query", self.NO_RESPONSE)
+                    search_query = parsed.get("search_query", self.NO_RESPONSE)
                     if search_query != self.NO_RESPONSE:
-                        return search_query
-                if function.name == "search_by_filename":
-                    arg = json.loads(function.arguments)
-                    filename = arg.get("filename", "")
+                        return (
+                            "search_sources",
+                            {"search_query": search_query},
+                        )
+                elif function.name == "search_by_filename":
+                    filename = parsed.get("filename", "")
                     if filename:
-                        return f"filename:{filename}"
-        elif query_text := response_message.content:
-            if query_text.strip() != self.NO_RESPONSE:
-                return query_text
-        return user_query
+                        return (
+                            "search_by_filename",
+                            {"filename": filename, "search_query": f"filename:{filename}"},
+                        )
+                elif function.name == "get_weather":
+                    # Preserve original parsed args, but add normalized search_query
+                    return (
+                        "get_weather",
+                        parsed | {"search_query": user_query},  # fallback to original user query
+                    )
+        else:
+            if (query_text := response_message.content) and query_text.strip() != self.NO_RESPONSE:
+                return ("search_sources", {"search_query": query_text})
+        # Fallback: treat original user query as search_sources
+        return ("search_sources", {"search_query": user_query})
 
     def extract_followup_questions(self, content: Optional[str]):
         if content is None:
@@ -319,72 +346,89 @@ class ChatReadRetrieveReadApproach(Approach):
             ),
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        tool_name, tool_args = self.get_tool_details(chat_completion, original_user_query)
 
-        # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
+        # Conditional branching based off tool_name
+        data_points = DataPoints([], [], [])
+        thoughts = []
+        if tool_name == "get_weather":
+            # Optional: fetch weather and add as synthetic result for grounding
+            weather_datapoint: Optional[str] = None
+            lat = tool_args.get("latitude")
+            lon = tool_args.get("longitude")
+            weather_datapoint = await self.fetch_weather_noaa(float(lat), float(lon))
+            # Prepend weather info so it is considered high-salience; mark citation
+            data_points.text.insert(0, weather_datapoint)
+            data_points.citations.insert(0, "Current Weather")
+            thoughts.append(ThoughtStep("Fetch weather data", weather_datapoint, {"location": f"{lat}, {lon}"}))
+        elif tool_name == "search_by_filename" or tool_name == "search_sources":
+            query_text = tool_args.get("search_query")
 
-        vectors: list[VectorQuery] = []
-        if use_vector_search:
-            if search_text_embeddings:
-                vectors.append(await self.compute_text_embedding(query_text))
-            if search_image_embeddings:
-                vectors.append(await self.compute_multimodal_embedding(query_text))
+            # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
-        results = await self.search(
-            top,
-            query_text,
-            search_index_filter,
-            vectors,
-            use_text_search,
-            use_vector_search,
-            use_semantic_ranker,
-            use_semantic_captions,
-            minimum_search_score,
-            minimum_reranker_score,
-            use_query_rewriting,
-        )
+            vectors: list[VectorQuery] = []
+            if use_vector_search:
+                if search_text_embeddings:
+                    vectors.append(await self.compute_text_embedding(query_text))
+                if search_image_embeddings:
+                    vectors.append(await self.compute_multimodal_embedding(query_text))
 
-        # STEP 3: Generate a contextual and content specific answer using the search results and chat history
-        data_points = await self.get_sources_content(
-            results,
-            use_semantic_captions,
-            include_text_sources=send_text_sources,
-            download_image_sources=send_image_sources,
-            user_oid=auth_claims.get("oid"),
-        )
-        extra_info = ExtraInfo(
-            data_points,
-            thoughts=[
-                self.format_thought_step_for_chatcompletion(
-                    title="Prompt to generate search query",
-                    messages=query_messages,
-                    overrides=overrides,
-                    model=self.chatgpt_model,
-                    deployment=self.chatgpt_deployment,
-                    usage=chat_completion.usage,
-                    reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
-                ),
-                ThoughtStep(
-                    "Search using generated search query",
-                    query_text,
-                    {
-                        "use_semantic_captions": use_semantic_captions,
-                        "use_semantic_ranker": use_semantic_ranker,
-                        "use_query_rewriting": use_query_rewriting,
-                        "top": top,
-                        "filter": search_index_filter,
-                        "use_vector_search": use_vector_search,
-                        "use_text_search": use_text_search,
-                        "search_text_embeddings": search_text_embeddings,
-                        "search_image_embeddings": search_image_embeddings,
-                    },
-                ),
-                ThoughtStep(
-                    "Search results",
-                    [result.serialize_for_results() for result in results],
-                ),
-            ],
-        )
+            results = await self.search(
+                top,
+                query_text,
+                search_index_filter,
+                vectors,
+                use_text_search,
+                use_vector_search,
+                use_semantic_ranker,
+                use_semantic_captions,
+                minimum_search_score,
+                minimum_reranker_score,
+                use_query_rewriting,
+            )
+
+            # STEP 3: Generate a contextual and content specific answer using the search results and chat history
+            data_points = await self.get_sources_content(
+                results,
+                use_semantic_captions,
+                include_text_sources=send_text_sources,
+                download_image_sources=send_image_sources,
+                user_oid=auth_claims.get("oid"),
+            )
+            thoughts.append(
+                [
+                    self.format_thought_step_for_chatcompletion(
+                        title="Prompt to generate search query",
+                        messages=query_messages,
+                        overrides=overrides,
+                        model=self.chatgpt_model,
+                        deployment=self.chatgpt_deployment,
+                        usage=chat_completion.usage,
+                        reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
+                    ),
+                    ThoughtStep(
+                        "Search using generated search query",
+                        query_text,
+                        {
+                            "use_semantic_captions": use_semantic_captions,
+                            "use_semantic_ranker": use_semantic_ranker,
+                            "use_query_rewriting": use_query_rewriting,
+                            "top": top,
+                            "filter": search_index_filter,
+                            "use_vector_search": use_vector_search,
+                            "use_text_search": use_text_search,
+                            "search_text_embeddings": search_text_embeddings,
+                            "search_image_embeddings": search_image_embeddings,
+                        },
+                    ),
+                    ThoughtStep(
+                        "Search results",
+                        [result.serialize_for_results() for result in results],
+                    ),
+                ]
+            )
+
+        extra_info = ExtraInfo(data_points, thoughts=thoughts)
         return extra_info
 
     async def run_agentic_retrieval_approach(
@@ -443,3 +487,64 @@ class ChatReadRetrieveReadApproach(Approach):
             ],
         )
         return extra_info
+
+    async def fetch_weather_noaa(self, latitude: float, longitude: float) -> str:
+        """Retrieve a concise current weather summary from NOAA (NWS) API.
+
+        Approach adapted from sample in Azure Samples repository. We first call
+        the points endpoint to discover the forecast office grid, then fetch
+        the latest observation. We intentionally keep the text short so it
+        remains an efficient grounding data point.
+
+        Parameters
+        ----------
+        latitude: float
+            Latitude in decimal degrees.
+        longitude: float
+            Longitude in decimal degrees.
+
+        Returns
+        -------
+        str
+            A short textual weather summary including temperature, wind, and
+            description. Falls back gracefully if any field is missing.
+        """
+        headers = {"User-Agent": "azure-search-openai-demo/1.0 (support@example.com)"}
+        async with aiohttp.ClientSession(headers=headers) as session:
+            # Points metadata
+            async with session.get(
+                f"https://api.weather.gov/points/{latitude:.4f},{longitude:.4f}", timeout=10
+            ) as resp:
+                if resp.status != 200:
+                    raise RuntimeError(f"NOAA points lookup failed: {resp.status}")
+                points = await resp.json()
+            observation_url = points.get("properties", {}).get("observationStations")
+            if not observation_url:
+                raise RuntimeError("Missing observationStations in NOAA points response")
+            # Fetch stations list (first station is fine for a lightweight summary)
+            async with session.get(observation_url, timeout=10) as resp:
+                if resp.status != 200:
+                    raise RuntimeError(f"NOAA stations lookup failed: {resp.status}")
+                stations = await resp.json()
+            station_id = stations.get("features", [{}])[0].get("properties", {}).get("stationIdentifier")
+            if not station_id:
+                raise RuntimeError("No stationIdentifier found")
+            async with session.get(
+                f"https://api.weather.gov/stations/{station_id}/observations/latest", timeout=10
+            ) as resp:
+                if resp.status != 200:
+                    raise RuntimeError(f"NOAA latest observation failed: {resp.status}")
+                latest = await resp.json()
+        props = latest.get("properties", {})
+        text = props.get("textDescription") or "Unknown conditions"
+        temp_c = props.get("temperature", {}).get("value")
+        wind_speed_mps = props.get("windSpeed", {}).get("value")
+        rel_humidity = props.get("relativeHumidity", {}).get("value")
+        parts = [text]
+        if temp_c is not None:
+            parts.append(f"Temp {temp_c:.1f}C")
+        if wind_speed_mps is not None:
+            parts.append(f"Wind {wind_speed_mps:.1f}m/s")
+        if rel_humidity is not None:
+            parts.append(f"RH {rel_humidity:.0f}%")
+        return " | ".join(parts)
