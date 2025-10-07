@@ -7,6 +7,66 @@ param environmentName string
 
 @minLength(1)
 @description('Primary location for all resources')
+// microsoft.insights/components has restricted regions
+@allowed([
+  'eastus'
+  'southcentralus'
+  'northeurope'
+  'westeurope'
+  'southeastasia'
+  'westus2'
+  'uksouth'
+  'canadacentral'
+  'centralindia'
+  'japaneast'
+  'australiaeast'
+  'koreacentral'
+  'francecentral'
+  'centralus'
+  'eastus2'
+  'eastasia'
+  'westus'
+  'southafricanorth'
+  'northcentralus'
+  'brazilsouth'
+  'switzerlandnorth'
+  'norwayeast'
+  'norwaywest'
+  'australiasoutheast'
+  'australiacentral2'
+  'germanywestcentral'
+  'switzerlandwest'
+  'uaecentral'
+  'ukwest'
+  'japanwest'
+  'brazilsoutheast'
+  'uaenorth'
+  'australiacentral'
+  'southindia'
+  'westus3'
+  'koreasouth'
+  'swedencentral'
+  'canadaeast'
+  'jioindiacentral'
+  'jioindiawest'
+  'qatarcentral'
+  'southafricawest'
+  'germanynorth'
+  'polandcentral'
+  'israelcentral'
+  'italynorth'
+  'mexicocentral'
+  'spaincentral'
+  'newzealandnorth'
+  'chilecentral'
+  'indonesiacentral'
+  'malaysiawest'
+])
+@metadata({
+  azd: {
+    type: 'location'
+  }
+})
 param location string
 
 param appServicePlanName string = '' // Set in main.parameters.json
