@@ -258,15 +258,14 @@ async def test_compute_multimodal_embedding_no_client():
         await chat_approach.compute_multimodal_embedding("What's in this image?")
 
 
-def test_chat_prompt_render_with_image_directive(chat_approach):
+@pytest.mark.asyncio
+async def test_chat_prompt_render_with_image_directive(chat_approach):
     """Verify DocFX style :::image directive is sanitized (replaced with [image]) during prompt rendering."""
     image_directive = (
         "activator-introduction.md#page=1: Intro text before image. "
         ':::image type="content" source="./media/activator-introduction/activator.png" '
         'alt-text="Diagram that shows the architecture of Fabric Activator."::: More text after image.'
     )
-    # Build Document and run get_sources_content to apply sanitization
-    import asyncio
 
     async def build_sources():
         return await chat_approach.get_sources_content(
@@ -284,7 +283,7 @@ def test_chat_prompt_render_with_image_directive(chat_approach):
             user_oid=None,
         )
 
-    data_points = asyncio.get_event_loop().run_until_complete(build_sources())
+    data_points = await build_sources()
 
     messages = chat_approach.prompt_manager.render_prompt(
         chat_approach.answer_prompt,
@@ -299,7 +298,7 @@ def test_chat_prompt_render_with_image_directive(chat_approach):
     )
     assert messages
     # Find the user message containing Sources and verify placeholder
-    combined = "\n".join([m["content"] for m in messages if m["role"] == "user"])  # type: ignore
+    combined = "\n".join([m["content"] for m in messages if m["role"] == "user"])
     # Expect triple colons escaped
     assert "&#58;&#58;&#58;image" in combined
     assert "activator-introduction/activator.png" in combined
