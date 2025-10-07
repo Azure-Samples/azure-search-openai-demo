@@ -372,8 +372,10 @@ class Approach(ABC):
             DataPoints: with text (list[str]), images (list[str - base64 data URI]), citations (list[str]).
         """
 
-        def nonewlines(s: str) -> str:
-            return s.replace("\n", " ").replace("\r", " ")
+        def clean_source(s: str) -> str:
+            s = s.replace("\n", " ").replace("\r", " ")  # normalize newlines to spaces
+            s = s.replace(":::", "&#58;&#58;&#58;")  # escape DocFX/markdown triple colons
+            return s
 
         citations = []
         text_sources = []
@@ -389,11 +391,10 @@ class Approach(ABC):
             # If semantic captions are used, extract captions; otherwise, use content
             if include_text_sources:
                 if use_semantic_captions and doc.captions:
-                    text_sources.append(
-                        f"{citation}: {nonewlines(' . '.join([cast(str, c.text) for c in doc.captions]))}"
-                    )
+                    cleaned = clean_source(" . ".join([cast(str, c.text) for c in doc.captions]))
                 else:
-                    text_sources.append(f"{citation}: {nonewlines(doc.content or '')}")
+                    cleaned = clean_source(doc.content or "")
+                text_sources.append(f"{citation}: {cleaned}")
 
             if download_image_sources and hasattr(doc, "images") and doc.images:
                 for img in doc.images:
