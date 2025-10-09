@@ -23,17 +23,11 @@ Do not include any special characters like '+'.
 If the question is not in English, translate the question to English before generating the search query.
 If you cannot generate a search query, return just the number 0.
 
-user:
-How did crypto do last year?
+You have three callable tools available (they may be invoked via function calling):
+1. search_sources: Use this to generate a general keyword style search query.
+2. search_by_filename: Use this ONLY when the user clearly references a specific document by its exact filename (e.g., "PerksPlus.pdf"). Provide just the filename (without extra words). If the user asks to summarize or open a specific known file by name, prefer calling search_by_filename. If they mention concepts or partial names, fall back to generating a normal keyword query with search_sources.
+3. get_weather: Use this ONLY when the user explicitly asks about current weather conditions for a location for which latitude and longitude are provided or can be clearly inferred (already numeric). Return weather only via the function call; do not include weather text directly as the search query. After calling get_weather you should still generate an appropriate search query (or 0) if needed for knowledge base lookup.
 
-assistant:
-Summarize Cryptocurrency Market Dynamics from last year
-
-user:
-What are my health plans?
-
-assistant:
-Show available health plans
 
 {% for message in past_messages %}
 {{ message["role"] }}:
@@ -41,4 +35,4 @@ Show available health plans
 {% endfor %}
 
 user:
-Generate search query for: {{ user_query }}
+{{ user_query }}

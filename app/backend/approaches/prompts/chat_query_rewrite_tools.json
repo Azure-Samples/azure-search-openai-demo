@@ -1,17 +1,57 @@
-[{
-    "type": "function",
-    "function": {
-        "name": "search_sources",
-        "description": "Retrieve sources from the Azure AI Search index",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "search_query": {
-                    "type": "string",
-                    "description": "Query string to retrieve documents from azure search eg: 'Health care plan'"
-                }
-            },
-            "required": ["search_query"]
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "search_sources",
+            "description": "Retrieve sources from the Azure AI Search index",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "search_query": {
+                        "type": "string",
+                        "description": "Query string to retrieve documents from azure search eg: 'Health care plan'"
+                    }
+                },
+                "required": ["search_query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_by_filename",
+            "description": "Retrieve a specific filename from the Azure AI Search index",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "filename": {
+                        "type": "string",
+                        "description": "The filename, like 'PerksPlus.pdf'"
+                    }
+                },
+                "required": ["filename"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "Get current weather summary for given latitude and longitude using NOAA (National Weather Service) API",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "latitude": {
+                        "type": "number",
+                        "description": "Latitude in decimal degrees (e.g. 37.7749)"
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "description": "Longitude in decimal degrees (e.g. -122.4194)"
+                    }
+                },
+                "required": ["latitude", "longitude"]
+            }
         }
     }
-}]
+]
