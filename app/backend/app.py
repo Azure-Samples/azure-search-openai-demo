@@ -426,8 +426,6 @@ async def setup_clients():
         os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM] else None
     )
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
-    # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
-    AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-10-21"
     AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
     AZURE_OPENAI_API_KEY_OVERRIDE = os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE")
     # Used only with non-Azure OpenAI deployments
@@ -563,7 +561,6 @@ async def setup_clients():
     openai_client = setup_openai_client(
         openai_host=OPENAI_HOST,
         azure_credential=azure_credential,
-        azure_openai_api_version=AZURE_OPENAI_API_VERSION,
         azure_openai_service=AZURE_OPENAI_SERVICE,
         azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
         azure_openai_api_key=AZURE_OPENAI_API_KEY_OVERRIDE,
@@ -609,7 +606,6 @@ async def setup_clients():
             azure_openai_service=AZURE_OPENAI_SERVICE,
             azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
             azure_openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-            azure_openai_api_version=AZURE_OPENAI_API_VERSION,
             azure_openai_key=clean_key_if_exists(AZURE_OPENAI_API_KEY_OVERRIDE),
             openai_key=clean_key_if_exists(OPENAI_API_KEY),
             openai_org=OPENAI_ORGANIZATION,
