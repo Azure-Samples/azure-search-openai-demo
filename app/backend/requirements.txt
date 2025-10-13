@@ -339,7 +339,7 @@ pycparser==2.22
     # via cffi
 pydantic==2.8.2
     # via openai
-pydantic-core==2.20.1
+pydantic-core==2.41.1
     # via pydantic
 pygments==2.18.0
     # via rich
