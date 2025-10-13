@@ -50,7 +50,7 @@ jobs:
           PSRULE_CONFIGURATION_AZURE_BICEP_FILE_EXPANSION_TIMEOUT: '30'
 
       - name: Upload results to security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: github.repository == 'Azure-Samples/azure-search-openai-demo'
         with:
           sarif_file: reports/ps-rule-results.sarif
