@@ -1,51 +1,57 @@
-# Adding new data
 
-New files should be added to the `data` folder, and then either run scripts/prepdocs.sh or scripts/prepdocs.ps1 to ingest the data.
+# Copilot & AI Agent Instructions for This Codebase
 
-# Adding a new azd environment variable
+This project is a RAG (Retrieval-Augmented Generation) chat app using Azure OpenAI and Azure AI Search, with a Python (Quart) backend and a React (Vite/TypeScript) frontend. It is designed for rapid iteration, Azure deployment, and extensibility. These instructions guide AI coding agents to be productive and follow project conventions.
 
-An azd environment variable is stored by the azd CLI for each environment. It is passed to the "azd up" command and can configure both provisioning options and application settings.
-When adding new azd environment variables, update:
+## Architecture Overview
 
-1. infra/main.parameters.json : Add the new parameter with a Bicep-friendly variable name and map to the new environment variable
-1. infra/main.bicep: Add the new Bicep parameter at the top, and add it to the `appEnvVariables` object
-1. azure.yaml: Add the new environment variable under pipeline config section
-1. .azdo/pipelines/azure-dev.yml: Add the new environment variable under `env` section
-1. .github/workflows/azure-dev.yml: Add the new environment variable under `env` section
+- **Backend**: `app/backend` (Quart, Python)
+  - `approaches/`: Pluggable RAG strategies (e.g., `retrievethenread.py`, `chatreadretrieveread.py`)
+  - `app.py`: Main entry point
+- **Frontend**: `app/frontend` (React, Vite, TypeScript)
+  - `src/api/`: API client
+  - `src/components/`: UI components
+  - `src/locales/`: i18n translations (edit all languages for new UI strings)
+- **Infra**: `infra/` (Bicep templates, `azure.yaml`)
+- **Data**: `data/` (documents for ingestion)
+- **Tests**: `tests/` (pytest, Playwright e2e)
 
-# Adding a new setting to "Developer Settings" in RAG app
+See `docs/architecture.md` for diagrams and data flow.
 
-When adding a new developer setting, update:
+## Key Workflows
 
-* frontend:
-  * app/frontend/src/api/models.ts : Add to ChatAppRequestOverrides
-  * app/frontend/src/components/Settings.tsx : Add a UI element for the setting
-  * app/frontend/src/locales/*/translations.json: Add a translation for the setting label/tooltip for all languages
-  * app/frontend/src/pages/chat/Chat.tsx: Add the setting to the component, pass it to Settings
-  * app/frontend/src/pages/ask/Ask.tsx: Add the setting to the component, pass it to Settings
+- **Local Dev**: Use VS Code Dev Containers or Codespaces for pre-configured environments. See `docs/localdev.md` for hot reloading, debug, and task usage.
+  - Start dev servers: Use the VS Code "Development" task or run `app/start.sh` (runs both frontend and backend with hot reload).
+- **Azure Deployment**: Use `azd up` to provision infra and deploy code. Use `azd deploy` to redeploy code only. See `README.md` and `docs/azd.md`.
+- **Data Ingestion**: Add files to `data/`, then run `scripts/prepdocs.sh` to ingest.
+- **Testing**: All tests in `tests/` (pytest). E2E tests in `e2e.py` (Playwright, mocks backend). Activate `.venv` before running tests.
 
-* backend:
-  * app/backend/approaches/chatreadretrieveread.py :  Retrieve from overrides parameter
-  * app/backend/approaches/retrievethenread.py : Retrieve from overrides parameter
-  * app/backend/app.py: Some settings may need to be sent down in the /config route.
+## Project-Specific Conventions
 
-# When adding tests for a new feature:
+- **Adding azd env vars**: Update all of:
+  1. `infra/main.parameters.json` (add param)
+  2. `infra/main.bicep` (add param, wire to `appEnvVariables`)
+  3. `azure.yaml` (pipeline config)
+  4. `.azdo/pipelines/azure-dev.yml` and `.github/workflows/azure-dev.yml` (env section)
+- **Adding Developer Settings**:
+  - Frontend: Update `src/api/models.ts`, `components/Settings.tsx`, all `locales/*/translation.json`, and pass through `pages/chat/Chat.tsx` and `pages/ask/Ask.tsx`.
+  - Backend: Update `approaches/chatreadretrieveread.py`, `approaches/retrievethenread.py`, and `app.py` as needed.
+- **Tests**: Add e2e for UI, integration for API, unit for functions. Use `conftest.py` for mocks.
+- **Pull Requests**: Follow `PULL_REQUEST_TEMPLATE.md`.
 
-All tests are in the `tests` folder and use the pytest framework.
-There are three styles of tests:
+## Integration & Patterns
 
-* e2e tests: These use playwright to run the app in a browser and test the UI end-to-end. They are in e2e.py and they mock the backend using the snapshots from the app tests.
-* app integration tests: Mostly in test_app.py, these test the app's API endpoints and use mocks for services like Azure OpenAI and Azure Search.
-* unit tests: The rest of the tests are unit tests that test individual functions and methods. They are in test_*.py files.
+- **Backend/Frontend API**: REST endpoints defined in backend, consumed via `src/api/`.
+- **RAG Approaches**: Add new strategies in `app/backend/approaches/` and register in `app.py`.
+- **Internationalization**: All UI strings must be added to every language in `src/locales/`.
+- **Infra**: All infra changes must be reflected in both Bicep and pipeline config files.
 
-When adding a new feature, add tests for it in the appropriate file.
-If the feature is a UI element, add an e2e test for it.
-If it is an API endpoint, add an app integration test for it.
-If it is a function or method, add a unit test for it.
-Use mocks from conftest.py to mock external services.
+## References
 
-When you're running tests, make sure you activate the .venv virtual environment first:
+- [README.md](../README.md) — Quickstart, deployment, and dev environment
+- [docs/architecture.md](../docs/architecture.md) — Architecture diagrams and explanation
+- [docs/localdev.md](../docs/localdev.md) — Local dev, debugging, and tasks
 
-```bash
-source .venv/bin/activate
-```
+> **Nota:** Mantenha os links de referência acima atualizados conforme a estrutura do projeto. Se mover arquivos como AGENTS.md, ajuste o caminho aqui.
+
+Keep this file up to date with any changes to workflows or conventions.

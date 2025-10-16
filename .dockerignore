@@ -1,0 +1,15 @@
+venv
+.venv
+.venv-*
+node_modules
+app/frontend/node_modules
+.git
+.gitignore
+docs
+data
+tests
+*.pyc
+__pycache__
+dist
+build
+*.log
