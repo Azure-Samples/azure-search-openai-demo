@@ -215,6 +215,20 @@ class SearchManager:
                     ],
                 )
 
+            if self.use_acls:
+                oids_field = SearchField(
+                    name="oids",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    filterable=True,
+                    permission_filter=PermissionFilter.USER_IDS,
+                )
+                groups_field = SearchField(
+                    name="groups",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    filterable=True,
+                    permission_filter=PermissionFilter.GROUP_IDS,
+                )
+
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
                 logger.info("Creating new search index %s", self.search_info.index_name)
                 fields = [
@@ -257,22 +271,8 @@ class SearchManager:
                     ),
                 ]
                 if self.use_acls:
-                    fields.append(
-                        SearchField(
-                            name="oids",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                            filterable=True,
-                            permission_filter=PermissionFilter.USER_IDS,
-                        )
-                    )
-                    fields.append(
-                        SearchField(
-                            name="groups",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                            filterable=True,
-                            permission_filter=PermissionFilter.GROUP_IDS,
-                        )
-                    )
+                    fields.append(oids_field)
+                    fields.append(groups_field)
                     permission_filter_option = SearchIndexPermissionFilterOption.ENABLED
 
                 if self.use_int_vectorization:
@@ -446,30 +446,18 @@ class SearchManager:
 
                     if existing_index.permission_filter_option != SearchIndexPermissionFilterOption.ENABLED:
                         existing_index.permission_filter_option = SearchIndexPermissionFilterOption.ENABLED
-                    oids_field = next((field for field in existing_index.fields if field.name == "oids"), None)
-                    if oids_field:
-                        oids_field.permission_filter = IndexerPermissionOption.USER_IDS
+                    existing_oids_field = next((field for field in existing_index.fields if field.name == "oids"), None)
+                    if existing_oids_field:
+                        existing_oids_field.permission_filter = IndexerPermissionOption.USER_IDS
                     else:
-                        existing_index.fields.append(
-                            SearchField(
-                                name="oids",
-                                type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                                filterable=True,
-                                permission_filter=PermissionFilter.USER_IDS,
-                            )
-                        )
-                    groups_field = next((field for field in existing_index.fields if field.name == "groups"), None)
-                    if groups_field:
-                        groups_field.permission_filter = IndexerPermissionOption.GROUP_IDS
+                        existing_index.fields.append(oids_field)
+                    existing_groups_field = next(
+                        (field for field in existing_index.fields if field.name == "groups"), None
+                    )
+                    if existing_groups_field:
+                        existing_groups_field.permission_filter = IndexerPermissionOption.GROUP_IDS
                     else:
-                        existing_index.fields.append(
-                            SearchField(
-                                name="groups",
-                                type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                                filterable=True,
-                                permission_filter=PermissionFilter.GROUP_IDS,
-                            )
-                        )
+                        existing_index.fields.append(groups_field)
 
                     await search_index_client.create_or_update_index(existing_index)
 
