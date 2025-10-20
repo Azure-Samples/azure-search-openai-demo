@@ -80,6 +80,7 @@ MockAgent = KnowledgeAgent(
 
 async def mock_search(self, *args, **kwargs):
     self.filter = kwargs.get("filter")
+    self.access_token = kwargs.get("x_ms_query_source_authorization")
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
 
@@ -100,6 +101,7 @@ def create_mock_retrieve(response_type="default"):
         params_list = retrieval_request.knowledge_source_params
         params = params_list[0]
         self.filter = getattr(params, "filter_add_on", None)
+        self.access_token = kwargs.get("x_ms_query_source_authorization")
 
         if response_type == "sorting":
             return mock_retrieval_response_with_sorting()
@@ -385,6 +387,20 @@ vision_envs = [
     },
 ]
 
+vision_auth_envs = [
+    {
+        "OPENAI_HOST": "azure",
+        "AZURE_OPENAI_SERVICE": "test-openai-service",
+        "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "test-chatgpt",
+        "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
+        "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
+        "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
+        "USE_MULTIMODAL": "true",
+        "AZURE_VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
+        "AZURE_USE_AUTHENTICATION": "true",
+    },
+]
+
 auth_envs = [
     {
         "OPENAI_HOST": "azure",
@@ -662,8 +678,7 @@ async def agent_auth_client(
     mock_blob_container_client,
     mock_azurehttp_calls,
     mock_confidential_client_success,
-    mock_validate_token_success,
-    mock_list_groups_success,
+    mock_validate_token_success
 ):
     quart_app = app.create_app()
 
@@ -704,7 +719,6 @@ async def auth_client(
     mock_openai_embedding,
     mock_confidential_client_success,
     mock_validate_token_success,
-    mock_list_groups_success,
     mock_acs_search_filter,
     mock_azurehttp_calls,
     request,
@@ -744,7 +758,6 @@ async def auth_public_documents_client(
     mock_openai_embedding,
     mock_confidential_client_success,
     mock_validate_token_success,
-    mock_list_groups_success,
     mock_acs_search_filter,
     request,
 ):
@@ -789,6 +802,35 @@ async def vision_client(
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_acs_search,
+    mock_blob_container_client_exists,
+    mock_azurehttp_calls,
+):
+    quart_app = app.create_app()
+
+    async with quart_app.test_app() as test_app:
+        test_app.app.config.update({"TESTING": True})
+        mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+        mock_blob_service_client = BlobServiceClient(
+            f"https://{os.environ['AZURE_STORAGE_ACCOUNT']}.blob.core.windows.net",
+            credential=MockAzureCredential(),
+            transport=MockTransport(),
+            retry_total=0,  # Necessary to avoid unnecessary network requests during tests
+        )
+        test_app.app.config[app.CONFIG_GLOBAL_BLOB_MANAGER].blob_service_client = mock_blob_service_client
+
+        yield test_app.test_client()
+
+
+@pytest_asyncio.fixture(scope="function")
+async def vision_auth_client(
+    monkeypatch,
+    mock_vision_auth_env,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_confidential_client_success,
+    mock_validate_token_success,
+    mock_acs_search_filter,
     mock_blob_container_client_exists,
     mock_azurehttp_calls,
 ):

@@ -156,7 +156,7 @@ class RetrieveThenReadApproach(Approach):
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         filter = self.build_filter(overrides)
-        access_token = overrides.get("access_token")
+        access_token = auth_claims.get("access_token")
         q = str(messages[-1]["content"])
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
@@ -228,7 +228,7 @@ class RetrieveThenReadApproach(Approach):
     ) -> ExtraInfo:
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides)
-        access_token = overrides.get("access_token")
+        access_token = auth_claims.get("access_token")
         top = overrides.get("top", 3)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         send_text_sources = overrides.get("send_text_sources", True)

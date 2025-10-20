@@ -280,7 +280,7 @@ class ChatReadRetrieveReadApproach(Approach):
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         search_index_filter = self.build_filter(overrides)
-        access_token = overrides.get("access_token")
+        access_token = auth_claims.get("access_token")
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
         search_text_embeddings = overrides.get("search_text_embeddings", True)
@@ -391,7 +391,7 @@ class ChatReadRetrieveReadApproach(Approach):
         auth_claims: dict[str, Any],
     ):
         search_index_filter = self.build_filter(overrides)
-        access_token = overrides.get("access_token")
+        access_token = auth_claims.get("access_token")
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         top = overrides.get("top", 3)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")

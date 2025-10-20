@@ -32,7 +32,7 @@ class AuthError(Exception):
 
 
 class AuthenticationHelper:
-    scope: str = "https://graph.microsoft.com/.default"
+    scope: str = "https://search.microsoft.com/.default"
 
     def __init__(
         self,
@@ -152,7 +152,7 @@ class AuthenticationHelper:
             # Use the on-behalf-of-flow to acquire another token for use with Azure Search
             # See https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow for more information
             search_resource_access_token = self.confidential_client.acquire_token_on_behalf_of(
-                user_assertion=auth_token, scopes=["https://search.azure.com/.default"]
+                user_assertion=auth_token, scopes=[self.scope]
             )
             if "error" in search_resource_access_token:
                 raise AuthError(error=str(search_resource_access_token), status_code=401)
@@ -171,10 +171,8 @@ class AuthenticationHelper:
             return {}
 
     async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
-        # Start with the standard security token for all queries
-        access_token = auth_claims.get("access_token")
-        # If there was no security token or no path, then the path is allowed
-        if not access_token or len(path) == 0:
+        # If there was no access control or no path, then the path is allowed
+        if not self.require_access_control or len(path) == 0:
             return True
 
         # Remove any fragment string from the path before checking
@@ -192,7 +190,7 @@ class AuthenticationHelper:
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied
         results = await search_client.search(
-            search_text="*", top=1, filter=filter, x_ms_query_source_authorization=access_token
+            search_text="*", top=1, filter=filter, x_ms_query_source_authorization=auth_claims.get("access_token")
         )
         allowed = False
         async for _ in results:
