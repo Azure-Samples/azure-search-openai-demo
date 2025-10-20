@@ -609,6 +609,7 @@ def mock_vision_env(monkeypatch, request):
             mock_default_azure_credential.return_value = MockAzureCredential()
             yield
 
+
 @pytest.fixture(params=vision_auth_envs, ids=["auth_client0"])
 def mock_vision_auth_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
@@ -697,7 +698,7 @@ async def agent_auth_client(
     mock_blob_container_client,
     mock_azurehttp_calls,
     mock_confidential_client_success,
-    mock_validate_token_success
+    mock_validate_token_success,
 ):
     quart_app = app.create_app()
 
@@ -840,6 +841,7 @@ async def vision_client(
 
         yield test_app.test_client()
 
+
 @pytest_asyncio.fixture(scope="function")
 async def vision_auth_client(
     monkeypatch,
@@ -869,7 +871,6 @@ async def vision_auth_client(
         yield test_app.test_client()
 
 
-
 @pytest.fixture
 def mock_validate_token_success(monkeypatch):
     async def mock_validate_access_token(self, token):
@@ -884,7 +885,7 @@ def mock_confidential_client_success(monkeypatch):
         assert kwargs.get("user_assertion") is not None
         scopes = kwargs.get("scopes")
         assert scopes == [AuthenticationHelper.scope]
-        return {"access_token": "MockToken"}
+        return {"access_token": "MockToken", "id_token_claims": {"oid": "OID_X"}}
 
     monkeypatch.setattr(
         msal.ConfidentialClientApplication, "acquire_token_on_behalf_of", mock_acquire_token_on_behalf_of
