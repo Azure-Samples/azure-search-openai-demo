@@ -79,6 +79,7 @@ MockAgent = KnowledgeAgent(
 
 
 async def mock_search(self, *args, **kwargs):
+    print("mock_search called with args:", args, "kwargs:", kwargs)
     self.filter = kwargs.get("filter")
     self.access_token = kwargs.get("x_ms_query_source_authorization")
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
@@ -101,7 +102,7 @@ def create_mock_retrieve(response_type="default"):
         params_list = retrieval_request.knowledge_source_params
         params = params_list[0]
         self.filter = getattr(params, "filter_add_on", None)
-        self.access_token = kwargs.get("x_ms_query_source_authorization")
+        self.access_token = kwargs.get("x_ms_query_source_authorization", None)
 
         if response_type == "sorting":
             return mock_retrieval_response_with_sorting()
@@ -396,8 +397,8 @@ vision_auth_envs = [
         "AZURE_OPENAI_EMB_MODEL_NAME": "text-embedding-3-large",
         "AZURE_OPENAI_EMB_DIMENSIONS": "3072",
         "USE_MULTIMODAL": "true",
-        "AZURE_VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
         "AZURE_USE_AUTHENTICATION": "true",
+        "AZURE_VISION_ENDPOINT": "https://testvision.cognitiveservices.azure.com/",
     },
 ]
 
@@ -592,6 +593,24 @@ def mock_agent_auth_env(monkeypatch, request):
 
 @pytest.fixture(params=vision_envs, ids=["client0"])
 def mock_vision_env(monkeypatch, request):
+    with mock.patch.dict(os.environ, clear=True):
+        monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
+        monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_IMAGESTORAGE_CONTAINER", "test-image-container")
+        monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "test-storage-rg")
+        monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-storage-subid")
+        monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
+        monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4.1-mini")
+        for key, value in request.param.items():
+            monkeypatch.setenv(key, value)
+
+        with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
+            mock_default_azure_credential.return_value = MockAzureCredential()
+            yield
+
+@pytest.fixture(params=vision_auth_envs, ids=["auth_client0"])
+def mock_vision_auth_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
@@ -821,16 +840,15 @@ async def vision_client(
 
         yield test_app.test_client()
 
-
 @pytest_asyncio.fixture(scope="function")
 async def vision_auth_client(
     monkeypatch,
     mock_vision_auth_env,
-    mock_openai_chatcompletion,
-    mock_openai_embedding,
     mock_confidential_client_success,
     mock_validate_token_success,
-    mock_acs_search_filter,
+    mock_openai_chatcompletion,
+    mock_openai_embedding,
+    mock_acs_search,
     mock_blob_container_client_exists,
     mock_azurehttp_calls,
 ):
@@ -849,6 +867,7 @@ async def vision_auth_client(
         test_app.app.config[app.CONFIG_GLOBAL_BLOB_MANAGER].blob_service_client = mock_blob_service_client
 
         yield test_app.test_client()
+
 
 
 @pytest.fixture
