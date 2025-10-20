@@ -32,7 +32,7 @@ class AuthError(Exception):
 
 
 class AuthenticationHelper:
-    scope: str = "https://search.microsoft.com/.default"
+    scope: str = "https://search.azure.com/.default"
 
     def __init__(
         self,
