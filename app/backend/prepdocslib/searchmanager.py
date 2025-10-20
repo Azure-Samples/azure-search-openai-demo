@@ -266,7 +266,7 @@ class SearchManager:
                         )
                     )
                     fields.append(
-                        SimpleField(
+                        SearchField(
                             name="groups",
                             type=SearchFieldDataType.Collection(SearchFieldDataType.String),
                             filterable=True,
@@ -449,9 +449,27 @@ class SearchManager:
                     oids_field = next((field for field in existing_index.fields if field.name == "oids"), None)
                     if oids_field:
                         oids_field.permission_filter = IndexerPermissionOption.USER_IDS
+                    else:
+                        existing_index.fields.append(
+                            SearchField(
+                                name="oids",
+                                type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                                filterable=True,
+                                permission_filter=PermissionFilter.USER_IDS,
+                            )
+                        )
                     groups_field = next((field for field in existing_index.fields if field.name == "groups"), None)
                     if groups_field:
                         groups_field.permission_filter = IndexerPermissionOption.GROUP_IDS
+                    else:
+                        existing_index.fields.append(
+                            SearchField(
+                                name="groups",
+                                type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                                filterable=True,
+                                permission_filter=PermissionFilter.GROUP_IDS,
+                            )
+                        )
 
                     await search_index_client.create_or_update_index(existing_index)
 
