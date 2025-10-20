@@ -125,7 +125,7 @@ jobs:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
           version: "0.4.20"
@@ -133,7 +133,7 @@ jobs:
           python-version: "3.11"
 
       - name: Setup node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 20
 
