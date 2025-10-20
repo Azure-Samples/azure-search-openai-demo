@@ -292,7 +292,7 @@ class Approach(ABC):
                         knowledge_source_name=search_index_name,
                         filter_add_on=filter_add_on,
                     )
-                ]
+                ],
             ),
             x_ms_query_source_authorization=access_token,
         )

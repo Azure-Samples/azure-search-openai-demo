@@ -157,7 +157,9 @@ class AuthenticationHelper:
             if "error" in search_resource_access_token:
                 raise AuthError(error=str(search_resource_access_token), status_code=401)
 
-            auth_claims = {"access_token": search_resource_access_token["access_token"]}
+            id_token_claims = search_resource_access_token["id_token_claims"]
+            access_token = search_resource_access_token["access_token"]
+            auth_claims = {"access_token": access_token, "oid": id_token_claims["oid"]}
             return auth_claims
         except AuthError as e:
             logging.exception("Exception getting authorization information - " + json.dumps(e.error))
