@@ -214,6 +214,45 @@ class Approach(ABC):
     ) -> list[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
+        # Specialized filename: pattern support. If the query explicitly requests a filename,
+        # bypass normal text/vector search and filter directly on the sourcepage field.
+        if query_text and query_text.startswith("filename:"):
+            raw_filename = query_text[len("filename:") :].strip()
+            safe_filename = raw_filename.replace("'", "''")
+            filename_filter = f"sourcefile eq '{safe_filename}'"
+            effective_filter = f"{filter} and {filename_filter}" if filter else filename_filter
+            results = await self.search_client.search(
+                search_text="",  # empty since we rely solely on filter
+                filter=effective_filter,
+                top=top,
+            )
+            documents: list[Document] = []
+            async for page in results.by_page():
+                async for document in page:
+                    documents.append(
+                        Document(
+                            id=document.get("id"),
+                            content=document.get("content"),
+                            category=document.get("category"),
+                            sourcepage=document.get("sourcepage"),
+                            sourcefile=document.get("sourcefile"),
+                            oids=document.get("oids"),
+                            groups=document.get("groups"),
+                            captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
+                            score=document.get("@search.score"),
+                            reranker_score=document.get("@search.reranker_score"),
+                            images=document.get("images"),
+                        )
+                    )
+            qualified_documents = [
+                doc
+                for doc in documents
+                if (
+                    (doc.score or 0) >= (minimum_search_score or 0)
+                    and (doc.reranker_score or 0) >= (minimum_reranker_score or 0)
+                )
+            ]
+            return qualified_documents
         if use_semantic_ranker:
             results = await self.search_client.search(
                 search_text=search_text,
