@@ -11,10 +11,12 @@ from azure.search.documents.indexes.models import (
     BinaryQuantizationCompression,
     HnswAlgorithmConfiguration,
     HnswParameters,
+    IndexerPermissionOption,
     KnowledgeAgent,
     KnowledgeAgentAzureOpenAIModel,
     KnowledgeAgentRequestLimits,
     KnowledgeSourceReference,
+    PermissionFilter,
     RescoringOptions,
     SearchableField,
     SearchField,
@@ -22,6 +24,7 @@ from azure.search.documents.indexes.models import (
     SearchIndex,
     SearchIndexKnowledgeSource,
     SearchIndexKnowledgeSourceParameters,
+    SearchIndexPermissionFilterOption,
     SemanticConfiguration,
     SemanticField,
     SemanticPrioritizedFields,
@@ -92,6 +95,7 @@ class SearchManager:
             text_vector_compression = None
             image_vector_search_profile = None
             image_vector_algorithm = None
+            permission_filter_option = None
 
             if self.embeddings:
                 if self.embedding_dimensions is None:
@@ -254,10 +258,11 @@ class SearchManager:
                 ]
                 if self.use_acls:
                     fields.append(
-                        SimpleField(
+                        SearchField(
                             name="oids",
                             type=SearchFieldDataType.Collection(SearchFieldDataType.String),
                             filterable=True,
+                            permission_filter=PermissionFilter.USER_IDS,
                         )
                     )
                     fields.append(
@@ -265,8 +270,10 @@ class SearchManager:
                             name="groups",
                             type=SearchFieldDataType.Collection(SearchFieldDataType.String),
                             filterable=True,
+                            permission_filter=PermissionFilter.GROUP_IDS,
                         )
                     )
+                    permission_filter_option = SearchIndexPermissionFilterOption.ENABLED
 
                 if self.use_int_vectorization:
                     logger.info("Including parent_id field for integrated vectorization support in new index")
@@ -322,6 +329,7 @@ class SearchManager:
                         compressions=vector_compressions,
                         vectorizers=vectorizers,
                     ),
+                    permission_filter_option=permission_filter_option,
                 )
 
                 await search_index_client.create_index(index)
@@ -432,6 +440,20 @@ class SearchManager:
                             "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
                             self.search_info,
                         )
+
+                if self.use_acls:
+                    logger.info("Enabling permission filtering on index %s", self.search_info.index_name)
+
+                    if existing_index.permission_filter_option != SearchIndexPermissionFilterOption.ENABLED:
+                        existing_index.permission_filter_option = SearchIndexPermissionFilterOption.ENABLED
+                    oids_field = next((field for field in existing_index.fields if field.name == "oids"), None)
+                    if oids_field:
+                        oids_field.permission_filter = IndexerPermissionOption.USER_IDS
+                    groups_field = next((field for field in existing_index.fields if field.name == "groups"), None)
+                    if groups_field:
+                        groups_field.permission_filter = IndexerPermissionOption.GROUP_IDS
+
+                    await search_index_client.create_or_update_index(existing_index)
 
         if self.search_info.use_agentic_retrieval and self.search_info.agent_name:
             await self.create_agent()
