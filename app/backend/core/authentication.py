@@ -43,7 +43,6 @@ class AuthenticationHelper:
         client_app_id: Optional[str],
         tenant_id: Optional[str],
         require_access_control: bool = False,
-        enable_global_documents: bool = False,
         enable_unauthenticated_access: bool = False,
     ):
         self.use_authentication = use_authentication
@@ -66,7 +65,6 @@ class AuthenticationHelper:
             field_names = [field.name for field in search_index.fields] if search_index else []
             self.has_auth_fields = "oids" in field_names and "groups" in field_names
             self.require_access_control = require_access_control
-            self.enable_global_documents = enable_global_documents
             self.enable_unauthenticated_access = enable_unauthenticated_access
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
@@ -74,7 +72,6 @@ class AuthenticationHelper:
         else:
             self.has_auth_fields = False
             self.require_access_control = False
-            self.enable_global_documents = True
             self.enable_unauthenticated_access = True
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
@@ -163,18 +160,18 @@ class AuthenticationHelper:
             return auth_claims
         except AuthError as e:
             logging.exception("Exception getting authorization information - " + json.dumps(e.error))
-            if self.require_access_control and not self.enable_unauthenticated_access:
+            if not self.enable_unauthenticated_access:
                 raise
             return {}
         except Exception:
             logging.exception("Exception getting authorization information")
-            if self.require_access_control and not self.enable_unauthenticated_access:
+            if not self.enable_unauthenticated_access:
                 raise
             return {}
 
     async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
         # If there was no access control or no path, then the path is allowed
-        if not self.require_access_control or len(path) == 0:
+        if not self.auth_helper.require_access_control or len(path) == 0:
             return True
 
         # Remove any fragment string from the path before checking

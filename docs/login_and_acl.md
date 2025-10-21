@@ -41,7 +41,7 @@ The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azur
 - [Environment variables reference](#environment-variables-reference)
   - [Authentication behavior by environment](#authentication-behavior-by-environment)
 
-This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id).
+This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id). The optional login and document level access control system uses the built-in Azure AI Search [document access control](https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement).
 
 ![AppLoginArchitecture](/docs/images/applogincomponents.png)
 
@@ -85,13 +85,6 @@ The easiest way to setup the two apps is to use the `azd` CLI. We've written scr
     azd env set AZURE_ENFORCE_ACCESS_CONTROL true
     ```
 
-1. (Optional) **Allow global document access**
-  To allow users to search on documents that have no access controls assigned, even when access control is required, run the following command:
-
-    ```shell
-    azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true
-    ```
-
 1. (Optional) **Allow unauthenticated access**
   To allow unauthenticated users to use the app, even when access control is enforced, run the following command:
 
@@ -99,7 +92,7 @@ The easiest way to setup the two apps is to use the `azd` CLI. We've written scr
     azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true
     ```
 
-    Note: These users will not be able to search on documents that have access control assigned, so `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should also be set to true to give them access to the remaining documents.
+    Note: These users will not be able to search on documents that have access control assigned.
 
 1. **Set the authentication tenant ID**
   Specify the tenant ID associated with authentication by running:
@@ -146,10 +139,11 @@ The following instructions explain how to setup the two apps using the Azure Por
   - Select one of the available key durations.
   - The generated key value will be displayed after you select **Add**.
   - Copy the generated key value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
-- Select **API Permissions** in the left hand menu. By default, the [delegated `User.Read`](https://learn.microsoft.com/graph/permissions-reference#user-permissions) permission should be present. This permission is required to read the signed-in user's profile to get the security information used for document level access control. If this permission is not present, it needs to be added to the application.
-  - Select **Add a permission**, and then **Microsoft Graph**.
+- Select **API Permissions** in the left hand menu. The server app will use the `user_impersonation` permission from Azure AI Search to issue a token for security filtering on behalf of the logged in user.
+  - Select **Add a permission**, and then **APIs my organization uses**.
+  - Search for and select **Azure Cognitive Search**.
   - Select **Delegated permissions**.
-  - Search for and and select `User.Read`.
+  - Search for and and select `user_impersonation`.
   - Select **Add permissions**.
 - Select **Expose an API** in the left hand menu. The server app works by using the [On Behalf Of Flow](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow#protocol-diagram), which requires the server app to expose at least 1 API.
   - The application must define a URI to expose APIs. Select **Add** next to **Application ID URI**.
@@ -164,11 +158,6 @@ The following instructions explain how to setup the two apps using the Azure Por
     - For **User consent description**, type **Allow the app to access Azure Search OpenAI Chat API on your behalf**.
     - Leave **State** set to **Enabled**.
     - Select **Add scope** at the bottom to save the scope.
-- (Optional) Enable group claims. Include which Microsoft Entra groups the user is part of as part of the login in the [optional claims](https://learn.microsoft.com/entra/identity-platform/optional-claims). The groups are used for [optional security filtering](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) in the search results.
-  - In the left hand menu, select **Token configuration**
-  - Under **Optional claims**, select **Add groups claim**
-  - Select which [group types](https://learn.microsoft.com/entra/identity/hybrid/connect/how-to-connect-fed-group-claims) to include in the claim. Note that a [overage claim](https://learn.microsoft.com/entra/identity-platform/access-token-claims-reference#groups-overage-claim) will be emitted if the user is part of too many groups. In this case, the API server will use the [Microsoft Graph](https://learn.microsoft.com/graph/api/user-list-memberof?view=graph-rest-*0&tabs=http) to list the groups the user is part of instead of relying on the groups in the claim.
-  - Select **Add** to save your changes
 
 #### Client App
 
@@ -215,8 +204,6 @@ Consent from the user must be obtained for use of the client and server app. The
 If you are running setup for the first time, ensure you have run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <YOUR-STORAGE_ACCOUNT>` before running `azd up`. If you do not set this environment variable, your index will not be initialized with access control support when `prepdocs` is run for the first time. To manually enable access control in your index, use the [manual setup script](#azure-data-lake-storage-gen2-setup).
 
 Ensure you run `azd env set AZURE_USE_AUTHENTICATION` to enable the login UI once you have setup the two Microsoft Entra apps before you deploy or run the application. The login UI will not appear unless all [required environment variables](#environment-variables-reference) have been setup.
-
-In both the chat and ask a question modes, under **Developer settings** optional **Use oid security filter** and **Use groups security filter** checkboxes will appear. The oid (User ID) filter maps to the `oids` field in the search index and the groups (Group ID) filter maps to the `groups` field in the search index. If `AZURE_ENFORCE_ACCESS_CONTROL` has been set, then both the **Use oid security filter** and **Use groups security filter** options are always enabled and cannot be disabled.
 
 #### Programmatic Access with Authentication
 
@@ -340,9 +327,7 @@ Once the environment variables are set, run the script using the following comma
 The following environment variables are used to setup the optional login and document level access control:
 
 - `AZURE_USE_AUTHENTICATION`: Enables Entra ID login and document level access control. Set to true before running `azd up`.
-- `AZURE_ENFORCE_ACCESS_CONTROL`: Enforces Entra ID based login and document level access control on documents with access control assigned. Set to true before running `azd up`. If `AZURE_ENFORCE_ACCESS_CONTROL` is enabled and `AZURE_ENABLE_UNAUTHENTICATED_ACCESS` is not enabled, then authentication is required to use the app.
-- `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS`: Allows users to search on documents that have no access controls assigned
-- `AZURE_ENABLE_UNAUTHENTICATED_ACCESS`: Allows unauthenticated users to access the chat app, even when `AZURE_ENFORCE_ACCESS_CONTROL` is enabled. `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should be set to true to allow unauthenticated users to search on documents that have no access control assigned. Unauthenticated users cannot search on documents with access control assigned.
+- `AZURE_ENABLE_UNAUTHENTICATED_ACCESS`: Allows unauthenticated users to access the chat app. Unauthenticated users cannot search on documents with access control assigned.
 - `AZURE_DISABLE_APP_SERVICES_AUTHENTICATION`: Disables [use of built-in authentication for App Services](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization). An authentication flow based on the MSAL SDKs is used instead. Useful when you want to provide programmatic access to the chat endpoints with authentication.
 - `AZURE_SERVER_APP_ID`: (Required) Application ID of the Microsoft Entra app for the API server.
 - `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Microsoft Entra server app.
@@ -356,13 +341,11 @@ The following environment variables are used to setup the optional login and doc
 
 This application uses an in-memory token cache. User sessions are only available in memory while the application is running. When the application server is restarted, all users will need to log-in again.
 
-The following table describes the impact of the `AZURE_USE_AUTHENTICATION` and `AZURE_ENFORCE_ACCESS_CONTROL` variables depending on the environment you are deploying the application in:
+The following table describes the impact of the `AZURE_USE_AUTHENTICATION` and `AZURE_ENABLE_UNAUTHENTICATED_ACCESS` variables depending on the environment you are deploying the application in:
 
-| AZURE_USE_AUTHENTICATION | AZURE_ENFORCE_ACCESS_CONTROL | Environment | Default Behavior |
+| AZURE_USE_AUTHENTICATION | AZURE_ENABLE_UNAUTHENTICATED_ACCESS | Default Behavior |
 |-|-|-|-|
-| True | False | App Services | Use integrated auth <br /> Login page blocks access to app <br /> User can opt-into access control in developer settings <br /> Allows unrestricted access to sources |
-| True | True | App Services | Use integrated auth <br /> Login page blocks access to app <br /> User must use access control |
-| True | False | Local or Codespaces | Do not use integrated auth <br /> Can use app without login <br /> User can opt-into access control in developer settings <br /> Allows unrestricted access to sources |
-| True | True | Local or Codespaces | Do not use integrated auth <br /> Cannot use app without login <br /> Behavior is chat box is greyed out with default “Please login message” <br /> User must use login button to make chat box usable <br /> User must use access control when logged in |
-| False | False | All | No login or access control |
-| False | True | All | Invalid setting |
+| True | False | User must login, Access control applied on all requests |
+| True | True | User doesn't have to login, Access control only applied on logged in requests |
+| False | False | No login or access control |
+| False | True | Invalid setting |

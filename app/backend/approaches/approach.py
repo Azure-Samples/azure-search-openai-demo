@@ -225,7 +225,7 @@ class Approach(ABC):
                 query_speller=self.query_speller,
                 semantic_configuration_name="default",
                 semantic_query=query_text,
-                x_ms_query_source_authorization=access_token,
+                x_ms_query_source_authorization=access_token if self.auth_helper.require_access_control else None,
             )
         else:
             results = await self.search_client.search(
@@ -233,7 +233,7 @@ class Approach(ABC):
                 filter=filter,
                 top=top,
                 vector_queries=search_vectors,
-                x_ms_query_source_authorization=access_token,
+                x_ms_query_source_authorization=access_token if self.auth_helper.require_access_control else None,
             )
 
         documents: list[Document] = []
@@ -294,7 +294,7 @@ class Approach(ABC):
                     )
                 ],
             ),
-            x_ms_query_source_authorization=access_token,
+            x_ms_query_source_authorization=access_token if self.auth_helper.require_access_control else None,
         )
 
         # Map activity id -> agent's internal search query

@@ -127,6 +127,7 @@ def setup_list_file_strategy(
     datalake_filesystem: Union[str, None],
     datalake_path: Union[str, None],
     datalake_key: Union[str, None],
+    enable_global_documents: bool = False
 ):
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
@@ -139,10 +140,11 @@ def setup_list_file_strategy(
             data_lake_filesystem=datalake_filesystem,
             data_lake_path=datalake_path,
             credential=adls_gen2_creds,
+            enable_global_documents=enable_global_documents,
         )
     elif local_files:
         logger.info("Using local files: %s", local_files)
-        list_file_strategy = LocalListFileStrategy(path_pattern=local_files)
+        list_file_strategy = LocalListFileStrategy(path_pattern=local_files, enable_global_documents=enable_global_documents)
     else:
         raise ValueError("Either local_files or datalake_storage_account must be provided.")
     return list_file_strategy
@@ -431,6 +433,8 @@ if __name__ == "__main__":
     use_int_vectorization = os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
     use_acls = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL") is not None
+    require_access_control = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
+    enable_global_documents = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
     use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
@@ -507,6 +511,7 @@ if __name__ == "__main__":
         datalake_filesystem=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM"),
         datalake_path=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM_PATH"),
         datalake_key=clean_key_if_exists(args.datalakekey),
+        enable_global_documents=enable_global_documents
     )
 
     # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
@@ -557,6 +562,7 @@ if __name__ == "__main__":
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
             use_acls=use_acls,
             category=args.category,
+            require_access_control=require_access_control,
         )
     else:
         file_processors = setup_file_processors(
@@ -594,6 +600,7 @@ if __name__ == "__main__":
             category=args.category,
             use_content_understanding=use_content_understanding,
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
+            require_access_control=require_access_control,
         )
 
     try:
