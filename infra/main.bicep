@@ -69,9 +69,9 @@ param environmentName string
 })
 param location string
 
-param appServicePlanName string = '' // Set in main.parameters.json
-param backendServiceName string = '' // Set in main.parameters.json
-param resourceGroupName string = '' // Set in main.parameters.json
+param appServicePlanName string = 'P1V3' // Set in main.parameters.json
+param backendServiceName string = 'premiumv3' // Set in main.parameters.json
+param resourceGroupName string = '2' // Set in main.parameters.json
 
 param applicationInsightsDashboardName string = '' // Set in main.parameters.json
 param applicationInsightsName string = '' // Set in main.parameters.json
@@ -215,7 +215,7 @@ var chatGpt = {
   deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'gpt-4.1-mini'
   deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '2025-04-14'
   deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'GlobalStandard'
-  deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
+  deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 1000
 }
 
 param embeddingModelName string = ''
@@ -229,7 +229,7 @@ var embedding = {
   deploymentName: !empty(embeddingDeploymentName) ? embeddingDeploymentName : 'text-embedding-3-large'
   deploymentVersion: !empty(embeddingDeploymentVersion) ? embeddingDeploymentVersion : (embeddingModelName == 'text-embedding-ada-002' ? '2' : '1')
   deploymentSkuName: !empty(embeddingDeploymentSkuName) ? embeddingDeploymentSkuName : (embeddingModelName == 'text-embedding-ada-002' ? 'Standard' : 'GlobalStandard')
-  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 30
+  deploymentCapacity: embeddingDeploymentCapacity != 0 ? embeddingDeploymentCapacity : 100
   dimensions: embeddingDimensions != 0 ? embeddingDimensions : 3072
 }
 
@@ -864,7 +864,7 @@ module storage 'core/storage/storage-account.bicep' = {
     allowBlobPublicAccess: false
     allowSharedKeyAccess: false
     sku: {
-      name: storageSkuName
+      name: 'Standard_ZRS'
     }
     deleteRetentionPolicy: {
       enabled: true
