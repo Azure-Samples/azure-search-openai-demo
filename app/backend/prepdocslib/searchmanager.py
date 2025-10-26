@@ -74,7 +74,7 @@ class SearchManager:
         embeddings: Optional[OpenAIEmbeddings] = None,
         field_name_embedding: Optional[str] = None,
         search_images: bool = False,
-        require_access_control: bool = False,
+        require_access_control: bool = False
     ):
         self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name

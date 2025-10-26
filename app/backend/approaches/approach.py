@@ -32,7 +32,6 @@ from openai.types.chat import (
 )
 
 from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
@@ -152,7 +151,6 @@ class Approach(ABC):
         self,
         search_client: SearchClient,
         openai_client: AsyncOpenAI,
-        auth_helper: AuthenticationHelper,
         query_language: Optional[str],
         query_speller: Optional[str],
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -169,7 +167,6 @@ class Approach(ABC):
     ):
         self.search_client = search_client
         self.openai_client = openai_client
-        self.auth_helper = auth_helper
         self.query_language = query_language
         self.query_speller = query_speller
         self.embedding_deployment = embedding_deployment
@@ -225,7 +222,7 @@ class Approach(ABC):
                 query_speller=self.query_speller,
                 semantic_configuration_name="default",
                 semantic_query=query_text,
-                x_ms_query_source_authorization=access_token if self.auth_helper.require_access_control else None,
+                x_ms_query_source_authorization=access_token,
             )
         else:
             results = await self.search_client.search(
@@ -233,7 +230,7 @@ class Approach(ABC):
                 filter=filter,
                 top=top,
                 vector_queries=search_vectors,
-                x_ms_query_source_authorization=access_token if self.auth_helper.require_access_control else None,
+                x_ms_query_source_authorization=access_token,
             )
 
         documents: list[Document] = []
@@ -294,7 +291,7 @@ class Approach(ABC):
                     )
                 ],
             ),
-            x_ms_query_source_authorization=access_token if self.auth_helper.require_access_control else None,
+            x_ms_query_source_authorization=access_token,
         )
 
         # Map activity id -> agent's internal search query

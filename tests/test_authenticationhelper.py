@@ -27,7 +27,6 @@ MockSearchIndex = SearchIndex(
 
 def create_authentication_helper(
     require_access_control: bool = False,
-    enable_global_documents: bool = False,
     enable_unauthenticated_access: bool = False,
 ):
     return AuthenticationHelper(
@@ -38,7 +37,6 @@ def create_authentication_helper(
         client_app_id="CLIENT_APP",
         tenant_id="TENANT_ID",
         require_access_control=require_access_control,
-        enable_global_documents=enable_global_documents,
         enable_unauthenticated_access=enable_unauthenticated_access,
     )
 
@@ -79,16 +77,26 @@ def create_mock_jwt(kid="mock_kid", oid="OID_X"):
 
 @pytest.mark.asyncio
 async def test_get_auth_claims_success(mock_confidential_client_success, mock_validate_token_success):
-    helper = create_authentication_helper()
+    helper = create_authentication_helper(require_access_control=True)
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert auth_claims.get("access_token") == "MockToken"
+    assert auth_claims.get("oid") == "OID_X"
+
+
+@pytest.mark.asyncio
+async def test_get_auth_claims_success_no_required(mock_confidential_client_success, mock_validate_token_success):
+    helper = create_authentication_helper(require_access_control=False)
+    auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
+    assert "access_token" not in auth_claims
+    assert auth_claims.get("oid") == "OID_X"
 
 
 @pytest.mark.asyncio
 async def test_get_auth_claims_unauthorized(mock_confidential_client_unauthorized, mock_validate_token_success):
     helper = create_authentication_helper()
-    auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
-    assert len(auth_claims.keys()) == 0
+    with pytest.raises(AuthError) as exc_info:
+        await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
+    assert exc_info.value.status_code == 401
 
 
 def test_auth_setup(mock_confidential_client_success, mock_validate_token_success, snapshot):
@@ -214,36 +222,6 @@ async def test_check_path_auth_allowed_sourcefile(
 
 
 @pytest.mark.asyncio
-async def test_check_path_auth_allowed_public_sourcefile(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
-):
-    auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
-        require_access_control=True, enable_global_documents=True
-    )
-    filter = None
-    access_token = None
-
-    async def mock_search(self, *args, **kwargs):
-        nonlocal access_token, filter
-        access_token = kwargs.get("x_ms_query_source_authorization")
-        filter = kwargs.get("filter")
-        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
-
-    monkeypatch.setattr(SearchClient, "search", mock_search)
-
-    assert (
-        await auth_helper_require_access_control_and_enable_global_documents.check_path_auth(
-            path="Benefit_Options.pdf",
-            auth_claims={"access_token": "MockToken"},
-            search_client=create_search_client(),
-        )
-        is True
-    )
-    assert access_token == "MockToken"
-    assert filter == "(sourcefile eq 'Benefit_Options.pdf') or (sourcepage eq 'Benefit_Options.pdf')"
-
-
-@pytest.mark.asyncio
 async def test_check_path_auth_allowed_empty(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
@@ -261,36 +239,6 @@ async def test_check_path_auth_allowed_empty(
 
     assert (
         await auth_helper_require_access_control.check_path_auth(
-            path="",
-            auth_claims={"access_token": "MockToken"},
-            search_client=create_search_client(),
-        )
-        is True
-    )
-    assert access_token is None
-    assert filter is None
-
-
-@pytest.mark.asyncio
-async def test_check_path_auth_allowed_public_empty(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
-):
-    auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
-        require_access_control=True, enable_global_documents=True
-    )
-    access_token = None
-    filter = None
-
-    async def mock_search(self, *args, **kwargs):
-        nonlocal access_token, filter
-        access_token = kwargs.get("x_ms_query_source_authorization")
-        filter = kwargs.get("filter")
-        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
-
-    monkeypatch.setattr(SearchClient, "search", mock_search)
-
-    assert (
-        await auth_helper_require_access_control_and_enable_global_documents.check_path_auth(
             path="",
             auth_claims={"access_token": "MockToken"},
             search_client=create_search_client(),
@@ -349,39 +297,6 @@ async def test_check_path_auth_allowed_without_access_control(
 
     assert (
         await auth_helper.check_path_auth(
-            path="Benefit_Options-2.pdf",
-            auth_claims={"access_token": "MockToken"},
-            search_client=create_search_client(),
-        )
-        is True
-    )
-    assert filter is None
-    assert access_token is None
-    assert called_search is False
-
-
-@pytest.mark.asyncio
-async def test_check_path_auth_allowed_public_without_access_control(
-    monkeypatch, mock_confidential_client_success, mock_validate_token_success
-):
-    auth_helper_require_access_control_and_enable_global_documents = create_authentication_helper(
-        require_access_control=False, enable_global_documents=True
-    )
-    filter = None
-    access_token = None
-    called_search = False
-
-    async def mock_search(self, *args, **kwargs):
-        nonlocal filter, access_token, called_search
-        access_token = kwargs.get("x_ms_query_source_authorization")
-        filter = kwargs.get("filter")
-        called_search = True
-        return MockAsyncPageIterator(data=[])
-
-    monkeypatch.setattr(SearchClient, "search", mock_search)
-
-    assert (
-        await auth_helper_require_access_control_and_enable_global_documents.check_path_auth(
             path="Benefit_Options-2.pdf",
             auth_claims={"access_token": "MockToken"},
             search_client=create_search_client(),

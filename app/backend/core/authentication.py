@@ -155,8 +155,11 @@ class AuthenticationHelper:
                 raise AuthError(error=str(search_resource_access_token), status_code=401)
 
             id_token_claims = search_resource_access_token["id_token_claims"]
-            access_token = search_resource_access_token["access_token"]
-            auth_claims = {"access_token": access_token, "oid": id_token_claims["oid"]}
+            auth_claims = { "oid": id_token_claims["oid"] }
+            # Only pass on the access token if access control is required
+            if self.require_access_control:
+                access_token = search_resource_access_token["access_token"]
+                auth_claims["access_token"] = access_token
             return auth_claims
         except AuthError as e:
             logging.exception("Exception getting authorization information - " + json.dumps(e.error))
@@ -171,7 +174,7 @@ class AuthenticationHelper:
 
     async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
         # If there was no access control or no path, then the path is allowed
-        if not self.auth_helper.require_access_control or len(path) == 0:
+        if not self.require_access_control or len(path) == 0:
             return True
 
         # Remove any fragment string from the path before checking

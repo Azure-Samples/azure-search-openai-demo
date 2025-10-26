@@ -20,7 +20,6 @@ from approaches.approach import (
     ThoughtStep,
 )
 from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
@@ -42,7 +41,6 @@ class ChatReadRetrieveReadApproach(Approach):
         agent_model: Optional[str],
         agent_deployment: Optional[str],
         agent_client: KnowledgeAgentRetrievalClient,
-        auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -67,7 +65,6 @@ class ChatReadRetrieveReadApproach(Approach):
         self.agent_deployment = agent_deployment
         self.agent_client = agent_client
         self.openai_client = openai_client
-        self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment

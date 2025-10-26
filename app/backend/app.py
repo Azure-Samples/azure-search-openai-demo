@@ -544,7 +544,6 @@ async def setup_clients():
         client_app_id=AZURE_CLIENT_APP_ID,
         tenant_id=AZURE_AUTH_TENANT_ID,
         require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
-        enable_global_documents=AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS,
         enable_unauthenticated_access=AZURE_ENABLE_UNAUTHENTICATED_ACCESS,
     )
 
@@ -676,7 +675,6 @@ async def setup_clients():
         agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
         agent_client=agent_client,
         openai_client=openai_client,
-        auth_helper=auth_helper,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
@@ -703,7 +701,6 @@ async def setup_clients():
         agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
         agent_client=agent_client,
         openai_client=openai_client,
-        auth_helper=auth_helper,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
         embedding_model=OPENAI_EMB_MODEL,
