@@ -236,7 +236,6 @@ async def test_compute_multimodal_embedding_no_client():
         agent_model=None,
         agent_deployment=None,
         agent_client=None,
-        auth_helper=None,
         openai_client=None,
         chatgpt_model="gpt-35-turbo",
         chatgpt_deployment="chat",
