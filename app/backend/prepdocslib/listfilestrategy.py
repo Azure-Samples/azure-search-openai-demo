@@ -149,7 +149,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         data_lake_filesystem: str,
         data_lake_path: str,
         credential: Union[AsyncTokenCredential, str],
-        enable_global_documents: bool = False
+        enable_global_documents: bool = False,
     ):
         self.data_lake_storage_account = data_lake_storage_account
         self.data_lake_filesystem = data_lake_filesystem
@@ -197,7 +197,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             acls["oids"].append(acl_parts[1])
                         if acl_parts[0] == "group" and "r" in acl_parts[2]:
                             acls["groups"].append(acl_parts[1])
-                    
+
                     if self.enable_global_documents and len(acls["oids"]) == 0 and len(acls["groups"]) == 0:
                         acls = {"oids": ["all"], "groups": ["all"]}
 

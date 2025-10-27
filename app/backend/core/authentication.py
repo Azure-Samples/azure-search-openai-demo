@@ -155,7 +155,7 @@ class AuthenticationHelper:
                 raise AuthError(error=str(search_resource_access_token), status_code=401)
 
             id_token_claims = search_resource_access_token["id_token_claims"]
-            auth_claims = { "oid": id_token_claims["oid"] }
+            auth_claims = {"oid": id_token_claims["oid"]}
             # Only pass on the access token if access control is required
             if self.require_access_control:
                 access_token = search_resource_access_token["access_token"]

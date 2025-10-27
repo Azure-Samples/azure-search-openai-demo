@@ -74,7 +74,7 @@ class SearchManager:
         embeddings: Optional[OpenAIEmbeddings] = None,
         field_name_embedding: Optional[str] = None,
         search_images: bool = False,
-        require_access_control: bool = False
+        require_access_control: bool = False,
     ):
         self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name
@@ -275,7 +275,11 @@ class SearchManager:
                 if self.use_acls:
                     fields.append(oids_field)
                     fields.append(groups_field)
-                    permission_filter_option = SearchIndexPermissionFilterOption.ENABLED if self.require_access_control else SearchIndexPermissionFilterOption.DISABLED
+                    permission_filter_option = (
+                        SearchIndexPermissionFilterOption.ENABLED
+                        if self.require_access_control
+                        else SearchIndexPermissionFilterOption.DISABLED
+                    )
 
                 if self.use_int_vectorization:
                     logger.info("Including parent_id field for integrated vectorization support in new index")
@@ -446,7 +450,11 @@ class SearchManager:
                 if self.use_acls:
                     logger.info("Enabling permission filtering on index %s", self.search_info.index_name)
 
-                    existing_index.permission_filter_option = SearchIndexPermissionFilterOption.ENABLED if self.require_access_control else SearchIndexPermissionFilterOption.DISABLED
+                    existing_index.permission_filter_option = (
+                        SearchIndexPermissionFilterOption.ENABLED
+                        if self.require_access_control
+                        else SearchIndexPermissionFilterOption.DISABLED
+                    )
                     existing_oids_field = next((field for field in existing_index.fields if field.name == "oids"), None)
                     if existing_oids_field:
                         existing_oids_field.permission_filter = IndexerPermissionOption.USER_IDS

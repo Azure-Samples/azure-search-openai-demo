@@ -127,7 +127,7 @@ def setup_list_file_strategy(
     datalake_filesystem: Union[str, None],
     datalake_path: Union[str, None],
     datalake_key: Union[str, None],
-    enable_global_documents: bool = False
+    enable_global_documents: bool = False,
 ):
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
@@ -144,7 +144,9 @@ def setup_list_file_strategy(
         )
     elif local_files:
         logger.info("Using local files: %s", local_files)
-        list_file_strategy = LocalListFileStrategy(path_pattern=local_files, enable_global_documents=enable_global_documents)
+        list_file_strategy = LocalListFileStrategy(
+            path_pattern=local_files, enable_global_documents=enable_global_documents
+        )
     else:
         raise ValueError("Either local_files or datalake_storage_account must be provided.")
     return list_file_strategy
@@ -511,7 +513,7 @@ if __name__ == "__main__":
         datalake_filesystem=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM"),
         datalake_path=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM_PATH"),
         datalake_key=clean_key_if_exists(args.datalakekey),
-        enable_global_documents=enable_global_documents
+        enable_global_documents=enable_global_documents,
     )
 
     # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
