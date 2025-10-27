@@ -4,8 +4,10 @@ import pytest
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
+    PermissionFilter,
     SearchFieldDataType,
     SearchIndex,
+    SearchIndexPermissionFilterOption,
     SimpleField,
 )
 
@@ -26,6 +28,41 @@ class AsyncSearchResultsIterator:
         if self.num >= 0:
             return self.results[self.num]
 
+        raise StopAsyncIteration
+
+    def by_page(self):
+        return AsyncPageIterator([self.results])
+
+
+class AsyncPageIterator:
+    def __init__(self, pages):
+        self.pages = pages
+        self.index = 0
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self.index < len(self.pages):
+            page = self.pages[self.index]
+            self.index += 1
+            return AsyncPageContent(page)
+        raise StopAsyncIteration
+
+
+class AsyncPageContent:
+    def __init__(self, items):
+        self.items = items
+        self.index = 0
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self.index < len(self.items):
+            item = self.items[self.index]
+            self.index += 1
+            return item
         raise StopAsyncIteration
 
 
@@ -210,6 +247,54 @@ async def test_update_storage_urls(monkeypatch, caplog):
 
 
 @pytest.mark.asyncio
+async def test_enable_global_access(monkeypatch, caplog):
+    call_count = 0
+
+    async def mock_search(self, *args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        assert kwargs.get("filter") == "not oids/any() and not groups/any()"
+        assert kwargs.get("select") == ["id"]
+
+        # First call returns documents, second call returns empty (simulating that documents were updated)
+        if call_count == 1:
+            return AsyncSearchResultsIterator(
+                [
+                    {"id": 1},
+                    {"id": 2},
+                ]
+            )
+        else:
+            return AsyncSearchResultsIterator([])
+
+    merged_documents = []
+
+    async def mock_merge_documents(self, *args, **kwargs):
+        for document in kwargs.get("documents"):
+            merged_documents.append(document)
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+    monkeypatch.setattr(SearchClient, "merge_documents", mock_merge_documents)
+
+    command = ManageAcl(
+        service_name="SERVICE",
+        index_name="INDEX",
+        url="https://test.blob.core.windows.net/content/",
+        acl_action="enable_global_access",
+        acl_type="",
+        acl="",
+        credentials=MockAzureCredential(),
+    )
+    with caplog.at_level(logging.INFO):
+        await command.run()
+        assert merged_documents == [
+            {"id": 1, "oids": ["all"], "groups": ["all"]},
+            {"id": 2, "oids": ["all"], "groups": ["all"]},
+        ]
+        assert "Updated 2 documents to enable global access..." in caplog.text
+
+
+@pytest.mark.asyncio
 async def test_enable_acls_with_missing_fields(monkeypatch, capsys):
     async def mock_get_index(self, *args, **kwargs):
         return SearchIndex(name="INDEX", fields=[])
@@ -298,5 +383,10 @@ def validate_index(index):
     assert oids_field.type == SearchFieldDataType.Collection(
         SearchFieldDataType.String
     ) and groups_field.type == SearchFieldDataType.Collection(SearchFieldDataType.String)
+    assert (
+        oids_field.permission_filter == PermissionFilter.USER_IDS
+        and groups_field.permission_filter == PermissionFilter.GROUP_IDS
+    )
     assert storageurl_field.type == SearchFieldDataType.String
     assert oids_field.filterable and groups_field.filterable and storageurl_field.filterable
+    assert index.permission_filter_option == SearchIndexPermissionFilterOption.ENABLED

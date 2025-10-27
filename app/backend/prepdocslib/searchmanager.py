@@ -11,7 +11,6 @@ from azure.search.documents.indexes.models import (
     BinaryQuantizationCompression,
     HnswAlgorithmConfiguration,
     HnswParameters,
-    IndexerPermissionOption,
     KnowledgeAgent,
     KnowledgeAgentAzureOpenAIModel,
     KnowledgeAgentRequestLimits,
@@ -457,14 +456,14 @@ class SearchManager:
                     )
                     existing_oids_field = next((field for field in existing_index.fields if field.name == "oids"), None)
                     if existing_oids_field:
-                        existing_oids_field.permission_filter = IndexerPermissionOption.USER_IDS
+                        existing_oids_field.permission_filter = PermissionFilter.USER_IDS
                     else:
                         existing_index.fields.append(oids_field)
                     existing_groups_field = next(
                         (field for field in existing_index.fields if field.name == "groups"), None
                     )
                     if existing_groups_field:
-                        existing_groups_field.permission_filter = IndexerPermissionOption.GROUP_IDS
+                        existing_groups_field.permission_filter = PermissionFilter.GROUP_IDS
                     else:
                         existing_index.fields.append(groups_field)
 

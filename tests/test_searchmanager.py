@@ -7,7 +7,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
-    IndexerPermissionOption,
+    PermissionFilter,
     SearchFieldDataType,
     SearchIndex,
     SearchIndexPermissionFilterOption,
@@ -182,10 +182,10 @@ async def test_create_index_acls(monkeypatch, search_info):
     assert len(indexes[0].fields) == 8
     oids_field = next((field for field in indexes[0].fields if field.name == "oids"), None)
     assert oids_field is not None, "Expected 'oids' field to be present"
-    assert oids_field.permission_filter == IndexerPermissionOption.USER_IDS
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
     groups_field = next((field for field in indexes[0].fields if field.name == "groups"), None)
     assert groups_field is not None, "Expected 'groups' field to be present"
-    assert groups_field.permission_filter == IndexerPermissionOption.GROUP_IDS
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
 
 
 @pytest.mark.asyncio
@@ -215,10 +215,10 @@ async def test_create_index_acls_no_enforcement(monkeypatch, search_info):
     assert len(indexes[0].fields) == 8
     oids_field = next((field for field in indexes[0].fields if field.name == "oids"), None)
     assert oids_field is not None, "Expected 'oids' field to be present"
-    assert oids_field.permission_filter == IndexerPermissionOption.USER_IDS
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
     groups_field = next((field for field in indexes[0].fields if field.name == "groups"), None)
     assert groups_field is not None, "Expected 'groups' field to be present"
-    assert groups_field.permission_filter == IndexerPermissionOption.GROUP_IDS
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
 
 
 @pytest.mark.asyncio
@@ -265,10 +265,10 @@ async def test_create_index_acls_no_existing_fields(monkeypatch, search_info):
     assert len(updated_indexes[0].fields) == 3
     oids_field = next((field for field in updated_indexes[0].fields if field.name == "oids"), None)
     assert oids_field is not None, "Expected 'oids' field to be present"
-    assert oids_field.permission_filter == IndexerPermissionOption.USER_IDS
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
     groups_field = next((field for field in updated_indexes[0].fields if field.name == "groups"), None)
     assert groups_field is not None, "Expected 'groups' field to be present"
-    assert groups_field.permission_filter == IndexerPermissionOption.GROUP_IDS
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
 
 
 @pytest.mark.asyncio
@@ -315,10 +315,10 @@ async def test_create_index_acls_no_existing_fields_no_enforcement(monkeypatch, 
     assert len(updated_indexes[0].fields) == 3
     oids_field = next((field for field in updated_indexes[0].fields if field.name == "oids"), None)
     assert oids_field is not None, "Expected 'oids' field to be present"
-    assert oids_field.permission_filter == IndexerPermissionOption.USER_IDS
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
     groups_field = next((field for field in updated_indexes[0].fields if field.name == "groups"), None)
     assert groups_field is not None, "Expected 'groups' field to be present"
-    assert groups_field.permission_filter == IndexerPermissionOption.GROUP_IDS
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
 
 
 @pytest.mark.asyncio
@@ -375,10 +375,10 @@ async def test_create_index_acls_with_existing_fields(monkeypatch, search_info):
     assert len(updated_indexes[0].fields) == 3
     oids_field = next((field for field in updated_indexes[0].fields if field.name == "oids"), None)
     assert oids_field is not None, "Expected 'oids' field to be present"
-    assert oids_field.permission_filter == IndexerPermissionOption.USER_IDS
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
     groups_field = next((field for field in updated_indexes[0].fields if field.name == "groups"), None)
     assert groups_field is not None, "Expected 'groups' field to be present"
-    assert groups_field.permission_filter == IndexerPermissionOption.GROUP_IDS
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
 
 
 @pytest.mark.asyncio
@@ -435,10 +435,10 @@ async def test_create_index_acls_with_existing_fields_no_enforcement(monkeypatch
     assert len(updated_indexes[0].fields) == 3
     oids_field = next((field for field in updated_indexes[0].fields if field.name == "oids"), None)
     assert oids_field is not None, "Expected 'oids' field to be present"
-    assert oids_field.permission_filter == IndexerPermissionOption.USER_IDS
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
     groups_field = next((field for field in updated_indexes[0].fields if field.name == "groups"), None)
     assert groups_field is not None, "Expected 'groups' field to be present"
-    assert groups_field.permission_filter == IndexerPermissionOption.GROUP_IDS
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
 
 
 @pytest.mark.asyncio
