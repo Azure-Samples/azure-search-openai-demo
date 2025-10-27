@@ -36,7 +36,7 @@ class MockAzureCredential(AsyncTokenCredential):
 
     async def get_token(self, *scopes, **kwargs):  # accept claims, enable_cae, etc.
         # Return a simple mock token structure with required attributes
-        return MockToken("mock-token", 9999999999, "mock-token")
+        return MockToken("mock-token", 99999999999, "mock-token")
 
 
 class MockAzureCredentialExpired(AsyncTokenCredential):
