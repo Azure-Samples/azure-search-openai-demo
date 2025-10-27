@@ -34,6 +34,16 @@ If necessary, edit this file to ensure it accurately reflects the current state 
     * app/frontend/src/pages: Contains the main pages of the application
 * infra: Contains the Bicep templates for provisioning Azure resources.
 * tests: Contains the test code, including e2e tests, app integration tests, and unit tests.
+* .github/workflows: Contains GitHub Actions workflows for CI/CD.
+  * .github/workflows/azure-dev-validation.yaml: Validates infrastructure (Bicep build) and runs PSRule analysis on test templates.
+  * .github/workflows/azure-dev.yml: Provisions and deploys the full application to Azure using azd on pushes to main.
+  * .github/workflows/evaluate.yaml: Runs the RAG evaluation flow when a PR comment `/evaluate` is added; posts summary back to the PR.
+  * .github/workflows/frontend.yaml: Runs Prettier check (lint/format verification) against the frontend source.
+  * .github/workflows/lint-markdown.yml: Lints Markdown files with markdownlint on pull requests touching `.md` files.
+  * .github/workflows/nightly-jobs.yaml: Nightly scheduled workflow that calls the `python-test.yaml` reusable workflow.
+  * .github/workflows/python-test.yaml: Matrix CI (Python + Node) running lint (ruff), type checks (mypy), formatting (black), backend tests with coverage & diff-cover, i18n check, and E2E Playwright tests.
+  * .github/workflows/stale-bot.yaml: Adds stale notices and auto-closes inactive issues and PRs based on inactivity windows.
+  * .github/workflows/validate-markdown.yaml: Enhanced Markdown validation on PRs (broken paths, locale in docs URLs, broken external links).
 
 ## Adding new data
 
