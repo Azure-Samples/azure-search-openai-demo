@@ -27,3 +27,7 @@ updates:
         patterns:
           - "opentelemetry-*"
           - "azure-monitor-opentelemetry*"
+      pydantic:
+        patterns:
+          - "pydantic"
+          - "pydantic-*"
