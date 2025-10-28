@@ -36,3 +36,4 @@ updates:
         patterns:
           - "pydantic"
           - "pydantic-*"
+          - "typing-extensions"

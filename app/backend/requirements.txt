@@ -337,9 +337,9 @@ psutil==5.9.8
     # via azure-monitor-opentelemetry-exporter
 pycparser==2.22
     # via cffi
-pydantic==2.8.2
+pydantic==2.12.3
     # via openai
-pydantic-core==2.20.1
+pydantic-core==2.41.4
     # via pydantic
 pygments==2.18.0
     # via rich
@@ -394,9 +394,7 @@ taskgroup==0.2.2
 tenacity==9.1.2
     # via -r requirements.in
 tiktoken==0.8.0
-    # via
-    #   -r requirements.in
-    #   opentelemetry-instrumentation-openai
+    # via -r requirements.in
 tomli==2.2.1
     # via hypercorn
 tqdm==4.66.5
@@ -407,7 +405,7 @@ types-html5lib==1.1.11.20241018
     # via types-beautifulsoup4
 types-pillow==10.2.0.20240822
     # via -r requirements.in
-typing-extensions==4.13.2
+typing-extensions==4.15.0
     # via
     #   -r requirements.in
     #   aiosignal
@@ -433,7 +431,10 @@ typing-extensions==4.13.2
     #   quart
     #   quart-cors
     #   taskgroup
+    #   typing-inspection
     #   uvicorn
+typing-inspection==0.4.2
+    # via pydantic
 urllib3==2.5.0
     # via requests
 uvicorn==0.30.6
