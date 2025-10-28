@@ -195,18 +195,14 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
-                    "use_oid_security_filter": True,
-                    "use_groups_security_filter": True,
                     "exclude_category": "excluded",
                 },
             },
         },
     )
     assert response.status_code == 200
-    assert (
-        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
-        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
-    )
+    assert auth_client.config[app.CONFIG_SEARCH_CLIENT].filter == "category ne 'excluded'"
+    assert auth_client.config[app.CONFIG_SEARCH_CLIENT].access_token == "MockToken"
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -221,8 +217,6 @@ async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
-                    "use_oid_security_filter": True,
-                    "use_groups_security_filter": True,
                     "exclude_category": "excluded",
                     "use_agentic_retrieval": True,
                 },
@@ -230,10 +224,9 @@ async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
         },
     )
     assert response.status_code == 200
-    assert (
-        agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter
-        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
-    )
+    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter == "category ne 'excluded'"
+    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].access_token == "MockToken"
+
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -248,18 +241,14 @@ async def test_ask_rtr_text_filter_public_documents(auth_public_documents_client
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
-                    "use_oid_security_filter": True,
-                    "use_groups_security_filter": True,
                     "exclude_category": "excluded",
                 },
             },
         },
     )
     assert response.status_code == 200
-    assert (
-        auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter
-        == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
-    )
+    assert auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter == "category ne 'excluded'"
+    assert auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].access_token == "MockToken"
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -572,18 +561,14 @@ async def test_chat_text_filter(auth_client, snapshot):
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
-                    "use_oid_security_filter": True,
-                    "use_groups_security_filter": True,
                     "exclude_category": "excluded",
                 },
             },
         },
     )
     assert response.status_code == 200
-    assert (
-        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
-        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
-    )
+    assert auth_client.config[app.CONFIG_SEARCH_CLIENT].filter == "category ne 'excluded'"
+    assert auth_client.config[app.CONFIG_SEARCH_CLIENT].access_token == "MockToken"
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -598,18 +583,14 @@ async def test_chat_text_filter_agent(agent_auth_client, snapshot):
             "context": {
                 "overrides": {
                     "use_agentic_retrieval": True,
-                    "use_oid_security_filter": True,
-                    "use_groups_security_filter": True,
                     "exclude_category": "excluded",
                 },
             },
         },
     )
     assert response.status_code == 200
-    assert (
-        agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter
-        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
-    )
+    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter == "category ne 'excluded'"
+    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].access_token == "MockToken"
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -624,18 +605,14 @@ async def test_chat_text_filter_public_documents(auth_public_documents_client, s
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
-                    "use_oid_security_filter": True,
-                    "use_groups_security_filter": True,
                     "exclude_category": "excluded",
                 },
             },
         },
     )
     assert response.status_code == 200
-    assert (
-        auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter
-        == "category ne 'excluded' and ((oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z'))) or (not oids/any() and not groups/any()))"
-    )
+    assert auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].filter == "category ne 'excluded'"
+    assert auth_public_documents_client.config[app.CONFIG_SEARCH_CLIENT].access_token == "MockToken"
     result = await response.get_json()
     if result.get("session_state"):
         del result["session_state"]
@@ -953,18 +930,14 @@ async def test_chat_stream_text_filter(auth_client, snapshot):
             "context": {
                 "overrides": {
                     "retrieval_mode": "text",
-                    "use_oid_security_filter": True,
-                    "use_groups_security_filter": True,
                     "exclude_category": "excluded",
                 }
             },
         },
     )
     assert response.status_code == 200
-    assert (
-        auth_client.config[app.CONFIG_SEARCH_CLIENT].filter
-        == "category ne 'excluded' and (oids/any(g:search.in(g, 'OID_X')) or groups/any(g:search.in(g, 'GROUP_Y, GROUP_Z')))"
-    )
+    assert auth_client.config[app.CONFIG_SEARCH_CLIENT].filter == "category ne 'excluded'"
+    assert auth_client.config[app.CONFIG_SEARCH_CLIENT].access_token == "MockToken"
     result = await response.get_data()
     snapshot.assert_match(result, "result.jsonlines")
 
@@ -1088,8 +1061,8 @@ async def test_chat_stream_vision(vision_client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_vision_user(monkeypatch, auth_client, mock_user_directory_client, snapshot):
-    response = await auth_client.post(
+async def test_chat_vision_user(monkeypatch, vision_auth_client, mock_user_directory_client, snapshot):
+    response = await vision_auth_client.post(
         "/chat",
         headers={"Authorization": "Bearer MockToken"},
         json={"messages": [{"content": "Flowers in westbrae nursery logo?", "role": "user"}]},

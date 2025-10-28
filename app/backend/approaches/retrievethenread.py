@@ -12,7 +12,6 @@ from approaches.approach import (
     ThoughtStep,
 )
 from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
@@ -32,7 +31,6 @@ class RetrieveThenReadApproach(Approach):
         agent_model: Optional[str],
         agent_deployment: Optional[str],
         agent_client: KnowledgeAgentRetrievalClient,
-        auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -58,7 +56,6 @@ class RetrieveThenReadApproach(Approach):
         self.agent_client = agent_client
         self.chatgpt_deployment = chatgpt_deployment
         self.openai_client = openai_client
-        self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
@@ -155,7 +152,8 @@ class RetrieveThenReadApproach(Approach):
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
-        filter = self.build_filter(overrides, auth_claims)
+        filter = self.build_filter(overrides)
+        access_token = auth_claims.get("access_token")
         q = str(messages[-1]["content"])
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
@@ -183,6 +181,7 @@ class RetrieveThenReadApproach(Approach):
             minimum_search_score,
             minimum_reranker_score,
             use_query_rewriting,
+            access_token,
         )
 
         data_points = await self.get_sources_content(
@@ -225,7 +224,8 @@ class RetrieveThenReadApproach(Approach):
         auth_claims: dict[str, Any],
     ) -> ExtraInfo:
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
-        search_index_filter = self.build_filter(overrides, auth_claims)
+        search_index_filter = self.build_filter(overrides)
+        access_token = auth_claims.get("access_token")
         top = overrides.get("top", 3)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         send_text_sources = overrides.get("send_text_sources", True)
@@ -239,6 +239,7 @@ class RetrieveThenReadApproach(Approach):
             filter_add_on=search_index_filter,
             minimum_reranker_score=minimum_reranker_score,
             results_merge_strategy=results_merge_strategy,
+            access_token=access_token,
         )
 
         data_points = await self.get_sources_content(
