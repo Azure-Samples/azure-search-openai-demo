@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
 
-name: azure-search-openai-demo
+name: azure-rag-auth
 metadata:
   template: azure-search-openai-demo@0.0.3
 requiredVersions:
@@ -20,24 +20,24 @@ services:
       prepackage:
         windows:
           shell: pwsh
-          run:  cd ../frontend;npm install;npm run build
+          run: ../../scripts/build_frontend.ps1
           interactive: false
           continueOnError: false
         posix:
           shell: sh
-          run:  cd ../frontend;npm install;npm run build
+          run: ../../scripts/build_frontend.sh
           interactive: false
           continueOnError: false
       # This hook is called when Azure Container Apps is the host
       prebuild:
         windows:
           shell: pwsh
-          run:  cd ../frontend;npm install;npm run build
+          run: ../../scripts/build_frontend.ps1
           interactive: false
           continueOnError: false
         posix:
           shell: sh
-          run:  cd ../frontend;npm install;npm run build
+          run: ../../scripts/build_frontend.sh
           interactive: false
           continueOnError: false
 hooks:
@@ -55,11 +55,11 @@ hooks:
     postprovision:
       windows:
         shell: pwsh
-        run: ./scripts/auth_update.ps1;./scripts/prepdocs.ps1
+        run: ./scripts/auth_update.ps1 && ./scripts/prepdocs.ps1
         interactive: true
         continueOnError: false
       posix:
         shell: sh
-        run: ./scripts/auth_update.sh;./scripts/prepdocs.sh
+        run: ./scripts/auth_update.sh && ./scripts/prepdocs.sh
         interactive: true
         continueOnError: false

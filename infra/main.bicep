@@ -70,7 +70,7 @@ param environmentName string
 param location string
 
 param appServicePlanName string = 'P1V3' // Set in main.parameters.json
-param backendServiceName string = 'premiumv3' // Set in main.parameters.json
+param backendServiceName string = '' // Set in main.parameters.json
 param resourceGroupName string = '2' // Set in main.parameters.json
 
 param applicationInsightsDashboardName string = '' // Set in main.parameters.json
@@ -331,7 +331,13 @@ param useAiProject bool = false
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
-var tags = { 'azd-env-name': environmentName }
+var tags = {
+  'azd-env-name': environmentName
+  BRGOWNER: 'AALETTO'
+  BRGITLEAD: 'ASCHUYLER'
+  BRGMATTER: '999964'
+  BRGDESCRIPTION: 'Azure AI Search Demo development'
+}
 
 var tenantIdForAuth = !empty(authTenantId) ? authTenantId : tenantId
 var authenticationIssuerUri = '${environment().authentication.loginEndpoint}${tenantIdForAuth}/v2.0'
