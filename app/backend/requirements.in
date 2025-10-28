@@ -30,4 +30,4 @@ msgraph-sdk
 python-dotenv
 prompty
 rich
-typing-extensions
+typing-extensions>=4.14.1
