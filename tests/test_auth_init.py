@@ -1,7 +1,10 @@
+import json
 import os
+from types import SimpleNamespace
 from unittest import mock
 
 import pytest
+from kiota_abstractions.api_error import APIError
 from msgraph import GraphServiceClient
 from msgraph.generated.models.application import Application
 from msgraph.generated.models.password_credential import PasswordCredential
@@ -14,6 +17,7 @@ from scripts.auth_init import (
     client_app,
     create_application,
     create_or_update_application_with_secret,
+    grant_application_admin_consent,
     server_app_initial,
     server_app_permission_setup,
 )
@@ -22,6 +26,8 @@ MOCK_OBJECT_ID = "OBJ123"
 MOCK_APP_ID = "APP123"
 MOCK_SECRET = "SECRET_VALUE"
 EXISTING_MOCK_OBJECT_ID = "OBJ999"
+MOCK_CLIENT_APP_ID = "client-app"
+MOCK_SERVER_APP_ID = "server-app"
 
 
 @pytest.fixture
@@ -41,6 +47,19 @@ def graph_client(monkeypatch):
     }
     created_ids = {"object_id": MOCK_OBJECT_ID, "app_id": MOCK_APP_ID}
     secret_text_value = {"value": MOCK_SECRET}
+    service_principals = {
+        MOCK_CLIENT_APP_ID: SimpleNamespace(id="client-sp"),
+        MOCK_SERVER_APP_ID: SimpleNamespace(id="server-sp"),
+        "00000003-0000-0000-c000-000000000000": SimpleNamespace(id="graph-sp"),
+        "880da380-985e-4198-81b9-e05b1cc53158": SimpleNamespace(id="resource-sp"),
+    }
+
+    def fake_service_principals_with_app_id(app_id):
+        if app_id not in service_principals:
+            raise AssertionError(f"Unexpected service principal lookup for {app_id}")
+        return FakeRequestBuilder(service_principals[app_id])
+
+    oauth_grants = FakeOAuthGrant()
 
     async def fake_send_async(request_info, return_type, error_mapping=None):
         url = request_info.url or ""
@@ -62,7 +81,14 @@ def graph_client(monkeypatch):
         if method == "POST" and url.endswith("/addPassword"):
             calls["applications.add_password.post"].append(request_info.content)
             return PasswordCredential(secret_text=secret_text_value["value"])
+        if "oauth2PermissionGrants" in url:
+            if method == "GET":
+                return oauth_grants.next_response()
+            if method == "POST":
+                return oauth_grants.handle_post(request_info.content)
         raise AssertionError(f"Unexpected request: {method} {url}")
+
+    monkeypatch.setattr(client, "service_principals_with_app_id", fake_service_principals_with_app_id)
 
     # Patch the adapter
     monkeypatch.setattr(client.request_adapter, "send_async", fake_send_async)
@@ -70,7 +96,45 @@ def graph_client(monkeypatch):
     client._test_calls = calls
     client._test_secret_text_value = secret_text_value
     client._test_ids = created_ids
+    client._test_service_principals = service_principals
+    client._test_oauth_grants = oauth_grants
     return client
+
+
+class FakeRequestBuilder:
+    def __init__(self, result):
+        self._result = result
+
+    async def get(self):
+        return self._result
+
+
+class FakeOAuthGrant:
+    def __init__(self):
+        self.responses: list[SimpleNamespace] = []
+        self.raise_on_post: APIError | None = None
+        self.posted = []
+        self.post_attempts = 0
+
+    def configure(self, responses, raise_on_post=None):
+        self.responses = list(responses)
+        self.raise_on_post = raise_on_post
+        self.posted = []
+        self.post_attempts = 0
+
+    def next_response(self):
+        if not self.responses:
+            raise AssertionError("No configured response for oauth2_permission_grants.get")
+        return self.responses.pop(0)
+
+    def handle_post(self, grant):
+        self.post_attempts += 1
+        if self.raise_on_post is not None:
+            error = self.raise_on_post
+            self.raise_on_post = None
+            raise error
+        self.posted.append(json.loads(grant.decode("utf-8")))
+        return grant
 
 
 @pytest.mark.asyncio
@@ -232,4 +296,54 @@ def test_server_app_permission_setup():
     app_with_permissions = server_app_permission_setup("server_app_id")
     assert app_with_permissions.identifier_uris == ["api://server_app_id"]
     assert app_with_permissions.required_resource_access is not None
-    assert len(app_with_permissions.required_resource_access) == 1
+    assert len(app_with_permissions.required_resource_access) == 2
+
+
+@pytest.mark.asyncio
+async def test_grant_application_admin_consent_creates_grants(graph_client):
+    graph = graph_client
+    oauth_grants = graph._test_oauth_grants
+    oauth_grants.configure(responses=[SimpleNamespace(value=[]), SimpleNamespace(value=[]), SimpleNamespace(value=[])])
+
+    await grant_application_admin_consent(graph, MOCK_CLIENT_APP_ID, MOCK_SERVER_APP_ID)
+
+    assert oauth_grants.post_attempts == 3
+    scopes = {grant["scope"] for grant in oauth_grants.posted}
+    assert scopes == {
+        "User.Read email offline_access openid profile",
+        "user_impersonation",
+        "access_as_user",
+    }
+
+
+@pytest.mark.asyncio
+async def test_grant_application_admin_consent_skips_existing_grants(graph_client):
+    graph = graph_client
+    oauth_grants = graph._test_oauth_grants
+    oauth_grants.configure(
+        responses=[
+            SimpleNamespace(value=[SimpleNamespace(id="grant1")]),
+            SimpleNamespace(value=[SimpleNamespace(id="grant2")]),
+            SimpleNamespace(value=[SimpleNamespace(id="grant3")]),
+        ]
+    )
+
+    await grant_application_admin_consent(graph, MOCK_CLIENT_APP_ID, MOCK_SERVER_APP_ID)
+
+    assert oauth_grants.post_attempts == 0
+    assert not oauth_grants.posted
+
+
+@pytest.mark.asyncio
+async def test_grant_application_admin_consent_handles_insufficient_permissions(graph_client):
+    graph = graph_client
+    oauth_grants = graph._test_oauth_grants
+    error = APIError()
+    error.response_status_code = 403
+    error.message = "Forbidden"
+    oauth_grants.configure(responses=[SimpleNamespace(value=[])], raise_on_post=error)
+
+    await grant_application_admin_consent(graph, MOCK_CLIENT_APP_ID, MOCK_SERVER_APP_ID)
+
+    assert oauth_grants.post_attempts == 1
+    assert not oauth_grants.posted

@@ -4,8 +4,11 @@ import os
 import random
 import subprocess
 import uuid
+from dataclasses import dataclass
 
 from azure.identity.aio import AzureDeveloperCliCredential
+from kiota_abstractions.api_error import APIError
+from kiota_abstractions.base_request_configuration import RequestConfiguration
 from msgraph import GraphServiceClient
 from msgraph.generated.applications.item.add_password.add_password_post_request_body import (
     AddPasswordPostRequestBody,
@@ -13,6 +16,7 @@ from msgraph.generated.applications.item.add_password.add_password_post_request_
 from msgraph.generated.models.api_application import ApiApplication
 from msgraph.generated.models.application import Application
 from msgraph.generated.models.implicit_grant_settings import ImplicitGrantSettings
+from msgraph.generated.models.o_auth2_permission_grant import OAuth2PermissionGrant
 from msgraph.generated.models.password_credential import PasswordCredential
 from msgraph.generated.models.permission_scope import PermissionScope
 from msgraph.generated.models.required_resource_access import RequiredResourceAccess
@@ -20,6 +24,9 @@ from msgraph.generated.models.resource_access import ResourceAccess
 from msgraph.generated.models.service_principal import ServicePrincipal
 from msgraph.generated.models.spa_application import SpaApplication
 from msgraph.generated.models.web_application import WebApplication
+from msgraph.generated.oauth2_permission_grants.oauth2_permission_grants_request_builder import (
+    Oauth2PermissionGrantsRequestBuilder,
+)
 
 from auth_common import get_application, test_authentication_enabled
 from load_azd_env import load_azd_env
@@ -116,12 +123,27 @@ def server_app_permission_setup(server_app_id: str) -> Application:
         ),
         required_resource_access=[
             RequiredResourceAccess(
+                resource_app_id="00000003-0000-0000-c000-000000000000",
+                resource_access=[
+                    # Graph User.Read
+                    ResourceAccess(id=uuid.UUID("{e1fe6dd8-ba31-4d61-89e7-88639da4683d}"), type="Scope"),
+                    # Graph email
+                    ResourceAccess(id=uuid.UUID("{64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0}"), type="Scope"),
+                    # Graph offline_access
+                    ResourceAccess(id=uuid.UUID("{7427e0e9-2fba-42fe-b0c0-848c9e6a8182}"), type="Scope"),
+                    # Graph openid
+                    ResourceAccess(id=uuid.UUID("{37f7f235-527c-4136-accd-4a02d197296e}"), type="Scope"),
+                    # Graph profile
+                    ResourceAccess(id=uuid.UUID("{14dad69e-099b-42c9-810b-d002981feec1}"), type="Scope"),
+                ],
+            ),
+            RequiredResourceAccess(
                 resource_app_id="880da380-985e-4198-81b9-e05b1cc53158",
                 resource_access=[
                     # user_impersonation
                     ResourceAccess(id=uuid.UUID("{a4165a31-5d9e-4120-bd1e-9d88c66fd3b8}"), type="Scope")
                 ],
-            )
+            ),
         ],
         identifier_uris=[f"api://{server_app_id}"],
     )
@@ -169,6 +191,87 @@ def server_app_known_client_application(client_app_id: str) -> Application:
     )
 
 
+@dataclass
+class GrantDefinition:
+    principal_id: str
+    resource_app_id: str
+    scopes: list[str]
+    target_label: str
+
+    def scope_string(self) -> str:
+        return " ".join(self.scopes)
+
+
+async def grant_application_admin_consent(graph_client: GraphServiceClient, client_app_id: str, server_app_id: str):
+    client_principal = await graph_client.service_principals_with_app_id(client_app_id).get()
+    if client_principal is None or client_principal.id is None:
+        raise ValueError("Unable to locate service principal for client application")
+
+    server_principal = await graph_client.service_principals_with_app_id(server_app_id).get()
+    if server_principal is None or server_principal.id is None:
+        raise ValueError("Unable to locate service principal for server application")
+
+    grant_definitions = [
+        GrantDefinition(
+            principal_id=server_principal.id,
+            resource_app_id="00000003-0000-0000-c000-000000000000",
+            scopes=["User.Read", "email", "offline_access", "openid", "profile"],
+            target_label="server application",
+        ),
+        GrantDefinition(
+            principal_id=server_principal.id,
+            resource_app_id="880da380-985e-4198-81b9-e05b1cc53158",
+            scopes=["user_impersonation"],
+            target_label="server application",
+        ),
+        GrantDefinition(
+            principal_id=client_principal.id,
+            resource_app_id=server_app_id,
+            scopes=["access_as_user"],
+            target_label="client application",
+        ),
+    ]
+
+    for grant in grant_definitions:
+        resource_principal = await graph_client.service_principals_with_app_id(grant.resource_app_id).get()
+        if resource_principal is None or resource_principal.id is None:
+            raise ValueError(f"Unable to locate service principal for resource {grant.resource_app_id}")
+
+        desired_scope = grant.scope_string()
+        filter_query = f"clientId eq '{grant.principal_id}' and resourceId eq '{resource_principal.id}'"
+        query_params = Oauth2PermissionGrantsRequestBuilder.Oauth2PermissionGrantsRequestBuilderGetQueryParameters(
+            filter=filter_query
+        )
+        request_config = RequestConfiguration[
+            Oauth2PermissionGrantsRequestBuilder.Oauth2PermissionGrantsRequestBuilderGetQueryParameters
+        ](query_parameters=query_params)
+        existing_grants = await graph_client.oauth2_permission_grants.get(request_configuration=request_config)
+
+        current_grant = existing_grants.value[0] if existing_grants and existing_grants.value else None
+
+        if current_grant:
+            print(f"Admin consent already granted for {desired_scope} on the {grant.target_label}")
+            continue
+
+        try:
+            await graph_client.oauth2_permission_grants.post(
+                OAuth2PermissionGrant(
+                    client_id=grant.principal_id,
+                    consent_type="AllPrincipals",
+                    resource_id=resource_principal.id,
+                    scope=desired_scope,
+                )
+            )
+            print(f"Granted admin consent for {desired_scope} on the {grant.target_label}")
+        except APIError as error:
+            status_code = error.response_status_code
+            if status_code in {401, 403}:
+                print(f"Failed to grant admin consent: {error.message}")
+                return
+            else:
+                raise
+
+
 async def main():
     load_azd_env()
 
@@ -210,6 +313,10 @@ async def main():
     await graph_client.applications.by_application_id(server_object_id).patch(
         server_app_known_client_application(client_app_id)
     )
+
+    print("Attempting to grant admin consent for the client and server applications...")
+    await grant_application_admin_consent(graph_client, client_app_id, server_app_id)
+
     print("Authentication setup complete.")
 
 
