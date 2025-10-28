@@ -576,6 +576,8 @@ async def setup_clients():
             raise ValueError(
                 "AZURE_USERSTORAGE_ACCOUNT and AZURE_USERSTORAGE_CONTAINER must be set when USE_USER_UPLOAD is true"
             )
+        if not AZURE_ENFORCE_ACCESS_CONTROL:
+            raise ValueError("AZURE_ENFORCE_ACCESS_CONTROL must be true when USE_USER_UPLOAD is true")
         user_blob_manager = AdlsBlobManager(
             endpoint=f"https://{AZURE_USERSTORAGE_ACCOUNT}.dfs.core.windows.net",
             container=AZURE_USERSTORAGE_CONTAINER,

@@ -59,6 +59,7 @@ async def test_app_azure_custom_identity(monkeypatch, minimal_env):
 async def test_app_user_upload_processors(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+    monkeypatch.setenv("AZURE_ENFORCE_ACCESS_CONTROL", "true")
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
 
     quart_app = app.create_app()
@@ -69,9 +70,38 @@ async def test_app_user_upload_processors(monkeypatch, minimal_env):
 
 
 @pytest.mark.asyncio
+async def test_app_user_upload_requires_storage_configuration(monkeypatch, minimal_env):
+    monkeypatch.setenv("USE_USER_UPLOAD", "true")
+
+    quart_app = app.create_app()
+    with pytest.raises(
+        quart.testing.app.LifespanError,
+        match="AZURE_USERSTORAGE_ACCOUNT and AZURE_USERSTORAGE_CONTAINER must be set when USE_USER_UPLOAD is true",
+    ):
+        async with quart_app.test_app():
+            pass
+
+
+@pytest.mark.asyncio
+async def test_app_user_upload_requires_enforce_access_control(monkeypatch, minimal_env):
+    monkeypatch.setenv("USE_USER_UPLOAD", "true")
+    monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
+    monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+
+    quart_app = app.create_app()
+    with pytest.raises(
+        quart.testing.app.LifespanError,
+        match="AZURE_ENFORCE_ACCESS_CONTROL must be true when USE_USER_UPLOAD is true",
+    ):
+        async with quart_app.test_app():
+            pass
+
+
+@pytest.mark.asyncio
 async def test_app_user_upload_processors_docint(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+    monkeypatch.setenv("AZURE_ENFORCE_ACCESS_CONTROL", "true")
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
     monkeypatch.setenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE", "test-docint-service")
 
@@ -86,6 +116,7 @@ async def test_app_user_upload_processors_docint(monkeypatch, minimal_env):
 async def test_app_user_upload_processors_docint_localpdf(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+    monkeypatch.setenv("AZURE_ENFORCE_ACCESS_CONTROL", "true")
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
     monkeypatch.setenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE", "test-docint-service")
     monkeypatch.setenv("USE_LOCAL_PDF_PARSER", "true")
@@ -102,6 +133,7 @@ async def test_app_user_upload_processors_docint_localpdf(monkeypatch, minimal_e
 async def test_app_user_upload_processors_docint_localhtml(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+    monkeypatch.setenv("AZURE_ENFORCE_ACCESS_CONTROL", "true")
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
     monkeypatch.setenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE", "test-docint-service")
     monkeypatch.setenv("USE_LOCAL_HTML_PARSER", "true")
@@ -189,6 +221,7 @@ async def test_app_config_semanticranker_disabled(monkeypatch, minimal_env):
 async def test_app_config_user_upload(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+    monkeypatch.setenv("AZURE_ENFORCE_ACCESS_CONTROL", "true")
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
     quart_app = app.create_app()
     async with quart_app.test_app() as test_app:
@@ -207,6 +240,7 @@ async def test_app_config_user_upload_novectors(monkeypatch, minimal_env):
     """Check that this combo works correctly with prepdocs.py embedding service."""
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+    monkeypatch.setenv("AZURE_ENFORCE_ACCESS_CONTROL", "true")
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
     monkeypatch.setenv("USE_VECTORS", "false")
     quart_app = app.create_app()
@@ -226,6 +260,7 @@ async def test_app_config_user_upload_bad_openai_config(monkeypatch, minimal_env
     """Check that this combo works correctly with prepdocs.py embedding service."""
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+    monkeypatch.setenv("AZURE_ENFORCE_ACCESS_CONTROL", "true")
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
     monkeypatch.setenv("OPENAI_HOST", "openai")
     quart_app = app.create_app()
@@ -241,6 +276,7 @@ async def test_app_config_user_upload_openaicom(monkeypatch, minimal_env):
     """Check that this combo works correctly with prepdocs.py embedding service."""
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
+    monkeypatch.setenv("AZURE_ENFORCE_ACCESS_CONTROL", "true")
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
     monkeypatch.setenv("OPENAI_HOST", "openai")
     monkeypatch.setenv("OPENAI_API_KEY", "pretendkey")
