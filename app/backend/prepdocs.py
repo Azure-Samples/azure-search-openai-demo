@@ -434,8 +434,8 @@ if __name__ == "__main__":
 
     use_int_vectorization = os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
-    use_acls = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL") is not None
-    require_access_control = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
+    use_acls = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    require_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     enable_global_documents = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
     use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
