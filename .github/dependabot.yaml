@@ -22,3 +22,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      telemetry:
+        patterns:
+          - "opentelemetry-*"
+          - "azure-monitor-opentelemetry*"
