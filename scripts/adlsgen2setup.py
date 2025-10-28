@@ -3,7 +3,7 @@ import asyncio
 import json
 import logging
 import os
-from typing import Any, Optional
+from typing import Any
 
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
@@ -54,7 +54,7 @@ class AdlsGen2Setup:
         self.credentials = credentials
         self.security_enabled_groups = security_enabled_groups
         self.data_access_control_format = data_access_control_format
-        self.graph_headers: Optional[dict[str, str]] = None
+        self.graph_headers: dict[str, str] | None = None
 
     async def run(self):
         async with self.create_service_client() as service_client:

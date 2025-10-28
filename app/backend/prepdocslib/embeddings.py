@@ -1,7 +1,6 @@
 import logging
 from abc import ABC
-from collections.abc import Awaitable
-from typing import Callable, Optional, Union
+from collections.abc import Awaitable, Callable
 from urllib.parse import urljoin
 
 import aiohttp
@@ -160,13 +159,13 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
 
     def __init__(
         self,
-        open_ai_service: Union[str, None],
-        open_ai_deployment: Union[str, None],
+        open_ai_service: str | None,
+        open_ai_deployment: str | None,
         open_ai_model_name: str,
         open_ai_dimensions: int,
         open_ai_api_version: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
-        open_ai_custom_url: Union[str, None] = None,
+        credential: AsyncTokenCredential | AzureKeyCredential,
+        open_ai_custom_url: str | None = None,
         disable_batch: bool = False,
     ):
         super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)
@@ -184,7 +183,7 @@ class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
     async def create_client(self) -> AsyncOpenAI:
         class AuthArgs(TypedDict, total=False):
             api_key: str
-            azure_ad_token_provider: Callable[[], Union[str, Awaitable[str]]]
+            azure_ad_token_provider: Callable[[], str | Awaitable[str]]
 
         auth_args = AuthArgs()
         if isinstance(self.credential, AzureKeyCredential):
@@ -215,7 +214,7 @@ class OpenAIEmbeddingService(OpenAIEmbeddings):
         open_ai_model_name: str,
         open_ai_dimensions: int,
         credential: str,
-        organization: Optional[str] = None,
+        organization: str | None = None,
         disable_batch: bool = False,
     ):
         super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)

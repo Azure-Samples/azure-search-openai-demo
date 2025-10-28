@@ -3,7 +3,7 @@
 import base64
 import json
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import aiohttp
 import jwt
@@ -36,12 +36,12 @@ class AuthenticationHelper:
 
     def __init__(
         self,
-        search_index: Optional[SearchIndex],
+        search_index: SearchIndex | None,
         use_authentication: bool,
-        server_app_id: Optional[str],
-        server_app_secret: Optional[str],
-        client_app_id: Optional[str],
-        tenant_id: Optional[str],
+        server_app_id: str | None,
+        server_app_secret: str | None,
+        client_app_id: str | None,
+        tenant_id: str | None,
         require_access_control: bool = False,
         enable_global_documents: bool = False,
         enable_unauthenticated_access: bool = False,

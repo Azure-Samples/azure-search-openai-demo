@@ -3,7 +3,7 @@ import asyncio
 import json
 import logging
 import os
-from typing import Any, Union
+from typing import Any
 from urllib.parse import urljoin
 
 from azure.core.credentials import AzureKeyCredential
@@ -34,7 +34,7 @@ class ManageAcl:
         acl_action: str,
         acl_type: str,
         acl: str,
-        credentials: Union[AsyncTokenCredential, AzureKeyCredential],
+        credentials: AsyncTokenCredential | AzureKeyCredential,
     ):
         """
         Initializes the command
@@ -213,7 +213,7 @@ async def main(args: Any):
         if args.tenant_id is None
         else AzureDeveloperCliCredential(tenant_id=args.tenant_id, process_timeout=60)
     )
-    search_credential: Union[AsyncTokenCredential, AzureKeyCredential] = azd_credential
+    search_credential: AsyncTokenCredential | AzureKeyCredential = azd_credential
     if args.search_key is not None:
         search_credential = AzureKeyCredential(args.search_key)
 

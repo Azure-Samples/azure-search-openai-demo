@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
 
 @dataclass
@@ -10,8 +9,8 @@ class ImageOnPage:
     description: str
     figure_id: str
     page_num: int  # 0-indexed
-    url: Optional[str] = None
-    embedding: Optional[list[float]] = None
+    url: str | None = None
+    embedding: list[float] | None = None
 
 
 @dataclass

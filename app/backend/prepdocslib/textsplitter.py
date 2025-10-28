@@ -3,7 +3,6 @@ import re
 from abc import ABC
 from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import Optional
 
 import tiktoken
 
@@ -392,7 +391,7 @@ class SentenceTextSplitter(TextSplitter):
         This avoids partial/duplicated figures and keeps headings with their following figure when space permits.
         """
         figure_regex = re.compile(r"<figure.*?</figure>", re.IGNORECASE | re.DOTALL)
-        previous_chunk: Optional[Chunk] = None
+        previous_chunk: Chunk | None = None
 
         for page in pages:
             raw = page.text or ""

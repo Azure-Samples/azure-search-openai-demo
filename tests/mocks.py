@@ -1,7 +1,6 @@
 import json
 from collections import namedtuple
 from io import BytesIO
-from typing import Optional
 
 import aiohttp
 import openai.types
@@ -136,7 +135,7 @@ class MockCaption:
 
 
 class MockAsyncSearchResultsIterator:
-    def __init__(self, search_text, vector_queries: Optional[list[VectorQuery]]):
+    def __init__(self, search_text, vector_queries: list[VectorQuery] | None):
         if search_text == "westbrae nursery logo" and (
             vector_queries and any([vector.fields == "images/embedding" for vector in vector_queries])
         ):

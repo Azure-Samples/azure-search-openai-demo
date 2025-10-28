@@ -4,7 +4,7 @@ import logging
 import uuid
 from collections.abc import AsyncGenerator
 from enum import Enum
-from typing import IO, Optional, Union
+from typing import IO
 
 import pymupdf
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
@@ -65,15 +65,15 @@ class DocumentAnalysisParser(Parser):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        credential: AsyncTokenCredential | AzureKeyCredential,
         model_id="prebuilt-layout",
         media_description_strategy: Enum = MediaDescriptionStrategy.NONE,
         # If using OpenAI, this is the client to use
-        openai_client: Union[AsyncOpenAI, None] = None,
-        openai_model: Optional[str] = None,
-        openai_deployment: Optional[str] = None,
+        openai_client: AsyncOpenAI | None = None,
+        openai_model: str | None = None,
+        openai_deployment: str | None = None,
         # If using Content Understanding, this is the endpoint for the service
-        content_understanding_endpoint: Union[str, None] = None,
+        content_understanding_endpoint: str | None = None,
         # should this take the blob storage info too?
     ):
         self.model_id = model_id
@@ -98,7 +98,7 @@ class DocumentAnalysisParser(Parser):
         ) as document_intelligence_client:
             file_analyzed = False
 
-            media_describer: Union[ContentUnderstandingDescriber, MultimodalModelDescriber, None] = None
+            media_describer: ContentUnderstandingDescriber | MultimodalModelDescriber | None = None
             if self.media_description_strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING:
                 if self.content_understanding_endpoint is None:
                     raise ValueError(
@@ -171,7 +171,7 @@ class DocumentAnalysisParser(Parser):
 
                 page_offset = page.spans[0].offset
                 page_length = page.spans[0].length
-                mask_chars: list[tuple[ObjectType, Union[int, None]]] = [(ObjectType.NONE, None)] * page_length
+                mask_chars: list[tuple[ObjectType, int | None]] = [(ObjectType.NONE, None)] * page_length
                 # mark all positions of the table spans in the page
                 for table_idx, table in enumerate(tables_on_page):
                     for span in table.spans:

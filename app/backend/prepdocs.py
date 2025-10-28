@@ -3,7 +3,6 @@ import asyncio
 import logging
 import os
 from enum import Enum
-from typing import Optional, Union
 
 import aiohttp
 from azure.core.credentials import AzureKeyCredential
@@ -45,7 +44,7 @@ from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 logger = logging.getLogger("scripts")
 
 
-def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:
+def clean_key_if_exists(key: str | None) -> str | None:
     """Remove leading and trailing whitespace from a key if it exists. If the key is empty, return None."""
     if key is not None and key.strip() != "":
         return key.strip()
@@ -69,16 +68,16 @@ async def setup_search_info(
     search_service: str,
     index_name: str,
     azure_credential: AsyncTokenCredential,
-    use_agentic_retrieval: Union[bool, None] = None,
-    azure_openai_endpoint: Union[str, None] = None,
-    agent_name: Union[str, None] = None,
-    agent_max_output_tokens: Union[int, None] = None,
-    azure_openai_searchagent_deployment: Union[str, None] = None,
-    azure_openai_searchagent_model: Union[str, None] = None,
-    search_key: Union[str, None] = None,
-    azure_vision_endpoint: Union[str, None] = None,
+    use_agentic_retrieval: bool | None = None,
+    azure_openai_endpoint: str | None = None,
+    agent_name: str | None = None,
+    agent_max_output_tokens: int | None = None,
+    azure_openai_searchagent_deployment: str | None = None,
+    azure_openai_searchagent_model: str | None = None,
+    search_key: str | None = None,
+    azure_vision_endpoint: str | None = None,
 ) -> SearchInfo:
-    search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
+    search_creds: AsyncTokenCredential | AzureKeyCredential = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
     )
     if use_agentic_retrieval and azure_openai_searchagent_model is None:
@@ -104,10 +103,10 @@ def setup_blob_manager(
     storage_container: str,
     storage_resource_group: str,
     subscription_id: str,
-    storage_key: Union[str, None] = None,
-    image_storage_container: Union[str, None] = None,  # Added this parameter
+    storage_key: str | None = None,
+    image_storage_container: str | None = None,  # Added this parameter
 ):
-    storage_creds: Union[AsyncTokenCredential, str] = azure_credential if storage_key is None else storage_key
+    storage_creds: AsyncTokenCredential | str = azure_credential if storage_key is None else storage_key
 
     return BlobManager(
         endpoint=f"https://{storage_account}.blob.core.windows.net",
@@ -122,17 +121,17 @@ def setup_blob_manager(
 
 def setup_list_file_strategy(
     azure_credential: AsyncTokenCredential,
-    local_files: Union[str, None],
-    datalake_storage_account: Union[str, None],
-    datalake_filesystem: Union[str, None],
-    datalake_path: Union[str, None],
-    datalake_key: Union[str, None],
+    local_files: str | None,
+    datalake_storage_account: str | None,
+    datalake_filesystem: str | None,
+    datalake_path: str | None,
+    datalake_key: str | None,
 ):
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
         if datalake_filesystem is None or datalake_path is None:
             raise ValueError("DataLake file system and path are required when using Azure Data Lake Gen2")
-        adls_gen2_creds: Union[AsyncTokenCredential, str] = azure_credential if datalake_key is None else datalake_key
+        adls_gen2_creds: AsyncTokenCredential | str = azure_credential if datalake_key is None else datalake_key
         logger.info("Using Data Lake Gen2 Storage Account: %s", datalake_storage_account)
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=datalake_storage_account,
@@ -160,13 +159,13 @@ def setup_embeddings_service(
     openai_host: OpenAIHost,
     emb_model_name: str,
     emb_model_dimensions: int,
-    azure_openai_service: Union[str, None],
-    azure_openai_custom_url: Union[str, None],
-    azure_openai_deployment: Union[str, None],
-    azure_openai_key: Union[str, None],
+    azure_openai_service: str | None,
+    azure_openai_custom_url: str | None,
+    azure_openai_deployment: str | None,
+    azure_openai_key: str | None,
     azure_openai_api_version: str,
-    openai_key: Union[str, None],
-    openai_org: Union[str, None],
+    openai_key: str | None,
+    openai_org: str | None,
     disable_vectors: bool = False,
     disable_batch_vectors: bool = False,
 ):
@@ -175,7 +174,7 @@ def setup_embeddings_service(
         return None
 
     if openai_host in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
-        azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
+        azure_open_ai_credential: AsyncTokenCredential | AzureKeyCredential = (
             azure_credential if azure_openai_key is None else AzureKeyCredential(azure_openai_key)
         )
         return AzureOpenAIEmbeddingService(
@@ -203,12 +202,12 @@ def setup_embeddings_service(
 def setup_openai_client(
     openai_host: OpenAIHost,
     azure_credential: AsyncTokenCredential,
-    azure_openai_api_key: Union[str, None] = None,
-    azure_openai_api_version: Union[str, None] = None,
-    azure_openai_service: Union[str, None] = None,
-    azure_openai_custom_url: Union[str, None] = None,
-    openai_api_key: Union[str, None] = None,
-    openai_organization: Union[str, None] = None,
+    azure_openai_api_key: str | None = None,
+    azure_openai_api_version: str | None = None,
+    azure_openai_service: str | None = None,
+    azure_openai_custom_url: str | None = None,
+    openai_api_key: str | None = None,
+    openai_organization: str | None = None,
 ):
     if openai_host not in OpenAIHost:
         raise ValueError(f"Invalid OPENAI_HOST value: {openai_host}. Must be one of {[h.value for h in OpenAIHost]}.")
@@ -260,23 +259,23 @@ def setup_openai_client(
 
 def setup_file_processors(
     azure_credential: AsyncTokenCredential,
-    document_intelligence_service: Union[str, None],
-    document_intelligence_key: Union[str, None] = None,
+    document_intelligence_service: str | None,
+    document_intelligence_key: str | None = None,
     local_pdf_parser: bool = False,
     local_html_parser: bool = False,
     use_content_understanding: bool = False,
     use_multimodal: bool = False,
-    openai_client: Union[AsyncOpenAI, None] = None,
-    openai_model: Union[str, None] = None,
-    openai_deployment: Union[str, None] = None,
-    content_understanding_endpoint: Union[str, None] = None,
+    openai_client: AsyncOpenAI | None = None,
+    openai_model: str | None = None,
+    openai_deployment: str | None = None,
+    content_understanding_endpoint: str | None = None,
 ):
     sentence_text_splitter = SentenceTextSplitter()
 
-    doc_int_parser: Optional[DocumentAnalysisParser] = None
+    doc_int_parser: DocumentAnalysisParser | None = None
     # check if Azure Document Intelligence credentials are provided
     if document_intelligence_service is not None:
-        documentintelligence_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
+        documentintelligence_creds: AsyncTokenCredential | AzureKeyCredential = (
             azure_credential if document_intelligence_key is None else AzureKeyCredential(document_intelligence_key)
         )
         doc_int_parser = DocumentAnalysisParser(
@@ -297,7 +296,7 @@ def setup_file_processors(
             content_understanding_endpoint=content_understanding_endpoint,
         )
 
-    pdf_parser: Optional[Parser] = None
+    pdf_parser: Parser | None = None
     if local_pdf_parser or document_intelligence_service is None:
         pdf_parser = LocalPdfParser()
     elif document_intelligence_service is not None:
@@ -305,7 +304,7 @@ def setup_file_processors(
     else:
         logger.warning("No PDF parser available")
 
-    html_parser: Optional[Parser] = None
+    html_parser: Parser | None = None
     if local_html_parser or document_intelligence_service is None:
         html_parser = LocalHTMLParser()
     elif document_intelligence_service is not None:
@@ -344,9 +343,9 @@ def setup_file_processors(
 
 
 def setup_image_embeddings_service(
-    azure_credential: AsyncTokenCredential, vision_endpoint: Union[str, None], use_multimodal: bool
-) -> Union[ImageEmbeddings, None]:
-    image_embeddings_service: Optional[ImageEmbeddings] = None
+    azure_credential: AsyncTokenCredential, vision_endpoint: str | None, use_multimodal: bool
+) -> ImageEmbeddings | None:
+    image_embeddings_service: ImageEmbeddings | None = None
     if use_multimodal:
         if vision_endpoint is None:
             raise ValueError("An Azure AI Vision endpoint must be provided to use multimodal features.")

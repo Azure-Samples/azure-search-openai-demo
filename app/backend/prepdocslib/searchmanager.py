@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-from typing import Optional
 
 from azure.search.documents.indexes.models import (
     AIServicesVisionParameters,
@@ -49,7 +48,7 @@ class Section:
     A section of a page that is stored in a search service. These sections are used as context by Azure OpenAI service
     """
 
-    def __init__(self, chunk: Chunk, content: File, category: Optional[str] = None):
+    def __init__(self, chunk: Chunk, content: File, category: str | None = None):
         self.chunk = chunk  # content comes from here
         self.content = content  # sourcepage and sourcefile come from here
         self.category = category
@@ -65,11 +64,11 @@ class SearchManager:
     def __init__(
         self,
         search_info: SearchInfo,
-        search_analyzer_name: Optional[str] = None,
+        search_analyzer_name: str | None = None,
         use_acls: bool = False,
         use_int_vectorization: bool = False,
-        embeddings: Optional[OpenAIEmbeddings] = None,
-        field_name_embedding: Optional[str] = None,
+        embeddings: OpenAIEmbeddings | None = None,
+        field_name_embedding: str | None = None,
         search_images: bool = False,
     ):
         self.search_info = search_info
@@ -482,7 +481,7 @@ class SearchManager:
 
             logger.info("Agent %s created successfully", self.search_info.agent_name)
 
-    async def update_content(self, sections: list[Section], url: Optional[str] = None):
+    async def update_content(self, sections: list[Section], url: str | None = None):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -534,7 +533,7 @@ class SearchManager:
                 )
                 await search_client.upload_documents(documents)
 
-    async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
+    async def remove_content(self, path: str | None = None, only_oid: str | None = None):
         logger.info(
             "Removing sections from '{%s or '<all>'}' from search index '%s'", path, self.search_info.index_name
         )

@@ -1,7 +1,7 @@
 import json
 import re
 from collections.abc import AsyncGenerator, Awaitable
-from typing import Any, Optional, Union, cast
+from typing import Any, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
@@ -39,14 +39,14 @@ class ChatReadRetrieveReadApproach(Approach):
         *,
         search_client: SearchClient,
         search_index_name: str,
-        agent_model: Optional[str],
-        agent_deployment: Optional[str],
+        agent_model: str | None,
+        agent_deployment: str | None,
         agent_client: KnowledgeAgentRetrievalClient,
         auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
-        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        chatgpt_deployment: str | None,  # Not needed for non-Azure OpenAI
+        embedding_deployment: str | None,  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
         embedding_field: str,
@@ -55,11 +55,11 @@ class ChatReadRetrieveReadApproach(Approach):
         query_language: str,
         query_speller: str,
         prompt_manager: PromptManager,
-        reasoning_effort: Optional[str] = None,
+        reasoning_effort: str | None = None,
         multimodal_enabled: bool = False,
-        image_embeddings_client: Optional[ImageEmbeddings] = None,
-        global_blob_manager: Optional[BlobManager] = None,
-        user_blob_manager: Optional[AdlsBlobManager] = None,
+        image_embeddings_client: ImageEmbeddings | None = None,
+        global_blob_manager: BlobManager | None = None,
+        user_blob_manager: AdlsBlobManager | None = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -107,7 +107,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 return query_text
         return user_query
 
-    def extract_followup_questions(self, content: Optional[str]):
+    def extract_followup_questions(self, content: str | None):
         if content is None:
             return content, []
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
@@ -218,7 +218,7 @@ class ChatReadRetrieveReadApproach(Approach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
         use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
         original_user_query = messages[-1]["content"]
 
@@ -246,7 +246,7 @@ class ChatReadRetrieveReadApproach(Approach):
         )
 
         chat_coroutine = cast(
-            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+            Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]],
             self.create_chat_completion(
                 self.chatgpt_deployment,
                 self.chatgpt_model,

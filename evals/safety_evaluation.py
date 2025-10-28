@@ -4,7 +4,7 @@ import logging
 import os
 import pathlib
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 import requests
 from azure.ai.evaluation import ContentSafetyEvaluator
@@ -50,7 +50,7 @@ async def callback(
     messages: list[dict],
     stream: bool = False,
     session_state: Any = None,
-    context: Optional[dict[str, Any]] = None,
+    context: dict[str, Any] | None = None,
     target_url: str = "http://localhost:50505/chat",
 ):
     messages_list = messages["messages"]

@@ -2,7 +2,7 @@ import base64
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass, field
-from typing import Any, Optional, TypedDict, Union, cast
+from typing import Any, TypedDict, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import (
@@ -39,18 +39,18 @@ from prepdocslib.embeddings import ImageEmbeddings
 
 @dataclass
 class Document:
-    id: Optional[str] = None
-    content: Optional[str] = None
-    category: Optional[str] = None
-    sourcepage: Optional[str] = None
-    sourcefile: Optional[str] = None
-    oids: Optional[list[str]] = None
-    groups: Optional[list[str]] = None
-    captions: Optional[list[QueryCaptionResult]] = None
-    score: Optional[float] = None
-    reranker_score: Optional[float] = None
-    search_agent_query: Optional[str] = None
-    images: Optional[list[dict[str, Any]]] = None
+    id: str | None = None
+    content: str | None = None
+    category: str | None = None
+    sourcepage: str | None = None
+    sourcefile: str | None = None
+    oids: list[str] | None = None
+    groups: list[str] | None = None
+    captions: list[QueryCaptionResult] | None = None
+    score: float | None = None
+    reranker_score: float | None = None
+    search_agent_query: str | None = None
+    images: list[dict[str, Any]] | None = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         result_dict = {
@@ -84,8 +84,8 @@ class Document:
 @dataclass
 class ThoughtStep:
     title: str
-    description: Optional[Any]
-    props: Optional[dict[str, Any]] = None
+    description: Any | None
+    props: dict[str, Any] | None = None
 
     def update_token_usage(self, usage: CompletionUsage) -> None:
         if self.props:
@@ -94,23 +94,23 @@ class ThoughtStep:
 
 @dataclass
 class DataPoints:
-    text: Optional[list[str]] = None
-    images: Optional[list] = None
-    citations: Optional[list[str]] = None
+    text: list[str] | None = None
+    images: list | None = None
+    citations: list[str] | None = None
 
 
 @dataclass
 class ExtraInfo:
     data_points: DataPoints
     thoughts: list[ThoughtStep] = field(default_factory=list)
-    followup_questions: Optional[list[Any]] = None
+    followup_questions: list[Any] | None = None
 
 
 @dataclass
 class TokenUsageProps:
     prompt_tokens: int
     completion_tokens: int
-    reasoning_tokens: Optional[int]
+    reasoning_tokens: int | None
     total_tokens: int
 
     @classmethod
@@ -153,19 +153,19 @@ class Approach(ABC):
         search_client: SearchClient,
         openai_client: AsyncOpenAI,
         auth_helper: AuthenticationHelper,
-        query_language: Optional[str],
-        query_speller: Optional[str],
-        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        query_language: str | None,
+        query_speller: str | None,
+        embedding_deployment: str | None,  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_model: str,
         embedding_dimensions: int,
         embedding_field: str,
         openai_host: str,
         prompt_manager: PromptManager,
-        reasoning_effort: Optional[str] = None,
+        reasoning_effort: str | None = None,
         multimodal_enabled: bool = False,
-        image_embeddings_client: Optional[ImageEmbeddings] = None,
-        global_blob_manager: Optional[BlobManager] = None,
-        user_blob_manager: Optional[AdlsBlobManager] = None,
+        image_embeddings_client: ImageEmbeddings | None = None,
+        global_blob_manager: BlobManager | None = None,
+        user_blob_manager: AdlsBlobManager | None = None,
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -185,7 +185,7 @@ class Approach(ABC):
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
 
-    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
+    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> str | None:
         include_category = overrides.get("include_category")
         exclude_category = overrides.get("exclude_category")
         security_filter = self.auth_helper.build_security_filters(overrides, auth_claims)
@@ -201,16 +201,16 @@ class Approach(ABC):
     async def search(
         self,
         top: int,
-        query_text: Optional[str],
-        filter: Optional[str],
+        query_text: str | None,
+        filter: str | None,
         vectors: list[VectorQuery],
         use_text_search: bool,
         use_vector_search: bool,
         use_semantic_ranker: bool,
         use_semantic_captions: bool,
-        minimum_search_score: Optional[float] = None,
-        minimum_reranker_score: Optional[float] = None,
-        use_query_rewriting: Optional[bool] = None,
+        minimum_search_score: float | None = None,
+        minimum_reranker_score: float | None = None,
+        use_query_rewriting: bool | None = None,
     ) -> list[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
@@ -271,10 +271,10 @@ class Approach(ABC):
         messages: list[ChatCompletionMessageParam],
         agent_client: KnowledgeAgentRetrievalClient,
         search_index_name: str,
-        top: Optional[int] = None,
-        filter_add_on: Optional[str] = None,
-        minimum_reranker_score: Optional[float] = None,
-        results_merge_strategy: Optional[str] = None,
+        top: int | None = None,
+        filter_add_on: str | None = None,
+        minimum_reranker_score: float | None = None,
+        results_merge_strategy: str | None = None,
     ) -> tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
         # STEP 1: Invoke agentic retrieval
         response = await agent_client.retrieve(
@@ -358,7 +358,7 @@ class Approach(ABC):
         use_semantic_captions: bool,
         include_text_sources: bool,
         download_image_sources: bool,
-        user_oid: Optional[str] = None,
+        user_oid: str | None = None,
     ) -> DataPoints:
         """Extract text/image sources & citations from documents.
 
@@ -408,15 +408,15 @@ class Approach(ABC):
                     citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))
         return DataPoints(text=text_sources, images=image_sources, citations=citations)
 
-    def get_citation(self, sourcepage: Optional[str]):
+    def get_citation(self, sourcepage: str | None):
         return sourcepage or ""
 
-    def get_image_citation(self, sourcepage: Optional[str], image_url: str):
+    def get_image_citation(self, sourcepage: str | None, image_url: str):
         sourcepage_citation = self.get_citation(sourcepage)
         image_filename = image_url.split("/")[-1]
         return f"{sourcepage_citation}({image_filename})"
 
-    async def download_blob_as_base64(self, blob_url: str, user_oid: Optional[str] = None) -> Optional[str]:
+    async def download_blob_as_base64(self, blob_url: str, user_oid: str | None = None) -> str | None:
         """
         Downloads a blob from either Azure Blob Storage or Azure Data Lake Storage and returns it as a base64 encoded string.
 
@@ -484,7 +484,7 @@ class Approach(ABC):
         multimodal_query_vector = await self.image_embeddings_client.create_embedding_for_text(q)
         return VectorizedQuery(vector=multimodal_query_vector, k_nearest_neighbors=50, fields="images/embedding")
 
-    def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
+    def get_system_prompt_variables(self, override_prompt: str | None) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>
         if override_prompt is None:
             return {}
@@ -511,17 +511,17 @@ class Approach(ABC):
 
     def create_chat_completion(
         self,
-        chatgpt_deployment: Optional[str],
+        chatgpt_deployment: str | None,
         chatgpt_model: str,
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         response_token_limit: int,
         should_stream: bool = False,
-        tools: Optional[list[ChatCompletionToolParam]] = None,
-        temperature: Optional[float] = None,
-        n: Optional[int] = None,
-        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
-    ) -> Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]:
+        tools: list[ChatCompletionToolParam] | None = None,
+        temperature: float | None = None,
+        n: int | None = None,
+        reasoning_effort: ChatCompletionReasoningEffort | None = None,
+    ) -> Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]:
         if chatgpt_model in self.GPT_REASONING_MODELS:
             params: dict[str, Any] = {
                 # max_tokens is not supported
@@ -562,9 +562,9 @@ class Approach(ABC):
         messages: list[ChatCompletionMessageParam],
         overrides: dict[str, Any],
         model: str,
-        deployment: Optional[str],
-        usage: Optional[CompletionUsage] = None,
-        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+        deployment: str | None,
+        usage: CompletionUsage | None = None,
+        reasoning_effort: ChatCompletionReasoningEffort | None = None,
     ) -> ThoughtStep:
         properties: dict[str, Any] = {"model": model}
         if deployment:

@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from azure.search.documents.indexes._generated.models import (
     NativeBlobSoftDeleteDeletionDetectionPolicy,
@@ -43,9 +42,9 @@ class IntegratedVectorizerStrategy(Strategy):
         search_field_name_embedding: str,
         subscription_id: str,
         document_action: DocumentAction = DocumentAction.Add,
-        search_analyzer_name: Optional[str] = None,
+        search_analyzer_name: str | None = None,
         use_acls: bool = False,
-        category: Optional[str] = None,
+        category: str | None = None,
     ):
 
         self.list_file_strategy = list_file_strategy

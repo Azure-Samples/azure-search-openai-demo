@@ -7,7 +7,7 @@ import tempfile
 from abc import ABC
 from collections.abc import AsyncGenerator
 from glob import glob
-from typing import IO, Optional, Union
+from typing import IO
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.filedatalake.aio import (
@@ -23,7 +23,7 @@ class File:
     This file might contain access control information about which users or groups can access it
     """
 
-    def __init__(self, content: IO, acls: Optional[dict[str, list]] = None, url: Optional[str] = None):
+    def __init__(self, content: IO, acls: dict[str, list] | None = None, url: str | None = None):
         self.content = content
         self.acls = acls or {}
         self.url = url
@@ -146,7 +146,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         data_lake_storage_account: str,
         data_lake_filesystem: str,
         data_lake_path: str,
-        credential: Union[AsyncTokenCredential, str],
+        credential: AsyncTokenCredential | str,
     ):
         self.data_lake_storage_account = data_lake_storage_account
         self.data_lake_filesystem = data_lake_filesystem
