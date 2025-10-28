@@ -302,7 +302,7 @@ The script supports the following commands. All commands support `-v` for verbos
 
 #### Enabling global access on documents without access control
 
-- `python ./scripts/manageacl.py --acl-action enable_global_access`: Set the special [`["all"]`](https://learn.microsoft.com/en-us/azure/search/search-index-access-control-lists-and-rbac-push-api#special-acl-values-all-and-none) on the `oids` (User ID) and `groups` (Group IDs) security filter fields in your index on documents that do not have any existing `oids` or `groups` access control. This will enable any signed-in user to query these documents.
+- `python ./scripts/manageacl.py --acl-action enable_global_access`: Set the special [`["all"]`](https://learn.microsoft.com/azure/search/search-index-access-control-lists-and-rbac-push-api#special-acl-values-all-and-none) on the `oids` (User ID) and `groups` (Group IDs) security filter fields in your index on documents that do not have any existing `oids` or `groups` access control. This will enable any signed-in user to query these documents.
 
 ### Azure Data Lake Storage Gen2 Setup
 
