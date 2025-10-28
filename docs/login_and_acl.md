@@ -37,11 +37,13 @@ The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azur
   - [Troubleshooting](#troubleshooting)
 - [Adding data with document level access control](#adding-data-with-document-level-access-control)
   - [Using the Add Documents API](#using-the-add-documents-api)
+    - [Enabling global access on documents without access control](#enabling-global-access-on-documents-without-access-control)
   - [Azure Data Lake Storage Gen2 and prepdocs](#azure-data-lake-storage-gen2-setup)
+- [Migrate to built-in document access control](migrate-to-built-in-document-access-control)
 - [Environment variables reference](#environment-variables-reference)
   - [Authentication behavior by environment](#authentication-behavior-by-environment)
 
-This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id). The optional login and document level access control system uses the built-in Azure AI Search [document access control](https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement).
+This guide demonstrates how to add an optional login and document level access control system to the sample. This system can be used to restrict access to indexed data to specific users based on what [Microsoft Entra groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) they are a part of, or their [user object id](https://learn.microsoft.com/partner-center/find-ids-and-domain-names#find-the-user-object-id). This system utilizes the [built-in document access and control from Azure AI Search](https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement).
 
 ![AppLoginArchitecture](/docs/images/applogincomponents.png)
 
@@ -85,14 +87,21 @@ The easiest way to setup the two apps is to use the `azd` CLI. We've written scr
     azd env set AZURE_ENFORCE_ACCESS_CONTROL true
     ```
 
+1. (Optional) **Allow global document access**
+  To allow upload of documents that have global access when there are no document-specific access controls assigned, run the following command:
+
+    ```shell
+    azd env set AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS true
+    ```
+
 1. (Optional) **Allow unauthenticated access**
-  To allow unauthenticated users to use the app, even when access control is enforced, run the following command:
+  To allow unauthenticated users to use the app, run the following command:
 
     ```shell
     azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS true
     ```
 
-    Note: These users will not be able to search on documents that have access control assigned.
+    Note: These users will not be able to search on documents that have access control assigned, so `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` should also be set to true to give them access to the remaining documents.
 
 1. **Set the authentication tenant ID**
   Specify the tenant ID associated with authentication by running:
@@ -139,6 +148,11 @@ The following instructions explain how to setup the two apps using the Azure Por
   - Select one of the available key durations.
   - The generated key value will be displayed after you select **Add**.
   - Copy the generated key value and run the following `azd` command to save this ID: `azd env set AZURE_SERVER_APP_SECRET <generated key value>`.
+- Select **API Permissions** in the left hand menu. By default, the [delegated `User.Read`](https://learn.microsoft.com/graph/permissions-reference#user-permissions) permission should be present. This permission is required to read the signed-in user's profile.
+  - Select **Add a permission**, and then **Microsoft Graph**.
+  - Select **Delegated permissions**.
+  - Search for and and select `User.Read`.
+  - Select **Add permissions**.
 - Select **API Permissions** in the left hand menu. The server app will use the `user_impersonation` permission from Azure AI Search to issue a token for security filtering on behalf of the logged in user.
   - Select **Add a permission**, and then **APIs my organization uses**.
   - Search for and select **Azure Cognitive Search**.
@@ -286,6 +300,10 @@ The script supports the following commands. All commands support `-v` for verbos
   python ./scripts/manageacl.py -v --acl-type oids --acl-action remove --acl xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx --url https://st12345.blob.core.windows.net/content/Benefit_Options.pdf
   ```
 
+#### Enabling global access on documents without access control
+
+- `python ./scripts/manageacl.py --acl-action enable_global_access`: Set the special [`["all"]`](https://learn.microsoft.com/en-us/azure/search/search-index-access-control-lists-and-rbac-push-api#special-acl-values-all-and-none) on the `oids` (User ID) and `groups` (Group IDs) security filter fields in your index on documents that do not have any existing `oids` or `groups` access control. This will enable any signed-in user to query these documents.
+
 ### Azure Data Lake Storage Gen2 Setup
 
 [Azure Data Lake Storage Gen2](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) implements an [access control model](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control) that can be used for document level access control. The [adlsgen2setup.py](/scripts/adlsgen2setup.py) script uploads the sample data included in the [data](./data) folder to a Data Lake Storage Gen2 storage account. The [Storage Blob Data Owner](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control-model#role-based-access-control-azure-rbac) role is required to use the script.
@@ -322,12 +340,25 @@ To run this script with a Data Lake Storage Gen2 account, first set the followin
 
 Once the environment variables are set, run the script using the following command: `/scripts/prepdocs.ps1` or `/scripts/prepdocs.sh`.
 
+## Migrate to built-in document access control
+
+Previous versions of the sample used [security filters](https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search) to implement document-level access control.
+To support [built-in access control](https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement), deployment takes the following steps:
+
+1. Adds the `user_impersonation` permission for Azure AI Search to the server app
+2. Enables [permission filtering](https://learn.microsoft.com/azure/search/search-index-access-control-lists-and-rbac-push-api#create-an-index-with-permission-filter-fields) on the existing index.
+3. Sets the [x-ms-query-source-authorization](https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement#how-query-time-enforcement-works) header on every query when `AZURE_ENFORCE_ACCESS_CONTROL` is enabled.
+
+When `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` was enabled, previous versions of the sample interpreted no access control on a document as meaning that the document was globally available. Built-in document access control requires [`["all"]`](https://learn.microsoft.com/azure/search/search-index-access-control-lists-and-rbac-push-api#special-acl-values-all-and-none) to be set for each globally available document. You can run a [one-time migration](#enabling-global-access-on-documents-without-access-control) on your existing index to enable global access for these documents.
+
 ## Environment variables reference
 
 The following environment variables are used to setup the optional login and document level access control:
 
 - `AZURE_USE_AUTHENTICATION`: Enables Entra ID login and document level access control. Set to true before running `azd up`.
-- `AZURE_ENABLE_UNAUTHENTICATED_ACCESS`: Allows unauthenticated users to access the chat app. Unauthenticated users cannot search on documents with access control assigned.
+- `AZURE_ENFORCE_ACCESS_CONTROL`: Enforces Entra ID based login and document level access control on documents with access control assigned. Set to true before running `azd up`. If `AZURE_ENFORCE_ACCESS_CONTROL` is enabled and `AZURE_ENABLE_UNAUTHENTICATED_ACCESS` is not enabled, then authentication is required to use the app.
+- `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS`: Enables prepdocs upload code to support setting user ids and group ids to `["all"]` when uploading documents that have no access control assigned. This will enable the built-in document level access control to return these documents if `AZURE_ENFORCE_ACCESS_CONTROL` is enabled. If you are migrating from a previous version where this was not required, you'll have to perform a [one-time migration](#migrate-to-built-in-document-access-control) to enable global document access.
+- `AZURE_ENABLE_UNAUTHENTICATED_ACCESS`: Allows unauthenticated users to access the chat app. If `AZURE_ENFORCE_ACCESS_CONTROL` is enabled, unauthenticated users cannot search on documents.
 - `AZURE_DISABLE_APP_SERVICES_AUTHENTICATION`: Disables [use of built-in authentication for App Services](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization). An authentication flow based on the MSAL SDKs is used instead. Useful when you want to provide programmatic access to the chat endpoints with authentication.
 - `AZURE_SERVER_APP_ID`: (Required) Application ID of the Microsoft Entra app for the API server.
 - `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Microsoft Entra server app.
@@ -341,11 +372,13 @@ The following environment variables are used to setup the optional login and doc
 
 This application uses an in-memory token cache. User sessions are only available in memory while the application is running. When the application server is restarted, all users will need to log-in again.
 
-The following table describes the impact of the `AZURE_USE_AUTHENTICATION` and `AZURE_ENABLE_UNAUTHENTICATED_ACCESS` variables depending on the environment you are deploying the application in:
+The following table describes the impact of the `AZURE_USE_AUTHENTICATION` and `AZURE_ENFORCE_ACCESS_CONTROL` variables depending on the environment you are deploying the application in:
 
-| AZURE_USE_AUTHENTICATION | AZURE_ENABLE_UNAUTHENTICATED_ACCESS | Default Behavior |
+| AZURE_USE_AUTHENTICATION | AZURE_ENFORCE_ACCESS_CONTROL | Environment | Default Behavior |
 |-|-|-|-|
-| True | False | User must login, Access control applied on all requests |
-| True | True | User doesn't have to login, Access control only applied on logged in requests |
-| False | False | No login or access control |
-| False | True | Invalid setting |
+| True | False | App Services | Use integrated auth <br /> Login page blocks access to app <br /> User can opt-into access control in developer settings <br /> Allows unrestricted access to sources |
+| True | True | App Services | Use integrated auth <br /> Login page blocks access to app <br /> User must use access control |
+| True | False | Local or Codespaces | Do not use integrated auth <br /> Can use app without login <br /> User can opt-into access control in developer settings <br /> Allows unrestricted access to sources |
+| True | True | Local or Codespaces | Do not use integrated auth <br /> Cannot use app without login <br /> Behavior is chat box is greyed out with default “Please login message” <br /> User must use login button to make chat box usable <br /> User must use access control when logged in |
+| False | False | All | No login or access control |
+| False | True | All | Invalid setting |
