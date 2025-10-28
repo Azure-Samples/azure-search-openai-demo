@@ -42,7 +42,7 @@ class AuthenticationHelper:
         server_app_secret: Optional[str],
         client_app_id: Optional[str],
         tenant_id: Optional[str],
-        require_access_control: bool = False,
+        enforce_access_control: bool = False,
         enable_unauthenticated_access: bool = False,
     ):
         self.use_authentication = use_authentication
@@ -64,21 +64,21 @@ class AuthenticationHelper:
         if self.use_authentication:
             field_names = [field.name for field in search_index.fields] if search_index else []
             self.has_auth_fields = "oids" in field_names and "groups" in field_names
-            self.require_access_control = require_access_control
+            self.enforce_access_control = enforce_access_control
             self.enable_unauthenticated_access = enable_unauthenticated_access
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
         else:
             self.has_auth_fields = False
-            self.require_access_control = False
+            self.enforce_access_control = False
             self.enable_unauthenticated_access = True
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
         return {
             "useLogin": self.use_authentication,  # Whether or not login elements are enabled on the UI
-            "requireAccessControl": self.require_access_control,  # Whether or not access control is required to access documents with access control lists
+            "requireAccessControl": self.enforce_access_control,  # Whether or not access control is required to access documents with access control lists
             "enableUnauthenticatedAccess": self.enable_unauthenticated_access,  # Whether or not the user can access the app without login
             "msalConfig": {
                 "auth": {
@@ -157,7 +157,8 @@ class AuthenticationHelper:
             id_token_claims = search_resource_access_token["id_token_claims"]
             auth_claims = {"oid": id_token_claims["oid"]}
             # Only pass on the access token if access control is required
-            if self.require_access_control:
+            # See https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement for more information
+            if self.enforce_access_control:
                 access_token = search_resource_access_token["access_token"]
                 auth_claims["access_token"] = access_token
             return auth_claims
@@ -174,7 +175,7 @@ class AuthenticationHelper:
 
     async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
         # If there was no access control or no path, then the path is allowed
-        if not self.require_access_control or len(path) == 0:
+        if not self.enforce_access_control or len(path) == 0:
             return True
 
         # Remove any fragment string from the path before checking
@@ -192,7 +193,7 @@ class AuthenticationHelper:
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied
         results = await search_client.search(
-            search_text="*", top=1, filter=filter, x_ms_query_source_authorization=auth_claims.get("access_token")
+            search_text="*", top=1, filter=filter, x_ms_query_source_authorization=auth_claims["access_token"]
         )
         allowed = False
         async for _ in results:

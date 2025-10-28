@@ -123,6 +123,7 @@ def server_app_permission_setup(server_app_id: str) -> Application:
         ),
         required_resource_access=[
             RequiredResourceAccess(
+                # Graph App ID
                 resource_app_id="00000003-0000-0000-c000-000000000000",
                 resource_access=[
                     # Graph User.Read
@@ -138,6 +139,7 @@ def server_app_permission_setup(server_app_id: str) -> Application:
                 ],
             ),
             RequiredResourceAccess(
+                # Azure Search App ID
                 resource_app_id="880da380-985e-4198-81b9-e05b1cc53158",
                 resource_access=[
                     # user_impersonation
@@ -202,6 +204,8 @@ class GrantDefinition:
         return " ".join(self.scopes)
 
 
+# Required for the server app to work correctly
+# See https://learn.microsoft.com/graph/api/oauth2permissiongrant-post for more information
 async def grant_application_admin_consent(graph_client: GraphServiceClient, client_app_id: str, server_app_id: str):
     client_principal = await graph_client.service_principals_with_app_id(client_app_id).get()
     if client_principal is None or client_principal.id is None:

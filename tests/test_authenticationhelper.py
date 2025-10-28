@@ -26,7 +26,7 @@ MockSearchIndex = SearchIndex(
 
 
 def create_authentication_helper(
-    require_access_control: bool = False,
+    enforce_access_control: bool = False,
     enable_unauthenticated_access: bool = False,
 ):
     return AuthenticationHelper(
@@ -36,7 +36,7 @@ def create_authentication_helper(
         server_app_secret="SERVER_SECRET",
         client_app_id="CLIENT_APP",
         tenant_id="TENANT_ID",
-        require_access_control=require_access_control,
+        enforce_access_control=enforce_access_control,
         enable_unauthenticated_access=enable_unauthenticated_access,
     )
 
@@ -77,7 +77,7 @@ def create_mock_jwt(kid="mock_kid", oid="OID_X"):
 
 @pytest.mark.asyncio
 async def test_get_auth_claims_success(mock_confidential_client_success, mock_validate_token_success):
-    helper = create_authentication_helper(require_access_control=True)
+    helper = create_authentication_helper(enforce_access_control=True)
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert auth_claims.get("access_token") == "MockToken"
     assert auth_claims.get("oid") == "OID_X"
@@ -85,7 +85,7 @@ async def test_get_auth_claims_success(mock_confidential_client_success, mock_va
 
 @pytest.mark.asyncio
 async def test_get_auth_claims_success_no_required(mock_confidential_client_success, mock_validate_token_success):
-    helper = create_authentication_helper(require_access_control=False)
+    helper = create_authentication_helper(enforce_access_control=False)
     auth_claims = await helper.get_auth_claims_if_enabled(headers={"Authorization": "Bearer Token"})
     assert "access_token" not in auth_claims
     assert auth_claims.get("oid") == "OID_X"
@@ -106,7 +106,7 @@ def test_auth_setup(mock_confidential_client_success, mock_validate_token_succes
 
 
 def test_auth_setup_required_access_control(mock_confidential_client_success, mock_validate_token_success, snapshot):
-    helper = create_authentication_helper(require_access_control=True)
+    helper = create_authentication_helper(enforce_access_control=True)
     result = helper.get_auth_setup_for_client()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -114,7 +114,7 @@ def test_auth_setup_required_access_control(mock_confidential_client_success, mo
 def test_auth_setup_required_access_control_and_unauthenticated_access(
     mock_confidential_client_success, mock_validate_token_success, snapshot
 ):
-    helper = create_authentication_helper(require_access_control=True, enable_unauthenticated_access=True)
+    helper = create_authentication_helper(enforce_access_control=True, enable_unauthenticated_access=True)
     result = helper.get_auth_setup_for_client()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
@@ -138,7 +138,7 @@ def test_get_auth_token(mock_confidential_client_success, mock_validate_token_su
 
 @pytest.mark.asyncio
 async def test_check_path_auth_denied(monkeypatch, mock_confidential_client_success, mock_validate_token_success):
-    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    auth_helper_enforce_access_control = create_authentication_helper(enforce_access_control=True)
     access_token = None
     filter = None
 
@@ -151,7 +151,7 @@ async def test_check_path_auth_denied(monkeypatch, mock_confidential_client_succ
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
     assert (
-        await auth_helper_require_access_control.check_path_auth(
+        await auth_helper_enforce_access_control.check_path_auth(
             path="Benefit_Options-2.pdf",
             auth_claims={"access_token": "MockToken"},
             search_client=create_search_client(),
@@ -166,7 +166,7 @@ async def test_check_path_auth_denied(monkeypatch, mock_confidential_client_succ
 async def test_check_path_auth_allowed_sourcepage(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
-    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    auth_helper_enforce_access_control = create_authentication_helper(enforce_access_control=True)
     access_token = None
     filter = None
 
@@ -179,7 +179,7 @@ async def test_check_path_auth_allowed_sourcepage(
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
     assert (
-        await auth_helper_require_access_control.check_path_auth(
+        await auth_helper_enforce_access_control.check_path_auth(
             path="Benefit_Options-2's complement.pdf",
             auth_claims={"access_token": "MockToken"},
             search_client=create_search_client(),
@@ -197,7 +197,7 @@ async def test_check_path_auth_allowed_sourcepage(
 async def test_check_path_auth_allowed_sourcefile(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
-    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    auth_helper_enforce_access_control = create_authentication_helper(enforce_access_control=True)
     access_token = None
     filter = None
 
@@ -210,7 +210,7 @@ async def test_check_path_auth_allowed_sourcefile(
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
     assert (
-        await auth_helper_require_access_control.check_path_auth(
+        await auth_helper_enforce_access_control.check_path_auth(
             path="Benefit_Options.pdf",
             auth_claims={"access_token": "MockToken"},
             search_client=create_search_client(),
@@ -225,7 +225,7 @@ async def test_check_path_auth_allowed_sourcefile(
 async def test_check_path_auth_allowed_empty(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
-    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    auth_helper_enforce_access_control = create_authentication_helper(enforce_access_control=True)
     filter = None
     access_token = None
 
@@ -238,7 +238,7 @@ async def test_check_path_auth_allowed_empty(
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
     assert (
-        await auth_helper_require_access_control.check_path_auth(
+        await auth_helper_enforce_access_control.check_path_auth(
             path="",
             auth_claims={"access_token": "MockToken"},
             search_client=create_search_client(),
@@ -253,7 +253,7 @@ async def test_check_path_auth_allowed_empty(
 async def test_check_path_auth_allowed_fragment(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
-    auth_helper_require_access_control = create_authentication_helper(require_access_control=True)
+    auth_helper_enforce_access_control = create_authentication_helper(enforce_access_control=True)
     access_token = None
     filter = None
 
@@ -266,7 +266,7 @@ async def test_check_path_auth_allowed_fragment(
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
     assert (
-        await auth_helper_require_access_control.check_path_auth(
+        await auth_helper_enforce_access_control.check_path_auth(
             path="Benefit_Options.pdf#textafterfragment",
             auth_claims={"access_token": "MockToken"},
             search_client=create_search_client(),
@@ -281,7 +281,7 @@ async def test_check_path_auth_allowed_fragment(
 async def test_check_path_auth_allowed_without_access_control(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
-    auth_helper = create_authentication_helper(require_access_control=False)
+    auth_helper = create_authentication_helper(enforce_access_control=False)
     filter = None
     access_token = None
     called_search = False

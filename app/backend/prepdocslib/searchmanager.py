@@ -73,7 +73,7 @@ class SearchManager:
         embeddings: Optional[OpenAIEmbeddings] = None,
         field_name_embedding: Optional[str] = None,
         search_images: bool = False,
-        require_access_control: bool = False,
+        enforce_access_control: bool = False,
     ):
         self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name
@@ -83,7 +83,7 @@ class SearchManager:
         self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else None
         self.field_name_embedding = field_name_embedding
         self.search_images = search_images
-        self.require_access_control = require_access_control
+        self.enforce_access_control = enforce_access_control
 
     async def create_index(self):
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
@@ -276,7 +276,7 @@ class SearchManager:
                     fields.append(groups_field)
                     permission_filter_option = (
                         SearchIndexPermissionFilterOption.ENABLED
-                        if self.require_access_control
+                        if self.enforce_access_control
                         else SearchIndexPermissionFilterOption.DISABLED
                     )
 
@@ -447,13 +447,13 @@ class SearchManager:
                         )
 
                 if self.use_acls:
-                    logger.info("Enabling permission filtering on index %s", self.search_info.index_name)
+                    if self.enforce_access_control:
+                        logger.info("Enabling permission filtering on index %s", self.search_info.index_name)
+                        existing_index.permission_filter_option = SearchIndexPermissionFilterOption.ENABLED
+                    else:
+                        logger.info("Disabling permission filtering on index %s", self.search_info.index_name)
+                        existing_index.permission_filter_option = SearchIndexPermissionFilterOption.DISABLED
 
-                    existing_index.permission_filter_option = (
-                        SearchIndexPermissionFilterOption.ENABLED
-                        if self.require_access_control
-                        else SearchIndexPermissionFilterOption.DISABLED
-                    )
                     existing_oids_field = next((field for field in existing_index.fields if field.name == "oids"), None)
                     if existing_oids_field:
                         existing_oids_field.permission_filter = PermissionFilter.USER_IDS

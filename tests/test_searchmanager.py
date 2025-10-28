@@ -172,7 +172,7 @@ async def test_create_index_acls(monkeypatch, search_info):
     manager = SearchManager(
         search_info,
         use_acls=True,
-        require_access_control=True,
+        enforce_access_control=True,
         field_name_embedding="embedding",
     )
     await manager.create_index()
@@ -205,7 +205,7 @@ async def test_create_index_acls_no_enforcement(monkeypatch, search_info):
     manager = SearchManager(
         search_info,
         use_acls=True,
-        require_access_control=False,
+        enforce_access_control=False,
         field_name_embedding="embedding",
     )
     await manager.create_index()
@@ -255,7 +255,7 @@ async def test_create_index_acls_no_existing_fields(monkeypatch, search_info):
     manager = SearchManager(
         search_info,
         use_acls=True,
-        require_access_control=True,
+        enforce_access_control=True,
         field_name_embedding="embedding",
     )
     await manager.create_index()
@@ -305,7 +305,7 @@ async def test_create_index_acls_no_existing_fields_no_enforcement(monkeypatch, 
     manager = SearchManager(
         search_info,
         use_acls=True,
-        require_access_control=False,
+        enforce_access_control=False,
         field_name_embedding="embedding",
     )
     await manager.create_index()
@@ -365,7 +365,7 @@ async def test_create_index_acls_with_existing_fields(monkeypatch, search_info):
     manager = SearchManager(
         search_info,
         use_acls=True,
-        require_access_control=True,
+        enforce_access_control=True,
         field_name_embedding="embedding",
     )
     await manager.create_index()
@@ -425,7 +425,7 @@ async def test_create_index_acls_with_existing_fields_no_enforcement(monkeypatch
     manager = SearchManager(
         search_info,
         use_acls=True,
-        require_access_control=False,
+        enforce_access_control=False,
         field_name_embedding="embedding",
     )
     await manager.create_index()

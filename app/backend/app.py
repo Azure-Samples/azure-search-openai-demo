@@ -542,7 +542,7 @@ async def setup_clients():
         server_app_secret=AZURE_SERVER_APP_SECRET,
         client_app_id=AZURE_CLIENT_APP_ID,
         tenant_id=AZURE_AUTH_TENANT_ID,
-        require_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
+        enforce_access_control=AZURE_ENFORCE_ACCESS_CONTROL,
         enable_unauthenticated_access=AZURE_ENABLE_UNAUTHENTICATED_ACCESS,
     )
 
