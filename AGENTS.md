@@ -103,7 +103,7 @@ cd app/backend && uv pip compile requirements.in -o requirements.txt --python-ve
 To check Python type hints, use the following command:
 
 ```shell
-cd app/backend && mypy . --config-file=../pyproject.toml
+cd app/backend && mypy . --config-file=../../pyproject.toml
 ```
 
 ```shell
