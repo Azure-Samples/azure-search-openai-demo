@@ -208,7 +208,7 @@ multidict==6.7.0
     #   yarl
 oauthlib==3.3.1
     # via requests-oauthlib
-openai==2.6.1
+openai==1.109.1
     # via -r requirements.in
 opentelemetry-api==1.38.0
     # via
