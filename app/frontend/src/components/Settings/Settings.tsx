@@ -33,8 +33,6 @@ export interface SettingsProps {
     showReasoningEffortOption: boolean;
     showMultimodalOptions: boolean;
     showVectorOption: boolean;
-    useOidSecurityFilter: boolean;
-    useGroupsSecurityFilter: boolean;
     useLogin: boolean;
     loggedIn: boolean;
     requireAccessControl: boolean;
@@ -74,8 +72,6 @@ export const Settings = ({
     showReasoningEffortOption,
     showMultimodalOptions,
     showVectorOption,
-    useOidSecurityFilter,
-    useGroupsSecurityFilter,
     useLogin,
     loggedIn,
     requireAccessControl,
@@ -118,10 +114,6 @@ export const Settings = ({
     const reasoningEffortFieldId = useId("reasoningEffortField");
     const semanticCaptionsId = useId("semanticCaptions");
     const semanticCaptionsFieldId = useId("semanticCaptionsField");
-    const useOidSecurityFilterId = useId("useOidSecurityFilter");
-    const useOidSecurityFilterFieldId = useId("useOidSecurityFilterField");
-    const useGroupsSecurityFilterId = useId("useGroupsSecurityFilter");
-    const useGroupsSecurityFilterFieldId = useId("useGroupsSecurityFilterField");
     const shouldStreamId = useId("shouldStream");
     const shouldStreamFieldId = useId("shouldStreamField");
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
@@ -311,32 +303,6 @@ export const Settings = ({
                     ]}
                     onRenderLabel={props => renderLabel(props, queryRewritingFieldId, queryRewritingFieldId, t("helpTexts.reasoningEffort"))}
                 />
-            )}
-            {useLogin && (
-                <>
-                    <Checkbox
-                        id={useOidSecurityFilterFieldId}
-                        className={styles.settingsSeparator}
-                        checked={useOidSecurityFilter || requireAccessControl}
-                        label={t("labels.useOidSecurityFilter")}
-                        disabled={!loggedIn || requireAccessControl}
-                        onChange={(_ev, checked) => onChange("useOidSecurityFilter", !!checked)}
-                        aria-labelledby={useOidSecurityFilterId}
-                        onRenderLabel={props => renderLabel(props, useOidSecurityFilterId, useOidSecurityFilterFieldId, t("helpTexts.useOidSecurityFilter"))}
-                    />
-                    <Checkbox
-                        id={useGroupsSecurityFilterFieldId}
-                        className={styles.settingsSeparator}
-                        checked={useGroupsSecurityFilter || requireAccessControl}
-                        label={t("labels.useGroupsSecurityFilter")}
-                        disabled={!loggedIn || requireAccessControl}
-                        onChange={(_ev, checked) => onChange("useGroupsSecurityFilter", !!checked)}
-                        aria-labelledby={useGroupsSecurityFilterId}
-                        onRenderLabel={props =>
-                            renderLabel(props, useGroupsSecurityFilterId, useGroupsSecurityFilterFieldId, t("helpTexts.useGroupsSecurityFilter"))
-                        }
-                    />
-                </>
             )}
             {showVectorOption && !useAgenticRetrieval && (
                 <>

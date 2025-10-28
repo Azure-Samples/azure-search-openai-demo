@@ -22,8 +22,6 @@ export type ChatAppRequestOverrides = {
     prompt_template_prefix?: string;
     prompt_template_suffix?: string;
     suggest_followup_questions?: boolean;
-    use_oid_security_filter?: boolean;
-    use_groups_security_filter?: boolean;
     send_text_sources: boolean;
     send_image_sources: boolean;
     search_text_embeddings: boolean;
