@@ -37,3 +37,13 @@ updates:
           - "pydantic"
           - "pydantic-*"
           - "typing-extensions"
+      pallets:
+        patterns:
+          - "flask"
+          - "werkzeug"
+          - "blinker"
+          - "quart"
+          - "jinja2"
+          - "click"
+          - "itsdangerous"
+          - "markupsafe"
