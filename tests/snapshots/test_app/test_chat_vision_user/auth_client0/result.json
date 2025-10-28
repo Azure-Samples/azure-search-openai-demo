@@ -8,8 +8,8 @@
                 "westbrae_jun28.pdf#page=2"
             ],
             "images": [
-                "data:image/png;base64,dGVzdCBjb250ZW50",
-                "data:image/png;base64,dGVzdCBjb250ZW50"
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==",
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=="
             ],
             "text": [
                 "westbrae_jun28.pdf#page=1: <figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter \"M\" with four colors: red, blue, green, and yellow. To the right of the \"M\" is the word \"Gmail\" written in gray text. The design is modern and clean. The colors used are characteristic of Google's branding.</figcaption></figure>   Pamela Fox <pamela.fox@gmail.com>  Receipt / Tax invoice (#2-108442)  Westbrae Nursery <no-reply@email.lightspeedhq.com> Reply-To: jeff@westbrae-nursery.com To: pamela.fox@gmail.com  Sat, Jun 28, 2025 at 1:21 PM   <figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text \"Westbrae\" is positioned to the right of the flowers. Below \"Westbrae\" is the word \"Nursery.\" The design is simple and rendered in black and white.</figcaption></figure>   An Employee-Owned Co-op 1272 Gilman St, Berkeley, CA 94706 510-526-5517  Main Outlet  Receipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm   <figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.",
@@ -183,13 +183,13 @@
                             },
                             {
                                 "image_url": {
-                                    "url": "data:image/png;base64,dGVzdCBjb250ZW50"
+                                    "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=="
                                 },
                                 "type": "image_url"
                             },
                             {
                                 "image_url": {
-                                    "url": "data:image/png;base64,dGVzdCBjb250ZW50"
+                                    "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=="
                                 },
                                 "type": "image_url"
                             },
