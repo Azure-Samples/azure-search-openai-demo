@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, Optional, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
@@ -28,14 +28,14 @@ class RetrieveThenReadApproach(Approach):
         *,
         search_client: SearchClient,
         search_index_name: str,
-        agent_model: str | None,
-        agent_deployment: str | None,
+        agent_model: Optional[str],
+        agent_deployment: Optional[str],
         agent_client: KnowledgeAgentRetrievalClient,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
-        chatgpt_deployment: str | None,  # Not needed for non-Azure OpenAI
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         embedding_model: str,
-        embedding_deployment: str | None,  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
+        embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
         embedding_dimensions: int,
         embedding_field: str,
         sourcepage_field: str,
@@ -43,11 +43,11 @@ class RetrieveThenReadApproach(Approach):
         query_language: str,
         query_speller: str,
         prompt_manager: PromptManager,
-        reasoning_effort: str | None = None,
+        reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
-        image_embeddings_client: ImageEmbeddings | None = None,
-        global_blob_manager: BlobManager | None = None,
-        user_blob_manager: AdlsBlobManager | None = None,
+        image_embeddings_client: Optional[ImageEmbeddings] = None,
+        global_blob_manager: Optional[BlobManager] = None,
+        user_blob_manager: Optional[AdlsBlobManager] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name

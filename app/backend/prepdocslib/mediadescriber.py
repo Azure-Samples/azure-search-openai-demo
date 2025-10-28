@@ -1,6 +1,7 @@
 import base64
 import logging
 from abc import ABC
+from typing import Optional
 
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
@@ -116,7 +117,7 @@ class ContentUnderstandingDescriber(MediaDescriber):
 
 
 class MultimodalModelDescriber(MediaDescriber):
-    def __init__(self, openai_client: AsyncOpenAI, model: str, deployment: str | None = None):
+    def __init__(self, openai_client: AsyncOpenAI, model: str, deployment: Optional[str] = None):
         self.openai_client = openai_client
         self.model = model
         self.deployment = deployment

@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -16,10 +17,10 @@ logger = logging.getLogger("scripts")
 async def parse_file(
     file: File,
     file_processors: dict[str, FileProcessor],
-    category: str | None = None,
-    blob_manager: BaseBlobManager | None = None,
-    image_embeddings_client: ImageEmbeddings | None = None,
-    user_oid: str | None = None,
+    category: Optional[str] = None,
+    blob_manager: Optional[BaseBlobManager] = None,
+    image_embeddings_client: Optional[ImageEmbeddings] = None,
+    user_oid: Optional[str] = None,
 ) -> list[Section]:
     key = file.file_extension().lower()
     processor = file_processors.get(key)
@@ -60,14 +61,14 @@ class FileStrategy(Strategy):
         search_info: SearchInfo,
         file_processors: dict[str, FileProcessor],
         document_action: DocumentAction = DocumentAction.Add,
-        embeddings: OpenAIEmbeddings | None = None,
-        image_embeddings: ImageEmbeddings | None = None,
-        search_analyzer_name: str | None = None,
-        search_field_name_embedding: str | None = None,
+        embeddings: Optional[OpenAIEmbeddings] = None,
+        image_embeddings: Optional[ImageEmbeddings] = None,
+        search_analyzer_name: Optional[str] = None,
+        search_field_name_embedding: Optional[str] = None,
         use_acls: bool = False,
-        category: str | None = None,
+        category: Optional[str] = None,
         use_content_understanding: bool = False,
-        content_understanding_endpoint: str | None = None,
+        content_understanding_endpoint: Optional[str] = None,
         enforce_access_control: bool = False,
     ):
         self.list_file_strategy = list_file_strategy
@@ -146,9 +147,9 @@ class UploadUserFileStrategy:
         search_info: SearchInfo,
         file_processors: dict[str, FileProcessor],
         blob_manager: AdlsBlobManager,
-        search_field_name_embedding: str | None = None,
-        embeddings: OpenAIEmbeddings | None = None,
-        image_embeddings: ImageEmbeddings | None = None,
+        search_field_name_embedding: Optional[str] = None,
+        embeddings: Optional[OpenAIEmbeddings] = None,
+        image_embeddings: Optional[ImageEmbeddings] = None,
         enforce_access_control: bool = False,
     ):
         self.file_processors = file_processors

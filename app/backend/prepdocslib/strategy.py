@@ -1,5 +1,6 @@
 from abc import ABC
 from enum import Enum
+from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -20,13 +21,13 @@ class SearchInfo:
         endpoint: str,
         credential: AsyncTokenCredential | AzureKeyCredential,
         index_name: str,
-        use_agentic_retrieval: bool | None = False,
-        agent_name: str | None = None,
-        agent_max_output_tokens: int | None = None,
-        azure_openai_searchagent_model: str | None = None,
-        azure_openai_searchagent_deployment: str | None = None,
-        azure_openai_endpoint: str | None = None,
-        azure_vision_endpoint: str | None = None,
+        use_agentic_retrieval: Optional[bool] = False,
+        agent_name: Optional[str] = None,
+        agent_max_output_tokens: Optional[int] = None,
+        azure_openai_searchagent_model: Optional[str] = None,
+        azure_openai_searchagent_deployment: Optional[str] = None,
+        azure_openai_endpoint: Optional[str] = None,
+        azure_vision_endpoint: Optional[str] = None,
     ):
         self.endpoint = endpoint
         self.credential = credential

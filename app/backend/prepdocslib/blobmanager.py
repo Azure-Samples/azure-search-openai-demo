@@ -3,7 +3,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import IO, Any, TypedDict
+from typing import IO, Any, Optional, TypedDict
 from urllib.parse import unquote
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -96,11 +96,13 @@ class BaseBlobManager:
         image_bytes: bytes,
         image_filename: str,
         image_page_num: int,
-        user_oid: str | None = None,
-    ) -> str | None:
+        user_oid: Optional[str] = None,
+    ) -> Optional[str]:
         raise NotImplementedError("Subclasses must implement this method")
 
-    async def download_blob(self, blob_path: str, user_oid: str | None = None) -> tuple[bytes, BlobProperties] | None:
+    async def download_blob(
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[tuple[bytes, BlobProperties]]:
         """
         Downloads a blob from Azure Storage.
         If user_oid is provided, it checks if the blob belongs to the user.
@@ -202,7 +204,7 @@ class AdlsBlobManager(BaseBlobManager):
         # Decode the URL to convert %2F back to / and other escaped characters
         return unquote(file_client.url)
 
-    def _get_image_directory_path(self, document_filename: str, user_oid: str, page_num: int | None = None) -> str:
+    def _get_image_directory_path(self, document_filename: str, user_oid: str, page_num: Optional[int] = None) -> str:
         """
         Returns the standardized path for storing document images.
 
@@ -224,8 +226,8 @@ class AdlsBlobManager(BaseBlobManager):
         image_bytes: bytes,
         image_filename: str,
         image_page_num: int,
-        user_oid: str | None = None,
-    ) -> str | None:
+        user_oid: Optional[str] = None,
+    ) -> Optional[str]:
         """
         Uploads an image from a document to ADLS in a directory structure:
         {user_oid}/{document_name}/images/{image_name}
@@ -252,7 +254,9 @@ class AdlsBlobManager(BaseBlobManager):
         await file_client.upload_data(image_bytes, overwrite=True, metadata={"UploadedBy": user_oid})
         return unquote(file_client.url)
 
-    async def download_blob(self, blob_path: str, user_oid: str | None = None) -> tuple[bytes, BlobProperties] | None:
+    async def download_blob(
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[tuple[bytes, BlobProperties]]:
         """
         Downloads a blob from Azure Data Lake Storage.
 
@@ -390,10 +394,10 @@ class BlobManager(BaseBlobManager):
         endpoint: str,
         container: str,
         credential: AsyncTokenCredential | str,
-        image_container: str | None = None,
-        account: str | None = None,
-        resource_group: str | None = None,
-        subscription_id: str | None = None,
+        image_container: Optional[str] = None,
+        account: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        subscription_id: Optional[str] = None,
     ):
         self.endpoint = endpoint
         self.credential = credential
@@ -435,8 +439,8 @@ class BlobManager(BaseBlobManager):
         image_bytes: bytes,
         image_filename: str,
         image_page_num: int,
-        user_oid: str | None = None,
-    ) -> str | None:
+        user_oid: Optional[str] = None,
+    ) -> Optional[str]:
         if self.image_container is None:
             raise ValueError(
                 "Image container name is not set. Re-run `azd provision` to automatically set up the images container."
@@ -454,7 +458,9 @@ class BlobManager(BaseBlobManager):
         blob_client = await container_client.upload_blob(blob_name, image_bytes, overwrite=True)
         return blob_client.url
 
-    async def download_blob(self, blob_path: str, user_oid: str | None = None) -> tuple[bytes, BlobProperties] | None:
+    async def download_blob(
+        self, blob_path: str, user_oid: Optional[str] = None
+    ) -> Optional[tuple[bytes, BlobProperties]]:
         """
         Downloads a blob from Azure Blob Storage.
 
@@ -511,7 +517,7 @@ class BlobManager(BaseBlobManager):
             logger.warning("Blob not found: %s", blob_path)
             return None
 
-    async def remove_blob(self, path: str | None = None):
+    async def remove_blob(self, path: Optional[str] = None):
         container_client = self.blob_service_client.get_container_client(self.container)
         if not await container_client.exists():
             return
