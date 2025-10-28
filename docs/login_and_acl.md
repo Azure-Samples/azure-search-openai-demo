@@ -39,7 +39,7 @@ The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azur
   - [Using the Add Documents API](#using-the-add-documents-api)
     - [Enabling global access on documents without access control](#enabling-global-access-on-documents-without-access-control)
   - [Azure Data Lake Storage Gen2 and prepdocs](#azure-data-lake-storage-gen2-setup)
-- [Migrate to built-in document access control](migrate-to-built-in-document-access-control)
+- [Migrate to built-in document access control](#migrate-to-built-in-document-access-control)
 - [Environment variables reference](#environment-variables-reference)
   - [Authentication behavior by environment](#authentication-behavior-by-environment)
 
