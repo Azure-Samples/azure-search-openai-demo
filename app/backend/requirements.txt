@@ -18,7 +18,7 @@ anyio==4.4.0
     # via
     #   httpx
     #   openai
-asgiref==3.8.1
+asgiref==3.10.0
     # via opentelemetry-instrumentation-asgi
 async-timeout==5.0.1
     # via aiohttp
