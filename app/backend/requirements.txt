@@ -320,7 +320,7 @@ packaging==24.1
     # via
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-flask
-pillow==10.4.0
+pillow==12.0.0
     # via -r requirements.in
 priority==2.0.0
     # via hypercorn
