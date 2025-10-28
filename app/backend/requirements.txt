@@ -52,9 +52,9 @@ azure-identity==1.17.1
     #   -r requirements.in
     #   azure-monitor-opentelemetry-exporter
     #   msgraph-sdk
-azure-monitor-opentelemetry==1.6.13
+azure-monitor-opentelemetry==1.8.1
     # via -r requirements.in
-azure-monitor-opentelemetry-exporter==1.0.0b40
+azure-monitor-opentelemetry-exporter==1.0.0b44
     # via azure-monitor-opentelemetry
 azure-search-documents==11.7.0b1
     # via -r requirements.in
@@ -211,7 +211,7 @@ oauthlib==3.3.1
     # via requests-oauthlib
 openai==1.99.8
     # via -r requirements.in
-opentelemetry-api==1.36.0
+opentelemetry-api==1.38.0
     # via
     #   azure-core-tracing-opentelemetry
     #   azure-monitor-opentelemetry-exporter
@@ -234,7 +234,7 @@ opentelemetry-api==1.36.0
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
-opentelemetry-instrumentation==0.57b0
+opentelemetry-instrumentation==0.59b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
@@ -249,39 +249,39 @@ opentelemetry-instrumentation==0.57b0
     #   opentelemetry-instrumentation-urllib
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
-opentelemetry-instrumentation-aiohttp-client==0.57b0
+opentelemetry-instrumentation-aiohttp-client==0.59b0
     # via -r requirements.in
-opentelemetry-instrumentation-asgi==0.57b0
+opentelemetry-instrumentation-asgi==0.59b0
     # via
     #   -r requirements.in
     #   opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-dbapi==0.57b0
+opentelemetry-instrumentation-dbapi==0.59b0
     # via opentelemetry-instrumentation-psycopg2
-opentelemetry-instrumentation-django==0.57b0
+opentelemetry-instrumentation-django==0.59b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-fastapi==0.57b0
+opentelemetry-instrumentation-fastapi==0.59b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-flask==0.57b0
+opentelemetry-instrumentation-flask==0.59b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-httpx==0.57b0
+opentelemetry-instrumentation-httpx==0.59b0
     # via -r requirements.in
-opentelemetry-instrumentation-openai==0.39.0
+opentelemetry-instrumentation-openai==0.47.5
     # via -r requirements.in
-opentelemetry-instrumentation-psycopg2==0.57b0
+opentelemetry-instrumentation-psycopg2==0.59b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-requests==0.57b0
+opentelemetry-instrumentation-requests==0.59b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib==0.57b0
+opentelemetry-instrumentation-urllib==0.59b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-urllib3==0.57b0
+opentelemetry-instrumentation-urllib3==0.59b0
     # via azure-monitor-opentelemetry
-opentelemetry-instrumentation-wsgi==0.57b0
+opentelemetry-instrumentation-wsgi==0.59b0
     # via
     #   opentelemetry-instrumentation-django
     #   opentelemetry-instrumentation-flask
 opentelemetry-resource-detector-azure==0.1.5
     # via azure-monitor-opentelemetry
-opentelemetry-sdk==1.36.0
+opentelemetry-sdk==1.38.0
     # via
     #   azure-monitor-opentelemetry
     #   azure-monitor-opentelemetry-exporter
@@ -289,7 +289,7 @@ opentelemetry-sdk==1.36.0
     #   microsoft-kiota-authentication-azure
     #   microsoft-kiota-http
     #   opentelemetry-resource-detector-azure
-opentelemetry-semantic-conventions==0.57b0
+opentelemetry-semantic-conventions==0.59b0
     # via
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-aiohttp-client
@@ -305,9 +305,9 @@ opentelemetry-semantic-conventions==0.57b0
     #   opentelemetry-instrumentation-urllib3
     #   opentelemetry-instrumentation-wsgi
     #   opentelemetry-sdk
-opentelemetry-semantic-conventions-ai==0.4.3
+opentelemetry-semantic-conventions-ai==0.4.13
     # via opentelemetry-instrumentation-openai
-opentelemetry-util-http==0.57b0
+opentelemetry-util-http==0.59b0
     # via
     #   opentelemetry-instrumentation-aiohttp-client
     #   opentelemetry-instrumentation-asgi
