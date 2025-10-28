@@ -341,7 +341,7 @@ pydantic==2.12.3
     # via openai
 pydantic-core==2.41.4
     # via pydantic
-pygments==2.18.0
+pygments==2.19.2
     # via rich
 pyjwt==2.10.1
     # via
