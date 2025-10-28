@@ -102,7 +102,7 @@ exceptiongroup==1.3.0
     #   taskgroup
 fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
-flask==3.0.3
+flask==3.1.2
     # via quart
 frozenlist==1.4.1
     # via
