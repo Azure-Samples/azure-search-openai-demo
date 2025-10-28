@@ -20,7 +20,6 @@ from approaches.approach import (
     ThoughtStep,
 )
 from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
@@ -42,7 +41,6 @@ class ChatReadRetrieveReadApproach(Approach):
         agent_model: str | None,
         agent_deployment: str | None,
         agent_client: KnowledgeAgentRetrievalClient,
-        auth_helper: AuthenticationHelper,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: str | None,  # Not needed for non-Azure OpenAI
@@ -67,7 +65,6 @@ class ChatReadRetrieveReadApproach(Approach):
         self.agent_deployment = agent_deployment
         self.agent_client = agent_client
         self.openai_client = openai_client
-        self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.embedding_deployment = embedding_deployment
@@ -279,7 +276,8 @@ class ChatReadRetrieveReadApproach(Approach):
         top = overrides.get("top", 3)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
-        search_index_filter = self.build_filter(overrides, auth_claims)
+        search_index_filter = self.build_filter(overrides)
+        access_token = auth_claims.get("access_token")
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
         search_text_embeddings = overrides.get("search_text_embeddings", True)
@@ -337,6 +335,7 @@ class ChatReadRetrieveReadApproach(Approach):
             minimum_search_score,
             minimum_reranker_score,
             use_query_rewriting,
+            access_token,
         )
 
         # STEP 3: Generate a contextual and content specific answer using the search results and chat history
@@ -388,7 +387,8 @@ class ChatReadRetrieveReadApproach(Approach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
     ):
-        search_index_filter = self.build_filter(overrides, auth_claims)
+        search_index_filter = self.build_filter(overrides)
+        access_token = auth_claims.get("access_token")
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         top = overrides.get("top", 3)
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
@@ -403,6 +403,7 @@ class ChatReadRetrieveReadApproach(Approach):
             filter_add_on=search_index_filter,
             minimum_reranker_score=minimum_reranker_score,
             results_merge_strategy=results_merge_strategy,
+            access_token=access_token,
         )
 
         data_points = await self.get_sources_content(

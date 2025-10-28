@@ -90,8 +90,9 @@ class LocalListFileStrategy(ListFileStrategy):
     Concrete strategy for listing files that are located in a local filesystem
     """
 
-    def __init__(self, path_pattern: str):
+    def __init__(self, path_pattern: str, enable_global_documents: bool = False):
         self.path_pattern = path_pattern
+        self.enable_global_documents = enable_global_documents
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async for p in self._list_paths(self.path_pattern):
@@ -107,9 +108,10 @@ class LocalListFileStrategy(ListFileStrategy):
                 yield path
 
     async def list(self) -> AsyncGenerator[File, None]:
+        acls = {"oids": ["all"], "groups": ["all"]} if self.enable_global_documents else {}
         async for path in self.list_paths():
             if not self.check_md5(path):
-                yield File(content=open(path, mode="rb"))
+                yield File(content=open(path, mode="rb"), acls=acls, url=path)
 
     def check_md5(self, path: str) -> bool:
         # if filename ends in .md5 skip
@@ -147,11 +149,13 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         data_lake_filesystem: str,
         data_lake_path: str,
         credential: AsyncTokenCredential | str,
+        enable_global_documents: bool = False,
     ):
         self.data_lake_storage_account = data_lake_storage_account
         self.data_lake_filesystem = data_lake_filesystem
         self.data_lake_path = data_lake_path
         self.credential = credential
+        self.enable_global_documents = enable_global_documents
 
     async def list_paths(self) -> AsyncGenerator[str, None]:
         async with DataLakeServiceClient(
@@ -193,6 +197,10 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                             acls["oids"].append(acl_parts[1])
                         if acl_parts[0] == "group" and "r" in acl_parts[2]:
                             acls["groups"].append(acl_parts[1])
+
+                    if self.enable_global_documents and len(acls["oids"]) == 0 and len(acls["groups"]) == 0:
+                        acls = {"oids": ["all"], "groups": ["all"]}
+
                     yield File(content=open(temp_file_path, "rb"), acls=acls, url=file_client.url)
                 except Exception as data_lake_exception:
                     logger.error(f"\tGot an error while reading {path} -> {data_lake_exception} --> skipping file")

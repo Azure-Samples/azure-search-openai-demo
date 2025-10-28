@@ -70,8 +70,6 @@ async def callback(
                 "semantic_ranker": True,
                 "semantic_captions": False,
                 "suggest_followup_questions": False,
-                "use_oid_security_filter": False,
-                "use_groups_security_filter": False,
                 "vector_fields": ["embedding"],
                 "use_gpt4v": False,
                 "gpt4v_input": "textAndImages",

@@ -32,7 +32,7 @@ class AuthError(Exception):
 
 
 class AuthenticationHelper:
-    scope: str = "https://graph.microsoft.com/.default"
+    scope: str = "https://search.azure.com/.default"
 
     def __init__(
         self,
@@ -42,8 +42,7 @@ class AuthenticationHelper:
         server_app_secret: str | None,
         client_app_id: str | None,
         tenant_id: str | None,
-        require_access_control: bool = False,
-        enable_global_documents: bool = False,
+        enforce_access_control: bool = False,
         enable_unauthenticated_access: bool = False,
     ):
         self.use_authentication = use_authentication
@@ -65,23 +64,21 @@ class AuthenticationHelper:
         if self.use_authentication:
             field_names = [field.name for field in search_index.fields] if search_index else []
             self.has_auth_fields = "oids" in field_names and "groups" in field_names
-            self.require_access_control = require_access_control
-            self.enable_global_documents = enable_global_documents
+            self.enforce_access_control = enforce_access_control
             self.enable_unauthenticated_access = enable_unauthenticated_access
             self.confidential_client = ConfidentialClientApplication(
                 server_app_id, authority=self.authority, client_credential=server_app_secret, token_cache=TokenCache()
             )
         else:
             self.has_auth_fields = False
-            self.require_access_control = False
-            self.enable_global_documents = True
+            self.enforce_access_control = False
             self.enable_unauthenticated_access = True
 
     def get_auth_setup_for_client(self) -> dict[str, Any]:
         # returns MSAL.js settings used by the client app
         return {
             "useLogin": self.use_authentication,  # Whether or not login elements are enabled on the UI
-            "requireAccessControl": self.require_access_control,  # Whether or not access control is required to access documents with access control lists
+            "requireAccessControl": self.enforce_access_control,  # Whether or not access control is required to access documents with access control lists
             "enableUnauthenticatedAccess": self.enable_unauthenticated_access,  # Whether or not the user can access the app without login
             "msalConfig": {
                 "auth": {
@@ -138,128 +135,47 @@ class AuthenticationHelper:
 
         raise AuthError(error="Authorization header is expected", status_code=401)
 
-    def build_security_filters(self, overrides: dict[str, Any], auth_claims: dict[str, Any]):
-        # Build different permutations of the oid or groups security filter using OData filters
-        # https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search
-        # https://learn.microsoft.com/azure/search/search-query-odata-filter
-        use_oid_security_filter = self.require_access_control or overrides.get("use_oid_security_filter")
-        use_groups_security_filter = self.require_access_control or overrides.get("use_groups_security_filter")
-
-        if (use_oid_security_filter or use_groups_security_filter) and not self.has_auth_fields:
-            raise AuthError(
-                error="oids and groups must be defined in the search index to use authentication", status_code=400
-            )
-
-        oid_security_filter = (
-            "oids/any(g:search.in(g, '{}'))".format(auth_claims.get("oid", "")) if use_oid_security_filter else None
-        )
-        groups_security_filter = (
-            "groups/any(g:search.in(g, '{}'))".format(", ".join(auth_claims.get("groups", [])))
-            if use_groups_security_filter
-            else None
-        )
-
-        # If only one security filter is specified, use that filter
-        # If both security filters are specified, combine them with "or" so only 1 security filter needs to pass
-        # If no security filters are specified, don't return any filter
-        security_filter = None
-        if oid_security_filter and not groups_security_filter:
-            security_filter = f"{oid_security_filter}"
-        elif groups_security_filter and not oid_security_filter:
-            security_filter = f"{groups_security_filter}"
-        elif oid_security_filter and groups_security_filter:
-            security_filter = f"({oid_security_filter} or {groups_security_filter})"
-
-        # If global documents are allowed, append the public global filter
-        if self.enable_global_documents:
-            global_documents_filter = "(not oids/any() and not groups/any())"
-            if security_filter:
-                security_filter = f"({security_filter} or {global_documents_filter})"
-
-        return security_filter
-
-    @staticmethod
-    async def list_groups(graph_resource_access_token: dict) -> list[str]:
-        headers = {"Authorization": "Bearer " + graph_resource_access_token["access_token"]}
-        groups = []
-        async with aiohttp.ClientSession(headers=headers) as session:
-            resp_json = None
-            resp_status = None
-            async with session.get(url="https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=id") as resp:
-                resp_json = await resp.json()
-                resp_status = resp.status
-                if resp_status != 200:
-                    raise AuthError(error=json.dumps(resp_json), status_code=resp_status)
-
-            while resp_status == 200:
-                value = resp_json["value"]
-                for group in value:
-                    groups.append(group["id"])
-                next_link = resp_json.get("@odata.nextLink")
-                if next_link:
-                    async with session.get(url=next_link) as resp:
-                        resp_json = await resp.json()
-                        resp_status = resp.status
-                else:
-                    break
-            if resp_status != 200:
-                raise AuthError(error=json.dumps(resp_json), status_code=resp_status)
-
-        return groups
-
     async def get_auth_claims_if_enabled(self, headers: dict) -> dict[str, Any]:
         if not self.use_authentication:
             return {}
         try:
             # Read the authentication token from the authorization header and exchange it using the On Behalf Of Flow
-            # The scope is set to the Microsoft Graph API, which may need to be called for more authorization information
+            # The scope is set to Azure Search for authentication
             # https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow
             auth_token = AuthenticationHelper.get_token_auth_header(headers)
             # Validate the token before use
             await self.validate_access_token(auth_token)
 
-            # Use the on-behalf-of-flow to acquire another token for use with Microsoft Graph
+            # Use the on-behalf-of-flow to acquire another token for use with Azure Search
             # See https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow for more information
-            graph_resource_access_token = self.confidential_client.acquire_token_on_behalf_of(
-                user_assertion=auth_token, scopes=["https://graph.microsoft.com/.default"]
+            search_resource_access_token = self.confidential_client.acquire_token_on_behalf_of(
+                user_assertion=auth_token, scopes=[self.scope]
             )
-            if "error" in graph_resource_access_token:
-                raise AuthError(error=str(graph_resource_access_token), status_code=401)
+            if "error" in search_resource_access_token:
+                raise AuthError(error=str(search_resource_access_token), status_code=401)
 
-            # Read the claims from the response. The oid and groups claims are used for security filtering
-            # https://learn.microsoft.com/entra/identity-platform/id-token-claims-reference
-            id_token_claims = graph_resource_access_token["id_token_claims"]
-            auth_claims = {"oid": id_token_claims["oid"], "groups": id_token_claims.get("groups", [])}
-
-            # A groups claim may have been omitted either because it was not added in the application manifest for the API application,
-            # or a groups overage claim may have been emitted.
-            # https://learn.microsoft.com/entra/identity-platform/id-token-claims-reference#groups-overage-claim
-            missing_groups_claim = "groups" not in id_token_claims
-            has_group_overage_claim = (
-                missing_groups_claim
-                and "_claim_names" in id_token_claims
-                and "groups" in id_token_claims["_claim_names"]
-            )
-            if missing_groups_claim or has_group_overage_claim:
-                # Read the user's groups from Microsoft Graph
-                auth_claims["groups"] = await AuthenticationHelper.list_groups(graph_resource_access_token)
+            id_token_claims = search_resource_access_token["id_token_claims"]
+            auth_claims = {"oid": id_token_claims["oid"]}
+            # Only pass on the access token if access control is required
+            # See https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement for more information
+            if self.enforce_access_control:
+                access_token = search_resource_access_token["access_token"]
+                auth_claims["access_token"] = access_token
             return auth_claims
         except AuthError as e:
             logging.exception("Exception getting authorization information - " + json.dumps(e.error))
-            if self.require_access_control and not self.enable_unauthenticated_access:
+            if not self.enable_unauthenticated_access:
                 raise
             return {}
         except Exception:
             logging.exception("Exception getting authorization information")
-            if self.require_access_control and not self.enable_unauthenticated_access:
+            if not self.enable_unauthenticated_access:
                 raise
             return {}
 
     async def check_path_auth(self, path: str, auth_claims: dict[str, Any], search_client: SearchClient) -> bool:
-        # Start with the standard security filter for all queries
-        security_filter = self.build_security_filters(overrides={}, auth_claims=auth_claims)
-        # If there was no security filter or no path, then the path is allowed
-        if not security_filter or len(path) == 0:
+        # If there was no access control or no path, then the path is allowed
+        if not self.enforce_access_control or len(path) == 0:
             return True
 
         # Remove any fragment string from the path before checking
@@ -272,11 +188,13 @@ class AuthenticationHelper:
         # Replace ' with '' to escape the single quote for the filter
         # https://learn.microsoft.com/azure/search/query-odata-filter-orderby-syntax#escaping-special-characters-in-string-constants
         path_for_filter = path.replace("'", "''")
-        filter = f"{security_filter} and ((sourcefile eq '{path_for_filter}') or (sourcepage eq '{path_for_filter}'))"
+        filter = f"(sourcefile eq '{path_for_filter}') or (sourcepage eq '{path_for_filter}')"
 
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied
-        results = await search_client.search(search_text="*", top=1, filter=filter)
+        results = await search_client.search(
+            search_text="*", top=1, filter=filter, x_ms_query_source_authorization=auth_claims["access_token"]
+        )
         allowed = False
         async for _ in results:
             allowed = True

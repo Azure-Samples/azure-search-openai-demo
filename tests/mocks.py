@@ -27,6 +27,11 @@ from azure.storage.blob import BlobProperties
 
 MOCK_EMBEDDING_DIMENSIONS = 1536
 MOCK_EMBEDDING_MODEL_NAME = "text-embedding-ada-002"
+TEST_PNG_BYTES = (
+    b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00"
+    b"\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\xdac\xfc\xcf\xf0\xbf\x1e\x00\x06\x83\x02\x7f\x94\xad"
+    b"\xd0\xeb\x00\x00\x00\x00IEND\xaeB`\x82"
+)
 
 MockToken = namedtuple("MockToken", ["token", "expires_on", "value"])
 
@@ -63,7 +68,7 @@ class MockBlob:
         )
 
     async def readall(self):
-        return b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\xdac\xfc\xcf\xf0\xbf\x1e\x00\x06\x83\x02\x7f\x94\xad\xd0\xeb\x00\x00\x00\x00IEND\xaeB`\x82"
+        return TEST_PNG_BYTES
 
     async def readinto(self, buffer: BytesIO):
         buffer.write(b"test")
@@ -95,7 +100,7 @@ class MockTransport(AsyncHttpTransport):
             request,
             MockAiohttpClientResponse(
                 request.url,
-                b"test content",
+                TEST_PNG_BYTES,
                 {
                     "Content-Type": "application/octet-stream",
                     "Content-Range": "bytes 0-27/28",

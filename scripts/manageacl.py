@@ -5,6 +5,7 @@ import logging
 import os
 from typing import Any
 from urllib.parse import urljoin
+from uuid import uuid4
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -12,8 +13,10 @@ from azure.identity.aio import AzureDeveloperCliCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
+    PermissionFilter,
+    SearchField,
     SearchFieldDataType,
-    SimpleField,
+    SearchIndexPermissionFilterOption,
 )
 
 from load_azd_env import load_azd_env
@@ -83,6 +86,8 @@ class ManageAcl:
                 await self.add_acl(search_client)
             elif self.acl_action == "update_storage_urls":
                 await self.update_storage_urls(search_client)
+            elif self.acl_action == "enable_global_access":
+                await self.enable_global_access(search_client)
             else:
                 raise Exception(f"Unknown action {self.acl_action}")
 
@@ -148,34 +153,41 @@ class ManageAcl:
         return found_documents
 
     async def enable_acls(self, endpoint: str):
+        oids_field = SearchField(
+            name="oids",
+            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+            filterable=True,
+            permission_filter=PermissionFilter.USER_IDS,
+        )
+        groups_field = SearchField(
+            name="groups",
+            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+            filterable=True,
+            permission_filter=PermissionFilter.GROUP_IDS,
+        )
         async with SearchIndexClient(endpoint=endpoint, credential=self.credentials) as search_index_client:
             logger.info(f"Enabling acls for index {self.index_name}")
             index_definition = await search_index_client.get_index(self.index_name)
-            if not any(field.name == "oids" for field in index_definition.fields):
-                index_definition.fields.append(
-                    SimpleField(
-                        name="oids",
-                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                        filterable=True,
-                    )
-                )
-            if not any(field.name == "groups" for field in index_definition.fields):
-                index_definition.fields.append(
-                    SimpleField(
-                        name="groups",
-                        type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                        filterable=True,
-                    )
-                )
+            existing_oids_field = next((field for field in index_definition.fields if field.name == "oids"), None)
+            if existing_oids_field:
+                existing_oids_field.permission_filter = PermissionFilter.USER_IDS
+            else:
+                index_definition.fields.append(oids_field)
+            existing_groups_field = next((field for field in index_definition.fields if field.name == "groups"), None)
+            if existing_groups_field:
+                existing_groups_field.permission_filter = PermissionFilter.GROUP_IDS
+            else:
+                index_definition.fields.append(groups_field)
             if not any(field.name == "storageUrl" for field in index_definition.fields):
                 index_definition.fields.append(
-                    SimpleField(
+                    SearchField(
                         name="storageUrl",
                         type="Edm.String",
                         filterable=True,
                         facetable=False,
                     ),
                 )
+            index_definition.permission_filter_option = SearchIndexPermissionFilterOption.ENABLED
             await search_index_client.create_or_update_index(index_definition)
 
     async def update_storage_urls(self, search_client: SearchClient):
@@ -202,6 +214,32 @@ class ManageAcl:
             logger.info("No documents found with empty storageUrl value")
         else:
             logger.info("Not updating any search documents")
+
+    async def enable_global_access(self, search_client: SearchClient):
+        logger.info(f"Enabling global access for index {self.index_name}")
+        # Find all documents with no oids and no groups (global access on previous access control version)
+        filter = "not oids/any() and not groups/any()"
+        # Create a session when paging through results to ensure consistency in multi-replica services
+        # For more information, please see https://learn.microsoft.com/azure/search/index-similarity-and-scoring#scoring-statistics-and-sticky-sessions
+        session_id = str(uuid4())
+        get_next_results = True
+        while get_next_results:
+            total_results_size = 0
+            results = await search_client.search(
+                search_text="*", top=100000, filter=filter, session_id=session_id, select=["id"]
+            )
+            results_by_page = results.by_page()
+            async for page in results_by_page:
+                # Enable global access by adding "all" to both oids and groups
+                update_page = [{"id": item["id"], "oids": ["all"], "groups": ["all"]} async for item in page]
+                if len(update_page) > 0:
+                    await search_client.merge_documents(documents=update_page)
+                total_results_size += len(update_page)
+
+            logger.info(f"Updated {total_results_size} documents to enable global access...")
+            # If any results were returned, there may be more pages
+            get_next_results = total_results_size > 0
+        logger.info("Completed enabling global access for index")
 
 
 async def main(args: Any):
@@ -243,7 +281,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--acl-action",
         required=False,
-        choices=["remove", "add", "view", "remove_all", "enable_acls", "update_storage_urls"],
+        choices=["remove", "add", "view", "remove_all", "enable_acls", "update_storage_urls", "enable_global_access"],
         help="Optional. Whether to remove or add the ACL to the document, or enable acls on the index",
     )
     parser.add_argument("--acl", required=False, default=None, help="Optional. Value of ACL to add or remove.")
@@ -259,8 +297,10 @@ if __name__ == "__main__":
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.INFO)
 
-    if not args.acl_type and args.acl_action != "enable_acls" and args.acl_action != "update_storage_urls":
-        print("Must specify either --acl-type or --acl-action enable_acls or --acl-action update_storage_urls")
+    if not args.acl_type and args.acl_action not in ["enable_acls", "update_storage_urls", "enable_global_access"]:
+        print(
+            "Must specify either --acl-type or --acl-action enable_acls or --acl-action update_storage_urls or --acl-action enable_global_access"
+        )
         exit(1)
 
     asyncio.run(main(args))

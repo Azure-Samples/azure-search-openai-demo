@@ -32,7 +32,6 @@ from openai.types.chat import (
 )
 
 from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
@@ -152,7 +151,6 @@ class Approach(ABC):
         self,
         search_client: SearchClient,
         openai_client: AsyncOpenAI,
-        auth_helper: AuthenticationHelper,
         query_language: str | None,
         query_speller: str | None,
         embedding_deployment: str | None,  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -169,7 +167,6 @@ class Approach(ABC):
     ):
         self.search_client = search_client
         self.openai_client = openai_client
-        self.auth_helper = auth_helper
         self.query_language = query_language
         self.query_speller = query_speller
         self.embedding_deployment = embedding_deployment
@@ -185,17 +182,14 @@ class Approach(ABC):
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
 
-    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> str | None:
+    def build_filter(self, overrides: dict[str, Any]) -> str | None:
         include_category = overrides.get("include_category")
         exclude_category = overrides.get("exclude_category")
-        security_filter = self.auth_helper.build_security_filters(overrides, auth_claims)
         filters = []
         if include_category:
             filters.append("category eq '{}'".format(include_category.replace("'", "''")))
         if exclude_category:
             filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
-        if security_filter:
-            filters.append(security_filter)
         return None if len(filters) == 0 else " and ".join(filters)
 
     async def search(
@@ -211,6 +205,7 @@ class Approach(ABC):
         minimum_search_score: float | None = None,
         minimum_reranker_score: float | None = None,
         use_query_rewriting: bool | None = None,
+        access_token: str | None = None,
     ) -> list[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
@@ -227,6 +222,7 @@ class Approach(ABC):
                 query_speller=self.query_speller,
                 semantic_configuration_name="default",
                 semantic_query=query_text,
+                x_ms_query_source_authorization=access_token,
             )
         else:
             results = await self.search_client.search(
@@ -234,6 +230,7 @@ class Approach(ABC):
                 filter=filter,
                 top=top,
                 vector_queries=search_vectors,
+                x_ms_query_source_authorization=access_token,
             )
 
         documents: list[Document] = []
@@ -275,6 +272,7 @@ class Approach(ABC):
         filter_add_on: str | None = None,
         minimum_reranker_score: float | None = None,
         results_merge_strategy: str | None = None,
+        access_token: str | None = None,
     ) -> tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
         # STEP 1: Invoke agentic retrieval
         response = await agent_client.retrieve(
@@ -292,7 +290,8 @@ class Approach(ABC):
                         filter_add_on=filter_add_on,
                     )
                 ],
-            )
+            ),
+            x_ms_query_source_authorization=access_token,
         )
 
         # Map activity id -> agent's internal search query

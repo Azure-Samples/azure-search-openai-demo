@@ -8,7 +8,7 @@
                 "Financial Market Analysis Report 2023.pdf#page=2"
             ],
             "images": [
-                "data:image/png;base64,dGVzdCBjb250ZW50"
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=="
             ],
             "text": [
                 "Financial Market Analysis Report 2023.pdf#page=7:  This section examines the correlations between stock indices, cryptocurrency prices, and commodity prices, revealing how changes in one market can have ripple effects across the financial ecosystem.### Impact of Macroeconomic Factors   <figure><figcaption>Impact of Interest Rates, Inflation, and GDP Growth on Financial Markets<br>The image is a line graph titled \"on Financial Markets\" displaying data from 2018 to 2023. It tracks three variables: Interest Rates %, Inflation Data %, and GDP Growth %, each represented by a different colored line (blue for Interest Rates, orange for Inflation Data, and gray for GDP Growth). Interest Rates % start around 2% in 2018, dip to about 0.25% in 2021, then rise to 1.5% in 2023. Inflation Data % begin at approximately 1.9% in 2018, rise to a peak near 3.4% in 2022, and then decrease to 2.5% in 2023. GDP Growth % shows significant fluctuations, starting at 3% in 2018, plunging to almost -4% in 2020, then rebounding to around 4.5% in 2021 before gradually declining to around 2.8% in 2023.</figcaption></figure>   Macroeconomic factors such as interest rates, inflation, and GDP growth play a pivotal role in shaping financial markets.",
@@ -124,7 +124,7 @@
                             },
                             {
                                 "image_url": {
-                                    "url": "data:image/png;base64,dGVzdCBjb250ZW50"
+                                    "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=="
                                 },
                                 "type": "image_url"
                             },

@@ -16,8 +16,8 @@ async def get_application(graph_client: GraphServiceClient, client_id: str) -> s
 
 def test_authentication_enabled():
     use_authentication = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
-    require_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
-    if require_access_control and not use_authentication:
+    enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
+    if enforce_access_control and not use_authentication:
         print("AZURE_ENFORCE_ACCESS_CONTROL is true, but AZURE_USE_AUTHENTICATION is false. Stopping...")
         return False
 
