@@ -38,7 +38,7 @@ from azure.search.documents.indexes.models import (
 )
 
 from .blobmanager import BlobManager
-from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
+from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
 from .textsplitter import Chunk
@@ -109,12 +109,12 @@ class SearchManager:
                     )
 
                 text_vectorizer = None
-                if isinstance(self.embeddings, AzureOpenAIEmbeddingService):
+                if self.embeddings.azure_endpoint and self.embeddings.azure_deployment_name:
                     text_vectorizer = AzureOpenAIVectorizer(
                         vectorizer_name=f"{self.embeddings.open_ai_model_name}-vectorizer",
                         parameters=AzureOpenAIVectorizerParameters(
-                            resource_url=self.embeddings.open_ai_endpoint,
-                            deployment_name=self.embeddings.open_ai_deployment,
+                            resource_url=self.embeddings.azure_endpoint,
+                            deployment_name=self.embeddings.azure_deployment_name,
                             model_name=self.embeddings.open_ai_model_name,
                         ),
                     )
@@ -426,14 +426,18 @@ class SearchManager:
                     existing_index.vector_search.vectorizers is None
                     or len(existing_index.vector_search.vectorizers) == 0
                 ):
-                    if self.embeddings is not None and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
+                    if (
+                        self.embeddings is not None
+                        and self.embeddings.azure_endpoint
+                        and self.embeddings.azure_deployment_name
+                    ):
                         logger.info("Adding vectorizer to search index %s", self.search_info.index_name)
                         existing_index.vector_search.vectorizers = [
                             AzureOpenAIVectorizer(
                                 vectorizer_name=f"{self.search_info.index_name}-vectorizer",
                                 parameters=AzureOpenAIVectorizerParameters(
-                                    resource_url=self.embeddings.open_ai_endpoint,
-                                    deployment_name=self.embeddings.open_ai_deployment,
+                                    resource_url=self.embeddings.azure_endpoint,
+                                    deployment_name=self.embeddings.azure_deployment_name,
                                     model_name=self.embeddings.open_ai_model_name,
                                 ),
                             )
