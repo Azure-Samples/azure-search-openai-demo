@@ -367,12 +367,13 @@ param ragSendTextSources bool = true
 @description('Whether to send image sources to LLM for RAG responses')
 param ragSendImageSources bool = true
 
-param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
-param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-Env' : ''
-param containerRegistryName string = deploymentTarget == 'containerapps'
-  ? '${replace(toLower(environmentName), '-', '')}acr'
+param acaIdentityName string = deploymentTarget == 'containerapps'
+  ? 'mgid-rag-${toLower(replace(environmentName, '-', ''))}-03'
   : ''
-
+param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? 'caen-rag-${toLower(replace(environmentName, '-', ''))}-03' : ''
+param containerRegistryName string = deploymentTarget == 'containerapps'
+  ? 'cregrag${toLower(replace(environmentName, '-', ''))}03'
+  : ''
 // Configure CORS for allowing different web apps to use the backend
 // For more information please see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
 var msftAllowedOrigins = [ 'https://portal.azure.com', 'https://ms.portal.azure.com' ]
