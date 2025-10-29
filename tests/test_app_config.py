@@ -53,9 +53,11 @@ async def test_app_azure_custom_identity(monkeypatch, minimal_env):
 
     quart_app = app.create_app()
     async with quart_app.test_app():
-        api_key = quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key
-        assert callable(api_key)
-        assert str(quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url) == "http://azureapi.com/api/v1/"
+        openai_client = quart_app.config[app.CONFIG_OPENAI_CLIENT]
+        assert openai_client.api_key == ""
+        # The AsyncOpenAI client stores the callable inside _api_key_provider
+        assert getattr(openai_client, "_api_key_provider", None) is not None
+        assert str(openai_client.base_url) == "http://azureapi.com/api/v1/"
 
 
 @pytest.mark.asyncio

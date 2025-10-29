@@ -1,7 +1,7 @@
 azure-identity
 quart
 quart-cors
-openai>=1.108.1
+openai>=1.109.1
 tiktoken
 tenacity
 azure-ai-documentintelligence==1.0.0b4
