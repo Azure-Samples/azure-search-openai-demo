@@ -1,7 +1,7 @@
 import json
 import re
 from collections.abc import AsyncGenerator, Awaitable
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
@@ -215,7 +215,7 @@ class ChatReadRetrieveReadApproach(Approach):
         overrides: dict[str, Any],
         auth_claims: dict[str, Any],
         should_stream: bool = False,
-    ) -> tuple[ExtraInfo, Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]]:
+    ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
         use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
         original_user_query = messages[-1]["content"]
 
@@ -243,7 +243,7 @@ class ChatReadRetrieveReadApproach(Approach):
         )
 
         chat_coroutine = cast(
-            Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]],
+            Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]],
             self.create_chat_completion(
                 self.chatgpt_deployment,
                 self.chatgpt_model,

@@ -1,6 +1,6 @@
 from abc import ABC
 from enum import Enum
-from typing import Optional, Union
+from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -19,7 +19,7 @@ class SearchInfo:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
+        credential: AsyncTokenCredential | AzureKeyCredential,
         index_name: str,
         use_agentic_retrieval: Optional[bool] = False,
         agent_name: Optional[str] = None,
