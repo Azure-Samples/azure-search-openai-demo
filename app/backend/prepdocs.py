@@ -210,7 +210,7 @@ def setup_openai_client(
             logger.info("OPENAI_HOST is azure, setting up Azure OpenAI client")
             if not azure_openai_service:
                 raise ValueError("AZURE_OPENAI_SERVICE must be set when OPENAI_HOST is azure")
-            azure_openai_endpoint = "https://{azure_openai_service}.openai.azure.com/"
+            azure_openai_endpoint = f"https://{azure_openai_service}.openai.azure.com"
             base_url = f"{azure_openai_endpoint}/openai/v1"
         if azure_openai_api_key:
             logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
