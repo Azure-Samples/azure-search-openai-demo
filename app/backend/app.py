@@ -425,11 +425,6 @@ async def setup_clients():
         os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM] else None
     )
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
-    AZURE_OPENAI_ENDPOINT = (
-        os.getenv("AZURE_OPENAI_ENDPOINT")
-        or (AZURE_OPENAI_CUSTOM_URL if OPENAI_HOST == OpenAIHost.AZURE_CUSTOM else None)
-        or (f"https://{AZURE_OPENAI_SERVICE}.openai.azure.com" if AZURE_OPENAI_SERVICE else None)
-    )
     AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
     AZURE_OPENAI_API_KEY_OVERRIDE = os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE")
     # Used only with non-Azure OpenAI deployments
@@ -608,7 +603,7 @@ async def setup_clients():
             emb_model_name=OPENAI_EMB_MODEL,
             emb_model_dimensions=OPENAI_EMB_DIMENSIONS,
             azure_openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-            azure_openai_endpoint=AZURE_OPENAI_ENDPOINT,
+            azure_openai_endpoint=azure_openai_endpoint,
             disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
         )
         image_embeddings_service = setup_image_embeddings_service(
