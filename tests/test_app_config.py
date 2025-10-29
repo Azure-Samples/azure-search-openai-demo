@@ -43,7 +43,7 @@ async def test_app_azure_custom_key(monkeypatch, minimal_env):
     quart_app = app.create_app()
     async with quart_app.test_app():
         assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "azure-api-key"
-        assert str(quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url) == "http://azureapi.com/api/v1/"
+        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://azureapi.com/api/v1/"
 
 
 @pytest.mark.asyncio
