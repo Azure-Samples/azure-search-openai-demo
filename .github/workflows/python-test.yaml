@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "windows-latest"]
-        python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python_version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         node_version: ["20.14", "22"]
     steps:
         - uses: actions/checkout@v5
@@ -36,7 +36,7 @@ jobs:
           uses: astral-sh/setup-uv@v6
           with:
             enable-cache: true
-            version: "0.4.20"
+            version: "0.9.5"
             cache-dependency-glob: "requirements**.txt"
             python-version: ${{ matrix.python_version }}
             activate-environment: true

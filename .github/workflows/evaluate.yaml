@@ -128,7 +128,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          version: "0.4.20"
+          version: "0.9.5"
           cache-dependency-glob: "requirements**.txt"
           python-version: "3.11"
 

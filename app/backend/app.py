@@ -5,9 +5,9 @@ import logging
 import mimetypes
 import os
 import time
-from collections.abc import AsyncGenerator, Awaitable
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from pathlib import Path
-from typing import Any, Callable, Union, cast
+from typing import Any, cast
 
 from azure.cognitiveservices.speech import (
     ResultReason,
@@ -477,7 +477,7 @@ async def setup_clients():
     # Use the current user identity for keyless authentication to Azure services.
     # This assumes you use 'azd auth login' locally, and managed identity when deployed on Azure.
     # The managed identity is setup in the infra/ folder.
-    azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential]
+    azure_credential: AzureDeveloperCliCredential | ManagedIdentityCredential
     azure_ai_token_provider: Callable[[], Awaitable[str]]
     if RUNNING_ON_AZURE:
         current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")

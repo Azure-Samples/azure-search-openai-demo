@@ -7,7 +7,7 @@ import tempfile
 from abc import ABC
 from collections.abc import AsyncGenerator
 from glob import glob
-from typing import IO, Optional, Union
+from typing import IO, Optional
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.storage.filedatalake.aio import (
@@ -148,7 +148,7 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
         data_lake_storage_account: str,
         data_lake_filesystem: str,
         data_lake_path: str,
-        credential: Union[AsyncTokenCredential, str],
+        credential: AsyncTokenCredential | str,
         enable_global_documents: bool = False,
     ):
         self.data_lake_storage_account = data_lake_storage_account
