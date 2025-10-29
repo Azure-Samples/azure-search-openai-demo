@@ -334,14 +334,6 @@ def test_setup_embeddings_service_requires_deployment_for_azure() -> None:
         )
 
 
-def test_setup_openai_client_requires_valid_host() -> None:
-    with pytest.raises(ValueError, match="Invalid OPENAI_HOST value"):
-        prepdocs.setup_openai_client(
-            openai_host="invalid_host",  # type: ignore
-            azure_credential=MockAzureCredential(),
-        )
-
-
 @pytest.mark.asyncio
 async def test_openai_embeddings_use_deployment_for_azure_model():
     class RecordingEmbeddingsClient:

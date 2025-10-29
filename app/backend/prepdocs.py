@@ -195,9 +195,6 @@ def setup_openai_client(
     openai_api_key: Optional[str] = None,
     openai_organization: Optional[str] = None,
 ) -> tuple[AsyncOpenAI, Optional[str]]:
-    if openai_host not in OpenAIHost:
-        raise ValueError(f"Invalid OPENAI_HOST value: {openai_host}. Must be one of {[h.value for h in OpenAIHost]}.")
-
     openai_client: AsyncOpenAI
     azure_openai_endpoint: Optional[str] = None
 
