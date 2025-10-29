@@ -1,6 +1,7 @@
 import json
 import os
 from types import SimpleNamespace
+from typing import Optional
 from unittest import mock
 
 import pytest
@@ -112,7 +113,7 @@ class FakeRequestBuilder:
 class FakeOAuthGrant:
     def __init__(self):
         self.responses: list[SimpleNamespace] = []
-        self.raise_on_post: APIError | None = None
+        self.raise_on_post: Optional[APIError] = None
         self.posted = []
         self.post_attempts = 0
 
