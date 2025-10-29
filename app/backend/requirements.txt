@@ -58,7 +58,7 @@ azure-monitor-opentelemetry-exporter==1.0.0b44
     # via azure-monitor-opentelemetry
 azure-search-documents==11.7.0b1
     # via -r requirements.in
-azure-storage-blob==12.22.0
+azure-storage-blob==12.27.0
     # via
     #   -r requirements.in
     #   azure-storage-file-datalake
