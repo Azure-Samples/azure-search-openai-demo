@@ -6,6 +6,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from openai.types.chat import ChatCompletion
 
+from approaches.approach import Document
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from prepdocslib.embeddings import ImageEmbeddings
@@ -235,7 +236,6 @@ async def test_compute_multimodal_embedding_no_client():
         agent_model=None,
         agent_deployment=None,
         agent_client=None,
-        auth_helper=None,
         openai_client=None,
         chatgpt_model="gpt-35-turbo",
         chatgpt_deployment="chat",
@@ -255,3 +255,52 @@ async def test_compute_multimodal_embedding_no_client():
     # Test that calling compute_multimodal_embedding raises a ValueError
     with pytest.raises(ValueError, match="Approach is missing an image embeddings client for multimodal queries"):
         await chat_approach.compute_multimodal_embedding("What's in this image?")
+
+
+@pytest.mark.asyncio
+async def test_chat_prompt_render_with_image_directive(chat_approach):
+    """Verify DocFX style :::image directive is sanitized (replaced with [image]) during prompt rendering."""
+    image_directive = (
+        "activator-introduction.md#page=1: Intro text before image. "
+        ':::image type="content" source="./media/activator-introduction/activator.png" '
+        'alt-text="Diagram that shows the architecture of Fabric Activator."::: More text after image.'
+    )
+
+    async def build_sources():
+        return await chat_approach.get_sources_content(
+            [
+                Document(
+                    id="doc1",
+                    content=image_directive.split(": ", 1)[1],
+                    sourcepage="activator-introduction.md#page=1",
+                    sourcefile="activator-introduction.md",
+                )
+            ],
+            use_semantic_captions=False,
+            include_text_sources=True,
+            download_image_sources=False,
+            user_oid=None,
+        )
+
+    data_points = await build_sources()
+
+    messages = chat_approach.prompt_manager.render_prompt(
+        chat_approach.answer_prompt,
+        {
+            "include_follow_up_questions": False,
+            "past_messages": [],
+            "user_query": "What is Fabric Activator?",
+            "text_sources": data_points.text,
+            "image_sources": data_points.images,
+            "citations": data_points.citations,
+        },
+    )
+    assert messages
+    # Find the user message containing Sources and verify placeholder
+    combined = "\n".join([m["content"] for m in messages if m["role"] == "user"])
+    # Expect triple colons escaped
+    assert "&#58;&#58;&#58;image" in combined
+    assert "activator-introduction/activator.png" in combined
+    assert "Diagram that shows the architecture of Fabric Activator." in combined
+    # Original unescaped sequence should be gone
+    assert ":::image" not in combined

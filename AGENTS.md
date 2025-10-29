@@ -78,14 +78,49 @@ When adding a new feature, add tests for it in the appropriate file.
 If the feature is a UI element, add an e2e test for it.
 If it is an API endpoint, add an app integration test for it.
 If it is a function or method, add a unit test for it.
-Use mocks from conftest.py to mock external services.
+Use mocks from tests/conftest.py to mock external services. Prefer mocking at the HTTP/requests level when possible.
 
 When you're running tests, make sure you activate the .venv virtual environment first:
 
-```bash
+```shell
 source .venv/bin/activate
 ```
+
+To check for coverage, run the following command:
+
+```shell
+pytest --cov --cov-report=annotate:cov_annotate
+```
+
+Open the cov_annotate directory to view the annotated source code. There will be one file per source file. If a file has 100% source coverage, it means all lines are covered by tests, so you do not need to open the file.
+
+For each file that has less than 100% test coverage, find the matching file in cov_annotate and review the file.
+
+If a line starts with a ! (exclamation mark), it means that the line is not covered by tests. Add tests to cover the missing lines.
 
 ## Sending pull requests
 
 When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md format.
+
+## Upgrading dependencies
+
+To upgrade a particular package in the backend, use the following command, replacing `<package-name>` with the name of the package you want to upgrade:
+
+```shell
+cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.10 --upgrade-package package-name
+```
+
+## Checking Python type hints
+
+To check Python type hints, use the following command:
+
+```shell
+cd app/backend && mypy . --config-file=../../pyproject.toml
+```
+
+```shell
+cd scripts && mypy . --config-file=../pyproject.toml
+```
+
+Note that we do not currently enforce type hints in the tests folder, as it would require adding a lot of `# type: ignore` comments to the existing tests.
+We only enforce type hints in the main application code and scripts.

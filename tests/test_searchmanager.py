@@ -7,8 +7,10 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
+    PermissionFilter,
     SearchFieldDataType,
     SearchIndex,
+    SearchIndexPermissionFilterOption,
     SimpleField,
 )
 from openai.types.create_embedding_response import Usage
@@ -170,12 +172,273 @@ async def test_create_index_acls(monkeypatch, search_info):
     manager = SearchManager(
         search_info,
         use_acls=True,
+        enforce_access_control=True,
         field_name_embedding="embedding",
     )
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
+    assert indexes[0].permission_filter_option == SearchIndexPermissionFilterOption.ENABLED
     assert len(indexes[0].fields) == 8
+    oids_field = next((field for field in indexes[0].fields if field.name == "oids"), None)
+    assert oids_field is not None, "Expected 'oids' field to be present"
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
+    groups_field = next((field for field in indexes[0].fields if field.name == "groups"), None)
+    assert groups_field is not None, "Expected 'groups' field to be present"
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
+
+
+@pytest.mark.asyncio
+async def test_create_index_acls_no_enforcement(monkeypatch, search_info):
+    indexes = []
+
+    async def mock_create_index(self, index):
+        indexes.append(index)
+
+    async def mock_list_index_names(self):
+        for index in []:
+            yield index
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+
+    manager = SearchManager(
+        search_info,
+        use_acls=True,
+        enforce_access_control=False,
+        field_name_embedding="embedding",
+    )
+    await manager.create_index()
+    assert len(indexes) == 1, "It should have created one index"
+    assert indexes[0].name == "test"
+    assert indexes[0].permission_filter_option == SearchIndexPermissionFilterOption.DISABLED
+    assert len(indexes[0].fields) == 8
+    oids_field = next((field for field in indexes[0].fields if field.name == "oids"), None)
+    assert oids_field is not None, "Expected 'oids' field to be present"
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
+    groups_field = next((field for field in indexes[0].fields if field.name == "groups"), None)
+    assert groups_field is not None, "Expected 'groups' field to be present"
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
+
+
+@pytest.mark.asyncio
+async def test_create_index_acls_no_existing_fields(monkeypatch, search_info):
+    created_indexes = []
+    updated_indexes = []
+
+    async def mock_create_index(self, index):
+        created_indexes.append(index)
+
+    async def mock_list_index_names(self):
+        yield "test"
+
+    async def mock_get_index(self, *args, **kwargs):
+        return SearchIndex(
+            name="test",
+            fields=[
+                SimpleField(
+                    name="storageUrl",
+                    type=SearchFieldDataType.String,
+                    filterable=True,
+                )
+            ],
+        )
+
+    async def mock_create_or_update_index(self, index, *args, **kwargs):
+        updated_indexes.append(index)
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_or_update_index)
+
+    manager = SearchManager(
+        search_info,
+        use_acls=True,
+        enforce_access_control=True,
+        field_name_embedding="embedding",
+    )
+    await manager.create_index()
+    assert len(updated_indexes) == 1, "It should have created one index"
+    assert updated_indexes[0].name == "test"
+    assert updated_indexes[0].permission_filter_option == SearchIndexPermissionFilterOption.ENABLED
+    assert len(updated_indexes[0].fields) == 3
+    oids_field = next((field for field in updated_indexes[0].fields if field.name == "oids"), None)
+    assert oids_field is not None, "Expected 'oids' field to be present"
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
+    groups_field = next((field for field in updated_indexes[0].fields if field.name == "groups"), None)
+    assert groups_field is not None, "Expected 'groups' field to be present"
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
+
+
+@pytest.mark.asyncio
+async def test_create_index_acls_no_existing_fields_no_enforcement(monkeypatch, search_info):
+    created_indexes = []
+    updated_indexes = []
+
+    async def mock_create_index(self, index):
+        created_indexes.append(index)
+
+    async def mock_list_index_names(self):
+        yield "test"
+
+    async def mock_get_index(self, *args, **kwargs):
+        return SearchIndex(
+            name="test",
+            fields=[
+                SimpleField(
+                    name="storageUrl",
+                    type=SearchFieldDataType.String,
+                    filterable=True,
+                )
+            ],
+        )
+
+    async def mock_create_or_update_index(self, index, *args, **kwargs):
+        updated_indexes.append(index)
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_or_update_index)
+
+    manager = SearchManager(
+        search_info,
+        use_acls=True,
+        enforce_access_control=False,
+        field_name_embedding="embedding",
+    )
+    await manager.create_index()
+    assert len(updated_indexes) == 1, "It should have created one index"
+    assert updated_indexes[0].name == "test"
+    assert updated_indexes[0].permission_filter_option == SearchIndexPermissionFilterOption.DISABLED
+    assert len(updated_indexes[0].fields) == 3
+    oids_field = next((field for field in updated_indexes[0].fields if field.name == "oids"), None)
+    assert oids_field is not None, "Expected 'oids' field to be present"
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
+    groups_field = next((field for field in updated_indexes[0].fields if field.name == "groups"), None)
+    assert groups_field is not None, "Expected 'groups' field to be present"
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
+
+
+@pytest.mark.asyncio
+async def test_create_index_acls_with_existing_fields(monkeypatch, search_info):
+    created_indexes = []
+    updated_indexes = []
+
+    async def mock_create_index(self, index):
+        created_indexes.append(index)
+
+    async def mock_list_index_names(self):
+        yield "test"
+
+    async def mock_get_index(self, *args, **kwargs):
+        return SearchIndex(
+            name="test",
+            fields=[
+                SimpleField(
+                    name="storageUrl",
+                    type=SearchFieldDataType.String,
+                    filterable=True,
+                ),
+                SimpleField(
+                    name="oids",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    filterable=True,
+                ),
+                SimpleField(
+                    name="groups",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    filterable=True,
+                ),
+            ],
+        )
+
+    async def mock_create_or_update_index(self, index, *args, **kwargs):
+        updated_indexes.append(index)
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_or_update_index)
+
+    manager = SearchManager(
+        search_info,
+        use_acls=True,
+        enforce_access_control=True,
+        field_name_embedding="embedding",
+    )
+    await manager.create_index()
+    assert len(updated_indexes) == 1, "It should have created one index"
+    assert updated_indexes[0].name == "test"
+    assert updated_indexes[0].permission_filter_option == SearchIndexPermissionFilterOption.ENABLED
+    assert len(updated_indexes[0].fields) == 3
+    oids_field = next((field for field in updated_indexes[0].fields if field.name == "oids"), None)
+    assert oids_field is not None, "Expected 'oids' field to be present"
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
+    groups_field = next((field for field in updated_indexes[0].fields if field.name == "groups"), None)
+    assert groups_field is not None, "Expected 'groups' field to be present"
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
+
+
+@pytest.mark.asyncio
+async def test_create_index_acls_with_existing_fields_no_enforcement(monkeypatch, search_info):
+    created_indexes = []
+    updated_indexes = []
+
+    async def mock_create_index(self, index):
+        created_indexes.append(index)
+
+    async def mock_list_index_names(self):
+        yield "test"
+
+    async def mock_get_index(self, *args, **kwargs):
+        return SearchIndex(
+            name="test",
+            fields=[
+                SimpleField(
+                    name="storageUrl",
+                    type=SearchFieldDataType.String,
+                    filterable=True,
+                ),
+                SimpleField(
+                    name="oids",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    filterable=True,
+                ),
+                SimpleField(
+                    name="groups",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    filterable=True,
+                ),
+            ],
+        )
+
+    async def mock_create_or_update_index(self, index, *args, **kwargs):
+        updated_indexes.append(index)
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_or_update_index)
+
+    manager = SearchManager(
+        search_info,
+        use_acls=True,
+        enforce_access_control=False,
+        field_name_embedding="embedding",
+    )
+    await manager.create_index()
+    assert len(updated_indexes) == 1, "It should have created one index"
+    assert updated_indexes[0].name == "test"
+    assert updated_indexes[0].permission_filter_option == SearchIndexPermissionFilterOption.DISABLED
+    assert len(updated_indexes[0].fields) == 3
+    oids_field = next((field for field in updated_indexes[0].fields if field.name == "oids"), None)
+    assert oids_field is not None, "Expected 'oids' field to be present"
+    assert oids_field.permission_filter == PermissionFilter.USER_IDS
+    groups_field = next((field for field in updated_indexes[0].fields if field.name == "groups"), None)
+    assert groups_field is not None, "Expected 'groups' field to be present"
+    assert groups_field.permission_filter == PermissionFilter.GROUP_IDS
 
 
 @pytest.mark.asyncio

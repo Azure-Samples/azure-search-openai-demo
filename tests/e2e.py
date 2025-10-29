@@ -179,8 +179,6 @@ def test_chat_customization(page: Page, live_server_url: str):
                 assert overrides["prompt_template"] == "You are a cat and only talk about tuna."
                 assert overrides["exclude_category"] == "dogs"
                 assert overrides["suggest_followup_questions"] is True
-                assert overrides["use_oid_security_filter"] is False
-                assert overrides["use_groups_security_filter"] is False
         except Exception as e:
             print(f"Error in test_chat_customization handler: {e}")
 

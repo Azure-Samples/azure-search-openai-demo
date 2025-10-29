@@ -43,8 +43,6 @@ export function Component(): JSX.Element {
     const [question, setQuestion] = useState<string>("");
     const [searchTextEmbeddings, setSearchTextEmbeddings] = useState<boolean>(true);
     const [searchImageEmbeddings, setSearchImageEmbeddings] = useState<boolean>(false);
-    const [useOidSecurityFilter, setUseOidSecurityFilter] = useState<boolean>(false);
-    const [useGroupsSecurityFilter, setUseGroupsSecurityFilter] = useState<boolean>(false);
     const [showMultimodalOptions, setShowMultimodalOptions] = useState<boolean>(false);
     const [showSemanticRankerOption, setShowSemanticRankerOption] = useState<boolean>(false);
     const [showQueryRewritingOption, setShowQueryRewritingOption] = useState<boolean>(false);
@@ -156,8 +154,6 @@ export function Component(): JSX.Element {
                         semantic_captions: useSemanticCaptions,
                         query_rewriting: useQueryRewriting,
                         reasoning_effort: reasoningEffort,
-                        use_oid_security_filter: useOidSecurityFilter,
-                        use_groups_security_filter: useGroupsSecurityFilter,
                         search_text_embeddings: searchTextEmbeddings,
                         search_image_embeddings: searchImageEmbeddings,
                         send_text_sources: sendTextSources,
@@ -227,12 +223,6 @@ export function Component(): JSX.Element {
             case "includeCategory":
                 setIncludeCategory(value);
                 break;
-            case "useOidSecurityFilter":
-                setUseOidSecurityFilter(value);
-                break;
-            case "useGroupsSecurityFilter":
-                setUseGroupsSecurityFilter(value);
-                break;
             case "llmInputs":
                 break;
             case "sendTextSources":
@@ -275,14 +265,6 @@ export function Component(): JSX.Element {
         } else {
             setActiveAnalysisPanelTab(tab);
         }
-    };
-
-    const onUseOidSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseOidSecurityFilter(!!checked);
-    };
-
-    const onUseGroupsSecurityFilterChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
-        setUseGroupsSecurityFilter(!!checked);
     };
 
     const { t, i18n } = useTranslation();
@@ -384,8 +366,6 @@ export function Component(): JSX.Element {
                     showReasoningEffortOption={showReasoningEffortOption}
                     showMultimodalOptions={showMultimodalOptions}
                     showVectorOption={showVectorOption}
-                    useOidSecurityFilter={useOidSecurityFilter}
-                    useGroupsSecurityFilter={useGroupsSecurityFilter}
                     useLogin={!!useLogin}
                     loggedIn={loggedIn}
                     requireAccessControl={requireAccessControl}

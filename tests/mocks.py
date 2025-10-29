@@ -28,14 +28,20 @@ from azure.storage.blob import BlobProperties
 
 MOCK_EMBEDDING_DIMENSIONS = 1536
 MOCK_EMBEDDING_MODEL_NAME = "text-embedding-ada-002"
+TEST_PNG_BYTES = (
+    b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00"
+    b"\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\xdac\xfc\xcf\xf0\xbf\x1e\x00\x06\x83\x02\x7f\x94\xad"
+    b"\xd0\xeb\x00\x00\x00\x00IEND\xaeB`\x82"
+)
 
 MockToken = namedtuple("MockToken", ["token", "expires_on", "value"])
 
 
 class MockAzureCredential(AsyncTokenCredential):
 
-    async def get_token(self, uri):
-        return MockToken("", 9999999999, "")
+    async def get_token(self, *scopes, **kwargs):  # accept claims, enable_cae, etc.
+        # Return a simple mock token structure with required attributes
+        return MockToken("mock-token", 9999999999, "mock-token")
 
 
 class MockAzureCredentialExpired(AsyncTokenCredential):
@@ -43,7 +49,7 @@ class MockAzureCredentialExpired(AsyncTokenCredential):
     def __init__(self):
         self.access_number = 0
 
-    async def get_token(self, uri):
+    async def get_token(self, *scopes, **kwargs):
         self.access_number += 1
         if self.access_number == 1:
             return MockToken("", 0, "")
@@ -63,7 +69,7 @@ class MockBlob:
         )
 
     async def readall(self):
-        return b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\xdac\xfc\xcf\xf0\xbf\x1e\x00\x06\x83\x02\x7f\x94\xad\xd0\xeb\x00\x00\x00\x00IEND\xaeB`\x82"
+        return TEST_PNG_BYTES
 
     async def readinto(self, buffer: BytesIO):
         buffer.write(b"test")
@@ -95,7 +101,7 @@ class MockTransport(AsyncHttpTransport):
             request,
             MockAiohttpClientResponse(
                 request.url,
-                b"test content",
+                TEST_PNG_BYTES,
                 {
                     "Content-Type": "application/octet-stream",
                     "Content-Range": "bytes 0-27/28",

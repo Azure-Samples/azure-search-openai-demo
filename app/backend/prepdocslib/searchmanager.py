@@ -15,6 +15,7 @@ from azure.search.documents.indexes.models import (
     KnowledgeAgentAzureOpenAIModel,
     KnowledgeAgentRequestLimits,
     KnowledgeSourceReference,
+    PermissionFilter,
     RescoringOptions,
     SearchableField,
     SearchField,
@@ -22,6 +23,7 @@ from azure.search.documents.indexes.models import (
     SearchIndex,
     SearchIndexKnowledgeSource,
     SearchIndexKnowledgeSourceParameters,
+    SearchIndexPermissionFilterOption,
     SemanticConfiguration,
     SemanticField,
     SemanticPrioritizedFields,
@@ -71,6 +73,7 @@ class SearchManager:
         embeddings: Optional[OpenAIEmbeddings] = None,
         field_name_embedding: Optional[str] = None,
         search_images: bool = False,
+        enforce_access_control: bool = False,
     ):
         self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name
@@ -80,6 +83,7 @@ class SearchManager:
         self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else None
         self.field_name_embedding = field_name_embedding
         self.search_images = search_images
+        self.enforce_access_control = enforce_access_control
 
     async def create_index(self):
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
@@ -92,6 +96,7 @@ class SearchManager:
             text_vector_compression = None
             image_vector_search_profile = None
             image_vector_algorithm = None
+            permission_filter_option = None
 
             if self.embeddings:
                 if self.embedding_dimensions is None:
@@ -211,6 +216,20 @@ class SearchManager:
                     ],
                 )
 
+            if self.use_acls:
+                oids_field = SearchField(
+                    name="oids",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    filterable=True,
+                    permission_filter=PermissionFilter.USER_IDS,
+                )
+                groups_field = SearchField(
+                    name="groups",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    filterable=True,
+                    permission_filter=PermissionFilter.GROUP_IDS,
+                )
+
             if self.search_info.index_name not in [name async for name in search_index_client.list_index_names()]:
                 logger.info("Creating new search index %s", self.search_info.index_name)
                 fields = [
@@ -253,19 +272,12 @@ class SearchManager:
                     ),
                 ]
                 if self.use_acls:
-                    fields.append(
-                        SimpleField(
-                            name="oids",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                            filterable=True,
-                        )
-                    )
-                    fields.append(
-                        SimpleField(
-                            name="groups",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
-                            filterable=True,
-                        )
+                    fields.append(oids_field)
+                    fields.append(groups_field)
+                    permission_filter_option = (
+                        SearchIndexPermissionFilterOption.ENABLED
+                        if self.enforce_access_control
+                        else SearchIndexPermissionFilterOption.DISABLED
                     )
 
                 if self.use_int_vectorization:
@@ -322,6 +334,7 @@ class SearchManager:
                         compressions=vector_compressions,
                         vectorizers=vectorizers,
                     ),
+                    permission_filter_option=permission_filter_option,
                 )
 
                 await search_index_client.create_index(index)
@@ -432,6 +445,29 @@ class SearchManager:
                             "Can't add vectorizer to search index %s since no Azure OpenAI embeddings service is defined",
                             self.search_info,
                         )
+
+                if self.use_acls:
+                    if self.enforce_access_control:
+                        logger.info("Enabling permission filtering on index %s", self.search_info.index_name)
+                        existing_index.permission_filter_option = SearchIndexPermissionFilterOption.ENABLED
+                    else:
+                        logger.info("Disabling permission filtering on index %s", self.search_info.index_name)
+                        existing_index.permission_filter_option = SearchIndexPermissionFilterOption.DISABLED
+
+                    existing_oids_field = next((field for field in existing_index.fields if field.name == "oids"), None)
+                    if existing_oids_field:
+                        existing_oids_field.permission_filter = PermissionFilter.USER_IDS
+                    else:
+                        existing_index.fields.append(oids_field)
+                    existing_groups_field = next(
+                        (field for field in existing_index.fields if field.name == "groups"), None
+                    )
+                    if existing_groups_field:
+                        existing_groups_field.permission_filter = PermissionFilter.GROUP_IDS
+                    else:
+                        existing_index.fields.append(groups_field)
+
+                    await search_index_client.create_or_update_index(existing_index)
 
         if self.search_info.use_agentic_retrieval and self.search_info.agent_name:
             await self.create_agent()
