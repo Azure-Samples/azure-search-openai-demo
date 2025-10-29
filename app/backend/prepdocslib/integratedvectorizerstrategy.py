@@ -29,7 +29,7 @@ from .strategy import DocumentAction, SearchInfo, Strategy
 logger = logging.getLogger("scripts")
 
 
-class IntegratedVectorizerStrategy(Strategy):
+class IntegratedVectorizerStrategy(Strategy):  # pragma: no cover
     """
     Strategy for ingesting and vectorizing documents into a search service from files stored storage account
     """

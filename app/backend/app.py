@@ -560,7 +560,7 @@ async def setup_clients():
         # Wait until token is needed to fetch for the first time
         current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
 
-    openai_client = setup_openai_client(
+    openai_client, azure_openai_endpoint = setup_openai_client(
         openai_host=OPENAI_HOST,
         azure_credential=azure_credential,
         azure_openai_service=AZURE_OPENAI_SERVICE,

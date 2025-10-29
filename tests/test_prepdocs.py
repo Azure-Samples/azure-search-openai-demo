@@ -313,6 +313,35 @@ def test_setup_embeddings_service_requires_endpoint_for_azure() -> None:
         )
 
 
+def test_setup_embeddings_service_requires_deployment_for_azure() -> None:
+    with pytest.raises(ValueError):
+        prepdocs.setup_embeddings_service(
+            open_ai_client=MockClient(
+                MockEmbeddingsClient(
+                    openai.types.CreateEmbeddingResponse(
+                        object="list",
+                        data=[],
+                        model="text-embedding-3-large",
+                        usage=Usage(prompt_tokens=0, total_tokens=0),
+                    )
+                )
+            ),
+            openai_host=prepdocs.OpenAIHost.AZURE,
+            emb_model_name=MOCK_EMBEDDING_MODEL_NAME,
+            emb_model_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+            azure_openai_deployment=None,
+            azure_openai_endpoint="https://service.openai.azure.com",
+        )
+
+
+def test_setup_openai_client_requires_valid_host() -> None:
+    with pytest.raises(ValueError, match="Invalid OPENAI_HOST value"):
+        prepdocs.setup_openai_client(
+            openai_host="invalid_host",  # type: ignore
+            azure_credential=MockAzureCredential(),
+        )
+
+
 @pytest.mark.asyncio
 async def test_openai_embeddings_use_deployment_for_azure_model():
     class RecordingEmbeddingsClient:

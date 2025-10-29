@@ -12,6 +12,7 @@ from azure.search.documents.indexes.models import (
     SearchIndex,
     SearchIndexPermissionFilterOption,
     SimpleField,
+    VectorSearch,
 )
 from openai.types.create_embedding_response import Usage
 
@@ -153,6 +154,73 @@ async def test_create_index_add_field(monkeypatch, search_info):
     assert len(updated_indexes) == 1, "It should have updated the existing index"
     assert len(updated_indexes[0].fields) == 1
     assert updated_indexes[0].fields[0].name == "storageUrl"
+
+
+@pytest.mark.asyncio
+async def test_create_index_adds_vectorizer_to_existing_index(monkeypatch, search_info):
+    """Test that a vectorizer is added to an existing index when embeddings are configured."""
+    created_indexes = []
+    updated_indexes = []
+
+    async def mock_create_index(self, index):
+        created_indexes.append(index)  # pragma: no cover
+
+    async def mock_list_index_names(self):
+        yield "test"
+
+    async def mock_get_index(self, *args, **kwargs):
+        # Return an existing index with vector_search but no vectorizers
+        # Include embedding field to avoid triggering the embedding field addition code path
+        return SearchIndex(
+            name="test",
+            fields=[
+                SimpleField(
+                    name="storageUrl",
+                    type=SearchFieldDataType.String,
+                    filterable=True,
+                ),
+                SimpleField(
+                    name="embedding",
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                    searchable=True,
+                    vector_search_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+                ),
+            ],
+            vector_search=VectorSearch(vectorizers=[]),
+        )
+
+    async def mock_create_or_update_index(self, index, *args, **kwargs):
+        updated_indexes.append(index)
+
+    monkeypatch.setattr(SearchIndexClient, "create_index", mock_create_index)
+    monkeypatch.setattr(SearchIndexClient, "list_index_names", mock_list_index_names)
+    monkeypatch.setattr(SearchIndexClient, "get_index", mock_get_index)
+    monkeypatch.setattr(SearchIndexClient, "create_or_update_index", mock_create_or_update_index)
+
+    # Create a simple mock embeddings object with just the properties we need for index creation
+    class MockEmbeddings:
+        def __init__(self):
+            self.azure_endpoint = "https://test.openai.azure.com"
+            self.azure_deployment_name = "test-deployment"
+            self.open_ai_model_name = MOCK_EMBEDDING_MODEL_NAME
+            self.open_ai_dimensions = MOCK_EMBEDDING_DIMENSIONS
+
+    embeddings = MockEmbeddings()
+
+    manager = SearchManager(search_info, embeddings=embeddings, field_name_embedding="embedding")
+    await manager.create_index()
+
+    assert len(created_indexes) == 0, "It should not have created a new index"
+    assert len(updated_indexes) == 1, "It should have updated the existing index"
+    assert updated_indexes[0].vector_search.vectorizers is not None
+    assert len(updated_indexes[0].vector_search.vectorizers) == 1, "Should have added one vectorizer"
+    # The vectorizer name for updating existing indexes uses index_name
+    assert updated_indexes[0].vector_search.vectorizers[0].vectorizer_name == "test-vectorizer"
+    # Verify the vectorizer parameters
+    vectorizer = updated_indexes[0].vector_search.vectorizers[0]
+    assert vectorizer.parameters.resource_url == "https://test.openai.azure.com"
+    assert vectorizer.parameters.deployment_name == "test-deployment"
+    assert vectorizer.parameters.model_name == MOCK_EMBEDDING_MODEL_NAME
 
 
 @pytest.mark.asyncio
