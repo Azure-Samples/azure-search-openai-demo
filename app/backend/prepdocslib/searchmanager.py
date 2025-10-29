@@ -574,7 +574,7 @@ class SearchManager:
                 )
                 await search_client.upload_documents(documents)
 
-    async def remove_content(self, path: str | None = None, only_oid: str | None = None):
+    async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
         logger.info(
             "Removing sections from '{%s or '<all>'}' from search index '%s'", path, self.search_info.index_name
         )
