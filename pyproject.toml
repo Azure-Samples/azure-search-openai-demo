@@ -1,7 +1,7 @@
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 lint.select = ["E", "F", "I", "UP"]
-lint.ignore = ["E501", "E701"] # line too long, multiple statements on one line
+lint.ignore = ["E501", "E701", "UP045"] # line too long, multiple statements on one line, keep Optional[X]
 src = ["app/backend", "scripts"]
 
 [tool.ruff.lint.isort]
@@ -23,7 +23,7 @@ show_missing = true
 
 [tool.mypy]
 check_untyped_defs = true
-python_version = 3.9
+python_version = "3.10"
 
 [[tool.mypy.overrides]]
 module = [

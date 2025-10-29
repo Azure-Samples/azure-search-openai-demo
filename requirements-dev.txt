@@ -1,5 +1,5 @@
 -r app/backend/requirements.txt
-ruff
+ruff>=0.14.2
 black
 pytest
 pytest-asyncio
