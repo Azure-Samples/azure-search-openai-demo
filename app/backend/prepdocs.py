@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import logging
 import os
+from collections.abc import Awaitable, Callable
 from enum import Enum
 from typing import Optional
 
@@ -202,7 +203,7 @@ def setup_openai_client(
 
     if openai_host in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
         base_url: Optional[str] = None
-        api_key_or_token: Optional[str | AsyncTokenCredential] = None
+        api_key_or_token: Optional[str | Callable[[], Awaitable[str]]] = None
         if openai_host == OpenAIHost.AZURE_CUSTOM:
             logger.info("OPENAI_HOST is azure_custom, setting up Azure OpenAI custom client")
             if not azure_openai_custom_url:
@@ -224,7 +225,7 @@ def setup_openai_client(
             )
         openai_client = AsyncOpenAI(
             base_url=base_url,
-            api_key=api_key_or_token,
+            api_key=api_key_or_token,  # type: ignore[arg-type]
         )
     elif openai_host == OpenAIHost.LOCAL:
         logger.info("OPENAI_HOST is local, setting up local OpenAI client for OPENAI_BASE_URL with no key")
