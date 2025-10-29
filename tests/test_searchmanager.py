@@ -15,7 +15,7 @@ from azure.search.documents.indexes.models import (
 )
 from openai.types.create_embedding_response import Usage
 
-from prepdocslib.embeddings import AzureOpenAIEmbeddingService
+from prepdocslib.embeddings import OpenAIEmbeddings
 from prepdocslib.listfilestrategy import File
 from prepdocslib.page import ImageOnPage
 from prepdocslib.searchmanager import SearchManager, Section
@@ -510,28 +510,22 @@ async def test_update_content_many(monkeypatch, search_info):
 
 @pytest.mark.asyncio
 async def test_update_content_with_embeddings(monkeypatch, search_info):
-    async def mock_create_client(*args, **kwargs):
-        # From https://platform.openai.com/docs/api-reference/embeddings/create
-        return MockClient(
-            embeddings_client=MockEmbeddingsClient(
-                create_embedding_response=openai.types.CreateEmbeddingResponse(
-                    object="list",
-                    data=[
-                        openai.types.Embedding(
-                            embedding=[
-                                0.0023064255,
-                                -0.009327292,
-                                -0.0028842222,
-                            ],
-                            index=0,
-                            object="embedding",
-                        )
-                    ],
-                    model="text-embedding-3-large",
-                    usage=Usage(prompt_tokens=8, total_tokens=8),
-                )
+    response = openai.types.CreateEmbeddingResponse(
+        object="list",
+        data=[
+            openai.types.Embedding(
+                embedding=[
+                    0.0023064255,
+                    -0.009327292,
+                    -0.0028842222,
+                ],
+                index=0,
+                object="embedding",
             )
-        )
+        ],
+        model="text-embedding-3-large",
+        usage=Usage(prompt_tokens=8, total_tokens=8),
+    )
 
     documents_uploaded = []
 
@@ -539,16 +533,14 @@ async def test_update_content_with_embeddings(monkeypatch, search_info):
         documents_uploaded.extend(documents)
 
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
-    embeddings = AzureOpenAIEmbeddingService(
-        open_ai_service="x",
-        open_ai_deployment="x",
+    embeddings = OpenAIEmbeddings(
+        open_ai_client=MockClient(MockEmbeddingsClient(response)),
         open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
         open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        open_ai_api_version="test-api-version",
-        credential=AzureKeyCredential("test"),
         disable_batch=True,
+        azure_deployment_name="x",
+        azure_endpoint="https://x.openai.azure.com",
     )
-    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
     manager = SearchManager(
         search_info,
         embeddings=embeddings,
@@ -943,14 +935,29 @@ async def test_create_index_with_search_images_and_embeddings(monkeypatch, searc
     )
 
     # Create embeddings service
-    embeddings = AzureOpenAIEmbeddingService(
-        open_ai_service="x",
-        open_ai_deployment="x",
+    response = openai.types.CreateEmbeddingResponse(
+        object="list",
+        data=[
+            openai.types.Embedding(
+                embedding=[
+                    0.0023064255,
+                    -0.009327292,
+                    -0.0028842222,
+                ],
+                index=0,
+                object="embedding",
+            )
+        ],
+        model="text-embedding-3-large",
+        usage=Usage(prompt_tokens=8, total_tokens=8),
+    )
+    embeddings = OpenAIEmbeddings(
+        open_ai_client=MockClient(MockEmbeddingsClient(response)),
         open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
         open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        open_ai_api_version="test-api-version",
-        credential=AzureKeyCredential("test"),
         disable_batch=True,
+        azure_deployment_name="x",
+        azure_endpoint="https://x.openai.azure.com",
     )
 
     # Create a SearchManager with both search_images and embeddings

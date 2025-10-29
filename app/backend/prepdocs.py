@@ -15,11 +15,7 @@ from rich.logging import RichHandler
 from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
 from prepdocslib.csvparser import CsvParser
-from prepdocslib.embeddings import (
-    AzureOpenAIEmbeddingService,
-    ImageEmbeddings,
-    OpenAIEmbeddingService,
-)
+from prepdocslib.embeddings import ImageEmbeddings, OpenAIEmbeddings
 from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import FileStrategy
 from prepdocslib.htmlparser import LocalHTMLParser
@@ -160,16 +156,12 @@ class OpenAIHost(str, Enum):
 
 
 def setup_embeddings_service(
-    azure_credential: AsyncTokenCredential,
+    open_ai_client: AsyncOpenAI,
     openai_host: OpenAIHost,
     emb_model_name: str,
     emb_model_dimensions: int,
-    azure_openai_service: Optional[str],
-    azure_openai_custom_url: Optional[str],
-    azure_openai_deployment: Optional[str],
-    azure_openai_key: Optional[str],
-    openai_key: Optional[str],
-    openai_org: Optional[str],
+    azure_openai_deployment: str | None,
+    azure_openai_endpoint: str | None,
     disable_vectors: bool = False,
     disable_batch_vectors: bool = False,
 ):
@@ -177,29 +169,24 @@ def setup_embeddings_service(
         logger.info("Not setting up embeddings service")
         return None
 
+    azure_endpoint = None
+    azure_deployment = None
     if openai_host in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
-        azure_open_ai_credential: AsyncTokenCredential | AzureKeyCredential = (
-            azure_credential if azure_openai_key is None else AzureKeyCredential(azure_openai_key)
-        )
-        return AzureOpenAIEmbeddingService(
-            open_ai_service=azure_openai_service,
-            open_ai_custom_url=azure_openai_custom_url,
-            open_ai_deployment=azure_openai_deployment,
-            open_ai_model_name=emb_model_name,
-            open_ai_dimensions=emb_model_dimensions,
-            credential=azure_open_ai_credential,
-            disable_batch=disable_batch_vectors,
-        )
-    else:
-        if openai_key is None:
-            raise ValueError("OpenAI key is required when using the non-Azure OpenAI API")
-        return OpenAIEmbeddingService(
-            open_ai_model_name=emb_model_name,
-            open_ai_dimensions=emb_model_dimensions,
-            credential=openai_key,
-            organization=openai_org,
-            disable_batch=disable_batch_vectors,
-        )
+        if azure_openai_endpoint is None:
+            raise ValueError("Azure OpenAI endpoint must be provided when using Azure OpenAI embeddings")
+        if azure_openai_deployment is None:
+            raise ValueError("Azure OpenAI deployment must be provided when using Azure OpenAI embeddings")
+        azure_endpoint = azure_openai_endpoint
+        azure_deployment = azure_openai_deployment
+
+    return OpenAIEmbeddings(
+        open_ai_client=open_ai_client,
+        open_ai_model_name=emb_model_name,
+        open_ai_dimensions=emb_model_dimensions,
+        disable_batch=disable_batch_vectors,
+        azure_deployment_name=azure_deployment,
+        azure_endpoint=azure_endpoint,
+    )
 
 
 def setup_openai_client(
@@ -226,17 +213,15 @@ def setup_openai_client(
             logger.info("OPENAI_HOST is azure, setting up Azure OpenAI client")
             if not azure_openai_service:
                 raise ValueError("AZURE_OPENAI_SERVICE must be set when OPENAI_HOST is azure")
-            endpoint = f"https://{azure_openai_service}.openai.azure.com"
+            endpoint = f"https://{azure_openai_service}.openai.azure.com/openai/v1"
         if azure_openai_api_key:
             logger.info("AZURE_OPENAI_API_KEY_OVERRIDE found, using as api_key for Azure OpenAI client")
-            openai_client = AsyncOpenAI(
-                base_url=f"{endpoint}/openai/v1", api_key=azure_openai_api_key
-            )
+            openai_client = AsyncOpenAI(base_url=endpoint, api_key=azure_openai_api_key)
         else:
             logger.info("Using Azure credential (passwordless authentication) for Azure OpenAI client")
             token_provider = get_bearer_token_provider(azure_credential, "https://cognitiveservices.azure.com/.default")
             openai_client = AsyncOpenAI(
-                base_url=f"{endpoint}/openai/v1",
+                base_url=endpoint,
                 api_key=token_provider,
             )
     elif openai_host == OpenAIHost.LOCAL:
@@ -515,20 +500,6 @@ if __name__ == "__main__":
     emb_model_dimensions = 1536
     if os.getenv("AZURE_OPENAI_EMB_DIMENSIONS"):
         emb_model_dimensions = int(os.environ["AZURE_OPENAI_EMB_DIMENSIONS"])
-    openai_embeddings_service = setup_embeddings_service(
-        azure_credential=azd_credential,
-        openai_host=OPENAI_HOST,
-        emb_model_name=os.environ["AZURE_OPENAI_EMB_MODEL_NAME"],
-        emb_model_dimensions=emb_model_dimensions,
-        azure_openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
-        azure_openai_custom_url=os.getenv("AZURE_OPENAI_CUSTOM_URL"),
-        azure_openai_deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
-        azure_openai_key=os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"),
-        openai_key=clean_key_if_exists(os.getenv("OPENAI_API_KEY")),
-        openai_org=os.getenv("OPENAI_ORGANIZATION"),
-        disable_vectors=dont_use_vectors,
-        disable_batch_vectors=args.disablebatchvectors,
-    )
     openai_client = setup_openai_client(
         openai_host=OPENAI_HOST,
         azure_credential=azd_credential,
@@ -538,11 +509,25 @@ if __name__ == "__main__":
         openai_api_key=clean_key_if_exists(os.getenv("OPENAI_API_KEY")),
         openai_organization=os.getenv("OPENAI_ORGANIZATION"),
     )
+    azure_embedding_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT") or os.getenv("AZURE_OPENAI_CUSTOM_URL")
+    if not azure_embedding_endpoint and OPENAI_HOST == OpenAIHost.AZURE:
+        if service := os.getenv("AZURE_OPENAI_SERVICE"):
+            azure_embedding_endpoint = f"https://{service}.openai.azure.com"
+    openai_embeddings_service = setup_embeddings_service(
+        open_ai_client=openai_client,
+        openai_host=OPENAI_HOST,
+        emb_model_name=os.environ["AZURE_OPENAI_EMB_MODEL_NAME"],
+        emb_model_dimensions=emb_model_dimensions,
+        azure_openai_deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
+        azure_openai_endpoint=azure_embedding_endpoint,
+        disable_vectors=dont_use_vectors,
+        disable_batch_vectors=args.disablebatchvectors,
+    )
 
     ingestion_strategy: Strategy
     if use_int_vectorization:
 
-        if not openai_embeddings_service or not isinstance(openai_embeddings_service, AzureOpenAIEmbeddingService):
+        if not openai_embeddings_service or OPENAI_HOST not in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
             raise Exception("Integrated vectorization strategy requires an Azure OpenAI embeddings service")
 
         ingestion_strategy = IntegratedVectorizerStrategy(

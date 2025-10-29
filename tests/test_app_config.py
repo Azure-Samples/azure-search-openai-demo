@@ -16,8 +16,10 @@ def minimal_env(monkeypatch):
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_OPENAI_SERVICE", "test-openai-service")
         monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4.1-mini")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "test-chat-deployment")
         monkeypatch.setenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
         monkeypatch.setenv("AZURE_OPENAI_EMB_DIMENSIONS", "3072")
+        monkeypatch.setenv("AZURE_OPENAI_EMB_DEPLOYMENT", "test-emb-deployment")
         yield
 
 
@@ -41,7 +43,7 @@ async def test_app_azure_custom_key(monkeypatch, minimal_env):
     quart_app = app.create_app()
     async with quart_app.test_app():
         assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "azure-api-key"
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://azureapi.com/api/v1/openai/"
+        assert str(quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url) == "http://azureapi.com/api/v1/"
 
 
 @pytest.mark.asyncio
@@ -51,8 +53,9 @@ async def test_app_azure_custom_identity(monkeypatch, minimal_env):
 
     quart_app = app.create_app()
     async with quart_app.test_app():
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key == "<missing API key>"
-        assert quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url == "http://azureapi.com/api/v1/openai/"
+        api_key = quart_app.config[app.CONFIG_OPENAI_CLIENT].api_key
+        assert callable(api_key)
+        assert str(quart_app.config[app.CONFIG_OPENAI_CLIENT].base_url) == "http://azureapi.com/api/v1/"
 
 
 @pytest.mark.asyncio

@@ -38,7 +38,7 @@ from azure.search.documents.indexes.models import (
 )
 
 from .blobmanager import BlobManager
-from .embeddings import AzureOpenAIEmbeddingService, OpenAIEmbeddings
+from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import File
 from .strategy import SearchInfo
 from .textsplitter import Chunk
@@ -109,12 +109,12 @@ class SearchManager:
                     )
 
                 text_vectorizer = None
-                if isinstance(self.embeddings, AzureOpenAIEmbeddingService):
+                if self.embeddings.azure_endpoint and self.embeddings.azure_deployment_name:
                     text_vectorizer = AzureOpenAIVectorizer(
                         vectorizer_name=f"{self.embeddings.open_ai_model_name}-vectorizer",
                         parameters=AzureOpenAIVectorizerParameters(
-                            resource_url=self.embeddings.open_ai_endpoint,
-                            deployment_name=self.embeddings.open_ai_deployment,
+                            resource_url=self.embeddings.azure_endpoint,
+                            deployment_name=self.embeddings.azure_deployment_name,
                             model_name=self.embeddings.open_ai_model_name,
                         ),
                     )
@@ -426,14 +426,18 @@ class SearchManager:
                     existing_index.vector_search.vectorizers is None
                     or len(existing_index.vector_search.vectorizers) == 0
                 ):
-                    if self.embeddings is not None and isinstance(self.embeddings, AzureOpenAIEmbeddingService):
+                    if (
+                        self.embeddings is not None
+                        and self.embeddings.azure_endpoint
+                        and self.embeddings.azure_deployment_name
+                    ):
                         logger.info("Adding vectorizer to search index %s", self.search_info.index_name)
                         existing_index.vector_search.vectorizers = [
                             AzureOpenAIVectorizer(
                                 vectorizer_name=f"{self.search_info.index_name}-vectorizer",
                                 parameters=AzureOpenAIVectorizerParameters(
-                                    resource_url=self.embeddings.open_ai_endpoint,
-                                    deployment_name=self.embeddings.open_ai_deployment,
+                                    resource_url=self.embeddings.azure_endpoint,
+                                    deployment_name=self.embeddings.azure_deployment_name,
                                     model_name=self.embeddings.open_ai_model_name,
                                 ),
                             )
@@ -518,7 +522,7 @@ class SearchManager:
 
             logger.info("Agent %s created successfully", self.search_info.agent_name)
 
-    async def update_content(self, sections: list[Section], url: Optional[str] = None):
+    async def update_content(self, sections: list[Section], url: str | None = None):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
@@ -570,7 +574,7 @@ class SearchManager:
                 )
                 await search_client.upload_documents(documents)
 
-    async def remove_content(self, path: Optional[str] = None, only_oid: Optional[str] = None):
+    async def remove_content(self, path: str | None = None, only_oid: str | None = None):
         logger.info(
             "Removing sections from '{%s or '<all>'}' from search index '%s'", path, self.search_info.index_name
         )
