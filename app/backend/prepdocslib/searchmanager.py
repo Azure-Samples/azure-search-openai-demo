@@ -522,7 +522,7 @@ class SearchManager:
 
             logger.info("Agent %s created successfully", self.search_info.agent_name)
 
-    async def update_content(self, sections: list[Section], url: str | None = None):
+    async def update_content(self, sections: list[Section], url: Optional[str] = None):
         MAX_BATCH_SIZE = 1000
         section_batches = [sections[i : i + MAX_BATCH_SIZE] for i in range(0, len(sections), MAX_BATCH_SIZE)]
 
