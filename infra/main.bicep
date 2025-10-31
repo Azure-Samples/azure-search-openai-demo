@@ -599,7 +599,7 @@ module containerApps 'core/host/container-apps.bicep' = if (deploymentTarget == 
     tags: tags
     location: location
     containerAppsEnvironmentName: acaManagedEnvironmentName
-    containerRegistryName: '${containerRegistryName}${resourceToken}'
+    containerRegistryName: '${containerRegistryName}'
     logAnalyticsWorkspaceName: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceName : ''
     subnetResourceId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
     usePrivateIngress: usePrivateEndpoint

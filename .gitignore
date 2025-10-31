@@ -2,6 +2,9 @@
 .azure
 *_env
 
+# Test files with credentials
+test_auth.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
