@@ -37,10 +37,10 @@
     "chatEmptyStateTitle": "Chat with your data",
     "chatEmptyStateSubtitle": "Ask anything or try an example",
     "defaultExamples": {
-        "1": "What is included in my Northwind Health Plus plan that is not in standard?",
-        "2": "What happens in a performance review?",
-        "3": "What does a Product Manager do?",
-        "placeholder": "Type a new question (e.g. does my plan cover annual eye exams?)"
+        "1": "What are the guidelines for acceptable use of AI and ML tools?",
+        "2": "What is the company policy on conflicts of interest?",
+        "3": "What are the dos and don'ts for email communication?",
+        "placeholder": "Type a new question (e.g. what is the social media policy?)"
     },
     "askTitle": "Ask your data",
     "multimodalExamples": {
