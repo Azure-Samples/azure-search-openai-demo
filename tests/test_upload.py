@@ -6,16 +6,9 @@ import azure.storage.filedatalake.aio
 import pytest
 from azure.search.documents.aio import SearchClient
 from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient
-from openai.types.create_embedding_response import (
-    CreateEmbeddingResponse,
-    Embedding,
-    Usage,
-)
 from quart.datastructures import FileStorage
 
-from prepdocslib.embeddings import AzureOpenAIEmbeddingService
-
-from .mocks import MockClient, MockEmbeddingsClient
+from prepdocslib.embeddings import OpenAIEmbeddings
 
 
 @pytest.mark.asyncio
@@ -65,28 +58,8 @@ async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_clie
 
     monkeypatch.setattr(DataLakeFileClient, "upload_data", mock_upload_file)
 
-    async def mock_create_client(self, *args, **kwargs):
-        # From https://platform.openai.com/docs/api-reference/embeddings/create
-        return MockClient(
-            embeddings_client=MockEmbeddingsClient(
-                create_embedding_response=CreateEmbeddingResponse(
-                    object="list",
-                    data=[
-                        Embedding(
-                            embedding=[
-                                0.0023064255,
-                                -0.009327292,
-                                -0.0028842222,
-                            ],
-                            index=0,
-                            object="embedding",
-                        )
-                    ],
-                    model="text-embedding-3-large",
-                    usage=Usage(prompt_tokens=8, total_tokens=8),
-                )
-            )
-        )
+    async def mock_create_embeddings(self, texts):
+        return [[0.0023064255, -0.009327292, -0.0028842222] for _ in texts]
 
     documents_uploaded = []
 
@@ -94,7 +67,7 @@ async def test_upload_file(auth_client, monkeypatch, mock_data_lake_service_clie
         documents_uploaded.extend(documents)
 
     monkeypatch.setattr(SearchClient, "upload_documents", mock_upload_documents)
-    monkeypatch.setattr(AzureOpenAIEmbeddingService, "create_client", mock_create_client)
+    monkeypatch.setattr(OpenAIEmbeddings, "create_embeddings", mock_create_embeddings)
 
     response = await auth_client.post(
         "/upload",

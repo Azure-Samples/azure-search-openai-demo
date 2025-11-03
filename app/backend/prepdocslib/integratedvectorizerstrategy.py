@@ -21,7 +21,7 @@ from azure.search.documents.indexes.models import (
 )
 
 from .blobmanager import BlobManager
-from .embeddings import AzureOpenAIEmbeddingService
+from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
 from .strategy import DocumentAction, SearchInfo, Strategy
@@ -29,7 +29,7 @@ from .strategy import DocumentAction, SearchInfo, Strategy
 logger = logging.getLogger("scripts")
 
 
-class IntegratedVectorizerStrategy(Strategy):
+class IntegratedVectorizerStrategy(Strategy):  # pragma: no cover
     """
     Strategy for ingesting and vectorizing documents into a search service from files stored storage account
     """
@@ -39,7 +39,7 @@ class IntegratedVectorizerStrategy(Strategy):
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
         search_info: SearchInfo,
-        embeddings: AzureOpenAIEmbeddingService,
+        embeddings: OpenAIEmbeddings,
         search_field_name_embedding: str,
         subscription_id: str,
         document_action: DocumentAction = DocumentAction.Add,
@@ -83,12 +83,15 @@ class IntegratedVectorizerStrategy(Strategy):
             outputs=[OutputFieldMappingEntry(name="textItems", target_name="pages")],
         )
 
+        if not self.embeddings.azure_endpoint or not self.embeddings.azure_deployment_name:
+            raise ValueError("Integrated vectorization requires Azure OpenAI endpoint and deployment")
+
         embedding_skill = AzureOpenAIEmbeddingSkill(
             name="embedding-skill",
             description="Skill to generate embeddings via Azure OpenAI",
             context="/document/pages/*",
-            resource_url=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
-            deployment_name=self.embeddings.open_ai_deployment,
+            resource_url=self.embeddings.azure_endpoint,
+            deployment_name=self.embeddings.azure_deployment_name,
             model_name=self.embeddings.open_ai_model_name,
             dimensions=self.embeddings.open_ai_dimensions,
             inputs=[
