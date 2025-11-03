@@ -3,7 +3,7 @@ import asyncio
 import logging
 import os
 from enum import Enum
-from typing import Optional, Union
+from typing import Optional
 
 import aiohttp
 from azure.core.credentials import AzureKeyCredential
@@ -45,7 +45,7 @@ from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 logger = logging.getLogger("scripts")
 
 
-def clean_key_if_exists(key: Union[str, None]) -> Union[str, None]:
+def clean_key_if_exists(key: Optional[str]) -> Optional[str]:
     """Remove leading and trailing whitespace from a key if it exists. If the key is empty, return None."""
     if key is not None and key.strip() != "":
         return key.strip()
@@ -69,16 +69,16 @@ async def setup_search_info(
     search_service: str,
     index_name: str,
     azure_credential: AsyncTokenCredential,
-    use_agentic_retrieval: Union[bool, None] = None,
-    azure_openai_endpoint: Union[str, None] = None,
-    agent_name: Union[str, None] = None,
-    agent_max_output_tokens: Union[int, None] = None,
-    azure_openai_searchagent_deployment: Union[str, None] = None,
-    azure_openai_searchagent_model: Union[str, None] = None,
-    search_key: Union[str, None] = None,
-    azure_vision_endpoint: Union[str, None] = None,
+    use_agentic_retrieval: Optional[bool] = None,
+    azure_openai_endpoint: Optional[str] = None,
+    agent_name: Optional[str] = None,
+    agent_max_output_tokens: Optional[int] = None,
+    azure_openai_searchagent_deployment: Optional[str] = None,
+    azure_openai_searchagent_model: Optional[str] = None,
+    search_key: Optional[str] = None,
+    azure_vision_endpoint: Optional[str] = None,
 ) -> SearchInfo:
-    search_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
+    search_creds: AsyncTokenCredential | AzureKeyCredential = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
     )
     if use_agentic_retrieval and azure_openai_searchagent_model is None:
@@ -104,10 +104,10 @@ def setup_blob_manager(
     storage_container: str,
     storage_resource_group: str,
     subscription_id: str,
-    storage_key: Union[str, None] = None,
-    image_storage_container: Union[str, None] = None,  # Added this parameter
+    storage_key: Optional[str] = None,
+    image_storage_container: Optional[str] = None,  # Added this parameter
 ):
-    storage_creds: Union[AsyncTokenCredential, str] = azure_credential if storage_key is None else storage_key
+    storage_creds: AsyncTokenCredential | str = azure_credential if storage_key is None else storage_key
 
     return BlobManager(
         endpoint=f"https://{storage_account}.blob.core.windows.net",
@@ -122,27 +122,31 @@ def setup_blob_manager(
 
 def setup_list_file_strategy(
     azure_credential: AsyncTokenCredential,
-    local_files: Union[str, None],
-    datalake_storage_account: Union[str, None],
-    datalake_filesystem: Union[str, None],
-    datalake_path: Union[str, None],
-    datalake_key: Union[str, None],
+    local_files: Optional[str],
+    datalake_storage_account: Optional[str],
+    datalake_filesystem: Optional[str],
+    datalake_path: Optional[str],
+    datalake_key: Optional[str],
+    enable_global_documents: bool = False,
 ):
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
         if datalake_filesystem is None or datalake_path is None:
             raise ValueError("DataLake file system and path are required when using Azure Data Lake Gen2")
-        adls_gen2_creds: Union[AsyncTokenCredential, str] = azure_credential if datalake_key is None else datalake_key
+        adls_gen2_creds: AsyncTokenCredential | str = azure_credential if datalake_key is None else datalake_key
         logger.info("Using Data Lake Gen2 Storage Account: %s", datalake_storage_account)
         list_file_strategy = ADLSGen2ListFileStrategy(
             data_lake_storage_account=datalake_storage_account,
             data_lake_filesystem=datalake_filesystem,
             data_lake_path=datalake_path,
             credential=adls_gen2_creds,
+            enable_global_documents=enable_global_documents,
         )
     elif local_files:
         logger.info("Using local files: %s", local_files)
-        list_file_strategy = LocalListFileStrategy(path_pattern=local_files)
+        list_file_strategy = LocalListFileStrategy(
+            path_pattern=local_files, enable_global_documents=enable_global_documents
+        )
     else:
         raise ValueError("Either local_files or datalake_storage_account must be provided.")
     return list_file_strategy
@@ -160,13 +164,13 @@ def setup_embeddings_service(
     openai_host: OpenAIHost,
     emb_model_name: str,
     emb_model_dimensions: int,
-    azure_openai_service: Union[str, None],
-    azure_openai_custom_url: Union[str, None],
-    azure_openai_deployment: Union[str, None],
-    azure_openai_key: Union[str, None],
+    azure_openai_service: Optional[str],
+    azure_openai_custom_url: Optional[str],
+    azure_openai_deployment: Optional[str],
+    azure_openai_key: Optional[str],
     azure_openai_api_version: str,
-    openai_key: Union[str, None],
-    openai_org: Union[str, None],
+    openai_key: Optional[str],
+    openai_org: Optional[str],
     disable_vectors: bool = False,
     disable_batch_vectors: bool = False,
 ):
@@ -175,7 +179,7 @@ def setup_embeddings_service(
         return None
 
     if openai_host in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
-        azure_open_ai_credential: Union[AsyncTokenCredential, AzureKeyCredential] = (
+        azure_open_ai_credential: AsyncTokenCredential | AzureKeyCredential = (
             azure_credential if azure_openai_key is None else AzureKeyCredential(azure_openai_key)
         )
         return AzureOpenAIEmbeddingService(
@@ -203,12 +207,12 @@ def setup_embeddings_service(
 def setup_openai_client(
     openai_host: OpenAIHost,
     azure_credential: AsyncTokenCredential,
-    azure_openai_api_key: Union[str, None] = None,
-    azure_openai_api_version: Union[str, None] = None,
-    azure_openai_service: Union[str, None] = None,
-    azure_openai_custom_url: Union[str, None] = None,
-    openai_api_key: Union[str, None] = None,
-    openai_organization: Union[str, None] = None,
+    azure_openai_api_key: Optional[str] = None,
+    azure_openai_api_version: Optional[str] = None,
+    azure_openai_service: Optional[str] = None,
+    azure_openai_custom_url: Optional[str] = None,
+    openai_api_key: Optional[str] = None,
+    openai_organization: Optional[str] = None,
 ):
     if openai_host not in OpenAIHost:
         raise ValueError(f"Invalid OPENAI_HOST value: {openai_host}. Must be one of {[h.value for h in OpenAIHost]}.")
@@ -260,23 +264,23 @@ def setup_openai_client(
 
 def setup_file_processors(
     azure_credential: AsyncTokenCredential,
-    document_intelligence_service: Union[str, None],
-    document_intelligence_key: Union[str, None] = None,
+    document_intelligence_service: Optional[str],
+    document_intelligence_key: Optional[str] = None,
     local_pdf_parser: bool = False,
     local_html_parser: bool = False,
     use_content_understanding: bool = False,
     use_multimodal: bool = False,
-    openai_client: Union[AsyncOpenAI, None] = None,
-    openai_model: Union[str, None] = None,
-    openai_deployment: Union[str, None] = None,
-    content_understanding_endpoint: Union[str, None] = None,
+    openai_client: Optional[AsyncOpenAI] = None,
+    openai_model: Optional[str] = None,
+    openai_deployment: Optional[str] = None,
+    content_understanding_endpoint: Optional[str] = None,
 ):
     sentence_text_splitter = SentenceTextSplitter()
 
     doc_int_parser: Optional[DocumentAnalysisParser] = None
     # check if Azure Document Intelligence credentials are provided
     if document_intelligence_service is not None:
-        documentintelligence_creds: Union[AsyncTokenCredential, AzureKeyCredential] = (
+        documentintelligence_creds: AsyncTokenCredential | AzureKeyCredential = (
             azure_credential if document_intelligence_key is None else AzureKeyCredential(document_intelligence_key)
         )
         doc_int_parser = DocumentAnalysisParser(
@@ -344,8 +348,8 @@ def setup_file_processors(
 
 
 def setup_image_embeddings_service(
-    azure_credential: AsyncTokenCredential, vision_endpoint: Union[str, None], use_multimodal: bool
-) -> Union[ImageEmbeddings, None]:
+    azure_credential: AsyncTokenCredential, vision_endpoint: Optional[str], use_multimodal: bool
+) -> Optional[ImageEmbeddings]:
     image_embeddings_service: Optional[ImageEmbeddings] = None
     if use_multimodal:
         if vision_endpoint is None:
@@ -430,7 +434,9 @@ if __name__ == "__main__":
 
     use_int_vectorization = os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
-    use_acls = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL") is not None
+    use_acls = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
+    enable_global_documents = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
     use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
@@ -507,6 +513,7 @@ if __name__ == "__main__":
         datalake_filesystem=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM"),
         datalake_path=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM_PATH"),
         datalake_key=clean_key_if_exists(args.datalakekey),
+        enable_global_documents=enable_global_documents,
     )
 
     # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
@@ -557,6 +564,7 @@ if __name__ == "__main__":
             search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
             use_acls=use_acls,
             category=args.category,
+            enforce_access_control=enforce_access_control,
         )
     else:
         file_processors = setup_file_processors(
@@ -594,6 +602,7 @@ if __name__ == "__main__":
             category=args.category,
             use_content_understanding=use_content_understanding,
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
+            enforce_access_control=enforce_access_control,
         )
 
     try:

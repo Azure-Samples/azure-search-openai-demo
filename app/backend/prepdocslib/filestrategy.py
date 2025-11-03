@@ -69,6 +69,7 @@ class FileStrategy(Strategy):
         category: Optional[str] = None,
         use_content_understanding: bool = False,
         content_understanding_endpoint: Optional[str] = None,
+        enforce_access_control: bool = False,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -83,6 +84,7 @@ class FileStrategy(Strategy):
         self.category = category
         self.use_content_understanding = use_content_understanding
         self.content_understanding_endpoint = content_understanding_endpoint
+        self.enforce_access_control = enforce_access_control
 
     def setup_search_manager(self):
         self.search_manager = SearchManager(
@@ -93,6 +95,7 @@ class FileStrategy(Strategy):
             self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
             search_images=self.image_embeddings is not None,
+            enforce_access_control=self.enforce_access_control,
         )
 
     async def setup(self):
@@ -147,6 +150,7 @@ class UploadUserFileStrategy:
         search_field_name_embedding: Optional[str] = None,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
+        enforce_access_control: bool = False,
     ):
         self.file_processors = file_processors
         self.embeddings = embeddings
@@ -161,6 +165,7 @@ class UploadUserFileStrategy:
             embeddings=self.embeddings,
             field_name_embedding=search_field_name_embedding,
             search_images=False,
+            enforce_access_control=enforce_access_control,
         )
         self.search_field_name_embedding = search_field_name_embedding
 

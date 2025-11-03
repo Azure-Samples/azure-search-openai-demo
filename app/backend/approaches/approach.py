@@ -2,7 +2,7 @@ import base64
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import dataclass, field
-from typing import Any, Optional, TypedDict, Union, cast
+from typing import Any, Optional, TypedDict, cast
 
 from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.agent.models import (
@@ -32,7 +32,6 @@ from openai.types.chat import (
 )
 
 from approaches.promptmanager import PromptManager
-from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
@@ -152,7 +151,6 @@ class Approach(ABC):
         self,
         search_client: SearchClient,
         openai_client: AsyncOpenAI,
-        auth_helper: AuthenticationHelper,
         query_language: Optional[str],
         query_speller: Optional[str],
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -169,7 +167,6 @@ class Approach(ABC):
     ):
         self.search_client = search_client
         self.openai_client = openai_client
-        self.auth_helper = auth_helper
         self.query_language = query_language
         self.query_speller = query_speller
         self.embedding_deployment = embedding_deployment
@@ -185,18 +182,15 @@ class Approach(ABC):
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
 
-    def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
+    def build_filter(self, overrides: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
         exclude_category = overrides.get("exclude_category")
-        security_filter = self.auth_helper.build_security_filters(overrides, auth_claims)
         filters = []
         if include_category:
             filters.append("category eq '{}'".format(include_category.replace("'", "''")))
         if exclude_category:
             filters.append("category ne '{}'".format(exclude_category.replace("'", "''")))
-        if security_filter:
-            filters.append(security_filter)
-        return None if len(filters) == 0 else " and ".join(filters)
+        return None if not filters else " and ".join(filters)
 
     async def search(
         self,
@@ -211,6 +205,7 @@ class Approach(ABC):
         minimum_search_score: Optional[float] = None,
         minimum_reranker_score: Optional[float] = None,
         use_query_rewriting: Optional[bool] = None,
+        access_token: Optional[str] = None,
     ) -> list[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
@@ -227,6 +222,7 @@ class Approach(ABC):
                 query_speller=self.query_speller,
                 semantic_configuration_name="default",
                 semantic_query=query_text,
+                x_ms_query_source_authorization=access_token,
             )
         else:
             results = await self.search_client.search(
@@ -234,6 +230,7 @@ class Approach(ABC):
                 filter=filter,
                 top=top,
                 vector_queries=search_vectors,
+                x_ms_query_source_authorization=access_token,
             )
 
         documents: list[Document] = []
@@ -275,6 +272,7 @@ class Approach(ABC):
         filter_add_on: Optional[str] = None,
         minimum_reranker_score: Optional[float] = None,
         results_merge_strategy: Optional[str] = None,
+        access_token: Optional[str] = None,
     ) -> tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
         # STEP 1: Invoke agentic retrieval
         response = await agent_client.retrieve(
@@ -292,7 +290,8 @@ class Approach(ABC):
                         filter_add_on=filter_add_on,
                     )
                 ],
-            )
+            ),
+            x_ms_query_source_authorization=access_token,
         )
 
         # Map activity id -> agent's internal search query
@@ -521,7 +520,7 @@ class Approach(ABC):
         temperature: Optional[float] = None,
         n: Optional[int] = None,
         reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
-    ) -> Union[Awaitable[ChatCompletion], Awaitable[AsyncStream[ChatCompletionChunk]]]:
+    ) -> Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]:
         if chatgpt_model in self.GPT_REASONING_MODELS:
             params: dict[str, Any] = {
                 # max_tokens is not supported

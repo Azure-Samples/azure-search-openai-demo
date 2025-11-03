@@ -114,7 +114,7 @@ As of early June 2025, the default chat completion model is `gpt-4.1-mini`. If y
     azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 0125
     ```
 
-1. To set the Azure OpenAI deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
+1. To set the Azure OpenAI deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-foundry/foundry-models/concepts/deployment-types).
 
     For GlobalStandard:
 
@@ -206,7 +206,7 @@ By default, the deployed Azure web app uses the `text-embedding-3-large` embeddi
     azd env set AZURE_OPENAI_EMB_DEPLOYMENT_VERSION 1
     ```
 
-4. To set the embedding model deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-services/openai/how-to/deployment-types#deployment-types).
+4. To set the embedding model deployment SKU name, run this command with [the desired SKU name](https://learn.microsoft.com/azure/ai-foundry/foundry-models/concepts/deployment-types).
 
     For GlobalStandard:
 
