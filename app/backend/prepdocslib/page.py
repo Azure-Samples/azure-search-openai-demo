@@ -1,5 +1,6 @@
-from dataclasses import dataclass, field
-from typing import Optional
+import base64
+from dataclasses import asdict, dataclass, field
+from typing import Any, Optional
 
 
 @dataclass
@@ -7,11 +8,89 @@ class ImageOnPage:
     bytes: bytes
     bbox: tuple[float, float, float, float]  # Pixels
     filename: str
-    description: str
     figure_id: str
     page_num: int  # 0-indexed
+    placeholder: str  # HTML placeholder in page text, e.g. '<figure id="fig_..."></figure>'
+    mime_type: str = "image/png"  # Set by parser; default assumes PNG rendering
     url: Optional[str] = None
+    title: str = ""
     embedding: Optional[list[float]] = None
+    description: Optional[str] = None
+
+    def to_skill_payload(
+        self,
+        file_name: str,
+        *,
+        include_bytes: bool = False,
+        include_bytes_base64: bool = True,
+    ) -> dict[str, Any]:
+        """Serialize this figure for the figure_processor skill output.
+
+        Parameters:
+            file_name: Source document file name.
+            include_bytes: When True, include the raw ``bytes`` field. Defaults to False to avoid
+                bloating payload size and because JSON serialization of raw bytes is not desired.
+            include_bytes_base64: When True (default), include a base64 representation of the image
+                as ``bytes_base64`` for downstream skills that might still need the encoded image.
+
+        Notes:
+            - Previous behavior always included both the raw bytes (via ``asdict``) and a base64 copy.
+              This is wasteful for typical pipelines where only the blob ``url`` plus lightweight
+              metadata are required. The new defaults favor minimal payload size.
+            - Callers needing the raw bytes can opt-in with ``include_bytes=True`` (e.g., for a
+              chained skill that has not yet persisted the blob or for debugging scenarios).
+        """
+
+        data = asdict(self)
+
+        if not include_bytes and "bytes" in data:
+            # Remove raw bytes to keep payload lean (and JSON-friendly without extra handling).
+            data.pop("bytes", None)
+
+        if include_bytes_base64:
+            # Always base64 from the current in-memory bytes, not from any cached version, to ensure fidelity.
+            b = self.bytes if isinstance(self.bytes, (bytes, bytearray)) else b""
+            data["bytes_base64"] = base64.b64encode(b).decode("utf-8")
+
+        data["document_file_name"] = file_name
+        return data
+
+    @classmethod
+    def from_skill_payload(cls, data: dict[str, Any]) -> tuple["ImageOnPage", str]:
+        """Deserialize a figure skill payload into an ImageOnPage, normalizing fields."""
+        # Decode base64 image data
+        bytes_base64 = data.get("bytes_base64")
+        if not bytes_base64:
+            raise ValueError("Figure payload missing required bytes_base64 field")
+        try:
+            raw_bytes = base64.b64decode(bytes_base64)
+        except Exception as exc:  # pragma: no cover - defensive
+            raise ValueError("Invalid bytes_base64 image data") from exc
+
+        # page_num may arrive as str; coerce
+        try:
+            page_num = int(data.get("page_num") or 0)
+        except Exception:
+            page_num = 0
+
+        # bbox may arrive as list; coerce into tuple
+        bbox_val = data.get("bbox")
+        if isinstance(bbox_val, list) and len(bbox_val) == 4:
+            bbox = tuple(bbox_val)  # type: ignore[assignment]
+        else:
+            bbox = (0, 0, 0, 0)
+
+        image = cls(
+            bytes=raw_bytes,
+            bbox=bbox,
+            page_num=page_num,
+            filename=data.get("filename"),
+            figure_id=data.get("figure_id"),
+            placeholder=data.get("placeholder"),
+            mime_type=data.get("mime_type") or "image/png",
+            title=data.get("title"),
+        )
+        return image, data.get("document_file_name", "")
 
 
 @dataclass
@@ -29,6 +108,7 @@ class Page:
     offset: int
     text: str
     images: list[ImageOnPage] = field(default_factory=list)
+    tables: list[str] = field(default_factory=list)
 
 
 @dataclass

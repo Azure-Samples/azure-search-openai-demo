@@ -17,6 +17,9 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/backend/approaches/prompts/chat_query_rewrite.prompty: Prompt used to rewrite the query based off search history into a better search query
       * app/backend/approaches/prompts/chat_query_rewrite_tools.json: Tools used by the query rewriting prompt
       * app/backend/approaches/prompts/chat_answer_question.prompty: Prompt used by the Chat approach to actually answer the question based off sources
+    * app/backend/prepdocslib/cloudingestionstrategy.py: Builds the Azure AI Search indexer and skillset for the cloud ingestion pipeline
+    * app/backend/prepdocslib/pdfparser.py: Uses Azure Document Intelligence to emit page text plus figure placeholders
+    * app/backend/prepdocslib/figureprocessor.py: Shared helper that generates figure descriptions for both local ingestion and the cloud figure-processor skill
     * app/backend/app.py: The main entry point for the backend application.
   * app/frontend: Contains the React frontend code, built with TypeScript, built with vite.
     * app/frontend/src/api: Contains the API client code for communicating with the backend.
@@ -49,6 +52,15 @@ When adding new azd environment variables, update:
 1. .azdo/pipelines/azure-dev.yml: Add the new environment variable under `env` section
 1. .github/workflows/azure-dev.yml: Add the new environment variable under `env` section
 
+For cloud ingestion, `prepdocs.py --use-cloud-ingestion` expects the function endpoints and managed identity resource IDs in the azd environment. The search service must have a system- or user-assigned managed identity with access to the Azure Functions app:
+
+* `DOCUMENT_EXTRACTOR_SKILL_ENDPOINT`
+* `DOCUMENT_EXTRACTOR_SKILL_RESOURCE_ID`
+* `FIGURE_PROCESSOR_SKILL_ENDPOINT`
+* `FIGURE_PROCESSOR_SKILL_RESOURCE_ID`
+* `TEXT_PROCESSOR_SKILL_ENDPOINT`
+* `TEXT_PROCESSOR_SKILL_RESOURCE_ID`
+
 ## Adding a new setting to "Developer Settings" in RAG app
 
 When adding a new developer setting, update:
@@ -65,7 +77,7 @@ When adding a new developer setting, update:
   * app/backend/approaches/retrievethenread.py : Retrieve from overrides parameter
   * app/backend/app.py: Some settings may need to be sent down in the /config route.
 
-## When adding tests for a new feature:
+## When adding tests for a new feature
 
 All tests are in the `tests` folder and use the pytest framework.
 There are three styles of tests:

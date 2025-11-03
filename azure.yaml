@@ -40,6 +40,18 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: false
           continueOnError: false
+  document-extractor:
+    project: ./app/functions/document_extractor
+    language: py
+    host: function
+  figure-processor:
+    project: ./app/functions/figure_processor
+    language: py
+    host: function
+  text-processor:
+    project: ./app/functions/text_processor
+    language: py
+    host: function
 hooks:
     preprovision:
       windows:

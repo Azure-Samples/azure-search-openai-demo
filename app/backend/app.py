@@ -586,7 +586,7 @@ async def setup_clients():
         current_app.config[CONFIG_USER_BLOB_MANAGER] = user_blob_manager
 
         # Set up ingester
-        file_processors = setup_file_processors(
+        file_processors, figure_processor = setup_file_processors(
             azure_credential=azure_credential,
             document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
             local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER", "").lower() == "true",
@@ -627,6 +627,7 @@ async def setup_clients():
             image_embeddings=image_embeddings_service,
             search_field_name_embedding=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
             blob_manager=user_blob_manager,
+            figure_processor=figure_processor,
         )
         current_app.config[CONFIG_INGESTER] = ingester
 

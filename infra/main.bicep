@@ -130,6 +130,7 @@ param speechServiceSkuName string // Set in main.parameters.json
 param speechServiceVoice string = ''
 param useMultimodal bool = false
 param useEval bool = false
+param useCloudIngestion bool = false
 
 @allowed(['free', 'provisioned', 'serverless'])
 param cosmosDbSkuName string // Set in main.parameters.json
@@ -654,6 +655,46 @@ module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == '
     enableUnauthenticatedAccess: enableUnauthenticatedAccess
     blobContainerUri: 'https://${storageAccountName}.blob.${environment().suffixes.storage}/${tokenStorageContainerName}'
     appIdentityResourceId: (deploymentTarget == 'appservice') ? '' : acaBackend.outputs.identityResourceId
+  }
+}
+
+// FUNCTION APPS FOR CLOUD INGESTION
+module functions 'app/functions.bicep' = if (useCloudIngestion) {
+  name: 'functions'
+  scope: resourceGroup
+  params: {
+    location: location
+    tags: tags
+    applicationInsightsName: useApplicationInsights ? monitoring.outputs.applicationInsightsName : ''
+    storageAccountName: storage.outputs.name
+    storageResourceGroupName: storageResourceGroup.name
+    searchServiceName: searchService.outputs.name
+    searchServiceResourceGroupName: searchServiceResourceGroup.name
+    openAiServiceName: isAzureOpenAiHost ? openAi.outputs.name : ''
+    openAiResourceGroupName: openAiResourceGroup.name
+    documentIntelligenceServiceName: documentIntelligence.outputs.name
+    documentIntelligenceResourceGroupName: documentIntelligenceResourceGroup.name
+    visionServiceName: useMultimodal ? vision.outputs.name : ''
+    visionResourceGroupName: useMultimodal ? visionResourceGroup.name : resourceGroup.name
+    contentUnderstandingServiceName: useMediaDescriberAzureCU ? contentUnderstanding.outputs.name : ''
+    contentUnderstandingResourceGroupName: useMediaDescriberAzureCU ? contentUnderstandingResourceGroup.name : resourceGroup.name
+    documentExtractorName: '${abbrs.webSitesFunctions}doc-extractor-${resourceToken}'
+    figureProcessorName: '${abbrs.webSitesFunctions}figure-processor-${resourceToken}'
+    textProcessorName: '${abbrs.webSitesFunctions}text-processor-${resourceToken}'
+    useVectors: ragSearchTextEmbeddings || ragSearchImageEmbeddings
+    useMultimodal: useMultimodal
+    useLocalPdfParser: useLocalPdfParser
+    useLocalHtmlParser: useLocalHtmlParser
+    useMediaDescriberAzureCU: useMediaDescriberAzureCU
+    searchIndexName: searchIndexName
+    searchFieldNameEmbedding: searchFieldNameEmbedding
+    openAiEmbDeployment: embedding.deploymentName
+    openAiEmbModelName: embedding.modelName
+    openAiEmbDimensions: embedding.dimensions
+    openAiApiVersion: azureOpenAiApiVersion
+    openAiChatDeployment: chatGpt.deploymentName
+    openAiChatModelName: chatGpt.modelName
+    openAiCustomUrl: azureOpenAiCustomUrl
   }
 }
 
