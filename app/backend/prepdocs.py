@@ -287,11 +287,6 @@ if __name__ == "__main__":
         "--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections"
     )
     parser.add_argument(
-        "--use-cloud-ingestion",
-        action="store_true",
-        help="Use Azure AI Search indexer with cloud-hosted custom skills instead of local ingestion",
-    )
-    parser.add_argument(
         "--remove",
         action="store_true",
         help="Remove references to this document from blob storage and the search index",
@@ -345,7 +340,7 @@ if __name__ == "__main__":
     use_acls = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     enable_global_documents = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
-    use_cloud_ingestion = args.use_cloud_ingestion or os.getenv("USE_CLOUD_INGESTION", "").lower() == "true"
+    use_cloud_ingestion = os.getenv("USE_CLOUD_INGESTION", "").lower() == "true"
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
     use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"

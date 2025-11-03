@@ -142,9 +142,10 @@ __all__ = [
 
 def setup_blob_manager(
     *,
+    azure_credential: AsyncTokenCredential | str,
     storage_account: str,
     storage_container: str,
-    credential: AsyncTokenCredential | str,
+    storage_key: str | None = None,
     storage_resource_group: str | None = None,
     subscription_id: str | None = None,
     image_storage_container: str | None = None,
@@ -157,11 +158,13 @@ def setup_blob_manager(
     container when figures are stored separately.
     """
     endpoint = f"https://{storage_account}.blob.core.windows.net"
+    storage_credential: AsyncTokenCredential | str = azure_credential if storage_key is None else storage_key
+
     return BlobManager(
         endpoint=endpoint,
         container=storage_container,
         account=storage_account,
-        credential=credential,
+        credential=storage_credential,
         resource_group=storage_resource_group,
         subscription_id=subscription_id,
         image_container=image_storage_container,

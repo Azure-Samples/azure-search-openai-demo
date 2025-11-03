@@ -92,7 +92,7 @@ class FileStrategy(Strategy):
             self.search_info,
             self.search_analyzer_name,
             self.use_acls,
-            False,
+            False,  # use_parent_index_projection disabled for file-based ingestion
             self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
             search_images=self.image_embeddings is not None,
@@ -168,7 +168,7 @@ class UploadUserFileStrategy:
             search_info=self.search_info,
             search_analyzer_name=None,
             use_acls=True,
-            use_int_vectorization=False,
+            use_parent_index_projection=False,
             embeddings=self.embeddings,
             field_name_embedding=search_field_name_embedding,
             search_images=image_embeddings is not None,

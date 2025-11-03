@@ -52,15 +52,6 @@ When adding new azd environment variables, update:
 1. .azdo/pipelines/azure-dev.yml: Add the new environment variable under `env` section
 1. .github/workflows/azure-dev.yml: Add the new environment variable under `env` section
 
-For cloud ingestion, `prepdocs.py --use-cloud-ingestion` expects the function endpoints and managed identity resource IDs in the azd environment. The search service must have a system- or user-assigned managed identity with access to the Azure Functions app:
-
-* `DOCUMENT_EXTRACTOR_SKILL_ENDPOINT`
-* `DOCUMENT_EXTRACTOR_SKILL_RESOURCE_ID`
-* `FIGURE_PROCESSOR_SKILL_ENDPOINT`
-* `FIGURE_PROCESSOR_SKILL_RESOURCE_ID`
-* `TEXT_PROCESSOR_SKILL_ENDPOINT`
-* `TEXT_PROCESSOR_SKILL_RESOURCE_ID`
-
 ## Adding a new setting to "Developer Settings" in RAG app
 
 When adding a new developer setting, update:

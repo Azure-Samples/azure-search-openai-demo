@@ -469,7 +469,7 @@ var appEnvVariables = {
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
   AZURE_SEARCH_QUERY_REWRITING: searchServiceQueryRewriting
-  AZURE_VISION_ENDPOINT: useMultimodal ? vision.outputs.endpoint : ''
+  AZURE_VISION_ENDPOINT: useMultimodal ? vision!.outputs.endpoint : ''
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
   AZURE_SEARCH_FIELD_NAME_EMBEDDING: searchFieldNameEmbedding
@@ -538,6 +538,14 @@ var appEnvVariables = {
   RAG_SEARCH_IMAGE_EMBEDDINGS: ragSearchImageEmbeddings
   RAG_SEND_TEXT_SOURCES: ragSendTextSources
   RAG_SEND_IMAGE_SOURCES: ragSendImageSources
+  // Cloud ingestion skill endpoints (populated when useCloudIngestion)
+  DOCUMENT_EXTRACTOR_SKILL_ENDPOINT: useCloudIngestion ? 'https://${functions!.outputs.documentExtractorUrl}/api/extract' : ''
+  FIGURE_PROCESSOR_SKILL_ENDPOINT: useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
+  TEXT_PROCESSOR_SKILL_ENDPOINT: useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
+  // Skill audience identifier URI from registration module (created below)
+  DOCUMENT_EXTRACTOR_SKILL_RESOURCE_ID: useCloudIngestion ? functions!.outputs.documentExtractorSkillResourceId : ''
+  FIGURE_PROCESSOR_SKILL_RESOURCE_ID: useCloudIngestion ? functions!.outputs.figureProcessorSkillResourceId : ''
+  TEXT_PROCESSOR_SKILL_RESOURCE_ID: useCloudIngestion ? functions!.outputs.textProcessorSkillResourceId : ''
 }
 
 // App Service for the web application (Python Quart app with JS frontend)
@@ -665,18 +673,18 @@ module functions 'app/functions.bicep' = if (useCloudIngestion) {
   params: {
     location: location
     tags: tags
-    applicationInsightsName: useApplicationInsights ? monitoring.outputs.applicationInsightsName : ''
+    applicationInsightsName: useApplicationInsights ? monitoring!.outputs.applicationInsightsName : ''
     storageAccountName: storage.outputs.name
     storageResourceGroupName: storageResourceGroup.name
     searchServiceName: searchService.outputs.name
     searchServiceResourceGroupName: searchServiceResourceGroup.name
-    openAiServiceName: isAzureOpenAiHost ? openAi.outputs.name : ''
+    openAiServiceName: isAzureOpenAiHost ? openAi!.outputs.name : ''
     openAiResourceGroupName: openAiResourceGroup.name
     documentIntelligenceServiceName: documentIntelligence.outputs.name
     documentIntelligenceResourceGroupName: documentIntelligenceResourceGroup.name
-    visionServiceName: useMultimodal ? vision.outputs.name : ''
+    visionServiceName: useMultimodal ? vision!.outputs.name : ''
     visionResourceGroupName: useMultimodal ? visionResourceGroup.name : resourceGroup.name
-    contentUnderstandingServiceName: useMediaDescriberAzureCU ? contentUnderstanding.outputs.name : ''
+    contentUnderstandingServiceName: useMediaDescriberAzureCU ? contentUnderstanding!.outputs.name : ''
     contentUnderstandingResourceGroupName: useMediaDescriberAzureCU ? contentUnderstandingResourceGroup.name : resourceGroup.name
     documentExtractorName: '${abbrs.webSitesFunctions}doc-extractor-${resourceToken}'
     figureProcessorName: '${abbrs.webSitesFunctions}figure-processor-${resourceToken}'
@@ -695,6 +703,7 @@ module functions 'app/functions.bicep' = if (useCloudIngestion) {
     openAiChatDeployment: chatGpt.deploymentName
     openAiChatModelName: chatGpt.modelName
     openAiCustomUrl: azureOpenAiCustomUrl
+    openIdIssuer: authenticationIssuerUri
   }
 }
 
@@ -1208,7 +1217,8 @@ module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
   }
 }
 
-module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization) {
+// Search service needs blob read access for both integrated vectorization and cloud ingestion indexer data source
+module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization || useCloudIngestion) {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
@@ -1462,11 +1472,11 @@ output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.mode
 output AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.deploymentName : ''
 output AZURE_OPENAI_SEARCHAGENT_MODEL string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.modelName : ''
 output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
-output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
-output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
+output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech!.outputs.resourceId : ''
+output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech!.outputs.location : ''
 
-output AZURE_VISION_ENDPOINT string = useMultimodal ? vision.outputs.endpoint : ''
-output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
+output AZURE_VISION_ENDPOINT string = useMultimodal ? vision!.outputs.endpoint : ''
+output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding!.outputs.endpoint : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
 output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name
@@ -1493,6 +1503,15 @@ output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
 output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output AZURE_IMAGESTORAGE_CONTAINER string = useMultimodal ? imageStorageContainerName : ''
+
+// Cloud ingestion function skill endpoints & resource IDs
+output DOCUMENT_EXTRACTOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.documentExtractorUrl}/api/extract' : ''
+output FIGURE_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
+output TEXT_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
+// Identifier URI used as authResourceId for all custom skill endpoints
+output DOCUMENT_EXTRACTOR_SKILL_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.documentExtractorSkillResourceId : ''
+output FIGURE_PROCESSOR_SKILL_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.figureProcessorSkillResourceId : ''
+output TEXT_PROCESSOR_SKILL_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.textProcessorSkillResourceId : ''
 
 output AZURE_AI_PROJECT string = useAiProject ? ai.outputs.projectName : ''
 

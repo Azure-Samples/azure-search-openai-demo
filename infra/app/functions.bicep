@@ -19,6 +19,8 @@ param contentUnderstandingResourceGroupName string = ''
 param documentExtractorName string
 param figureProcessorName string
 param textProcessorName string
+// OpenID issuer provided by main template (e.g. https://login.microsoftonline.com/<tenantId>/v2.0)
+param openIdIssuer string
 
 // Shared configuration
 param useVectors bool
@@ -91,19 +93,17 @@ var figureProcessorDeploymentContainer = 'deploy-figure-processor-${take(resourc
 var textProcessorDeploymentContainer = 'deploy-text-processor-${take(resourceToken, 7)}'
 
 // Create deployment containers in storage account
-module deploymentContainers 'br/public:avm/res/storage/storage-account:0.8.3' = {
+// Create deployment containers via cross-scope module (avoids re-deploying storage account configuration)
+module deploymentContainers 'storage-containers.bicep' = {
   name: 'function-deployment-containers'
   scope: resourceGroup(storageResourceGroupName)
   params: {
-    name: storageAccountName
-    location: location
-    blobServices: {
-      containers: [
-        { name: documentExtractorDeploymentContainer }
-        { name: figureProcessorDeploymentContainer }
-        { name: textProcessorDeploymentContainer }
-      ]
-    }
+    storageAccountName: storageAccountName
+    containerNames: [
+      documentExtractorDeploymentContainer
+      figureProcessorDeploymentContainer
+      textProcessorDeploymentContainer
+    ]
   }
 }
 
@@ -137,22 +137,63 @@ module figureProcessorIdentity 'br/public:avm/res/managed-identity/user-assigned
   }
 }
 
-// App Service Plan (Flex Consumption)
-module appServicePlan 'br/public:avm/res/web/serverfarm:0.1.1' = {
-  name: 'functions-plan'
+// Flex Consumption supports only one Function App per plan; create a dedicated plan per ingestion function
+module documentExtractorPlan 'br/public:avm/res/web/serverfarm:0.1.1' = {
+  name: 'doc-extractor-plan'
   params: {
-    name: '${abbrs.webServerFarms}functions-${resourceToken}'
+    name: '${abbrs.webServerFarms}doc-extractor-${resourceToken}'
     sku: {
       name: 'FC1'
       tier: 'FlexConsumption'
     }
-    reserved: true // Required for Linux
+    reserved: true
+    location: location
+    tags: tags
+  }
+}
+
+module figureProcessorPlan 'br/public:avm/res/web/serverfarm:0.1.1' = {
+  name: 'figure-processor-plan'
+  params: {
+    name: '${abbrs.webServerFarms}figure-processor-${resourceToken}'
+    sku: {
+      name: 'FC1'
+      tier: 'FlexConsumption'
+    }
+    reserved: true
+    location: location
+    tags: tags
+  }
+}
+
+module textProcessorPlan 'br/public:avm/res/web/serverfarm:0.1.1' = {
+  name: 'text-processor-plan'
+  params: {
+    name: '${abbrs.webServerFarms}text-processor-${resourceToken}'
+    sku: {
+      name: 'FC1'
+      tier: 'FlexConsumption'
+    }
+    reserved: true
     location: location
     tags: tags
   }
 }
 
 // Document Extractor Function App
+// App registration for document extractor (uses function identity principalId as FIC subject)
+module documentExtractorAppReg '../core/auth/appregistration.bicep' = {
+  name: 'doc-extractor-appreg'
+  params: {
+    cloudEnvironment: environment().name
+    webAppIdentityId: documentExtractorIdentity.outputs.principalId
+    clientAppName: 'skill-${documentExtractorName}'
+    clientAppDisplayName: 'skill-${documentExtractorName}'
+    issuer: openIdIssuer
+    webAppEndpoint: 'https://${documentExtractorName}.azurewebsites.net'
+  }
+}
+
 module documentExtractor 'functions-app.bicep' = {
   name: 'document-extractor-func'
   params: {
@@ -160,7 +201,7 @@ module documentExtractor 'functions-app.bicep' = {
     location: location
     tags: union(tags, { 'azd-service-name': 'document-extractor' })
     applicationInsightsName: applicationInsightsName
-    appServicePlanId: appServicePlan.outputs.resourceId
+    appServicePlanId: documentExtractorPlan.outputs.resourceId
     runtimeName: 'python'
     runtimeVersion: '3.11'
     storageAccountName: storageAccountName
@@ -170,7 +211,9 @@ module documentExtractor 'functions-app.bicep' = {
     appSettings: allAppSettings
     instanceMemoryMB: 4096 // High memory for document processing
     maximumInstanceCount: 100
-    functionTimeout: '00:10:00' // 10 minutes for long-running extraction
+    // Removed unused functionTimeout parameter; configured defaults via host settings
+    skillAppClientId: documentExtractorAppReg.outputs.clientAppId
+    skillAppAudience: 'api://${documentExtractorAppReg.outputs.clientAppId}'
   }
   dependsOn: [
     deploymentContainers
@@ -178,6 +221,18 @@ module documentExtractor 'functions-app.bicep' = {
 }
 
 // Figure Processor Function App
+module figureProcessorAppReg '../core/auth/appregistration.bicep' = {
+  name: 'figure-processor-appreg'
+  params: {
+    cloudEnvironment: environment().name
+    webAppIdentityId: figureProcessorIdentity.outputs.principalId
+    clientAppName: 'skill-${figureProcessorName}'
+    clientAppDisplayName: 'skill-${figureProcessorName}'
+    issuer: openIdIssuer
+    webAppEndpoint: 'https://${figureProcessorName}.azurewebsites.net'
+  }
+}
+
 module figureProcessor 'functions-app.bicep' = {
   name: 'figure-processor-func'
   params: {
@@ -185,7 +240,7 @@ module figureProcessor 'functions-app.bicep' = {
     location: location
     tags: union(tags, { 'azd-service-name': 'figure-processor' })
     applicationInsightsName: applicationInsightsName
-    appServicePlanId: appServicePlan.outputs.resourceId
+    appServicePlanId: figureProcessorPlan.outputs.resourceId
     runtimeName: 'python'
     runtimeVersion: '3.11'
     storageAccountName: storageAccountName
@@ -195,7 +250,8 @@ module figureProcessor 'functions-app.bicep' = {
     appSettings: allAppSettings
     instanceMemoryMB: 2048
     maximumInstanceCount: 100
-    functionTimeout: '00:05:00'
+    skillAppClientId: figureProcessorAppReg.outputs.clientAppId
+    skillAppAudience: 'api://${figureProcessorAppReg.outputs.clientAppId}'
   }
   dependsOn: [
     deploymentContainers
@@ -203,6 +259,18 @@ module figureProcessor 'functions-app.bicep' = {
 }
 
 // Text Processor Function App
+module textProcessorAppReg '../core/auth/appregistration.bicep' = {
+  name: 'text-processor-appreg'
+  params: {
+    cloudEnvironment: environment().name
+    webAppIdentityId: textProcessorIdentity.outputs.principalId
+    clientAppName: 'skill-${textProcessorName}'
+    clientAppDisplayName: 'skill-${textProcessorName}'
+    issuer: openIdIssuer
+    webAppEndpoint: 'https://${textProcessorName}.azurewebsites.net'
+  }
+}
+
 module textProcessor 'functions-app.bicep' = {
   name: 'text-processor-func'
   params: {
@@ -210,7 +278,7 @@ module textProcessor 'functions-app.bicep' = {
     location: location
     tags: union(tags, { 'azd-service-name': 'text-processor' })
     applicationInsightsName: applicationInsightsName
-    appServicePlanId: appServicePlan.outputs.resourceId
+    appServicePlanId: textProcessorPlan.outputs.resourceId
     runtimeName: 'python'
     runtimeVersion: '3.11'
     storageAccountName: storageAccountName
@@ -220,7 +288,8 @@ module textProcessor 'functions-app.bicep' = {
     appSettings: allAppSettings
     instanceMemoryMB: 2048 // Standard memory for embedding
     maximumInstanceCount: 100
-    functionTimeout: '00:05:00' // 5 minutes default
+    skillAppClientId: textProcessorAppReg.outputs.clientAppId
+    skillAppAudience: 'api://${textProcessorAppReg.outputs.clientAppId}'
   }
   dependsOn: [
     deploymentContainers
@@ -282,10 +351,21 @@ module figureProcessorRbac 'functions-rbac.bicep' = {
 output documentExtractorName string = documentExtractor.outputs.name
 output documentExtractorUrl string = documentExtractor.outputs.defaultHostname
 output documentExtractorIdentityPrincipalId string = documentExtractorIdentity.outputs.principalId
+output documentExtractorClientAppId string = documentExtractorAppReg.outputs.clientAppId
+output documentExtractorSkillResourceId string = 'api://${documentExtractorAppReg.outputs.clientAppId}' : documentExtractorAppReg.outputs.clientAppId
 output figureProcessorName string = figureProcessor.outputs.name
 output figureProcessorUrl string = figureProcessor.outputs.defaultHostname
 output figureProcessorIdentityPrincipalId string = figureProcessorIdentity.outputs.principalId
+output figureProcessorClientAppId string = figureProcessorAppReg.outputs.clientAppId
+output figureProcessorSkillResourceId string = 'api://${figureProcessorAppReg.outputs.clientAppId}'
 output textProcessorName string = textProcessor.outputs.name
 output textProcessorUrl string = textProcessor.outputs.defaultHostname
 output textProcessorIdentityPrincipalId string = textProcessorIdentity.outputs.principalId
-output appServicePlanId string = appServicePlan.outputs.resourceId
+output textProcessorClientAppId string = textProcessorAppReg.outputs.clientAppId
+output textProcessorSkillResourceId string = 'api://${textProcessorAppReg.outputs.clientAppId}'
+// Output the last plan id (text processor) for potential diagnostics; others can be added if needed
+output appServicePlanId string = textProcessorPlan.outputs.resourceId
+// Resource IDs for each function app (used for auth_resource_id with managed identity secured skills)
+output documentExtractorResourceId string = documentExtractor.outputs.resourceId
+output figureProcessorResourceId string = figureProcessor.outputs.resourceId
+output textProcessorResourceId string = textProcessor.outputs.resourceId

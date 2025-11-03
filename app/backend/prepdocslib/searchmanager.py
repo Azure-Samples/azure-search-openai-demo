@@ -69,7 +69,10 @@ class SearchManager:
         search_info: SearchInfo,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
-        use_int_vectorization: bool = False,
+        # Renamed from use_int_vectorization to use_parent_index_projection to reflect
+        # that this flag controls parent/child index projection (adding parent_id and
+        # enhanced key field settings) rather than any specific vectorization mode.
+        use_parent_index_projection: bool = False,
         embeddings: Optional[OpenAIEmbeddings] = None,
         field_name_embedding: Optional[str] = None,
         search_images: bool = False,
@@ -78,7 +81,7 @@ class SearchManager:
         self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name
         self.use_acls = use_acls
-        self.use_int_vectorization = use_int_vectorization
+        self.use_parent_index_projection = use_parent_index_projection
         self.embeddings = embeddings
         self.embedding_dimensions = self.embeddings.open_ai_dimensions if self.embeddings else None
         self.field_name_embedding = field_name_embedding
@@ -235,7 +238,7 @@ class SearchManager:
                 fields = [
                     (
                         SimpleField(name="id", type="Edm.String", key=True)
-                        if not self.use_int_vectorization
+                        if not self.use_parent_index_projection
                         else SearchField(
                             name="id",
                             type="Edm.String",
@@ -280,8 +283,8 @@ class SearchManager:
                         else SearchIndexPermissionFilterOption.DISABLED
                     )
 
-                if self.use_int_vectorization:
-                    logger.info("Including parent_id field for integrated vectorization support in new index")
+                if self.use_parent_index_projection:
+                    logger.info("Including parent_id field for parent/child index projection support in new index")
                     fields.append(SearchableField(name="parent_id", type="Edm.String", filterable=True))
 
                 vectorizers: list[VectorSearchVectorizer] = []

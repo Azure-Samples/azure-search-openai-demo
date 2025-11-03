@@ -134,7 +134,7 @@ class IntegratedVectorizerStrategy(Strategy):
             search_info=self.search_info,
             search_analyzer_name=self.search_analyzer_name,
             use_acls=self.use_acls,
-            use_int_vectorization=True,
+            use_parent_index_projection=True,
             embeddings=self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
             search_images=False,

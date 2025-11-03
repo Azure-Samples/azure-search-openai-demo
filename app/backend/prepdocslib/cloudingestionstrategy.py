@@ -102,23 +102,33 @@ class CloudIngestionStrategy(Strategy):
         self.indexer_name = f"{prefix}-indexer"
         self.data_source_name = f"{prefix}-blob"
 
+        def _ensure_default_scope(val: str) -> str:
+            # If already ends with '/.default' keep as-is.
+            if val.endswith("/.default"):
+                return val
+            # If already contains '.default' (rare variant) keep.
+            if val.endswith(".default"):
+                return val
+            # Append '/.default' consistently (works for both raw appId and api://appId forms).
+            return f"{val}/.default"
+
         self.document_extractor = _SkillConfig(
             name=f"{prefix}-document-extractor-skill",
             description="Custom skill that downloads and parses source documents",
             uri=document_extractor_uri,
-            auth_resource_id=document_extractor_auth_resource_id,
+            auth_resource_id=_ensure_default_scope(document_extractor_auth_resource_id),
         )
         self.figure_processor = _SkillConfig(
             name=f"{prefix}-figure-processor-skill",
             description="Custom skill that enriches individual figures",
             uri=figure_processor_uri,
-            auth_resource_id=figure_processor_auth_resource_id,
+            auth_resource_id=_ensure_default_scope(figure_processor_auth_resource_id),
         )
         self.text_processor = _SkillConfig(
             name=f"{prefix}-text-processor-skill",
             description="Custom skill that merges figures, chunks text, and generates embeddings",
             uri=text_processor_uri,
-            auth_resource_id=text_processor_auth_resource_id,
+            auth_resource_id=_ensure_default_scope(text_processor_auth_resource_id),
         )
 
         self._search_manager: SearchManager | None = None
@@ -131,7 +141,7 @@ class CloudIngestionStrategy(Strategy):
             search_info=self.search_info,
             search_analyzer_name=self.search_analyzer_name,
             use_acls=self.use_acls,
-            use_int_vectorization=True,
+            use_parent_index_projection=True,
             embeddings=self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
             search_images=self.use_multimodal,
@@ -222,8 +232,12 @@ class CloudIngestionStrategy(Strategy):
         )
 
     def _build_skillset(self) -> SearchIndexerSkillset:
+        # NOTE: Do NOT map the chunk id directly to the index key field. Azure AI Search
+        # index projections forbid mapping an input field onto the target index key when
+        # using parent/child projections. The service will generate keys for projected
+        # child documents automatically. Removing the explicit 'id' mapping resolves
+        # HttpResponseError: "Input 'id' cannot map to the key field".
         mappings = [
-            InputFieldMappingEntry(name="id", source="/document/chunks/*/id"),
             InputFieldMappingEntry(name="content", source="/document/chunks/*/content"),
             InputFieldMappingEntry(name="sourcepage", source="/document/chunks/*/sourcepage"),
             InputFieldMappingEntry(name="sourcefile", source="/document/chunks/*/sourcefile"),
