@@ -44,14 +44,50 @@ services:
     project: ./app/functions/document_extractor
     language: py
     host: function
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: python ../../../scripts/copy_prepdocslib.py;python -m pip install --upgrade pip;python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          interactive: false
+          continueOnError: false
+        posix:
+          shell: sh
+          run: python ../../../scripts/copy_prepdocslib.py && python -m pip install --upgrade pip && python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          interactive: false
+          continueOnError: false
   figure-processor:
     project: ./app/functions/figure_processor
     language: py
     host: function
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: python ../../../scripts/copy_prepdocslib.py;python -m pip install --upgrade pip;python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          interactive: false
+          continueOnError: false
+        posix:
+          shell: sh
+          run: python ../../../scripts/copy_prepdocslib.py && python -m pip install --upgrade pip && python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          interactive: false
+          continueOnError: false
   text-processor:
     project: ./app/functions/text_processor
     language: py
     host: function
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: python ../../../scripts/copy_prepdocslib.py;python -m pip install --upgrade pip;python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          interactive: false
+          continueOnError: false
+        posix:
+          shell: sh
+          run: python ../../../scripts/copy_prepdocslib.py && python -m pip install --upgrade pip && python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          interactive: false
+          continueOnError: false
 hooks:
     preprovision:
       windows:
