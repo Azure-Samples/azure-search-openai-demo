@@ -1,9 +1,14 @@
-# Azure Functions runtime
 azure-functions>=1.21.3,<2.0.0
-
-# Local dependency: prepdocslib
-../../backend/prepdocslib
-
-# Note: prepdocslib's dependencies will be pulled in automatically
-# including: azure-ai-documentintelligence, azure-storage-blob,
-# azure-identity, openai, pymupdf, beautifulsoup4, etc.
+azure-identity
+azure-core
+azure-storage-blob
+azure-storage-file-datalake
+azure-search-documents==11.7.0b1
+azure-ai-documentintelligence==1.0.0b4
+typing-extensions
+beautifulsoup4
+pillow
+PyMuPDF
+pypdf
+tenacity
+rich
