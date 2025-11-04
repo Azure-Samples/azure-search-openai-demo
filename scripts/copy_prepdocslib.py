@@ -3,11 +3,6 @@
 Steps:
 1. Copy `prepdocslib` into each function directory.
 2. Overwrite each function's `requirements.txt` with backend `requirements.txt`.
-3. Copy backend requirements again as `requirements.backend.txt` for audit.
-
-No backups retained (per user request). The previous minimal requirements are
-discarded. All functions now share identical pinned versions ensuring imports
-like `azure.core` are available.
 """
 
 from __future__ import annotations
@@ -48,10 +43,6 @@ def main() -> None:
         # 2. Overwrite requirements.txt directly
         overwrite_req = func_dir / "requirements.txt"
         shutil.copy2(backend_requirements, overwrite_req)
-
-        # 3. Copy backend requirements for explicit provenance
-        audit_req = func_dir / "requirements.backend.txt"
-        shutil.copy2(backend_requirements, audit_req)
 
 
 if __name__ == "__main__":

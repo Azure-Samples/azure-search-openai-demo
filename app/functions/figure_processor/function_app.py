@@ -67,7 +67,7 @@ if AZURE_STORAGE_ACCOUNT and IMAGE_CONTAINER:
     BLOB_MANAGER = setup_blob_manager(
         storage_account=AZURE_STORAGE_ACCOUNT,
         storage_container=IMAGE_CONTAINER,
-        credential=GLOBAL_CREDENTIAL,
+        azure_credential=GLOBAL_CREDENTIAL,
         image_storage_container=IMAGE_CONTAINER,
     )
 else:
@@ -118,7 +118,7 @@ else:
 
 
 @app.function_name(name="process_figure")
-@app.route(route="process", methods=["POST"])
+@app.route(route="process", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
 async def process_figure_request(req: func.HttpRequest) -> func.HttpResponse:
     """Entrypoint for Azure Search custom skill calls."""
 

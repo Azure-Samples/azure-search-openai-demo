@@ -21,6 +21,7 @@ If necessary, edit this file to ensure it accurately reflects the current state 
     * app/backend/prepdocslib/pdfparser.py: Uses Azure Document Intelligence to emit page text plus figure placeholders
     * app/backend/prepdocslib/figureprocessor.py: Shared helper that generates figure descriptions for both local ingestion and the cloud figure-processor skill
     * app/backend/app.py: The main entry point for the backend application.
+  * app/functions: Azure Functions used for cloud ingestion custom skills (document extraction, figure processing, text processing). Each function bundles a synchronized copy of `prepdocslib`; run `python scripts/copy_prepdocslib.py` to refresh the local copies if you modify the library.
   * app/frontend: Contains the React frontend code, built with TypeScript, built with vite.
     * app/frontend/src/api: Contains the API client code for communicating with the backend.
     * app/frontend/src/components: Contains the React components for the frontend.

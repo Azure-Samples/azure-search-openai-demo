@@ -48,12 +48,12 @@ services:
       prepackage:
         windows:
           shell: pwsh
-          run: python ../../../scripts/copy_prepdocslib.py;python -m pip install --upgrade pip;python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          run: python ../../../scripts/copy_prepdocslib.py
           interactive: false
           continueOnError: false
         posix:
           shell: sh
-          run: python ../../../scripts/copy_prepdocslib.py && python -m pip install --upgrade pip && python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          run: python ../../../scripts/copy_prepdocslib.py
           interactive: false
           continueOnError: false
   figure-processor:
@@ -64,12 +64,12 @@ services:
       prepackage:
         windows:
           shell: pwsh
-          run: python ../../../scripts/copy_prepdocslib.py;python -m pip install --upgrade pip;python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          run: python ../../../scripts/copy_prepdocslib.py
           interactive: false
           continueOnError: false
         posix:
           shell: sh
-          run: python ../../../scripts/copy_prepdocslib.py && python -m pip install --upgrade pip && python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          run: python ../../../scripts/copy_prepdocslib.py
           interactive: false
           continueOnError: false
   text-processor:
@@ -80,12 +80,12 @@ services:
       prepackage:
         windows:
           shell: pwsh
-          run: python ../../../scripts/copy_prepdocslib.py;python -m pip install --upgrade pip;python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          run: python ../../../scripts/copy_prepdocslib.py
           interactive: false
           continueOnError: false
         posix:
           shell: sh
-          run: python ../../../scripts/copy_prepdocslib.py && python -m pip install --upgrade pip && python -m pip install -r requirements.txt -t .python_packages/lib/site-packages
+          run: python ../../../scripts/copy_prepdocslib.py
           interactive: false
           continueOnError: false
 hooks:

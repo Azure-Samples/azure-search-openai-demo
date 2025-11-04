@@ -148,6 +148,8 @@ npm-debug.log*
 node_modules
 static/
 
+app/functions/*/prepdocslib/
+
 data/**/*.md5
 
 .DS_Store
