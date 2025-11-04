@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, RefObject } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styles from "./Layout.module.css";
@@ -11,7 +11,7 @@ import { IconButton } from "@fluentui/react";
 const Layout = () => {
     const { t } = useTranslation();
     const [menuOpen, setMenuOpen] = useState(false);
-    const menuRef: RefObject<HTMLDivElement> = useRef(null);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
