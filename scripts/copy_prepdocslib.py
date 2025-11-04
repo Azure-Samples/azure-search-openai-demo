@@ -1,16 +1,17 @@
-"""Synchronize shared ingestion library and backend requirements with each
-Azure Function project prior to packaging.
+"""Synchronize shared ingestion library and unify dependencies across all
+Azure Function projects prior to packaging.
 
-What this script does:
-1. Copies the `prepdocslib` directory into every function service directory so
-    that relative imports succeed at build and runtime.
-2. Copies the backend `requirements.txt` alongside the function code as
-    `requirements.backend.txt` for traceability and potential future merges.
+Actions:
+1. Copy `prepdocslib` into each function directory.
+2. Overwrite each function's `requirements.txt` with the backend
+   `requirements.txt` (full set of pins) for consistent dependency versions.
+3. Preserve the original function `requirements.txt` (if it existed) as
+   `requirements.functions.txt` for rollback/reference.
+4. Also copy the backend requirements as `requirements.backend.txt` for audit.
 
-Why we don't overwrite the function's own `requirements.txt`:
-Each function has a minimal dependency list to reduce cold start time. The
-backend dependency set is larger (includes web framework, tracing, etc.) and
-is preserved separately should we later decide to consolidate pins.
+Note: Using the full backend dependency set will increase package size and may
+slightly impact cold start, but ensures all transitive imports (e.g. azure.core)
+are available without manual curation.
 """
 
 from __future__ import annotations
@@ -42,11 +43,25 @@ def main() -> None:
     ]
 
     for target in targets:
-        target.parent.mkdir(parents=True, exist_ok=True)
-        # Copy library tree
+        func_dir = target.parent
+        func_dir.mkdir(parents=True, exist_ok=True)
+
+        # 1. Library sync
         copy_tree(prep_source, target)
-        # Copy backend requirements next to the function-specific one for reference
-        dest_req = target.parent / "requirements.backend.txt"
+
+        # 2. Preserve original requirements if present
+        original_req = func_dir / "requirements.txt"
+        if original_req.exists():
+            backup_req = func_dir / "requirements.functions.txt"
+            # Only backup if we haven't already
+            if not backup_req.exists():
+                shutil.copy2(original_req, backup_req)
+
+        # 3. Overwrite with backend requirements
+        shutil.copy2(backend_requirements, original_req)
+
+        # 4. Copy backend requirements for explicit provenance
+        dest_req = func_dir / "requirements.backend.txt"
         shutil.copy2(backend_requirements, dest_req)
 
 
