@@ -31,7 +31,8 @@ from prepdocslib.servicesetup import (
     setup_openai_client,
 )
 
-app = func.FunctionApp()
+# Mark the function as anonymous since we are protecting it with built-in auth instead
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +119,7 @@ else:
 
 
 @app.function_name(name="process_figure")
-@app.route(route="process", methods=["POST"])
+@app.route(route="process", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
 async def process_figure_request(req: func.HttpRequest) -> func.HttpResponse:
     """Entrypoint for Azure Search custom skill calls."""
 

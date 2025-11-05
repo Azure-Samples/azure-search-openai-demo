@@ -49,6 +49,7 @@ var baseAppSettings = {
   AzureWebJobsStorage__queueServiceUri: stg.properties.primaryEndpoints.queue
   AzureWebJobsStorage__tableServiceUri: stg.properties.primaryEndpoints.table
   FUNCTIONS_EXTENSION_VERSION: '~4'
+  AZURE_CLIENT_ID: identityClientId
 }
 
 // Optional Application Insights settings
@@ -59,6 +60,8 @@ var appInsightsSettings = !empty(applicationInsightsName) ? {
 
 var easyAuthSettings = {
     OVERRIDE_USE_MI_FIC_ASSERTION_CLIENTID: identityClientId
+    WEBSITE_AUTH_PRM_DEFAULT_WITH_SCOPES: '${authIdentifierUri}/user_impersonation'
+    WEBSITE_AUTH_AAD_ALLOWED_TENANTS: authTenantId
 }
 
 // Merge all app settings
@@ -124,6 +127,15 @@ resource auth 'Microsoft.Web/sites/config@2022-03-01' = {
       unauthenticatedClientAction: 'Return401'
       redirectToProvider: 'azureactivedirectory'
     }
+    httpSettings: {
+      requireHttps: true
+      routes: {
+        apiPrefix: '/.auth'
+      }
+      forwardProxy: {
+        convention: 'NoProxy'
+      }
+    }
     identityProviders: {
       azureActiveDirectory: {
         enabled: true
@@ -139,10 +151,36 @@ resource auth 'Microsoft.Web/sites/config@2022-03-01' = {
           ]
           defaultAuthorizationPolicy: {
             allowedPrincipals: {}
-            allowedApplications: [authClientId]
+            allowedApplications: null  // TODO: Restrict to AI Search App
           }
         }
+        isAutoProvisioned: false
       }
+    }
+    login: {
+      routes: {
+        logoutEndpoint: '/.auth/logout'
+      }
+      tokenStore: {
+        enabled: true
+        tokenRefreshExtensionHours: 72
+        fileSystem: {}
+        azureBlobStorage: {}
+      }
+      preserveUrlFragmentsForLogins: false
+      allowedExternalRedirectUrls: []
+      cookieExpiration: {
+        convention: 'FixedTime'
+        timeToExpiration: '08:00:00'
+      }
+      nonce: {
+        validateNonce: true
+        nonceExpirationInterval: '00:05:00'
+      }
+    }
+    platform: {
+      enabled: true
+      runtimeVersion: '~1'
     }
   }
 }

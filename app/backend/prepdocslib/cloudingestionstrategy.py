@@ -10,6 +10,8 @@ from azure.search.documents.indexes._generated.models import (
     NativeBlobSoftDeleteDeletionDetectionPolicy,
 )
 from azure.search.documents.indexes.models import (
+    IndexingParameters,
+    IndexingParametersConfiguration,
     IndexProjectionMode,
     InputFieldMappingEntry,
     OutputFieldMappingEntry,
@@ -102,33 +104,23 @@ class CloudIngestionStrategy(Strategy):
         self.indexer_name = f"{prefix}-indexer"
         self.data_source_name = f"{prefix}-blob"
 
-        def _ensure_default_scope(val: str) -> str:
-            # If already ends with '/.default' keep as-is.
-            if val.endswith("/.default"):
-                return val
-            # If already contains '.default' (rare variant) keep.
-            if val.endswith(".default"):
-                return val
-            # Append '/.default' consistently (works for both raw appId and api://appId forms).
-            return f"{val}/.default"
-
         self.document_extractor = _SkillConfig(
             name=f"{prefix}-document-extractor-skill",
             description="Custom skill that downloads and parses source documents",
             uri=document_extractor_uri,
-            auth_resource_id=_ensure_default_scope(document_extractor_auth_resource_id),
+            auth_resource_id=document_extractor_auth_resource_id,
         )
         self.figure_processor = _SkillConfig(
             name=f"{prefix}-figure-processor-skill",
             description="Custom skill that enriches individual figures",
             uri=figure_processor_uri,
-            auth_resource_id=_ensure_default_scope(figure_processor_auth_resource_id),
+            auth_resource_id=figure_processor_auth_resource_id,
         )
         self.text_processor = _SkillConfig(
             name=f"{prefix}-text-processor-skill",
             description="Custom skill that merges figures, chunks text, and generates embeddings",
             uri=text_processor_uri,
-            auth_resource_id=_ensure_default_scope(text_processor_auth_resource_id),
+            auth_resource_id=text_processor_auth_resource_id,
         )
 
         self._search_manager: SearchManager | None = None
@@ -166,12 +158,10 @@ class CloudIngestionStrategy(Strategy):
             # Managed identity: Search service authenticates against the function app using this resource ID.
             auth_resource_id=self.document_extractor.auth_resource_id,
             inputs=[
-                InputFieldMappingEntry(name="blobUrl", source="/document/metadata_storage_path"),
+                # Provide the binary payload expected by the document extractor custom skill.
+                InputFieldMappingEntry(name="file_data", source="/document/file_data"),
                 InputFieldMappingEntry(name="file_name", source="/document/metadata_storage_name"),
                 InputFieldMappingEntry(name="content_type", source="/document/metadata_storage_content_type"),
-                InputFieldMappingEntry(
-                    name="metadata_storage_sas_token", source="/document/metadata_storage_sas_token"
-                ),
             ],
             outputs=outputs,
         )
@@ -310,6 +300,15 @@ class CloudIngestionStrategy(Strategy):
             data_source_name=self.data_source_name,
             target_index_name=self.search_info.index_name,
             skillset_name=self.skillset_name,
+            parameters=IndexingParameters(
+                configuration=IndexingParametersConfiguration(
+                    query_timeout=None,
+                    # markdown_parsing_submode=None,
+                    data_to_extract="contentAndMetadata",
+                    # markdown_header_depth=None,
+                    allow_skillset_to_read_file_data=True,
+                )
+            ),
         )
 
         async with self.search_info.create_search_indexer_client() as indexer_client:

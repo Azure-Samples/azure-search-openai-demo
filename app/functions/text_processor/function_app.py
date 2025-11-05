@@ -21,7 +21,8 @@ from prepdocslib.page import ImageOnPage, Page
 from prepdocslib.textprocessor import process_text
 from prepdocslib.textsplitter import SentenceTextSplitter
 
-app = func.FunctionApp()
+# Mark the function as anonymous since we are protecting it with built-in auth instead
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL", "")
 AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT", "")
 AZURE_OPENAI_EMB_MODEL_NAME = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
 AZURE_OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", "3072"))
-AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "")
+AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "2024-06-01")
 
 GLOBAL_CREDENTIAL: ManagedIdentityCredential | None
 EMBEDDING_SERVICE: AzureOpenAIEmbeddingService | None
@@ -84,7 +85,7 @@ if USE_VECTORS:
 
 
 @app.function_name(name="process_text")
-@app.route(route="process", methods=["POST"])
+@app.route(route="process", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
 async def process_text_entry(req: func.HttpRequest) -> func.HttpResponse:
     """Azure Search custom skill entry point for chunking and embeddings."""
 
@@ -169,7 +170,7 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
             if not figure_payload:
                 logger.warning("Figure ID %s not found in figures metadata for page %d", fid, page_num)
                 continue
-            image_on_page = ImageOnPage.from_skill_payload(figure_payload)
+            image_on_page, _ = ImageOnPage.from_skill_payload(figure_payload)
             page_obj.images.append(image_on_page)
         pages.append(page_obj)
 
@@ -202,7 +203,7 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
         content = section.chunk.text.strip()
         if not content:
             continue
-        embedding_vec = embeddings[idx] if embeddings else []
+        embedding_vec = embeddings[idx] if embeddings else None
         image_refs: list[dict[str, Any]] = []
         for image in section.chunk.images:
             ref = {
@@ -216,16 +217,29 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
             if USE_MULTIMODAL and image.embedding is not None:
                 ref["imageEmbedding"] = image.embedding
             image_refs.append(ref)
-        outputs.append(
-            {
-                "id": f"{normalized_id}-{idx:04d}",
-                "content": content,
-                "embedding": embedding_vec,
-                "sourcepage": BlobManager.sourcepage_from_file_page(file_name, section.chunk.page_num),
-                "sourcefile": file_name,
-                "parent_id": storage_url,
-                **({"images": image_refs} if image_refs else {}),
-            }
-        )
+        chunk_entry: dict[str, Any] = {
+            "id": f"{normalized_id}-{idx:04d}",
+            "content": content,
+            "sourcepage": BlobManager.sourcepage_from_file_page(file_name, section.chunk.page_num),
+            "sourcefile": file_name,
+            "parent_id": storage_url,
+            **({"images": image_refs} if image_refs else {}),
+        }
+
+        if embedding_vec is not None:
+            if len(embedding_vec) == AZURE_OPENAI_EMB_DIMENSIONS:
+                chunk_entry["embedding"] = embedding_vec
+            else:
+                logger.warning(
+                    "Skipping embedding for %s chunk %d due to dimension mismatch (expected %d, got %d)",
+                    file_name,
+                    idx,
+                    AZURE_OPENAI_EMB_DIMENSIONS,
+                    len(embedding_vec),
+                )
+        elif USE_VECTORS:
+            logger.warning("Embeddings were requested but missing for %s chunk %d", file_name, idx)
+
+        outputs.append(chunk_entry)
 
     return outputs

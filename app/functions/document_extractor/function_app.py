@@ -17,7 +17,7 @@ from azure.identity.aio import ManagedIdentityCredential
 from prepdocslib.ingestionhelpers import select_parser
 from prepdocslib.page import Page
 
-app = func.FunctionApp()
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ else:
 
 
 @app.function_name(name="extract")
-@app.route(route="extract", methods=["POST"])
+@app.route(route="extract", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
 async def extract_document(req: func.HttpRequest) -> func.HttpResponse:
     """
     Azure Search Custom Skill: Extract document content

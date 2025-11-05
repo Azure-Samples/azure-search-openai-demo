@@ -461,11 +461,11 @@ if __name__ == "__main__":
             raise ValueError("Cloud ingestion requires Azure OpenAI embeddings to configure the search index.")
 
         document_extractor_uri = require_env_var("DOCUMENT_EXTRACTOR_SKILL_ENDPOINT")
-        document_extractor_resource_id = require_env_var("DOCUMENT_EXTRACTOR_SKILL_RESOURCE_ID")
+        document_extractor_resource_id = require_env_var("DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID")
         figure_processor_uri = require_env_var("FIGURE_PROCESSOR_SKILL_ENDPOINT")
-        figure_processor_resource_id = require_env_var("FIGURE_PROCESSOR_SKILL_RESOURCE_ID")
+        figure_processor_resource_id = require_env_var("FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID")
         text_processor_uri = require_env_var("TEXT_PROCESSOR_SKILL_ENDPOINT")
-        text_processor_resource_id = require_env_var("TEXT_PROCESSOR_SKILL_RESOURCE_ID")
+        text_processor_resource_id = require_env_var("TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID")
         search_embedding_field = require_env_var("AZURE_SEARCH_FIELD_NAME_EMBEDDING")
 
         ingestion_strategy = CloudIngestionStrategy(
