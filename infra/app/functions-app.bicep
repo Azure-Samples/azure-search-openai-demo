@@ -14,10 +14,16 @@ param instanceMemoryMB int = 2048
 param maximumInstanceCount int = 10
 param identityId string
 param identityClientId string
-// App Registration client ID (applicationId) used to secure Function App endpoints (Easy Auth)
-param skillAppClientId string = ''
-// Audience / identifier URI to validate tokens (e.g. api://<subscriptionId>/<env>-skill)
-param skillAppAudience string = ''
+
+// Authorization parameters
+@description('The Entra ID application (client) ID for App Service Authentication')
+param authClientId string
+
+@description('The Entra ID identifier URI for App Service Authentication')
+param authIdentifierUri string
+
+@description('The Azure AD tenant ID for App Service Authentication')
+param authTenantId string
 
 // AVM expects authentication.type values: SystemAssignedIdentity | UserAssignedIdentity | StorageAccountConnectionString
 // Use UserAssignedIdentity for per-function user-assigned managed identity deployment storage access.
@@ -51,14 +57,12 @@ var appInsightsSettings = !empty(applicationInsightsName) ? {
   APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.?properties.ConnectionString ?? ''
 } : {}
 
-// Surface skill application identifiers for downstream logging/diagnostics (not used for manual validation now that Easy Auth is enabled)
-var skillAudienceSettings = (!empty(skillAppClientId) && !empty(skillAppAudience)) ? {
-  SKILL_APP_ID: skillAppClientId
-  SKILL_APP_AUDIENCE: skillAppAudience
-} : {}
+var easyAuthSettings = {
+    OVERRIDE_USE_MI_FIC_ASSERTION_CLIENTID: identityClientId
+}
 
 // Merge all app settings
-var allAppSettings = union(appSettings, baseAppSettings, appInsightsSettings, skillAudienceSettings)
+var allAppSettings = union(appSettings, baseAppSettings, appInsightsSettings, easyAuthSettings)
 
 // Create Flex Consumption Function App using AVM
 module functionApp 'br/public:avm/res/web/site:0.15.1' = {
@@ -70,7 +74,9 @@ module functionApp 'br/public:avm/res/web/site:0.15.1' = {
     tags: tags
     serverFarmResourceId: appServicePlanId
     managedIdentities: {
-      userAssignedResourceIds: [identityId]
+      userAssignedResourceIds: [
+        '${identityId}'
+      ]
     }
     functionAppConfig: {
       deployment: {
@@ -107,26 +113,38 @@ module functionApp 'br/public:avm/res/web/site:0.15.1' = {
 
 // Enable Easy Auth (App Service authentication) for Azure Search custom skill access when a skillAppId is provided.
 // Based on Microsoft guidance: require authentication, return 401 on unauthenticated, allowed audience api://{applicationId}.
-resource auth 'Microsoft.Web/sites/config@2022-03-01' = if (!empty(skillAppClientId) && !empty(skillAppAudience)) {
+resource auth 'Microsoft.Web/sites/config@2022-03-01' = {
   name: '${name}/authsettingsV2'
+  dependsOn: [
+    functionApp  // Ensure the Function App module completes before configuring authentication
+  ]
   properties: {
     globalValidation: {
       requireAuthentication: true
       unauthenticatedClientAction: 'Return401'
+      redirectToProvider: 'azureactivedirectory'
     }
     identityProviders: {
       azureActiveDirectory: {
         enabled: true
         registration: {
-          clientId: skillAppClientId
+          openIdIssuer: '${environment().authentication.loginEndpoint}${authTenantId}/v2.0'
+          clientId: authClientId
+          clientSecretSettingName: 'OVERRIDE_USE_MI_FIC_ASSERTION_CLIENTID'
         }
         validation: {
-          allowedAudiences: [ skillAppAudience ]
+          jwtClaimChecks: {}
+          allowedAudiences: [
+            authIdentifierUri
+          ]
+          defaultAuthorizationPolicy: {
+            allowedPrincipals: {}
+            allowedApplications: [authClientId]
+          }
         }
       }
     }
   }
-  dependsOn: [ functionApp ]
 }
 
 // Outputs
@@ -134,4 +152,4 @@ output name string = functionApp.outputs.name
 output defaultHostname string = functionApp.outputs.defaultHostname
 // Expose resourceId for downstream skill auth configuration
 output resourceId string = functionApp.outputs.resourceId
-output authEnabled bool = !empty(skillAppClientId) && !empty(skillAppAudience)
+output authEnabled bool = !empty(authClientId) && !empty(authIdentifierUri)

@@ -118,7 +118,7 @@ else:
 
 
 @app.function_name(name="process_figure")
-@app.route(route="process", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
+@app.route(route="process", methods=["POST"])
 async def process_figure_request(req: func.HttpRequest) -> func.HttpResponse:
     """Entrypoint for Azure Search custom skill calls."""
 

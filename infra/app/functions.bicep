@@ -65,6 +65,7 @@ var runtimeStorageRoles = [
 ]
 
 // Common app settings for both functions
+// TODO: Take the settings from main.bicep - appEnvVars
 var commonAppSettings = {
   // Storage
   AZURE_STORAGE_ACCOUNT: storageAccountName
@@ -111,6 +112,7 @@ var contentUnderstandingSettings = useMultimodal && !empty(contentUnderstandingS
 var allAppSettings = union(commonAppSettings, visionSettings, contentUnderstandingSettings)
 
 // Deployment storage containers
+// TODO: Can we just use a boring name, the same for all functions?
 var documentExtractorDeploymentContainer = 'deploy-doc-extractor-${take(resourceToken, 7)}'
 var figureProcessorDeploymentContainer = 'deploy-figure-processor-${take(resourceToken, 7)}'
 var textProcessorDeploymentContainer = 'deploy-text-processor-${take(resourceToken, 7)}'
@@ -174,10 +176,10 @@ resource textProcessorRuntimeStorage 'Microsoft.Storage/storageAccounts@2024-01-
 }
 
 resource documentExtractorRuntimeStorageRoles 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for role in runtimeStorageRoles: {
-  name: guid(documentExtractorRuntimeStorage.id, role.roleDefinitionId, 'doc-runtime')
+  name: guid(documentExtractorRuntimeStorage.id, role.roleDefinitionId, 'doc-storage-roles')
   scope: documentExtractorRuntimeStorage
   properties: {
-    principalId: documentExtractorIdentity.outputs.principalId
+    principalId: functionsUserIdentity.outputs.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', role.roleDefinitionId)
   }
@@ -187,10 +189,10 @@ resource documentExtractorRuntimeStorageRoles 'Microsoft.Authorization/roleAssig
 }]
 
 resource figureProcessorRuntimeStorageRoles 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for role in runtimeStorageRoles: {
-  name: guid(figureProcessorRuntimeStorage.id, role.roleDefinitionId, 'figure-runtime')
+  name: guid(figureProcessorRuntimeStorage.id, role.roleDefinitionId, 'figure-storage-roles')
   scope: figureProcessorRuntimeStorage
   properties: {
-    principalId: figureProcessorIdentity.outputs.principalId
+    principalId: functionsUserIdentity.outputs.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', role.roleDefinitionId)
   }
@@ -200,10 +202,10 @@ resource figureProcessorRuntimeStorageRoles 'Microsoft.Authorization/roleAssignm
 }]
 
 resource textProcessorRuntimeStorageRoles 'Microsoft.Authorization/roleAssignments@2022-04-01' = [for role in runtimeStorageRoles: {
-  name: guid(textProcessorRuntimeStorage.id, role.roleDefinitionId, 'text-runtime')
+  name: guid(textProcessorRuntimeStorage.id, role.roleDefinitionId, 'text-storage-roles')
   scope: textProcessorRuntimeStorage
   properties: {
-    principalId: textProcessorIdentity.outputs.principalId
+    principalId: functionsUserIdentity.outputs.principalId
     principalType: 'ServicePrincipal'
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', role.roleDefinitionId)
   }
@@ -211,36 +213,6 @@ resource textProcessorRuntimeStorageRoles 'Microsoft.Authorization/roleAssignmen
     textProcessorRuntimeStorageAccount
   ]
 }]
-
-// User-assigned managed identity for document extractor
-module documentExtractorIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.4.1' = {
-  name: 'doc-extractor-identity'
-  params: {
-    location: location
-    tags: tags
-    name: '${abbrs.managedIdentityUserAssignedIdentities}doc-extractor-${resourceToken}'
-  }
-}
-
-// User-assigned managed identity for text processor
-module textProcessorIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.4.1' = {
-  name: 'text-processor-identity'
-  params: {
-    location: location
-    tags: tags
-    name: '${abbrs.managedIdentityUserAssignedIdentities}text-processor-${resourceToken}'
-  }
-}
-
-// User-assigned managed identity for figure processor
-module figureProcessorIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.4.1' = {
-  name: 'figure-processor-identity'
-  params: {
-    location: location
-    tags: tags
-    name: '${abbrs.managedIdentityUserAssignedIdentities}figure-processor-${resourceToken}'
-  }
-}
 
 // Flex Consumption supports only one Function App per plan; create a dedicated plan per ingestion function
 module documentExtractorPlan 'br/public:avm/res/web/serverfarm:0.1.1' = {
@@ -285,15 +257,28 @@ module textProcessorPlan 'br/public:avm/res/web/serverfarm:0.1.1' = {
   }
 }
 
+
+module functionsUserIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.4.1' = {
+  name: 'functions-user-identity'
+  params: {
+    location: location
+    tags: tags
+    name: 'functions-user-identity-${resourceToken}'
+  }
+}
+
+
+
 // Document Extractor Function App
 // App registration for document extractor (uses function identity principalId as FIC subject)
 module documentExtractorAppReg '../core/auth/appregistration.bicep' = {
   name: 'doc-extractor-appreg'
   params: {
+    appUniqueName: '${documentExtractorName}-appreg'
     cloudEnvironment: environment().name
-    webAppIdentityId: documentExtractorIdentity.outputs.principalId
-    clientAppName: 'skill-${documentExtractorName}'
-    clientAppDisplayName: 'skill-${documentExtractorName}'
+    webAppIdentityId: functionsUserIdentity.outputs.principalId
+    clientAppName: '${documentExtractorName}-app'
+    clientAppDisplayName: '${documentExtractorName} Entra App'
     issuer: openIdIssuer
     webAppEndpoint: 'https://${documentExtractorName}.azurewebsites.net'
   }
@@ -309,18 +294,18 @@ module documentExtractor 'functions-app.bicep' = {
     appServicePlanId: documentExtractorPlan.outputs.resourceId
     runtimeName: 'python'
     runtimeVersion: '3.11'
+    identityId: functionsUserIdentity.outputs.resourceId
+    identityClientId: functionsUserIdentity.outputs.clientId
+    authClientId: documentExtractorAppReg.outputs.clientAppId
+    authIdentifierUri: documentExtractorAppReg.outputs.identifierUri
+    authTenantId: tenant().tenantId
     storageAccountName: documentExtractorRuntimeStorageName
     deploymentStorageContainerName: documentExtractorDeploymentContainer
-    identityId: documentExtractorIdentity.outputs.resourceId
-    identityClientId: documentExtractorIdentity.outputs.clientId
     appSettings: union(allAppSettings, {
       AzureFunctionsWebHost__hostid: documentExtractorHostId
     })
     instanceMemoryMB: 4096 // High memory for document processing
     maximumInstanceCount: 100
-    // Removed unused functionTimeout parameter; configured defaults via host settings
-    skillAppClientId: documentExtractorAppReg.outputs.clientAppId
-    skillAppAudience: 'api://${documentExtractorAppReg.outputs.clientAppId}'
   }
   dependsOn: [
     documentExtractorRuntimeStorageAccount
@@ -331,8 +316,9 @@ module documentExtractor 'functions-app.bicep' = {
 module figureProcessorAppReg '../core/auth/appregistration.bicep' = {
   name: 'figure-processor-appreg'
   params: {
+    appUniqueName: '${figureProcessorName}-app'
     cloudEnvironment: environment().name
-    webAppIdentityId: figureProcessorIdentity.outputs.principalId
+    webAppIdentityId: functionsUserIdentity.outputs.principalId
     clientAppName: 'skill-${figureProcessorName}'
     clientAppDisplayName: 'skill-${figureProcessorName}'
     issuer: openIdIssuer
@@ -352,15 +338,16 @@ module figureProcessor 'functions-app.bicep' = {
     runtimeVersion: '3.11'
     storageAccountName: figureProcessorRuntimeStorageName
     deploymentStorageContainerName: figureProcessorDeploymentContainer
-    identityId: figureProcessorIdentity.outputs.resourceId
-    identityClientId: figureProcessorIdentity.outputs.clientId
+    identityId: functionsUserIdentity.outputs.resourceId
+    identityClientId: functionsUserIdentity.outputs.clientId
+    authClientId: figureProcessorAppReg.outputs.clientAppId
+    authIdentifierUri: figureProcessorAppReg.outputs.identifierUri
+    authTenantId: tenant().tenantId
     appSettings: union(allAppSettings, {
       AzureFunctionsWebHost__hostid: figureProcessorHostId
     })
     instanceMemoryMB: 2048
     maximumInstanceCount: 100
-    skillAppClientId: figureProcessorAppReg.outputs.clientAppId
-    skillAppAudience: 'api://${figureProcessorAppReg.outputs.clientAppId}'
   }
   dependsOn: [
     figureProcessorRuntimeStorageAccount
@@ -371,8 +358,9 @@ module figureProcessor 'functions-app.bicep' = {
 module textProcessorAppReg '../core/auth/appregistration.bicep' = {
   name: 'text-processor-appreg'
   params: {
+    appUniqueName: '${textProcessorName}-app'
     cloudEnvironment: environment().name
-    webAppIdentityId: textProcessorIdentity.outputs.principalId
+    webAppIdentityId: functionsUserIdentity.outputs.principalId
     clientAppName: 'skill-${textProcessorName}'
     clientAppDisplayName: 'skill-${textProcessorName}'
     issuer: openIdIssuer
@@ -392,15 +380,16 @@ module textProcessor 'functions-app.bicep' = {
     runtimeVersion: '3.11'
     storageAccountName: textProcessorRuntimeStorageName
     deploymentStorageContainerName: textProcessorDeploymentContainer
-    identityId: textProcessorIdentity.outputs.resourceId
-    identityClientId: textProcessorIdentity.outputs.clientId
+    identityId: functionsUserIdentity.outputs.resourceId
+    identityClientId: functionsUserIdentity.outputs.clientId
+    authClientId: textProcessorAppReg.outputs.clientAppId
+    authIdentifierUri: textProcessorAppReg.outputs.identifierUri
+    authTenantId: tenant().tenantId
     appSettings: union(allAppSettings, {
       AzureFunctionsWebHost__hostid: textProcessorHostId
     })
     instanceMemoryMB: 2048 // Standard memory for embedding
     maximumInstanceCount: 100
-    skillAppClientId: textProcessorAppReg.outputs.clientAppId
-    skillAppAudience: 'api://${textProcessorAppReg.outputs.clientAppId}'
   }
   dependsOn: [
     textProcessorRuntimeStorageAccount
@@ -408,10 +397,10 @@ module textProcessor 'functions-app.bicep' = {
 }
 
 // RBAC: Document Extractor Roles
-module documentExtractorRbac 'functions-rbac.bicep' = {
+module functionsIdentityRBAC 'functions-rbac.bicep' = {
   name: 'doc-extractor-rbac'
   params: {
-    principalId: documentExtractorIdentity.outputs.principalId
+    principalId: functionsUserIdentity.outputs.principalId
     storageResourceGroupName: storageResourceGroupName
     searchServiceResourceGroupName: searchServiceResourceGroupName
     openAiResourceGroupName: openAiResourceGroupName
@@ -424,65 +413,15 @@ module documentExtractorRbac 'functions-rbac.bicep' = {
   }
 }
 
-// RBAC: Text Processor Roles
-module textProcessorRbac 'functions-rbac.bicep' = {
-  name: 'text-processor-rbac'
-  params: {
-    principalId: textProcessorIdentity.outputs.principalId
-    storageResourceGroupName: storageResourceGroupName
-    searchServiceResourceGroupName: searchServiceResourceGroupName
-    openAiResourceGroupName: openAiResourceGroupName
-    documentIntelligenceResourceGroupName: documentIntelligenceResourceGroupName
-    visionServiceName: visionServiceName
-    visionResourceGroupName: visionResourceGroupName
-    contentUnderstandingServiceName: contentUnderstandingServiceName
-    contentUnderstandingResourceGroupName: contentUnderstandingResourceGroupName
-    useMultimodal: useMultimodal
-  }
-}
-
-// RBAC: Figure Processor Roles
-module figureProcessorRbac 'functions-rbac.bicep' = {
-  name: 'figure-processor-rbac'
-  params: {
-    principalId: figureProcessorIdentity.outputs.principalId
-    storageResourceGroupName: storageResourceGroupName
-    searchServiceResourceGroupName: searchServiceResourceGroupName
-    openAiResourceGroupName: openAiResourceGroupName
-    documentIntelligenceResourceGroupName: documentIntelligenceResourceGroupName
-    visionServiceName: visionServiceName
-    visionResourceGroupName: visionResourceGroupName
-    contentUnderstandingServiceName: contentUnderstandingServiceName
-    contentUnderstandingResourceGroupName: contentUnderstandingResourceGroupName
-    useMultimodal: useMultimodal
-  }
-}
 
 // Outputs
 output documentExtractorName string = documentExtractor.outputs.name
 output documentExtractorUrl string = documentExtractor.outputs.defaultHostname
-output documentExtractorIdentityPrincipalId string = documentExtractorIdentity.outputs.principalId
-output documentExtractorClientAppId string = documentExtractorAppReg.outputs.clientAppId
-output documentExtractorSkillResourceId string = documentExtractorAppReg.outputs.clientAppId
 output figureProcessorName string = figureProcessor.outputs.name
 output figureProcessorUrl string = figureProcessor.outputs.defaultHostname
-output figureProcessorIdentityPrincipalId string = figureProcessorIdentity.outputs.principalId
-output figureProcessorClientAppId string = figureProcessorAppReg.outputs.clientAppId
-output figureProcessorSkillResourceId string = figureProcessorAppReg.outputs.clientAppId
 output textProcessorName string = textProcessor.outputs.name
 output textProcessorUrl string = textProcessor.outputs.defaultHostname
-output textProcessorIdentityPrincipalId string = textProcessorIdentity.outputs.principalId
-output textProcessorClientAppId string = textProcessorAppReg.outputs.clientAppId
-output textProcessorSkillResourceId string = textProcessorAppReg.outputs.clientAppId
-output documentExtractorRuntimeStorageName string = documentExtractorRuntimeStorageName
-output figureProcessorRuntimeStorageName string = figureProcessorRuntimeStorageName
-output textProcessorRuntimeStorageName string = textProcessorRuntimeStorageName
-output documentExtractorHostId string = documentExtractorHostId
-output figureProcessorHostId string = figureProcessorHostId
-output textProcessorHostId string = textProcessorHostId
-// Output the last plan id (text processor) for potential diagnostics; others can be added if needed
-output appServicePlanId string = textProcessorPlan.outputs.resourceId
 // Resource IDs for each function app (used for auth_resource_id with managed identity secured skills)
-output documentExtractorResourceId string = documentExtractor.outputs.resourceId
-output figureProcessorResourceId string = figureProcessor.outputs.resourceId
-output textProcessorResourceId string = textProcessor.outputs.resourceId
+output documentExtractorAuthIdentifierUri string = documentExtractorAppReg.outputs.identifierUri
+output figureProcessorAuthIdentifierUri string = figureProcessorAppReg.outputs.identifierUri
+output textProcessorAuthIdentifierUri string = textProcessorAppReg.outputs.identifierUri

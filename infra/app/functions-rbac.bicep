@@ -23,7 +23,7 @@ var monitoringMetricsPublisherRoleId = '3913510d-42f4-4e42-8a64-420c390055eb' //
 // Storage: Blob Data Reader (read content container)
 module storageBlobReaderRole '../core/security/role.bicep' = {
   scope: resourceGroup(storageResourceGroupName)
-  name: 'storage-blob-reader-${uniqueString(principalId)}'
+  name: 'function-storage-blob-reader-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: storageBlobDataReaderRoleId
@@ -34,7 +34,7 @@ module storageBlobReaderRole '../core/security/role.bicep' = {
 // Storage: Blob Data Contributor (write images container, deployment container)
 module storageBlobContributorRole '../core/security/role.bicep' = {
   scope: resourceGroup(storageResourceGroupName)
-  name: 'storage-blob-contributor-${uniqueString(principalId)}'
+  name: 'function-storage-blob-contributor-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: storageBlobDataContributorRoleId
@@ -45,7 +45,7 @@ module storageBlobContributorRole '../core/security/role.bicep' = {
 // Storage: Queue Data Contributor (for AzureWebJobsStorage)
 module storageQueueContributorRole '../core/security/role.bicep' = {
   scope: resourceGroup(storageResourceGroupName)
-  name: 'storage-queue-contributor-${uniqueString(principalId)}'
+  name: 'function-storage-queue-contributor-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: storageQueueDataContributorRoleId
@@ -56,7 +56,7 @@ module storageQueueContributorRole '../core/security/role.bicep' = {
 // Storage: Table Data Contributor (for AzureWebJobsStorage)
 module storageTableContributorRole '../core/security/role.bicep' = {
   scope: resourceGroup(storageResourceGroupName)
-  name: 'storage-table-contributor-${uniqueString(principalId)}'
+  name: 'function-storage-table-contributor-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: storageTableDataContributorRoleId
@@ -67,7 +67,7 @@ module storageTableContributorRole '../core/security/role.bicep' = {
 // Search: Index Data Contributor (write chunks to index)
 module searchIndexContributorRole '../core/security/role.bicep' = {
   scope: resourceGroup(searchServiceResourceGroupName)
-  name: 'search-index-contributor-${uniqueString(principalId)}'
+  name: 'function-search-index-contributor-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: searchIndexDataContributorRoleId
@@ -78,7 +78,7 @@ module searchIndexContributorRole '../core/security/role.bicep' = {
 // OpenAI: Cognitive Services OpenAI User
 module openAiUserRole '../core/security/role.bicep' = {
   scope: resourceGroup(openAiResourceGroupName)
-  name: 'openai-user-${uniqueString(principalId)}'
+  name: 'function-openai-user-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: cognitiveServicesOpenAIUserRoleId
@@ -89,7 +89,7 @@ module openAiUserRole '../core/security/role.bicep' = {
 // Document Intelligence: Cognitive Services User
 module documentIntelligenceUserRole '../core/security/role.bicep' = {
   scope: resourceGroup(documentIntelligenceResourceGroupName)
-  name: 'doc-intelligence-user-${uniqueString(principalId)}'
+  name: 'function-doc-intelligence-user-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: cognitiveServicesUserRoleId
@@ -100,7 +100,7 @@ module documentIntelligenceUserRole '../core/security/role.bicep' = {
 // Vision: Cognitive Services User (if multimodal)
 module visionUserRole '../core/security/role.bicep' = if (useMultimodal && !empty(visionServiceName)) {
   scope: resourceGroup(visionResourceGroupName)
-  name: 'vision-user-${uniqueString(principalId)}'
+  name: 'function-vision-user-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: cognitiveServicesUserRoleId
@@ -111,7 +111,7 @@ module visionUserRole '../core/security/role.bicep' = if (useMultimodal && !empt
 // Content Understanding: Cognitive Services User (if multimodal)
 module contentUnderstandingUserRole '../core/security/role.bicep' = if (useMultimodal && !empty(contentUnderstandingServiceName)) {
   scope: resourceGroup(contentUnderstandingResourceGroupName)
-  name: 'content-understanding-user-${uniqueString(principalId)}'
+  name: 'function-content-understanding-user-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: cognitiveServicesUserRoleId
@@ -121,7 +121,7 @@ module contentUnderstandingUserRole '../core/security/role.bicep' = if (useMulti
 
 // Application Insights: Monitoring Metrics Publisher
 module appInsightsMetricsPublisherRole '../core/security/role.bicep' = {
-  name: 'appinsights-metrics-${uniqueString(principalId)}'
+  name: 'function-appinsights-metrics-${uniqueString(principalId)}'
   params: {
     principalId: principalId
     roleDefinitionId: monitoringMetricsPublisherRoleId

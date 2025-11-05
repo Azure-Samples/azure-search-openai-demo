@@ -543,9 +543,9 @@ var appEnvVariables = {
   FIGURE_PROCESSOR_SKILL_ENDPOINT: useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
   TEXT_PROCESSOR_SKILL_ENDPOINT: useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
   // Skill audience identifier URI from registration module (created below)
-  DOCUMENT_EXTRACTOR_SKILL_RESOURCE_ID: useCloudIngestion ? functions!.outputs.documentExtractorSkillResourceId : ''
-  FIGURE_PROCESSOR_SKILL_RESOURCE_ID: useCloudIngestion ? functions!.outputs.figureProcessorSkillResourceId : ''
-  TEXT_PROCESSOR_SKILL_RESOURCE_ID: useCloudIngestion ? functions!.outputs.textProcessorSkillResourceId : ''
+  DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID: useCloudIngestion ? functions!.outputs.documentExtractorAuthIdentifierUri : ''
+  FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID: useCloudIngestion ? functions!.outputs.figureProcessorAuthIdentifierUri : ''
+  TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID: useCloudIngestion ? functions!.outputs.textProcessorAuthIdentifierUri : ''
 }
 
 // App Service for the web application (Python Quart app with JS frontend)
@@ -1509,9 +1509,9 @@ output DOCUMENT_EXTRACTOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://$
 output FIGURE_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
 output TEXT_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
 // Identifier URI used as authResourceId for all custom skill endpoints
-output DOCUMENT_EXTRACTOR_SKILL_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.documentExtractorSkillResourceId : ''
-output FIGURE_PROCESSOR_SKILL_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.figureProcessorSkillResourceId : ''
-output TEXT_PROCESSOR_SKILL_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.textProcessorSkillResourceId : ''
+output DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.documentExtractorAuthIdentifierUri : ''
+output FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.figureProcessorAuthIdentifierUri : ''
+output TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.textProcessorAuthIdentifierUri : ''
 
 output AZURE_AI_PROJECT string = useAiProject ? ai.outputs.projectName : ''
 
