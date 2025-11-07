@@ -112,10 +112,10 @@ def test_table_to_html_with_spans():
 @pytest.mark.asyncio
 async def test_process_figure_without_bounding_regions():
     figure = DocumentFigure(id="1", caption=None, bounding_regions=None)
-    result = await DocumentAnalysisParser.process_figure(None, figure)
+    result = await DocumentAnalysisParser.figure_to_image(None, figure)
 
     assert isinstance(result, ImageOnPage)
-    assert result.description == ""
+    assert result.description is None
     assert result.title == ""
     assert result.figure_id == "1"
     assert result.page_num == 0
@@ -143,10 +143,10 @@ async def test_process_figure_with_bounding_regions(monkeypatch, caplog):
     monkeypatch.setattr(DocumentAnalysisParser, "crop_image_from_pdf_page", mock_crop_image_from_pdf_page)
 
     with caplog.at_level(logging.WARNING):
-        result = await DocumentAnalysisParser.process_figure(doc, figure)
+        result = await DocumentAnalysisParser.figure_to_image(doc, figure)
 
         assert isinstance(result, ImageOnPage)
-        assert result.description == ""
+        assert result.description is None
         assert result.title == "Logo"
         assert result.bytes == b"image_bytes"
         assert result.page_num == 0
@@ -294,8 +294,7 @@ async def test_parse_doc_with_figures(monkeypatch):
     monkeypatch.setattr(mock_poller, "result", mock_poller_result)
 
     parser = DocumentAnalysisParser(
-        endpoint="https://example.com",
-        credential=MockAzureCredential(),
+        endpoint="https://example.com", credential=MockAzureCredential(), process_figures=True
     )
 
     with open(TEST_DATA_DIR / "Simple Figure.pdf", "rb") as f:
@@ -357,14 +356,13 @@ async def test_parse_unsupportedformat(monkeypatch, caplog):
     monkeypatch.setattr(mock_poller, "result", mock_poller_result)
 
     parser = DocumentAnalysisParser(
-        endpoint="https://example.com",
-        credential=MockAzureCredential(),
+        endpoint="https://example.com", credential=MockAzureCredential(), process_figures=True
     )
     content = io.BytesIO(b"pdf content bytes")
     content.name = "test.docx"
     with caplog.at_level(logging.ERROR):
         pages = [page async for page in parser.parse(content)]
-        assert "does not support high-resolution figure extraction" in caplog.text
+        assert "does not support media description." in caplog.text
 
     assert len(pages) == 1
     assert pages[0].page_num == 0
