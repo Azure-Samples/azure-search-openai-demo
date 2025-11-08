@@ -304,7 +304,7 @@ class CloudIngestionStrategy(Strategy):
                 configuration=IndexingParametersConfiguration(
                     query_timeout=None,
                     # markdown_parsing_submode=None,
-                    data_to_extract="contentAndMetadata",
+                    data_to_extract="storageMetadata",
                     # markdown_header_depth=None,
                     allow_skillset_to_read_file_data=True,
                 )
