@@ -424,7 +424,8 @@ class BlobManager(BaseBlobManager):
             await container_client.create_container()
 
         # Re-open and upload the original file
-        if file.url is None:
+        # URL may be a path to a local file or already set to a blob URL
+        if file.url is None or os.path.exists(file.url):
             with open(file.content.name, "rb") as reopened_file:
                 blob_name = self.blob_name_from_file_name(file.content.name)
                 logger.info("Uploading blob for document '%s'", blob_name)
