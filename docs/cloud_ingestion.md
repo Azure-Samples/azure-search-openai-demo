@@ -1,6 +1,6 @@
-# Cloud-Based Data Ingestion with Azure Functions
+# RAG chat: Cloud-Based data ingestion with Azure Functions
 
-This document describes the cloud-based ingestion architecture that uses Azure Functions as custom skills for Azure AI Search indexers.
+This document describes the cloud-based ingestion architecture that uses Azure Functions as custom skills for Azure AI Search indexer.
 
 ## Overview
 
@@ -13,6 +13,9 @@ The cloud ingestion strategy provides an alternative to the local script-based i
 This architecture enables serverless, scalable, and event-driven document processing.
 
 ## Architecture
+
+TODO: Replace with a mermaid diagram like textsplitter has,
+OR use my images from slides.
 
 ```ascii
 ┌─────────────────────────────────────────────────────────────────┐

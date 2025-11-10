@@ -46,48 +46,30 @@ services:
     host: function
     hooks:
       prepackage:
-        windows:
-          shell: pwsh
-          run: python ../../../scripts/copy_prepdocslib.py
-          interactive: false
-          continueOnError: false
-        posix:
-          shell: sh
-          run: python ../../../scripts/copy_prepdocslib.py
-          interactive: false
-          continueOnError: false
+        shell: pwsh
+        run: python ../../../scripts/copy_prepdocslib.py
+        interactive: false
+        continueOnError: false
   figure-processor:
     project: ./app/functions/figure_processor
     language: py
     host: function
     hooks:
       prepackage:
-        windows:
-          shell: pwsh
-          run: python ../../../scripts/copy_prepdocslib.py
-          interactive: false
-          continueOnError: false
-        posix:
-          shell: sh
-          run: python ../../../scripts/copy_prepdocslib.py
-          interactive: false
-          continueOnError: false
+        shell: pwsh
+        run: python ../../../scripts/copy_prepdocslib.py
+        interactive: false
+        continueOnError: false
   text-processor:
     project: ./app/functions/text_processor
     language: py
     host: function
     hooks:
       prepackage:
-        windows:
-          shell: pwsh
-          run: python ../../../scripts/copy_prepdocslib.py
-          interactive: false
-          continueOnError: false
-        posix:
-          shell: sh
-          run: python ../../../scripts/copy_prepdocslib.py
-          interactive: false
-          continueOnError: false
+        shell: pwsh
+        run: python ../../../scripts/copy_prepdocslib.py
+        interactive: false
+        continueOnError: false
 hooks:
     preprovision:
       windows:

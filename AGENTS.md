@@ -120,3 +120,33 @@ We only enforce type hints in the main application code and scripts.
 ## Python code style
 
 Do not use single underscores in front of "private" methods or variables in Python code. We do not follow that convention in this codebase, since this is an application and not a library.
+
+## Deploying the application
+
+To deploy the application, use the `azd` CLI tool. Make sure you have the latest version of the `azd` CLI installed. Then, run the following command from the root of the repository:
+
+```shell
+azd up
+```
+
+That command will BOTH provision the Azure resources AND deploy the application code.
+
+If you only changed the Bicep templates and want to re-provision the Azure resources, run:
+
+```shell
+azd provision
+```
+
+If you only changed the application code and want to re-deploy the code, run:
+
+```shell
+azd deploy
+```
+
+If you are using cloud ingestion and only want to deploy individual functions, run the necessary deploy commands, for example:
+
+```shell
+azd deploy document-extractor
+azd deploy figure-processor
+azd deploy text-processor
+```

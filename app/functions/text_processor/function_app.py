@@ -156,6 +156,7 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
     figures_input = consolidated_doc.get("figures", [])  # serialized skill payload
 
     # Merge enriched fields from figure processor into figures array
+    # TODO: possibly remove enriched_*, are they actually needed?
     enriched_descriptions = data.get("enriched_descriptions", [])
     enriched_urls = data.get("enriched_urls", [])
     enriched_embeddings = data.get("enriched_embeddings", [])
