@@ -3,8 +3,6 @@
 Processes markdown text into search chunks with (optional) embeddings and figure metadata.
 """
 
-from __future__ import annotations
-
 import io
 import json
 import logging
@@ -15,9 +13,13 @@ import azure.functions as func
 from azure.identity.aio import ManagedIdentityCredential
 
 from prepdocslib.blobmanager import BlobManager
-from prepdocslib.embeddings import AzureOpenAIEmbeddingService
 from prepdocslib.listfilestrategy import File
 from prepdocslib.page import ImageOnPage, Page
+from prepdocslib.servicesetup import (
+    OpenAIHost,
+    setup_embeddings_service,
+    setup_openai_client,
+)
 from prepdocslib.textprocessor import process_text
 from prepdocslib.textsplitter import SentenceTextSplitter
 
@@ -29,15 +31,13 @@ logger = logging.getLogger(__name__)
 USE_VECTORS = os.getenv("USE_VECTORS", "true").lower() == "true"
 USE_MULTIMODAL = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
 
+OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
 AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE", "")
 AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL", "")
 AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT", "")
 AZURE_OPENAI_EMB_MODEL_NAME = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
 AZURE_OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", "3072"))
-AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "2024-06-01")
 
-GLOBAL_CREDENTIAL: ManagedIdentityCredential | None
-EMBEDDING_SERVICE: AzureOpenAIEmbeddingService | None
 SENTENCE_SPLITTER = SentenceTextSplitter()
 
 # ---------------------------------------------------------------------------
@@ -55,21 +55,28 @@ else:
 # ---------------------------------------------------------------------------
 EMBEDDING_SERVICE = None
 if USE_VECTORS:
-    embeddings_ready = (
-        AZURE_OPENAI_API_VERSION
-        and (AZURE_OPENAI_SERVICE or AZURE_OPENAI_CUSTOM_URL)
-        and (AZURE_OPENAI_EMB_DEPLOYMENT or AZURE_OPENAI_EMB_MODEL_NAME)
+    embeddings_ready = (AZURE_OPENAI_SERVICE or AZURE_OPENAI_CUSTOM_URL) and (
+        AZURE_OPENAI_EMB_DEPLOYMENT or AZURE_OPENAI_EMB_MODEL_NAME
     )
     if embeddings_ready:
         try:
-            EMBEDDING_SERVICE = AzureOpenAIEmbeddingService(
-                open_ai_service=AZURE_OPENAI_SERVICE or None,
-                open_ai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT or None,
-                open_ai_model_name=AZURE_OPENAI_EMB_MODEL_NAME,
-                open_ai_dimensions=AZURE_OPENAI_EMB_DIMENSIONS,
-                open_ai_api_version=AZURE_OPENAI_API_VERSION,
-                credential=GLOBAL_CREDENTIAL,
-                open_ai_custom_url=AZURE_OPENAI_CUSTOM_URL or None,
+            # Setup OpenAI client
+            openai_host = OpenAIHost(OPENAI_HOST)
+            openai_client, azure_openai_endpoint = setup_openai_client(
+                openai_host=openai_host,
+                azure_credential=GLOBAL_CREDENTIAL,
+                azure_openai_service=AZURE_OPENAI_SERVICE or None,
+                azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL or None,
+            )
+
+            # Setup embeddings service
+            EMBEDDING_SERVICE = setup_embeddings_service(
+                openai_host,
+                openai_client,
+                emb_model_name=AZURE_OPENAI_EMB_MODEL_NAME,
+                emb_model_dimensions=AZURE_OPENAI_EMB_DIMENSIONS,
+                azure_openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT or None,
+                azure_openai_endpoint=azure_openai_endpoint,
             )
             logger.info(
                 "Embedding service initialised (deployment=%s, model=%s, dims=%d)",

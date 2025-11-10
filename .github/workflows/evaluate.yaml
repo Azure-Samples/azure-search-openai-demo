@@ -29,7 +29,6 @@ jobs:
       # project specific
       AZURE_OPENAI_SERVICE: ${{ vars.AZURE_OPENAI_SERVICE }}
       AZURE_OPENAI_LOCATION: ${{ vars.AZURE_OPENAI_LOCATION }}
-      AZURE_OPENAI_API_VERSION: ${{ vars.AZURE_OPENAI_API_VERSION }}
       AZURE_OPENAI_RESOURCE_GROUP: ${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
       AZURE_DOCUMENTINTELLIGENCE_SERVICE: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_SERVICE }}
       AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP }}
@@ -125,15 +124,15 @@ jobs:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
-          version: "0.4.20"
+          version: "0.9.5"
           cache-dependency-glob: "requirements**.txt"
           python-version: "3.11"
 
       - name: Setup node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 20
 
@@ -193,19 +192,19 @@ jobs:
 
       - name: Upload eval results as build artifact
         if: ${{ success() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
             name: eval_result
             path: ./evals/results/pr${{ github.event.issue.number }}
 
       - name: Upload server logs as build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: server_logs
           path: ./app/backend/serverlogs.out
 
       - name: Upload server error logs as build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: server_error_logs
           path: ./app/backend/serverlogs.err

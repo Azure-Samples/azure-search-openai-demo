@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "windows-latest"]
-        python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python_version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         node_version: ["20.14", "22"]
     steps:
         - uses: actions/checkout@v5
@@ -33,15 +33,15 @@ jobs:
             # Fetch full history so diff-cover can compute a merge base with origin/main
             fetch-depth: 0
         - name: Install uv
-          uses: astral-sh/setup-uv@v6
+          uses: astral-sh/setup-uv@v7
           with:
             enable-cache: true
-            version: "0.4.20"
+            version: "0.9.5"
             cache-dependency-glob: "requirements**.txt"
             python-version: ${{ matrix.python_version }}
             activate-environment: true
         - name: Setup node
-          uses: actions/setup-node@v5
+          uses: actions/setup-node@v6
           with:
             node-version: ${{ matrix.node_version }}
         - name: Build frontend
@@ -82,7 +82,7 @@ jobs:
             pytest tests/e2e.py --tracing=retain-on-failure
         - name: Upload test artifacts
           if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v5
           with:
             name: playwright-traces${{ matrix.python_version }}
             path: test-results

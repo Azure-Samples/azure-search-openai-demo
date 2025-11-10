@@ -1,18 +1,17 @@
 import logging
+from argparse import Namespace
 from unittest.mock import AsyncMock
 
 import openai
 import openai.types
 import pytest
 import tenacity
+from azure.core.credentials import AzureKeyCredential
 from httpx import Request, Response
 from openai.types.create_embedding_response import Usage
 
-from prepdocslib.embeddings import (
-    AzureOpenAIEmbeddingService,
-    ImageEmbeddings,
-    OpenAIEmbeddingService,
-)
+import prepdocs
+from prepdocslib.embeddings import ImageEmbeddings, OpenAIEmbeddings
 
 from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
@@ -35,40 +34,30 @@ class MockClient:
 
 
 @pytest.mark.asyncio
-async def test_compute_embedding_success(monkeypatch):
-    async def mock_create_client(*args, **kwargs):
-        # From https://platform.openai.com/docs/api-reference/embeddings/create
-        return MockClient(
-            embeddings_client=MockEmbeddingsClient(
-                create_embedding_response=openai.types.CreateEmbeddingResponse(
-                    object="list",
-                    data=[
-                        openai.types.Embedding(
-                            embedding=[
-                                0.0023064255,
-                                -0.009327292,
-                                -0.0028842222,
-                            ],
-                            index=0,
-                            object="embedding",
-                        )
-                    ],
-                    model="text-embedding-3-large",
-                    usage=Usage(prompt_tokens=8, total_tokens=8),
-                )
+async def test_compute_embedding_success():
+    response = openai.types.CreateEmbeddingResponse(
+        object="list",
+        data=[
+            openai.types.Embedding(
+                embedding=[
+                    0.0023064255,
+                    -0.009327292,
+                    -0.0028842222,
+                ],
+                index=0,
+                object="embedding",
             )
-        )
+        ],
+        model="text-embedding-3-large",
+        usage=Usage(prompt_tokens=8, total_tokens=8),
+    )
 
-    embeddings = AzureOpenAIEmbeddingService(
-        open_ai_service="x",
-        open_ai_deployment="x",
+    embeddings = OpenAIEmbeddings(
+        open_ai_client=MockClient(MockEmbeddingsClient(response)),
         open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
         open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        open_ai_api_version="test-api-version",
-        credential=MockAzureCredential(),
         disable_batch=False,
     )
-    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
     assert await embeddings.create_embeddings(texts=["foo"]) == [
         [
             0.0023064255,
@@ -77,48 +66,12 @@ async def test_compute_embedding_success(monkeypatch):
         ]
     ]
 
-    embeddings = AzureOpenAIEmbeddingService(
-        open_ai_service="x",
-        open_ai_deployment="x",
+    embeddings = OpenAIEmbeddings(
+        open_ai_client=MockClient(MockEmbeddingsClient(response)),
         open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
         open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        open_ai_api_version="test-api-version",
-        credential=MockAzureCredential(),
         disable_batch=True,
     )
-    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
-    assert await embeddings.create_embeddings(texts=["foo"]) == [
-        [
-            0.0023064255,
-            -0.009327292,
-            -0.0028842222,
-        ]
-    ]
-
-    embeddings = OpenAIEmbeddingService(
-        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
-        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        credential=MockAzureCredential(),
-        organization="org",
-        disable_batch=False,
-    )
-    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
-    assert await embeddings.create_embeddings(texts=["foo"]) == [
-        [
-            0.0023064255,
-            -0.009327292,
-            -0.0028842222,
-        ]
-    ]
-
-    embeddings = OpenAIEmbeddingService(
-        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
-        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-        credential=MockAzureCredential(),
-        organization="org",
-        disable_batch=True,
-    )
-    monkeypatch.setattr(embeddings, "create_client", mock_create_client)
     assert await embeddings.create_embeddings(texts=["foo"]) == [
         [
             0.0023064255,
@@ -146,18 +99,17 @@ async def create_rate_limit_client(*args, **kwargs):
 @pytest.mark.asyncio
 async def test_compute_embedding_ratelimiterror_batch(monkeypatch, caplog):
     with caplog.at_level(logging.INFO):
-        monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
+        monkeypatch.setattr(
+            "prepdocslib.embeddings.wait_random_exponential",
+            lambda *args, **kwargs: tenacity.wait_fixed(0),
+        )
         with pytest.raises(tenacity.RetryError):
-            embeddings = AzureOpenAIEmbeddingService(
-                open_ai_service="x",
-                open_ai_deployment="x",
+            embeddings = OpenAIEmbeddings(
+                open_ai_client=MockClient(RateLimitMockEmbeddingsClient()),
                 open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
                 open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-                open_ai_api_version="test-api-version",
-                credential=MockAzureCredential(),
                 disable_batch=False,
             )
-            monkeypatch.setattr(embeddings, "create_client", create_rate_limit_client)
             await embeddings.create_embeddings(texts=["foo"])
         assert caplog.text.count("Rate limited on the OpenAI embeddings API") == 14
 
@@ -165,18 +117,17 @@ async def test_compute_embedding_ratelimiterror_batch(monkeypatch, caplog):
 @pytest.mark.asyncio
 async def test_compute_embedding_ratelimiterror_single(monkeypatch, caplog):
     with caplog.at_level(logging.INFO):
-        monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
+        monkeypatch.setattr(
+            "prepdocslib.embeddings.wait_random_exponential",
+            lambda *args, **kwargs: tenacity.wait_fixed(0),
+        )
         with pytest.raises(tenacity.RetryError):
-            embeddings = AzureOpenAIEmbeddingService(
-                open_ai_service="x",
-                open_ai_deployment="x",
+            embeddings = OpenAIEmbeddings(
+                open_ai_client=MockClient(RateLimitMockEmbeddingsClient()),
                 open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
                 open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-                open_ai_api_version="test-api-version",
-                credential=MockAzureCredential(),
                 disable_batch=True,
             )
-            monkeypatch.setattr(embeddings, "create_client", create_rate_limit_client)
             await embeddings.create_embeddings(texts=["foo"])
         assert caplog.text.count("Rate limited on the OpenAI embeddings API") == 14
 
@@ -186,37 +137,28 @@ class AuthenticationErrorMockEmbeddingsClient:
         raise openai.AuthenticationError(message="Bad things happened.", response=fake_response(403), body=None)
 
 
-async def create_auth_error_limit_client(*args, **kwargs):
-    return MockClient(embeddings_client=AuthenticationErrorMockEmbeddingsClient())
-
-
 @pytest.mark.asyncio
-async def test_compute_embedding_autherror(monkeypatch, capsys):
-    monkeypatch.setattr(tenacity.wait_random_exponential, "__call__", lambda x, y: 0)
+async def test_compute_embedding_autherror(monkeypatch):
+    monkeypatch.setattr(
+        "prepdocslib.embeddings.wait_random_exponential",
+        lambda *args, **kwargs: tenacity.wait_fixed(0),
+    )
     with pytest.raises(openai.AuthenticationError):
-        embeddings = AzureOpenAIEmbeddingService(
-            open_ai_service="x",
-            open_ai_deployment="x",
+        embeddings = OpenAIEmbeddings(
+            open_ai_client=MockClient(AuthenticationErrorMockEmbeddingsClient()),
             open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
             open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-            open_ai_api_version="test-api-version",
-            credential=MockAzureCredential(),
             disable_batch=False,
         )
-        monkeypatch.setattr(embeddings, "create_client", create_auth_error_limit_client)
         await embeddings.create_embeddings(texts=["foo"])
 
     with pytest.raises(openai.AuthenticationError):
-        embeddings = AzureOpenAIEmbeddingService(
-            open_ai_service="x",
-            open_ai_deployment="x",
+        embeddings = OpenAIEmbeddings(
+            open_ai_client=MockClient(AuthenticationErrorMockEmbeddingsClient()),
             open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
             open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
-            open_ai_api_version="test-api-version",
-            credential=MockAzureCredential(),
             disable_batch=True,
         )
-        monkeypatch.setattr(embeddings, "create_client", create_auth_error_limit_client)
         await embeddings.create_embeddings(texts=["foo"])
 
 
@@ -248,3 +190,333 @@ async def test_image_embeddings_success(mock_azurehttp_calls):
     ]
 
     mock_token_provider.assert_called_once()
+
+
+def test_setup_blob_manager_respects_storage_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    class StubBlobManager:
+        def __init__(
+            self,
+            *,
+            endpoint: str,
+            container: str,
+            account: str,
+            credential: object,
+            resource_group: str,
+            subscription_id: str,
+            image_container: str | None = None,
+        ) -> None:
+            captured["endpoint"] = endpoint
+            captured["container"] = container
+            captured["account"] = account
+            captured["credential"] = credential
+            captured["resource_group"] = resource_group
+            captured["subscription_id"] = subscription_id
+            captured["image_container"] = image_container
+
+    monkeypatch.setattr(prepdocs, "BlobManager", StubBlobManager)
+
+    result = prepdocs.setup_blob_manager(
+        azure_credential=MockAzureCredential(),
+        storage_account="storageacct",
+        storage_container="docs",
+        storage_resource_group="rg",
+        subscription_id="sub-id",
+        storage_key="override-key",
+        image_storage_container="images",
+    )
+
+    assert isinstance(result, StubBlobManager)
+    assert captured["credential"] == "override-key"
+    assert captured["image_container"] == "images"
+
+
+def test_setup_list_file_strategy_uses_datalake_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    class StubAdlsStrategy:
+        def __init__(
+            self,
+            *,
+            data_lake_storage_account: str,
+            data_lake_filesystem: str,
+            data_lake_path: str,
+            credential: object,
+            enable_global_documents: bool = False,
+        ) -> None:
+            captured["storage_account"] = data_lake_storage_account
+            captured["filesystem"] = data_lake_filesystem
+            captured["path"] = data_lake_path
+            captured["credential"] = credential
+            captured["enable_global_documents"] = enable_global_documents
+
+    monkeypatch.setattr(prepdocs, "ADLSGen2ListFileStrategy", StubAdlsStrategy)
+
+    strategy = prepdocs.setup_list_file_strategy(
+        azure_credential=MockAzureCredential(),
+        local_files=None,
+        datalake_storage_account="adlsacct",
+        datalake_filesystem="filesystem",
+        datalake_path="path",
+        datalake_key="custom-key",
+        enable_global_documents=True,
+    )
+
+    assert isinstance(strategy, StubAdlsStrategy)
+    assert captured["credential"] == "custom-key"
+    assert captured["enable_global_documents"] is True
+
+
+def test_setup_embeddings_service_populates_azure_metadata() -> None:
+    embeddings = prepdocs.setup_embeddings_service(
+        open_ai_client=MockClient(
+            MockEmbeddingsClient(
+                openai.types.CreateEmbeddingResponse(
+                    object="list",
+                    data=[],
+                    model="text-embedding-3-large",
+                    usage=Usage(prompt_tokens=0, total_tokens=0),
+                )
+            )
+        ),
+        openai_host=prepdocs.OpenAIHost.AZURE,
+        emb_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        emb_model_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        azure_openai_deployment="deployment",
+        azure_openai_endpoint="https://service.openai.azure.com",
+    )
+
+    assert isinstance(embeddings, OpenAIEmbeddings)
+    assert embeddings.azure_deployment_name == "deployment"
+    assert embeddings.azure_endpoint == "https://service.openai.azure.com"
+
+
+def test_setup_embeddings_service_requires_endpoint_for_azure() -> None:
+    with pytest.raises(ValueError):
+        prepdocs.setup_embeddings_service(
+            open_ai_client=MockClient(
+                MockEmbeddingsClient(
+                    openai.types.CreateEmbeddingResponse(
+                        object="list",
+                        data=[],
+                        model="text-embedding-3-large",
+                        usage=Usage(prompt_tokens=0, total_tokens=0),
+                    )
+                )
+            ),
+            openai_host=prepdocs.OpenAIHost.AZURE,
+            emb_model_name=MOCK_EMBEDDING_MODEL_NAME,
+            emb_model_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+            azure_openai_deployment="deployment",
+            azure_openai_endpoint=None,
+        )
+
+
+def test_setup_embeddings_service_requires_deployment_for_azure() -> None:
+    with pytest.raises(ValueError):
+        prepdocs.setup_embeddings_service(
+            open_ai_client=MockClient(
+                MockEmbeddingsClient(
+                    openai.types.CreateEmbeddingResponse(
+                        object="list",
+                        data=[],
+                        model="text-embedding-3-large",
+                        usage=Usage(prompt_tokens=0, total_tokens=0),
+                    )
+                )
+            ),
+            openai_host=prepdocs.OpenAIHost.AZURE,
+            emb_model_name=MOCK_EMBEDDING_MODEL_NAME,
+            emb_model_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+            azure_openai_deployment=None,
+            azure_openai_endpoint="https://service.openai.azure.com",
+        )
+
+
+@pytest.mark.asyncio
+async def test_openai_embeddings_use_deployment_for_azure_model():
+    class RecordingEmbeddingsClient:
+        def __init__(self) -> None:
+            self.models: list[str] = []
+
+        async def create(self, *, model: str, input, **kwargs):
+            self.models.append(model)
+            data = [
+                openai.types.Embedding(embedding=[0.1, 0.2, 0.3], index=i, object="embedding")
+                for i, _ in enumerate(input)
+            ]
+            return openai.types.CreateEmbeddingResponse(
+                object="list",
+                data=data,
+                model=model,
+                usage=Usage(prompt_tokens=0, total_tokens=0),
+            )
+
+    recording_client = RecordingEmbeddingsClient()
+    embeddings = OpenAIEmbeddings(
+        open_ai_client=MockClient(recording_client),
+        open_ai_model_name=MOCK_EMBEDDING_MODEL_NAME,
+        open_ai_dimensions=MOCK_EMBEDDING_DIMENSIONS,
+        disable_batch=False,
+        azure_deployment_name="azure-deployment",
+        azure_endpoint="https://service.openai.azure.com",
+    )
+
+    result = await embeddings.create_embeddings(["foo"])
+
+    assert recording_client.models == ["azure-deployment"]
+    assert len(result) == 1
+
+
+@pytest.mark.asyncio
+async def test_manageacl_main_uses_search_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    from scripts import manageacl as manageacl_module
+
+    monkeypatch.setenv("AZURE_SEARCH_SERVICE", "searchsvc")
+    monkeypatch.setenv("AZURE_SEARCH_INDEX", "searchindex")
+
+    monkeypatch.setattr(manageacl_module, "load_azd_env", lambda: None)
+
+    class DummyAzureCredential:
+        def __init__(self, *args, **kwargs) -> None:  # pragma: no cover - simple stub
+            pass
+
+    monkeypatch.setattr(manageacl_module, "AzureDeveloperCliCredential", DummyAzureCredential)
+
+    captured: dict[str, object] = {}
+
+    class DummyManageAcl:
+        def __init__(
+            self,
+            *,
+            service_name: str,
+            index_name: str,
+            url: str,
+            acl_action: str,
+            acl_type: str | None,
+            acl: str | None,
+            credentials: object,
+        ) -> None:
+            captured["service_name"] = service_name
+            captured["index_name"] = index_name
+            captured["url"] = url
+            captured["credentials"] = credentials
+
+        async def run(self) -> None:
+            captured["run_called"] = True
+
+    monkeypatch.setattr(manageacl_module, "ManageAcl", DummyManageAcl)
+
+    args = Namespace(
+        tenant_id=None,
+        search_key="secret",
+        url="https://example/document.pdf",
+        acl_action="view",
+        acl_type="oids",
+        acl="user1",
+    )
+
+    await manageacl_module.main(args)
+
+    assert captured["run_called"] is True
+    assert isinstance(captured["credentials"], AzureKeyCredential)
+    assert captured["credentials"].key == "secret"
+    assert captured["service_name"] == "searchsvc"
+    assert captured["index_name"] == "searchindex"
+
+
+def test_setup_openai_client_azure_constructs_endpoint_correctly(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that setup_openai_client correctly constructs the Azure OpenAI endpoint URL from service name."""
+    captured_base_url: list[str] = []
+
+    class StubAsyncOpenAI:
+        def __init__(self, *, base_url: str, api_key, **kwargs) -> None:
+            captured_base_url.append(base_url)
+
+    monkeypatch.setattr(prepdocs, "AsyncOpenAI", StubAsyncOpenAI)
+    monkeypatch.setattr(prepdocs, "get_bearer_token_provider", lambda *args, **kwargs: lambda: "fake_token")
+
+    client, endpoint = prepdocs.setup_openai_client(
+        openai_host=prepdocs.OpenAIHost.AZURE,
+        azure_credential=MockAzureCredential(),
+        azure_openai_service="myopenaiservice",
+    )
+
+    # Verify the endpoint is constructed correctly
+    assert endpoint == "https://myopenaiservice.openai.azure.com"
+    # Verify the base_url includes the endpoint with the openai/v1 suffix
+    assert captured_base_url[0] == "https://myopenaiservice.openai.azure.com/openai/v1"
+
+
+def test_setup_openai_client_azure_custom_uses_custom_url(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that setup_openai_client uses the custom URL for azure_custom host."""
+    captured_base_url: list[str] = []
+
+    class StubAsyncOpenAI:
+        def __init__(self, *, base_url: str, api_key, **kwargs) -> None:
+            captured_base_url.append(base_url)
+
+    monkeypatch.setattr(prepdocs, "AsyncOpenAI", StubAsyncOpenAI)
+
+    client, endpoint = prepdocs.setup_openai_client(
+        openai_host=prepdocs.OpenAIHost.AZURE_CUSTOM,
+        azure_credential=MockAzureCredential(),
+        azure_openai_custom_url="https://custom.endpoint.com/openai",
+        azure_openai_api_key="test-key",
+    )
+
+    # Verify the custom URL is used
+    assert captured_base_url[0] == "https://custom.endpoint.com/openai"
+    # Verify endpoint is None for custom URLs
+    assert endpoint is None
+
+
+def test_setup_openai_client_azure_respects_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that setup_openai_client uses the API key override when provided."""
+    captured_api_key: list[str] = []
+
+    class StubAsyncOpenAI:
+        def __init__(self, *, base_url: str, api_key: str, **kwargs) -> None:
+            captured_api_key.append(api_key)
+
+    monkeypatch.setattr(prepdocs, "AsyncOpenAI", StubAsyncOpenAI)
+
+    client, endpoint = prepdocs.setup_openai_client(
+        openai_host=prepdocs.OpenAIHost.AZURE,
+        azure_credential=MockAzureCredential(),
+        azure_openai_service="myopenaiservice",
+        azure_openai_api_key="my-api-key-override",
+    )
+
+    assert captured_api_key[0] == "my-api-key-override"
+
+
+def test_setup_openai_client_openai_requires_api_key() -> None:
+    """Test that setup_openai_client raises ValueError when using OpenAI without API key."""
+    with pytest.raises(ValueError, match="OpenAI key is required"):
+        prepdocs.setup_openai_client(
+            openai_host=prepdocs.OpenAIHost.OPENAI,
+            azure_credential=MockAzureCredential(),
+            openai_api_key=None,
+        )
+
+
+def test_setup_openai_client_azure_requires_service() -> None:
+    """Test that setup_openai_client raises ValueError when using Azure without service name."""
+    with pytest.raises(ValueError, match="AZURE_OPENAI_SERVICE must be set"):
+        prepdocs.setup_openai_client(
+            openai_host=prepdocs.OpenAIHost.AZURE,
+            azure_credential=MockAzureCredential(),
+            azure_openai_service=None,
+        )
+
+
+def test_setup_openai_client_azure_custom_requires_url() -> None:
+    """Test that setup_openai_client raises ValueError when using azure_custom without custom URL."""
+    with pytest.raises(ValueError, match="AZURE_OPENAI_CUSTOM_URL must be set"):
+        prepdocs.setup_openai_client(
+            openai_host=prepdocs.OpenAIHost.AZURE_CUSTOM,
+            azure_credential=MockAzureCredential(),
+            azure_openai_custom_url=None,
+        )

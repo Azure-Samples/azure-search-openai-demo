@@ -31,7 +31,6 @@ jobs:
       # project specific
       AZURE_OPENAI_SERVICE: ${{ vars.AZURE_OPENAI_SERVICE }}
       AZURE_OPENAI_LOCATION: ${{ vars.AZURE_OPENAI_LOCATION }}
-      AZURE_OPENAI_API_VERSION: ${{ vars.AZURE_OPENAI_API_VERSION }}
       AZURE_OPENAI_RESOURCE_GROUP: ${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
       AZURE_DOCUMENTINTELLIGENCE_SERVICE: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_SERVICE }}
       AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP }}
@@ -123,7 +122,7 @@ jobs:
         uses: Azure/setup-azd@v2.2.0
 
       - name: Install Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: 20
 

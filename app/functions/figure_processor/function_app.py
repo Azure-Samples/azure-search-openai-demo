@@ -10,8 +10,6 @@ This function:
 5. Returns enriched figure metadata back to the indexer for downstream text processing.
 """
 
-from __future__ import annotations
-
 import json
 import logging
 import os
@@ -79,21 +77,14 @@ else:
 _openai_client = None
 _openai_model = None
 _openai_deployment = None
-openai_ready = (
-    USE_MULTIMODAL
-    and AZURE_OPENAI_API_VERSION
-    and (AZURE_OPENAI_SERVICE or AZURE_OPENAI_CUSTOM_URL)
-    and AZURE_OPENAI_CHATGPT_DEPLOYMENT
-)
+openai_ready = USE_MULTIMODAL and (AZURE_OPENAI_SERVICE or AZURE_OPENAI_CUSTOM_URL) and AZURE_OPENAI_CHATGPT_DEPLOYMENT
 if openai_ready:
     _host = OpenAIHost.AZURE_CUSTOM if AZURE_OPENAI_CUSTOM_URL else OpenAIHost.AZURE
-    _openai_client = setup_openai_client(
+    _openai_client, _ = setup_openai_client(
         openai_host=_host,
         azure_credential=GLOBAL_CREDENTIAL,
-        azure_openai_api_version=AZURE_OPENAI_API_VERSION,
         azure_openai_service=AZURE_OPENAI_SERVICE or None,
         azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL or None,
-        azure_openai_chat_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
     )
     _openai_model = AZURE_OPENAI_CHATGPT_MODEL or AZURE_OPENAI_CHATGPT_DEPLOYMENT
     _openai_deployment = AZURE_OPENAI_CHATGPT_DEPLOYMENT

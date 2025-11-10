@@ -90,6 +90,18 @@ When you're running tests, make sure you activate the .venv virtual environment 
 source .venv/bin/activate
 ```
 
+To check for coverage, run the following command:
+
+```shell
+pytest --cov --cov-report=annotate:cov_annotate
+```
+
+Open the cov_annotate directory to view the annotated source code. There will be one file per source file. If a file has 100% source coverage, it means all lines are covered by tests, so you do not need to open the file.
+
+For each file that has less than 100% test coverage, find the matching file in cov_annotate and review the file.
+
+If a line starts with a ! (exclamation mark), it means that the line is not covered by tests. Add tests to cover the missing lines.
+
 ## Sending pull requests
 
 When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md format.
@@ -99,7 +111,7 @@ When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md for
 To upgrade a particular package in the backend, use the following command, replacing `<package-name>` with the name of the package you want to upgrade:
 
 ```shell
-cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.9 --upgrade-package package-name
+cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.10 --upgrade-package package-name
 ```
 
 ## Checking Python type hints
@@ -107,7 +119,7 @@ cd app/backend && uv pip compile requirements.in -o requirements.txt --python-ve
 To check Python type hints, use the following command:
 
 ```shell
-cd app/backend && mypy . --config-file=../pyproject.toml
+cd app/backend && mypy . --config-file=../../pyproject.toml
 ```
 
 ```shell

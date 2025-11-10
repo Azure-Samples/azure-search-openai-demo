@@ -5,9 +5,9 @@ import logging
 import mimetypes
 import os
 import time
-from collections.abc import AsyncGenerator, Awaitable
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from pathlib import Path
-from typing import Any, Callable, Union, cast
+from typing import Any, cast
 
 from azure.cognitiveservices.speech import (
     ResultReason,
@@ -90,7 +90,6 @@ from decorators import authenticated, authenticated_path
 from error import error_dict, error_response
 from prepdocs import (
     OpenAIHost,
-    clean_key_if_exists,
     setup_embeddings_service,
     setup_file_processors,
     setup_image_embeddings_service,
@@ -426,8 +425,6 @@ async def setup_clients():
         os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT") if OPENAI_HOST in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM] else None
     )
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
-    # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
-    AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION") or "2024-10-21"
     AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
     AZURE_OPENAI_API_KEY_OVERRIDE = os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE")
     # Used only with non-Azure OpenAI deployments
@@ -477,7 +474,7 @@ async def setup_clients():
     # Use the current user identity for keyless authentication to Azure services.
     # This assumes you use 'azd auth login' locally, and managed identity when deployed on Azure.
     # The managed identity is setup in the infra/ folder.
-    azure_credential: Union[AzureDeveloperCliCredential, ManagedIdentityCredential]
+    azure_credential: AzureDeveloperCliCredential | ManagedIdentityCredential
     azure_ai_token_provider: Callable[[], Awaitable[str]]
     if RUNNING_ON_AZURE:
         current_app.logger.info("Setting up Azure credential using ManagedIdentityCredential")
@@ -558,10 +555,9 @@ async def setup_clients():
         # Wait until token is needed to fetch for the first time
         current_app.config[CONFIG_SPEECH_SERVICE_TOKEN] = None
 
-    openai_client = setup_openai_client(
+    openai_client, azure_openai_endpoint = setup_openai_client(
         openai_host=OPENAI_HOST,
         azure_credential=azure_credential,
-        azure_openai_api_version=AZURE_OPENAI_API_VERSION,
         azure_openai_service=AZURE_OPENAI_SERVICE,
         azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
         azure_openai_api_key=AZURE_OPENAI_API_KEY_OVERRIDE,
@@ -602,17 +598,12 @@ async def setup_clients():
             search_service=AZURE_SEARCH_SERVICE, index_name=AZURE_SEARCH_INDEX, azure_credential=azure_credential
         )
         text_embeddings_service = setup_embeddings_service(
-            azure_credential=azure_credential,
-            openai_host=OpenAIHost(OPENAI_HOST),
+            open_ai_client=openai_client,
+            openai_host=OPENAI_HOST,
             emb_model_name=OPENAI_EMB_MODEL,
             emb_model_dimensions=OPENAI_EMB_DIMENSIONS,
-            azure_openai_service=AZURE_OPENAI_SERVICE,
-            azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
             azure_openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-            azure_openai_api_version=AZURE_OPENAI_API_VERSION,
-            azure_openai_key=clean_key_if_exists(AZURE_OPENAI_API_KEY_OVERRIDE),
-            openai_key=clean_key_if_exists(OPENAI_API_KEY),
-            openai_org=OPENAI_ORGANIZATION,
+            azure_openai_endpoint=azure_openai_endpoint,
             disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
         )
         image_embeddings_service = setup_image_embeddings_service(
@@ -728,6 +719,7 @@ async def close_clients():
     await current_app.config[CONFIG_GLOBAL_BLOB_MANAGER].close_clients()
     if user_blob_manager := current_app.config.get(CONFIG_USER_BLOB_MANAGER):
         await user_blob_manager.close_clients()
+    await current_app.config[CONFIG_CREDENTIAL].close()
 
 
 def create_app():

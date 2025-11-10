@@ -1,11 +1,12 @@
-"""Synchronize ingestion library and apply unified dependency pins.
+"""Synchronize prepdocslib ingestion library to function apps.
+This script ensures that the latest version of the prepdocslib library used
+by backend ingestion is copied into each of the Azure Function apps that
+also rely on this library.
 
 Steps:
 1. Copy `prepdocslib` into each function directory.
 2. Overwrite each function's `requirements.txt` with backend `requirements.txt`.
 """
-
-from __future__ import annotations
 
 import shutil
 from pathlib import Path

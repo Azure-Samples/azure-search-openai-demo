@@ -3,7 +3,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import IO, Any, Optional, TypedDict, Union
+from typing import IO, Any, Optional, TypedDict
 from urllib.parse import unquote
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -169,7 +169,7 @@ class AdlsBlobManager(BaseBlobManager):
             await directory_client.set_access_control(owner=user_oid)
         return directory_client
 
-    async def upload_blob(self, file: Union[File, IO], filename: str, user_oid: str) -> str:
+    async def upload_blob(self, file: File | IO, filename: str, user_oid: str) -> str:
         """
         Uploads a file directly to the user's directory in ADLS (no subdirectory).
 
@@ -393,7 +393,7 @@ class BlobManager(BaseBlobManager):
         self,
         endpoint: str,
         container: str,
-        credential: Union[AsyncTokenCredential, str],
+        credential: AsyncTokenCredential | str,
         image_container: Optional[str] = None,
         account: Optional[str] = None,
         resource_group: Optional[str] = None,

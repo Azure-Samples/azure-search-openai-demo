@@ -1,15 +1,11 @@
 import logging
 from abc import ABC
-from collections.abc import Awaitable
-from typing import Callable, Optional, Union
+from collections.abc import Awaitable, Callable
 from urllib.parse import urljoin
 
 import aiohttp
 import tiktoken
-from azure.core.credentials import AzureKeyCredential
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity.aio import get_bearer_token_provider
-from openai import AsyncAzureOpenAI, AsyncOpenAI, RateLimitError
+from openai import AsyncOpenAI, RateLimitError
 from tenacity import (
     AsyncRetrying,
     retry_if_exception_type,
@@ -22,9 +18,7 @@ logger = logging.getLogger("scripts")
 
 
 class EmbeddingBatch:
-    """
-    Represents a batch of text that is going to be embedded
-    """
+    """Represents a batch of text that is going to be embedded."""
 
     def __init__(self, texts: list[str], token_length: int):
         self.texts = texts
@@ -36,12 +30,9 @@ class ExtraArgs(TypedDict, total=False):
 
 
 class OpenAIEmbeddings(ABC):
-    """
-    Contains common logic across both OpenAI and Azure OpenAI embedding services
-    Can split source text into batches for more efficient embedding calls
-    """
+    """Client wrapper that handles batching, retries, and token accounting."""
 
-    SUPPORTED_BATCH_AOAI_MODEL = {
+    SUPPORTED_BATCH_MODEL = {
         "text-embedding-ada-002": {"token_limit": 8100, "max_batch_size": 16},
         "text-embedding-3-small": {"token_limit": 8100, "max_batch_size": 16},
         "text-embedding-3-large": {"token_limit": 8100, "max_batch_size": 16},
@@ -52,13 +43,26 @@ class OpenAIEmbeddings(ABC):
         "text-embedding-3-large": True,
     }
 
-    def __init__(self, open_ai_model_name: str, open_ai_dimensions: int, disable_batch: bool = False):
+    def __init__(
+        self,
+        open_ai_client: AsyncOpenAI,
+        open_ai_model_name: str,
+        open_ai_dimensions: int,
+        *,
+        disable_batch: bool = False,
+        azure_deployment_name: str | None = None,
+        azure_endpoint: str | None = None,
+    ):
+        self.open_ai_client = open_ai_client
         self.open_ai_model_name = open_ai_model_name
         self.open_ai_dimensions = open_ai_dimensions
         self.disable_batch = disable_batch
+        self.azure_deployment_name = azure_deployment_name
+        self.azure_endpoint = azure_endpoint.rstrip("/") if azure_endpoint else None
 
-    async def create_client(self) -> AsyncOpenAI:
-        raise NotImplementedError
+    @property
+    def _api_model(self) -> str:
+        return self.azure_deployment_name or self.open_ai_model_name
 
     def before_retry_sleep(self, retry_state):
         logger.info("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
@@ -68,7 +72,7 @@ class OpenAIEmbeddings(ABC):
         return len(encoding.encode(text))
 
     def split_text_into_batches(self, texts: list[str]) -> list[EmbeddingBatch]:
-        batch_info = OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL.get(self.open_ai_model_name)
+        batch_info = OpenAIEmbeddings.SUPPORTED_BATCH_MODEL.get(self.open_ai_model_name)
         if not batch_info:
             raise NotImplementedError(
                 f"Model {self.open_ai_model_name} is not supported with batch embedding operations"
@@ -101,7 +105,6 @@ class OpenAIEmbeddings(ABC):
     async def create_embedding_batch(self, texts: list[str], dimensions_args: ExtraArgs) -> list[list[float]]:
         batches = self.split_text_into_batches(texts)
         embeddings = []
-        client = await self.create_client()
         for batch in batches:
             async for attempt in AsyncRetrying(
                 retry=retry_if_exception_type(RateLimitError),
@@ -110,8 +113,8 @@ class OpenAIEmbeddings(ABC):
                 before_sleep=self.before_retry_sleep,
             ):
                 with attempt:
-                    emb_response = await client.embeddings.create(
-                        model=self.open_ai_model_name, input=batch.texts, **dimensions_args
+                    emb_response = await self.open_ai_client.embeddings.create(
+                        model=self._api_model, input=batch.texts, **dimensions_args
                     )
                     embeddings.extend([data.embedding for data in emb_response.data])
                     logger.info(
@@ -123,7 +126,6 @@ class OpenAIEmbeddings(ABC):
         return embeddings
 
     async def create_embedding_single(self, text: str, dimensions_args: ExtraArgs) -> list[float]:
-        client = await self.create_client()
         async for attempt in AsyncRetrying(
             retry=retry_if_exception_type(RateLimitError),
             wait=wait_random_exponential(min=15, max=60),
@@ -131,8 +133,8 @@ class OpenAIEmbeddings(ABC):
             before_sleep=self.before_retry_sleep,
         ):
             with attempt:
-                emb_response = await client.embeddings.create(
-                    model=self.open_ai_model_name, input=text, **dimensions_args
+                emb_response = await self.open_ai_client.embeddings.create(
+                    model=self._api_model, input=text, **dimensions_args
                 )
                 logger.info("Computed embedding for text section. Character count: %d", len(text))
 
@@ -146,84 +148,10 @@ class OpenAIEmbeddings(ABC):
             else {}
         )
 
-        if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_AOAI_MODEL:
+        if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_MODEL:
             return await self.create_embedding_batch(texts, dimensions_args)
 
         return [await self.create_embedding_single(text, dimensions_args) for text in texts]
-
-
-class AzureOpenAIEmbeddingService(OpenAIEmbeddings):
-    """
-    Class for using Azure OpenAI embeddings
-    To learn more please visit https://learn.microsoft.com/azure/ai-services/openai/concepts/understand-embeddings
-    """
-
-    def __init__(
-        self,
-        open_ai_service: Union[str, None],
-        open_ai_deployment: Union[str, None],
-        open_ai_model_name: str,
-        open_ai_dimensions: int,
-        open_ai_api_version: str,
-        credential: Union[AsyncTokenCredential, AzureKeyCredential],
-        open_ai_custom_url: Union[str, None] = None,
-        disable_batch: bool = False,
-    ):
-        super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)
-        self.open_ai_service = open_ai_service
-        if open_ai_service:
-            self.open_ai_endpoint = f"https://{open_ai_service}.openai.azure.com"
-        elif open_ai_custom_url:
-            self.open_ai_endpoint = open_ai_custom_url
-        else:
-            raise ValueError("Either open_ai_service or open_ai_custom_url must be provided")
-        self.open_ai_deployment = open_ai_deployment
-        self.open_ai_api_version = open_ai_api_version
-        self.credential = credential
-
-    async def create_client(self) -> AsyncOpenAI:
-        class AuthArgs(TypedDict, total=False):
-            api_key: str
-            azure_ad_token_provider: Callable[[], Union[str, Awaitable[str]]]
-
-        auth_args = AuthArgs()
-        if isinstance(self.credential, AzureKeyCredential):
-            auth_args["api_key"] = self.credential.key
-        elif isinstance(self.credential, AsyncTokenCredential):
-            auth_args["azure_ad_token_provider"] = get_bearer_token_provider(
-                self.credential, "https://cognitiveservices.azure.com/.default"
-            )
-        else:
-            raise TypeError("Invalid credential type")
-
-        return AsyncAzureOpenAI(
-            azure_endpoint=self.open_ai_endpoint,
-            azure_deployment=self.open_ai_deployment,
-            api_version=self.open_ai_api_version,
-            **auth_args,
-        )
-
-
-class OpenAIEmbeddingService(OpenAIEmbeddings):
-    """
-    Class for using OpenAI embeddings
-    To learn more please visit https://platform.openai.com/docs/guides/embeddings
-    """
-
-    def __init__(
-        self,
-        open_ai_model_name: str,
-        open_ai_dimensions: int,
-        credential: str,
-        organization: Optional[str] = None,
-        disable_batch: bool = False,
-    ):
-        super().__init__(open_ai_model_name, open_ai_dimensions, disable_batch)
-        self.credential = credential
-        self.organization = organization
-
-    async def create_client(self) -> AsyncOpenAI:
-        return AsyncOpenAI(api_key=self.credential, organization=self.organization)
 
 
 class ImageEmbeddings:

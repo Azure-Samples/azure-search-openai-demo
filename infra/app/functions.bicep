@@ -77,7 +77,6 @@ var commonAppSettings = {
   AZURE_OPENAI_EMB_DEPLOYMENT: openAiEmbDeployment
   AZURE_OPENAI_EMB_MODEL_NAME: openAiEmbModelName
   AZURE_OPENAI_EMB_DIMENSIONS: string(openAiEmbDimensions)
-  AZURE_OPENAI_API_VERSION: openAiApiVersion
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: openAiChatDeployment
   AZURE_OPENAI_CHATGPT_MODEL: openAiChatModelName
   AZURE_OPENAI_CUSTOM_URL: openAiCustomUrl

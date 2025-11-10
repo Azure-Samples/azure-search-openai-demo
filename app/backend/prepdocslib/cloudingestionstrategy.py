@@ -26,7 +26,7 @@ from azure.search.documents.indexes.models import (
 )
 
 from .blobmanager import BlobManager
-from .embeddings import AzureOpenAIEmbeddingService
+from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
 from .strategy import DocumentAction, SearchInfo, Strategy
@@ -56,7 +56,7 @@ class CloudIngestionStrategy(Strategy):
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
         search_info: SearchInfo,
-        embeddings: AzureOpenAIEmbeddingService,
+        embeddings: OpenAIEmbeddings,
         search_field_name_embedding: str,
         document_extractor_uri: str,
         document_extractor_auth_resource_id: str,
@@ -253,8 +253,12 @@ class CloudIngestionStrategy(Strategy):
     async def setup(self) -> None:
         logger.info("Setting up search index and skillset for cloud ingestion")
 
-        if not isinstance(self.embeddings, AzureOpenAIEmbeddingService):
-            raise TypeError("Cloud ingestion requires AzureOpenAIEmbeddingService for search index setup")
+        if not self.embeddings.azure_endpoint or not self.embeddings.azure_deployment_name:
+            raise ValueError("Integrated vectorization requires Azure OpenAI endpoint and deployment")
+
+        if not isinstance(self.embeddings, OpenAIEmbeddings):
+            raise TypeError("Cloud ingestion requires Azure OpenAI embeddings to configure the search index.")
+
         self._search_manager = SearchManager(
             search_info=self.search_info,
             search_analyzer_name=self.search_analyzer_name,

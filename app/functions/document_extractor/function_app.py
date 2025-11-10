@@ -14,8 +14,8 @@ import azure.functions as func
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import ManagedIdentityCredential
 
-from prepdocslib.ingestionhelpers import select_parser
 from prepdocslib.page import Page
+from prepdocslib.servicesetup import select_parser
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 

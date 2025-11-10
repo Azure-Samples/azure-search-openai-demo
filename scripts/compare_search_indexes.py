@@ -1,6 +1,4 @@
-"""Compare documents across two Azure AI Search indexes using azd credentials."""
-
-from __future__ import annotations
+"""Compare documents across two Azure AI Search indexes"""
 
 import argparse
 import asyncio
