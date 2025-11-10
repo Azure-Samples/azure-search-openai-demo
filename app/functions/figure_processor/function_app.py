@@ -44,7 +44,7 @@ USE_MEDIA_DESCRIBER_AZURE_CU = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "false"
 CONTENT_UNDERSTANDING_ENDPOINT = os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT", "")
 AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE", "")
 AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL", "")
-AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "")
+AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "2024-06-01")
 AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "")
 AZURE_OPENAI_CHATGPT_MODEL = os.getenv("AZURE_OPENAI_CHATGPT_MODEL", "")
 AZURE_VISION_ENDPOINT = os.getenv("AZURE_VISION_ENDPOINT", "")
@@ -141,6 +141,12 @@ async def process_figure_request(req: func.HttpRequest) -> func.HttpResponse:
         data = record.get("data", {})
         try:
             image_on_page, file_name = ImageOnPage.from_skill_payload(data)
+            logger.info(
+                "Figure processor input for %s: url=%s, description=%s",
+                image_on_page.figure_id,
+                image_on_page.url,
+                image_on_page.description,
+            )
             await process_page_image(
                 image=image_on_page,
                 document_filename=file_name,
@@ -148,7 +154,19 @@ async def process_figure_request(req: func.HttpRequest) -> func.HttpResponse:
                 image_embeddings_client=IMAGE_EMBEDDINGS,
                 figure_processor=FIGURE_PROCESSOR,
             )
+            logger.info(
+                "Figure processor after enrichment for %s: url=%s, description=%s",
+                image_on_page.figure_id,
+                (image_on_page.url or "NONE")[:100],
+                (image_on_page.description or "NONE")[:100],
+            )
             figure_payload = image_on_page.to_skill_payload(file_name, include_bytes_base64=False, include_bytes=False)
+            logger.info(
+                "Figure processor returning payload for %s: url='%s', description='%s'",
+                image_on_page.figure_id,
+                figure_payload.get("url", "MISSING")[:100] if figure_payload.get("url") else "NONE",
+                figure_payload.get("description", "MISSING")[:100] if figure_payload.get("description") else "NONE",
+            )
             output_values.append(
                 {
                     "recordId": record_id,

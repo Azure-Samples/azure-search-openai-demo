@@ -23,7 +23,7 @@ This architecture enables serverless, scalable, and event-driven document proces
 ┌─────────────────────────────────────────────────────────────────┐
 │  Azure AI Search Indexer                                        │
 │  - Blob data source (monitors content container)               │
-│  - Skillset with 3 chained custom skills                       │
+│  - Skillset with 4 chained skills (3 custom + 1 built-in)     │
 │  - Runs on schedule or on-demand                               │
 │  - Handles retries, checkpointing, state tracking              │
 └──────────────────────┬──────────────────────────────────────────┘
@@ -33,13 +33,14 @@ This architecture enables serverless, scalable, and event-driven document proces
          │  SKILL #1: document_extractor│
          │  (Flex Consumption Function) │
          │  HTTP Trigger                │
+         │  Context: /document          │
          │  Timeout: 10 minutes         │
          └─────────────┬────────────────┘
                        │
-  Input:               │ Output:
-  • Blob URL           │ • Markdown text with figure anchors
-  • File metadata      │ • Page metadata (text + figure ids)
-                       │ • Figures array (metadata + base64 image)
+  Input:               │ Output to /document:
+  • Blob URL           │ • pages[] (text + figure ids)
+  • File metadata      │ • figures[] (metadata + base64 image)
+                       │
    Processes:          │
    • Download blob     │
    • Document Intelligence
@@ -51,15 +52,16 @@ This architecture enables serverless, scalable, and event-driven document proces
          │  SKILL #2: figure_processor │
          │  (Flex Consumption Function)│
          │  HTTP Trigger               │
+         │  Context: /document/figures/*│
          │  Timeout: 6 minutes         │
          │  Memory: 3072 MB            │
          └─────────────┬───────────────┘
                        │
-  Context:            │ Output:
-  • /document/figures/*│ • Figure url (blob SAS)
-  Input values:       │ • Figure caption
-  • Figure bytes      │ • Figure embedding vector
-  • Figure metadata   │
+  Input (per figure): │ Output to /document/figures/*:
+  • Figure bytes      │ • description (enriched)
+  • Figure metadata   │ • url (enriched)
+  • placeholder       │ • embedding (enriched)
+  • title             │
    Processes:          │
    • Upload to blob    │
    • Describe via LLM  │
@@ -67,19 +69,43 @@ This architecture enables serverless, scalable, and event-driven document proces
                        │
                        ▼
          ┌─────────────────────────────┐
-         │  SKILL #3: text_processor   │
+         │  SKILL #3: Shaper Skill     │
+         │  (Built-in Azure AI Search) │
+         │  Context: /document          │
+         └─────────────┬───────────────┘
+                       │
+  Purpose:            │ Output to /document:
+  • Consolidate data  │ • consolidated_document:
+                       │   - pages[] (from skill #1)
+  Shaper combines:    │   - figures[] (enriched from skill #2)
+  • Original pages    │   - file_name
+  • Enriched figures  │   - storageUrl
+  • File metadata     │
+                       │
+  Why needed:         │
+  Azure AI Search enrichment tree isolates contexts.
+  Data enriched at /document/figures/* doesn't automatically
+  merge into /document scope. Shaper explicitly consolidates
+  all fields into a single object for downstream consumption.
+                       │
+                       ▼
+         ┌─────────────────────────────┐
+         │  SKILL #4: text_processor   │
          │  (Combines, splits, embeds) │
          │  HTTP Trigger               │
+         │  Context: /document          │
          │  Timeout: 5 minutes         │
          │  Memory: 2048 MB            │
          └─────────────┬───────────────┘
                        │
   Input:              │ Output:
-  • Full markdown     │ • Array of chunks with:
-  • Processed figures │   - Content text
-  • File metadata     │   - Text embeddings
-  Processes:          │   - Figure references + embeddings
-  • Enrich placeholders│   - Metadata (sourcepage, etc.)
+  • consolidated_doc  │ • Array of chunks with:
+    - pages[]         │   - Content text
+    - figures[]       │   - Text embeddings
+    - file_name       │   - Figure references + embeddings
+    - storageUrl      │   - Metadata (sourcepage, etc.)
+   Processes:          │
+   • Enrich placeholders│
    • Split text        │
    • Generate embeddings│
                        │
@@ -214,9 +240,8 @@ This architecture enables serverless, scalable, and event-driven document proces
     {
       "recordId": "1",
       "data": {
-        "id": "fig1",
         "url": "https://storage.../images/doc-fig1.png",
-        "caption": "Bar chart showing quarterly revenue",
+        "description": "<figure><figcaption>Bar chart showing quarterly revenue</figcaption></figure>",
         "imageEmbedding": [0.789, -0.012, ...]
       },
       "errors": [],
@@ -226,7 +251,85 @@ This architecture enables serverless, scalable, and event-driven document proces
 }
 ```
 
-### 3. Text Processor Function
+### 4. Shaper Skill (Built-in)
+
+**Type:** Built-in Azure AI Search skill
+
+**Purpose:** Consolidates enrichments from different contexts into a single object.
+
+**Why Needed:**
+
+Azure AI Search's enrichment tree isolates data by context. When the `figure_processor` skill runs at context `/document/figures/*`, it enriches individual figure objects (adding `description`, `url`, `embedding`). However, these enrichments remain isolated in the `/document/figures/*` context and don't automatically merge into the `/document` context where the `text_processor` skill operates.
+
+The Shaper skill explicitly consolidates:
+
+- Original `pages` array from `document_extractor`
+- Enriched `figures` array with `description`, `url`, `embedding` from `figure_processor`
+- File metadata (`file_name`, `storageUrl`)
+
+This consolidated object is then passed to the `text_processor` skill, ensuring it receives all enriched data in a single, well-structured input.
+
+**Configuration:**
+
+- Context: `/document`
+- Uses nested `inputs` syntax with `source_context` for array consolidation
+- Output: `consolidated_document` object containing all required fields
+
+**Input Mapping:**
+
+```python
+ShaperSkill(
+    name="document-shaper-skill",
+    context="/document",
+    inputs=[
+        InputFieldMappingEntry(name="pages", source="/document/pages"),
+        InputFieldMappingEntry(
+            name="figures",
+            source_context="/document/figures/*",
+            inputs=[
+                InputFieldMappingEntry(name="figure_id", source="/document/figures/*/figure_id"),
+                InputFieldMappingEntry(name="filename", source="/document/figures/*/filename"),
+                # ... other figure fields
+                InputFieldMappingEntry(name="description", source="/document/figures/*/description"),
+                InputFieldMappingEntry(name="url", source="/document/figures/*/url"),
+                InputFieldMappingEntry(name="embedding", source="/document/figures/*/embedding"),
+            ]
+        ),
+        InputFieldMappingEntry(name="file_name", source="/document/metadata_storage_name"),
+        InputFieldMappingEntry(name="storageUrl", source="/document/metadata_storage_path"),
+    ],
+    outputs=[
+        OutputFieldMappingEntry(name="output", target_name="consolidated_document")
+    ]
+)
+```
+
+**Output Format:**
+
+The Shaper skill produces a `consolidated_document` object at `/document/consolidated_document`:
+
+```json
+{
+  "consolidated_document": {
+    "pages": [
+      {"page_num": 0, "text": "...", "figure_ids": ["1.1"]}
+    ],
+    "figures": [
+      {
+        "figure_id": "1.1",
+        "filename": "figure1_1.png",
+        "description": "The image shows a logo...",
+        "url": "https://storage.../images/doc/figure1_1.png",
+        "embedding": [0.123, -0.456, ...]
+      }
+    ],
+    "file_name": "document.pdf",
+    "storageUrl": "https://storage.../content/document.pdf"
+  }
+}
+```
+
+### 5. Text Processor Function
 
 **Location:** `app/functions/text_processor/`
 

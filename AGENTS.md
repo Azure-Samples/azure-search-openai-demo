@@ -116,3 +116,7 @@ cd scripts && mypy . --config-file=../pyproject.toml
 
 Note that we do not currently enforce type hints in the tests folder, as it would require adding a lot of `# type: ignore` comments to the existing tests.
 We only enforce type hints in the main application code and scripts.
+
+## Python code style
+
+Do not use single underscores in front of "private" methods or variables in Python code. We do not follow that convention in this codebase, since this is an application and not a library.

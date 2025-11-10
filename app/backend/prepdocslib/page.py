@@ -52,20 +52,25 @@ class ImageOnPage:
             b = self.bytes if isinstance(self.bytes, (bytes, bytearray)) else b""
             data["bytes_base64"] = base64.b64encode(b).decode("utf-8")
 
+        # Remove None values to prevent document extractor from emitting fields that will be
+        # enriched by figure processor, avoiding potential conflicts in Azure AI Search enrichment merge
+        data = {k: v for k, v in data.items() if v is not None}
+
         data["document_file_name"] = file_name
         return data
 
     @classmethod
     def from_skill_payload(cls, data: dict[str, Any]) -> tuple["ImageOnPage", str]:
         """Deserialize a figure skill payload into an ImageOnPage, normalizing fields."""
-        # Decode base64 image data
+        # Decode base64 image data (optional - may be omitted if already persisted to blob)
         bytes_base64 = data.get("bytes_base64")
-        if not bytes_base64:
-            raise ValueError("Figure payload missing required bytes_base64 field")
-        try:
-            raw_bytes = base64.b64decode(bytes_base64)
-        except Exception as exc:  # pragma: no cover - defensive
-            raise ValueError("Invalid bytes_base64 image data") from exc
+        if bytes_base64:
+            try:
+                raw_bytes = base64.b64decode(bytes_base64)
+            except Exception as exc:  # pragma: no cover - defensive
+                raise ValueError("Invalid bytes_base64 image data") from exc
+        else:
+            raw_bytes = b""  # Empty bytes if not provided (already uploaded to blob)
 
         # page_num may arrive as str; coerce
         try:
@@ -89,6 +94,8 @@ class ImageOnPage:
             placeholder=data.get("placeholder"),
             mime_type=data.get("mime_type") or "image/png",
             title=data.get("title"),
+            description=data.get("description"),
+            url=data.get("url"),
         )
         return image, data.get("document_file_name", "")
 

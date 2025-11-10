@@ -139,7 +139,7 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
     Parameters
     ----------
     data: dict[str, Any]
-        Skill payload containing file metadata, pages, and figures.
+        Skill payload containing consolidated_document with file metadata, pages, and figures.
 
     Returns
     -------
@@ -147,11 +147,38 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
         Chunk dictionaries ready for downstream indexing.
     """
 
-    file_name = data.get("file_name", "document")
-    storage_url = data.get("storageUrl") or data.get("metadata_storage_path") or file_name
-    pages_input = data.get("pages", [])  # [{page_num, text, figure_ids}]
-    figures_input = data.get("figures", [])  # serialized skill payload
+    # Extract consolidated_document object from Shaper skill
+    consolidated_doc = data.get("consolidated_document", data)
+
+    file_name = consolidated_doc.get("file_name", "document")
+    storage_url = consolidated_doc.get("storageUrl") or consolidated_doc.get("metadata_storage_path") or file_name
+    pages_input = consolidated_doc.get("pages", [])  # [{page_num, text, figure_ids}]
+    figures_input = consolidated_doc.get("figures", [])  # serialized skill payload
+
+    # Merge enriched fields from figure processor into figures array
+    enriched_descriptions = data.get("enriched_descriptions", [])
+    enriched_urls = data.get("enriched_urls", [])
+    enriched_embeddings = data.get("enriched_embeddings", [])
+
+    for i, figure in enumerate(figures_input):
+        if i < len(enriched_descriptions):
+            figure["description"] = enriched_descriptions[i]
+        if i < len(enriched_urls):
+            figure["url"] = enriched_urls[i]
+        if i < len(enriched_embeddings):
+            figure["embedding"] = enriched_embeddings[i]
+
+    # Debug: log the first figure to see what fields are present
+    if figures_input:
+        logger.info("DEBUG: First figure keys after merge: %s", list(figures_input[0].keys()))
+        logger.info(
+            "DEBUG: First figure sample after merge: %s",
+            {k: str(v)[:50] if v else v for k, v in list(figures_input[0].items())[:10]},
+        )
+
     figures_by_id = {figure["figure_id"]: figure for figure in figures_input}
+
+    logger.info("Processing %s: %d pages, %d figures", file_name, len(pages_input), len(figures_input))
 
     # Build Page objects with placeholders intact (figure markup will be injected by combine_text_with_figures())
     pages: list[Page] = []
@@ -170,8 +197,31 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
             if not figure_payload:
                 logger.warning("Figure ID %s not found in figures metadata for page %d", fid, page_num)
                 continue
-            image_on_page, _ = ImageOnPage.from_skill_payload(figure_payload)
-            page_obj.images.append(image_on_page)
+            logger.info(
+                "Deserializing figure %s: has description=%s, has url=%s, has bytes_base64=%s",
+                fid,
+                "description" in figure_payload,
+                "url" in figure_payload,
+                "bytes_base64" in figure_payload,
+            )
+            logger.info(
+                "Figure %s payload values: description='%s', url='%s'",
+                fid,
+                figure_payload.get("description", "MISSING")[:100] if figure_payload.get("description") else "NONE",
+                figure_payload.get("url", "MISSING")[:100] if figure_payload.get("url") else "NONE",
+            )
+            try:
+                image_on_page, _ = ImageOnPage.from_skill_payload(figure_payload)
+                logger.info(
+                    "Figure %s deserialized: description='%s', url='%s', placeholder=%s",
+                    fid,
+                    (image_on_page.description or "NONE")[:100],
+                    image_on_page.url or "NONE",
+                    image_on_page.placeholder,
+                )
+                page_obj.images.append(image_on_page)
+            except Exception as exc:
+                logger.error("Failed to deserialize figure %s: %s", fid, exc, exc_info=True)
         pages.append(page_obj)
 
     if not pages:
@@ -207,15 +257,12 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
         image_refs: list[dict[str, Any]] = []
         for image in section.chunk.images:
             ref = {
-                "id": image.figure_id,
                 "url": image.url or "",
-                "caption": image.title or image.figure_id,
-                "bbox": list(image.bbox),
+                "description": image.description or "",
+                "boundingbox": list(image.bbox),
             }
-            # Optionally surface plain description separately (strip markup) if needed later.
-            # Since image.description now holds markup, we do not include it here by default.
             if USE_MULTIMODAL and image.embedding is not None:
-                ref["imageEmbedding"] = image.embedding
+                ref["embedding"] = image.embedding
             image_refs.append(ref)
         chunk_entry: dict[str, Any] = {
             "id": f"{normalized_id}-{idx:04d}",

@@ -118,7 +118,7 @@ class FileStrategy(Strategy):
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
-                    await self.blob_manager.upload_blob(file)
+                    blob_url = await self.blob_manager.upload_blob(file)
                     sections = await parse_file(
                         file,
                         self.file_processors,
@@ -128,7 +128,7 @@ class FileStrategy(Strategy):
                         figure_processor=self.figure_processor,
                     )
                     if sections:
-                        await self.search_manager.update_content(sections, url=file.url)
+                        await self.search_manager.update_content(sections, url=blob_url)
                 finally:
                     if file:
                         file.close()

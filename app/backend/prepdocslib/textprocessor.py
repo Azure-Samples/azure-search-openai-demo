@@ -19,10 +19,12 @@ def combine_text_with_figures(page: "Page") -> None:
     After figures have been described and enriched, this replaces their
     placeholders in the page text with the full <figure> markup.
     """
+    from .figureprocessor import build_figure_markup
 
     for image in page.images:
         if image.description and image.placeholder in page.text:
-            page.text = page.text.replace(image.placeholder, image.description)
+            figure_markup = build_figure_markup(image, image.description)
+            page.text = page.text.replace(image.placeholder, figure_markup)
             logger.info("Replaced placeholder for figure %s with description markup", image.figure_id)
         elif not image.description:
             logger.debug("No description for figure %s; keeping placeholder", image.figure_id)

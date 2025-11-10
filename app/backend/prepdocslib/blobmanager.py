@@ -450,7 +450,7 @@ class BlobManager(BaseBlobManager):
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
             )
-        container_client = self.blob_service_client.get_container_client(self.container)
+        container_client = self.blob_service_client.get_container_client(self.image_container)
         if not await container_client.exists():
             await container_client.create_container()
         image_bytes = self.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
