@@ -467,6 +467,7 @@ async def setup_clients():
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
     USE_AGENTIC_RETRIEVAL = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
+    USE_VECTORS = os.getenv("USE_VECTORS", "").lower() != "false"
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
     RUNNING_ON_AZURE = os.getenv("WEBSITE_HOSTNAME") is not None or os.getenv("RUNNING_IN_PRODUCTION") is not None
@@ -597,15 +598,18 @@ async def setup_clients():
         search_info = await setup_search_info(
             search_service=AZURE_SEARCH_SERVICE, index_name=AZURE_SEARCH_INDEX, azure_credential=azure_credential
         )
-        text_embeddings_service = setup_embeddings_service(
-            open_ai_client=openai_client,
-            openai_host=OPENAI_HOST,
-            emb_model_name=OPENAI_EMB_MODEL,
-            emb_model_dimensions=OPENAI_EMB_DIMENSIONS,
-            azure_openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
-            azure_openai_endpoint=azure_openai_endpoint,
-            disable_vectors=os.getenv("USE_VECTORS", "").lower() == "false",
-        )
+
+        text_embeddings_service = None
+        if USE_VECTORS:
+            text_embeddings_service = setup_embeddings_service(
+                open_ai_client=openai_client,
+                openai_host=OPENAI_HOST,
+                emb_model_name=OPENAI_EMB_MODEL,
+                emb_model_dimensions=OPENAI_EMB_DIMENSIONS,
+                azure_openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT,
+                azure_openai_endpoint=azure_openai_endpoint,
+            )
+
         image_embeddings_service = setup_image_embeddings_service(
             azure_credential=azure_credential,
             vision_endpoint=AZURE_VISION_ENDPOINT,
@@ -641,7 +645,7 @@ async def setup_clients():
         OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS
         or Approach.GPT_REASONING_MODELS[OPENAI_CHATGPT_MODEL].streaming
     )
-    current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = os.getenv("USE_VECTORS", "").lower() != "false"
+    current_app.config[CONFIG_VECTOR_SEARCH_ENABLED] = bool(USE_VECTORS)
     current_app.config[CONFIG_USER_UPLOAD_ENABLED] = bool(USE_USER_UPLOAD)
     current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED] = ENABLE_LANGUAGE_PICKER
     current_app.config[CONFIG_SPEECH_INPUT_ENABLED] = USE_SPEECH_INPUT_BROWSER

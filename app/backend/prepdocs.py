@@ -5,14 +5,12 @@ import os
 from typing import Optional
 
 import aiohttp
-from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential
 from openai import AsyncOpenAI
 from rich.logging import RichHandler
 
 from load_azd_env import load_azd_env
-from prepdocslib.cloudingestionstrategy import CloudIngestionStrategy
 from prepdocslib.csvparser import CsvParser
 from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import FileStrategy
@@ -34,8 +32,9 @@ from prepdocslib.servicesetup import (
     setup_figure_processor,
     setup_image_embeddings_service,
     setup_openai_client,
+    setup_search_info,
 )
-from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
+from prepdocslib.strategy import DocumentAction, Strategy
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
@@ -60,39 +59,6 @@ async def check_search_service_connectivity(search_service: str) -> bool:
     except Exception as e:
         logger.debug(f"Search service ping failed: {e}")
         return False
-
-
-async def setup_search_info(
-    search_service: str,
-    index_name: str,
-    azure_credential: AsyncTokenCredential,
-    use_agentic_retrieval: Optional[bool] = None,
-    azure_openai_endpoint: Optional[str] = None,
-    agent_name: Optional[str] = None,
-    agent_max_output_tokens: Optional[int] = None,
-    azure_openai_searchagent_deployment: Optional[str] = None,
-    azure_openai_searchagent_model: Optional[str] = None,
-    search_key: Optional[str] = None,
-    azure_vision_endpoint: Optional[str] = None,
-) -> SearchInfo:
-    search_creds: AsyncTokenCredential | AzureKeyCredential = (
-        azure_credential if search_key is None else AzureKeyCredential(search_key)
-    )
-    if use_agentic_retrieval and azure_openai_searchagent_model is None:
-        raise ValueError("Azure OpenAI SearchAgent model must be specified when using agentic retrieval.")
-
-    return SearchInfo(
-        endpoint=f"https://{search_service}.search.windows.net/",
-        credential=search_creds,
-        index_name=index_name,
-        agent_name=agent_name,
-        agent_max_output_tokens=agent_max_output_tokens,
-        use_agentic_retrieval=use_agentic_retrieval,
-        azure_openai_endpoint=azure_openai_endpoint,
-        azure_openai_searchagent_model=azure_openai_searchagent_model,
-        azure_openai_searchagent_deployment=azure_openai_searchagent_deployment,
-        azure_vision_endpoint=azure_vision_endpoint,
-    )
 
 
 def setup_list_file_strategy(
@@ -272,6 +238,12 @@ if __name__ == "__main__":  # pragma: no cover
 
     load_azd_env()
 
+    if os.getenv("USE_CLOUD_INGESTION", "").lower() == "true":
+        logger.warning(
+            "Cloud ingestion is enabled. Please use setup_cloud_ingestion.py instead of prepdocs.py. Exiting."
+        )
+        exit(0)
+
     if (
         os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled"
         and os.getenv("AZURE_USE_VPN_GATEWAY", "").lower() != "true"
@@ -284,7 +256,6 @@ if __name__ == "__main__":  # pragma: no cover
     use_acls = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     enable_global_documents = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
-    use_cloud_ingestion = os.getenv("USE_CLOUD_INGESTION", "").lower() == "true"
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
     use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
@@ -313,20 +284,18 @@ if __name__ == "__main__":  # pragma: no cover
     if use_agentic_retrieval and OPENAI_HOST not in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
         raise Exception("Agentic retrieval requires an Azure OpenAI chat completion service")
 
-    search_info = loop.run_until_complete(
-        setup_search_info(
-            search_service=os.environ["AZURE_SEARCH_SERVICE"],
-            index_name=os.environ["AZURE_SEARCH_INDEX"],
-            use_agentic_retrieval=use_agentic_retrieval,
-            agent_name=os.getenv("AZURE_SEARCH_AGENT"),
-            agent_max_output_tokens=int(os.getenv("AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS", 10000)),
-            azure_openai_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-            azure_openai_searchagent_deployment=os.getenv("AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT"),
-            azure_openai_searchagent_model=os.getenv("AZURE_OPENAI_SEARCHAGENT_MODEL"),
-            azure_credential=azd_credential,
-            search_key=clean_key_if_exists(args.searchkey),
-            azure_vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
-        )
+    search_info = setup_search_info(
+        search_service=os.environ["AZURE_SEARCH_SERVICE"],
+        index_name=os.environ["AZURE_SEARCH_INDEX"],
+        use_agentic_retrieval=use_agentic_retrieval,
+        agent_name=os.getenv("AZURE_SEARCH_AGENT"),
+        agent_max_output_tokens=int(os.getenv("AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS", 10000)),
+        azure_openai_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+        azure_openai_searchagent_deployment=os.getenv("AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT"),
+        azure_openai_searchagent_model=os.getenv("AZURE_OPENAI_SEARCHAGENT_MODEL"),
+        azure_credential=azd_credential,
+        search_key=clean_key_if_exists(args.searchkey),
+        azure_vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
     )
 
     # Check search service connectivity
@@ -390,38 +359,7 @@ if __name__ == "__main__":  # pragma: no cover
         )
 
     ingestion_strategy: Strategy
-    if use_cloud_ingestion:
-        if args.category:
-            logger.warning("Category assignment is not currently supported with cloud ingestion; ignoring.")
-
-        document_extractor_uri = os.environ["DOCUMENT_EXTRACTOR_SKILL_ENDPOINT"]
-        document_extractor_resource_id = os.environ["DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID"]
-        figure_processor_uri = os.environ["FIGURE_PROCESSOR_SKILL_ENDPOINT"]
-        figure_processor_resource_id = os.environ["FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID"]
-        text_processor_uri = os.environ["TEXT_PROCESSOR_SKILL_ENDPOINT"]
-        text_processor_resource_id = os.environ["TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID"]
-        search_embedding_field = os.environ["AZURE_SEARCH_FIELD_NAME_EMBEDDING"]
-
-        ingestion_strategy = CloudIngestionStrategy(
-            list_file_strategy=list_file_strategy,
-            blob_manager=blob_manager,
-            search_info=search_info,
-            embeddings=openai_embeddings_service,
-            search_field_name_embedding=search_embedding_field,
-            document_extractor_uri=document_extractor_uri,
-            document_extractor_auth_resource_id=document_extractor_resource_id,
-            figure_processor_uri=figure_processor_uri,
-            figure_processor_auth_resource_id=figure_processor_resource_id,
-            text_processor_uri=text_processor_uri,
-            text_processor_auth_resource_id=text_processor_resource_id,
-            subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
-            document_action=document_action,
-            search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
-            use_acls=use_acls,
-            use_multimodal=use_multimodal,
-            enforce_access_control=enforce_access_control,
-        )
-    elif use_int_vectorization:
+    if use_int_vectorization:
 
         if not openai_embeddings_service or OPENAI_HOST not in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
             raise Exception("Integrated vectorization strategy requires an Azure OpenAI embeddings service")

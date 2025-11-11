@@ -697,7 +697,6 @@ module functions 'app/functions.bicep' = if (useCloudIngestion) {
     openAiEmbDeployment: embedding.deploymentName
     openAiEmbModelName: embedding.modelName
     openAiEmbDimensions: embedding.dimensions
-    openAiApiVersion: azureOpenAiApiVersion
     openAiChatDeployment: chatGpt.deploymentName
     openAiChatModelName: chatGpt.modelName
     openAiCustomUrl: azureOpenAiCustomUrl

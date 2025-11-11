@@ -17,6 +17,7 @@ from .figureprocessor import FigureProcessor, MediaDescriptionStrategy
 from .htmlparser import LocalHTMLParser
 from .parser import Parser
 from .pdfparser import DocumentAnalysisParser, LocalPdfParser
+from .strategy import SearchInfo
 from .textparser import TextParser
 
 logger = logging.getLogger("scripts")
@@ -35,6 +36,40 @@ class OpenAIHost(str, Enum):
     AZURE = "azure"
     AZURE_CUSTOM = "azure_custom"
     LOCAL = "local"
+
+
+def setup_search_info(
+    search_service: str,
+    index_name: str,
+    azure_credential: AsyncTokenCredential,
+    use_agentic_retrieval: Optional[bool] = None,
+    azure_openai_endpoint: Optional[str] = None,
+    agent_name: Optional[str] = None,
+    agent_max_output_tokens: Optional[int] = None,
+    azure_openai_searchagent_deployment: Optional[str] = None,
+    azure_openai_searchagent_model: Optional[str] = None,
+    search_key: Optional[str] = None,
+    azure_vision_endpoint: Optional[str] = None,
+) -> SearchInfo:
+    """Setup search service information."""
+    search_creds: AsyncTokenCredential | AzureKeyCredential = (
+        azure_credential if search_key is None else AzureKeyCredential(search_key)
+    )
+    if use_agentic_retrieval and azure_openai_searchagent_model is None:
+        raise ValueError("Azure OpenAI SearchAgent model must be specified when using agentic retrieval.")
+
+    return SearchInfo(
+        endpoint=f"https://{search_service}.search.windows.net/",
+        credential=search_creds,
+        index_name=index_name,
+        agent_name=agent_name,
+        agent_max_output_tokens=agent_max_output_tokens,
+        use_agentic_retrieval=use_agentic_retrieval,
+        azure_openai_endpoint=azure_openai_endpoint,
+        azure_openai_searchagent_model=azure_openai_searchagent_model,
+        azure_openai_searchagent_deployment=azure_openai_searchagent_deployment,
+        azure_vision_endpoint=azure_vision_endpoint,
+    )
 
 
 def setup_openai_client(

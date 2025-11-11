@@ -33,7 +33,6 @@ param searchFieldNameEmbedding string
 param openAiEmbDeployment string
 param openAiEmbModelName string
 param openAiEmbDimensions int
-param openAiApiVersion string
 param openAiChatDeployment string
 param openAiChatModelName string
 param openAiCustomUrl string

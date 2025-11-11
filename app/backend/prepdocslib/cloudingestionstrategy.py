@@ -47,7 +47,7 @@ class SkillConfig:
     auth_resource_id: str
 
 
-class CloudIngestionStrategy(Strategy):
+class CloudIngestionStrategy(Strategy):  # pragma: no cover
     """Ingestion strategy that wires Azure Function custom skills into an indexer."""
 
     def __init__(

@@ -1,22 +1,20 @@
-"""Utilities for describing and enriching figures outside of document parsing."""
+"""Utilities for describing and enriching figures extracted from documents."""
 
 import logging
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
+from .blobmanager import BaseBlobManager
+from .embeddings import ImageEmbeddings
 from .mediadescriber import (
     ContentUnderstandingDescriber,
     MediaDescriber,
     MultimodalModelDescriber,
 )
-
-if TYPE_CHECKING:  # pragma: no cover - used only for type hints
-    from .blobmanager import BaseBlobManager
-    from .embeddings import ImageEmbeddings
-    from .page import ImageOnPage
+from .page import ImageOnPage
 
 logger = logging.getLogger("scripts")
 
@@ -127,13 +125,7 @@ async def process_page_image(
     figure_processor: Optional["FigureProcessor"] = None,
     user_oid: Optional[str] = None,
 ) -> "ImageOnPage":
-    """Generate description, upload image, and optionally compute embedding for a figure.
-
-    Relaxed from previous version:
-      - Only blob_manager is strictly required (for upload).
-      - image_embeddings_client may be None (embedding step skipped).
-      - Returns the mutated ImageOnPage for easier functional-style use.
-    """
+    """Generate description, upload image, and optionally compute embedding for a figure."""
 
     if blob_manager is None:
         raise ValueError("BlobManager must be provided to process images.")

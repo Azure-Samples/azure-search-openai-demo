@@ -11,6 +11,7 @@ from typing import Any, cast
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential
 from azure.search.documents.aio import SearchClient
+from Levenshtein import ratio
 
 from load_azd_env import load_azd_env
 
@@ -75,6 +76,57 @@ def build_endpoint(service_name: str) -> str:
     """Return the full endpoint URL for the Azure AI Search service."""
 
     return f"https://{service_name}.search.windows.net"
+
+
+def _match_chunks_by_similarity(
+    first_docs: list[dict[str, Any]], second_docs: list[dict[str, Any]]
+) -> list[tuple[dict[str, Any], dict[str, Any], float]]:
+    """
+    Match chunks from two document lists based on content similarity using Levenshtein ratio.
+
+    Returns a list of tuples (doc1, doc2, similarity_score) where each doc1 is matched
+    to its best matching doc2 based on content similarity.
+    """
+    matched_pairs = []
+    used_second_indices = set()
+
+    for doc1 in first_docs:
+        content1 = doc1.get("content", "")
+        best_match = None
+        best_similarity = 0.0
+        best_idx = -1
+
+        # Find the best matching chunk from second_docs
+        for idx, doc2 in enumerate(second_docs):
+            if idx in used_second_indices:
+                continue
+
+            content2 = doc2.get("content", "")
+            # Normalize whitespace for comparison
+            normalized1 = " ".join(str(content1).split())
+            normalized2 = " ".join(str(content2).split())
+
+            # Calculate similarity ratio (0.0 to 1.0)
+            similarity = ratio(normalized1, normalized2)
+
+            if similarity > best_similarity:
+                best_similarity = similarity
+                best_match = doc2
+                best_idx = idx
+
+        if best_match is not None:
+            matched_pairs.append((doc1, best_match, best_similarity))
+            used_second_indices.add(best_idx)
+        else:
+            # No match found, pair with None
+            matched_pairs.append((doc1, {}, 0.0))
+
+    # Add any unmatched docs from second_docs
+    for idx, doc2 in enumerate(second_docs):
+        if idx not in used_second_indices:
+            matched_pairs.append(({}, doc2, 0.0))
+
+    return matched_pairs
 
 
 async def compare_indexes(
@@ -145,8 +197,36 @@ async def compare_indexes(
                     len(second_docs),
                 )
 
-            # Compare field sets and values for each document pair
-            for idx, (doc1, doc2) in enumerate(zip(first_docs, second_docs)):
+            # Match chunks by content similarity instead of position
+            matched_pairs = _match_chunks_by_similarity(first_docs, second_docs)
+
+            # Compare field sets and values for each matched document pair
+            for idx, (doc1, doc2, similarity) in enumerate(matched_pairs):
+                # Skip if one or both documents are empty (unmatched)
+                if not doc1 or not doc2:
+                    differences_found = True
+                    logger.warning(
+                        "\n=== UNMATCHED CHUNK for sourcefile=%s, sourcepage=%s ===",
+                        key[0],
+                        key[1],
+                    )
+                    if not doc1:
+                        logger.warning("  Chunk only in %s: ID=%s", second_index, doc2.get("id"))
+                    if not doc2:
+                        logger.warning("  Chunk only in %s: ID=%s", first_index, doc1.get("id"))
+                    continue
+
+                if similarity < 0.8:
+                    logger.warning(
+                        "\n=== LOW SIMILARITY MATCH for sourcefile=%s, sourcepage=%s (chunk pair %d) ===",
+                        key[0],
+                        key[1],
+                        idx,
+                    )
+                    logger.warning("  Content similarity: %.2f%%", similarity * 100)
+                    logger.warning("  %s ID: %s", first_index, doc1.get("id"))
+                    logger.warning("  %s ID: %s", second_index, doc2.get("id"))
+
                 fields1 = set(doc1.keys())
                 fields2 = set(doc2.keys())
 

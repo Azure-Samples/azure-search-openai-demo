@@ -1,3 +1,9 @@
+$USE_CLOUD_INGESTION = (azd env get-value USE_CLOUD_INGESTION)
+if ($USE_CLOUD_INGESTION -eq "true") {
+  Write-Host "Cloud ingestion is enabled, so we are not running the manual ingestion process."
+  Exit 0
+}
+
 ./scripts/load_python_env.ps1
 
 $venvPythonPath = "./.venv/scripts/python.exe"
