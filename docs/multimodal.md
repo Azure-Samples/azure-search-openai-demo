@@ -112,5 +112,4 @@ and you may still see good results with just text inputs, since the inputs conta
 
 ## Compatibility
 
-* This feature is **not** compatible with [integrated vectorization](./deploy_features.md#enabling-integrated-vectorization), as the currently configured built-in skills do not process images or store image embeddings. Azure AI Search does now offer built-in skills for multimodal support, as demonstrated in [azure-ai-search-multimodal-sample](https://github.com/Azure-Samples/azure-ai-search-multimodal-sample), but we have not integrated them in this project. Instead, we are working on making a custom skill based off the data ingestion code in this repository, and hosting that skill on Azure Functions. Stay tuned to the releases to find out when that's available.
 * This feature *is* compatible with the [reasoning models](./reasoning.md) feature, as long as you use a model that [supports image inputs](https://learn.microsoft.com/azure/ai-services/openai/how-to/reasoning?tabs=python-secure%2Cpy#api--feature-support).

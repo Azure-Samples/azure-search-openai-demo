@@ -266,7 +266,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         logger.info("Setting up search index and skillset for cloud ingestion")
 
         if not self.embeddings.azure_endpoint or not self.embeddings.azure_deployment_name:
-            raise ValueError("Integrated vectorization requires Azure OpenAI endpoint and deployment")
+            raise ValueError("Cloud ingestion requires Azure OpenAI endpoint and deployment")
 
         if not isinstance(self.embeddings, OpenAIEmbeddings):
             raise TypeError("Cloud ingestion requires Azure OpenAI embeddings to configure the search index.")

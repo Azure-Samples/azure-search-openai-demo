@@ -36,7 +36,7 @@ In order to ingest a document format, we need a tool that can turn it into text.
 
 ## Ingestion stages
 
-The ingestion pipeline consists of three main stages that transform raw documents into searchable content in Azure AI Search. These stages apply to both local ingestion (using `prepdocs.py`) and cloud-based ingestion (using Azure Functions as custom skills).
+The ingestion pipeline consists of three main stages that transform raw documents into searchable content in Azure AI Search. These stages apply to both [local ingestion](#local-ingestion) and [cloud-based ingestion](#cloud-based-ingestion).
 
 ### Document extraction
 
@@ -153,6 +153,8 @@ The cloud ingestion pipeline uses four Azure Functions as custom skills within a
    - **Text Processor** (Skill #4): Combines text with enriched figures, chunks content, and generates embeddings
 4. **Azure AI Search Index** receives the final processed chunks with embeddings
 
+The functions are defined in the `app/functions/` directory, and the custom skillset is configured in the `app/backend/setup_cloud_ingestion.py` script.
+
 #### [Document Extractor Function](app/functions/document_extractor/)
 
 - Implements the [document extraction](#document-extraction) stage
@@ -163,7 +165,7 @@ The cloud ingestion pipeline uses four Azure Functions as custom skills within a
 - Implements the [figure processing](#figure-processing) stage
 - Emits enriched figure metadata with descriptions, URLs, and embeddings
 
-#### [Shaper Skill](https://learn.microsoft.com/en-us/azure/search/cognitive-search-skill-shaper)
+#### [Shaper Skill](https://learn.microsoft.com/azure/search/cognitive-search-skill-shaper)
 
 - Consolidates enrichments from the figure processor back into the main document context
 - Required because Azure AI Search's enrichment tree isolates data by context

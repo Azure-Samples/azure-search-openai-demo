@@ -12,7 +12,6 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling persistent chat history with Azure Cosmos DB](#enabling-persistent-chat-history-with-azure-cosmos-db)
 * [Enabling language picker](#enabling-language-picker)
 * [Enabling speech input/output](#enabling-speech-inputoutput)
-* [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling user document upload](#enabling-user-document-upload)
@@ -236,8 +235,7 @@ Learn more in the [multimodal guide](./multimodal.md).
 
 ## Enabling media description with Azure Content Understanding
 
-⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
-It is compatible with the [multimodal feature](./multimodal.md), but this feature enables only a subset of multimodal capabilities,
+⚠️ This feature is compatible with the [multimodal feature](./multimodal.md), but this feature enables only a subset of multimodal capabilities,
 so you may want to enable the multimodal feature instead or as well.
 
 By default, if your documents contain image-like figures, the data ingestion process will ignore those figures,

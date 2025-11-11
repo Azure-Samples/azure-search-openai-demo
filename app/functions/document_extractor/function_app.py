@@ -68,7 +68,7 @@ async def extract_document(req: func.HttpRequest) -> func.HttpResponse:
     Azure Search Custom Skill: Extract document content
 
     Input format (single record; file data only):
-    # https://learn.microsoft.com/en-us/azure/search/cognitive-search-skill-document-intelligence-layout#skill-inputs
+    # https://learn.microsoft.com/azure/search/cognitive-search-skill-document-intelligence-layout#skill-inputs
     {
         "values": [
             {

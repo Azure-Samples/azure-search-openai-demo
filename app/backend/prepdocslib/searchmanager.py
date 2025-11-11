@@ -69,9 +69,6 @@ class SearchManager:
         search_info: SearchInfo,
         search_analyzer_name: Optional[str] = None,
         use_acls: bool = False,
-        # Renamed from use_int_vectorization to use_parent_index_projection to reflect
-        # that this flag controls parent/child index projection (adding parent_id and
-        # enhanced key field settings) rather than any specific vectorization mode.
         use_parent_index_projection: bool = False,
         embeddings: Optional[OpenAIEmbeddings] = None,
         field_name_embedding: Optional[str] = None,
