@@ -26,6 +26,7 @@ from prepdocslib.listfilestrategy import (
 from prepdocslib.parser import Parser
 from prepdocslib.servicesetup import (
     OpenAIHost,
+    clean_key_if_exists,
     select_parser,
     setup_blob_manager,
     setup_embeddings_service,
@@ -39,13 +40,6 @@ from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 logger = logging.getLogger("scripts")
-
-
-def clean_key_if_exists(key: Optional[str]) -> Optional[str]:
-    """Remove leading and trailing whitespace from a key if it exists. If the key is empty, return None."""
-    if key is not None and key.strip() != "":
-        return key.strip()
-    return None
 
 
 async def check_search_service_connectivity(search_service: str) -> bool:

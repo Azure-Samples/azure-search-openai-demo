@@ -18,10 +18,16 @@ from azure.ai.documentintelligence.models import (
     DocumentTable,
     DocumentTableCell,
 )
+from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from PIL import Image, ImageChops
 
-from prepdocslib.figureprocessor import FigureProcessor, MediaDescriptionStrategy
+from prepdocslib.figureprocessor import (
+    FigureProcessor,
+    MediaDescriptionStrategy,
+    build_figure_markup,
+    process_page_image,
+)
 from prepdocslib.page import ImageOnPage
 from prepdocslib.pdfparser import DocumentAnalysisParser
 
@@ -433,7 +439,7 @@ async def test_figure_processor_content_understanding_initializes_once(monkeypat
 
     result_first = await figure_processor.describe(b"image")
     assert result_first == "A diagram"
-    describer_instance = figure_processor._media_describer  # type: ignore[attr-defined]
+    describer_instance = figure_processor.media_describer  # type: ignore[attr-defined]
     assert isinstance(describer_instance, FakeDescriber)
     describer_instance.create_analyzer.assert_awaited_once()
 
@@ -477,8 +483,6 @@ async def test_figure_processor_content_understanding_missing_credential():
 
 @pytest.mark.asyncio
 async def test_figure_processor_content_understanding_key_credential():
-    from azure.core.credentials import AzureKeyCredential
-
     figure_processor = FigureProcessor(
         strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
         credential=AzureKeyCredential("fake_key"),
@@ -501,7 +505,7 @@ async def test_figure_processor_openai_returns_describer(monkeypatch):
 
     describer = await figure_processor.get_media_describer()
     assert describer is not None
-    assert figure_processor._media_describer is describer
+    assert figure_processor.media_describer is describer
 
     # Second call should return the same instance
     describer2 = await figure_processor.get_media_describer()
@@ -526,15 +530,13 @@ async def test_figure_processor_unknown_strategy(caplog):
 async def test_figure_processor_mark_content_understanding_ready():
     figure_processor = FigureProcessor(strategy=MediaDescriptionStrategy.NONE)
 
-    assert not figure_processor._content_understanding_ready
+    assert not figure_processor.content_understanding_ready
     figure_processor.mark_content_understanding_ready()
-    assert figure_processor._content_understanding_ready
+    assert figure_processor.content_understanding_ready
 
 
 @pytest.mark.asyncio
 async def test_build_figure_markup_without_description(sample_image):
-    from prepdocslib.figureprocessor import build_figure_markup
-
     sample_image.title = "Sample Figure"
 
     result = build_figure_markup(sample_image, description=None)
@@ -543,8 +545,6 @@ async def test_build_figure_markup_without_description(sample_image):
 
 @pytest.mark.asyncio
 async def test_process_page_image_without_blob_manager(sample_image):
-    from prepdocslib.figureprocessor import process_page_image
-
     with pytest.raises(ValueError, match="BlobManager must be provided"):
         await process_page_image(
             image=sample_image,
@@ -556,7 +556,6 @@ async def test_process_page_image_without_blob_manager(sample_image):
 
 @pytest.mark.asyncio
 async def test_process_page_image_without_figure_processor(sample_image):
-    from prepdocslib.figureprocessor import process_page_image
 
     blob_manager = AsyncMock()
     blob_manager.upload_document_image = AsyncMock(return_value="https://example.com/image.png")
@@ -576,7 +575,6 @@ async def test_process_page_image_without_figure_processor(sample_image):
 
 @pytest.mark.asyncio
 async def test_process_page_image_sets_description(sample_image):
-    from prepdocslib.figureprocessor import process_page_image
 
     blob_manager = AsyncMock()
     blob_manager.upload_document_image = AsyncMock(return_value="https://example.com/image.png")
@@ -598,7 +596,6 @@ async def test_process_page_image_sets_description(sample_image):
 
 @pytest.mark.asyncio
 async def test_process_page_image_skips_upload_if_url_exists(sample_image):
-    from prepdocslib.figureprocessor import process_page_image
 
     sample_image.url = "https://existing.com/image.png"
 
@@ -618,7 +615,6 @@ async def test_process_page_image_skips_upload_if_url_exists(sample_image):
 
 @pytest.mark.asyncio
 async def test_process_page_image_with_embeddings(sample_image):
-    from prepdocslib.figureprocessor import process_page_image
 
     blob_manager = AsyncMock()
     blob_manager.upload_document_image = AsyncMock(return_value="https://example.com/image.png")

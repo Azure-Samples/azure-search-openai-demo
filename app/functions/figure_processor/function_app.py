@@ -161,7 +161,7 @@ async def process_figure_request(req: func.HttpRequest) -> func.HttpResponse:
                 image_embeddings_client=settings.image_embeddings,
                 figure_processor=settings.figure_processor,
             )
-            figure_payload = image_on_page.to_skill_payload(file_name, include_bytes_base64=False, include_bytes=False)
+            figure_payload = image_on_page.to_skill_payload(file_name, include_bytes_base64=False)
             output_values.append(
                 {
                     "recordId": record_id,

@@ -23,6 +23,13 @@ from .textparser import TextParser
 logger = logging.getLogger("scripts")
 
 
+def clean_key_if_exists(key: Optional[str]) -> Optional[str]:
+    """Remove leading and trailing whitespace from a key if it exists. If the key is empty, return None."""
+    if key is not None and key.strip() != "":
+        return key.strip()
+    return None
+
+
 class OpenAIHost(str, Enum):
     """Supported OpenAI hosting styles.
 

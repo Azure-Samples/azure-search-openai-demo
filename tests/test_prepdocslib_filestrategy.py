@@ -1,14 +1,19 @@
 import os
+from io import BytesIO
 
 import pytest
 from azure.search.documents.aio import SearchClient
 
 from prepdocslib.blobmanager import BlobManager
+from prepdocslib.figureprocessor import FigureProcessor, MediaDescriptionStrategy
 from prepdocslib.fileprocessor import FileProcessor
-from prepdocslib.filestrategy import FileStrategy
+from prepdocslib.filestrategy import FileStrategy, parse_file
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
+    File,
+    LocalListFileStrategy,
 )
+from prepdocslib.page import ImageOnPage, Page
 from prepdocslib.strategy import SearchInfo
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SimpleTextSplitter
@@ -105,11 +110,6 @@ async def test_file_strategy_adls2(monkeypatch, mock_env, mock_data_lake_service
 @pytest.mark.asyncio
 async def test_parse_file_with_images(monkeypatch):
     """Test that parse_file processes images and logs appropriately."""
-    from io import BytesIO
-
-    from prepdocslib.filestrategy import parse_file
-    from prepdocslib.listfilestrategy import File
-    from prepdocslib.page import ImageOnPage, Page
 
     # Create a mock file
     mock_file = File(content=BytesIO(b"test content"))
@@ -176,8 +176,6 @@ async def test_parse_file_with_images(monkeypatch):
 @pytest.mark.asyncio
 async def test_file_strategy_setup_with_content_understanding(monkeypatch, mock_env):
     """Test that FileStrategy.setup() properly initializes content understanding."""
-    from prepdocslib.figureprocessor import FigureProcessor, MediaDescriptionStrategy
-    from prepdocslib.listfilestrategy import LocalListFileStrategy
 
     # Create mock list strategy
     list_strategy = LocalListFileStrategy(path_pattern="*.txt")
@@ -239,8 +237,8 @@ async def test_file_strategy_setup_with_content_understanding(monkeypatch, mock_
     await file_strategy.setup()
 
     # Verify content understanding was initialized during setup
-    assert figure_processor._media_describer is not None
-    assert isinstance(figure_processor._media_describer, MockContentUnderstandingDescriber)
+    assert figure_processor.media_describer is not None
+    assert isinstance(figure_processor.media_describer, MockContentUnderstandingDescriber)
     # create_analyzer should be called during setup for content understanding
-    assert figure_processor._media_describer.create_analyzer_called
-    assert figure_processor._content_understanding_ready
+    assert figure_processor.media_describer.create_analyzer_called
+    assert figure_processor.content_understanding_ready

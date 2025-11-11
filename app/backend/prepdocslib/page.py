@@ -21,47 +21,23 @@ class ImageOnPage:
         self,
         file_name: str,
         *,
-        include_bytes: bool = False,
         include_bytes_base64: bool = True,
     ) -> dict[str, Any]:
-        """Serialize this figure for the figure_processor skill output.
-
-        Parameters:
-            file_name: Source document file name.
-            include_bytes: When True, include the raw ``bytes`` field. Defaults to False to avoid
-                bloating payload size and because JSON serialization of raw bytes is not desired.
-            include_bytes_base64: When True (default), include a base64 representation of the image
-                as ``bytes_base64`` for downstream skills that might still need the encoded image.
-
-        Notes:
-            - Previous behavior always included both the raw bytes (via ``asdict``) and a base64 copy.
-              This is wasteful for typical pipelines where only the blob ``url`` plus lightweight
-              metadata are required. The new defaults favor minimal payload size.
-            - Callers needing the raw bytes can opt-in with ``include_bytes=True`` (e.g., for a
-              chained skill that has not yet persisted the blob or for debugging scenarios).
-        """
-
         data = asdict(self)
 
-        if not include_bytes and "bytes" in data:
-            # Remove raw bytes to keep payload lean (and JSON-friendly without extra handling).
-            data.pop("bytes", None)
+        # Remove raw bytes to keep payload lean (and JSON-friendly without extra handling).
+        data.pop("bytes", None)
 
+        # Optionally include base64-encoded bytes for skills that need it
         if include_bytes_base64:
-            # Always base64 from the current in-memory bytes, not from any cached version, to ensure fidelity.
             b = self.bytes if isinstance(self.bytes, (bytes, bytearray)) else b""
             data["bytes_base64"] = base64.b64encode(b).decode("utf-8")
-
-        # Remove None values to prevent document extractor from emitting fields that will be
-        # enriched by figure processor, avoiding potential conflicts in Azure AI Search enrichment merge
-        data = {k: v for k, v in data.items() if v is not None}
 
         data["document_file_name"] = file_name
         return data
 
     @classmethod
     def from_skill_payload(cls, data: dict[str, Any]) -> tuple["ImageOnPage", str]:
-        """Deserialize a figure skill payload into an ImageOnPage, normalizing fields."""
         # Decode base64 image data (optional - may be omitted if already persisted to blob)
         bytes_base64 = data.get("bytes_base64")
         if bytes_base64:

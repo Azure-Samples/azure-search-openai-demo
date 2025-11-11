@@ -40,14 +40,14 @@ class FigureProcessor:
         openai_deployment: str | None = None,
         content_understanding_endpoint: str | None = None,
     ) -> None:
-        self._credential = credential
+        self.credential = credential
         self.strategy = strategy
-        self._openai_client = openai_client
-        self._openai_model = openai_model
-        self._openai_deployment = openai_deployment
-        self._content_understanding_endpoint = content_understanding_endpoint
-        self._media_describer: MediaDescriber | None = None
-        self._content_understanding_ready = False
+        self.openai_client = openai_client
+        self.openai_model = openai_model
+        self.openai_deployment = openai_deployment
+        self.content_understanding_endpoint = content_understanding_endpoint
+        self.media_describer: MediaDescriber | None = None
+        self.content_understanding_ready = False
 
     async def get_media_describer(self) -> MediaDescriber | None:
         """Return (and lazily create) the media describer for this processor."""
@@ -55,30 +55,28 @@ class FigureProcessor:
         if self.strategy == MediaDescriptionStrategy.NONE:
             return None
 
-        if self._media_describer is not None:
-            return self._media_describer
+        if self.media_describer is not None:
+            return self.media_describer
 
         if self.strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING:
-            if self._content_understanding_endpoint is None:
+            if self.content_understanding_endpoint is None:
                 raise ValueError("Content Understanding strategy requires an endpoint")
-            if self._credential is None:
+            if self.credential is None:
                 raise ValueError("Content Understanding strategy requires a credential")
-            if isinstance(self._credential, AzureKeyCredential):
+            if isinstance(self.credential, AzureKeyCredential):
                 raise ValueError(
                     "Content Understanding does not support key credentials; provide a token credential instead"
                 )
-            self._media_describer = ContentUnderstandingDescriber(
-                self._content_understanding_endpoint, self._credential
-            )
-            return self._media_describer
+            self.media_describer = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.credential)
+            return self.media_describer
 
         if self.strategy == MediaDescriptionStrategy.OPENAI:
-            if self._openai_client is None or self._openai_model is None:
+            if self.openai_client is None or self.openai_model is None:
                 raise ValueError("OpenAI strategy requires both a client and a model name")
-            self._media_describer = MultimodalModelDescriber(
-                self._openai_client, model=self._openai_model, deployment=self._openai_deployment
+            self.media_describer = MultimodalModelDescriber(
+                self.openai_client, model=self.openai_model, deployment=self.openai_deployment
             )
-            return self._media_describer
+            return self.media_describer
 
         logger.warning("Unknown media description strategy '%s'; skipping description", self.strategy)
         return None
@@ -86,7 +84,7 @@ class FigureProcessor:
     def mark_content_understanding_ready(self) -> None:
         """Record that the Content Understanding analyzer exists to avoid recreating it."""
 
-        self._content_understanding_ready = True
+        self.content_understanding_ready = True
 
     async def describe(self, image_bytes: bytes) -> str | None:
         """Generate a description for the provided image bytes if a describer is available."""
@@ -94,9 +92,9 @@ class FigureProcessor:
         describer = await self.get_media_describer()
         if describer is None:
             return None
-        if isinstance(describer, ContentUnderstandingDescriber) and not self._content_understanding_ready:
+        if isinstance(describer, ContentUnderstandingDescriber) and not self.content_understanding_ready:
             await describer.create_analyzer()
-            self._content_understanding_ready = True
+            self.content_understanding_ready = True
         return await describer.describe_image(image_bytes)
 
 

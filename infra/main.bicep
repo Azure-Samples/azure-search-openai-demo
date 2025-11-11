@@ -468,7 +468,7 @@ var appEnvVariables = {
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
   AZURE_SEARCH_QUERY_REWRITING: searchServiceQueryRewriting
-  AZURE_VISION_ENDPOINT: useMultimodal ? vision!.outputs.endpoint : ''
+  AZURE_VISION_ENDPOINT: useMultimodal ? vision.outputs.endpoint : ''
   AZURE_SEARCH_QUERY_LANGUAGE: searchQueryLanguage
   AZURE_SEARCH_QUERY_SPELLER: searchQuerySpeller
   AZURE_SEARCH_FIELD_NAME_EMBEDDING: searchFieldNameEmbedding
@@ -656,7 +656,7 @@ module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == '
   }
 }
 
-// FUNCTION APPS FOR CLOUD INGESTION
+// Optional Azure Functions for document ingestion and processing
 module functions 'app/functions.bicep' = if (useCloudIngestion) {
   name: 'functions'
   scope: resourceGroup
@@ -1445,11 +1445,11 @@ output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.mode
 output AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.deploymentName : ''
 output AZURE_OPENAI_SEARCHAGENT_MODEL string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.modelName : ''
 output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
-output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech!.outputs.resourceId : ''
-output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech!.outputs.location : ''
+output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
+output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
-output AZURE_VISION_ENDPOINT string = useMultimodal ? vision!.outputs.endpoint : ''
-output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding!.outputs.endpoint : ''
+output AZURE_VISION_ENDPOINT string = useMultimodal ? vision.outputs.endpoint : ''
+output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding.outputs.endpoint : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
 output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name

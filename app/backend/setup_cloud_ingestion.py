@@ -3,7 +3,6 @@
 import asyncio
 import logging
 import os
-from typing import Optional
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential
@@ -13,8 +12,10 @@ from rich.logging import RichHandler
 from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
 from prepdocslib.cloudingestionstrategy import CloudIngestionStrategy
+from prepdocslib.listfilestrategy import LocalListFileStrategy
 from prepdocslib.servicesetup import (
     OpenAIHost,
+    clean_key_if_exists,
     setup_blob_manager,
     setup_embeddings_service,
     setup_openai_client,
@@ -23,13 +24,6 @@ from prepdocslib.servicesetup import (
 from prepdocslib.strategy import DocumentAction
 
 logger = logging.getLogger("scripts")
-
-
-def clean_key_if_exists(key: Optional[str]) -> Optional[str]:
-    """Remove leading and trailing whitespace from a key if it exists. If the key is empty, return None."""
-    if key is not None and key.strip() != "":
-        return key.strip()
-    return None
 
 
 async def setup_cloud_ingestion_strategy(
@@ -107,10 +101,8 @@ async def setup_cloud_ingestion_strategy(
         disable_batch=False,
     )
 
-    # Create a minimal list file strategy (cloud ingestion doesn't use file listing)
-    from prepdocslib.listfilestrategy import LocalListFileStrategy
-
-    list_file_strategy = LocalListFileStrategy(path_pattern="", enable_global_documents=False)
+    # Create a list file strategy for uploading files from the data folder
+    list_file_strategy = LocalListFileStrategy(path_pattern="data/*", enable_global_documents=False)
 
     # Create the cloud ingestion strategy
     ingestion_strategy = CloudIngestionStrategy(
@@ -174,13 +166,9 @@ async def main():
         await ingestion_strategy.run()
 
     finally:
-        # Gracefully close any async clients/credentials
-        try:
-            await blob_manager.close_clients()
-            await openai_client.close()
-            await azd_credential.close()
-        except Exception as e:
-            logger.debug(f"Failed to close async clients cleanly: {e}")
+        await blob_manager.close_clients()
+        await openai_client.close()
+        await azd_credential.close()
 
 
 if __name__ == "__main__":

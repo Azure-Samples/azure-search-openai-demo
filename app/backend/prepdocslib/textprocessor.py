@@ -1,26 +1,18 @@
 """Utilities for processing document text and combining it with figure descriptions."""
 
 import logging
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:  # pragma: no cover - used only for type hints
-    from .listfilestrategy import File
-    from .page import Page
-    from .searchmanager import Section
-    from .textsplitter import TextSplitter
+from .figureprocessor import build_figure_markup
+from .listfilestrategy import File
+from .page import Page
+from .searchmanager import Section
+from .textsplitter import TextSplitter
 
 logger = logging.getLogger("scripts")
 
 
 def combine_text_with_figures(page: "Page") -> None:
-    """Replace figure placeholders in page text with full description markup.
-
-    This is Skill #3 (text_processor) in the three-skill pipeline.
-    After figures have been described and enriched, this replaces their
-    placeholders in the page text with the full <figure> markup.
-    """
-    from .figureprocessor import build_figure_markup
-
+    """Replace figure placeholders in page text with full description markup."""
     for image in page.images:
         if image.description and image.placeholder in page.text:
             figure_markup = build_figure_markup(image, image.description)
@@ -39,22 +31,9 @@ def process_text(
     category: str | None = None,
 ) -> list["Section"]:
     """Process document text and figures into searchable sections.
-
-    This is Skill #3 (text_processor) in the three-skill pipeline.
     Combines text with figure descriptions, splits into chunks, and
     associates figures with their containing sections.
-
-    Args:
-        pages: List of parsed pages with enriched figures
-        file: Original file being processed
-        splitter: Text splitter for chunking content
-        category: Optional category for sections
-
-    Returns:
-        List of Sections ready for indexing
     """
-    from .searchmanager import Section
-
     # Step 1: Combine text with figures on each page
     for page in pages:
         combine_text_with_figures(page)
