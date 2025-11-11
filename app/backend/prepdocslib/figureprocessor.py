@@ -114,9 +114,9 @@ async def process_page_image(
     *,
     image: "ImageOnPage",
     document_filename: str,
-    blob_manager: Optional["BaseBlobManager"],
-    image_embeddings_client: Optional["ImageEmbeddings"],
-    figure_processor: Optional["FigureProcessor"] = None,
+    blob_manager: Optional[BaseBlobManager],
+    image_embeddings_client: Optional[ImageEmbeddings],
+    figure_processor: Optional[FigureProcessor] = None,
     user_oid: Optional[str] = None,
 ) -> "ImageOnPage":
     """Generate description, upload image, and optionally compute embedding for a figure."""

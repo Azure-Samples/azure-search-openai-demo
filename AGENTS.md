@@ -17,9 +17,28 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/backend/approaches/prompts/chat_query_rewrite.prompty: Prompt used to rewrite the query based off search history into a better search query
       * app/backend/approaches/prompts/chat_query_rewrite_tools.json: Tools used by the query rewriting prompt
       * app/backend/approaches/prompts/chat_answer_question.prompty: Prompt used by the Chat approach to actually answer the question based off sources
-    * app/backend/prepdocslib/cloudingestionstrategy.py: Builds the Azure AI Search indexer and skillset for the cloud ingestion pipeline
-    * app/backend/prepdocslib/pdfparser.py: Uses Azure Document Intelligence to emit page text plus figure placeholders
-    * app/backend/prepdocslib/figureprocessor.py: Shared helper that generates figure descriptions for both local ingestion and the cloud figure-processor skill
+    * app/backend/prepdocslib: Contains the document ingestion library used by both local and cloud ingestion
+      * app/backend/prepdocslib/blobmanager.py: Manages uploads to Azure Blob Storage
+      * app/backend/prepdocslib/cloudingestionstrategy.py: Builds the Azure AI Search indexer and skillset for the cloud ingestion pipeline
+      * app/backend/prepdocslib/csvparser.py: Parses CSV files
+      * app/backend/prepdocslib/embeddings.py: Generates embeddings for text and images using Azure OpenAI
+      * app/backend/prepdocslib/figureprocessor.py: Generates figure descriptions for both local ingestion and the cloud figure-processor skill
+      * app/backend/prepdocslib/fileprocessor.py: Orchestrates parsing and chunking of individual files
+      * app/backend/prepdocslib/filestrategy.py: Strategy for uploading and indexing files (local ingestion)
+      * app/backend/prepdocslib/htmlparser.py: Parses HTML files
+      * app/backend/prepdocslib/integratedvectorizerstrategy.py: Strategy using Azure AI Search integrated vectorization
+      * app/backend/prepdocslib/jsonparser.py: Parses JSON files
+      * app/backend/prepdocslib/listfilestrategy.py: Lists files from local filesystem or Azure Data Lake
+      * app/backend/prepdocslib/mediadescriber.py: Interfaces for describing images (Azure OpenAI GPT-4o, Content Understanding)
+      * app/backend/prepdocslib/page.py: Data classes for pages, images, and chunks
+      * app/backend/prepdocslib/parser.py: Base parser interface
+      * app/backend/prepdocslib/pdfparser.py: Parses PDFs using Azure Document Intelligence or local parser
+      * app/backend/prepdocslib/searchmanager.py: Manages Azure AI Search index creation and updates
+      * app/backend/prepdocslib/servicesetup.py: Shared service setup helpers for OpenAI, embeddings, blob storage, etc.
+      * app/backend/prepdocslib/strategy.py: Base strategy interface for document ingestion
+      * app/backend/prepdocslib/textparser.py: Parses plain text and markdown files
+      * app/backend/prepdocslib/textprocessor.py: Processes text chunks for cloud ingestion (merges figures, generates embeddings)
+      * app/backend/prepdocslib/textsplitter.py: Splits text into chunks using different strategies
     * app/backend/app.py: The main entry point for the backend application.
   * app/functions: Azure Functions used for cloud ingestion custom skills (document extraction, figure processing, text processing). Each function bundles a synchronized copy of `prepdocslib`; run `python scripts/copy_prepdocslib.py` to refresh the local copies if you modify the library.
   * app/frontend: Contains the React frontend code, built with TypeScript, built with vite.

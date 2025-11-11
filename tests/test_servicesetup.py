@@ -1,11 +1,21 @@
+import openai
 import pytest
+from openai.types.create_embedding_response import Usage
 
+from prepdocslib.embeddings import OpenAIEmbeddings
+from prepdocslib.figureprocessor import FigureProcessor, MediaDescriptionStrategy
+from prepdocslib.pdfparser import DocumentAnalysisParser
 from prepdocslib.servicesetup import (
     OpenAIHost,
+    select_parser,
     setup_blob_manager,
     setup_embeddings_service,
+    setup_figure_processor,
+    setup_image_embeddings_service,
     setup_openai_client,
+    setup_search_info,
 )
+from prepdocslib.textparser import TextParser
 
 from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
@@ -38,9 +48,7 @@ def test_setup_blob_manager_respects_storage_key(monkeypatch: pytest.MonkeyPatch
             captured["subscription_id"] = subscription_id
             captured["image_container"] = image_container
 
-    import prepdocslib.servicesetup as servicesetup_module
-
-    monkeypatch.setattr(servicesetup_module, "BlobManager", StubBlobManager)
+    monkeypatch.setattr("prepdocslib.servicesetup.BlobManager", StubBlobManager)
 
     result = setup_blob_manager(
         azure_credential=MockAzureCredential(),
@@ -58,9 +66,6 @@ def test_setup_blob_manager_respects_storage_key(monkeypatch: pytest.MonkeyPatch
 
 
 def test_setup_embeddings_service_populates_azure_metadata() -> None:
-    import openai
-    from openai.types.create_embedding_response import Usage
-
     embeddings = setup_embeddings_service(
         open_ai_client=MockClient(
             MockEmbeddingsClient(
@@ -79,17 +84,12 @@ def test_setup_embeddings_service_populates_azure_metadata() -> None:
         azure_openai_endpoint="https://service.openai.azure.com",
     )
 
-    from prepdocslib.embeddings import OpenAIEmbeddings
-
     assert isinstance(embeddings, OpenAIEmbeddings)
     assert embeddings.azure_deployment_name == "deployment"
     assert embeddings.azure_endpoint == "https://service.openai.azure.com"
 
 
 def test_setup_embeddings_service_requires_endpoint_for_azure() -> None:
-    import openai
-    from openai.types.create_embedding_response import Usage
-
     with pytest.raises(ValueError):
         setup_embeddings_service(
             open_ai_client=MockClient(
@@ -111,9 +111,6 @@ def test_setup_embeddings_service_requires_endpoint_for_azure() -> None:
 
 
 def test_setup_embeddings_service_requires_deployment_for_azure() -> None:
-    import openai
-    from openai.types.create_embedding_response import Usage
-
     with pytest.raises(ValueError):
         setup_embeddings_service(
             open_ai_client=MockClient(
@@ -142,10 +139,10 @@ def test_setup_openai_client_azure_constructs_endpoint_correctly(monkeypatch: py
         def __init__(self, *, base_url: str, api_key, **kwargs) -> None:
             captured_base_url.append(base_url)
 
-    import prepdocslib.servicesetup as servicesetup_module
-
-    monkeypatch.setattr(servicesetup_module, "AsyncOpenAI", StubAsyncOpenAI)
-    monkeypatch.setattr(servicesetup_module, "get_bearer_token_provider", lambda *args, **kwargs: lambda: "fake_token")
+    monkeypatch.setattr("prepdocslib.servicesetup.AsyncOpenAI", StubAsyncOpenAI)
+    monkeypatch.setattr(
+        "prepdocslib.servicesetup.get_bearer_token_provider", lambda *args, **kwargs: lambda: "fake_token"
+    )
 
     client, endpoint = setup_openai_client(
         openai_host=OpenAIHost.AZURE,
@@ -167,9 +164,7 @@ def test_setup_openai_client_azure_custom_uses_custom_url(monkeypatch: pytest.Mo
         def __init__(self, *, base_url: str, api_key, **kwargs) -> None:
             captured_base_url.append(base_url)
 
-    import prepdocslib.servicesetup as servicesetup_module
-
-    monkeypatch.setattr(servicesetup_module, "AsyncOpenAI", StubAsyncOpenAI)
+    monkeypatch.setattr("prepdocslib.servicesetup.AsyncOpenAI", StubAsyncOpenAI)
 
     client, endpoint = setup_openai_client(
         openai_host=OpenAIHost.AZURE_CUSTOM,
@@ -192,9 +187,7 @@ def test_setup_openai_client_azure_respects_api_key(monkeypatch: pytest.MonkeyPa
         def __init__(self, *, base_url: str, api_key: str, **kwargs) -> None:
             captured_api_key.append(api_key)
 
-    import prepdocslib.servicesetup as servicesetup_module
-
-    monkeypatch.setattr(servicesetup_module, "AsyncOpenAI", StubAsyncOpenAI)
+    monkeypatch.setattr("prepdocslib.servicesetup.AsyncOpenAI", StubAsyncOpenAI)
 
     client, endpoint = setup_openai_client(
         openai_host=OpenAIHost.AZURE,
@@ -238,8 +231,6 @@ def test_setup_openai_client_azure_custom_requires_url() -> None:
 
 def test_setup_search_info_agentic_retrieval_without_model():
     """Test that setup_search_info raises ValueError when using agentic retrieval without search agent model."""
-    from prepdocslib.servicesetup import setup_search_info
-
     with pytest.raises(ValueError, match="SearchAgent model must be specified"):
         setup_search_info(
             azure_credential=MockAzureCredential(),
@@ -252,8 +243,6 @@ def test_setup_search_info_agentic_retrieval_without_model():
 
 def test_setup_image_embeddings_multimodal_without_vision():
     """Test that setup_image_embeddings_service raises ValueError when using multimodal without vision endpoint."""
-    from prepdocslib.servicesetup import setup_image_embeddings_service
-
     with pytest.raises(ValueError, match="Azure AI Vision endpoint must be provided"):
         setup_image_embeddings_service(
             use_multimodal=True,
@@ -264,9 +253,6 @@ def test_setup_image_embeddings_multimodal_without_vision():
 
 def test_setup_figure_processor_content_understanding():
     """Test that setup_figure_processor returns correct processor for content understanding."""
-    from prepdocslib.figureprocessor import FigureProcessor, MediaDescriptionStrategy
-    from prepdocslib.servicesetup import setup_figure_processor
-
     processor = setup_figure_processor(
         use_multimodal=False,
         use_content_understanding=True,
@@ -283,9 +269,6 @@ def test_setup_figure_processor_content_understanding():
 
 def test_setup_parser_document_intelligence_with_key():
     """Test that select_parser uses key credential when provided."""
-    from prepdocslib.pdfparser import DocumentAnalysisParser
-    from prepdocslib.servicesetup import select_parser
-
     parser = select_parser(
         file_name="test.pdf",
         content_type="application/pdf",
@@ -300,9 +283,6 @@ def test_setup_parser_document_intelligence_with_key():
 
 def test_setup_parser_text_file():
     """Test that select_parser returns TextParser for text files."""
-    from prepdocslib.servicesetup import select_parser
-    from prepdocslib.textparser import TextParser
-
     parser = select_parser(
         file_name="test.txt",
         content_type="text/plain",
@@ -315,9 +295,6 @@ def test_setup_parser_text_file():
 
 def test_setup_parser_application_type_with_di():
     """Test that select_parser uses DI for application/* content types."""
-    from prepdocslib.pdfparser import DocumentAnalysisParser
-    from prepdocslib.servicesetup import select_parser
-
     parser = select_parser(
         file_name="test.unknown",
         content_type="application/unknown",
@@ -330,8 +307,6 @@ def test_setup_parser_application_type_with_di():
 
 def test_setup_parser_unsupported_file_type():
     """Test that select_parser raises ValueError for unsupported file types."""
-    from prepdocslib.servicesetup import select_parser
-
     with pytest.raises(ValueError, match="Unsupported file type"):
         select_parser(
             file_name="test.xyz",
