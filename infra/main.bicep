@@ -536,14 +536,6 @@ var appEnvVariables = {
   RAG_SEARCH_IMAGE_EMBEDDINGS: ragSearchImageEmbeddings
   RAG_SEND_TEXT_SOURCES: ragSendTextSources
   RAG_SEND_IMAGE_SOURCES: ragSendImageSources
-  // Cloud ingestion skill endpoints (populated when useCloudIngestion)
-  DOCUMENT_EXTRACTOR_SKILL_ENDPOINT: useCloudIngestion ? 'https://${functions!.outputs.documentExtractorUrl}/api/extract' : ''
-  FIGURE_PROCESSOR_SKILL_ENDPOINT: useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
-  TEXT_PROCESSOR_SKILL_ENDPOINT: useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
-  // Skill audience identifier URI from registration module (created below)
-  DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID: useCloudIngestion ? functions!.outputs.documentExtractorAuthIdentifierUri : ''
-  FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID: useCloudIngestion ? functions!.outputs.figureProcessorAuthIdentifierUri : ''
-  TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID: useCloudIngestion ? functions!.outputs.textProcessorAuthIdentifierUri : ''
 }
 
 // App Service for the web application (Python Quart app with JS frontend)
@@ -672,13 +664,9 @@ module functions 'app/functions.bicep' = if (useCloudIngestion) {
     location: location
     tags: tags
     applicationInsightsName: useApplicationInsights ? monitoring!.outputs.applicationInsightsName : ''
-    storageAccountName: storage.outputs.name
     storageResourceGroupName: storageResourceGroup.name
-    searchServiceName: searchService.outputs.name
     searchServiceResourceGroupName: searchServiceResourceGroup.name
-    openAiServiceName: isAzureOpenAiHost ? openAi!.outputs.name : ''
     openAiResourceGroupName: openAiResourceGroup.name
-    documentIntelligenceServiceName: documentIntelligence.outputs.name
     documentIntelligenceResourceGroupName: documentIntelligenceResourceGroup.name
     visionServiceName: useMultimodal ? vision!.outputs.name : ''
     visionResourceGroupName: useMultimodal ? visionResourceGroup.name : resourceGroup.name
@@ -687,20 +675,9 @@ module functions 'app/functions.bicep' = if (useCloudIngestion) {
     documentExtractorName: '${abbrs.webSitesFunctions}doc-extractor-${resourceToken}'
     figureProcessorName: '${abbrs.webSitesFunctions}figure-processor-${resourceToken}'
     textProcessorName: '${abbrs.webSitesFunctions}text-processor-${resourceToken}'
-    useVectors: ragSearchTextEmbeddings || ragSearchImageEmbeddings
-    useMultimodal: useMultimodal
-    useLocalPdfParser: useLocalPdfParser
-    useLocalHtmlParser: useLocalHtmlParser
-    useMediaDescriberAzureCU: useMediaDescriberAzureCU
-    searchIndexName: searchIndexName
-    searchFieldNameEmbedding: searchFieldNameEmbedding
-    openAiEmbDeployment: embedding.deploymentName
-    openAiEmbModelName: embedding.modelName
-    openAiEmbDimensions: embedding.dimensions
-    openAiChatDeployment: chatGpt.deploymentName
-    openAiChatModelName: chatGpt.modelName
-    openAiCustomUrl: azureOpenAiCustomUrl
     openIdIssuer: authenticationIssuerUri
+    appEnvVariables: appEnvVariables
+    searchUserAssignedIdentityClientId: searchService.outputs.userAssignedIdentityClientId
   }
 }
 
@@ -1174,7 +1151,7 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
-    principalId: searchService.outputs.principalId
+    principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
     principalType: 'ServicePrincipal'
   }
@@ -1184,7 +1161,7 @@ module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal) {
   scope: visionResourceGroup
   name: 'vision-role-searchservice'
   params: {
-    principalId: searchService.outputs.principalId
+    principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
     principalType: 'ServicePrincipal'
   }
@@ -1219,7 +1196,7 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
-    principalId: searchService.outputs.principalId
+    principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
     principalType: 'ServicePrincipal'
   }
@@ -1229,7 +1206,7 @@ module storageRoleContributorSearchService 'core/security/role.bicep' = if (useI
   scope: storageResourceGroup
   name: 'storage-role-contributor-searchservice'
   params: {
-    principalId: searchService.outputs.principalId
+    principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
     principalType: 'ServicePrincipal'
   }
@@ -1482,8 +1459,8 @@ output AZURE_SEARCH_AGENT string = searchAgentName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
 output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLevel
-output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.principalId
 output AZURE_SEARCH_FIELD_NAME_EMBEDDING string = searchFieldNameEmbedding
+output AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID string = searchService.outputs.userAssignedIdentityResourceId
 
 output AZURE_COSMOSDB_ACCOUNT string = (useAuthentication && useChatHistoryCosmos) ? cosmosDb.outputs.name : ''
 output AZURE_CHAT_HISTORY_DATABASE string = chatHistoryDatabaseName

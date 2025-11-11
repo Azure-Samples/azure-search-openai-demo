@@ -33,11 +33,20 @@ param semanticSearch string = 'disabled'
 
 param sharedPrivateLinkStorageAccounts array = []
 
-var searchIdentityProvider = (sku.name == 'free') ? null : {
-  type: 'SystemAssigned'
+resource searchIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = if (sku.name != 'free') {
+  name: '${name}-identity'
+  location: location
+  tags: tags
 }
 
-resource search 'Microsoft.Search/searchServices@2023-11-01' = {
+var searchIdentityProvider = (sku.name == 'free') ? null : {
+  type: 'SystemAssigned, UserAssigned'
+  userAssignedIdentities: {
+    '${searchIdentity.id}': {}
+  }
+}
+
+resource search 'Microsoft.Search/searchServices@2025-05-01' = {
   name: name
   location: location
   tags: tags
@@ -55,7 +64,7 @@ resource search 'Microsoft.Search/searchServices@2023-11-01' = {
   }
   sku: sku
 
-  resource sharedPrivateLinkResource 'sharedPrivateLinkResources@2023-11-01' = [for (resourceId, i) in sharedPrivateLinkStorageAccounts: {
+  resource sharedPrivateLinkResource 'sharedPrivateLinkResources@2025-05-01' = [for (resourceId, i) in sharedPrivateLinkStorageAccounts: {
     name: 'search-shared-private-link-${i}'
     properties: {
       groupId: 'blob'
@@ -70,4 +79,8 @@ resource search 'Microsoft.Search/searchServices@2023-11-01' = {
 output id string = search.id
 output endpoint string = 'https://${name}.search.windows.net/'
 output name string = search.name
-output principalId string = !empty(searchIdentityProvider) ? search.identity.principalId : ''
+output systemAssignedPrincipalId string = (sku.name != 'free') ? search.identity.principalId : ''
+output userAssignedPrincipalId string = (sku.name != 'free') ? (searchIdentity.?properties.?principalId ?? '') : ''
+output userAssignedIdentityId string = (sku.name != 'free') ? (searchIdentity.?id ?? '') : ''
+output userAssignedIdentityClientId string = (sku.name != 'free') ? (searchIdentity.?properties.?clientId ?? '') : ''
+output userAssignedIdentityResourceId string = (sku.name != 'free') ? (searchIdentity.?id ?? '') : ''

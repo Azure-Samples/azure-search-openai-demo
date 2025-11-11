@@ -41,7 +41,7 @@ class FigureProcessor:
         content_understanding_endpoint: str | None = None,
     ) -> None:
         self._credential = credential
-        self._strategy = strategy
+        self.strategy = strategy
         self._openai_client = openai_client
         self._openai_model = openai_model
         self._openai_deployment = openai_deployment
@@ -49,20 +49,16 @@ class FigureProcessor:
         self._media_describer: MediaDescriber | None = None
         self._content_understanding_ready = False
 
-    @property
-    def strategy(self) -> MediaDescriptionStrategy:
-        return self._strategy
-
     async def get_media_describer(self) -> MediaDescriber | None:
         """Return (and lazily create) the media describer for this processor."""
 
-        if self._strategy == MediaDescriptionStrategy.NONE:
+        if self.strategy == MediaDescriptionStrategy.NONE:
             return None
 
         if self._media_describer is not None:
             return self._media_describer
 
-        if self._strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING:
+        if self.strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING:
             if self._content_understanding_endpoint is None:
                 raise ValueError("Content Understanding strategy requires an endpoint")
             if self._credential is None:
@@ -76,7 +72,7 @@ class FigureProcessor:
             )
             return self._media_describer
 
-        if self._strategy == MediaDescriptionStrategy.OPENAI:
+        if self.strategy == MediaDescriptionStrategy.OPENAI:
             if self._openai_client is None or self._openai_model is None:
                 raise ValueError("OpenAI strategy requires both a client and a model name")
             self._media_describer = MultimodalModelDescriber(
@@ -84,7 +80,7 @@ class FigureProcessor:
             )
             return self._media_describer
 
-        logger.warning("Unknown media description strategy '%s'; skipping description", self._strategy)
+        logger.warning("Unknown media description strategy '%s'; skipping description", self.strategy)
         return None
 
     def mark_content_understanding_ready(self) -> None:

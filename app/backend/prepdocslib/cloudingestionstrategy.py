@@ -17,6 +17,7 @@ from azure.search.documents.indexes.models import (
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
     SearchIndexerDataSourceType,
+    SearchIndexerDataUserAssignedIdentity,
     SearchIndexerIndexProjection,
     SearchIndexerIndexProjectionSelector,
     SearchIndexerIndexProjectionsParameters,
@@ -70,6 +71,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         use_acls: bool = False,
         use_multimodal: bool = False,
         enforce_access_control: bool = False,
+        search_user_assigned_identity_resource_id: str | None = None,
     ) -> None:
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -108,6 +110,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         )
 
         self._search_manager: SearchManager | None = None
+        self.search_user_assigned_identity_resource_id = search_user_assigned_identity_resource_id
 
     def _build_skillset(self) -> SearchIndexerSkillset:
         prefix = f"{self.search_info.index_name}-cloud"
@@ -152,6 +155,9 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
             degree_of_parallelism=1,
             # Managed identity: Search service authenticates against the function app using this resource ID.
             auth_resource_id=self.document_extractor.auth_resource_id,
+            auth_identity=SearchIndexerDataUserAssignedIdentity(
+                resource_id=self.search_user_assigned_identity_resource_id
+            ),
             inputs=[
                 # Provide the binary payload expected by the document extractor custom skill.
                 InputFieldMappingEntry(name="file_data", source="/document/file_data"),
@@ -175,6 +181,9 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
             degree_of_parallelism=1,
             # Managed identity: Search service authenticates against the function app using this resource ID.
             auth_resource_id=self.figure_processor.auth_resource_id,
+            auth_identity=SearchIndexerDataUserAssignedIdentity(
+                resource_id=self.search_user_assigned_identity_resource_id
+            ),
             inputs=[
                 InputFieldMappingEntry(name="figure_id", source="/document/figures/*/figure_id"),
                 InputFieldMappingEntry(name="document_file_name", source="/document/figures/*/document_file_name"),
@@ -237,6 +246,9 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
             degree_of_parallelism=1,
             # Managed identity: Search service authenticates against the function app using this resource ID.
             auth_resource_id=self.text_processor.auth_resource_id,
+            auth_identity=SearchIndexerDataUserAssignedIdentity(
+                resource_id=self.search_user_assigned_identity_resource_id
+            ),
             inputs=[
                 InputFieldMappingEntry(name="consolidated_document", source="/document/consolidated_document"),
             ],

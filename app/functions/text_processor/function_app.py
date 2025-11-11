@@ -1,18 +1,19 @@
 """Azure Function: Text Processor.
-
-Processes markdown text into search chunks with (optional) embeddings and figure metadata.
+Custom skill for Azure AI Search that merges page text with figure metadata, splits into chunks, and computes embeddings.
 """
 
 import io
 import json
 import logging
 import os
+from dataclasses import dataclass
 from typing import Any
 
 import azure.functions as func
 from azure.identity.aio import ManagedIdentityCredential
 
 from prepdocslib.blobmanager import BlobManager
+from prepdocslib.embeddings import OpenAIEmbeddings
 from prepdocslib.listfilestrategy import File
 from prepdocslib.page import ImageOnPage, Page
 from prepdocslib.servicesetup import (
@@ -28,73 +29,88 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 logger = logging.getLogger(__name__)
 
-USE_VECTORS = os.getenv("USE_VECTORS", "true").lower() == "true"
-USE_MULTIMODAL = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
 
-OPENAI_HOST = os.getenv("OPENAI_HOST", "azure")
-AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE", "")
-AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL", "")
-AZURE_OPENAI_EMB_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT", "")
-AZURE_OPENAI_EMB_MODEL_NAME = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
-AZURE_OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", "3072"))
+@dataclass
+class GlobalSettings:
+    use_vectors: bool
+    use_multimodal: bool
+    embedding_dimensions: int
+    sentence_splitter: SentenceTextSplitter
+    embedding_service: OpenAIEmbeddings | None
 
-SENTENCE_SPLITTER = SentenceTextSplitter()
 
-# ---------------------------------------------------------------------------
-# Global credential initialisation (single shared Managed Identity credential)
-# ---------------------------------------------------------------------------
-if AZURE_CLIENT_ID := (os.getenv("AZURE_CLIENT_ID") or os.getenv("IDENTITY_CLIENT_ID") or os.getenv("MSI_CLIENT_ID")):
-    logger.info("Using Managed Identity with client ID: %s", AZURE_CLIENT_ID)
-    GLOBAL_CREDENTIAL = ManagedIdentityCredential(client_id=AZURE_CLIENT_ID)
-else:
-    logger.info("Using default Managed Identity without explicit client ID")
-    GLOBAL_CREDENTIAL = ManagedIdentityCredential()
+settings: GlobalSettings | None = None
 
-# ---------------------------------------------------------------------------
-# Embedding service initialisation (optional)
-# ---------------------------------------------------------------------------
-EMBEDDING_SERVICE = None
-if USE_VECTORS:
-    embeddings_ready = (AZURE_OPENAI_SERVICE or AZURE_OPENAI_CUSTOM_URL) and (
-        AZURE_OPENAI_EMB_DEPLOYMENT or AZURE_OPENAI_EMB_MODEL_NAME
-    )
-    if embeddings_ready:
-        try:
-            # Setup OpenAI client
-            openai_host = OpenAIHost(OPENAI_HOST)
+
+def configure_global_settings():
+    global settings
+
+    # Environment configuration
+    use_vectors = os.getenv("USE_VECTORS", "true").lower() == "true"
+    use_multimodal = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
+    embedding_dimensions = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", "3072"))
+
+    # Conditionally required (based on feature flags)
+    openai_host_str = os.getenv("OPENAI_HOST", "azure")
+    azure_openai_service = os.getenv("AZURE_OPENAI_SERVICE")
+    azure_openai_custom_url = os.getenv("AZURE_OPENAI_CUSTOM_URL")
+    azure_openai_emb_deployment = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
+    azure_openai_emb_model_name = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
+
+    sentence_splitter = SentenceTextSplitter()
+
+    # Single shared managed identity credential
+    if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
+        logger.info("Using Managed Identity with client ID: %s", AZURE_CLIENT_ID)
+        azure_credential = ManagedIdentityCredential(client_id=AZURE_CLIENT_ID)
+    else:
+        logger.info("Using default Managed Identity without client ID")
+        azure_credential = ManagedIdentityCredential()
+
+    # Embedding service (optional)
+    embedding_service = None
+    if use_vectors:
+        if (azure_openai_service or azure_openai_custom_url) and (
+            azure_openai_emb_deployment and azure_openai_emb_model_name
+        ):
+            openai_host = OpenAIHost(openai_host_str)
             openai_client, azure_openai_endpoint = setup_openai_client(
                 openai_host=openai_host,
-                azure_credential=GLOBAL_CREDENTIAL,
-                azure_openai_service=AZURE_OPENAI_SERVICE or None,
-                azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL or None,
+                azure_credential=azure_credential,
+                azure_openai_service=azure_openai_service,
+                azure_openai_custom_url=azure_openai_custom_url,
             )
-
-            # Setup embeddings service
-            EMBEDDING_SERVICE = setup_embeddings_service(
+            embedding_service = setup_embeddings_service(
                 openai_host,
                 openai_client,
-                emb_model_name=AZURE_OPENAI_EMB_MODEL_NAME,
-                emb_model_dimensions=AZURE_OPENAI_EMB_DIMENSIONS,
-                azure_openai_deployment=AZURE_OPENAI_EMB_DEPLOYMENT or None,
+                emb_model_name=azure_openai_emb_model_name,
+                emb_model_dimensions=embedding_dimensions,
+                azure_openai_deployment=azure_openai_emb_deployment,
                 azure_openai_endpoint=azure_openai_endpoint,
             )
-            logger.info(
-                "Embedding service initialised (deployment=%s, model=%s, dims=%d)",
-                AZURE_OPENAI_EMB_DEPLOYMENT or AZURE_OPENAI_EMB_MODEL_NAME,
-                AZURE_OPENAI_EMB_MODEL_NAME,
-                AZURE_OPENAI_EMB_DIMENSIONS,
-            )
-        except Exception as exc:  # pragma: no cover - defensive initialisation
-            logger.error("Failed to initialise embedding service: %s", exc, exc_info=True)
-            EMBEDDING_SERVICE = None
-    else:
-        logger.warning("USE_VECTORS is true but embedding configuration incomplete; embeddings disabled")
+        else:
+            logger.warning("USE_VECTORS is true but embedding configuration incomplete; embeddings disabled")
+
+    settings = GlobalSettings(
+        use_vectors=use_vectors,
+        use_multimodal=use_multimodal,
+        embedding_dimensions=embedding_dimensions,
+        sentence_splitter=sentence_splitter,
+        embedding_service=embedding_service,
+    )
 
 
 @app.function_name(name="process_text")
 @app.route(route="process", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
 async def process_text_entry(req: func.HttpRequest) -> func.HttpResponse:
     """Azure Search custom skill entry point for chunking and embeddings."""
+
+    if settings is None:
+        return func.HttpResponse(
+            json.dumps({"error": "Settings not initialized"}),
+            mimetype="application/json",
+            status_code=500,
+        )
 
     try:
         payload = req.get_json()
@@ -113,7 +129,7 @@ async def process_text_entry(req: func.HttpRequest) -> func.HttpResponse:
         record_id = record.get("recordId", "")
         data = record.get("data", {})
         try:
-            chunks = await _process_document(data)
+            chunks = await process_document(data)
             output_values.append(
                 {
                     "recordId": record_id,
@@ -140,7 +156,7 @@ async def process_text_entry(req: func.HttpRequest) -> func.HttpResponse:
     )
 
 
-async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
+async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
     """Combine figures with page text, split into chunks, and (optionally) embed.
 
     Parameters
@@ -161,28 +177,6 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
     storage_url = consolidated_doc.get("storageUrl") or consolidated_doc.get("metadata_storage_path") or file_name
     pages_input = consolidated_doc.get("pages", [])  # [{page_num, text, figure_ids}]
     figures_input = consolidated_doc.get("figures", [])  # serialized skill payload
-
-    # Merge enriched fields from figure processor into figures array
-    # TODO: possibly remove enriched_*, are they actually needed?
-    enriched_descriptions = data.get("enriched_descriptions", [])
-    enriched_urls = data.get("enriched_urls", [])
-    enriched_embeddings = data.get("enriched_embeddings", [])
-
-    for i, figure in enumerate(figures_input):
-        if i < len(enriched_descriptions):
-            figure["description"] = enriched_descriptions[i]
-        if i < len(enriched_urls):
-            figure["url"] = enriched_urls[i]
-        if i < len(enriched_embeddings):
-            figure["embedding"] = enriched_embeddings[i]
-
-    # Debug: log the first figure to see what fields are present
-    if figures_input:
-        logger.info("DEBUG: First figure keys after merge: %s", list(figures_input[0].keys()))
-        logger.info(
-            "DEBUG: First figure sample after merge: %s",
-            {k: str(v)[:50] if v else v for k, v in list(figures_input[0].items())[:10]},
-        )
 
     figures_by_id = {figure["figure_id"]: figure for figure in figures_input}
 
@@ -205,28 +199,8 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
             if not figure_payload:
                 logger.warning("Figure ID %s not found in figures metadata for page %d", fid, page_num)
                 continue
-            logger.info(
-                "Deserializing figure %s: has description=%s, has url=%s, has bytes_base64=%s",
-                fid,
-                "description" in figure_payload,
-                "url" in figure_payload,
-                "bytes_base64" in figure_payload,
-            )
-            logger.info(
-                "Figure %s payload values: description='%s', url='%s'",
-                fid,
-                figure_payload.get("description", "MISSING")[:100] if figure_payload.get("description") else "NONE",
-                figure_payload.get("url", "MISSING")[:100] if figure_payload.get("url") else "NONE",
-            )
             try:
                 image_on_page, _ = ImageOnPage.from_skill_payload(figure_payload)
-                logger.info(
-                    "Figure %s deserialized: description='%s', url='%s', placeholder=%s",
-                    fid,
-                    (image_on_page.description or "NONE")[:100],
-                    image_on_page.url or "NONE",
-                    image_on_page.placeholder,
-                )
                 page_obj.images.append(image_on_page)
             except Exception as exc:
                 logger.error("Failed to deserialize figure %s: %s", fid, exc, exc_info=True)
@@ -241,16 +215,16 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
     dummy_stream.name = file_name
     file_wrapper = File(content=dummy_stream)
 
-    sections = process_text(pages, file_wrapper, SENTENCE_SPLITTER, category=None)
+    sections = process_text(pages, file_wrapper, settings.sentence_splitter, category=None)
     if not sections:
         return []
 
     # Generate embeddings for section texts
     chunk_texts = [s.chunk.text for s in sections]
     embeddings: list[list[float]] | None = None
-    if USE_VECTORS and chunk_texts:
-        if EMBEDDING_SERVICE:
-            embeddings = await EMBEDDING_SERVICE.create_embeddings(chunk_texts)
+    if settings.use_vectors and chunk_texts:
+        if settings.embedding_service:
+            embeddings = await settings.embedding_service.create_embeddings(chunk_texts)
         else:
             logger.warning("Embeddings requested but service not initialised; skipping vectors")
 
@@ -269,7 +243,7 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
                 "description": image.description or "",
                 "boundingbox": list(image.bbox),
             }
-            if USE_MULTIMODAL and image.embedding is not None:
+            if settings.use_multimodal and image.embedding is not None:
                 ref["embedding"] = image.embedding
             image_refs.append(ref)
         chunk_entry: dict[str, Any] = {
@@ -282,19 +256,27 @@ async def _process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
         }
 
         if embedding_vec is not None:
-            if len(embedding_vec) == AZURE_OPENAI_EMB_DIMENSIONS:
+            if len(embedding_vec) == settings.embedding_dimensions:
                 chunk_entry["embedding"] = embedding_vec
             else:
                 logger.warning(
                     "Skipping embedding for %s chunk %d due to dimension mismatch (expected %d, got %d)",
                     file_name,
                     idx,
-                    AZURE_OPENAI_EMB_DIMENSIONS,
+                    settings.embedding_dimensions,
                     len(embedding_vec),
                 )
-        elif USE_VECTORS:
+        elif settings.use_vectors:
             logger.warning("Embeddings were requested but missing for %s chunk %d", file_name, idx)
 
         outputs.append(chunk_entry)
 
     return outputs
+
+
+# Initialize settings at module load time, unless we're in a test environment
+if os.environ.get("PYTEST_CURRENT_TEST") is None:
+    try:
+        configure_global_settings()
+    except KeyError as e:
+        logger.warning("Could not initialize settings at module load time: %s", e)

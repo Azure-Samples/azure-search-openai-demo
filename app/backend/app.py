@@ -595,7 +595,7 @@ async def setup_clients():
             openai_model=OPENAI_CHATGPT_MODEL,
             openai_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT if OPENAI_HOST == OpenAIHost.AZURE else None,
         )
-        search_info = await setup_search_info(
+        search_info = setup_search_info(
             search_service=AZURE_SEARCH_SERVICE, index_name=AZURE_SEARCH_INDEX, azure_credential=azure_credential
         )
 

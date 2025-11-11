@@ -269,7 +269,9 @@ async def test_app_config_user_upload_bad_openai_config(monkeypatch, minimal_env
     monkeypatch.setenv("USE_USER_UPLOAD", "true")
     monkeypatch.setenv("OPENAI_HOST", "openai")
     quart_app = app.create_app()
-    with pytest.raises(quart.testing.app.LifespanError, match="OPENAI_API_KEY is required for public OpenAI host"):
+    with pytest.raises(
+        quart.testing.app.LifespanError, match="OpenAI key is required when using the non-Azure OpenAI API"
+    ):
         async with quart_app.test_app() as test_app:
             test_app.test_client()
 

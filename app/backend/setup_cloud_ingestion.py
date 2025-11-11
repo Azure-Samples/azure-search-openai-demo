@@ -39,6 +39,7 @@ async def setup_cloud_ingestion_strategy(
     # Get environment variables
     search_service = os.environ["AZURE_SEARCH_SERVICE"]
     index_name = os.environ["AZURE_SEARCH_INDEX"]
+    search_user_assigned_identity_resource_id = os.environ.get("AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID")
     storage_account = os.environ["AZURE_STORAGE_ACCOUNT"]
     storage_container = os.environ["AZURE_STORAGE_CONTAINER"]
     storage_resource_group = os.environ["AZURE_STORAGE_RESOURCE_GROUP"]
@@ -128,6 +129,7 @@ async def setup_cloud_ingestion_strategy(
         use_acls=use_acls,
         use_multimodal=use_multimodal,
         enforce_access_control=enforce_access_control,
+        search_user_assigned_identity_resource_id=search_user_assigned_identity_resource_id,
     )
 
     return ingestion_strategy, openai_client, azure_credential, blob_manager

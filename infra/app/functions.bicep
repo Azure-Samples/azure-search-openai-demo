@@ -2,18 +2,17 @@
 param location string = resourceGroup().location
 param tags object = {}
 param applicationInsightsName string
-param storageAccountName string
 param storageResourceGroupName string
-param searchServiceName string
 param searchServiceResourceGroupName string
-param openAiServiceName string
 param openAiResourceGroupName string
-param documentIntelligenceServiceName string
 param documentIntelligenceResourceGroupName string
 param visionServiceName string = ''
 param visionResourceGroupName string = ''
 param contentUnderstandingServiceName string = ''
 param contentUnderstandingResourceGroupName string = ''
+
+// App environment variables from main.bicep
+param appEnvVariables object
 
 // Function App Names
 param documentExtractorName string
@@ -22,20 +21,8 @@ param textProcessorName string
 // OpenID issuer provided by main template (e.g. https://login.microsoftonline.com/<tenantId>/v2.0)
 param openIdIssuer string
 
-// Shared configuration
-param useVectors bool
-param useMultimodal bool
-param useLocalPdfParser bool
-param useLocalHtmlParser bool
-param useMediaDescriberAzureCU bool
-param searchIndexName string
-param searchFieldNameEmbedding string
-param openAiEmbDeployment string
-param openAiEmbModelName string
-param openAiEmbDimensions int
-param openAiChatDeployment string
-param openAiChatModelName string
-param openAiCustomUrl string
+@description('The principal ID of the Search service user-assigned managed identity')
+param searchUserAssignedIdentityClientId string
 
 var abbrs = loadJsonContent('../abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, resourceGroup().id, location))
@@ -63,57 +50,8 @@ var runtimeStorageRoles = [
   }
 ]
 
-// Common app settings for both functions
-// TODO: Take the settings from main.bicep - appEnvVars
-var commonAppSettings = {
-  // Storage
-  AZURE_STORAGE_ACCOUNT: storageAccountName
-  AZURE_STORAGE_CONTAINER: 'content'
-  AZURE_IMAGESTORAGE_CONTAINER: 'images'
-
-  // Azure OpenAI
-  AZURE_OPENAI_SERVICE: openAiServiceName
-  AZURE_OPENAI_EMB_DEPLOYMENT: openAiEmbDeployment
-  AZURE_OPENAI_EMB_MODEL_NAME: openAiEmbModelName
-  AZURE_OPENAI_EMB_DIMENSIONS: string(openAiEmbDimensions)
-  AZURE_OPENAI_CHATGPT_DEPLOYMENT: openAiChatDeployment
-  AZURE_OPENAI_CHATGPT_MODEL: openAiChatModelName
-  AZURE_OPENAI_CUSTOM_URL: openAiCustomUrl
-
-  // Azure AI Search
-  AZURE_SEARCH_SERVICE: searchServiceName
-  AZURE_SEARCH_INDEX: searchIndexName
-  AZURE_SEARCH_FIELD_NAME_EMBEDDING: searchFieldNameEmbedding
-
-  // Document Intelligence
-  AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligenceServiceName
-
-  // Feature flags
-  USE_VECTORS: string(useVectors)
-  USE_MULTIMODAL: string(useMultimodal)
-  USE_LOCAL_PDF_PARSER: string(useLocalPdfParser)
-  USE_LOCAL_HTML_PARSER: string(useLocalHtmlParser)
-  USE_MEDIA_DESCRIBER_AZURE_CU: string(useMediaDescriberAzureCU)
-}
-
-// Add optional vision settings
-var visionSettings = useMultimodal && !empty(visionServiceName) ? {
-  AZURE_VISION_ENDPOINT: 'https://${visionServiceName}.cognitiveservices.azure.com/'
-} : {}
-
-// Add optional content understanding settings
-var contentUnderstandingSettings = useMultimodal && !empty(contentUnderstandingServiceName) ? {
-  AZURE_CONTENTUNDERSTANDING_ENDPOINT: 'https://${contentUnderstandingServiceName}.cognitiveservices.azure.com/'
-} : {}
-
-// Merge all settings
-var allAppSettings = union(commonAppSettings, visionSettings, contentUnderstandingSettings)
-
-// Deployment storage containers
-// TODO: Can we just use a boring name, the same for all functions?
-var documentExtractorDeploymentContainer = 'deploy-doc-extractor-${take(resourceToken, 7)}'
-var figureProcessorDeploymentContainer = 'deploy-figure-processor-${take(resourceToken, 7)}'
-var textProcessorDeploymentContainer = 'deploy-text-processor-${take(resourceToken, 7)}'
+// Deployment storage container name (same name used in each function's storage account)
+var deploymentContainerName = 'app-package-deployment'
 
 // Runtime storage accounts per function (Flex Consumption requirement)
 module documentExtractorRuntimeStorageAccount '../core/storage/storage-account.bicep' = {
@@ -125,7 +63,7 @@ module documentExtractorRuntimeStorageAccount '../core/storage/storage-account.b
     allowBlobPublicAccess: false
     containers: [
       {
-        name: documentExtractorDeploymentContainer
+        name: deploymentContainerName
       }
     ]
   }
@@ -140,7 +78,7 @@ module figureProcessorRuntimeStorageAccount '../core/storage/storage-account.bic
     allowBlobPublicAccess: false
     containers: [
       {
-        name: figureProcessorDeploymentContainer
+        name: deploymentContainerName
       }
     ]
   }
@@ -155,7 +93,7 @@ module textProcessorRuntimeStorageAccount '../core/storage/storage-account.bicep
     allowBlobPublicAccess: false
     containers: [
       {
-        name: textProcessorDeploymentContainer
+        name: deploymentContainerName
       }
     ]
   }
@@ -297,9 +235,10 @@ module documentExtractor 'functions-app.bicep' = {
     authClientId: documentExtractorAppReg.outputs.clientAppId
     authIdentifierUri: documentExtractorAppReg.outputs.identifierUri
     authTenantId: tenant().tenantId
+    searchUserAssignedIdentityClientId: searchUserAssignedIdentityClientId
     storageAccountName: documentExtractorRuntimeStorageName
-    deploymentStorageContainerName: documentExtractorDeploymentContainer
-    appSettings: union(allAppSettings, {
+    deploymentStorageContainerName: deploymentContainerName
+    appSettings: union(appEnvVariables, {
       AzureFunctionsWebHost__hostid: documentExtractorHostId
     })
     instanceMemoryMB: 4096 // High memory for document processing
@@ -335,13 +274,14 @@ module figureProcessor 'functions-app.bicep' = {
     runtimeName: 'python'
     runtimeVersion: '3.11'
     storageAccountName: figureProcessorRuntimeStorageName
-    deploymentStorageContainerName: figureProcessorDeploymentContainer
+    deploymentStorageContainerName: deploymentContainerName
     identityId: functionsUserIdentity.outputs.resourceId
     identityClientId: functionsUserIdentity.outputs.clientId
     authClientId: figureProcessorAppReg.outputs.clientAppId
     authIdentifierUri: figureProcessorAppReg.outputs.identifierUri
     authTenantId: tenant().tenantId
-    appSettings: union(allAppSettings, {
+    searchUserAssignedIdentityClientId: searchUserAssignedIdentityClientId
+    appSettings: union(appEnvVariables, {
       AzureFunctionsWebHost__hostid: figureProcessorHostId
     })
     instanceMemoryMB: 2048
@@ -377,13 +317,14 @@ module textProcessor 'functions-app.bicep' = {
     runtimeName: 'python'
     runtimeVersion: '3.11'
     storageAccountName: textProcessorRuntimeStorageName
-    deploymentStorageContainerName: textProcessorDeploymentContainer
+    deploymentStorageContainerName: deploymentContainerName
     identityId: functionsUserIdentity.outputs.resourceId
     identityClientId: functionsUserIdentity.outputs.clientId
     authClientId: textProcessorAppReg.outputs.clientAppId
     authIdentifierUri: textProcessorAppReg.outputs.identifierUri
     authTenantId: tenant().tenantId
-    appSettings: union(allAppSettings, {
+    searchUserAssignedIdentityClientId: searchUserAssignedIdentityClientId
+    appSettings: union(appEnvVariables, {
       AzureFunctionsWebHost__hostid: textProcessorHostId
     })
     instanceMemoryMB: 2048 // Standard memory for embedding
@@ -407,7 +348,7 @@ module functionsIdentityRBAC 'functions-rbac.bicep' = {
     visionResourceGroupName: visionResourceGroupName
     contentUnderstandingServiceName: contentUnderstandingServiceName
     contentUnderstandingResourceGroupName: contentUnderstandingResourceGroupName
-    useMultimodal: useMultimodal
+    useMultimodal: bool(appEnvVariables.USE_MULTIMODAL)
   }
 }
 

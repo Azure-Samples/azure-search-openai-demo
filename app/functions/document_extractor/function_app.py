@@ -8,6 +8,7 @@ import io
 import json
 import logging
 import os
+from dataclasses import dataclass
 from typing import Any
 
 import azure.functions as func
@@ -22,19 +23,42 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 logger = logging.getLogger(__name__)
 
 
-USE_LOCAL_PDF_PARSER = os.getenv("USE_LOCAL_PDF_PARSER", "false").lower() == "true"
-USE_LOCAL_HTML_PARSER = os.getenv("USE_LOCAL_HTML_PARSER", "false").lower() == "true"
-USE_MULTIMODAL = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
+@dataclass
+class GlobalSettings:
+    use_local_pdf_parser: bool
+    use_local_html_parser: bool
+    use_multimodal: bool
+    document_intelligence_service: str | None
+    azure_credential: ManagedIdentityCredential
 
-DOCUMENT_INTELLIGENCE_SERVICE = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
 
-# Eagerly create a single managed identity credential instance for the worker.
-if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
-    logger.info("Using Managed Identity with client ID: %s", AZURE_CLIENT_ID)
-    AZURE_CREDENTIAL = ManagedIdentityCredential(client_id=AZURE_CLIENT_ID)
-else:
-    logger.info("Using default Managed Identity without client ID")
-    AZURE_CREDENTIAL = ManagedIdentityCredential()
+settings: GlobalSettings | None = None
+
+
+def configure_global_settings():
+    global settings
+
+    # Environment configuration
+    use_local_pdf_parser = os.getenv("USE_LOCAL_PDF_PARSER", "false").lower() == "true"
+    use_local_html_parser = os.getenv("USE_LOCAL_HTML_PARSER", "false").lower() == "true"
+    use_multimodal = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
+    document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
+
+    # Single shared managed identity credential
+    if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
+        logger.info("Using Managed Identity with client ID: %s", AZURE_CLIENT_ID)
+        azure_credential = ManagedIdentityCredential(client_id=AZURE_CLIENT_ID)
+    else:
+        logger.info("Using default Managed Identity without client ID")
+        azure_credential = ManagedIdentityCredential()
+
+    settings = GlobalSettings(
+        use_local_pdf_parser=use_local_pdf_parser,
+        use_local_html_parser=use_local_html_parser,
+        use_multimodal=use_multimodal,
+        document_intelligence_service=document_intelligence_service,
+        azure_credential=azure_credential,
+    )
 
 
 @app.function_name(name="extract")
@@ -92,6 +116,13 @@ async def extract_document(req: func.HttpRequest) -> func.HttpResponse:
         ]
     }
     """
+    if settings is None:
+        return func.HttpResponse(
+            json.dumps({"error": "Settings not initialized"}),
+            mimetype="application/json",
+            status_code=500,
+        )
+
     try:
         # Parse custom skill input
         req_body = req.get_json()
@@ -148,12 +179,12 @@ async def process_document(data: dict[str, Any]) -> dict[str, Any]:
     parser = select_parser(
         file_name=file_name,
         content_type=content_type,
-        azure_credential=AZURE_CREDENTIAL,
-        document_intelligence_service=DOCUMENT_INTELLIGENCE_SERVICE or None,
+        azure_credential=settings.azure_credential,
+        document_intelligence_service=settings.document_intelligence_service,
         document_intelligence_key=None,
-        process_figures=USE_MULTIMODAL,
-        use_local_pdf_parser=USE_LOCAL_PDF_PARSER,
-        use_local_html_parser=USE_LOCAL_HTML_PARSER,
+        process_figures=settings.use_multimodal,
+        use_local_pdf_parser=settings.use_local_pdf_parser,
+        use_local_html_parser=settings.use_local_html_parser,
     )
 
     pages: list[Page] = []
@@ -208,3 +239,11 @@ def build_document_components(file_name: str, pages: list[Page]) -> dict[str, An
         "pages": page_entries,
         "figures": figure_entries,
     }
+
+
+# Initialize settings at module load time, unless we're in a test environment
+if os.environ.get("PYTEST_CURRENT_TEST") is None:
+    try:
+        configure_global_settings()
+    except KeyError as e:
+        logger.warning("Could not initialize settings at module load time: %s", e)
