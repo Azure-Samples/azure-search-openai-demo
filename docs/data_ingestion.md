@@ -14,6 +14,7 @@ The chat app provides two ways to ingest data: manual ingestion and cloud-based 
   - [Indexing additional documents](#indexing-additional-documents)
   - [Removing documents](#removing-documents)
 - [Cloud-based ingestion](#cloud-based-ingestion)
+  - [Custom skills pipeline](#custom-skills-pipeline)
   - [Indexing of additional documents](#indexing-of-additional-documents)
   - [Removal of documents](#removal-of-documents)
   - [Scheduled indexing](#scheduled-indexing)
@@ -139,17 +140,54 @@ You must first explicitly [enable cloud ingestion](./deploy_features.md#enabling
 
 This feature cannot be used on existing index. You need to create a new index or drop and recreate an existing index. In the newly created index schema, a new field 'parent_id' is added. This is used internally by the indexer to manage life cycle of chunks.
 
+### Custom skills pipeline
+
+The cloud ingestion pipeline uses four Azure Functions as custom skills within an Azure AI Search indexer. Each function corresponds to a stage in the ingestion process. Here's how it works:
+
+1. **User uploads documents** to Azure Blob Storage (content container)
+2. **Azure AI Search Indexer** monitors the blob container and orchestrates processing
+3. **Custom skills** process documents through three stages:
+   - **Document Extractor** (Skill #1): Extracts text and figure metadata from source documents
+   - **Figure Processor** (Skill #2): Enriches figures with descriptions and embeddings
+   - **Shaper Skill** (Skill #3): Built-in Azure AI Search skill that consolidates enriched data
+   - **Text Processor** (Skill #4): Combines text with enriched figures, chunks content, and generates embeddings
+4. **Azure AI Search Index** receives the final processed chunks with embeddings
+
+#### [Document Extractor Function](app/functions/document_extractor/)
+
+- Implements the [document extraction](#document-extraction) stage
+- Emits markdown text with `<figure id="...">` placeholders and figure metadata
+
+#### [Figure Processor Function](app/functions/figure_processor/)
+
+- Implements the [figure processing](#figure-processing) stage
+- Emits enriched figure metadata with descriptions, URLs, and embeddings
+
+#### [Shaper Skill](https://learn.microsoft.com/en-us/azure/search/cognitive-search-skill-shaper)
+
+- Consolidates enrichments from the figure processor back into the main document context
+- Required because Azure AI Search's enrichment tree isolates data by context
+- The Shaper explicitly combines:
+  - Original `pages` array from `document_extractor`
+  - Enriched `figures` array with descriptions, URLs, and embeddings from `figure_processor`
+  - File metadata (file_name, storageUrl)
+- Creates a `consolidated_document` object that the text processor can consume
+
+#### [Text Processor Function](app/functions/text_processor/)
+
+- Implements the [text processing](#text-processing) stage (figure merging, chunking, embedding)
+- Receives the consolidated document with enriched figures from the Shaper skill
+- Emits search-ready chunks with figure references and embeddings
+
 ### Indexing of additional documents
 
 To add additional documents to the index, first upload them to your data source (Blob storage, by default).
-Then navigate to the Azure portal, find the index, and run it.
-The Azure AI Search indexer will identify the new documents and ingest them into the index.
+Then navigate to the Azure portal and run the indexer. The Azure AI Search indexer will identify the new documents and ingest them into the index.
 
 ### Removal of documents
 
 To remove documents from the index, remove them from your data source (Blob storage, by default).
-Then navigate to the Azure portal, find the index, and run it.
-The Azure AI Search indexer will take care of removing those documents from the index.
+Then navigate to the Azure portal and run the indexer. The Azure AI Search indexer will take care of removing those documents from the index.
 
 ### Scheduled indexing
 

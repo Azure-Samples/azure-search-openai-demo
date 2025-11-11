@@ -432,6 +432,7 @@ class BlobManager(BaseBlobManager):
                 blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                 file.url = blob_client.url
 
+        assert file.url is not None, "file.url must be set after upload"
         return unquote(file.url)
 
     async def upload_document_image(

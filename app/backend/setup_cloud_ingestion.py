@@ -7,9 +7,11 @@ from typing import Optional
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential
+from openai import AsyncOpenAI
 from rich.logging import RichHandler
 
 from load_azd_env import load_azd_env
+from prepdocslib.blobmanager import BlobManager
 from prepdocslib.cloudingestionstrategy import CloudIngestionStrategy
 from prepdocslib.servicesetup import (
     OpenAIHost,
@@ -33,13 +35,13 @@ def clean_key_if_exists(key: Optional[str]) -> Optional[str]:
 async def setup_cloud_ingestion_strategy(
     azure_credential: AsyncTokenCredential,
     document_action: DocumentAction = DocumentAction.Add,
-) -> CloudIngestionStrategy:
+) -> tuple[CloudIngestionStrategy, AsyncOpenAI, AsyncTokenCredential, BlobManager]:
     """Setup the cloud ingestion strategy with all required services."""
 
     # Get environment variables
     search_service = os.environ["AZURE_SEARCH_SERVICE"]
     index_name = os.environ["AZURE_SEARCH_INDEX"]
-    search_user_assigned_identity_resource_id = os.environ.get("AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID")
+    search_user_assigned_identity_resource_id = os.environ["AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID"]
     storage_account = os.environ["AZURE_STORAGE_ACCOUNT"]
     storage_container = os.environ["AZURE_STORAGE_CONTAINER"]
     storage_resource_group = os.environ["AZURE_STORAGE_RESOURCE_GROUP"]
@@ -168,7 +170,8 @@ async def main():
         # Setup the indexer, skillset, and data source
         logger.info("Setting up indexer, skillset, and data source...")
         await ingestion_strategy.setup()
-        logger.info("Cloud ingestion setup complete!")
+        logger.info("Triggering initial indexing run...")
+        await ingestion_strategy.run()
 
     finally:
         # Gracefully close any async clients/credentials

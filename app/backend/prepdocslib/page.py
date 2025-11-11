@@ -85,15 +85,25 @@ class ImageOnPage:
         else:
             bbox = (0, 0, 0, 0)
 
+        filename = data.get("filename")
+        figure_id = data.get("figure_id")
+        placeholder = data.get("placeholder")
+        assert filename is not None, "filename is required"
+        assert figure_id is not None, "figure_id is required"
+
+        # Generate placeholder if not provided
+        if placeholder is None:
+            placeholder = f'<figure id="{figure_id}"></figure>'
+
         image = cls(
             bytes=raw_bytes,
             bbox=bbox,
             page_num=page_num,
-            filename=data.get("filename"),
-            figure_id=data.get("figure_id"),
-            placeholder=data.get("placeholder"),
+            filename=filename,
+            figure_id=figure_id,
+            placeholder=placeholder,
             mime_type=data.get("mime_type") or "image/png",
-            title=data.get("title"),
+            title=data.get("title") or "",
             description=data.get("description"),
             url=data.get("url"),
         )

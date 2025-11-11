@@ -307,6 +307,7 @@ def test_setup_parser_text_file():
         file_name="test.txt",
         content_type="text/plain",
         azure_credential=MockAzureCredential(),
+        document_intelligence_service=None,
     )
 
     assert isinstance(parser, TextParser)
@@ -336,4 +337,5 @@ def test_setup_parser_unsupported_file_type():
             file_name="test.xyz",
             content_type="application/xyz",
             azure_credential=MockAzureCredential(),
+            document_intelligence_service=None,
         )

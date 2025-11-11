@@ -71,7 +71,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         use_acls: bool = False,
         use_multimodal: bool = False,
         enforce_access_control: bool = False,
-        search_user_assigned_identity_resource_id: str | None = None,
+        search_user_assigned_identity_resource_id: str,
     ) -> None:
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -297,38 +297,31 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
             skillset = self._build_skillset()
             await indexer_client.create_or_update_skillset(skillset)
 
-    async def run(self) -> None:
-        if self.document_action == DocumentAction.Add:
-            files = self.list_file_strategy.list()
-            async for file in files:
-                try:
-                    await self.blob_manager.upload_blob(file)
-                finally:
-                    if file:
-                        file.close()
-        elif self.document_action == DocumentAction.Remove:
-            paths = self.list_file_strategy.list_paths()
-            async for path in paths:
-                await self.blob_manager.remove_blob(path)
-        elif self.document_action == DocumentAction.RemoveAll:
-            await self.blob_manager.remove_blob()
+            indexer = SearchIndexer(
+                name=self.indexer_name,
+                description="Indexer orchestrating cloud ingestion pipeline",
+                data_source_name=self.data_source_name,
+                target_index_name=self.search_info.index_name,
+                skillset_name=self.skillset_name,
+                parameters=IndexingParameters(
+                    configuration=IndexingParametersConfiguration(
+                        query_timeout=None,  # type: ignore
+                        data_to_extract="storageMetadata",
+                        allow_skillset_to_read_file_data=True,
+                    )
+                ),
+            )
+            await indexer_client.create_or_update_indexer(indexer)
 
-        indexer = SearchIndexer(
-            name=self.indexer_name,
-            description="Indexer orchestrating cloud ingestion pipeline",
-            data_source_name=self.data_source_name,
-            target_index_name=self.search_info.index_name,
-            skillset_name=self.skillset_name,
-            parameters=IndexingParameters(
-                configuration=IndexingParametersConfiguration(
-                    query_timeout=None,
-                    data_to_extract="storageMetadata",
-                    allow_skillset_to_read_file_data=True,
-                )
-            ),
-        )
+    async def run(self) -> None:
+        files = self.list_file_strategy.list()
+        async for file in files:
+            try:
+                await self.blob_manager.upload_blob(file)
+            finally:
+                if file:
+                    file.close()
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
-            await indexer_client.create_or_update_indexer(indexer)
             await indexer_client.run_indexer(self.indexer_name)
         logger.info("Triggered indexer '%s' for cloud ingestion", self.indexer_name)
