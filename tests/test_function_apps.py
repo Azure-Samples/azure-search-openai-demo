@@ -1,6 +1,7 @@
 import base64
 import json
 import logging
+import os
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any
@@ -485,12 +486,32 @@ async def test_document_extractor_without_settings(monkeypatch: pytest.MonkeyPat
     assert body["error"] == "Settings not initialized"
 
 
-@pytest.mark.asyncio
-async def test_document_extractor_module_init_key_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test document extractor handles KeyError during module initialization."""
-    # This tests lines 248-249 in document_extractor/function_app.py
-    # The module-level initialization code catches KeyError and logs a warning
-    pass  # This is tested by ensuring the module can load even if env vars are missing
+def test_document_extractor_module_init_key_error(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Reload module without pytest env to trigger init warning path."""
+    import importlib
+    from unittest import mock
+
+    saved_env = os.environ.get("PYTEST_CURRENT_TEST")
+    monkeypatch.delenv("PYTEST_CURRENT_TEST", raising=False)
+
+    caplog.set_level("WARNING")
+
+    with mock.patch("azure.identity.aio.ManagedIdentityCredential", lambda *_, **__: object()), mock.patch(
+        "prepdocslib.servicesetup.build_file_processors", side_effect=KeyError("missing env")
+    ):
+        reloaded = importlib.reload(document_extractor)
+
+    assert "Could not initialize settings at module load time" in caplog.text
+
+    monkeypatch.setenv("PYTEST_CURRENT_TEST", "pytest")
+
+    if saved_env is not None:
+        monkeypatch.setenv("PYTEST_CURRENT_TEST", saved_env)
+
+    importlib.reload(reloaded)
+    reloaded.settings = None
 
 
 @pytest.mark.asyncio
@@ -581,9 +602,62 @@ async def test_text_processor_with_client_id(monkeypatch: pytest.MonkeyPatch) ->
 
 @pytest.mark.asyncio
 async def test_text_processor_embeddings_setup(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test text processor sets up embeddings when use_vectors is true."""
-    # This tests lines 75-76, 82 in text_processor/function_app.py
-    pass  # This is tested by the existing comprehensive text processor tests
+    """configure_global_settings wires up embedding service when configuration is complete."""
+
+    monkeypatch.setenv("USE_VECTORS", "true")
+    monkeypatch.setenv("AZURE_OPENAI_SERVICE", "svc")
+    monkeypatch.setenv("AZURE_OPENAI_EMB_DEPLOYMENT", "deployment")
+    monkeypatch.setenv("AZURE_OPENAI_EMB_MODEL_NAME", "model")
+    monkeypatch.setenv("OPENAI_HOST", "azure")
+
+    class StubCredential:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+    monkeypatch.setattr(text_processor, "ManagedIdentityCredential", StubCredential)
+    monkeypatch.setattr(text_processor, "build_file_processors", lambda **kwargs: {".pdf": object()})
+
+    calls: dict[str, object] = {}
+
+    def fake_setup_openai_client(**kwargs):
+        calls["openai_host"] = kwargs["openai_host"]
+        return object(), "https://svc.openai.azure.com"
+
+    def fake_setup_embeddings_service(openai_host, openai_client, **kwargs):
+        calls["embedding"] = kwargs
+        return "embedding-service"
+
+    monkeypatch.setattr(text_processor, "setup_openai_client", fake_setup_openai_client)
+    monkeypatch.setattr(text_processor, "setup_embeddings_service", fake_setup_embeddings_service)
+
+    text_processor.settings = None
+    text_processor.configure_global_settings()
+
+    assert calls["openai_host"] == text_processor.OpenAIHost.AZURE
+    assert calls["embedding"]["emb_model_name"] == "model"
+    assert text_processor.settings is not None
+    assert text_processor.settings.embedding_service == "embedding-service"
+
+    text_processor.settings = None
+
+
+def test_text_processor_configure_logs_when_embedding_config_missing(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    monkeypatch.setenv("USE_VECTORS", "true")
+    monkeypatch.setattr(text_processor, "ManagedIdentityCredential", lambda *args, **kwargs: object())
+    monkeypatch.setattr(text_processor, "build_file_processors", lambda **kwargs: {".pdf": object()})
+
+    text_processor.settings = None
+
+    with caplog.at_level(logging.WARNING):
+        text_processor.configure_global_settings()
+
+    assert "embedding configuration incomplete" in caplog.text
+    assert text_processor.settings is not None
+    assert text_processor.settings.embedding_service is None
+
+    text_processor.settings = None
 
 
 @pytest.mark.asyncio
@@ -891,3 +965,103 @@ async def test_text_processor_embeddings_missing_warning(monkeypatch: pytest.Mon
 
     assert response.status_code == 200
     assert "were requested but missing" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_text_processor_process_document_handles_missing_figures(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    stub_processor = FileProcessor(TextParser(), SentenceTextSplitter())
+
+    monkeypatch.setattr(text_processor, "select_processor_for_filename", lambda *_args, **_kwargs: stub_processor)
+    monkeypatch.setattr(
+        text_processor,
+        "process_text",
+        lambda *args, **kwargs: [SectionStub(chunk=ChunkStub(page_num=0, text="Chunk", images=[]))],
+    )
+
+    text_processor.settings = text_processor.GlobalSettings(
+        use_vectors=False,
+        use_multimodal=False,
+        embedding_dimensions=1536,
+        file_processors={".pdf": stub_processor},
+        embedding_service=None,
+    )
+
+    payload = {
+        "consolidated_document": {
+            "file_name": "sample.pdf",
+            "pages": [
+                {
+                    "page_num": 0,
+                    "text": "Hello",
+                    "figure_ids": ["missing", "bad"],
+                }
+            ],
+            "figures": [
+                {
+                    "figure_id": "bad",
+                    # Missing filename forces ImageOnPage.from_skill_payload to raise AssertionError
+                }
+            ],
+        }
+    }
+
+    with caplog.at_level(logging.WARNING):
+        chunks = await text_processor.process_document(payload)
+
+    assert chunks
+    assert any("not found in figures metadata" in record.message for record in caplog.records)
+    assert any("Failed to deserialize figure" in record.message for record in caplog.records)
+
+    text_processor.settings = None
+
+
+@pytest.mark.asyncio
+async def test_text_processor_process_document_returns_empty_when_no_pages(monkeypatch: pytest.MonkeyPatch) -> None:
+    text_processor.settings = text_processor.GlobalSettings(
+        use_vectors=False,
+        use_multimodal=False,
+        embedding_dimensions=1536,
+        file_processors={},
+        embedding_service=None,
+    )
+
+    result = await text_processor.process_document({"consolidated_document": {"file_name": "empty.pdf", "pages": []}})
+
+    assert result == []
+
+    text_processor.settings = None
+
+
+def test_text_processor_module_init_logs_warning(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    import importlib
+    from unittest import mock
+
+    saved_env = os.environ.get("PYTEST_CURRENT_TEST")
+    monkeypatch.delenv("PYTEST_CURRENT_TEST", raising=False)
+
+    class StubCredential:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+    caplog.set_level("WARNING")
+
+    with mock.patch("azure.identity.aio.ManagedIdentityCredential", StubCredential), mock.patch(
+        "prepdocslib.servicesetup.build_file_processors", side_effect=KeyError("missing env")
+    ), mock.patch("prepdocslib.servicesetup.setup_openai_client", return_value=(object(), None)), mock.patch(
+        "prepdocslib.servicesetup.setup_embeddings_service", return_value=None
+    ):
+        reloaded = importlib.reload(text_processor)
+
+    assert "Could not initialize settings at module load time" in caplog.text
+
+    monkeypatch.setenv("PYTEST_CURRENT_TEST", "pytest")
+
+    if saved_env is not None:
+        monkeypatch.setenv("PYTEST_CURRENT_TEST", saved_env)
+
+    importlib.reload(reloaded)
+    reloaded.settings = None

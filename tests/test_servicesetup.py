@@ -4,10 +4,13 @@ from openai.types.create_embedding_response import Usage
 
 from prepdocslib.embeddings import OpenAIEmbeddings
 from prepdocslib.figureprocessor import FigureProcessor, MediaDescriptionStrategy
+from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.pdfparser import DocumentAnalysisParser
 from prepdocslib.servicesetup import (
     OpenAIHost,
     build_file_processors,
+    clean_key_if_exists,
+    select_processor_for_filename,
     setup_blob_manager,
     setup_embeddings_service,
     setup_figure_processor,
@@ -317,3 +320,34 @@ def test_build_file_processors_without_di_excludes_office_formats():
     assert ".docx" not in file_processors
     assert ".pptx" not in file_processors
     assert ".xlsx" not in file_processors
+
+
+def test_clean_key_if_exists_handles_whitespace() -> None:
+    assert clean_key_if_exists("  secret  ") == "secret"
+    assert clean_key_if_exists("   ") is None
+    assert clean_key_if_exists(None) is None
+
+
+def test_build_file_processors_logs_when_no_parsers(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    caplog.set_level("WARNING")
+    monkeypatch.setattr("prepdocslib.servicesetup.DocumentAnalysisParser", lambda *args, **kwargs: None)
+
+    processors = build_file_processors(
+        azure_credential=MockAzureCredential(),
+        document_intelligence_service="service",
+        use_local_pdf_parser=False,
+        use_local_html_parser=False,
+    )
+
+    assert ".pdf" not in processors
+    assert ".html" not in processors
+    warnings = {record.message for record in caplog.records}
+    assert any("No PDF parser available" in message for message in warnings)
+    assert any("No HTML parser available" in message for message in warnings)
+
+
+def test_select_processor_for_filename_raises_when_unknown() -> None:
+    with pytest.raises(ValueError, match="Unsupported file type: file.unsupported"):
+        select_processor_for_filename("file.unsupported", {".txt": FileProcessor(TextParser(), None)})

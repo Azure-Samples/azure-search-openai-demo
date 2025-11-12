@@ -35,8 +35,6 @@ async def parse_file(
         return []
     logger.info("Ingesting '%s'", file.filename())
     pages = [page async for page in processor.parser.parse(content=file.content)]
-    total_images = sum(len(page.images) for page in pages)
-    logger.info("Found %d images across %d pages", total_images, len(pages))
     for page in pages:
         for image in page.images:
             logger.info("Processing image '%s' on page %d", image.filename, page.page_num)

@@ -273,7 +273,7 @@ def build_file_processors(
     pdf_parser: Optional[Parser] = None
     if use_local_pdf_parser or document_intelligence_service is None:
         pdf_parser = LocalPdfParser()
-    elif document_intelligence_service is not None:
+    elif doc_int_parser is not None:
         pdf_parser = doc_int_parser
     else:
         logger.warning("No PDF parser available")
@@ -281,7 +281,7 @@ def build_file_processors(
     html_parser: Optional[Parser] = None
     if use_local_html_parser or document_intelligence_service is None:
         html_parser = LocalHTMLParser()
-    elif document_intelligence_service is not None:
+    elif doc_int_parser is not None:
         html_parser = doc_int_parser
     else:
         logger.warning("No HTML parser available")
