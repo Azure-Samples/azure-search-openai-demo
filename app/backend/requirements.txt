@@ -452,5 +452,5 @@ wsproto==1.2.0
     # via hypercorn
 yarl==1.17.2
     # via aiohttp
-zipp==3.21.0
+zipp==3.23.0
     # via importlib-metadata
