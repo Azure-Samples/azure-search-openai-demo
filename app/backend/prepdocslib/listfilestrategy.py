@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import inspect
 import logging
 import os
 import re
@@ -10,9 +11,8 @@ from glob import glob
 from typing import IO, Optional, Union
 
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.storage.filedatalake.aio import (
-    DataLakeServiceClient,
-)
+from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.filedatalake.aio import DataLakeServiceClient
 
 logger = logging.getLogger("scripts")
 
@@ -200,3 +200,78 @@ class ADLSGen2ListFileStrategy(ListFileStrategy):
                         os.remove(temp_file_path)
                     except Exception as file_delete_exception:
                         logger.error(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")
+
+
+class AzureBlobListFileStrategy(ListFileStrategy):
+    """
+    Concrete strategy for listing files that are located in a standard Azure Blob Storage container.
+    """
+
+    def __init__(
+        self,
+        storage_account: str,
+        storage_container: str,
+        credential: Union[AsyncTokenCredential, str],
+        path_prefix: Optional[str] = None,
+    ):
+        self.storage_account = storage_account
+        self.storage_container = storage_container
+        self.credential = credential
+        if path_prefix:
+            # Normalize prefix to avoid double slashes
+            self.path_prefix = path_prefix.lstrip("/")
+        else:
+            self.path_prefix = None
+
+    @staticmethod
+    async def _close_client(client):
+        close = getattr(client, "close", None)
+        if close:
+            result = close()
+            if inspect.isawaitable(result):
+                await result
+
+    async def list_paths(self) -> AsyncGenerator[str, None]:
+        service_client = BlobServiceClient(
+            account_url=f"https://{self.storage_account}.blob.core.windows.net", credential=self.credential
+        )
+        container_client = service_client.get_container_client(self.storage_container)
+        try:
+            async for blob in container_client.list_blobs(name_starts_with=self.path_prefix or None):
+                # Skip virtual directories
+                if blob.name.endswith("/"):
+                    continue
+                yield blob.name
+        finally:
+            await self._close_client(container_client)
+            await self._close_client(service_client)
+
+    async def list(self) -> AsyncGenerator[File, None]:
+        service_client = BlobServiceClient(
+            account_url=f"https://{self.storage_account}.blob.core.windows.net", credential=self.credential
+        )
+        container_client = service_client.get_container_client(self.storage_container)
+        try:
+            async for blob in container_client.list_blobs(name_starts_with=self.path_prefix or None):
+                if blob.name.endswith("/"):
+                    continue
+
+                blob_client = container_client.get_blob_client(blob.name)
+                temp_file_path = os.path.join(tempfile.gettempdir(), os.path.basename(blob.name))
+
+                try:
+                    downloader = await blob_client.download_blob()
+                    with open(temp_file_path, "wb") as temp_file:
+                        data = await downloader.readall()
+                        temp_file.write(data)
+
+                    yield File(content=open(temp_file_path, "rb"), url=blob_client.url)
+                except Exception as blob_exception:
+                    logger.error(f"\tGot an error while reading {blob.name} -> {blob_exception} --> skipping file")
+                    try:
+                        os.remove(temp_file_path)
+                    except Exception as file_delete_exception:
+                        logger.error(f"\tGot an error while deleting {temp_file_path} -> {file_delete_exception}")
+        finally:
+            await self._close_client(container_client)
+            await self._close_client(service_client)

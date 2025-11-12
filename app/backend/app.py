@@ -54,6 +54,7 @@ from config import (
     CONFIG_AGENTIC_RETRIEVAL_ENABLED,
     CONFIG_ASK_APPROACH,
     CONFIG_AUTH_CLIENT,
+    CONFIG_CACHE,
     CONFIG_CHAT_APPROACH,
     CONFIG_CHAT_HISTORY_BROWSER_ENABLED,
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
@@ -110,7 +111,68 @@ mimetypes.add_type("text/css", ".css")
 
 @bp.route("/")
 async def index():
-    return await bp.send_static_file("index.html")
+    """Basic health check."""
+    return jsonify({"status": "healthy", "service": "RAG Backend"})
+
+@bp.route("/health", methods=["GET"])
+async def health():
+    """Enhanced health check with dependency probes."""
+    import aiohttp
+    from datetime import datetime
+    
+    health_status = {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "dependencies": {}
+    }
+    
+    # Check Azure AI Search
+    search_ok = False
+    search_latency_ms = None
+    try:
+        search_client: SearchClient = current_app.config.get(CONFIG_SEARCH_CLIENT)
+        if search_client:
+            t0 = time.time()
+            # Simple ping - get index stats
+            await search_client.get_document_count()
+            search_latency_ms = int((time.time() - t0) * 1000)
+            search_ok = True
+    except Exception as e:
+        search_ok = False
+        health_status["dependencies"]["azure_search"] = {"ok": False, "error": str(e)[:100]}
+    
+    if search_ok:
+        health_status["dependencies"]["azure_search"] = {
+            "ok": True,
+            "latency_ms": search_latency_ms
+        }
+    
+    # Check Azure OpenAI
+    openai_ok = False
+    openai_latency_ms = None
+    try:
+        openai_client = current_app.config.get(CONFIG_OPENAI_CLIENT)
+        if openai_client:
+            t0 = time.time()
+            # Simple ping - list models (lightweight call)
+            await openai_client.models.list()
+            openai_latency_ms = int((time.time() - t0) * 1000)
+            openai_ok = True
+    except Exception as e:
+        openai_ok = False
+        health_status["dependencies"]["azure_openai"] = {"ok": False, "error": str(e)[:100]}
+    
+    if openai_ok:
+        health_status["dependencies"]["azure_openai"] = {
+            "ok": True,
+            "latency_ms": openai_latency_ms
+        }
+    
+    # Overall status
+    if not search_ok or not openai_ok:
+        health_status["status"] = "degraded"
+    
+    return jsonify(health_status)
 
 
 # Empty page is recommended for login redirect to work.
@@ -219,6 +281,13 @@ async def chat(auth_claims: dict[str, Any]):
     request_json = await request.get_json()
     context = request_json.get("context", {})
     context["auth_claims"] = auth_claims
+    
+    # Extract correlation ID from request headers
+    traceparent = request.headers.get("x-traceparent") or request.headers.get("traceparent")
+    if traceparent:
+        context["traceparent"] = traceparent
+        current_app.logger.info(f"traceparent={traceparent}")
+    
     try:
         approach: Approach = cast(Approach, current_app.config[CONFIG_CHAT_APPROACH])
 
@@ -508,13 +577,23 @@ async def setup_clients():
     current_app.config[CONFIG_CREDENTIAL] = azure_credential
 
     # Set up clients for AI Search and Storage
+    # For local development, use AZURE_SEARCH_KEY if available (avoids needing azd)
+    from azure.core.credentials import AzureKeyCredential
+    AZURE_SEARCH_KEY = os.getenv("AZURE_SEARCH_KEY")
+    if AZURE_SEARCH_KEY:
+        current_app.logger.info("Using AZURE_SEARCH_KEY for Azure Search authentication")
+        search_credential = AzureKeyCredential(AZURE_SEARCH_KEY)
+    else:
+        current_app.logger.info("Using Azure credential (Managed Identity/Azure CLI) for Azure Search authentication")
+        search_credential = azure_credential
+    
     search_client = SearchClient(
         endpoint=AZURE_SEARCH_ENDPOINT,
         index_name=AZURE_SEARCH_INDEX,
-        credential=azure_credential,
+        credential=search_credential,
     )
     agent_client = KnowledgeAgentRetrievalClient(
-        endpoint=AZURE_SEARCH_ENDPOINT, agent_name=AZURE_SEARCH_AGENT, credential=azure_credential
+        endpoint=AZURE_SEARCH_ENDPOINT, agent_name=AZURE_SEARCH_AGENT, credential=search_credential
     )
 
     # Set up the global blob storage manager (used for global content/images, but not user uploads)
@@ -696,6 +775,12 @@ async def setup_clients():
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
+    # Initialize cache (Redis or in-memory)
+    from services.cache import create_cache
+    from config import REDIS_URL
+    cache = await create_cache(REDIS_URL)
+    current_app.config[CONFIG_CACHE] = cache
+
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
         search_index_name=AZURE_SEARCH_INDEX,
@@ -729,6 +814,9 @@ async def close_clients():
     await current_app.config[CONFIG_GLOBAL_BLOB_MANAGER].close_clients()
     if user_blob_manager := current_app.config.get(CONFIG_USER_BLOB_MANAGER):
         await user_blob_manager.close_clients()
+    # Close cache connection
+    if cache := current_app.config.get(CONFIG_CACHE):
+        await cache.close()
 
 
 def create_app():
@@ -736,23 +824,27 @@ def create_app():
     app.register_blueprint(bp)
     app.register_blueprint(chat_history_cosmosdb_bp)
 
-    if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
+    app_insights_conn_str = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING", "").strip()
+    if app_insights_conn_str and app_insights_conn_str.lower() not in ("", "none", "your-app-insights-connection-string"):
         app.logger.info("APPLICATIONINSIGHTS_CONNECTION_STRING is set, enabling Azure Monitor")
-        configure_azure_monitor(
-            instrumentation_options={
-                "django": {"enabled": False},
-                "psycopg2": {"enabled": False},
-                "fastapi": {"enabled": False},
-            }
-        )
-        # This tracks HTTP requests made by aiohttp:
-        AioHttpClientInstrumentor().instrument()
-        # This tracks HTTP requests made by httpx:
-        HTTPXClientInstrumentor().instrument()
-        # This tracks OpenAI SDK requests:
-        OpenAIInstrumentor().instrument()
-        # This middleware tracks app route requests:
-        app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[assignment]
+        try:
+            configure_azure_monitor(
+                instrumentation_options={
+                    "django": {"enabled": False},
+                    "psycopg2": {"enabled": False},
+                    "fastapi": {"enabled": False},
+                }
+            )
+            # This tracks HTTP requests made by aiohttp:
+            AioHttpClientInstrumentor().instrument()
+            # This tracks HTTP requests made by httpx:
+            HTTPXClientInstrumentor().instrument()
+            # This tracks OpenAI SDK requests:
+            OpenAIInstrumentor().instrument()
+            # This middleware tracks app route requests:
+            app.asgi_app = OpenTelemetryMiddleware(app.asgi_app)  # type: ignore[assignment]
+        except Exception as e:
+            app.logger.warning(f"Failed to configure Azure Monitor: {e}. Continuing without telemetry.")
 
     # Log levels should be one of https://docs.python.org/3/library/logging.html#logging-levels
     # Set root level to WARNING to avoid seeing overly verbose logs from SDKS

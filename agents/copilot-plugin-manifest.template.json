@@ -1,0 +1,137 @@
+{
+  "$schema": "https://schemas.microsoft.com/copilot/plugin/v1.0/plugin.schema.json",
+  "version": "1.0.0",
+  "name": "ai-master-engineer-rag",
+  "displayName": "AI Master Engineer RAG",
+  "description": "Search and query organizational documents using RAG (Retrieval-Augmented Generation). Get accurate, cited answers from your knowledge base.",
+  "publisher": "Actual Reality",
+  "iconUrl": "{{PRODUCTION_URL}}/icons/copilot-icon.png",
+  "capabilities": [
+    "search",
+    "answer",
+    "citation"
+  ],
+  "authentication": {
+    "type": "microsoftEntraID",
+    "clientId": "74d6d3c9-fe0f-40d2-80d1-9b636235e6a7",
+    "authorizationUrl": "https://login.microsoftonline.com/b998106b-07ef-4d03-bca9-128c816631e6/oauth2/v2.0/authorize",
+    "tokenUrl": "https://login.microsoftonline.com/b998106b-07ef-4d03-bca9-128c816631e6/oauth2/v2.0/token",
+    "scopes": [
+      "User.Read",
+      "offline_access"
+    ]
+  },
+  "endpoints": {
+    "search": {
+      "url": "{{PRODUCTION_URL}}/api/copilot/search",
+      "method": "POST",
+      "description": "Search documents in the knowledge base"
+    },
+    "query": {
+      "url": "{{PRODUCTION_URL}}/api/copilot/query",
+      "method": "POST",
+      "description": "Query documents and get AI-generated answers with citations"
+    },
+    "health": {
+      "url": "{{PRODUCTION_URL}}/api/copilot/health",
+      "method": "GET",
+      "description": "Health check endpoint"
+    }
+  },
+  "parameters": {
+    "search": {
+      "query": {
+        "type": "string",
+        "required": true,
+        "description": "Search query string"
+      },
+      "maxResults": {
+        "type": "number",
+        "required": false,
+        "default": 5,
+        "description": "Maximum number of results to return"
+      }
+    },
+    "query": {
+      "message": {
+        "type": "string",
+        "required": true,
+        "description": "User question or query"
+      },
+      "conversationHistory": {
+        "type": "array",
+        "required": false,
+        "description": "Previous conversation messages for context"
+      }
+    }
+  },
+  "responses": {
+    "search": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "snippet": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string",
+                "enum": ["corpus", "web"]
+              }
+            }
+          }
+        },
+        "totalCount": {
+          "type": "number"
+        }
+      }
+    },
+    "query": {
+      "type": "object",
+      "properties": {
+        "answer": {
+          "type": "string",
+          "description": "AI-generated answer"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "snippet": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "thoughts": {
+          "type": "array",
+          "description": "Processing steps (optional)"
+        }
+      }
+    }
+  }
+}
+
+
+
+
+

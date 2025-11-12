@@ -11,6 +11,7 @@ param location string
 
 param appServicePlanName string = '' // Set in main.parameters.json
 param backendServiceName string = '' // Set in main.parameters.json
+param agentsServiceName string = '' // Set in main.parameters.json
 param resourceGroupName string = '' // Set in main.parameters.json
 
 param applicationInsightsDashboardName string = '' // Set in main.parameters.json
@@ -296,6 +297,11 @@ param azureContainerAppsWorkloadProfile string
 @allowed(['appservice', 'containerapps'])
 param deploymentTarget string = 'appservice'
 
+@description('Enable Key Vault for secret management')
+param enableKeyVault bool = false
+@description('Key Vault name (optional, will be generated if not provided)')
+param keyVaultName string = ''
+
 // RAG Configuration Parameters
 @description('Whether to use text embeddings for RAG search')
 param ragSearchTextEmbeddings bool = true
@@ -374,6 +380,23 @@ module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) 
       ? logAnalyticsName
       : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
     publicNetworkAccess: publicNetworkAccess
+  }
+}
+
+// Create Key Vault for secret management (optional)
+module keyVault 'modules/keyvault.bicep' = if (enableKeyVault) {
+  name: 'keyvault'
+  scope: resourceGroup
+  params: {
+    name: !empty(keyVaultName) ? keyVaultName : '${abbrs.keyVaultVaults}${resourceToken}'
+    location: location
+    tags: tags
+    tenantId: tenantId
+    accessPolicies: [] // Will be updated after App Services are created
+    enableSoftDelete: true
+    softDeleteRetentionInDays: 7
+    enablePurgeProtection: false
+    sku: 'standard'
   }
 }
 
@@ -488,9 +511,13 @@ var appEnvVariables = {
 module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservice') {
   name: 'web'
   scope: resourceGroup
+  dependsOn: [
+    enableKeyVault ? keyVault : null
+  ]
   params: {
     name: !empty(backendServiceName) ? backendServiceName : '${abbrs.webSitesAppService}backend-${resourceToken}'
     location: location
+    keyVaultName: enableKeyVault ? keyVault.outputs.name : ''
     tags: union(tags, { 'azd-service-name': 'backend' })
     // Need to check deploymentTarget again due to https://github.com/Azure/bicep/issues/3990
     appServicePlanId: deploymentTarget == 'appservice' ? appServicePlan.outputs.id : ''
@@ -514,6 +541,77 @@ module backend 'core/host/appservice.bicep' = if (deploymentTarget == 'appservic
       AZURE_SERVER_APP_SECRET: serverAppSecret
       AZURE_CLIENT_APP_SECRET: clientAppSecret
     })
+  }
+}
+
+// App Service for the Agents service (Teams Bot)
+var agentsEnvVariables = {
+  // Bot Framework Configuration
+  MICROSOFT_APP_ID: '' // Set via Azure Portal or Key Vault
+  MICROSOFT_APP_PASSWORD: '' // Set via Azure Portal or Key Vault
+  // Microsoft 365 Configuration
+  AZURE_TENANT_ID: tenantId
+  AZURE_CLIENT_ID: clientAppId // Use same client ID as backend
+  AZURE_CLIENT_SECRET: clientAppSecret // Use same client secret as backend
+  // Backend API Configuration - reference backend service
+  BACKEND_URL: deploymentTarget == 'appservice'
+    ? 'https://${backend.outputs.name}.azurewebsites.net'
+    : 'https://${acaBackend.outputs.name}.azurecontainerapps.io'
+  // Azure Services (inherit from backend)
+  AZURE_OPENAI_ENDPOINT: isAzureOpenAiHost && deployAzureOpenAi
+    ? 'https://${openAi.outputs.name}.openai.azure.com'
+    : ''
+  AZURE_OPENAI_API_KEY: azureOpenAiApiKey
+  AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
+  AZURE_SEARCH_ENDPOINT: 'https://${searchService.outputs.name}.search.windows.net'
+  AZURE_SEARCH_KEY: '' // Set via Key Vault or use Managed Identity
+  AZURE_SEARCH_INDEX: searchIndexName
+  // Application Insights
+  APPLICATIONINSIGHTS_CONNECTION_STRING: useApplicationInsights
+    ? monitoring.outputs.applicationInsightsConnectionString
+    : ''
+  // Port configuration
+  PORT: '3978'
+  // Agent Settings
+  AGENT_NAME: 'RAG Assistant'
+  MAX_CONVERSATION_TURNS: '20'
+  ENABLE_TYPING_INDICATOR: 'true'
+  // Channel Settings
+  ENABLE_TEAMS: 'true'
+  ENABLE_COPILOT: 'true'
+  ENABLE_WEB_CHAT: 'true'
+  // CORS
+  ALLOWED_ORIGINS: join(['https://teams.microsoft.com', 'https://teams.microsoft.com/*'], ';')
+  RUNNING_IN_PRODUCTION: 'true'
+}
+
+module agents 'core/host/appservice.bicep' = if (deploymentTarget == 'appservice') {
+  name: 'agents'
+  scope: resourceGroup
+  dependsOn: [
+    backend
+    enableKeyVault ? keyVault : null
+  ]
+  params: {
+    name: !empty(agentsServiceName) ? agentsServiceName : '${abbrs.webSitesAppService}agents-${resourceToken}'
+    location: location
+    tags: union(tags, { 'azd-service-name': 'agents' })
+    appServicePlanId: deploymentTarget == 'appservice' ? appServicePlan.outputs.id : ''
+    runtimeName: 'python'
+    runtimeVersion: '3.11'
+    appCommandLine: 'python main.py'
+    scmDoBuildDuringDeployment: true
+    managedIdentity: true
+    keyVaultName: enableKeyVault ? keyVault.outputs.name : ''
+    virtualNetworkSubnetId: usePrivateEndpoint ? isolation.outputs.appSubnetId : ''
+    publicNetworkAccess: publicNetworkAccess
+    allowedOrigins: ['https://teams.microsoft.com']
+    // Disable Easy Auth for Agents (uses Bot Framework auth)
+    enableUnauthenticatedAccess: true
+    disableAppServicesAuthentication: true
+    use32BitWorkerProcess: appServiceSkuName == 'F1'
+    alwaysOn: appServiceSkuName != 'F1'
+    appSettings: agentsEnvVariables
   }
 }
 

@@ -1,11 +1,11 @@
 # Bot Framework dependencies
 botbuilder-core>=4.15.0
 botbuilder-schema>=4.15.0
-botbuilder-adapters-teams>=4.15.0
 
 # Web framework
 quart>=0.18.0
 quart-cors>=0.7.0
+hypercorn>=0.14.0
 
 # HTTP client for calling backend
 aiohttp>=3.8.0

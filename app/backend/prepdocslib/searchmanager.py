@@ -83,8 +83,11 @@ class SearchManager:
                 # OpenAI-based embeddings
                 self.embedding_dimensions = self.embeddings.open_ai_dimensions
             elif hasattr(self.embeddings, 'get_embedding_dimensions'):
-                # PatentsBERTa embeddings
+                # PatentsBERTa or NOMIC embeddings
                 self.embedding_dimensions = self.embeddings.get_embedding_dimensions()
+            elif hasattr(self.embeddings, 'embedding_dimensions'):
+                # Direct dimension attribute (NOMIC)
+                self.embedding_dimensions = self.embeddings.embedding_dimensions
             else:
                 self.embedding_dimensions = None
         else:

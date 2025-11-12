@@ -21,6 +21,7 @@ from prepdocslib.embeddings import (
     OpenAIEmbeddingService,
 )
 from prepdocslib.patentsberta_embeddings import PatentsBertaEmbeddings
+from prepdocslib.nomic_embeddings import NomicEmbeddings
 from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import FileStrategy
 from prepdocslib.htmlparser import LocalHTMLParser
@@ -30,6 +31,7 @@ from prepdocslib.integratedvectorizerstrategy import (
 from prepdocslib.jsonparser import JsonParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
+    AzureBlobListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
 )
@@ -128,6 +130,10 @@ def setup_list_file_strategy(
     datalake_filesystem: Union[str, None],
     datalake_path: Union[str, None],
     datalake_key: Union[str, None],
+    blob_storage_account: Union[str, None],
+    blob_storage_container: Union[str, None],
+    blob_path_prefix: Union[str, None],
+    blob_storage_key: Union[str, None],
 ):
     list_file_strategy: ListFileStrategy
     if datalake_storage_account:
@@ -141,11 +147,24 @@ def setup_list_file_strategy(
             data_lake_path=datalake_path,
             credential=adls_gen2_creds,
         )
+    elif blob_storage_account and blob_storage_container:
+        blob_creds: Union[AsyncTokenCredential, str] = azure_credential if blob_storage_key is None else blob_storage_key
+        logger.info(
+            "Using Azure Blob Storage container '%s' in account '%s'",
+            blob_storage_container,
+            blob_storage_account,
+        )
+        list_file_strategy = AzureBlobListFileStrategy(
+            storage_account=blob_storage_account,
+            storage_container=blob_storage_container,
+            credential=blob_creds,
+            path_prefix=blob_path_prefix,
+        )
     elif local_files:
         logger.info("Using local files: %s", local_files)
         list_file_strategy = LocalListFileStrategy(path_pattern=local_files)
     else:
-        raise ValueError("Either local_files or datalake_storage_account must be provided.")
+        raise ValueError("Provide either local_files, Azure Blob Storage details, or datalake_storage_account.")
     return list_file_strategy
 
 
@@ -155,6 +174,7 @@ class OpenAIHost(str, Enum):
     AZURE_CUSTOM = "azure_custom"
     LOCAL = "local"
     PATENTSBERTA = "patentsberta"
+    NOMIC = "nomic"
 
 
 def setup_embeddings_service(
@@ -173,6 +193,10 @@ def setup_embeddings_service(
     disable_batch_vectors: bool = False,
     patentsberta_endpoint: Union[str, None] = None,
     patentsberta_api_key: Union[str, None] = None,
+    nomic_endpoint: Union[str, None] = None,
+    nomic_api_key: Union[str, None] = None,
+    nomic_model: str = "nomic-embed-text-v1.5",
+    nomic_use_sdk: bool = False,
 ):
     if disable_vectors:
         logger.info("Not setting up embeddings service")
@@ -185,6 +209,16 @@ def setup_embeddings_service(
         return PatentsBertaEmbeddings(
             endpoint=patentsberta_endpoint,
             api_key=patentsberta_api_key,
+            batch_size=16,
+            max_retries=3
+        )
+    elif openai_host == OpenAIHost.NOMIC:
+        logger.info(f"Setting up NOMIC embedding service (model: {nomic_model})")
+        return NomicEmbeddings(
+            model=nomic_model,
+            api_key=nomic_api_key,
+            endpoint=nomic_endpoint,
+            use_sdk=nomic_use_sdk,
             batch_size=16,
             max_retries=3
         )
@@ -513,13 +547,18 @@ if __name__ == "__main__":
             )
         exit(1)
 
+    storage_key_cli = clean_key_if_exists(args.storagekey)
+    storage_key_env = clean_key_if_exists(os.getenv("AZURE_STORAGE_KEY"))
+    storage_sas_env = clean_key_if_exists(os.getenv("AZURE_STORAGE_SAS_TOKEN"))
+    resolved_storage_key = storage_key_cli or storage_key_env or storage_sas_env
+
     blob_manager = setup_blob_manager(
         azure_credential=azd_credential,
         storage_account=os.environ["AZURE_STORAGE_ACCOUNT"],
         storage_container=os.environ["AZURE_STORAGE_CONTAINER"],
         storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
-        storage_key=clean_key_if_exists(args.storagekey),
+        storage_key=resolved_storage_key,
         image_storage_container=os.environ.get("AZURE_IMAGESTORAGE_CONTAINER"),  # Pass the image container
     )
     list_file_strategy = setup_list_file_strategy(
@@ -529,6 +568,10 @@ if __name__ == "__main__":
         datalake_filesystem=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM"),
         datalake_path=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM_PATH"),
         datalake_key=clean_key_if_exists(args.datalakekey),
+        blob_storage_account=os.getenv("AZURE_STORAGE_ACCOUNT"),
+        blob_storage_container=os.getenv("AZURE_STORAGE_CONTAINER"),
+        blob_path_prefix=os.getenv("AZURE_STORAGE_BLOB_PREFIX"),
+        blob_storage_key=resolved_storage_key,
     )
 
     # https://learn.microsoft.com/azure/ai-services/openai/api-version-deprecation#latest-ga-api-release
@@ -552,6 +595,10 @@ if __name__ == "__main__":
         disable_batch_vectors=args.disablebatchvectors,
         patentsberta_endpoint=os.getenv("PATENTSBERTA_ENDPOINT"),
         patentsberta_api_key=os.getenv("PATENTSBERTA_API_KEY"),
+        nomic_endpoint=os.getenv("NOMIC_ENDPOINT"),
+        nomic_api_key=os.getenv("NOMIC_API_KEY"),
+        nomic_model=os.getenv("NOMIC_MODEL", "nomic-embed-text-v1.5"),
+        nomic_use_sdk=os.getenv("NOMIC_USE_SDK", "false").lower() == "true",
     )
     openai_client = setup_openai_client(
         openai_host=OPENAI_HOST,

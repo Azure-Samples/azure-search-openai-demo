@@ -35,3 +35,29 @@ CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS = "rag_search_text_embeddings"
 CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS = "rag_search_image_embeddings"
 CONFIG_RAG_SEND_TEXT_SOURCES = "rag_send_text_sources"
 CONFIG_RAG_SEND_IMAGE_SOURCES = "rag_send_image_sources"
+CONFIG_CACHE = "cache"
+
+# Feature flags and provider keys (Phase 1B scaffolding)
+import os
+
+ENABLE_WEB_SEARCH = os.getenv("ENABLE_WEB_SEARCH", "false").lower() == "true"
+SERPER_API_KEY = os.getenv("SERPER_API_KEY")
+WEB_CACHE_TTL_S = int(os.getenv("WEB_CACHE_TTL_S", "3600"))
+REDIS_URL = os.getenv("REDIS_URL")  # Optional Redis cache URL
+
+# OCR Configuration
+OCR_PROVIDER = os.getenv("OCR_PROVIDER", "none").lower()  # deepseek, azure_document_intelligence, none
+OCR_ON_INGEST = os.getenv("OCR_ON_INGEST", "false").lower() == "true"  # Run OCR during document ingestion
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
+DEEPSEEK_OCR_MODEL = os.getenv("DEEPSEEK_OCR_MODEL", "deepseek-ocr")
+AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT")
+AZURE_DOCUMENT_INTELLIGENCE_KEY = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_KEY")
+AZURE_DOCUMENT_INTELLIGENCE_MODEL = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_MODEL", "prebuilt-read")
+
+# NOMIC Embeddings Configuration
+NOMIC_API_KEY = os.getenv("NOMIC_API_KEY")
+NOMIC_ENDPOINT = os.getenv("NOMIC_ENDPOINT")  # Optional custom endpoint
+NOMIC_USE_SDK = os.getenv("NOMIC_USE_SDK", "false").lower() == "true"  # Use Python SDK instead of API
+NOMIC_INFERENCE_MODE = os.getenv("NOMIC_INFERENCE_MODE", "remote").lower()  # local or remote (SDK only)
+ENABLE_NOMIC_EMBEDDINGS = os.getenv("ENABLE_NOMIC_EMBEDDINGS", "false").lower() == "true"

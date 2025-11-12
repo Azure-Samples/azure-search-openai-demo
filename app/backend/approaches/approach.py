@@ -104,6 +104,7 @@ class ExtraInfo:
     data_points: DataPoints
     thoughts: list[ThoughtStep] = field(default_factory=list)
     followup_questions: Optional[list[Any]] = None
+    unified_citations: Optional[list[dict[str, Any]]] = None  # Unified citation format
 
 
 @dataclass
@@ -214,51 +215,70 @@ class Approach(ABC):
     ) -> list[Document]:
         search_text = query_text if use_text_search else ""
         search_vectors = vectors if use_vector_search else []
-        if use_semantic_ranker:
-            results = await self.search_client.search(
-                search_text=search_text,
-                filter=filter,
-                top=top,
-                query_caption="extractive|highlight-false" if use_semantic_captions else None,
-                query_rewrites="generative" if use_query_rewriting else None,
-                vector_queries=search_vectors,
-                query_type=QueryType.SEMANTIC,
-                query_language=self.query_language,
-                query_speller=self.query_speller,
-                semantic_configuration_name="default",
-                semantic_query=query_text,
-            )
-        else:
-            results = await self.search_client.search(
-                search_text=search_text,
-                filter=filter,
-                top=top,
-                vector_queries=search_vectors,
-            )
+        
+        try:
+            if use_semantic_ranker:
+                results = await self.search_client.search(
+                    search_text=search_text,
+                    filter=filter,
+                    top=top,
+                    query_caption="extractive|highlight-false" if use_semantic_captions else None,
+                    query_rewrites="generative" if use_query_rewriting else None,
+                    vector_queries=search_vectors,
+                    query_type=QueryType.SEMANTIC,
+                    query_language=self.query_language,
+                    query_speller=self.query_speller,
+                    semantic_configuration_name="default",
+                    semantic_query=query_text,
+                )
+            else:
+                results = await self.search_client.search(
+                    search_text=search_text,
+                    filter=filter,
+                    top=top,
+                    vector_queries=search_vectors,
+                )
+        except Exception as search_error:
+            # Handle empty index or missing searchable fields gracefully
+            error_msg = str(search_error)
+            if "CannotSearchWithoutSearchableFields" in error_msg or "searchable string fields" in error_msg:
+                # Return empty results instead of crashing - allows bot to respond with a helpful message
+                return []
+            # Re-raise other exceptions
+            raise
 
         documents: list[Document] = []
-        async for page in results.by_page():
-            async for document in page:
-                documents.append(
-                    Document(
-                        id=document.get("id"),
-                        content=document.get("content"),
-                        category=document.get("category"),
-                        sourcepage=document.get("sourcepage"),
-                        sourcefile=document.get("sourcefile"),
-                        oids=document.get("oids"),
-                        groups=document.get("groups"),
-                        captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
-                        score=document.get("@search.score"),
-                        reranker_score=document.get("@search.reranker_score"),
-                        images=document.get("images"),
+        try:
+            async for page in results.by_page():
+                async for document in page:
+                    documents.append(
+                        Document(
+                            id=document.get("id"),
+                            content=document.get("content"),
+                            category=document.get("category"),
+                            sourcepage=document.get("sourcepage"),
+                            sourcefile=document.get("sourcefile"),
+                            oids=document.get("oids"),
+                            groups=document.get("groups"),
+                            captions=cast(list[QueryCaptionResult], document.get("@search.captions")),
+                            score=document.get("@search.score"),
+                            reranker_score=document.get("@search.reranker_score"),
+                            images=document.get("images"),
+                        )
                     )
-                )
+        except Exception as e:
+            # Handle empty index or missing searchable fields gracefully
+            error_msg = str(e)
+            if "CannotSearchWithoutSearchableFields" in error_msg or "searchable string fields" in error_msg:
+                # Return empty results instead of crashing - allows bot to respond with a helpful message
+                return []
+            # Re-raise other exceptions
+            raise
 
-            qualified_documents = [
-                doc
-                for doc in documents
-                if (
+        qualified_documents = [
+            doc
+            for doc in documents
+            if (
                     (doc.score or 0) >= (minimum_search_score or 0)
                     and (doc.reranker_score or 0) >= (minimum_reranker_score or 0)
                 )

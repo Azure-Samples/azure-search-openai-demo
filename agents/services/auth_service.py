@@ -247,6 +247,164 @@ class AuthService:
             logger.error(f"Error acquiring access token: {e}")
             return None
     
+    async def get_obo_token(
+        self, 
+        user_token: str, 
+        scopes: Optional[List[str]] = None
+    ) -> Optional[str]:
+        """
+        Exchange a user token for an On-Behalf-Of (OBO) token.
+        This allows the bot to call backend APIs on behalf of the user.
+        
+        Args:
+            user_token: The user's access token from Teams
+            scopes: Optional scopes to request. Defaults to User.Read and offline_access
+            
+        Returns:
+            OBO token string or None if exchange fails
+        """
+        try:
+            if not self._msal_app:
+                logger.error("MSAL app not initialized")
+                return None
+            
+            if scopes is None:
+                scopes = ["User.Read", "offline_access"]
+            
+            # Use MSAL to exchange user token for OBO token
+            result = self._msal_app.acquire_token_on_behalf_of(
+                user_assertion=user_token,
+                scopes=scopes
+            )
+            
+            if "access_token" in result:
+                logger.info("Successfully acquired OBO token")
+                return result["access_token"]
+            else:
+                error = result.get("error", "unknown")
+                error_desc = result.get("error_description", "No description")
+                logger.error(f"Failed to acquire OBO token: {error} - {error_desc}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"Error acquiring OBO token: {e}", exc_info=True)
+            return None
+    
+    def extract_user_token_from_activity(self, turn_context: TurnContext) -> Optional[str]:
+        """
+        Extract user token from Teams activity.
+        Teams SSO tokens are typically in channel_data or via OAuthPrompt.
+        
+        Args:
+            turn_context: The turn context from Teams
+            
+        Returns:
+            User token string or None if not found
+        """
+        try:
+            # Check for token in channel_data (Teams SSO)
+            channel_data = turn_context.activity.channel_data
+            if channel_data and isinstance(channel_data, dict):
+                # Teams may include token in channel_data
+                token = channel_data.get("token") or channel_data.get("ssoToken")
+                if token:
+                    return token
+            
+            # Check for token in activity.value (for OAuth prompt responses)
+            activity_value = turn_context.activity.value
+            if activity_value and isinstance(activity_value, dict):
+                token = activity_value.get("token") or activity_value.get("accessToken")
+                if token:
+                    return token
+            
+            # Check in activity properties (for future Teams SSO implementations)
+            if hasattr(turn_context.activity, "token_response"):
+                token_response = turn_context.activity.token_response
+                if token_response and isinstance(token_response, dict):
+                    token = token_response.get("token") or token_response.get("access_token")
+                    if token:
+                        return token
+            
+            logger.debug("No user token found in activity")
+            return None
+            
+        except Exception as e:
+            logger.warning(f"Error extracting user token: {e}")
+            return None
+    
+    async def get_obo_user_claims(self, turn_context: TurnContext) -> Optional[Dict[str, Any]]:
+        """
+        Get user claims using OBO token exchange.
+        This is the preferred method for Teams SSO.
+        
+        Args:
+            turn_context: The turn context from Teams
+            
+        Returns:
+            User claims dictionary or None if OBO exchange fails
+        """
+        try:
+            # Extract user token from Teams activity
+            user_token = self.extract_user_token_from_activity(turn_context)
+            
+            if not user_token:
+                logger.debug("No user token found, cannot perform OBO exchange")
+                return None
+            
+            # Exchange user token for OBO token
+            obo_token = await self.get_obo_token(user_token)
+            
+            if not obo_token:
+                logger.warning("OBO token exchange failed, falling back to basic claims")
+                return await self.get_user_claims(turn_context)
+            
+            # Use OBO token to get user info from Graph
+            # For now, we'll validate the token and extract claims
+            # In production, you might want to decode the JWT token to get claims
+            try:
+                # Get user ID from turn context
+                user_id = turn_context.activity.from_property.id
+                
+                # Get enhanced claims using OBO token
+                access_token = await self.get_access_token()
+                if access_token:
+                    graph_user = await self.get_user_from_graph(user_id, access_token)
+                    groups = await self.get_user_groups_from_graph(user_id, access_token)
+                    
+                    if graph_user:
+                        return {
+                            "oid": user_id,
+                            "name": graph_user.display_name,
+                            "email": graph_user.mail or graph_user.user_principal_name,
+                            "tenant_id": self.config.tenant_id,
+                            "groups": [g.id for g in groups],
+                            "roles": [],
+                            "channel_id": turn_context.activity.channel_id,
+                            "conversation_id": turn_context.activity.conversation.id,
+                            "obo_token": obo_token,  # Include OBO token for backend calls
+                            "is_authenticated": True
+                        }
+            except Exception as e:
+                logger.warning(f"Error getting user info with OBO token: {e}")
+            
+            # Fallback to basic claims with OBO token
+            return {
+                "oid": turn_context.activity.from_property.id,
+                "name": turn_context.activity.from_property.name or "Unknown User",
+                "email": "",
+                "tenant_id": self.config.tenant_id,
+                "groups": [],
+                "roles": [],
+                "channel_id": turn_context.activity.channel_id,
+                "conversation_id": turn_context.activity.conversation.id,
+                "obo_token": obo_token,
+                "is_authenticated": True
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting OBO user claims: {e}", exc_info=True)
+            return None
+    
     async def get_user_from_graph(self, user_id: str, access_token: str) -> Optional[GraphUserInfo]:
         """
         Get user information from Microsoft Graph.

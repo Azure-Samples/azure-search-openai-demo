@@ -18,11 +18,17 @@ from approaches.approach import (
     Approach,
     ExtraInfo,
     ThoughtStep,
+    DataPoints,
 )
 from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
+from config import ENABLE_WEB_SEARCH, SERPER_API_KEY, WEB_CACHE_TTL_S, CONFIG_CACHE
+from typing import List, Dict
+from quart import current_app
+import hashlib
+import json
 
 
 class ChatReadRetrieveReadApproach(Approach):
@@ -271,6 +277,250 @@ class ChatReadRetrieveReadApproach(Approach):
     async def run_search_approach(
         self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
     ):
+        # Phase 1B scaffolding: allow a simple 'mode' switch with safe defaults
+        mode = overrides.get("mode", "rag")  # rag | web | hybrid
+        
+        # Hybrid mode: merge RAG + Web results
+        if mode == "hybrid":
+            if not ENABLE_WEB_SEARCH:
+                # Fallback to RAG-only if web search disabled
+                mode = "rag"
+            else:
+                # Run both RAG and Web in parallel, then merge
+                import asyncio
+                from services.web_search.serper_client import SerperClient
+                from services.web_search.normalizer import normalize_serper
+                
+                original_user_query = messages[-1]["content"]
+                if not isinstance(original_user_query, str):
+                    raise ValueError("The most recent message content must be a string.")
+                
+                # Get query for web search
+                query_messages = self.prompt_manager.render_prompt(
+                    self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
+                )
+                tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
+                chat_completion = cast(
+                    ChatCompletion,
+                    await self.create_chat_completion(
+                        self.chatgpt_deployment,
+                        self.chatgpt_model,
+                        messages=query_messages,
+                        overrides=overrides,
+                        response_token_limit=self.get_response_token_limit(self.chatgpt_model, 100),
+                        temperature=0.0,
+                        tools=tools,
+                        reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
+                    ),
+                )
+                query_text = self.get_search_query(chat_completion, original_user_query)
+                
+                # Run RAG search (reuse existing logic but with mode=rag override)
+                rag_overrides = {**overrides, "mode": "rag"}
+                rag_info = await self.run_search_approach(messages, rag_overrides, auth_claims)
+                
+                # Run web search with caching
+                web_info = None
+                if SERPER_API_KEY:
+                    try:
+                        top = overrides.get("top", 3)
+                        
+                        # Check cache first
+                        cache = current_app.config.get(CONFIG_CACHE)
+                        raw_items = None
+                        if cache:
+                            # Create cache key from query and top parameter
+                            cache_key_data = {"query": query_text, "top": top, "provider": "serper"}
+                            cache_key = f"web_search:{hashlib.md5(json.dumps(cache_key_data, sort_keys=True).encode()).hexdigest()}"
+                            cached_result = await cache.get(cache_key)
+                            if cached_result:
+                                raw_items = cached_result
+                        
+                        # If not in cache, fetch from API
+                        if raw_items is None:
+                            raw_items = await SerperClient(SERPER_API_KEY).search(query_text, top)
+                            # Cache the result
+                            if cache:
+                                cache_key_data = {"query": query_text, "top": top, "provider": "serper"}
+                                cache_key = f"web_search:{hashlib.md5(json.dumps(cache_key_data, sort_keys=True).encode()).hexdigest()}"
+                                await cache.set(cache_key, raw_items, WEB_CACHE_TTL_S)
+                        
+                        normalized = normalize_serper(raw_items)
+                        web_text_sources = [f"{item.get('url','')}: {item.get('snippet','')}" for item in normalized]
+                        web_citations = [item.get("url", "") for item in normalized]
+                        
+                        # Build unified citations for web
+                        from services.citation_builder import build_unified_from_text_sources
+                        web_text_sources_for_cit = [{"url": item.get("url"), "title": item.get("title"), "content": item.get("snippet"), "sourcefile": item.get("url")} for item in normalized]
+                        web_unified = build_unified_from_text_sources(web_text_sources_for_cit)
+                        for cit in web_unified:
+                            cit["source"] = "web"
+                            cit["provider"] = "serper"
+                        
+                        web_info = ExtraInfo(
+                            DataPoints(text=web_text_sources, images=[], citations=web_citations),
+                            unified_citations=web_unified,
+                        )
+                    except Exception as e:
+                        # Web search failed, continue with RAG only
+                        pass
+                
+                # Merge RAG + Web results with deduplication
+                merged_text = list(rag_info.data_points.text or [])
+                merged_citations = list(rag_info.data_points.citations or [])
+                merged_unified = list(rag_info.unified_citations or [])
+                seen_urls = set()
+                
+                # Add RAG URLs to seen set
+                for cit in rag_info.data_points.citations or []:
+                    seen_urls.add(cit.lower())
+                
+                # Add web results (deduplicate by URL)
+                if web_info:
+                    for text_src in web_info.data_points.text or []:
+                        # Extract URL from text source
+                        if "http" in text_src:
+                            url = text_src.split(":")[0] if ":" in text_src else ""
+                            if url.lower() not in seen_urls:
+                                merged_text.append(text_src)
+                                seen_urls.add(url.lower())
+                    
+                    for cit in web_info.data_points.citations or []:
+                        if cit.lower() not in seen_urls:
+                            merged_citations.append(cit)
+                            seen_urls.add(cit.lower())
+                    
+                    # Merge unified citations
+                    merged_unified.extend(web_info.unified_citations or [])
+                
+                return ExtraInfo(
+                    DataPoints(text=merged_text, images=rag_info.data_points.images, citations=merged_citations),
+                    thoughts=rag_info.thoughts + [
+                        ThoughtStep(
+                            title="Hybrid mode (RAG + Web)",
+                            description=f"Merged {len(rag_info.data_points.text or [])} RAG + {len(web_info.data_points.text or []) if web_info else 0} web results",
+                            props={"mode": "hybrid"},
+                        )
+                    ],
+                    unified_citations=merged_unified,
+                )
+        
+        if mode == "web":
+            if not ENABLE_WEB_SEARCH:
+                # Web search is disabled; return empty data points but do not crash
+                return ExtraInfo(
+                    DataPoints(text=[], images=[], citations=[]),
+                    thoughts=[
+                        ThoughtStep(
+                            title="Web search disabled",
+                            description="ENABLE_WEB_SEARCH flag is false; returning no external results.",
+                            props={"mode": mode},
+                        )
+                    ],
+                )
+
+            # Generate a query (reuse the standard rewrite step for consistency)
+            original_user_query = messages[-1]["content"]
+            if not isinstance(original_user_query, str):
+                raise ValueError("The most recent message content must be a string.")
+
+            query_messages = self.prompt_manager.render_prompt(
+                self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
+            )
+            tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
+            chat_completion = cast(
+                ChatCompletion,
+                await self.create_chat_completion(
+                    self.chatgpt_deployment,
+                    self.chatgpt_model,
+                    messages=query_messages,
+                    overrides=overrides,
+                    response_token_limit=self.get_response_token_limit(self.chatgpt_model, 100),
+                    temperature=0.0,
+                    tools=tools,
+                    reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
+                ),
+            )
+            query_text = self.get_search_query(chat_completion, original_user_query)
+
+            # Call SERPER and normalize results
+            if not SERPER_API_KEY:
+                return ExtraInfo(
+                    DataPoints(text=[], images=[], citations=[]),
+                    thoughts=[
+                        ThoughtStep(
+                            title="Missing SERPER_API_KEY",
+                            description="Set SERPER_API_KEY to enable web search.",
+                            props={"mode": mode},
+                        )
+                    ],
+                )
+
+            try:
+                from services.web_search.serper_client import SerperClient
+                from services.web_search.normalizer import normalize_serper
+
+                top = overrides.get("top", 3)
+                
+                # Check cache first
+                cache = current_app.config.get(CONFIG_CACHE)
+                raw_items = None
+                if cache:
+                    # Create cache key from query and top parameter
+                    cache_key_data = {"query": query_text, "top": top, "provider": "serper"}
+                    cache_key = f"web_search:{hashlib.md5(json.dumps(cache_key_data, sort_keys=True).encode()).hexdigest()}"
+                    cached_result = await cache.get(cache_key)
+                    if cached_result:
+                        raw_items = cached_result
+                
+                # If not in cache, fetch from API
+                if raw_items is None:
+                    raw_items: List[Dict[str, Any]] = await SerperClient(SERPER_API_KEY).search(query_text, top)
+                    # Cache the result
+                    if cache:
+                        cache_key_data = {"query": query_text, "top": top, "provider": "serper"}
+                        cache_key = f"web_search:{hashlib.md5(json.dumps(cache_key_data, sort_keys=True).encode()).hexdigest()}"
+                        await cache.set(cache_key, raw_items, WEB_CACHE_TTL_S)
+                
+                normalized = normalize_serper(raw_items)
+
+                # Build DataPoints from normalized results
+                text_sources = [f"{item.get('url','')}: {item.get('snippet','')}" for item in normalized]
+                citations = [item.get("url", "") for item in normalized]
+
+                # Build unified citations from web results
+                from services.citation_builder import build_unified_from_text_sources
+                # Convert normalized web results to text_sources format for citation builder
+                web_text_sources = [{"url": item.get("url"), "title": item.get("title"), "content": item.get("snippet"), "sourcefile": item.get("url")} for item in normalized]
+                unified_citations = build_unified_from_text_sources(web_text_sources)
+                # Mark as web sources
+                for cit in unified_citations:
+                    cit["source"] = "web"
+                    cit["provider"] = "serper"
+
+                return ExtraInfo(
+                    DataPoints(text=text_sources, images=[], citations=citations),
+                    thoughts=[
+                        ThoughtStep(
+                            title="Web search (SERPER)",
+                            description=f"Query: {query_text}",
+                            props={"top": top, "results": len(normalized)},
+                        )
+                    ],
+                    unified_citations=unified_citations,
+                )
+            except Exception as e:
+                return ExtraInfo(
+                    DataPoints(text=[], images=[], citations=[]),
+                    thoughts=[
+                        ThoughtStep(
+                            title="Web search error",
+                            description=str(e),
+                            props={"mode": mode},
+                        )
+                    ],
+                )
+
         use_text_search = overrides.get("retrieval_mode") in ["text", "hybrid", None]
         use_vector_search = overrides.get("retrieval_mode") in ["vectors", "hybrid", None]
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
@@ -347,6 +597,13 @@ class ChatReadRetrieveReadApproach(Approach):
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
         )
+        
+        # Build unified citations from RAG results
+        from services.citation_builder import build_unified_from_text_sources
+        # Convert Document results to text_sources format
+        rag_text_sources = [{"sourcepage": doc.sourcepage, "sourcefile": doc.sourcefile, "title": doc.sourcefile or "Document", "content": doc.content or ""} for doc in results]
+        unified_citations = build_unified_from_text_sources(rag_text_sources)
+        
         extra_info = ExtraInfo(
             data_points,
             thoughts=[
@@ -379,6 +636,7 @@ class ChatReadRetrieveReadApproach(Approach):
                     [result.serialize_for_results() for result in results],
                 ),
             ],
+            unified_citations=unified_citations,
         )
         return extra_info
 

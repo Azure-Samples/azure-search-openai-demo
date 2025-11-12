@@ -109,8 +109,13 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
+# Environments and secrets
 .env
+.env.*
+*.env
+*.key
+*.secret
+*.pem
 .venv
 .evalenv
 env/
@@ -118,6 +123,14 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# API keys and credentials
+*_key
+*_secret
+*_token
+credentials.json
+secrets.json
+agents/verify_credentials.py
 
 # Spyder project settings
 .spyderproject
@@ -153,4 +166,29 @@ data/**/*.md5
 !/data/.gitkeep
 !/data/README.md
 
+# Large files and data
+*.pdf
+!tests/test-data/*.pdf
+*.zip
+*.tar.gz
+*.7z
+*.rar
+
+# Cache and temporary files
+.cache/
+*.cache
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# OS files
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*

@@ -40,6 +40,11 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: false
           continueOnError: false
+  agents:
+    project: ./agents
+    language: py
+    # Agents service deploys to App Service (required for Bot Framework)
+    host: appservice
 hooks:
     preprovision:
       windows:

@@ -12,6 +12,7 @@ from botbuilder.schema import Activity, ActivityTypes, Attachment, CardAction, A
 from services.rag_service import RAGResponse
 from components.teams_components import TeamsComponents, TeamsCardConfig
 from constants.teams_text import TeamsTextConstants
+from models.citation import Citation, CitationSource, CitationProvider, resolve_citation_conflicts
 
 
 logger = logging.getLogger(__name__)
@@ -301,8 +302,23 @@ class TeamsResponseAdapter:
             
             card_json["body"].append(sources_container)
         
-        # Add citations section if available and enabled
-        if self.config.show_citations and rag_response.citations:
+        # Add unified citations section if available and enabled
+        # Prefer unified_citations over legacy citations format
+        citations_to_display = []
+        
+        if rag_response.unified_citations:
+            # Use unified citations format
+            # Resolve conflicts (prefer corpus over web)
+            resolved_citations = resolve_citation_conflicts(
+                rag_response.unified_citations,
+                prefer_corpus=True
+            )
+            citations_to_display = resolved_citations[:self.config.max_citations]
+        elif self.config.show_citations and rag_response.citations:
+            # Fallback to legacy citations format
+            citations_to_display = rag_response.citations[:self.config.max_citations]
+        
+        if citations_to_display:
             citations_container = {
                 "type": "Container",
                 "style": "default",
@@ -318,14 +334,38 @@ class TeamsResponseAdapter:
                 ]
             }
             
-            for i, citation in enumerate(rag_response.citations[:self.config.max_citations], 1):
-                citations_container["items"].append({
-                    "type": "TextBlock",
-                    "text": f"{i}. {citation}",
-                    "wrap": True,
-                    "size": "Small",
-                    "spacing": "Small"
-                })
+            for i, citation in enumerate(citations_to_display, 1):
+                if isinstance(citation, Citation):
+                    # Unified citation format
+                    citation_text = citation.title
+                    if citation.url:
+                        citation_text = f"[{citation.title}]({citation.url})"
+                    
+                    # Add source indicator
+                    source_indicator = "📄" if citation.source == CitationSource.CORPUS else "🌐"
+                    
+                    citation_block = {
+                        "type": "TextBlock",
+                        "text": f"{i}. {source_indicator} {citation_text}",
+                        "wrap": True,
+                        "size": "Small",
+                        "spacing": "Small"
+                    }
+                    
+                    # Add snippet if available
+                    if citation.snippet:
+                        citation_block["text"] += f"\n   {citation.snippet[:150]}..." if len(citation.snippet) > 150 else f"\n   {citation.snippet}"
+                    
+                    citations_container["items"].append(citation_block)
+                else:
+                    # Legacy string format
+                    citations_container["items"].append({
+                        "type": "TextBlock",
+                        "text": f"{i}. {citation}",
+                        "wrap": True,
+                        "size": "Small",
+                        "spacing": "Small"
+                    })
             
             card_json["body"].append(citations_container)
         

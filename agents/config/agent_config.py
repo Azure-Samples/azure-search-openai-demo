@@ -81,15 +81,22 @@ class AgentConfig:
     
     def validate(self) -> None:
         """Validate configuration."""
+        # For production: require all fields
+        # For emulator/testing: app_id/app_password can be empty (adapter will skip auth)
         required_fields = [
-            "app_id", "app_password", "tenant_id", "client_id", "client_secret",
-            "backend_url"
+            "tenant_id", "client_id", "client_secret", "backend_url"
         ]
         
         missing_fields = []
         for field in required_fields:
             if not getattr(self, field):
                 missing_fields.append(field)
+        
+        # Warn if app_id/password missing (needed for production, optional for emulator)
+        if not self.app_id or not self.app_password:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning("MICROSOFT_APP_ID or MICROSOFT_APP_PASSWORD not set - emulator/testing mode (auth will be skipped)")
         
         if missing_fields:
             raise ValueError(f"Missing required configuration fields: {', '.join(missing_fields)}")

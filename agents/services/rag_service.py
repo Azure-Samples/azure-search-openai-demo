@@ -5,12 +5,15 @@ This service calls the existing backend API instead of duplicating RAG logic.
 
 import asyncio
 import logging
-from typing import Dict, Any, List, Optional, AsyncGenerator
-from dataclasses import dataclass
+from typing import Dict, Any, List, Optional, AsyncGenerator, TYPE_CHECKING
+from dataclasses import dataclass, field
 import aiohttp
 import json
 
 from config.agent_config import AgentConfig
+
+if TYPE_CHECKING:
+    from models.citation import Citation
 
 
 logger = logging.getLogger(__name__)
@@ -31,10 +34,11 @@ class RAGResponse:
     """Response from RAG processing."""
     answer: str
     sources: List[Dict[str, Any]]
-    citations: List[str]
+    citations: List[str]  # Legacy format - string citations
     thoughts: List[Dict[str, Any]]
     token_usage: Optional[Dict[str, int]] = None
     model_info: Optional[Dict[str, str]] = None
+    unified_citations: Optional[List['Citation']] = None  # New unified citation format
 
 
 class RAGService:
@@ -159,22 +163,77 @@ class RAGService:
                 "session_state": None  # Will be managed by the agent
             }
             
+            # For webchat/local testing, we may not have auth tokens
+            # The backend will handle this via get_auth_claims_if_enabled
+            headers = {}
+            if "auth_claims" in context and context["auth_claims"].get("access_token"):
+                headers["Authorization"] = f"Bearer {context['auth_claims']['access_token']}"
+            # Propagate correlation id if present
+            if context.get("traceparent"):
+                headers["x-traceparent"] = str(context["traceparent"])  # simple correlation header
+            
             # Make the request to the backend
             async with self._http_session.post(
                 f"{self._backend_url}/chat",
-                json=payload
+                json=payload,
+                headers=headers
             ) as response:
                 if response.status == 200:
                     data = await response.json()
                     
+                    # Force print for debugging (always visible)
+                    print(f"\n{'='*60}")
+                    print(f"[RAG SERVICE] Backend response received")
+                    print(f"[RAG SERVICE] Response keys: {list(data.keys())}")
+                    if "message" in data:
+                        print(f"[RAG SERVICE] Message type: {type(data['message'])}")
+                        if isinstance(data.get('message'), dict):
+                            print(f"[RAG SERVICE] Message keys: {list(data['message'].keys())}")
+                            print(f"[RAG SERVICE] Message content preview: {str(data['message'].get('content', ''))[:100]}")
+                    
+                    # Backend returns: { "message": { "content": "...", "role": "..." }, "context": { "data_points": {...}, "thoughts": [...] } }
+                    # Extract answer from message.content
+                    answer = ""
+                    if "message" in data and isinstance(data["message"], dict):
+                        answer = data["message"].get("content", "")
+                        print(f"[RAG SERVICE] ✓ Extracted answer from message.content (length: {len(answer)})")
+                        logger.info(f"Extracted answer from message.content: {answer[:100]}...")
+                    elif "answer" in data:
+                        # Fallback for different response format
+                        answer = data.get("answer", "")
+                        print(f"[RAG SERVICE] ✓ Extracted answer from answer field (length: {len(answer)})")
+                        logger.info(f"Extracted answer from answer field: {answer[:100]}...")
+                    else:
+                        print(f"[RAG SERVICE] ✗ Could not find answer! Available keys: {list(data.keys())}")
+                        logger.warning(f"Could not find answer in response. Available keys: {list(data.keys())}")
+                        # Try to find any content field
+                        if "content" in data:
+                            answer = data.get("content", "")
+                            print(f"[RAG SERVICE] ✓ Found answer in content field (length: {len(answer)})")
+                    print(f"{'='*60}\n")
+                    
+                    # Extract data points from context
+                    context = data.get("context", {})
+                    data_points = context.get("data_points", {})
+                    text_sources = data_points.get("text", [])
+                    citations = data_points.get("citations", [])
+                    thoughts = context.get("thoughts", [])
+                    
+                    # Convert backend citations to unified format
+                    unified_citations = self._convert_to_unified_citations(
+                        text_sources,
+                        citations
+                    )
+                    
                     # Convert backend response to RAGResponse
                     return RAGResponse(
-                        answer=data.get("answer", ""),
-                        sources=data.get("data_points", {}).get("text", []),
-                        citations=data.get("data_points", {}).get("citations", []),
-                        thoughts=data.get("thoughts", []),
+                        answer=answer,
+                        sources=text_sources,
+                        citations=citations,
+                        thoughts=thoughts,
                         token_usage=data.get("token_usage"),
-                        model_info=data.get("model_info")
+                        model_info=data.get("model_info"),
+                        unified_citations=unified_citations
                     )
                 else:
                     error_text = await response.text()
@@ -184,6 +243,69 @@ class RAGService:
         except Exception as e:
             logger.error(f"Error calling backend chat API: {e}")
             raise
+    
+    def _convert_to_unified_citations(
+        self,
+        sources: List[Dict[str, Any]],
+        citations: List[str]
+    ) -> List['Citation']:
+        """
+        Convert backend citations to unified Citation format.
+        
+        Args:
+            sources: List of source documents from backend
+            citations: List of citation strings from backend
+            
+        Returns:
+            List of unified Citation objects
+        """
+        try:
+            from models.citation import Citation, CitationSource, CitationProvider
+            
+            unified: List[Citation] = []
+            
+            # Convert sources (corpus sources)
+            for source in sources:
+                if isinstance(source, dict):
+                    try:
+                        citation = Citation.from_azure_search(
+                            doc=source,
+                            snippet=source.get("content", ""),
+                            confidence=1.0
+                        )
+                        unified.append(citation)
+                    except Exception as e:
+                        logger.warning(f"Error converting source to citation: {e}")
+            
+            # Convert citation strings (if any)
+            for citation_str in citations:
+                if citation_str:
+                    # Try to parse citation string
+                    # Format may vary, attempt to extract URL
+                    import re
+                    url_match = re.search(r'https?://[^\s<>"\']+', citation_str)
+                    if url_match:
+                        try:
+                            citation = Citation(
+                                source=CitationSource.WEB,
+                                provider=CitationProvider.UNKNOWN,
+                                url=url_match.group(0),
+                                title=citation_str[:100],  # Use citation string as title
+                                snippet=citation_str,
+                                confidence=0.8  # Lower confidence for string citations
+                            )
+                            unified.append(citation)
+                        except Exception as e:
+                            logger.warning(f"Error converting citation string: {e}")
+            
+            return unified
+            
+        except ImportError:
+            logger.warning("Citation model not available, skipping unified citation conversion")
+            return []
+        except Exception as e:
+            logger.error(f"Error converting to unified citations: {e}", exc_info=True)
+            return []
     
     async def _call_backend_chat_stream(self, messages: List[Dict[str, str]], context: Dict[str, Any]) -> AsyncGenerator[Dict[str, Any], None]:
         """

@@ -90,11 +90,6 @@ class PatentsBertaEmbeddings:
             
         raise Exception("PatentsBERTa embedding generation failed")
 
-    async def create_embedding(self, text: str) -> List[float]:
-        """Create embedding for a single text"""
-        embeddings = await self.create_embeddings([text])
-        return embeddings[0] if embeddings else []
-
     def get_embedding_dimensions(self) -> int:
         """Return the dimension size of embeddings"""
         return self.embedding_dimensions
