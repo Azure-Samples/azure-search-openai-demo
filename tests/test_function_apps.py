@@ -1,6 +1,6 @@
 import base64
-import importlib
 import json
+import logging
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any
@@ -10,6 +10,9 @@ import pytest
 
 from document_extractor import function_app as document_extractor
 from figure_processor import function_app as figure_processor
+from prepdocslib.fileprocessor import FileProcessor
+from prepdocslib.textparser import TextParser
+from prepdocslib.textsplitter import SentenceTextSplitter
 from tests.mocks import TEST_PNG_BYTES
 from text_processor import function_app as text_processor
 
@@ -75,8 +78,6 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
     page = document_extractor.Page(page_num=0, offset=0, text=page_text, images=[figure])
 
     # Set up mock file processors and settings
-    from prepdocslib.fileprocessor import FileProcessor
-
     mock_file_processors = {
         ".pdf": FileProcessor(StubParser([page]), None),
     }
@@ -123,8 +124,6 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
 
 @pytest.mark.asyncio
 async def test_document_extractor_requires_single_record(monkeypatch: pytest.MonkeyPatch) -> None:
-    from prepdocslib.fileprocessor import FileProcessor
-
     mock_settings = document_extractor.GlobalSettings(
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
@@ -138,8 +137,6 @@ async def test_document_extractor_requires_single_record(monkeypatch: pytest.Mon
 
 @pytest.mark.asyncio
 async def test_document_extractor_handles_processing_exception(monkeypatch: pytest.MonkeyPatch) -> None:
-    from prepdocslib.fileprocessor import FileProcessor
-
     async def failing_process(data: dict[str, Any]) -> dict[str, Any]:
         raise RuntimeError("boom")
 
@@ -179,8 +176,6 @@ async def test_document_extractor_invalid_json_returns_error() -> None:
 
 @pytest.mark.asyncio
 async def test_document_extractor_process_document_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    from prepdocslib.fileprocessor import FileProcessor
-
     class FailingParser:
         async def parse(self, content):
             raise document_extractor.HttpResponseError(message="fail")
@@ -215,11 +210,10 @@ def test_document_extractor_missing_file_data() -> None:
 
 def test_document_extractor_managed_identity_reload(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("AZURE_CLIENT_ID", "client-123")
-    module = importlib.reload(document_extractor)
-    module.configure_global_settings()
-    assert isinstance(module.settings.azure_credential, module.ManagedIdentityCredential)
+    document_extractor.configure_global_settings()
+    assert isinstance(document_extractor.settings.azure_credential, document_extractor.ManagedIdentityCredential)
     monkeypatch.delenv("AZURE_CLIENT_ID", raising=False)
-    importlib.reload(document_extractor)
+    document_extractor.configure_global_settings()
 
 
 @pytest.mark.asyncio
@@ -297,64 +291,82 @@ def test_figure_processor_initialisation_with_env(monkeypatch: pytest.MonkeyPatc
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "deploy")
     monkeypatch.setenv("AZURE_VISION_ENDPOINT", "https://vision")
 
-    import sys
-    from pathlib import Path
+    call_state: dict[str, Any] = {}
 
-    fp_root = Path(__file__).parent.parent / "app" / "functions" / "figure_processor"
-    sys.path.insert(0, str(fp_root))
+    class StubCredential:
+        def __init__(self, client_id: str | None = None):
+            call_state["credential_client_id"] = client_id
 
-    fp_servicesetup = importlib.import_module("prepdocslib.servicesetup")
-    fp_embeddings = importlib.import_module("prepdocslib.embeddings")
+    def fake_setup_blob_manager(**kwargs: Any) -> str:
+        call_state["blob_manager_kwargs"] = kwargs
+        return "blob"
 
-    monkeypatch.setattr(fp_servicesetup, "setup_blob_manager", lambda **_: "blob")
-    monkeypatch.setattr(fp_servicesetup, "setup_figure_processor", lambda **_: "figproc")
-    monkeypatch.setattr(fp_servicesetup, "setup_openai_client", lambda **_: ("openai-client", None))
+    def fake_setup_figure_processor(**kwargs: Any) -> str:
+        call_state["figure_processor_kwargs"] = kwargs
+        return "figproc"
+
+    def fake_setup_openai_client(
+        *,
+        openai_host: Any,
+        azure_credential: Any,
+        azure_openai_service: str | None,
+        azure_openai_custom_url: str | None,
+    ) -> tuple[str, None]:
+        call_state["openai_client_args"] = {
+            "openai_host": openai_host,
+            "azure_credential": azure_credential,
+            "azure_openai_service": azure_openai_service,
+            "azure_openai_custom_url": azure_openai_custom_url,
+        }
+        return ("openai-client", None)
+
+    def fake_get_bearer_token_provider(credential: Any, scope: str):
+        call_state["token_scope"] = scope
+        call_state["token_credential"] = credential
+        return lambda: "token"
 
     class DummyImageEmbeddings:
         def __init__(self, endpoint: str, token_provider):
             self.endpoint = endpoint
             self.token_provider = token_provider
 
-    monkeypatch.setattr(fp_embeddings, "ImageEmbeddings", DummyImageEmbeddings)
-    monkeypatch.setattr("azure.identity.aio.get_bearer_token_provider", lambda *_, **__: lambda: "token")
+    monkeypatch.setattr(figure_processor, "ManagedIdentityCredential", StubCredential)
+    monkeypatch.setattr(figure_processor, "setup_blob_manager", fake_setup_blob_manager)
+    monkeypatch.setattr(figure_processor, "setup_figure_processor", fake_setup_figure_processor)
+    monkeypatch.setattr(figure_processor, "setup_openai_client", fake_setup_openai_client)
+    monkeypatch.setattr(figure_processor, "get_bearer_token_provider", fake_get_bearer_token_provider)
+    monkeypatch.setattr(figure_processor, "ImageEmbeddings", DummyImageEmbeddings)
+    monkeypatch.setattr(figure_processor, "settings", None)
 
-    module = importlib.reload(figure_processor)
-    module.configure_global_settings()
+    figure_processor.configure_global_settings()
 
-    assert module.settings.blob_manager == "blob"
-    assert module.settings.figure_processor == "figproc"
-    assert isinstance(module.settings.image_embeddings, DummyImageEmbeddings)
+    assert figure_processor.settings is not None
+    assert figure_processor.settings.blob_manager == "blob"
+    assert figure_processor.settings.figure_processor == "figproc"
+    embeddings = figure_processor.settings.image_embeddings
+    assert isinstance(embeddings, DummyImageEmbeddings)
+    assert embeddings.endpoint == "https://vision"
+    assert embeddings.token_provider() == "token"
 
-    # Reset module to default configuration for subsequent tests
-    for var in [
-        "AZURE_CLIENT_ID",
-        "AZURE_STORAGE_ACCOUNT",
-        "AZURE_IMAGESTORAGE_CONTAINER",
-        "USE_MULTIMODAL",
-        "AZURE_OPENAI_SERVICE",
-        "AZURE_OPENAI_CHATGPT_DEPLOYMENT",
-        "AZURE_VISION_ENDPOINT",
-    ]:
-        monkeypatch.delenv(var, raising=False)
-    sys.path.remove(str(fp_root))
-    importlib.reload(figure_processor)
+    assert call_state["credential_client_id"] == "client-456"
+    assert call_state["blob_manager_kwargs"]["storage_account"] == "acct"
+    assert call_state["figure_processor_kwargs"]["use_multimodal"] is True
+    assert call_state["token_scope"] == "https://cognitiveservices.azure.com/.default"
+    assert isinstance(call_state["token_credential"], StubCredential)
+    assert call_state["openai_client_args"]["azure_openai_service"] == "svc"
+    assert call_state["openai_client_args"]["azure_credential"] is call_state["token_credential"]
 
 
-def test_figure_processor_warns_when_openai_incomplete(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_figure_processor_warns_when_openai_incomplete(monkeypatch: pytest.MonkeyPatch, caplog) -> None:
     """Figure processor is created with warning when USE_MULTIMODAL is true but OpenAI config is incomplete."""
     monkeypatch.setenv("USE_MULTIMODAL", "true")
     monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "acct")
     monkeypatch.setenv("AZURE_IMAGESTORAGE_CONTAINER", "images")
     # OpenAI config missing, so figure_processor will be created but won't work properly
-    module = importlib.reload(figure_processor)
-    module.configure_global_settings()
+    figure_processor.configure_global_settings()
     # A FigureProcessor object is created even with incomplete config
-    assert module.settings.figure_processor is not None
-    # But it will raise ValueError when trying to describe images due to missing OpenAI client
-    monkeypatch.delenv("USE_MULTIMODAL", raising=False)
-    monkeypatch.delenv("AZURE_STORAGE_ACCOUNT", raising=False)
-    monkeypatch.delenv("AZURE_IMAGESTORAGE_CONTAINER", raising=False)
-    importlib.reload(figure_processor)
+    assert figure_processor.settings.figure_processor is not None
+    assert "USE_MULTIMODAL is true but Azure OpenAI configuration incomplete" in caplog.text
 
 
 @pytest.mark.asyncio
@@ -371,9 +383,6 @@ async def test_text_processor_builds_chunk_with_caption(monkeypatch: pytest.Monk
             return [[0.41, 0.42, 0.43] for _ in texts]
 
     # Set up mock file processors with stub splitter
-    from prepdocslib.fileprocessor import FileProcessor
-    from prepdocslib.textparser import TextParser
-
     mock_file_processors = {
         ".pdf": FileProcessor(TextParser(), StubSplitter()),
     }
@@ -562,21 +571,12 @@ async def test_text_processor_invalid_json(monkeypatch: pytest.MonkeyPatch) -> N
 @pytest.mark.asyncio
 async def test_text_processor_with_client_id(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test text processor uses ManagedIdentityCredential with client ID."""
-    import os
-
     # Set the AZURE_CLIENT_ID environment variable
-    original_client_id = os.environ.get("AZURE_CLIENT_ID")
-    os.environ["AZURE_CLIENT_ID"] = "test-client-id"
-
-    try:
-        # Force reimport to trigger module initialization with the env var set
-        importlib.reload(text_processor)
-    finally:
-        # Restore original value
-        if original_client_id:
-            os.environ["AZURE_CLIENT_ID"] = original_client_id
-        else:
-            os.environ.pop("AZURE_CLIENT_ID", None)
+    monkeypatch.setenv("AZURE_CLIENT_ID", "test-client-id")
+    text_processor.configure_global_settings()
+    # Verify it was configured (actual verification would check the credential type)
+    monkeypatch.delenv("AZURE_CLIENT_ID", raising=False)
+    text_processor.configure_global_settings()
 
 
 @pytest.mark.asyncio
@@ -589,10 +589,6 @@ async def test_text_processor_embeddings_setup(monkeypatch: pytest.MonkeyPatch) 
 @pytest.mark.asyncio
 async def test_text_processor_no_sections(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test text processor handles empty sections."""
-    from prepdocslib.fileprocessor import FileProcessor
-    from prepdocslib.textparser import TextParser
-    from prepdocslib.textsplitter import SentenceTextSplitter
-
     mock_file_processors = {
         ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
     }
@@ -640,12 +636,6 @@ async def test_text_processor_no_sections(monkeypatch: pytest.MonkeyPatch) -> No
 @pytest.mark.asyncio
 async def test_text_processor_embeddings_not_initialized(monkeypatch: pytest.MonkeyPatch, caplog) -> None:
     """Test text processor logs warning when embeddings requested but not initialized."""
-    import logging
-
-    from prepdocslib.fileprocessor import FileProcessor
-    from prepdocslib.textparser import TextParser
-    from prepdocslib.textsplitter import SentenceTextSplitter
-
     mock_file_processors = {
         ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
     }
@@ -690,10 +680,6 @@ async def test_text_processor_embeddings_not_initialized(monkeypatch: pytest.Mon
 @pytest.mark.asyncio
 async def test_text_processor_empty_chunk_skipped(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test text processor skips empty chunks."""
-    from prepdocslib.fileprocessor import FileProcessor
-    from prepdocslib.textparser import TextParser
-    from prepdocslib.textsplitter import SentenceTextSplitter
-
     mock_file_processors = {
         ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
     }
@@ -744,10 +730,6 @@ async def test_text_processor_empty_chunk_skipped(monkeypatch: pytest.MonkeyPatc
 @pytest.mark.asyncio
 async def test_text_processor_with_multimodal_embeddings(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test text processor includes image embeddings when use_multimodal is true."""
-    from prepdocslib.fileprocessor import FileProcessor
-    from prepdocslib.textparser import TextParser
-    from prepdocslib.textsplitter import SentenceTextSplitter
-
     mock_file_processors = {
         ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
     }
@@ -810,12 +792,6 @@ async def test_text_processor_with_multimodal_embeddings(monkeypatch: pytest.Mon
 @pytest.mark.asyncio
 async def test_text_processor_embedding_dimension_mismatch(monkeypatch: pytest.MonkeyPatch, caplog) -> None:
     """Test text processor logs warning when embedding dimensions don't match."""
-    import logging
-
-    from prepdocslib.fileprocessor import FileProcessor
-    from prepdocslib.textparser import TextParser
-    from prepdocslib.textsplitter import SentenceTextSplitter
-
     mock_embedding_service = type("MockEmbeddingService", (), {})()
 
     async def mock_create_embeddings(texts):
@@ -867,12 +843,6 @@ async def test_text_processor_embedding_dimension_mismatch(monkeypatch: pytest.M
 @pytest.mark.asyncio
 async def test_text_processor_embeddings_missing_warning(monkeypatch: pytest.MonkeyPatch, caplog) -> None:
     """Test text processor logs warning when embeddings are requested but missing."""
-    import logging
-
-    from prepdocslib.fileprocessor import FileProcessor
-    from prepdocslib.textparser import TextParser
-    from prepdocslib.textsplitter import SentenceTextSplitter
-
     mock_embedding_service = type("MockEmbeddingService", (), {})()
 
     async def mock_create_embeddings(texts):
