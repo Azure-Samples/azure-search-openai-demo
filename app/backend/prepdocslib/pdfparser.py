@@ -130,9 +130,11 @@ class DocumentAnalysisParser(Parser):
                     TABLE = 0
                     FIGURE = 1
 
+                MaskEntry = tuple[ObjectType, Optional[int]]
+
                 page_offset = page.spans[0].offset
                 page_length = page.spans[0].length
-                mask_chars: list[tuple[ObjectType, Optional[int]]] = [(ObjectType.NONE, None)] * page_length
+                mask_chars: list[MaskEntry] = [(ObjectType.NONE, None)] * page_length
                 # mark all positions of the table spans in the page
                 for table_idx, table in enumerate(tables_on_page):
                     for span in table.spans:
@@ -152,7 +154,7 @@ class DocumentAnalysisParser(Parser):
 
                 # build page text by replacing characters in table spans with table html
                 page_text = ""
-                added_objects: set[tuple[ObjectType, Optional[int]]] = set()
+                added_objects: set[MaskEntry] = set()
                 for idx, mask_char in enumerate(mask_chars):
                     object_type, object_idx = mask_char
                     if object_type == ObjectType.NONE:
