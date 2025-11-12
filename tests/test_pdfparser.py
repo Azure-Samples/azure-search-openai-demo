@@ -254,6 +254,56 @@ async def test_parse_with_filestorage(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_parse_with_non_seekable_stream(monkeypatch):
+    mock_poller = MagicMock()
+    captured_bodies: list[AnalyzeDocumentRequest] = []
+
+    async def mock_begin_analyze_document(self, model_id, **kwargs):
+        captured_bodies.append(kwargs["body"])
+        return mock_poller
+
+    async def mock_poller_result():
+        return AnalyzeResult(
+            content="Page content",
+            pages=[DocumentPage(page_number=1, spans=[DocumentSpan(offset=0, length=12)])],
+            tables=[],
+            figures=[],
+        )
+
+    monkeypatch.setattr(DocumentIntelligenceClient, "begin_analyze_document", mock_begin_analyze_document)
+    monkeypatch.setattr(mock_poller, "result", mock_poller_result)
+
+    class NonSeekableStream:
+        def __init__(self, data: bytes, name: str):
+            self._data = data
+            self._name = name
+            self._consumed = False
+
+        @property
+        def name(self) -> str:  # type: ignore[override]
+            return self._name
+
+        def read(self) -> bytes:
+            return self._data
+
+    parser = DocumentAnalysisParser(
+        endpoint="https://example.com",
+        credential=MockAzureCredential(),
+    )
+
+    stream = NonSeekableStream(b"pdf content bytes", "nonseekable.pdf")
+    pages = [page async for page in parser.parse(stream)]
+
+    assert len(pages) == 1
+    assert pages[0].page_num == 0
+    assert pages[0].offset == 0
+    assert pages[0].text == "Page content"
+    assert len(captured_bodies) == 1
+    assert isinstance(captured_bodies[0], AnalyzeDocumentRequest)
+    assert captured_bodies[0].bytes_source == b"pdf content bytes"
+
+
+@pytest.mark.asyncio
 async def test_parse_doc_with_tables(monkeypatch):
     mock_poller = MagicMock()
     captured_bodies: list[AnalyzeDocumentRequest] = []
