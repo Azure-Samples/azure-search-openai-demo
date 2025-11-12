@@ -14,15 +14,17 @@ from azure.identity.aio import ManagedIdentityCredential
 
 from prepdocslib.blobmanager import BlobManager
 from prepdocslib.embeddings import OpenAIEmbeddings
+from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.listfilestrategy import File
 from prepdocslib.page import ImageOnPage, Page
 from prepdocslib.servicesetup import (
     OpenAIHost,
+    build_file_processors,
+    select_processor_for_filename,
     setup_embeddings_service,
     setup_openai_client,
 )
 from prepdocslib.textprocessor import process_text
-from prepdocslib.textsplitter import SentenceTextSplitter
 
 # Mark the function as anonymous since we are protecting it with built-in auth instead
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -35,7 +37,7 @@ class GlobalSettings:
     use_vectors: bool
     use_multimodal: bool
     embedding_dimensions: int
-    sentence_splitter: SentenceTextSplitter
+    file_processors: dict[str, FileProcessor]
     embedding_service: OpenAIEmbeddings | None
 
 
@@ -56,8 +58,7 @@ def configure_global_settings():
     azure_openai_custom_url = os.getenv("AZURE_OPENAI_CUSTOM_URL")
     azure_openai_emb_deployment = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
     azure_openai_emb_model_name = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
-
-    sentence_splitter = SentenceTextSplitter()
+    document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
 
     # Single shared managed identity credential
     if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
@@ -66,6 +67,16 @@ def configure_global_settings():
     else:
         logger.info("Using default Managed Identity without client ID")
         azure_credential = ManagedIdentityCredential()
+
+    # Build file processors to get correct splitter for each file type
+    file_processors = build_file_processors(
+        azure_credential=azure_credential,
+        document_intelligence_service=document_intelligence_service,
+        document_intelligence_key=None,
+        use_local_pdf_parser=False,
+        use_local_html_parser=False,
+        process_figures=use_multimodal,
+    )
 
     # Embedding service (optional)
     embedding_service = None
@@ -95,7 +106,7 @@ def configure_global_settings():
         use_vectors=use_vectors,
         use_multimodal=use_multimodal,
         embedding_dimensions=embedding_dimensions,
-        sentence_splitter=sentence_splitter,
+        file_processors=file_processors,
         embedding_service=embedding_service,
     )
 
@@ -215,7 +226,11 @@ async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
     dummy_stream.name = file_name
     file_wrapper = File(content=dummy_stream)
 
-    sections = process_text(pages, file_wrapper, settings.sentence_splitter, category=None)
+    # Get the appropriate splitter for this file type
+    file_processor = select_processor_for_filename(file_name, settings.file_processors)
+    splitter = file_processor.splitter
+
+    sections = process_text(pages, file_wrapper, splitter, category=None)
     if not sections:
         return []
 

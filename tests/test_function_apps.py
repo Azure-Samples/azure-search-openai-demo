@@ -74,16 +74,18 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
     page_text = f"# Heading\n\n{placeholder}\n\nConclusion."
     page = document_extractor.Page(page_num=0, offset=0, text=page_text, images=[figure])
 
-    # Set up mock settings
+    # Set up mock file processors and settings
+    from prepdocslib.fileprocessor import FileProcessor
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(StubParser([page]), None),
+    }
+
     mock_settings = document_extractor.GlobalSettings(
-        use_local_pdf_parser=False,
-        use_local_html_parser=False,
-        use_multimodal=False,
-        document_intelligence_service=None,
+        file_processors=mock_file_processors,
         azure_credential=object(),
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
-    monkeypatch.setattr(document_extractor, "select_parser", lambda **_: StubParser([page]))
 
     request_payload = {
         "values": [
@@ -121,11 +123,10 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
 
 @pytest.mark.asyncio
 async def test_document_extractor_requires_single_record(monkeypatch: pytest.MonkeyPatch) -> None:
+    from prepdocslib.fileprocessor import FileProcessor
+
     mock_settings = document_extractor.GlobalSettings(
-        use_local_pdf_parser=False,
-        use_local_html_parser=False,
-        use_multimodal=False,
-        document_intelligence_service=None,
+        file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
@@ -137,14 +138,13 @@ async def test_document_extractor_requires_single_record(monkeypatch: pytest.Mon
 
 @pytest.mark.asyncio
 async def test_document_extractor_handles_processing_exception(monkeypatch: pytest.MonkeyPatch) -> None:
+    from prepdocslib.fileprocessor import FileProcessor
+
     async def failing_process(data: dict[str, Any]) -> dict[str, Any]:
         raise RuntimeError("boom")
 
     mock_settings = document_extractor.GlobalSettings(
-        use_local_pdf_parser=False,
-        use_local_html_parser=False,
-        use_multimodal=False,
-        document_intelligence_service=None,
+        file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
@@ -179,20 +179,22 @@ async def test_document_extractor_invalid_json_returns_error() -> None:
 
 @pytest.mark.asyncio
 async def test_document_extractor_process_document_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    from prepdocslib.fileprocessor import FileProcessor
+
     class FailingParser:
         async def parse(self, content):
             raise document_extractor.HttpResponseError(message="fail")
             yield  # Make this an async generator
 
+    mock_file_processors = {
+        ".pdf": FileProcessor(FailingParser(), None),
+    }
+
     mock_settings = document_extractor.GlobalSettings(
-        use_local_pdf_parser=False,
-        use_local_html_parser=False,
-        use_multimodal=False,
-        document_intelligence_service=None,
+        file_processors=mock_file_processors,
         azure_credential=object(),
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
-    monkeypatch.setattr(document_extractor, "select_parser", lambda **_: FailingParser())
 
     data = {
         "file_data": {"data": base64.b64encode(b"content").decode("utf-8")},
@@ -368,12 +370,20 @@ async def test_text_processor_builds_chunk_with_caption(monkeypatch: pytest.Monk
         async def create_embeddings(self, texts: list[str]) -> list[list[float]]:
             return [[0.41, 0.42, 0.43] for _ in texts]
 
+    # Set up mock file processors with stub splitter
+    from prepdocslib.fileprocessor import FileProcessor
+    from prepdocslib.textparser import TextParser
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), StubSplitter()),
+    }
+
     # Set up mock settings
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
         embedding_dimensions=3,
-        sentence_splitter=StubSplitter(),
+        file_processors=mock_file_processors,
         embedding_service=StubEmbeddingService(),
     )
     monkeypatch.setattr(text_processor, "settings", mock_settings)
@@ -537,7 +547,7 @@ async def test_text_processor_invalid_json(monkeypatch: pytest.MonkeyPatch) -> N
         use_multimodal=False,
         embedding_dimensions=1536,
         embedding_service=None,
-        sentence_splitter=object(),
+        file_processors={},
     )
     monkeypatch.setattr(text_processor, "settings", mock_settings)
 
@@ -579,12 +589,19 @@ async def test_text_processor_embeddings_setup(monkeypatch: pytest.MonkeyPatch) 
 @pytest.mark.asyncio
 async def test_text_processor_no_sections(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test text processor handles empty sections."""
+    from prepdocslib.fileprocessor import FileProcessor
+    from prepdocslib.textparser import TextParser
+    from prepdocslib.textsplitter import SentenceTextSplitter
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
+    }
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
         embedding_dimensions=1536,
         embedding_service=None,
-        sentence_splitter=object(),
+        file_processors=mock_file_processors,
     )
     monkeypatch.setattr(text_processor, "settings", mock_settings)
 
@@ -625,12 +642,19 @@ async def test_text_processor_embeddings_not_initialized(monkeypatch: pytest.Mon
     """Test text processor logs warning when embeddings requested but not initialized."""
     import logging
 
+    from prepdocslib.fileprocessor import FileProcessor
+    from prepdocslib.textparser import TextParser
+    from prepdocslib.textsplitter import SentenceTextSplitter
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
+    }
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,  # Request embeddings
         use_multimodal=False,
         embedding_dimensions=1536,
         embedding_service=None,  # But no service
-        sentence_splitter=object(),
+        file_processors=mock_file_processors,
     )
     monkeypatch.setattr(text_processor, "settings", mock_settings)
 
@@ -666,12 +690,19 @@ async def test_text_processor_embeddings_not_initialized(monkeypatch: pytest.Mon
 @pytest.mark.asyncio
 async def test_text_processor_empty_chunk_skipped(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test text processor skips empty chunks."""
+    from prepdocslib.fileprocessor import FileProcessor
+    from prepdocslib.textparser import TextParser
+    from prepdocslib.textsplitter import SentenceTextSplitter
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
+    }
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
         embedding_dimensions=1536,
         embedding_service=None,
-        sentence_splitter=object(),
+        file_processors=mock_file_processors,
     )
     monkeypatch.setattr(text_processor, "settings", mock_settings)
 
@@ -713,12 +744,19 @@ async def test_text_processor_empty_chunk_skipped(monkeypatch: pytest.MonkeyPatc
 @pytest.mark.asyncio
 async def test_text_processor_with_multimodal_embeddings(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test text processor includes image embeddings when use_multimodal is true."""
+    from prepdocslib.fileprocessor import FileProcessor
+    from prepdocslib.textparser import TextParser
+    from prepdocslib.textsplitter import SentenceTextSplitter
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
+    }
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=True,
         embedding_dimensions=1536,
         embedding_service=None,
-        sentence_splitter=object(),
+        file_processors=mock_file_processors,
     )
     monkeypatch.setattr(text_processor, "settings", mock_settings)
 
@@ -774,6 +812,10 @@ async def test_text_processor_embedding_dimension_mismatch(monkeypatch: pytest.M
     """Test text processor logs warning when embedding dimensions don't match."""
     import logging
 
+    from prepdocslib.fileprocessor import FileProcessor
+    from prepdocslib.textparser import TextParser
+    from prepdocslib.textsplitter import SentenceTextSplitter
+
     mock_embedding_service = type("MockEmbeddingService", (), {})()
 
     async def mock_create_embeddings(texts):
@@ -781,12 +823,15 @@ async def test_text_processor_embedding_dimension_mismatch(monkeypatch: pytest.M
 
     mock_embedding_service.create_embeddings = mock_create_embeddings
 
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
+    }
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
         embedding_dimensions=1536,  # Expecting 1536 dimensions
         embedding_service=mock_embedding_service,
-        sentence_splitter=object(),
+        file_processors=mock_file_processors,
     )
     monkeypatch.setattr(text_processor, "settings", mock_settings)
 
@@ -824,6 +869,10 @@ async def test_text_processor_embeddings_missing_warning(monkeypatch: pytest.Mon
     """Test text processor logs warning when embeddings are requested but missing."""
     import logging
 
+    from prepdocslib.fileprocessor import FileProcessor
+    from prepdocslib.textparser import TextParser
+    from prepdocslib.textsplitter import SentenceTextSplitter
+
     mock_embedding_service = type("MockEmbeddingService", (), {})()
 
     async def mock_create_embeddings(texts):
@@ -832,12 +881,15 @@ async def test_text_processor_embeddings_missing_warning(monkeypatch: pytest.Mon
 
     mock_embedding_service.create_embeddings = mock_create_embeddings
 
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), SentenceTextSplitter()),
+    }
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
         embedding_dimensions=1536,
         embedding_service=mock_embedding_service,
-        sentence_splitter=object(),
+        file_processors=mock_file_processors,
     )
     monkeypatch.setattr(text_processor, "settings", mock_settings)
 

@@ -7,7 +7,7 @@ from prepdocslib.figureprocessor import FigureProcessor, MediaDescriptionStrateg
 from prepdocslib.pdfparser import DocumentAnalysisParser
 from prepdocslib.servicesetup import (
     OpenAIHost,
-    select_parser,
+    build_file_processors,
     setup_blob_manager,
     setup_embeddings_service,
     setup_figure_processor,
@@ -144,7 +144,7 @@ def test_setup_openai_client_azure_constructs_endpoint_correctly(monkeypatch: py
         "prepdocslib.servicesetup.get_bearer_token_provider", lambda *args, **kwargs: lambda: "fake_token"
     )
 
-    client, endpoint = setup_openai_client(
+    _, endpoint = setup_openai_client(
         openai_host=OpenAIHost.AZURE,
         azure_credential=MockAzureCredential(),
         azure_openai_service="myopenaiservice",
@@ -166,7 +166,7 @@ def test_setup_openai_client_azure_custom_uses_custom_url(monkeypatch: pytest.Mo
 
     monkeypatch.setattr("prepdocslib.servicesetup.AsyncOpenAI", StubAsyncOpenAI)
 
-    client, endpoint = setup_openai_client(
+    _, endpoint = setup_openai_client(
         openai_host=OpenAIHost.AZURE_CUSTOM,
         azure_credential=MockAzureCredential(),
         azure_openai_custom_url="https://custom.endpoint.com/openai",
@@ -189,7 +189,7 @@ def test_setup_openai_client_azure_respects_api_key(monkeypatch: pytest.MonkeyPa
 
     monkeypatch.setattr("prepdocslib.servicesetup.AsyncOpenAI", StubAsyncOpenAI)
 
-    client, endpoint = setup_openai_client(
+    setup_openai_client(
         openai_host=OpenAIHost.AZURE,
         azure_credential=MockAzureCredential(),
         azure_openai_service="myopenaiservice",
@@ -267,50 +267,53 @@ def test_setup_figure_processor_content_understanding():
     assert processor.strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING
 
 
-def test_setup_parser_document_intelligence_with_key():
-    """Test that select_parser uses key credential when provided."""
-    parser = select_parser(
-        file_name="test.pdf",
-        content_type="application/pdf",
+def test_build_file_processors_with_document_intelligence_key():
+    """Test that build_file_processors uses key credential when provided."""
+    file_processors = build_file_processors(
         azure_credential=MockAzureCredential(),
         document_intelligence_service="myservice",
         document_intelligence_key="my-key",
+        use_local_pdf_parser=False,
         use_local_html_parser=False,
     )
 
-    assert isinstance(parser, DocumentAnalysisParser)
+    assert ".pdf" in file_processors
+    assert isinstance(file_processors[".pdf"].parser, DocumentAnalysisParser)
 
 
-def test_setup_parser_text_file():
-    """Test that select_parser returns TextParser for text files."""
-    parser = select_parser(
-        file_name="test.txt",
-        content_type="text/plain",
+def test_build_file_processors_text_files():
+    """Test that build_file_processors includes text file parsers."""
+    file_processors = build_file_processors(
         azure_credential=MockAzureCredential(),
         document_intelligence_service=None,
     )
 
-    assert isinstance(parser, TextParser)
+    assert ".txt" in file_processors
+    assert isinstance(file_processors[".txt"].parser, TextParser)
+    assert ".md" in file_processors
+    assert isinstance(file_processors[".md"].parser, TextParser)
 
 
-def test_setup_parser_application_type_with_di():
-    """Test that select_parser uses DI for application/* content types."""
-    parser = select_parser(
-        file_name="test.unknown",
-        content_type="application/unknown",
+def test_build_file_processors_with_di_enables_office_formats():
+    """Test that build_file_processors includes Office formats when DI is available."""
+    file_processors = build_file_processors(
         azure_credential=MockAzureCredential(),
         document_intelligence_service="myservice",
     )
 
-    assert isinstance(parser, DocumentAnalysisParser)
+    assert ".docx" in file_processors
+    assert ".pptx" in file_processors
+    assert ".xlsx" in file_processors
+    assert isinstance(file_processors[".docx"].parser, DocumentAnalysisParser)
 
 
-def test_setup_parser_unsupported_file_type():
-    """Test that select_parser raises ValueError for unsupported file types."""
-    with pytest.raises(ValueError, match="Unsupported file type"):
-        select_parser(
-            file_name="test.xyz",
-            content_type="application/xyz",
-            azure_credential=MockAzureCredential(),
-            document_intelligence_service=None,
-        )
+def test_build_file_processors_without_di_excludes_office_formats():
+    """Test that build_file_processors excludes Office formats when DI is not available."""
+    file_processors = build_file_processors(
+        azure_credential=MockAzureCredential(),
+        document_intelligence_service=None,
+    )
+
+    assert ".docx" not in file_processors
+    assert ".pptx" not in file_processors
+    assert ".xlsx" not in file_processors

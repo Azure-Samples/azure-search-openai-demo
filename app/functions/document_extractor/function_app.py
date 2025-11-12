@@ -15,8 +15,12 @@ import azure.functions as func
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import ManagedIdentityCredential
 
+from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.page import Page
-from prepdocslib.servicesetup import select_parser
+from prepdocslib.servicesetup import (
+    build_file_processors,
+    select_processor_for_filename,
+)
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -25,10 +29,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class GlobalSettings:
-    use_local_pdf_parser: bool
-    use_local_html_parser: bool
-    use_multimodal: bool
-    document_intelligence_service: str | None
+    file_processors: dict[str, FileProcessor]
     azure_credential: ManagedIdentityCredential
 
 
@@ -52,11 +53,18 @@ def configure_global_settings():
         logger.info("Using default Managed Identity without client ID")
         azure_credential = ManagedIdentityCredential()
 
-    settings = GlobalSettings(
+    # Build file processors dict for parser selection
+    file_processors = build_file_processors(
+        azure_credential=azure_credential,
+        document_intelligence_service=document_intelligence_service,
+        document_intelligence_key=None,
         use_local_pdf_parser=use_local_pdf_parser,
         use_local_html_parser=use_local_html_parser,
-        use_multimodal=use_multimodal,
-        document_intelligence_service=document_intelligence_service,
+        process_figures=use_multimodal,
+    )
+
+    settings = GlobalSettings(
+        file_processors=file_processors,
         azure_credential=azure_credential,
     )
 
@@ -176,16 +184,9 @@ async def process_document(data: dict[str, Any]) -> dict[str, Any]:
     document_stream, file_name, content_type = get_document_stream_filedata(data)
     logger.info("Processing document: %s", file_name)
 
-    parser = select_parser(
-        file_name=file_name,
-        content_type=content_type,
-        azure_credential=settings.azure_credential,
-        document_intelligence_service=settings.document_intelligence_service,
-        document_intelligence_key=None,
-        process_figures=settings.use_multimodal,
-        use_local_pdf_parser=settings.use_local_pdf_parser,
-        use_local_html_parser=settings.use_local_html_parser,
-    )
+    # Get parser from file_processors dict based on file extension
+    file_processor = select_processor_for_filename(file_name, settings.file_processors)
+    parser = file_processor.parser
 
     pages: list[Page] = []
     try:

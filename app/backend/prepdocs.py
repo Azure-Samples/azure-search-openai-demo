@@ -11,23 +11,19 @@ from openai import AsyncOpenAI
 from rich.logging import RichHandler
 
 from load_azd_env import load_azd_env
-from prepdocslib.csvparser import CsvParser
-from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.filestrategy import FileStrategy
 from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
-from prepdocslib.jsonparser import JsonParser
 from prepdocslib.listfilestrategy import (
     ADLSGen2ListFileStrategy,
     ListFileStrategy,
     LocalListFileStrategy,
 )
-from prepdocslib.parser import Parser
 from prepdocslib.servicesetup import (
     OpenAIHost,
+    build_file_processors,
     clean_key_if_exists,
-    select_parser,
     setup_blob_manager,
     setup_embeddings_service,
     setup_figure_processor,
@@ -36,8 +32,6 @@ from prepdocslib.servicesetup import (
     setup_search_info,
 )
 from prepdocslib.strategy import DocumentAction, Strategy
-from prepdocslib.textparser import TextParser
-from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 logger = logging.getLogger("scripts")
 
@@ -100,61 +94,20 @@ def setup_file_processors(
     openai_deployment: Optional[str] = None,
     content_understanding_endpoint: Optional[str] = None,
 ):
-    sentence_text_splitter = SentenceTextSplitter()
+    """Setup file processors and figure processor for document ingestion.
 
-    # Build mapping of file extensions to parsers using shared select_parser helper.
-    # Each select attempt may instantiate a DI parser; duplication is acceptable at startup.
-    def _try_select(ext: str, content_type: str) -> Parser | None:
-        file_name = f"dummy{ext}"
-        try:
-            return select_parser(
-                file_name=file_name,
-                content_type=content_type,
-                azure_credential=azure_credential,
-                document_intelligence_service=document_intelligence_service,
-                document_intelligence_key=document_intelligence_key,
-                process_figures=use_multimodal,
-                use_local_pdf_parser=local_pdf_parser,
-                use_local_html_parser=local_html_parser,
-            )
-        except ValueError:
-            return None
+    Uses build_file_processors from servicesetup to ensure consistent parser/splitter
+    selection logic with the Azure Functions cloud ingestion pipeline.
+    """
+    file_processors = build_file_processors(
+        azure_credential=azure_credential,
+        document_intelligence_service=document_intelligence_service,
+        document_intelligence_key=document_intelligence_key,
+        use_local_pdf_parser=local_pdf_parser,
+        use_local_html_parser=local_html_parser,
+        process_figures=use_multimodal,
+    )
 
-    pdf_parser: Parser | None = _try_select(".pdf", "application/pdf")
-    html_parser: Parser | None = _try_select(".html", "text/html")
-
-    # DI-only formats
-    di_exts = [
-        ".docx",
-        ".pptx",
-        ".xlsx",
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".tiff",
-        ".bmp",
-        ".heic",
-    ]
-    di_parsers: dict[str, Parser] = {}
-    for ext in di_exts:
-        parser = _try_select(ext, "application/octet-stream")
-        if parser is not None:
-            di_parsers[ext] = parser
-
-    # These file formats can always be parsed:
-    file_processors = {
-        ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
-        ".md": FileProcessor(TextParser(), sentence_text_splitter),
-        ".txt": FileProcessor(TextParser(), sentence_text_splitter),
-        ".csv": FileProcessor(CsvParser(), sentence_text_splitter),
-    }
-    # These require either a Python package or Document Intelligence
-    if pdf_parser is not None:
-        file_processors[".pdf"] = FileProcessor(pdf_parser, sentence_text_splitter)
-    if html_parser is not None:
-        file_processors[".html"] = FileProcessor(html_parser, sentence_text_splitter)
-    for ext, parser in di_parsers.items():
-        file_processors[ext] = FileProcessor(parser, sentence_text_splitter)
     figure_processor = setup_figure_processor(
         credential=azure_credential,
         use_multimodal=use_multimodal,

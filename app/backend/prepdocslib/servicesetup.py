@@ -12,13 +12,17 @@ from azure.identity.aio import get_bearer_token_provider
 from openai import AsyncOpenAI
 
 from .blobmanager import BlobManager
+from .csvparser import CsvParser
 from .embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .figureprocessor import FigureProcessor, MediaDescriptionStrategy
+from .fileprocessor import FileProcessor
 from .htmlparser import LocalHTMLParser
+from .jsonparser import JsonParser
 from .parser import Parser
 from .pdfparser import DocumentAnalysisParser, LocalPdfParser
 from .strategy import SearchInfo
 from .textparser import TextParser
+from .textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 logger = logging.getLogger("scripts")
 
@@ -241,77 +245,92 @@ def setup_figure_processor(
     return None
 
 
-def select_parser(
+def build_file_processors(
     *,
-    file_name: str,
-    content_type: str,
     azure_credential: AsyncTokenCredential,
     document_intelligence_service: str | None,
     document_intelligence_key: str | None = None,
-    process_figures: bool = False,
     use_local_pdf_parser: bool = False,
     use_local_html_parser: bool = False,
-) -> Parser:
-    """Return a parser instance appropriate for the file type and configuration.
+    process_figures: bool = False,
+) -> dict[str, FileProcessor]:
+    sentence_text_splitter = SentenceTextSplitter()
 
-    Args:
-        file_name: Source filename (used to derive extension)
-        content_type: MIME type (fallback for extension-based selection)
-        azure_credential: Token credential for DI service
-        document_intelligence_service: Name of DI service (None disables DI)
-        document_intelligence_key: Optional key credential (overrides token when provided)
-        process_figures: Whether figure extraction should be enabled in DI parser
-        use_local_pdf_parser: Force local PDF parsing instead of DI
-        use_local_html_parser: Force local HTML parsing instead of DI
-
-    Returns:
-        Parser capable of yielding Page objects for the document.
-
-    Raises:
-        ValueError: Unsupported file type or missing DI configuration for required formats.
-    """
-    extension = file_name.lower().rsplit(".", 1)[-1] if "." in file_name else ""
-    ext_with_dot = f".{extension}" if extension else ""
-
-    # Build DI parser lazily only if needed
-    di_parser: DocumentAnalysisParser | None = None
+    doc_int_parser: Optional[DocumentAnalysisParser] = None
+    # check if Azure Document Intelligence credentials are provided
     if document_intelligence_service:
         credential: AsyncTokenCredential | AzureKeyCredential
         if document_intelligence_key:
             credential = AzureKeyCredential(document_intelligence_key)
         else:
             credential = azure_credential
-        di_parser = DocumentAnalysisParser(
+        doc_int_parser = DocumentAnalysisParser(
             endpoint=f"https://{document_intelligence_service}.cognitiveservices.azure.com/",
             credential=credential,
             process_figures=process_figures,
         )
 
-    # Plain text / structured text formats always local
-    if ext_with_dot in {".txt", ".md", ".csv", ".json"} or content_type.startswith("text/plain"):
-        return TextParser()
+    pdf_parser: Optional[Parser] = None
+    if use_local_pdf_parser or document_intelligence_service is None:
+        pdf_parser = LocalPdfParser()
+    elif document_intelligence_service is not None:
+        pdf_parser = doc_int_parser
+    else:
+        logger.warning("No PDF parser available")
 
-    # HTML
-    if ext_with_dot in {".html", ".htm"} or content_type in {"text/html", "application/html"}:
-        if use_local_html_parser or not di_parser:
-            return LocalHTMLParser()
-        return di_parser
+    html_parser: Optional[Parser] = None
+    if use_local_html_parser or document_intelligence_service is None:
+        html_parser = LocalHTMLParser()
+    elif document_intelligence_service is not None:
+        html_parser = doc_int_parser
+    else:
+        logger.warning("No HTML parser available")
 
-    # PDF
-    if ext_with_dot == ".pdf":
-        if use_local_pdf_parser or not di_parser:
-            return LocalPdfParser()
-        return di_parser
+    # These file formats can always be parsed:
+    file_processors = {
+        ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
+        ".md": FileProcessor(TextParser(), sentence_text_splitter),
+        ".txt": FileProcessor(TextParser(), sentence_text_splitter),
+        ".csv": FileProcessor(CsvParser(), sentence_text_splitter),
+    }
+    # These require either a Python package or Document Intelligence
+    if pdf_parser is not None:
+        file_processors.update({".pdf": FileProcessor(pdf_parser, sentence_text_splitter)})
+    if html_parser is not None:
+        file_processors.update({".html": FileProcessor(html_parser, sentence_text_splitter)})
+    # These file formats require Document Intelligence
+    if doc_int_parser is not None:
+        file_processors.update(
+            {
+                ".docx": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".pptx": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".xlsx": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".png": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".jpg": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".jpeg": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".tiff": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".bmp": FileProcessor(doc_int_parser, sentence_text_splitter),
+                ".heic": FileProcessor(doc_int_parser, sentence_text_splitter),
+            }
+        )
+    return file_processors
 
-    # Formats requiring DI
-    di_required_exts = {".docx", ".pptx", ".xlsx", ".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".heic"}
-    if ext_with_dot in di_required_exts:
-        if not di_parser:
-            raise ValueError("Document Intelligence service must be configured to process this file type")
-        return di_parser
 
-    # Fallback: if MIME suggests application/* and DI available, use DI
-    if content_type.startswith("application/") and di_parser:
-        return di_parser
+def select_processor_for_filename(file_name: str, file_processors: dict[str, FileProcessor]) -> FileProcessor:
+    """Select the appropriate file processor for a given filename.
 
-    raise ValueError(f"Unsupported file type: {file_name}")
+    Args:
+        file_name: Name of the file to process
+        file_processors: Dictionary mapping file extensions to FileProcessor instances
+
+    Returns:
+        FileProcessor instance for the file
+
+    Raises:
+        ValueError: If the file extension is not supported
+    """
+    file_ext = os.path.splitext(file_name)[1].lower()
+    file_processor = file_processors.get(file_ext)
+    if not file_processor:
+        raise ValueError(f"Unsupported file type: {file_name}")
+    return file_processor
