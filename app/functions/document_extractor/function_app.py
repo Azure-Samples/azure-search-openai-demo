@@ -154,7 +154,7 @@ async def extract_document(req: func.HttpRequest) -> func.HttpResponse:
                 }
             ]
         except Exception as e:
-            logger.error(f"Error processing record {record_id}: {str(e)}", exc_info=True)
+            logger.error("Error processing record %s: %s", record_id, str(e), exc_info=True)
             output_values = [
                 {
                     "recordId": record_id,
