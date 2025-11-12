@@ -694,7 +694,7 @@ async def test_update_content_with_images_when_enabled(monkeypatch, search_info)
         description="Test image",
         figure_id="fig1",
         page_num=0,
-        placeholder="<figure id='fig1'></figure>",  # required positional arg
+        placeholder="<figure id='fig1'></figure>",
         url="http://example.com/img1.png",
         embedding=[0.01, 0.02],
     )

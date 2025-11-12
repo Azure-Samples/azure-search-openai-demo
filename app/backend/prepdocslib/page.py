@@ -67,7 +67,7 @@ class ImageOnPage:
         if filename is None:
             raise ValueError("filename is required")
         if figure_id is None:
-            raise ValueError("figure_id is required")
+            raise ValueError("figure_id is required for ImageOnPage deserialization")
 
         # Generate placeholder if not provided
         if placeholder is None:
