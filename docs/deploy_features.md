@@ -261,32 +261,6 @@ Convert them first to PDF or image formats to enable media description.
 
 By default, this project runs a local script in order to ingest data. Once you move beyond the sample documents, you may want to enable [cloud ingestion](./data_ingestion.md#cloud-ingestion), which uses Azure AI Search indexers and custom Azure AI Search skills based off the same code used by the local ingestion. That approach scales better to larger amounts of data.
 
-To enable cloud ingestion:
-
-1. If you've previously deployed, delete the existing search index or create a new index using:
-
-    ```shell
-    azd env set AZURE_SEARCH_INDEX cloudindex
-    ```
-
-2. Run this command:
-
-    ```shell
-    azd env set USE_CLOUD_INGESTION true
-    ```
-
-3. Open `azure.yaml` and un-comment the document-extractor, figure-processor, and text-processor sections. Those are the Azure Functions apps that will be deployed and serve as Azure AI Search skills.
-
-4. Provision the new Azure Functions resources, deploy the function apps, and update the search indexer with:
-
-    ```shell
-    azd up
-    ```
-
-5. That will upload the documents in the `data/` folder to the Blob storage container, create the indexer and skillset, and run the indexer to ingest the data. You can monitor the indexer status from the portal.
-
-6. When you have new documents to ingest, you can upload documents to the Blob storage container and run the indexer from the Azure Portal to ingest new documents.
-
 Learn more in the [cloud ingestion guide](./data_ingestion.md#cloud-ingestion).
 
 ## Enabling client-side chat history
