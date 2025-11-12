@@ -64,8 +64,10 @@ class ImageOnPage:
         filename = data.get("filename")
         figure_id = data.get("figure_id")
         placeholder = data.get("placeholder")
-        assert filename is not None, "filename is required"
-        assert figure_id is not None, "figure_id is required"
+        if filename is None:
+            raise ValueError("filename is required")
+        if figure_id is None:
+            raise ValueError("figure_id is required")
 
         # Generate placeholder if not provided
         if placeholder is None:
