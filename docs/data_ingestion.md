@@ -144,6 +144,8 @@ This feature cannot be used on existing index. You need to create a new index or
 
 The cloud ingestion pipeline uses four Azure Functions as custom skills within an Azure AI Search indexer. Each function corresponds to a stage in the ingestion process. Here's how it works:
 
+![Cloud ingestion pipeline diagram](images/ingestion_pipeline.png)
+
 1. **User uploads documents** to Azure Blob Storage (content container)
 2. **Azure AI Search Indexer** monitors the blob container and orchestrates processing
 3. **Custom skills** process documents through three stages:
