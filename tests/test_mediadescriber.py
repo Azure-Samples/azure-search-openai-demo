@@ -68,7 +68,7 @@ async def test_contentunderstanding_analyze(monkeypatch, caplog):
                                     "startPageNumber": 1,
                                     "endPageNumber": 1,
                                     "unit": "pixel",
-                                    "pages": [{"pageNumber": 0}],
+                                    "pages": [{"pageNumber": 1}],
                                 }
                             ],
                         },

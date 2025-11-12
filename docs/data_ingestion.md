@@ -2,7 +2,7 @@
 
 The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on the data ingestion component.
 
-The chat app provides two ways to ingest data: manual ingestion and cloud-based ingestion. Both approaches use the same code for processing the data, but the manual ingestion runs locally while cloud ingestion runs in Azure Functions as Azure AI Search custom skills.
+The chat app provides two ways to ingest data: manual ingestion and cloud ingestion. Both approaches use the same code for processing the data, but the manual ingestion runs locally while cloud ingestion runs in Azure Functions as Azure AI Search custom skills.
 
 - [Supported document formats](#supported-document-formats)
 - [Ingestion stages](#ingestion-stages)
@@ -13,7 +13,7 @@ The chat app provides two ways to ingest data: manual ingestion and cloud-based 
   - [Categorizing data for enhanced search](#enhancing-search-functionality-with-data-categorization)
   - [Indexing additional documents](#indexing-additional-documents)
   - [Removing documents](#removing-documents)
-- [Cloud-based ingestion](#cloud-based-ingestion)
+- [Cloud ingestion](#cloud-ingestion)
   - [Custom skills pipeline](#custom-skills-pipeline)
   - [Indexing of additional documents](#indexing-of-additional-documents)
   - [Removal of documents](#removal-of-documents)
@@ -36,7 +36,7 @@ In order to ingest a document format, we need a tool that can turn it into text.
 
 ## Ingestion stages
 
-The ingestion pipeline consists of three main stages that transform raw documents into searchable content in Azure AI Search. These stages apply to both [local ingestion](#local-ingestion) and [cloud-based ingestion](#cloud-based-ingestion).
+The ingestion pipeline consists of three main stages that transform raw documents into searchable content in Azure AI Search. These stages apply to both [local ingestion](#local-ingestion) and [cloud ingestion](#cloud-ingestion).
 
 ### Document extraction
 
@@ -132,7 +132,7 @@ To remove all documents, use `./scripts/prepdocs.sh --removeall` or `./scripts/p
 
 You can also remove individual documents by using the `--remove` flag. Open either `scripts/prepdocs.sh` or `scripts/prepdocs.ps1` and replace `/data/*` with `/data/YOUR-DOCUMENT-FILENAME-GOES-HERE.pdf`. Then run `scripts/prepdocs.sh --remove` or `scripts/prepdocs.ps1 --remove`.
 
-## Cloud-based ingestion
+## Cloud ingestion
 
 This project includes an optional feature to perform data ingestion in the cloud using Azure Functions as custom skills for Azure AI Search indexers. This approach offloads the ingestion workload from your local machine to the cloud, allowing for more scalable and efficient processing of large datasets.
 

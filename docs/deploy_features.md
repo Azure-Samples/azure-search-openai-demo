@@ -322,9 +322,9 @@ Alternatively you can use the browser's built-in [Speech Synthesis API](https://
 azd env set USE_SPEECH_OUTPUT_BROWSER true
 ```
 
-## Enabling cloud-based data ingestion
+## Enabling cloud data ingestion
 
-By default, this project runs a local script in order to ingest data. Once you move beyond the sample documents, you may want cloud-based ingestion, which uses Azure AI Search indexers and custom Azure AI Search skills based off the same code used by the local ingestion. That approach scales better to larger amounts of data.
+By default, this project runs a local script in order to ingest data. Once you move beyond the sample documents, you may want cloud ingestion, which uses Azure AI Search indexers and custom Azure AI Search skills based off the same code used by the local ingestion. That approach scales better to larger amounts of data.
 
 To enable cloud ingestion:
 
