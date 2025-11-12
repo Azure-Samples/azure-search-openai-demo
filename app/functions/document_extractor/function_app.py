@@ -167,7 +167,7 @@ async def extract_document(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(json.dumps({"values": output_values}), mimetype="application/json", status_code=200)
 
     except Exception as e:
-        logger.error(f"Fatal error in extract_document: {str(e)}", exc_info=True)
+        logger.error("Fatal error in extract_document: %s", str(e), exc_info=True)
         return func.HttpResponse(json.dumps({"error": str(e)}), mimetype="application/json", status_code=500)
 
 
