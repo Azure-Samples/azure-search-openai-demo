@@ -61,16 +61,16 @@ services:
   #       run: python ../../../scripts/copy_prepdocslib.py
   #       interactive: false
   #       continueOnError: false
-  text-processor:
-    project: ./app/functions/text_processor
-    language: py
-    host: function
-    hooks:
-      prepackage:
-        shell: pwsh
-        run: python ../../../scripts/copy_prepdocslib.py
-        interactive: false
-        continueOnError: false
+  # text-processor:
+  #   project: ./app/functions/text_processor
+  #   language: py
+  #   host: function
+  #   hooks:
+  #     prepackage:
+  #       shell: pwsh
+  #       run: python ../../../scripts/copy_prepdocslib.py
+  #       interactive: false
+  #       continueOnError: false
 hooks:
     preprovision:
       windows:
