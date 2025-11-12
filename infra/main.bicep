@@ -129,6 +129,7 @@ param speechServiceSkuName string // Set in main.parameters.json
 param speechServiceVoice string = ''
 param useMultimodal bool = false
 param useEval bool = false
+param useCloudIngestion bool = false
 
 @allowed(['free', 'provisioned', 'serverless'])
 param cosmosDbSkuName string // Set in main.parameters.json
@@ -655,6 +656,31 @@ module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == '
   }
 }
 
+// Optional Azure Functions for document ingestion and processing
+module functions 'app/functions.bicep' = if (useCloudIngestion) {
+  name: 'functions'
+  scope: resourceGroup
+  params: {
+    location: location
+    tags: tags
+    applicationInsightsName: useApplicationInsights ? monitoring!.outputs.applicationInsightsName : ''
+    storageResourceGroupName: storageResourceGroup.name
+    searchServiceResourceGroupName: searchServiceResourceGroup.name
+    openAiResourceGroupName: openAiResourceGroup.name
+    documentIntelligenceResourceGroupName: documentIntelligenceResourceGroup.name
+    visionServiceName: useMultimodal ? vision!.outputs.name : ''
+    visionResourceGroupName: useMultimodal ? visionResourceGroup.name : resourceGroup.name
+    contentUnderstandingServiceName: useMediaDescriberAzureCU ? contentUnderstanding!.outputs.name : ''
+    contentUnderstandingResourceGroupName: useMediaDescriberAzureCU ? contentUnderstandingResourceGroup.name : resourceGroup.name
+    documentExtractorName: '${abbrs.webSitesFunctions}doc-extractor-${resourceToken}'
+    figureProcessorName: '${abbrs.webSitesFunctions}figure-processor-${resourceToken}'
+    textProcessorName: '${abbrs.webSitesFunctions}text-processor-${resourceToken}'
+    openIdIssuer: authenticationIssuerUri
+    appEnvVariables: appEnvVariables
+    searchUserAssignedIdentityClientId: searchService.outputs.userAssignedIdentityClientId
+  }
+}
+
 var defaultOpenAiDeployments = [
   {
     name: chatGpt.deploymentName
@@ -1125,7 +1151,7 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
-    principalId: searchService.outputs.principalId
+    principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd'
     principalType: 'ServicePrincipal'
   }
@@ -1135,7 +1161,7 @@ module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal) {
   scope: visionResourceGroup
   name: 'vision-role-searchservice'
   params: {
-    principalId: searchService.outputs.principalId
+    principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
     principalType: 'ServicePrincipal'
   }
@@ -1165,11 +1191,12 @@ module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
   }
 }
 
-module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization) {
+// Search service needs blob read access for both integrated vectorization and cloud ingestion indexer data source
+module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization || useCloudIngestion) {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
-    principalId: searchService.outputs.principalId
+    principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
     principalType: 'ServicePrincipal'
   }
@@ -1179,7 +1206,7 @@ module storageRoleContributorSearchService 'core/security/role.bicep' = if (useI
   scope: storageResourceGroup
   name: 'storage-role-contributor-searchservice'
   params: {
-    principalId: searchService.outputs.principalId
+    principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
     principalType: 'ServicePrincipal'
   }
@@ -1432,8 +1459,8 @@ output AZURE_SEARCH_AGENT string = searchAgentName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
 output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLevel
-output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.principalId
 output AZURE_SEARCH_FIELD_NAME_EMBEDDING string = searchFieldNameEmbedding
+output AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID string = searchService.outputs.userAssignedIdentityResourceId
 
 output AZURE_COSMOSDB_ACCOUNT string = (useAuthentication && useChatHistoryCosmos) ? cosmosDb.outputs.name : ''
 output AZURE_CHAT_HISTORY_DATABASE string = chatHistoryDatabaseName
@@ -1449,6 +1476,15 @@ output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
 output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 
 output AZURE_IMAGESTORAGE_CONTAINER string = useMultimodal ? imageStorageContainerName : ''
+
+// Cloud ingestion function skill endpoints & resource IDs
+output DOCUMENT_EXTRACTOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.documentExtractorUrl}/api/extract' : ''
+output FIGURE_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
+output TEXT_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
+// Identifier URI used as authResourceId for all custom skill endpoints
+output DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.documentExtractorAuthIdentifierUri : ''
+output FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.figureProcessorAuthIdentifierUri : ''
+output TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.textProcessorAuthIdentifierUri : ''
 
 output AZURE_AI_PROJECT string = useAiProject ? ai.outputs.projectName : ''
 

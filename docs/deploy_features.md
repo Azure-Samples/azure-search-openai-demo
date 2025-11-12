@@ -12,7 +12,6 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Enabling persistent chat history with Azure Cosmos DB](#enabling-persistent-chat-history-with-azure-cosmos-db)
 * [Enabling language picker](#enabling-language-picker)
 * [Enabling speech input/output](#enabling-speech-inputoutput)
-* [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling user document upload](#enabling-user-document-upload)
@@ -236,8 +235,7 @@ Learn more in the [multimodal guide](./multimodal.md).
 
 ## Enabling media description with Azure Content Understanding
 
-⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
-It is compatible with the [multimodal feature](./multimodal.md), but this feature enables only a subset of multimodal capabilities,
+⚠️ This feature is compatible with the [multimodal feature](./multimodal.md), but this feature enables only a subset of multimodal capabilities,
 so you may want to enable the multimodal feature instead or as well.
 
 By default, if your documents contain image-like figures, the data ingestion process will ignore those figures,
@@ -324,30 +322,35 @@ Alternatively you can use the browser's built-in [Speech Synthesis API](https://
 azd env set USE_SPEECH_OUTPUT_BROWSER true
 ```
 
-## Enabling Integrated Vectorization
+## Enabling cloud data ingestion
 
-Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in-azure-ai-search/3960809). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
+By default, this project runs a local script in order to ingest data. Once you move beyond the sample documents, you may want cloud ingestion, which uses Azure AI Search indexers and custom Azure AI Search skills based off the same code used by the local ingestion. That approach scales better to larger amounts of data.
 
-To enable integrated vectorization with this sample:
+To enable cloud ingestion:
 
-1. If you've previously deployed, delete the existing search index. 🗑️
-2. To enable the use of integrated vectorization, run:
-
-    ```shell
-    azd env set USE_FEATURE_INT_VECTORIZATION true
-    ```
-
-3. If you've already deployed your app, then you can run just the `provision` step:
+1. If you've previously deployed, delete the existing search index or create a new index using:
 
     ```shell
-    azd provision
+    azd env set AZURE_SEARCH_INDEX cloudindex
     ```
 
-    That will set up necessary RBAC roles and configure the integrated vectorization feature on your search service.
+2. Run this command:
 
-    If you haven't deployed your app yet, then you should run the full `azd up` after configuring all optional features.
+    ```shell
+    azd env set USE_CLOUD_INGESTION true
+    ```
 
-4. You can view the resources such as the indexer and skillset in Azure Portal and monitor the status of the vectorization process.
+3. Open `azure.yaml` and un-comment the document-extractor, figure-processor, and text-processor sections. Those are the Azure Functions apps that will be deployed and serve as Azure AI Search skills.
+
+4. Provision the new Azure Functions resources, deploy the function apps, and update the search indexer with:
+
+    ```shell
+    azd up
+    ```
+
+5. That will upload the documents in the `data/` folder to the Blob storage container, create the indexer and skillset, and run the indexer to ingest the data. You can monitor the indexer status from the portal.
+
+6. When you have new documents to ingest, you can upload documents to the Blob storage container and run the indexer from the Azure Portal to ingest new documents.
 
 ## Enabling authentication
 
