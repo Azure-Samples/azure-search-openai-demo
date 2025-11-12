@@ -68,21 +68,27 @@ class DocumentAnalysisParser(Parser):
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential
         ) as document_intelligence_client:
-            file_analyzed = False
+            # Always convert to bytes up front to avoid passing a FileStorage/stream object
+            try:
+                content.seek(0)
+            except Exception:
+                pass
+            content_bytes = content.read()
+
+            poller = None
+            doc_for_pymupdf = None
+
             if self.process_figures:
-                content_bytes = content.read()
                 try:
                     poller = await document_intelligence_client.begin_analyze_document(
                         model_id="prebuilt-layout",
-                        analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
+                        body=AnalyzeDocumentRequest(bytes_source=content_bytes),
                         output=["figures"],
                         features=["ocrHighResolution"],
                         output_content_format="markdown",
                     )
                     doc_for_pymupdf = pymupdf.open(stream=io.BytesIO(content_bytes))
-                    file_analyzed = True
                 except HttpResponseError as e:
-                    content.seek(0)
                     if e.error and e.error.code == "InvalidArgument":
                         logger.error(
                             "This document type does not support media description. Proceeding with standard analysis."
@@ -92,10 +98,12 @@ class DocumentAnalysisParser(Parser):
                             "Unexpected error analyzing document for media description: %s. Proceeding with standard analysis.",
                             e,
                         )
+                    poller = None
 
-            if file_analyzed is False:
+            if poller is None:
                 poller = await document_intelligence_client.begin_analyze_document(
-                    model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
+                    model_id=self.model_id,
+                    body=AnalyzeDocumentRequest(bytes_source=content_bytes),
                 )
             analyze_result: AnalyzeResult = await poller.result()
 
@@ -122,11 +130,9 @@ class DocumentAnalysisParser(Parser):
                     TABLE = 0
                     FIGURE = 1
 
-                MaskEntry = tuple[ObjectType, Optional[int]]
-
                 page_offset = page.spans[0].offset
                 page_length = page.spans[0].length
-                mask_chars: list[MaskEntry] = [(ObjectType.NONE, None)] * page_length
+                mask_chars: list[tuple[ObjectType, Optional[int]]] = [(ObjectType.NONE, None)] * page_length
                 # mark all positions of the table spans in the page
                 for table_idx, table in enumerate(tables_on_page):
                     for span in table.spans:
@@ -146,7 +152,7 @@ class DocumentAnalysisParser(Parser):
 
                 # build page text by replacing characters in table spans with table html
                 page_text = ""
-                added_objects: set[MaskEntry] = set()
+                added_objects: set[tuple[ObjectType, Optional[int]]] = set()
                 for idx, mask_char in enumerate(mask_chars):
                     object_type, object_idx = mask_char
                     if object_type == ObjectType.NONE:

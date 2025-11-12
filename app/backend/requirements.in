@@ -5,7 +5,7 @@ quart-cors
 openai>=1.109.1
 tiktoken
 tenacity
-azure-ai-documentintelligence==1.0.0b4
+azure-ai-documentintelligence==1.0.2
 azure-cognitiveservices-speech
 azure-cosmos
 azure-search-documents==11.7.0b1

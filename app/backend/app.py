@@ -356,17 +356,13 @@ async def upload(auth_claims: dict[str, Any]):
     if "file" not in request_files:
         return jsonify({"message": "No file part in the request", "status": "failed"}), 400
 
-    try:
-        user_oid = auth_claims["oid"]
-        file = request_files.getlist("file")[0]
-        adls_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
-        file_url = await adls_manager.upload_blob(file, file.filename, user_oid)
-        ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
-        await ingester.add_file(File(content=file, url=file_url, acls={"oids": [user_oid]}), user_oid=user_oid)
-        return jsonify({"message": "File uploaded successfully"}), 200
-    except Exception as error:
-        current_app.logger.error("Error uploading file: %s", error)
-        return jsonify({"message": "Error uploading file, check server logs for details.", "status": "failed"}), 500
+    user_oid = auth_claims["oid"]
+    file = request_files.getlist("file")[0]
+    adls_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
+    file_url = await adls_manager.upload_blob(file, file.filename, user_oid)
+    ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
+    await ingester.add_file(File(content=file, url=file_url, acls={"oids": [user_oid]}), user_oid=user_oid)
+    return jsonify({"message": "File uploaded successfully"}), 200
 
 
 @bp.post("/delete_uploaded")
