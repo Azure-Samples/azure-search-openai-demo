@@ -14,7 +14,8 @@ The chat app provides two ways to ingest data: manual ingestion and cloud ingest
   - [Indexing additional documents](#indexing-additional-documents)
   - [Removing documents](#removing-documents)
 - [Cloud ingestion](#cloud-ingestion)
-  - [Custom skills pipeline](#custom-skills-pipeline)
+  - [Enabling cloud ingestion](#enabling-cloud-ingestion)
+  - [Indexer architecture](#indexer-architecture)
   - [Indexing of additional documents](#indexing-of-additional-documents)
   - [Removal of documents](#removal-of-documents)
   - [Scheduled indexing](#scheduled-indexing)
@@ -162,7 +163,7 @@ This project includes an optional feature to perform data ingestion in the cloud
 
 6. When you have new documents to ingest, you can upload documents to the Blob storage container and run the indexer from the Azure Portal to ingest new documents.
 
-### Cloud ingestion architecture
+### Indexer architecture
 
 The cloud ingestion pipeline uses four Azure Functions as custom skills within an Azure AI Search indexer. Each function corresponds to a stage in the ingestion process. Here's how it works:
 
