@@ -48,6 +48,10 @@ from approaches.approach import Approach
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
+from services.embedding_router import EmbeddingRouter
+from prepdocslib.patentsberta_embeddings import PatentsBertaEmbeddings
+from prepdocslib.nomic_embeddings import NomicEmbeddings
+from config import PATENTSBERTA_ENDPOINT, PATENTSBERTA_API_KEY, ENABLE_EMBEDDING_ROUTER, NOMIC_API_KEY, NOMIC_ENDPOINT, NOMIC_USE_SDK, NOMIC_INFERENCE_MODE
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
     CONFIG_AGENT_CLIENT,
@@ -761,6 +765,58 @@ async def setup_clients():
 
     prompt_manager = PromptyManager()
 
+    # Set up embedding router and services for intelligent routing
+    embedding_router = None
+    patentsberta_embeddings_service = None
+    nomic_embeddings_service = None
+    
+    if ENABLE_EMBEDDING_ROUTER:
+        # Initialize PatentsBERTa embeddings service if configured
+        if PATENTSBERTA_ENDPOINT:
+            try:
+                patentsberta_embeddings_service = PatentsBertaEmbeddings(
+                    endpoint=PATENTSBERTA_ENDPOINT,
+                    api_key=PATENTSBERTA_API_KEY,
+                    batch_size=16,
+                    max_retries=3
+                )
+                current_app.logger.info("PatentsBERTa embeddings service initialized")
+            except Exception as e:
+                current_app.logger.warning(f"Failed to initialize PatentsBERTa embeddings: {e}")
+        
+        # Initialize NOMIC embeddings service if configured
+        if NOMIC_API_KEY or NOMIC_ENDPOINT:
+            try:
+                nomic_embeddings_service = NomicEmbeddings(
+                    model="nomic-embed-text-v1.5",  # Default, router will select specific model
+                    api_key=NOMIC_API_KEY,
+                    endpoint=NOMIC_ENDPOINT,
+                    use_sdk=NOMIC_USE_SDK,
+                    inference_mode=NOMIC_INFERENCE_MODE,
+                    batch_size=16,
+                    max_retries=3
+                )
+                current_app.logger.info("NOMIC embeddings service initialized")
+            except Exception as e:
+                current_app.logger.warning(f"Failed to initialize NOMIC embeddings: {e}")
+        
+        # Initialize embedding router
+        if patentsberta_embeddings_service or nomic_embeddings_service:
+            try:
+                embedding_router = EmbeddingRouter(
+                    baseline_deployment=AZURE_OPENAI_EMB_DEPLOYMENT or OPENAI_EMB_MODEL,
+                    patentsberta_endpoint=PATENTSBERTA_ENDPOINT,
+                    nomic_endpoint=NOMIC_ENDPOINT,
+                    nomic_api_key=NOMIC_API_KEY,
+                    enable_heuristics=True
+                )
+                current_app.logger.info("Embedding router initialized with intelligent routing enabled")
+            except Exception as e:
+                current_app.logger.warning(f"Failed to initialize embedding router: {e}")
+                embedding_router = None
+    else:
+        current_app.logger.info("Embedding router disabled (ENABLE_EMBEDDING_ROUTER=false)")
+
     # Set up the two default RAG approaches for /ask and /chat
     # RetrieveThenReadApproach is used by /ask for single-turn Q&A
 
@@ -788,6 +844,9 @@ async def setup_clients():
         image_embeddings_client=image_embeddings_client,
         global_blob_manager=global_blob_manager,
         user_blob_manager=user_blob_manager,
+        embedding_router=embedding_router,
+        patentsberta_embeddings=patentsberta_embeddings_service,
+        nomic_embeddings=nomic_embeddings_service,
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -821,6 +880,9 @@ async def setup_clients():
         image_embeddings_client=image_embeddings_client,
         global_blob_manager=global_blob_manager,
         user_blob_manager=user_blob_manager,
+        embedding_router=embedding_router,
+        patentsberta_embeddings=patentsberta_embeddings_service,
+        nomic_embeddings=nomic_embeddings_service,
     )
 
 

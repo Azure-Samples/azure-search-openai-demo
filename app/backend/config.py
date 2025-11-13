@@ -61,3 +61,8 @@ NOMIC_ENDPOINT = os.getenv("NOMIC_ENDPOINT")  # Optional custom endpoint
 NOMIC_USE_SDK = os.getenv("NOMIC_USE_SDK", "false").lower() == "true"  # Use Python SDK instead of API
 NOMIC_INFERENCE_MODE = os.getenv("NOMIC_INFERENCE_MODE", "remote").lower()  # local or remote (SDK only)
 ENABLE_NOMIC_EMBEDDINGS = os.getenv("ENABLE_NOMIC_EMBEDDINGS", "false").lower() == "true"
+
+# PatentsBERTa Embeddings Configuration
+PATENTSBERTA_ENDPOINT = os.getenv("PATENTSBERTA_ENDPOINT")
+PATENTSBERTA_API_KEY = os.getenv("PATENTSBERTA_API_KEY")
+ENABLE_EMBEDDING_ROUTER = os.getenv("ENABLE_EMBEDDING_ROUTER", "true").lower() == "true"  # Enable intelligent routing

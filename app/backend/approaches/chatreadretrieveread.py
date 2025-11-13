@@ -66,20 +66,44 @@ class ChatReadRetrieveReadApproach(Approach):
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
         user_blob_manager: Optional[AdlsBlobManager] = None,
+        embedding_router: Optional[Any] = None,
+        patentsberta_embeddings: Optional[Any] = None,
+        nomic_embeddings: Optional[Any] = None,
     ):
+        # Get openai_host from environment or default to "azure"
+        import os
+        from prepdocslib.strategy import OpenAIHost
+        openai_host_str = os.getenv("OPENAI_HOST", "azure")
+        openai_host = OpenAIHost(openai_host_str).value if hasattr(OpenAIHost, openai_host_str.upper()) else openai_host_str
+        
+        super().__init__(
+            search_client=search_client,
+            openai_client=openai_client,
+            auth_helper=auth_helper,
+            query_language=query_language,
+            query_speller=query_speller,
+            embedding_deployment=embedding_deployment,
+            embedding_model=embedding_model,
+            embedding_dimensions=embedding_dimensions,
+            embedding_field=embedding_field,
+            openai_host=openai_host,
+            prompt_manager=prompt_manager,
+            reasoning_effort=reasoning_effort,
+            multimodal_enabled=multimodal_enabled,
+            image_embeddings_client=image_embeddings_client,
+            global_blob_manager=global_blob_manager,
+            user_blob_manager=user_blob_manager,
+            embedding_router=embedding_router,
+            patentsberta_embeddings=patentsberta_embeddings,
+            nomic_embeddings=nomic_embeddings,
+        )
         self.search_client = search_client
         self.search_index_name = search_index_name
         self.agent_model = agent_model
         self.agent_deployment = agent_deployment
         self.agent_client = agent_client
-        self.openai_client = openai_client
-        self.auth_helper = auth_helper
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
-        self.embedding_deployment = embedding_deployment
-        self.embedding_model = embedding_model
-        self.embedding_dimensions = embedding_dimensions
-        self.embedding_field = embedding_field
         self.sourcepage_field = sourcepage_field
         self.content_field = content_field
         self.query_language = query_language

@@ -167,6 +167,9 @@ class Approach(ABC):
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
         user_blob_manager: Optional[AdlsBlobManager] = None,
+        embedding_router: Optional[Any] = None,  # EmbeddingRouter for intelligent routing
+        patentsberta_embeddings: Optional[Any] = None,  # PatentsBertaEmbeddings service
+        nomic_embeddings: Optional[Any] = None,  # NomicEmbeddings service
     ):
         self.search_client = search_client
         self.openai_client = openai_client
@@ -185,6 +188,9 @@ class Approach(ABC):
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
+        self.embedding_router = embedding_router
+        self.patentsberta_embeddings = patentsberta_embeddings
+        self.nomic_embeddings = nomic_embeddings
 
     def build_filter(self, overrides: dict[str, Any], auth_claims: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -473,7 +479,44 @@ class Approach(ABC):
             return f"data:image/png;base64,{img}"
         return None
 
-    async def compute_text_embedding(self, q: str):
+    async def compute_text_embedding(self, q: str, metadata: Optional[dict[str, Any]] = None):
+        """
+        Compute text embedding for a query, using router if available to select appropriate model.
+        
+        Args:
+            q: Query text
+            metadata: Optional metadata for routing decisions
+            
+        Returns:
+            VectorizedQuery for search
+        """
+        # If router is available and enabled, use it to select embedding model
+        if self.embedding_router:
+            from services.embedding_router import EmbeddingModel
+            
+            # Analyze query and select model
+            selected_model = self.embedding_router.select_model(
+                content=q,
+                content_type="query",
+                metadata=metadata
+            )
+            
+            # Use selected model's embedding service
+            if selected_model == EmbeddingModel.PATENTSBERTA and self.patentsberta_embeddings:
+                # Use PatentsBERTa embeddings
+                query_vector = await self.patentsberta_embeddings.create_embedding(q)
+                # PatentsBERTa uses 768 dimensions, ensure field matches
+                return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
+            
+            elif selected_model == EmbeddingModel.NOMIC and self.nomic_embeddings:
+                # Use NOMIC embeddings
+                query_vector = await self.nomic_embeddings.create_embedding(q)
+                # NOMIC uses 768 dimensions, ensure field matches
+                return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
+            
+            # Fall through to baseline (Azure OpenAI)
+        
+        # Default: Use Azure OpenAI embeddings (baseline)
         SUPPORTED_DIMENSIONS_MODEL = {
             "text-embedding-ada-002": False,
             "text-embedding-3-small": True,
@@ -484,7 +527,7 @@ class Approach(ABC):
             dimensions: int
 
         dimensions_args: ExtraArgs = (
-            {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model] else {}
+            {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL.get(self.embedding_model, False) else {}
         )
         embedding = await self.openai_client.embeddings.create(
             # Azure OpenAI takes the deployment name as the model name
