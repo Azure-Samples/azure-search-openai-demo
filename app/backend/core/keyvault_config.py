@@ -68,8 +68,7 @@ class KeyVaultConfigLoader:
             Dictionary with web search API keys
         """
         return await self.reader.get_secrets({
-            "SERPER_API_KEY": "SERPER_API_KEY",
-            "DEEPSEEK_API_KEY": "DEEPSEEK_API_KEY"
+            "SERPER_API_KEY": "SERPER_API_KEY"
         })
     
     async def load_all_secrets(self) -> Dict[str, Optional[str]]:

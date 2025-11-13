@@ -84,6 +84,7 @@ from config import (
     CONFIG_USER_BLOB_MANAGER,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
+    OCR_ON_INGEST,
 )
 from core.authentication import AuthenticationHelper
 from core.sessionhelper import create_session_id
@@ -98,10 +99,13 @@ from prepdocs import (
     setup_openai_client,
     setup_search_info,
 )
+from services.ocr_service import OCRService
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 from prepdocslib.filestrategy import UploadUserFileStrategy
 from prepdocslib.listfilestrategy import File
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint("routes", __name__, static_folder="static")
 # Fix Windows registry issue with mimetypes
@@ -699,6 +703,17 @@ async def setup_clients():
             vision_endpoint=AZURE_VISION_ENDPOINT,
             use_multimodal=USE_MULTIMODAL,
         )
+        
+        # Initialize OCR service for runtime uploads if enabled
+        ocr_service = None
+        if OCR_ON_INGEST:
+            ocr_candidate = OCRService()
+            if ocr_candidate.is_enabled():
+                ocr_service = ocr_candidate
+                logger.info("OCR service enabled for runtime user uploads")
+            else:
+                logger.warning("OCR_ON_INGEST is enabled but no OCR provider is configured; skipping OCR for runtime uploads.")
+        
         ingester = UploadUserFileStrategy(
             search_info=search_info,
             file_processors=file_processors,
@@ -706,6 +721,7 @@ async def setup_clients():
             image_embeddings=image_embeddings_service,
             search_field_name_embedding=AZURE_SEARCH_FIELD_NAME_EMBEDDING,
             blob_manager=user_blob_manager,
+            ocr_service=ocr_service,
         )
         current_app.config[CONFIG_INGESTER] = ingester
 

@@ -1,44 +1,41 @@
 """
-DeepSeek OCR Client.
+Ollama OCR Client.
 
-Integration with DeepSeek OCR API for text extraction from images.
+Integration with local Ollama server for text extraction from images.
+Ollama provides OpenAI-compatible API for vision models.
 """
 
 import aiohttp
 import base64
 from typing import Dict, Any, Optional
 import logging
-from io import BytesIO
 
 from .base import OCRResult, OCRProvider
 
 logger = logging.getLogger(__name__)
 
 
-class DeepSeekOCRClient(OCRProvider):
+class OllamaOCRClient(OCRProvider):
     """
-    DeepSeek OCR client for text extraction from images.
+    Ollama OCR client for text extraction from images using local Ollama server.
     
-    DeepSeek OCR API documentation: https://api-docs.deepseek.com/
+    Supports any Ollama vision model (e.g., llava, bakllava, deepseek-v2).
     """
     
     def __init__(
         self,
-        api_key: str,
-        base_url: str = "https://api.deepseek.com/v1",
-        model: str = "deepseek-ocr",
-        timeout: int = 60
+        base_url: str = "http://localhost:11434/v1",
+        model: str = "llava",
+        timeout: int = 120
     ):
         """
-        Initialize DeepSeek OCR client.
+        Initialize Ollama OCR client.
         
         Args:
-            api_key: DeepSeek API key
-            base_url: Base URL for DeepSeek API (default: https://api.deepseek.com/v1)
-            model: Model name for OCR (default: deepseek-ocr)
-            timeout: Request timeout in seconds
+            base_url: Base URL for Ollama API (default: http://localhost:11434/v1)
+            model: Model name for OCR (default: llava)
+            timeout: Request timeout in seconds (default: 120 for local processing)
         """
-        self.api_key = api_key
         self.base_url = base_url.rstrip('/')
         self.model = model
         self.timeout = timeout
@@ -50,7 +47,7 @@ class DeepSeekOCRClient(OCRProvider):
         options: Optional[Dict[str, Any]] = None
     ) -> OCRResult:
         """
-        Extract text from image using DeepSeek OCR.
+        Extract text from image using Ollama vision model.
         
         Args:
             image_data: Image bytes (PNG, JPEG, PDF, etc.)
@@ -64,7 +61,7 @@ class DeepSeekOCRClient(OCRProvider):
             # Encode image to base64
             image_base64 = base64.b64encode(image_data).decode('utf-8')
             
-            # Prepare request payload
+            # Prepare request payload (OpenAI-compatible format)
             payload = {
                 "model": self.model,
                 "messages": [
@@ -84,6 +81,7 @@ class DeepSeekOCRClient(OCRProvider):
                         ]
                     }
                 ],
+                "stream": False,
                 "max_tokens": 4096
             }
             
@@ -98,9 +96,8 @@ class DeepSeekOCRClient(OCRProvider):
                 if "max_tokens" in options:
                     payload["max_tokens"] = options["max_tokens"]
             
-            # Make API request
+            # Make API request (Ollama uses OpenAI-compatible API, no auth needed)
             headers = {
-                "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json"
             }
             
@@ -112,8 +109,8 @@ class DeepSeekOCRClient(OCRProvider):
                 ) as response:
                     if response.status != 200:
                         error_text = await response.text()
-                        logger.error(f"DeepSeek OCR API error {response.status}: {error_text}")
-                        raise Exception(f"DeepSeek OCR API error {response.status}: {error_text}")
+                        logger.error(f"Ollama OCR API error {response.status}: {error_text}")
+                        raise Exception(f"Ollama OCR API error {response.status}: {error_text}")
                     
                     data = await response.json()
                     
@@ -121,38 +118,37 @@ class DeepSeekOCRClient(OCRProvider):
                     if "choices" in data and len(data["choices"]) > 0:
                         extracted_text = data["choices"][0]["message"]["content"]
                         
-                        # Extract confidence if available (some models provide this)
+                        # Extract confidence if available
                         confidence = 1.0
                         if "usage" in data:
                             # Use token counts as a proxy for confidence
-                            # More tokens usually means more text extracted
                             total_tokens = data["usage"].get("total_tokens", 0)
                             if total_tokens > 0:
-                                # Normalize confidence (this is a heuristic)
+                                # Normalize confidence (heuristic)
                                 confidence = min(1.0, total_tokens / 1000.0)
                         
                         metadata = {
-                            "provider": "deepseek",
+                            "provider": "ollama",
                             "model": self.model,
                             "language": language,
-                            "api_version": "v1",
+                            "base_url": self.base_url,
                             "usage": data.get("usage", {})
                         }
                         
                         return OCRResult(
                             text=extracted_text,
                             confidence=confidence,
-                            pages=[],  # DeepSeek doesn't provide page-level results
+                            pages=[],  # Ollama doesn't provide page-level results
                             metadata=metadata
                         )
                     else:
-                        raise Exception("No text extracted from DeepSeek OCR response")
+                        raise Exception("No text extracted from Ollama OCR response")
                         
         except aiohttp.ClientError as e:
-            logger.error(f"DeepSeek OCR network error: {e}")
-            raise Exception(f"DeepSeek OCR network error: {str(e)}")
+            logger.error(f"Ollama OCR network error: {e}")
+            raise Exception(f"Ollama OCR network error: {str(e)}")
         except Exception as e:
-            logger.error(f"DeepSeek OCR error: {e}")
+            logger.error(f"Ollama OCR error: {e}")
             raise
     
     async def extract_text_from_url(
@@ -162,7 +158,7 @@ class DeepSeekOCRClient(OCRProvider):
         options: Optional[Dict[str, Any]] = None
     ) -> OCRResult:
         """
-        Extract text from image URL using DeepSeek OCR.
+        Extract text from image URL using Ollama OCR.
         
         Args:
             image_url: URL of the image to process
@@ -182,8 +178,4 @@ class DeepSeekOCRClient(OCRProvider):
         except Exception as e:
             logger.error(f"Error fetching image from URL: {e}")
             raise
-
-
-
-
 

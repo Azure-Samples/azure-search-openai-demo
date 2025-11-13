@@ -192,3 +192,7 @@ desktop.ini
 .vscode/
 .idea/
 *.sublime-*
+
+tests/test_application.py
+tests/test_ollama_ocr.py
+tests/test_response_accuracy.py

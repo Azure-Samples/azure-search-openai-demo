@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, Any, Dict, Set
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -21,6 +21,8 @@ async def parse_file(
     blob_manager: Optional[BaseBlobManager] = None,
     image_embeddings_client: Optional[ImageEmbeddings] = None,
     user_oid: Optional[str] = None,
+    ocr_service: Optional[Any] = None,
+    enable_ocr: bool = False,
 ) -> list[Section]:
     key = file.file_extension().lower()
     processor = file_processors.get(key)
@@ -46,6 +48,38 @@ async def parse_file(
         section.chunk.images = [
             image for page in pages if page.page_num == section.chunk.page_num for image in page.images
         ]
+    if enable_ocr and ocr_service is not None:
+        ocr_cache: Dict[str, str] = {}
+        for section in sections:
+            if not section.chunk.images:
+                continue
+            processed_ids: Set[str] = set()
+            for image in section.chunk.images:
+                if image is None:
+                    continue
+                image_id = image.figure_id or image.filename or f"{file.filename()}-{image.page_num}"
+                if image_id in processed_ids:
+                    continue
+                processed_ids.add(image_id)
+                if image_id not in ocr_cache:
+                    if not getattr(image, "bytes", None):
+                        ocr_cache[image_id] = ""
+                    else:
+                        try:
+                            ocr_result = await ocr_service.extract_text(image.bytes)
+                            if ocr_result and getattr(ocr_result, "text", None):
+                                extracted_text = ocr_result.text.strip()
+                                ocr_cache[image_id] = extracted_text
+                                image.ocr_text = extracted_text or None
+                            else:
+                                ocr_cache[image_id] = ""
+                        except Exception as exc:
+                            logger.warning("Failed to run OCR for image %s: %s", image.filename, exc)
+                            ocr_cache[image_id] = ""
+                ocr_text = ocr_cache.get(image_id, "").strip()
+                if ocr_text:
+                    image.ocr_text = ocr_text
+                    section.chunk.text = f"{section.chunk.text.rstrip()}\n\n[Image OCR: {image_id}]\n{ocr_text}"
     return sections
 
 
@@ -69,6 +103,8 @@ class FileStrategy(Strategy):
         category: Optional[str] = None,
         use_content_understanding: bool = False,
         content_understanding_endpoint: Optional[str] = None,
+        ocr_service: Optional[Any] = None,
+        ocr_on_ingest: bool = False,
     ):
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -83,6 +119,8 @@ class FileStrategy(Strategy):
         self.category = category
         self.use_content_understanding = use_content_understanding
         self.content_understanding_endpoint = content_understanding_endpoint
+        self.ocr_service = ocr_service
+        self.ocr_on_ingest = ocr_on_ingest
 
     def setup_search_manager(self):
         self.search_manager = SearchManager(
@@ -117,7 +155,13 @@ class FileStrategy(Strategy):
                 try:
                     await self.blob_manager.upload_blob(file)
                     sections = await parse_file(
-                        file, self.file_processors, self.category, self.blob_manager, self.image_embeddings
+                        file,
+                        self.file_processors,
+                        self.category,
+                        self.blob_manager,
+                        self.image_embeddings,
+                        ocr_service=self.ocr_service if self.ocr_on_ingest else None,
+                        enable_ocr=self.ocr_on_ingest,
                     )
                     if sections:
                         await self.search_manager.update_content(sections, url=file.url)
@@ -147,6 +191,7 @@ class UploadUserFileStrategy:
         search_field_name_embedding: Optional[str] = None,
         embeddings: Optional[OpenAIEmbeddings] = None,
         image_embeddings: Optional[ImageEmbeddings] = None,
+        ocr_service: Optional[Any] = None,
     ):
         self.file_processors = file_processors
         self.embeddings = embeddings
@@ -163,10 +208,18 @@ class UploadUserFileStrategy:
             search_images=False,
         )
         self.search_field_name_embedding = search_field_name_embedding
+        self.ocr_service = ocr_service
 
     async def add_file(self, file: File, user_oid: str):
         sections = await parse_file(
-            file, self.file_processors, None, self.blob_manager, self.image_embeddings, user_oid=user_oid
+            file,
+            self.file_processors,
+            None,
+            self.blob_manager,
+            self.image_embeddings,
+            user_oid=user_oid,
+            ocr_service=self.ocr_service,
+            enable_ocr=self.ocr_service is not None,
         )
         if sections:
             await self.search_manager.update_content(sections, url=file.url)

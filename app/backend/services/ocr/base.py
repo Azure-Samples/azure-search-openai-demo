@@ -1,7 +1,7 @@
 """
 Base OCR Provider Protocol.
 
-Defines the interface for OCR providers (DeepSeek, Azure Document Intelligence, etc.).
+Defines the interface for OCR providers (Ollama, Azure Document Intelligence, etc.).
 """
 
 from typing import Protocol, Dict, Any, Optional

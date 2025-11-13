@@ -45,3 +45,9 @@ def load_azd_env():
     else:
         logger.info("Loading azd env from %s, which may override existing environment variables", env_file_path)
         load_dotenv(env_file_path, override=True)
+    
+    # Also load from local .env file as fallback (for variables not in azd env)
+    local_env_path = os.path.join(os.path.dirname(__file__), ".env")
+    if os.path.exists(local_env_path) and local_env_path != env_file_path:
+        logger.info("Also loading local .env from %s (as fallback for missing variables)", local_env_path)
+        load_dotenv(local_env_path, override=False)  # Don't override azd vars, but fill in missing ones

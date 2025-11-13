@@ -46,11 +46,11 @@ WEB_CACHE_TTL_S = int(os.getenv("WEB_CACHE_TTL_S", "3600"))
 REDIS_URL = os.getenv("REDIS_URL")  # Optional Redis cache URL
 
 # OCR Configuration
-OCR_PROVIDER = os.getenv("OCR_PROVIDER", "none").lower()  # deepseek, azure_document_intelligence, none
+OCR_PROVIDER = os.getenv("OCR_PROVIDER", "none").lower()  # ollama, azure_document_intelligence, none
 OCR_ON_INGEST = os.getenv("OCR_ON_INGEST", "false").lower() == "true"  # Run OCR during document ingestion
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
-DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
-DEEPSEEK_OCR_MODEL = os.getenv("DEEPSEEK_OCR_MODEL", "deepseek-ocr")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+OLLAMA_OCR_MODEL = os.getenv("OLLAMA_OCR_MODEL", "llava:7b")  # Must be a vision-capable model (llava, bakllava, etc.)
+OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "120"))
 AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT")
 AZURE_DOCUMENT_INTELLIGENCE_KEY = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_KEY")
 AZURE_DOCUMENT_INTELLIGENCE_MODEL = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_MODEL", "prebuilt-read")

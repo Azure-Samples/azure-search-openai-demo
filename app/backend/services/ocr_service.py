@@ -2,7 +2,7 @@
 OCR Service.
 
 Main service for OCR operations with provider abstraction.
-Supports multiple OCR providers (DeepSeek, Azure Document Intelligence, etc.).
+Supports multiple OCR providers (Ollama, Azure Document Intelligence, etc.).
 """
 
 import logging
@@ -11,7 +11,7 @@ from enum import Enum
 import os
 
 from services.ocr.base import OCRResult, OCRProvider
-from services.ocr.deepseek_client import DeepSeekOCRClient
+from services.ocr.ollama_client import OllamaOCRClient
 from services.ocr.azure_document_intelligence_client import AzureDocumentIntelligenceOCRClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 class OCRProviderType(str, Enum):
     """Supported OCR providers."""
-    DEEPSEEK = "deepseek"
+    OLLAMA = "ollama"
     AZURE_DOCUMENT_INTELLIGENCE = "azure_document_intelligence"
     NONE = "none"  # Disabled
 
@@ -80,19 +80,16 @@ class OCRService:
         if provider == OCRProviderType.NONE:
             return None
         
-        elif provider == OCRProviderType.DEEPSEEK:
-            api_key = os.getenv("DEEPSEEK_API_KEY")
-            if not api_key:
-                logger.warning("DEEPSEEK_API_KEY not set, OCR service disabled")
-                return None
+        elif provider == OCRProviderType.OLLAMA:
+            base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+            model = os.getenv("OLLAMA_OCR_MODEL", "llava")
+            timeout = int(os.getenv("OLLAMA_TIMEOUT", "120"))
             
-            base_url = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/v1")
-            model = os.getenv("DEEPSEEK_OCR_MODEL", "deepseek-ocr")
-            
-            return DeepSeekOCRClient(
-                api_key=api_key,
+            logger.info(f"Initializing Ollama OCR client: {base_url}, model: {model}")
+            return OllamaOCRClient(
                 base_url=base_url,
-                model=model
+                model=model,
+                timeout=timeout
             )
         
         elif provider == OCRProviderType.AZURE_DOCUMENT_INTELLIGENCE:
@@ -218,7 +215,7 @@ class OCRService:
         if self.provider == OCRProviderType.NONE or self.provider_client is None:
             return None
         
-        if isinstance(self.provider_client, DeepSeekOCRClient):
+        if isinstance(self.provider_client, OllamaOCRClient):
             try:
                 result = await self.provider_client.extract_text_from_url(
                     image_url=image_url,

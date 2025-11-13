@@ -118,6 +118,17 @@ class RetrieveThenReadApproach(Approach):
                 response_token_limit=self.get_response_token_limit(self.chatgpt_model, 1024),
             ),
         )
+        answer_content = chat_completion.choices[0].message.content
+        
+        # Filter citations to only include those actually used in the answer
+        from services.citation_filter import filter_citations_by_answer
+        if extra_info.data_points.citations and answer_content:
+            filtered_citations = filter_citations_by_answer(
+                extra_info.data_points.citations,
+                answer_content
+            )
+            extra_info.data_points.citations = filtered_citations
+        
         extra_info.thoughts.append(
             self.format_thought_step_for_chatcompletion(
                 title="Prompt to generate answer",
@@ -130,7 +141,7 @@ class RetrieveThenReadApproach(Approach):
         )
         return {
             "message": {
-                "content": chat_completion.choices[0].message.content,
+                "content": answer_content,
                 "role": chat_completion.choices[0].message.role,
             },
             "context": {

@@ -44,6 +44,8 @@ from prepdocslib.pdfparser import (
 from prepdocslib.strategy import DocumentAction, SearchInfo, Strategy
 from prepdocslib.textparser import TextParser
 from prepdocslib.textsplitter import SentenceTextSplitter, SimpleTextSplitter
+from services.ocr_service import OCRService
+from config import OCR_ON_INGEST
 
 logger = logging.getLogger("scripts")
 
@@ -650,6 +652,14 @@ if __name__ == "__main__":
             use_multimodal=use_multimodal,
         )
 
+        ocr_service = None
+        if OCR_ON_INGEST:
+            ocr_candidate = OCRService()
+            if ocr_candidate.is_enabled():
+                ocr_service = ocr_candidate
+            else:
+                logger.warning("OCR_ON_INGEST is enabled but no OCR provider is configured; skipping OCR.")
+
         ingestion_strategy = FileStrategy(
             search_info=search_info,
             list_file_strategy=list_file_strategy,
@@ -665,6 +675,8 @@ if __name__ == "__main__":
             category=args.category,
             use_content_understanding=use_content_understanding,
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
+            ocr_service=ocr_service,
+            ocr_on_ingest=ocr_service is not None and OCR_ON_INGEST,
         )
 
     try:

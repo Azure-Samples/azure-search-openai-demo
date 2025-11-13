@@ -134,6 +134,16 @@ class ChatReadRetrieveReadApproach(Approach):
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
+        
+        # Filter citations to only include those actually used in the answer
+        from services.citation_filter import filter_citations_by_answer
+        if extra_info.data_points.citations and content:
+            filtered_citations = filter_citations_by_answer(
+                extra_info.data_points.citations,
+                content
+            )
+            extra_info.data_points.citations = filtered_citations
+        
         # Assume last thought is for generating answer
         if self.include_token_usage and extra_info.thoughts and chat_completion_response.usage:
             extra_info.thoughts[-1].update_token_usage(chat_completion_response.usage)
@@ -278,7 +288,9 @@ class ChatReadRetrieveReadApproach(Approach):
         self, messages: list[ChatCompletionMessageParam], overrides: dict[str, Any], auth_claims: dict[str, Any]
     ):
         # Phase 1B scaffolding: allow a simple 'mode' switch with safe defaults
-        mode = overrides.get("mode", "rag")  # rag | web | hybrid
+        # Default to hybrid mode if web search is enabled, otherwise use rag
+        default_mode = "hybrid" if ENABLE_WEB_SEARCH and SERPER_API_KEY else "rag"
+        mode = overrides.get("mode", default_mode)  # rag | web | hybrid
         
         # Hybrid mode: merge RAG + Web results
         if mode == "hybrid":

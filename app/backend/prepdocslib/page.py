@@ -12,6 +12,7 @@ class ImageOnPage:
     page_num: int  # 0-indexed
     url: Optional[str] = None
     embedding: Optional[list[float]] = None
+    ocr_text: Optional[str] = None
 
 
 @dataclass
