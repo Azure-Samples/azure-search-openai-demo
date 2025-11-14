@@ -21,7 +21,7 @@ export const TokenUsageGraph: React.FC<TokenUsageGraphProps> = ({ tokenUsage, re
 
     return (
         <div className={styles.tokenUsageGraph}>
-            <div className={styles.header}>Token Usage</div>
+            <div className={styles.header}>Token usage</div>
             <div className={styles.primaryBarContainer} style={{ width: "100%" }}>
                 <div className={`${styles.tokenBar} ${styles.promptBar}`} style={{ width: calcPercent(prompt_tokens) }}>
                     <span className={styles.tokenLabel}>Prompt: {prompt_tokens}</span>

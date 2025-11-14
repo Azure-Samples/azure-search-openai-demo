@@ -11,16 +11,19 @@ from azure.search.documents.indexes.models import (
     BinaryQuantizationCompression,
     HnswAlgorithmConfiguration,
     HnswParameters,
-    KnowledgeAgent,
-    KnowledgeAgentAzureOpenAIModel,
-    KnowledgeAgentRequestLimits,
+    KnowledgeBase,
+    KnowledgeBaseAzureOpenAIModel,
+    KnowledgeRetrievalOutputMode,
     KnowledgeSourceReference,
     PermissionFilter,
+    RemoteSharePointKnowledgeSource,
+    RemoteSharePointKnowledgeSourceParameters,
     RescoringOptions,
     SearchableField,
     SearchField,
     SearchFieldDataType,
     SearchIndex,
+    SearchIndexFieldReference,
     SearchIndexKnowledgeSource,
     SearchIndexKnowledgeSourceParameters,
     SearchIndexPermissionFilterOption,
@@ -35,6 +38,7 @@ from azure.search.documents.indexes.models import (
     VectorSearchCompressionRescoreStorageMethod,
     VectorSearchProfile,
     VectorSearchVectorizer,
+    WebKnowledgeSource,
 )
 
 from .blobmanager import BlobManager
@@ -74,6 +78,8 @@ class SearchManager:
         field_name_embedding: Optional[str] = None,
         search_images: bool = False,
         enforce_access_control: bool = False,
+        use_web_source: bool = False,
+        use_sharepoint_source: bool = False,
     ):
         self.search_info = search_info
         self.search_analyzer_name = search_analyzer_name
@@ -84,6 +90,8 @@ class SearchManager:
         self.field_name_embedding = field_name_embedding
         self.search_images = search_images
         self.enforce_access_control = enforce_access_control
+        self.use_web_source = use_web_source
+        self.use_sharepoint_source = use_sharepoint_source
 
     async def create_index(self):
         logger.info("Checking whether search index %s exists...", self.search_info.index_name)
@@ -478,35 +486,63 @@ class SearchManager:
 
     async def create_agent(self):
         if self.search_info.agent_name:
-            logger.info(f"Creating search agent named {self.search_info.agent_name}")
+            logger.info(f"Creating (or updating) knowledge base '{self.search_info.agent_name}'...")
+            logger.info(f"use_web_source={self.use_web_source}, use_sharepoint_source={self.use_sharepoint_source}")
 
             field_names = ["id", "sourcepage", "sourcefile", "content", "category"]
             if self.use_acls:
                 field_names.extend(["oids", "groups"])
             if self.search_images:
                 field_names.append("images/url")
+            
+            # Create field references using the new SDK pattern
+            source_data_fields = [SearchIndexFieldReference(name=field) for field in field_names]
+            
             async with self.search_info.create_search_index_client() as search_index_client:
-                knowledge_source = SearchIndexKnowledgeSource(
+                search_index_knowledge_source = SearchIndexKnowledgeSource(
                     name=self.search_info.index_name,  # Use the same name for convenience
                     description="Default knowledge source using the main search index",
                     search_index_parameters=SearchIndexKnowledgeSourceParameters(
                         search_index_name=self.search_info.index_name,
-                        source_data_select=",".join(field_names),
+                        source_data_fields=source_data_fields,
                     ),
                 )
                 await search_index_client.create_or_update_knowledge_source(
-                    knowledge_source=knowledge_source, api_version="2025-08-01-preview"
+                    knowledge_source=search_index_knowledge_source
                 )
-                await search_index_client.create_or_update_agent(
-                    agent=KnowledgeAgent(
+
+                knowledge_sources = [
+                    KnowledgeSourceReference(name=search_index_knowledge_source.name),
+                ]
+                
+                if self.use_web_source:
+                    logger.info("Adding web knowledge source to the knowledge base")
+                    web_knowledge_source = WebKnowledgeSource(
+                        name="web",
+                        description="Default web knowledge source",
+                    )
+                    await search_index_client.create_or_update_knowledge_source(
+                        knowledge_source=web_knowledge_source
+                    )
+                    knowledge_sources.append(KnowledgeSourceReference(name=web_knowledge_source.name))
+                
+                if self.use_sharepoint_source:
+                    logger.info("Adding SharePoint knowledge source to the knowledge base")
+                    sharepoint_knowledge_source = RemoteSharePointKnowledgeSource(
+                        name="sharepoint",
+                        description="SharePoint knowledge source",
+                        remote_share_point_parameters=RemoteSharePointKnowledgeSourceParameters(),
+                    )
+                    await search_index_client.create_or_update_knowledge_source(
+                        knowledge_source=sharepoint_knowledge_source
+                    )
+                    knowledge_sources.append(KnowledgeSourceReference(name=sharepoint_knowledge_source.name))
+                await search_index_client.create_or_update_knowledge_base(
+                    knowledge_base=KnowledgeBase(
                         name=self.search_info.agent_name,
-                        knowledge_sources=[
-                            KnowledgeSourceReference(
-                                name=knowledge_source.name, include_references=True, include_reference_source_data=True
-                            )
-                        ],
+                        knowledge_sources=knowledge_sources,
                         models=[
-                            KnowledgeAgentAzureOpenAIModel(
+                            KnowledgeBaseAzureOpenAIModel(
                                 azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
                                     resource_url=self.search_info.azure_openai_endpoint,
                                     deployment_name=self.search_info.azure_openai_searchagent_deployment,
@@ -514,13 +550,11 @@ class SearchManager:
                                 )
                             )
                         ],
-                        request_limits=KnowledgeAgentRequestLimits(
-                            max_output_size=self.search_info.agent_max_output_tokens
-                        ),
+                        output_mode=KnowledgeRetrievalOutputMode.ANSWER_SYNTHESIS
                     )
                 )
 
-            logger.info("Agent %s created successfully", self.search_info.agent_name)
+            logger.info("Knowledge base '%s' created successfully", self.search_info.agent_name)
 
     async def update_content(self, sections: list[Section], url: Optional[str] = None):
         MAX_BATCH_SIZE = 1000

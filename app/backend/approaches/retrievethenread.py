@@ -1,6 +1,6 @@
 from typing import Any, Optional, cast
 
-from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
+from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI
@@ -30,7 +30,7 @@ class RetrieveThenReadApproach(Approach):
         search_index_name: str,
         agent_model: Optional[str],
         agent_deployment: Optional[str],
-        agent_client: KnowledgeAgentRetrievalClient,
+        agent_client: KnowledgeBaseRetrievalClient,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -48,6 +48,8 @@ class RetrieveThenReadApproach(Approach):
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
         user_blob_manager: Optional[AdlsBlobManager] = None,
+        use_web_source: bool = False,
+        use_sharepoint_source: bool = False,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -74,6 +76,8 @@ class RetrieveThenReadApproach(Approach):
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
+        self.use_web_source = use_web_source
+        self.use_sharepoint_source = use_sharepoint_source
 
     async def run(
         self,
@@ -93,50 +97,51 @@ class RetrieveThenReadApproach(Approach):
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)
 
-        # Process results
-        messages = self.prompt_manager.render_prompt(
-            self.answer_prompt,
-            self.get_system_prompt_variables(overrides.get("prompt_template"))
-            | {
-                "user_query": q,
-                "text_sources": extra_info.data_points.text,
-                "image_sources": extra_info.data_points.images or [],
-                "citations": extra_info.data_points.citations,
-            },
-        )
-
-        chat_completion = cast(
-            ChatCompletion,
-            await self.create_chat_completion(
-                self.chatgpt_deployment,
-                self.chatgpt_model,
-                messages=messages,
-                overrides=overrides,
-                response_token_limit=self.get_response_token_limit(self.chatgpt_model, 1024),
-            ),
-        )
-        extra_info.thoughts.append(
-            self.format_thought_step_for_chatcompletion(
-                title="Prompt to generate answer",
-                messages=messages,
-                overrides=overrides,
-                model=self.chatgpt_model,
-                deployment=self.chatgpt_deployment,
-                usage=chat_completion.usage,
+        if extra_info.answer:
+            answer = extra_info.answer
+        else:
+            # Process results
+            messages = self.prompt_manager.render_prompt(
+                self.answer_prompt,
+                self.get_system_prompt_variables(overrides.get("prompt_template"))
+                | {
+                    "user_query": q,
+                    "text_sources": extra_info.data_points.text,
+                    "image_sources": extra_info.data_points.images or [],
+                    "citations": extra_info.data_points.citations or [],
+                },
             )
-        )
+
+            chat_completion = cast(
+                ChatCompletion,
+                await self.create_chat_completion(
+                    self.chatgpt_deployment,
+                    self.chatgpt_model,
+                    messages=messages,
+                    overrides=overrides,
+                    response_token_limit=self.get_response_token_limit(self.chatgpt_model, 1024),
+                ),
+            )
+            extra_info.thoughts.append(
+                self.format_thought_step_for_chatcompletion(
+                    title="Prompt to generate answer",
+                    messages=messages,
+                    overrides=overrides,
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    usage=chat_completion.usage,
+                )
+            )
+            answer = chat_completion.choices[0].message.content or ""
+
         return {
             "message": {
-                "content": chat_completion.choices[0].message.content,
-                "role": chat_completion.choices[0].message.role,
+                "content": answer,
+                "role": "assistant",
             },
             "context": {
                 "thoughts": extra_info.thoughts,
-                "data_points": {
-                    "text": extra_info.data_points.text or [],
-                    "images": extra_info.data_points.images or [],
-                    "citations": extra_info.data_points.citations or [],
-                },
+                "data_points": extra_info.data_points,
             },
             "session_state": session_state,
         }
@@ -231,7 +236,7 @@ class RetrieveThenReadApproach(Approach):
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
 
-        response, results = await self.run_agentic_retrieval(
+        agentic_results = await self.run_agentic_retrieval(
             messages,
             self.agent_client,
             search_index_name=self.search_index_name,
@@ -240,21 +245,24 @@ class RetrieveThenReadApproach(Approach):
             minimum_reranker_score=minimum_reranker_score,
             results_merge_strategy=results_merge_strategy,
             access_token=access_token,
+            use_web_source=self.use_web_source,
+            use_sharepoint_source=self.use_sharepoint_source,
         )
 
         data_points = await self.get_sources_content(
-            results,
+            agentic_results.documents,
             use_semantic_captions=False,
             include_text_sources=send_text_sources,
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
+            web_results=agentic_results.web_results,
         )
 
         extra_info = ExtraInfo(
             data_points,
             thoughts=[
                 ThoughtStep(
-                    "Use agentic retrieval",
+                    "Send question to agentic retrieval",
                     messages,
                     {
                         "reranker_threshold": minimum_reranker_score,
@@ -264,15 +272,19 @@ class RetrieveThenReadApproach(Approach):
                 ),
                 ThoughtStep(
                     f"Agentic retrieval results (top {top})",
-                    [result.serialize_for_results() for result in results],
+                    agentic_results.get_ordered_results(),
                     {
                         "query_plan": (
-                            [activity.as_dict() for activity in response.activity] if response.activity else None
+                            [activity.as_dict() for activity in agentic_results.response.activity]
+                            if agentic_results.response.activity
+                            else None
                         ),
                         "model": self.agent_model,
                         "deployment": self.agent_deployment,
                     },
                 ),
             ],
+            answer=agentic_results.answer,
         )
+
         return extra_info

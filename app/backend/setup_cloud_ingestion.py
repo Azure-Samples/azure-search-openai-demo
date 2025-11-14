@@ -55,6 +55,7 @@ async def setup_cloud_ingestion_strategy(
     use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
     use_acls = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
+    use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
 
     # Setup search info
     search_info = setup_search_info(
@@ -123,6 +124,7 @@ async def setup_cloud_ingestion_strategy(
         use_acls=use_acls,
         use_multimodal=use_multimodal,
         enforce_access_control=enforce_access_control,
+        use_web_source=use_web_source,
         search_user_assigned_identity_resource_id=search_user_assigned_identity_resource_id,
     )
 

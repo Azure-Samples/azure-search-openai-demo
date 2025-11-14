@@ -27,7 +27,7 @@ class SearchInfo:
         azure_openai_searchagent_model: Optional[str] = None,
         azure_openai_searchagent_deployment: Optional[str] = None,
         azure_openai_endpoint: Optional[str] = None,
-        azure_vision_endpoint: Optional[str] = None,
+        azure_vision_endpoint: Optional[str] = None
     ):
         self.endpoint = endpoint
         self.credential = credential

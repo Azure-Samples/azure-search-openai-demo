@@ -206,6 +206,9 @@ if __name__ == "__main__":  # pragma: no cover
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
     use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
+    use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+    use_sharepoint_source = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
+    
 
     # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
     if tenant_id := os.getenv("AZURE_TENANT_ID"):
@@ -360,6 +363,8 @@ if __name__ == "__main__":  # pragma: no cover
             category=args.category,
             figure_processor=figure_processor,
             enforce_access_control=enforce_access_control,
+            use_web_source=use_web_source,
+            use_sharepoint_source=use_sharepoint_source,
         )
 
     try:

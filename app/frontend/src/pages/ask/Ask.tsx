@@ -56,6 +56,7 @@ export function Component(): JSX.Element {
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
+    const [showLLMOptions, setShowLLMOptions] = useState<boolean>(true);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
@@ -109,6 +110,7 @@ export function Component(): JSX.Element {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            setShowLLMOptions(config.showLLMOptions);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
@@ -371,6 +373,7 @@ export function Component(): JSX.Element {
                     requireAccessControl={requireAccessControl}
                     showAgenticRetrievalOption={showAgenticRetrievalOption}
                     useAgenticRetrieval={useAgenticRetrieval}
+                    llmCustomizationEnabled={showLLMOptions}
                     onChange={handleSettingsChange}
                 />
                 {useLogin && <TokenClaimsDisplay />}

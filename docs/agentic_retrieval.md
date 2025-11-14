@@ -26,15 +26,40 @@ This repository includes an optional feature that uses [agentic retrieval from A
 
    You can only change it to one of the [supported models](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-create#supported-models).
 
-3. **Update the infrastructure and application:**
+3. **(Optional) Enable web or SharePoint knowledge sources**
+
+   By default, agentic retrieval only searches the documents in your search index. You can optionally enable additional knowledge sources:
+
+   **Web source:** Enables searching the public web for information.
+
+   ```shell
+   azd env set USE_WEB_SOURCE true
+   ```
+
+   > [!NOTE]
+   > Web source requires the agent to use answer synthesis mode, which disables certain UI customizations including streaming, follow-up questions, and LLM parameter options.
+
+   **SharePoint source:** Enables searching SharePoint documents. Requires authentication to be enabled and uses the logged-in user's token via on-behalf-of flow.
+
+   ```shell
+   azd env set USE_SHAREPOINT_SOURCE true
+   ```
+
+   > [!NOTE]
+   > SharePoint source requires that users have a Microsoft Copilot license.
+   > [See licensing requirements for the Sharepoint knowledge source](https://learn.microsoft.com/microsoft-365-copilot/extensibility/api/ai-services/retrieval/overview#licensing).
+
+   These sources can be used independently or together. When enabled, the agentic retrieval agent will search all configured sources and merge results based on the configured merge strategy.
+
+4. **Update the infrastructure and application:**
 
    Execute `azd up` to provision the infrastructure changes (only the new model, if you ran `up` previously) and deploy the application code with the updated environment variables. The post-provision script will configure Azure AI Search with a Knowledge agent pointing at the search index.
 
-4. **Try out the feature:**
+5. **Try out the feature:**
 
    Open the web app and start a new chat. Agentic retrieval will be used to find all sources.
 
-5. **Review the query plan**
+6. **Review the query plan**
 
    Agentic retrieval uses additional billed tokens behind the scenes for the planning process.
    To see the token usage, select the lightbulb icon on a chat answer. This will open the "Thought process" tab, which shows the amount of tokens used by and the queries produced by the planning process

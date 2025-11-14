@@ -349,6 +349,12 @@
     },
     "ragSendImageSources": {
       "value": "${RAG_SEND_IMAGE_SOURCES=true}"
+    },
+    "useWebSource": {
+      "value": "${USE_WEB_SOURCE=false}"
+    },
+    "useSharePointSource": {
+      "value": "${USE_SHAREPOINT_SOURCE=false}"
     }
   }
 }

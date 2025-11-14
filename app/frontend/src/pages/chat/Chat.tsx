@@ -79,6 +79,8 @@ const Chat = () => {
     const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const [showChatHistoryCosmos, setShowChatHistoryCosmos] = useState<boolean>(false);
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
+    const [showFollowupQuestionsOption, setShowFollowupQuestionsOption] = useState<boolean>(true);
+    const [showLLMOptions, setShowLLMOptions] = useState<boolean>(true);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
 
     const audio = useRef(new Audio()).current;
@@ -127,6 +129,8 @@ const Chat = () => {
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            setShowFollowupQuestionsOption(config.showFollowupQuestionsOption);
+            setShowLLMOptions(config.showLLMOptions);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
@@ -554,9 +558,10 @@ const Chat = () => {
                         shouldStream={shouldStream}
                         streamingEnabled={streamingEnabled}
                         useSuggestFollowupQuestions={useSuggestFollowupQuestions}
-                        showSuggestFollowupQuestions={true}
+                        showSuggestFollowupQuestions={showFollowupQuestionsOption}
                         showAgenticRetrievalOption={showAgenticRetrievalOption}
                         useAgenticRetrieval={useAgenticRetrieval}
+                        llmCustomizationEnabled={showLLMOptions}
                         onChange={handleSettingsChange}
                     />
                     {useLogin && <TokenClaimsDisplay />}

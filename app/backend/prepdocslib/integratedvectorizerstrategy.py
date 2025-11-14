@@ -47,6 +47,7 @@ class IntegratedVectorizerStrategy(Strategy):  # pragma: no cover
         use_acls: bool = False,
         category: Optional[str] = None,
         enforce_access_control: bool = False,
+        use_web_source: bool = False,
     ):
 
         self.list_file_strategy = list_file_strategy
@@ -64,6 +65,7 @@ class IntegratedVectorizerStrategy(Strategy):  # pragma: no cover
         self.indexer_name = f"{prefix}-indexer"
         self.data_source_name = f"{prefix}-blob"
         self.enforce_access_control = enforce_access_control
+        self.use_web_source = use_web_source
 
     async def create_embedding_skill(self, index_name: str) -> SearchIndexerSkillset:
         """
@@ -142,6 +144,7 @@ class IntegratedVectorizerStrategy(Strategy):  # pragma: no cover
             field_name_embedding=self.search_field_name_embedding,
             search_images=False,
             enforce_access_control=self.enforce_access_control,
+            use_web_source=self.use_web_source,
         )
 
         await search_manager.create_index()

@@ -360,6 +360,10 @@ param ragSearchImageEmbeddings bool = true
 param ragSendTextSources bool = true
 @description('Whether to send image sources to LLM for RAG responses')
 param ragSendImageSources bool = true
+@description('Whether to enable web sources for agentic retrieval')
+param useWebSource bool = false
+@description('Whether to enable SharePoint sources for agentic retrieval')
+param useSharePointSource bool = false
 
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
@@ -536,6 +540,8 @@ var appEnvVariables = {
   RAG_SEARCH_IMAGE_EMBEDDINGS: ragSearchImageEmbeddings
   RAG_SEND_TEXT_SOURCES: ragSendTextSources
   RAG_SEND_IMAGE_SOURCES: ragSendImageSources
+  USE_WEB_SOURCE: useWebSource
+  USE_SHAREPOINT_SOURCE: useSharePointSource
 }
 
 // App Service for the web application (Python Quart app with JS frontend)

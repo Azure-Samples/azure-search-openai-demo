@@ -7,7 +7,8 @@
             "images": [],
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
-            ]
+            ],
+            "web": []
         },
         "thoughts": [
             {
@@ -22,7 +23,7 @@
                     "reranker_threshold": 0,
                     "results_merge_strategy": "interleaved"
                 },
-                "title": "Use agentic retrieval"
+                "title": "Send question to agentic retrieval"
             },
             {
                 "description": [

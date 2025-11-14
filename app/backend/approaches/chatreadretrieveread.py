@@ -3,8 +3,8 @@ import re
 from collections.abc import AsyncGenerator, Awaitable
 from typing import Any, Optional, cast
 
-from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import (
@@ -13,6 +13,8 @@ from openai.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionToolParam,
 )
+from openai.types.chat.chat_completion import Choice
+from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
 from approaches.approach import (
     Approach,
@@ -40,7 +42,7 @@ class ChatReadRetrieveReadApproach(Approach):
         search_index_name: str,
         agent_model: Optional[str],
         agent_deployment: Optional[str],
-        agent_client: KnowledgeAgentRetrievalClient,
+        agent_client: KnowledgeBaseRetrievalClient,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -58,6 +60,8 @@ class ChatReadRetrieveReadApproach(Approach):
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
         user_blob_manager: Optional[AdlsBlobManager] = None,
+        use_web_source: bool = False,
+        use_sharepoint_source: bool = False,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -85,6 +89,8 @@ class ChatReadRetrieveReadApproach(Approach):
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
+        self.use_web_source = use_web_source
+        self.use_sharepoint_source = use_sharepoint_source
 
     def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
         response_message = chat_completion.choices[0].message
@@ -126,11 +132,16 @@ class ChatReadRetrieveReadApproach(Approach):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
         # Assume last thought is for generating answer
+        # TODO: Update for agentic? This isn't still true?
         if self.include_token_usage and extra_info.thoughts and chat_completion_response.usage:
             extra_info.thoughts[-1].update_token_usage(chat_completion_response.usage)
         chat_app_response = {
             "message": {"content": content, "role": role},
-            "context": extra_info,
+            "context": {
+                "thoughts": extra_info.thoughts,
+                "data_points": extra_info.data_points,
+                "followup_questions": extra_info.followup_questions,
+            },
             "session_state": session_state,
         }
         return chat_app_response
@@ -229,6 +240,27 @@ class ChatReadRetrieveReadApproach(Approach):
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)
 
+        if extra_info.answer:
+            # If agentic retrieval already provided an answer, skip final call to LLM
+            async def return_answer() -> ChatCompletion:
+                return ChatCompletion(
+                    id="no-final-call",
+                    object="chat.completion",
+                    created=0,
+                    model=self.chatgpt_model,
+                    choices=[
+                        Choice(
+                            message=ChatCompletionMessage(
+                                role="assistant",
+                                content=extra_info.answer,
+                            ),
+                            finish_reason="stop",
+                            index=0,
+                        )
+                    ],
+                )
+            return (extra_info, return_answer())
+    
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
@@ -395,7 +427,7 @@ class ChatReadRetrieveReadApproach(Approach):
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
 
-        response, results = await self.run_agentic_retrieval(
+        agentic_results = await self.run_agentic_retrieval(
             messages=messages,
             agent_client=self.agent_client,
             search_index_name=self.search_index_name,
@@ -404,20 +436,23 @@ class ChatReadRetrieveReadApproach(Approach):
             minimum_reranker_score=minimum_reranker_score,
             results_merge_strategy=results_merge_strategy,
             access_token=access_token,
+            use_web_source=self.use_web_source,
+            use_sharepoint_source=self.use_sharepoint_source,
         )
 
         data_points = await self.get_sources_content(
-            results,
+            agentic_results.documents,
             use_semantic_captions=False,
             include_text_sources=send_text_sources,
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
+            web_results=agentic_results.web_results,
         )
         extra_info = ExtraInfo(
             data_points,
             thoughts=[
                 ThoughtStep(
-                    "Use agentic retrieval",
+                    "Send conversation to agentic retrieval",
                     messages,
                     {
                         "reranker_threshold": minimum_reranker_score,
@@ -426,16 +461,19 @@ class ChatReadRetrieveReadApproach(Approach):
                     },
                 ),
                 ThoughtStep(
-                    f"Agentic retrieval results (top {top})",
-                    [result.serialize_for_results() for result in results],
+                    "Agentic retrieval response",
+                    agentic_results.get_ordered_results(),
                     {
                         "query_plan": (
-                            [activity.as_dict() for activity in response.activity] if response.activity else None
+                            [activity.as_dict() for activity in agentic_results.response.activity]
+                            if agentic_results.response.activity
+                            else None
                         ),
                         "model": self.agent_model,
                         "deployment": self.agent_deployment,
                     },
                 ),
             ],
+            answer=agentic_results.answer,
         )
         return extra_info

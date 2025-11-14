@@ -6,7 +6,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from openai.types.chat import ChatCompletion
 
-from approaches.approach import Document
+from approaches.approach import Document, WebResult
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from prepdocslib.embeddings import ImageEmbeddings
@@ -222,7 +222,7 @@ async def test_compute_multimodal_embedding(monkeypatch, chat_approach):
     # Verify the result is a VectorizedQuery with the expected properties
     assert isinstance(result, VectorizedQuery)
     assert result.vector == [0.1, 0.2, 0.3, 0.4, 0.5]
-    assert result.k_nearest_neighbors == 50
+    assert result.k == 50
     assert result.fields == "images/embedding"
 
 
@@ -304,3 +304,62 @@ async def test_chat_prompt_render_with_image_directive(chat_approach):
     assert "Diagram that shows the architecture of Fabric Activator." in combined
     # Original unescaped sequence should be gone
     assert ":::image" not in combined
+
+
+def test_replace_all_ref_ids_unknown_fallback(chat_approach):
+    """Test that unknown ref_ids remain unchanged (fallback case)."""
+    answer = "This is an answer with [ref_id:999] that doesn't match any document or web result."
+    documents = [
+        Document(
+            id="doc1",
+            ref_id="1",
+            content="Some content",
+            sourcepage="page1.pdf",
+            sourcefile="page1.pdf",
+        )
+    ]
+    web_results = [
+        WebResult(
+            id="5",
+            title="Web Result",
+            url="https://example.com",
+        )
+    ]
+
+    result = chat_approach.replace_all_ref_ids(answer, documents, web_results)
+
+    # ref_id:999 doesn't exist in either documents or web_results, so it should remain unchanged
+    assert "[ref_id:999]" in result
+    assert result == "This is an answer with [ref_id:999] that doesn't match any document or web result."
+
+
+def test_replace_all_ref_ids_mixed(chat_approach):
+    """Test that ref_ids are replaced correctly for web, documents, and unknown refs."""
+    answer = "Check [ref_id:1] and [ref_id:5] and also [ref_id:999]."
+    documents = [
+        Document(
+            id="doc1",
+            ref_id="1",
+            content="Some content",
+            sourcepage="page1.pdf",
+            sourcefile="page1.pdf",
+        )
+    ]
+    web_results = [
+        WebResult(
+            id="5",
+            title="Web Result",
+            url="https://example.com",
+        )
+    ]
+
+    result = chat_approach.replace_all_ref_ids(answer, documents, web_results)
+
+    # ref_id:1 should be replaced with document sourcepage
+    assert "[page1.pdf]" in result
+    # ref_id:5 should be replaced with web URL (web has priority)
+    assert "[https://example.com]" in result
+    # ref_id:999 doesn't exist, should remain unchanged
+    assert "[ref_id:999]" in result
+    assert result == "Check [page1.pdf] and [https://example.com] and also [ref_id:999]."
+

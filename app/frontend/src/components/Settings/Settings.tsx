@@ -44,8 +44,9 @@ export interface SettingsProps {
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
     showSuggestFollowupQuestions?: boolean;
-    showAgenticRetrievalOption: boolean;
-    useAgenticRetrieval: boolean;
+    showAgenticRetrievalOption?: boolean;
+    useAgenticRetrieval?: boolean;
+    llmCustomizationEnabled?: boolean;
 }
 
 export const Settings = ({
@@ -84,7 +85,8 @@ export const Settings = ({
     promptTemplateSuffix,
     showSuggestFollowupQuestions,
     showAgenticRetrievalOption,
-    useAgenticRetrieval
+    useAgenticRetrieval,
+    llmCustomizationEnabled = true
 }: SettingsProps) => {
     const { t } = useTranslation();
 
@@ -125,12 +127,9 @@ export const Settings = ({
 
     return (
         <div className={className}>
-            <h3 className={styles.sectionHeader}>{t("overallSettings")}</h3>
-
-            {shouldStream !== undefined && (
+            {streamingEnabled && (
                 <Checkbox
                     id={shouldStreamFieldId}
-                    disabled={!streamingEnabled}
                     className={styles.settingsSeparator}
                     checked={shouldStream}
                     label={t("labels.shouldStream")}
@@ -318,66 +317,70 @@ export const Settings = ({
                 </>
             )}
 
-            <h3 className={styles.sectionHeader}>{t("llmSettings")}</h3>
-            <TextField
-                id={promptTemplateFieldId}
-                className={styles.settingsSeparator}
-                defaultValue={promptTemplate}
-                label={t("labels.promptTemplate")}
-                multiline
-                autoAdjustHeight
-                onChange={(_ev, val) => onChange("promptTemplate", val || "")}
-                aria-labelledby={promptTemplateId}
-                onRenderLabel={props => renderLabel(props, promptTemplateId, promptTemplateFieldId, t("helpTexts.promptTemplate"))}
-            />
-            <TextField
-                id={temperatureFieldId}
-                className={styles.settingsSeparator}
-                label={t("labels.temperature")}
-                type="number"
-                min={0}
-                max={1}
-                step={0.1}
-                defaultValue={temperature.toString()}
-                onChange={(_ev, val) => onChange("temperature", parseFloat(val || "0"))}
-                aria-labelledby={temperatureId}
-                onRenderLabel={props => renderLabel(props, temperatureId, temperatureFieldId, t("helpTexts.temperature"))}
-            />
-            <TextField
-                id={seedFieldId}
-                className={styles.settingsSeparator}
-                label={t("labels.seed")}
-                type="text"
-                defaultValue={seed?.toString() || ""}
-                onChange={(_ev, val) => onChange("seed", val ? parseInt(val) : null)}
-                aria-labelledby={seedId}
-                onRenderLabel={props => renderLabel(props, seedId, seedFieldId, t("helpTexts.seed"))}
-            />
+            {llmCustomizationEnabled && (
+                <>
+                    <h3 className={styles.sectionHeader}>{t("llmSettings")}</h3>
+                    <TextField
+                        id={promptTemplateFieldId}
+                        className={styles.settingsSeparator}
+                        defaultValue={promptTemplate}
+                        label={t("labels.promptTemplate")}
+                        multiline
+                        autoAdjustHeight
+                        onChange={(_ev, val) => onChange("promptTemplate", val || "")}
+                        aria-labelledby={promptTemplateId}
+                        onRenderLabel={props => renderLabel(props, promptTemplateId, promptTemplateFieldId, t("helpTexts.promptTemplate"))}
+                    />
+                    <TextField
+                        id={temperatureFieldId}
+                        className={styles.settingsSeparator}
+                        label={t("labels.temperature")}
+                        type="number"
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        defaultValue={temperature.toString()}
+                        onChange={(_ev, val) => onChange("temperature", parseFloat(val || "0"))}
+                        aria-labelledby={temperatureId}
+                        onRenderLabel={props => renderLabel(props, temperatureId, temperatureFieldId, t("helpTexts.temperature"))}
+                    />
+                    <TextField
+                        id={seedFieldId}
+                        className={styles.settingsSeparator}
+                        label={t("labels.seed")}
+                        type="text"
+                        defaultValue={seed?.toString() || ""}
+                        onChange={(_ev, val) => onChange("seed", val ? parseInt(val) : null)}
+                        aria-labelledby={seedId}
+                        onRenderLabel={props => renderLabel(props, seedId, seedFieldId, t("helpTexts.seed"))}
+                    />
 
-            {showMultimodalOptions && !useAgenticRetrieval && (
-                <fieldset className={styles.fieldset + " " + styles.settingsSeparator}>
-                    <legend className={styles.legend}>{t("labels.llmInputs")}</legend>
-                    <Stack tokens={{ childrenGap: 8 }}>
-                        <Checkbox
-                            id="sendTextSources"
-                            label={t("labels.llmInputsOptions.texts")}
-                            checked={sendTextSources}
-                            onChange={(_ev, checked) => {
-                                onChange("sendTextSources", !!checked);
-                            }}
-                            onRenderLabel={props => renderLabel(props, "sendTextSourcesLabel", "sendTextSources", t("helpTexts.llmTextInputs"))}
-                        />
-                        <Checkbox
-                            id="sendImageSources"
-                            label={t("labels.llmInputsOptions.images")}
-                            checked={sendImageSources}
-                            onChange={(_ev, checked) => {
-                                onChange("sendImageSources", !!checked);
-                            }}
-                            onRenderLabel={props => renderLabel(props, "sendImageSourcesLabel", "sendImageSources", t("helpTexts.llmImageInputs"))}
-                        />
-                    </Stack>
-                </fieldset>
+                    {showMultimodalOptions && !useAgenticRetrieval && (
+                        <fieldset className={styles.fieldset + " " + styles.settingsSeparator}>
+                            <legend className={styles.legend}>{t("labels.llmInputs")}</legend>
+                            <Stack tokens={{ childrenGap: 8 }}>
+                                <Checkbox
+                                    id="sendTextSources"
+                                    label={t("labels.llmInputsOptions.texts")}
+                                    checked={sendTextSources}
+                                    onChange={(_ev, checked) => {
+                                        onChange("sendTextSources", !!checked);
+                                    }}
+                                    onRenderLabel={props => renderLabel(props, "sendTextSourcesLabel", "sendTextSources", t("helpTexts.llmTextInputs"))}
+                                />
+                                <Checkbox
+                                    id="sendImageSources"
+                                    label={t("labels.llmInputsOptions.images")}
+                                    checked={sendImageSources}
+                                    onChange={(_ev, checked) => {
+                                        onChange("sendImageSources", !!checked);
+                                    }}
+                                    onRenderLabel={props => renderLabel(props, "sendImageSourcesLabel", "sendImageSources", t("helpTexts.llmImageInputs"))}
+                                />
+                            </Stack>
+                        </fieldset>
+                    )}
+                </>
             )}
         </div>
     );

@@ -22,9 +22,9 @@ from azure.identity.aio import (
     get_bearer_token_provider,
 )
 from azure.monitor.opentelemetry import configure_azure_monitor
-from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
+from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
 from opentelemetry.instrumentation.aiohttp_client import AioHttpClientInstrumentor
 from opentelemetry.instrumentation.asgi import OpenTelemetryMiddleware
 from opentelemetry.instrumentation.httpx import (
@@ -72,6 +72,7 @@ from config import (
     CONFIG_REASONING_EFFORT_ENABLED,
     CONFIG_SEARCH_CLIENT,
     CONFIG_SEMANTIC_RANKER_DEPLOYED,
+    CONFIG_SHAREPOINT_SOURCE_ENABLED,
     CONFIG_SPEECH_INPUT_ENABLED,
     CONFIG_SPEECH_OUTPUT_AZURE_ENABLED,
     CONFIG_SPEECH_OUTPUT_BROWSER_ENABLED,
@@ -83,6 +84,7 @@ from config import (
     CONFIG_USER_BLOB_MANAGER,
     CONFIG_USER_UPLOAD_ENABLED,
     CONFIG_VECTOR_SEARCH_ENABLED,
+    CONFIG_WEB_SOURCE_ENABLED,
 )
 from core.authentication import AuthenticationHelper
 from core.sessionhelper import create_session_id
@@ -280,13 +282,14 @@ def auth_setup():
 
 @bp.route("/config", methods=["GET"])
 def config():
+    use_web_source = current_app.config[CONFIG_WEB_SOURCE_ENABLED]
     return jsonify(
         {
             "showMultimodalOptions": current_app.config[CONFIG_MULTIMODAL_ENABLED],
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showQueryRewritingOption": current_app.config[CONFIG_QUERY_REWRITING_ENABLED],
             "showReasoningEffortOption": current_app.config[CONFIG_REASONING_EFFORT_ENABLED],
-            "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED],
+            "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED] and not use_web_source,
             "defaultReasoningEffort": current_app.config[CONFIG_DEFAULT_REASONING_EFFORT],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
             "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
@@ -301,6 +304,8 @@ def config():
             "ragSearchImageEmbeddings": current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS],
             "ragSendTextSources": current_app.config[CONFIG_RAG_SEND_TEXT_SOURCES],
             "ragSendImageSources": current_app.config[CONFIG_RAG_SEND_IMAGE_SOURCES],
+            "showFollowupQuestionsOption": not use_web_source,
+            "showLLMOptions": not use_web_source,
         }
     )
 
@@ -406,6 +411,7 @@ async def setup_clients():
     AZURE_SEARCH_ENDPOINT = f"https://{AZURE_SEARCH_SERVICE}.search.windows.net"
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     AZURE_SEARCH_AGENT = os.getenv("AZURE_SEARCH_AGENT", "")
+    AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS = int(os.getenv("AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS", "10000"))
     # Shared by all OpenAI deployments
     OPENAI_HOST = OpenAIHost(os.getenv("OPENAI_HOST", "azure"))
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
@@ -510,8 +516,9 @@ async def setup_clients():
         index_name=AZURE_SEARCH_INDEX,
         credential=azure_credential,
     )
-    agent_client = KnowledgeAgentRetrievalClient(
-        endpoint=AZURE_SEARCH_ENDPOINT, agent_name=AZURE_SEARCH_AGENT, credential=azure_credential
+
+    agent_client = KnowledgeBaseRetrievalClient(
+        endpoint=AZURE_SEARCH_ENDPOINT, knowledge_base_name=AZURE_SEARCH_AGENT, credential=azure_credential
     )
 
     # Set up the global blob storage manager (used for global content/images, but not user uploads)
@@ -596,7 +603,15 @@ async def setup_clients():
             openai_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT if OPENAI_HOST == OpenAIHost.AZURE else None,
         )
         search_info = setup_search_info(
-            search_service=AZURE_SEARCH_SERVICE, index_name=AZURE_SEARCH_INDEX, azure_credential=azure_credential
+            search_service=AZURE_SEARCH_SERVICE,
+            index_name=AZURE_SEARCH_INDEX,
+            azure_credential=azure_credential,
+            use_agentic_retrieval=USE_AGENTIC_RETRIEVAL,
+            azure_openai_endpoint=azure_openai_endpoint,
+            agent_name=AZURE_SEARCH_AGENT,
+            agent_max_output_tokens=AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS,
+            azure_openai_searchagent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
+            azure_openai_searchagent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
         )
 
         text_embeddings_service = None
@@ -659,6 +674,8 @@ async def setup_clients():
     current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS] = RAG_SEARCH_IMAGE_EMBEDDINGS
     current_app.config[CONFIG_RAG_SEND_TEXT_SOURCES] = RAG_SEND_TEXT_SOURCES
     current_app.config[CONFIG_RAG_SEND_IMAGE_SOURCES] = RAG_SEND_IMAGE_SOURCES
+    current_app.config[CONFIG_WEB_SOURCE_ENABLED] = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+    current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED] = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
 
     prompt_manager = PromptyManager()
 
@@ -688,6 +705,8 @@ async def setup_clients():
         image_embeddings_client=image_embeddings_client,
         global_blob_manager=global_blob_manager,
         user_blob_manager=user_blob_manager,
+        use_web_source=current_app.config[CONFIG_WEB_SOURCE_ENABLED],
+        use_sharepoint_source=current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED],
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -714,6 +733,8 @@ async def setup_clients():
         image_embeddings_client=image_embeddings_client,
         global_blob_manager=global_blob_manager,
         user_blob_manager=user_blob_manager,
+        use_web_source=current_app.config[CONFIG_WEB_SOURCE_ENABLED],
+        use_sharepoint_source=current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED],
     )
 
 

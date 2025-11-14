@@ -60,8 +60,7 @@ def setup_search_info(
     azure_openai_searchagent_deployment: Optional[str] = None,
     azure_openai_searchagent_model: Optional[str] = None,
     search_key: Optional[str] = None,
-    azure_vision_endpoint: Optional[str] = None,
-) -> SearchInfo:
+    azure_vision_endpoint: Optional[str] = None) -> SearchInfo:
     """Setup search service information."""
     search_creds: AsyncTokenCredential | AzureKeyCredential = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
@@ -79,7 +78,7 @@ def setup_search_info(
         azure_openai_endpoint=azure_openai_endpoint,
         azure_openai_searchagent_model=azure_openai_searchagent_model,
         azure_openai_searchagent_deployment=azure_openai_searchagent_deployment,
-        azure_vision_endpoint=azure_vision_endpoint,
+        azure_vision_endpoint=azure_vision_endpoint
     )
 
 

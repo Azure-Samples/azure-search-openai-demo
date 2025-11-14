@@ -109,14 +109,33 @@ export const Answer = ({
                     <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
                         <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
                         {parsedAnswer.citations.map((x, i) => {
-                            const path = getCitationFilePath(x);
-                            // Strip out the image filename in parentheses if it exists
-                            const strippedPath = path.replace(/\([^)]*\)$/, "");
-                            return (
-                                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(strippedPath)}>
-                                    {`${++i}. ${x}`}
-                                </a>
-                            );
+                            const isWeb = x.startsWith("http://") || x.startsWith("https://");
+                            const displayIndex = i + 1;
+                            if (isWeb) {
+                                // Attempt to find the matching web data point to retrieve its title
+                                const webEntry = answer.context.data_points.web?.find(w => w.url === x);
+                                const titleOrUrl = webEntry?.title?.trim() ? webEntry.title : x;
+                                return (
+                                    <a key={i} className={styles.citation} title={x} href={x} target="_blank" rel="noopener noreferrer">
+                                        {`${displayIndex}. ${titleOrUrl}`}
+                                    </a>
+                                );
+                            } else {
+                                const path = getCitationFilePath(x);
+                                return (
+                                    <a
+                                        key={i}
+                                        className={styles.citation}
+                                        title={x}
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            onCitationClicked(path);
+                                        }}
+                                    >
+                                        {`${displayIndex}. ${x}`}
+                                    </a>
+                                );
+                            }
                         })}
                     </Stack>
                 </Stack.Item>

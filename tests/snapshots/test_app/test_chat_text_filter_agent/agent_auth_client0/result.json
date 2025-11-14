@@ -7,7 +7,8 @@
             "images": [],
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
-            ]
+            ],
+            "web": []
         },
         "followup_questions": null,
         "thoughts": [
@@ -23,7 +24,7 @@
                     "reranker_threshold": 0,
                     "results_merge_strategy": "interleaved"
                 },
-                "title": "Use agentic retrieval"
+                "title": "Send conversation to agentic retrieval"
             },
             {
                 "description": [
@@ -65,7 +66,7 @@
                         }
                     ]
                 },
-                "title": "Agentic retrieval results (top 3)"
+                "title": "Agentic retrieval response"
             },
             {
                 "description": [

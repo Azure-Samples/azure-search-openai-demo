@@ -176,7 +176,7 @@ async def test_ask_rtr_text_agent(agent_client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "text", "use_agentic_retrieval": True},
+                "overrides": {"retrieval_mode": "text", "use_agentic_retrieval": True, "use_web_source": False},
             },
         },
     )

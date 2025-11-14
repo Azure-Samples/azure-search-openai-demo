@@ -41,16 +41,26 @@ export type Thoughts = {
     props?: { [key: string]: any };
 };
 
+export type WebDataPoint = {
+    id?: string;
+    title?: string;
+    url?: string;
+    snippet?: string;
+    search_agent_query?: string;
+};
+
 export type DataPoints = {
     text: string[];
     images: string[];
     citations: string[];
+    web?: WebDataPoint[];
 };
 
 export type ResponseContext = {
     data_points: DataPoints;
     followup_questions: string[] | null;
     thoughts: Thoughts[];
+    answer?: string;
 };
 
 export type ChatAppResponseOrError = {
@@ -98,6 +108,8 @@ export type Config = {
     ragSearchImageEmbeddings: boolean;
     ragSendTextSources: boolean;
     ragSendImageSources: boolean;
+    showFollowupQuestionsOption: boolean;
+    showLLMOptions: boolean;
 };
 
 export type SimpleAPIResponse = {

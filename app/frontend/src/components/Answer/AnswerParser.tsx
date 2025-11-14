@@ -51,13 +51,31 @@ export function parseAnswerToHtml(answer: ChatAppResponse, isStreaming: boolean,
                 citationIndex = citations.length;
             }
 
-            const path = getCitationFilePath(part);
-
-            return renderToStaticMarkup(
-                <a className="supContainer" title={part} onClick={() => onCitationClicked(path)}>
-                    <sup>{citationIndex}</sup>
-                </a>
-            );
+            const isWeb = part.startsWith("http://") || part.startsWith("https://");
+            if (isWeb) {
+                // Open external web citation in new tab
+                return renderToStaticMarkup(
+                    <a className="supContainer" title={part} href={part} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}>
+                        <sup>{citationIndex}</sup>
+                    </a>
+                );
+            } else {
+                // Use callback for local doc citation (iframe/modal in app)
+                const path = getCitationFilePath(part);
+                return renderToStaticMarkup(
+                    <a
+                        className="supContainer"
+                        title={part}
+                        onClick={e => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onCitationClicked(path);
+                        }}
+                    >
+                        <sup>{citationIndex}</sup>
+                    </a>
+                );
+            }
         }
     });
 

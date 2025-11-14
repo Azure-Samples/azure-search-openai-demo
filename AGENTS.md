@@ -72,6 +72,11 @@ When adding new azd environment variables, update:
 1. .azdo/pipelines/azure-dev.yml: Add the new environment variable under `env` section
 1. .github/workflows/azure-dev.yml: Add the new environment variable under `env` section
 
+You may also need to update:
+
+1. app/backend/prepdocs.py: If the variable is used in the ingestion script, retrieve it from environment variables here. Not always needed.
+1. app/backend/app.py: If the variable is used in the backend application, retrieve it from environment variables in setup_clients() function. Not always needed.
+
 ## Adding a new setting to "Developer Settings" in RAG app
 
 When adding a new developer setting, update:

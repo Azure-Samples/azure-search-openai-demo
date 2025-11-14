@@ -25,7 +25,14 @@ const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
 export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
     const isDisabledThoughtProcessTab: boolean = !answer.context.thoughts;
-    const isDisabledSupportingContentTab: boolean = !answer.context.data_points;
+    const dataPoints = answer.context.data_points;
+    const hasSupportingContent = Boolean(
+        dataPoints &&
+            ((dataPoints.text && dataPoints.text.length > 0) ||
+                (dataPoints.images && dataPoints.images.length > 0) ||
+                (dataPoints.web && dataPoints.web.length > 0))
+    );
+    const isDisabledSupportingContentTab: boolean = !hasSupportingContent;
     const isDisabledCitationTab: boolean = !activeCitation;
     const [citation, setCitation] = useState("");
 
