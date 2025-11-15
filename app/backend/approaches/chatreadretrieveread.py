@@ -426,7 +426,8 @@ class ChatReadRetrieveReadApproach(Approach):
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
-
+        # if effort is minimal, then call the query rewriting step first and get back query
+        
         agentic_results = await self.run_agentic_retrieval(
             messages=messages,
             agent_client=self.agent_client,
@@ -447,6 +448,7 @@ class ChatReadRetrieveReadApproach(Approach):
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
             web_results=agentic_results.web_results,
+            sharepoint_results=agentic_results.sharepoint_results,
         )
         extra_info = ExtraInfo(
             data_points,

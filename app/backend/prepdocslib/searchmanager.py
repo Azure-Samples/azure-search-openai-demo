@@ -487,7 +487,6 @@ class SearchManager:
     async def create_agent(self):
         if self.search_info.agent_name:
             logger.info(f"Creating (or updating) knowledge base '{self.search_info.agent_name}'...")
-            logger.info(f"use_web_source={self.use_web_source}, use_sharepoint_source={self.use_sharepoint_source}")
 
             field_names = ["id", "sourcepage", "sourcefile", "content", "category"]
             if self.use_acls:

@@ -38,6 +38,7 @@ This repository includes an optional feature that uses [agentic retrieval from A
 
    > [!NOTE]
    > Web source requires the agent to use answer synthesis mode, which disables certain UI customizations including streaming, follow-up questions, and LLM parameter options.
+   > ⚠️ The Microsoft Data Protection Addendum doesn't apply to data sent to Web Knowledge Source. [Learn more in the Web Knowledge source documentation](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-web)
 
    **SharePoint source:** Enables searching SharePoint documents. Requires authentication to be enabled and uses the logged-in user's token via on-behalf-of flow.
 

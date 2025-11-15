@@ -256,7 +256,7 @@ var searchAgent = {
   deploymentName: !empty(searchAgentDeploymentName) ? searchAgentDeploymentName : 'searchagent'
   deploymentVersion: !empty(searchAgentModelVersion) ? searchAgentModelVersion : '2025-04-14'
   deploymentSkuName: !empty(searchAgentDeploymentSkuName) ? searchAgentDeploymentSkuName : 'GlobalStandard'
-  deploymentCapacity: searchAgentDeploymentCapacity != 0 ? searchAgentDeploymentCapacity : 30
+  deploymentCapacity: searchAgentDeploymentCapacity != 0 ? searchAgentDeploymentCapacity : 100
 }
 
 

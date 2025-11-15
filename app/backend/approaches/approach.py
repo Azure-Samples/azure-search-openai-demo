@@ -10,6 +10,8 @@ from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClie
 from azure.search.documents.knowledgebases.models import (
     KnowledgeBaseMessage,
     KnowledgeBaseMessageTextContent,
+    KnowledgeBaseRemoteSharePointActivityRecord,
+    KnowledgeBaseRemoteSharePointReference,
     KnowledgeBaseRetrievalRequest,
     KnowledgeBaseRetrievalResponse,
     KnowledgeBaseSearchIndexActivityRecord,
@@ -108,16 +110,39 @@ class WebResult:
 
 
 @dataclass
+class SharePointResult:
+    id: Optional[str] = None
+    web_url: Optional[str] = None
+    content: Optional[str] = None
+    title: Optional[str] = None
+    reranker_score: Optional[float] = None
+    search_agent_query: Optional[str] = None
+
+    def serialize_for_results(self) -> dict[str, Any]:
+        return {
+            "type": "sharepoint",
+            "id": self.id,
+            "ref_id": str(self.id),
+            "web_url": self.web_url,
+            "content": self.content,
+            "title": self.title,
+            "reranker_score": self.reranker_score,
+            "search_agent_query": self.search_agent_query,
+        }
+
+
+@dataclass
 class AgenticRetrievalResults:
-    """Results from agentic retrieval including activities, documents, web results, and optional answer."""
+    """Results from agentic retrieval including activities, documents, web results, SharePoint results, and optional answer."""
 
     response: KnowledgeBaseRetrievalResponse
     documents: list[Document]
     web_results: list[WebResult]
+    sharepoint_results: list[SharePointResult] = field(default_factory=list)
     answer: Optional[str] = None  # Synthesized answer when web knowledge source is used
 
     def get_ordered_results(self) -> list[dict[str, Any]]:
-        """Get all results (documents and web) in their original reference order."""
+        """Get all results (documents, web, and SharePoint) in their original reference order."""
         # Combine all results with their ref_ids
         all_results: list[tuple[str, dict[str, Any]]] = []
         
@@ -128,6 +153,10 @@ class AgenticRetrievalResults:
         for web in self.web_results:
             if web.id:
                 all_results.append((str(web.id), web.serialize_for_results()))
+        
+        for sp in self.sharepoint_results:
+            if sp.id:
+                all_results.append((str(sp.id), sp.serialize_for_results()))
         
         # Sort by ref_id (numeric order)
         all_results.sort(key=lambda x: int(x[0]) if x[0].isdigit() else float('inf'))
@@ -360,16 +389,34 @@ class Approach(ABC):
             )
 
         if use_sharepoint_source:
+            print("Including SharePoint knowledge source in agentic retrieval")
+            print("Access token", access_token)
             knowledge_source_params_list.append(
                 RemoteSharePointKnowledgeSourceParams(
                     knowledge_source_name="sharepoint",
                     include_references=True,
                     include_reference_source_data=True,
+                    always_query_source=True
                 )
             )
 
+        # if minimal: pass intents 
+        #request_params = {}
+        #if self.reasoning_effort == "minimal":
+        #    request_params["intents"] = []
+        """
+        intents=[
+            KnowledgeRetrievalSemanticIntent(
+                search="What is the responsibility of the Zava CEO?"
+            ),
+            KnowledgeRetrievalSemanticIntent(
+                search="What Zava health plan would you recommend if they wanted the best coverage for mental health services?"
+            )
+        ],
+        """
         response = await agent_client.retrieve(
             retrieval_request=KnowledgeBaseRetrievalRequest(
+
                 messages=[
                     KnowledgeBaseMessage(
                         role=str(msg["role"]), content=[KnowledgeBaseMessageTextContent(text=str(msg["content"]))]
@@ -380,6 +427,8 @@ class Approach(ABC):
                 knowledge_source_params=knowledge_source_params_list,
                 include_activity=True,
             ),
+            # TODO: retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
+            # TODO: Only pass access token if knowledge source requires it?
             x_ms_query_source_authorization=access_token,
         )
 
@@ -388,16 +437,22 @@ class Approach(ABC):
         activity_mapping: dict[Any, Optional[str]] = {}
 
         for activity in activities:
-            if isinstance(activity, KnowledgeBaseSearchIndexActivityRecord) or hasattr(
-                activity, "search_index_arguments"
-            ):
-                activity_mapping[activity.id] = getattr(activity.search_index_arguments, "search", None)
-            elif isinstance(activity, KnowledgeBaseWebActivityRecord) or hasattr(activity, "web_arguments"):
-                activity_mapping[activity.id] = getattr(activity.web_arguments, "search", None)
+            print("Processing activity:", activity)
+            if isinstance(activity, KnowledgeBaseSearchIndexActivityRecord):
+                if activity.search_index_arguments:
+                    activity_mapping[activity.id] = activity.search_index_arguments.search
+            elif isinstance(activity, KnowledgeBaseWebActivityRecord):
+                if activity.web_arguments:
+                    activity_mapping[activity.id] = activity.web_arguments.search
+            elif isinstance(activity, KnowledgeBaseRemoteSharePointActivityRecord):
+                if activity.remote_share_point_arguments:
+                    activity_mapping[activity.id] = activity.remote_share_point_arguments.search
 
         # No refs? we're done
         if not (response and response.references):
-            return AgenticRetrievalResults(response=response, documents=[], web_results=[])
+            return AgenticRetrievalResults(
+                response=response, documents=[], web_results=[], sharepoint_results=[]
+            )
 
         # Extract references
         ref_order: dict[str, int] = {}
@@ -443,6 +498,20 @@ class Approach(ABC):
             )
             web_results.append(web_result)
 
+        # Handle KnowledgeBaseRemoteSharePointReference if SharePoint knowledge source is used
+        sharepoint_refs = [r for r in response.references if isinstance(r, KnowledgeBaseRemoteSharePointReference)]
+        sharepoint_results: list[SharePointResult] = []
+        for ref in sharepoint_refs:
+            sharepoint_result = SharePointResult(
+                id=ref.id,
+                web_url=ref.web_url,
+                content=ref.source_data.get("content") if ref.source_data else None,
+                title=ref.source_data.get("title") if ref.source_data else None,
+                reranker_score=getattr(ref, "reranker_score", None),
+                search_agent_query=activity_mapping[ref.activity_source],
+            )
+            sharepoint_results.append(sharepoint_result)
+
         if results_merge_strategy == "interleaved":
             documents = sorted(
                 documents,
@@ -455,26 +524,39 @@ class Approach(ABC):
             content = response.response[0].content[0]
             if isinstance(content, KnowledgeBaseMessageTextContent):
                 raw_answer = content.text
-                # Replace all ref_id tokens (web -> URL, documents -> sourcepage)
-                answer = self.replace_all_ref_ids(raw_answer, documents, web_results)
+                # Replace all ref_id tokens (web -> URL, documents -> sourcepage, SharePoint -> web_url)
+                answer = self.replace_all_ref_ids(raw_answer, documents, web_results, sharepoint_results)
 
         return AgenticRetrievalResults(
-            response=response, documents=documents, web_results=web_results, answer=answer
+            response=response,
+            documents=documents,
+            web_results=web_results,
+            sharepoint_results=sharepoint_results,
+            answer=answer,
         )
 
-    def replace_all_ref_ids(self, answer: str, documents: list[Document], web_results: list[WebResult]) -> str:
-        """Replace [ref_id:<id>] tokens with either document sourcepage or web URL.
+    def replace_all_ref_ids(
+        self,
+        answer: str,
+        documents: list[Document],
+        web_results: list[WebResult],
+        sharepoint_results: list[SharePointResult],
+    ) -> str:
+        """Replace [ref_id:<id>] tokens with document sourcepage, web URL, or SharePoint web_url.
 
-        Priority: if ref id matches a web result -> use URL, else if matches a document -> use sourcepage.
+        Priority: web result -> SharePoint result -> document.
         Unknown ids left untouched.
         """
         doc_map = {d.ref_id: d.sourcepage for d in documents if d.ref_id and d.sourcepage}
         web_map = {str(w.id): w.url for w in web_results if w.id and w.url}
+        sharepoint_map = {str(sp.id): sp.web_url for sp in sharepoint_results if sp.id and sp.web_url}
 
         def _sub(match: re.Match) -> str:
             ref_id = match.group(1)
             if ref_id in web_map and web_map[ref_id]:
                 return f"[{web_map[ref_id]}]"
+            if ref_id in sharepoint_map and sharepoint_map[ref_id]:
+                return f"[{sharepoint_map[ref_id]}]"
             if ref_id in doc_map and doc_map[ref_id]:
                 return f"[{doc_map[ref_id]}]"
             return match.group(0)
@@ -489,6 +571,7 @@ class Approach(ABC):
         download_image_sources: bool,
         user_oid: Optional[str] = None,
         web_results: Optional[list[WebResult]] = None,
+        sharepoint_results: Optional[list[SharePointResult]] = None,
     ) -> DataPoints:
         """Extract text/image sources & citations from documents.
 
@@ -498,6 +581,7 @@ class Approach(ABC):
             download_image_sources: Whether to attempt downloading & base64 encoding referenced images.
             user_oid: Optional user object id for per-user storage access (ADLS scenarios).
             web_results: Optional list of web retrieval results to expose to clients.
+            sharepoint_results: Optional list of SharePoint retrieval results to expose to clients.
 
         Returns:
             DataPoints: with text (list[str]), images (list[str - base64 data URI]), citations (list[str]).
@@ -550,6 +634,22 @@ class Approach(ABC):
                         "url": web.url,
                         "snippet": clean_source(web.snippet or ""),
                         "search_agent_query": web.search_agent_query,
+                    }
+                )
+        if sharepoint_results:
+            for sp in sharepoint_results:
+                citation = self.get_citation(sp.web_url)
+                if citation and citation not in citations:
+                    citations.append(citation)
+                if include_text_sources and sp.content:
+                    text_sources.append(f"{citation}: {clean_source(sp.content)}")
+                web_sources.append(
+                    {
+                        "id": sp.id,
+                        "title": sp.title or "",
+                        "url": sp.web_url or "",
+                        "snippet": clean_source(sp.content or ""),
+                        "search_agent_query": sp.search_agent_query,
                     }
                 )
         return DataPoints(
