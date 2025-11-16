@@ -19,10 +19,14 @@ from azure.search.documents.knowledgebases.models import (
     KnowledgeBaseSearchIndexReference,
     KnowledgeBaseWebActivityRecord,
     KnowledgeBaseWebReference,
+    KnowledgeRetrievalSemanticIntent,
     KnowledgeSourceParams,
     RemoteSharePointKnowledgeSourceParams,
     SearchIndexKnowledgeSourceParams,
     WebKnowledgeSourceParams,
+    KnowledgeRetrievalMinimalReasoningEffort,
+    KnowledgeRetrievalMediumReasoningEffort,
+    KnowledgeRetrievalLowReasoningEffort
 )
 from azure.search.documents.models import (
     QueryCaptionResult,
@@ -131,6 +135,12 @@ class SharePointResult:
             "search_agent_query": self.search_agent_query,
         }
 
+@dataclass
+class RewriteQueryResult:
+    query: str
+    messages: list[ChatCompletionMessageParam]
+    completion: ChatCompletion
+    reasoning_effort: ChatCompletionReasoningEffort
 
 @dataclass
 class AgenticRetrievalResults:
@@ -141,6 +151,7 @@ class AgenticRetrievalResults:
     web_results: list[WebResult]
     sharepoint_results: list[SharePointResult] = field(default_factory=list)
     answer: Optional[str] = None  # Synthesized answer when web knowledge source is used
+    rewrite_result: Optional[RewriteQueryResult] = None
 
     def get_ordered_results(self) -> list[dict[str, Any]]:
         """Get all results (documents, web, and SharePoint) in their original reference order."""
@@ -218,14 +229,6 @@ class GPTReasoningModelSupport:
     streaming: bool
     minimal_effort: bool
 
-
-@dataclass
-class RewriteQueryResult:
-    query: str
-    messages: list[ChatCompletionMessageParam]
-    completion: ChatCompletion
-
-
 class Approach(ABC):
     # List of GPT reasoning models support
     GPT_REASONING_MODELS = {
@@ -253,6 +256,8 @@ class Approach(ABC):
         embedding_dimensions: int,
         embedding_field: str,
         openai_host: str,
+        chatgpt_model: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
@@ -269,6 +274,8 @@ class Approach(ABC):
         self.embedding_dimensions = embedding_dimensions
         self.embedding_field = embedding_field
         self.openai_host = openai_host
+        self.chatgpt_model = chatgpt_model
+        self.chatgpt_deployment = chatgpt_deployment
         self.prompt_manager = prompt_manager
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
@@ -276,6 +283,8 @@ class Approach(ABC):
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
+        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
 
     def build_filter(self, overrides: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -398,10 +407,10 @@ class Approach(ABC):
         response_token_limit: int,
         tools: Optional[list[ChatCompletionToolParam]] = None,
         temperature: float = 0.0,
-        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
         no_response_token: Optional[str] = None,
     ) -> RewriteQueryResult:
         query_messages = self.prompt_manager.render_prompt(prompt_template, prompt_variables)
+        rewrite_reasoning_effort = self.get_lowest_reasoning_effort(self.chatgpt_model)
 
         chat_completion = cast(
             ChatCompletion,
@@ -413,7 +422,7 @@ class Approach(ABC):
                 response_token_limit=response_token_limit,
                 temperature=temperature,
                 tools=tools,
-                reasoning_effort=reasoning_effort,
+                reasoning_effort=rewrite_reasoning_effort,
             ),
         )
 
@@ -427,6 +436,7 @@ class Approach(ABC):
             query=rewritten_query,
             messages=query_messages,
             completion=chat_completion,
+            reasoning_effort=rewrite_reasoning_effort,
         )
 
     async def run_agentic_retrieval(
@@ -440,7 +450,8 @@ class Approach(ABC):
         results_merge_strategy: Optional[str] = None,
         access_token: Optional[str] = None,
         use_web_source: bool = False,
-        use_sharepoint_source: bool = False
+        use_sharepoint_source: bool = False,
+        retrieval_reasoning_effort: Optional[str] = None
     ) -> AgenticRetrievalResults:
         # STEP 1: Invoke agentic retrieval
 
@@ -480,35 +491,54 @@ class Approach(ABC):
                 )
             )
 
-        # if minimal: pass intents 
-        #request_params = {}
-        #if self.reasoning_effort == "minimal":
-        #    request_params["intents"] = []
-        """
-        intents=[
-            KnowledgeRetrievalSemanticIntent(
-                search="What is the responsibility of the Zava CEO?"
-            ),
-            KnowledgeRetrievalSemanticIntent(
-                search="What Zava health plan would you recommend if they wanted the best coverage for mental health services?"
+        agentic_retrieval_input = {}
+        rewrite_result = None
+        if retrieval_reasoning_effort == "minimal":
+            original_user_query = messages[-1]["content"]
+            if not isinstance(original_user_query, str):
+                raise ValueError("The most recent message content must be a string.")
+
+            rewrite_result = await self.rewrite_query(
+                prompt_template=self.query_rewrite_prompt,
+                prompt_variables={"user_query": original_user_query, "past_messages": messages[:-1]},
+                overrides={},
+                chatgpt_model=self.chatgpt_model,
+                chatgpt_deployment=self.chatgpt_deployment,
+                user_query=original_user_query,
+                response_token_limit=self.get_response_token_limit(self.chatgpt_model, 100), # Setting too low risks malformed JSON, setting too high may affect performance
+                tools=self.query_rewrite_tools,
+                temperature=0.0, # Minimize creativity for search query generation
+                no_response_token=self.QUERY_REWRITE_NO_RESPONSE,
             )
-        ],
-        """
+            agentic_retrieval_input["intents"] = [
+                KnowledgeRetrievalSemanticIntent(
+                    search=rewrite_result.query
+                )
+            ]
+            agentic_retrieval_input["output_mode"] = "extractiveData"
+        else:
+            agentic_retrieval_input["messages"] = [
+                KnowledgeBaseMessage(
+                    role=str(msg["role"]), content=[KnowledgeBaseMessageTextContent(text=str(msg["content"]))]
+                )
+                for msg in messages
+                if msg["role"] != "system"
+            ]
+
+        retrieval_effort = None
+        if retrieval_reasoning_effort == "minimal":
+            retrieval_effort = KnowledgeRetrievalMinimalReasoningEffort()
+        elif retrieval_reasoning_effort == "low":
+            retrieval_effort = KnowledgeRetrievalLowReasoningEffort()
+        elif retrieval_reasoning_effort == "medium":
+            retrieval_effort = KnowledgeRetrievalMediumReasoningEffort()
         response = await agent_client.retrieve(
             retrieval_request=KnowledgeBaseRetrievalRequest(
-
-                messages=[
-                    KnowledgeBaseMessage(
-                        role=str(msg["role"]), content=[KnowledgeBaseMessageTextContent(text=str(msg["content"]))]
-                    )
-                    for msg in messages
-                    if msg["role"] != "system"
-                ],
                 knowledge_source_params=knowledge_source_params_list,
                 include_activity=True,
+                retrieval_reasoning_effort=retrieval_effort,
+                **agentic_retrieval_input,
             ),
-            # TODO: retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
-            # TODO: Only pass access token if knowledge source requires it?
             x_ms_query_source_authorization=access_token,
         )
 
@@ -600,7 +630,7 @@ class Approach(ABC):
 
         # Extract answer from response if web knowledge source provided one
         answer = None
-        if response.response and len(response.response) > 0 and len(response.response[0].content) > 0:
+        if retrieval_reasoning_effort != "minimal" and response.response and len(response.response) > 0 and len(response.response[0].content) > 0:
             content = response.response[0].content[0]
             if isinstance(content, KnowledgeBaseMessageTextContent):
                 raw_answer = content.text
@@ -613,6 +643,7 @@ class Approach(ABC):
             web_results=web_results,
             sharepoint_results=sharepoint_results,
             answer=answer,
+            rewrite_result=rewrite_result
         )
 
     def replace_all_ref_ids(

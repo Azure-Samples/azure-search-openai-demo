@@ -249,6 +249,10 @@ class ChatReadRetrieveReadApproach(Approach):
                 f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
             )
         if use_agentic_retrieval:
+            if should_stream and overrides.get("retrieval_reasoning_effort") in ["low", "medium"]:
+                raise Exception(
+                    "Streaming is not supported with agentic retrieval when retrieval reasoning effort is set to low or medium. Please disable streaming or increase the retrieval reasoning effort."
+                )
             extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)
@@ -336,7 +340,6 @@ class ChatReadRetrieveReadApproach(Approach):
 
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
 
-        rewrite_reasoning_effort = self.get_lowest_reasoning_effort(self.chatgpt_model)
         rewrite_result = await self.rewrite_query(
             prompt_template=self.query_rewrite_prompt,
             prompt_variables={"user_query": original_user_query, "past_messages": messages[:-1]},
@@ -347,7 +350,6 @@ class ChatReadRetrieveReadApproach(Approach):
             response_token_limit=self.get_response_token_limit(self.chatgpt_model, 100), # Setting too low risks malformed JSON, setting too high may affect performance
             tools=self.query_rewrite_tools,
             temperature=0.0, # Minimize creativity for search query generation
-            reasoning_effort=rewrite_reasoning_effort,
             no_response_token=self.NO_RESPONSE,
         )
 
@@ -395,7 +397,7 @@ class ChatReadRetrieveReadApproach(Approach):
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
                     usage=rewrite_result.completion.usage,
-                    reasoning_effort=rewrite_reasoning_effort,
+                    reasoning_effort=rewrite_result.reasoning_effort,
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -435,8 +437,7 @@ class ChatReadRetrieveReadApproach(Approach):
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
         retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
         if self.use_web_source and retrieval_reasoning_effort == "minimal":
-            raise ValueError("Web source cannot be used with minimal retrieval reasoning effort.")
-        # if effort is minimal, then call the query rewriting step first and get back query
+            raise Exception("Web source cannot be used with minimal retrieval reasoning effort.")
         
         agentic_results = await self.run_agentic_retrieval(
             messages=messages,
@@ -449,6 +450,7 @@ class ChatReadRetrieveReadApproach(Approach):
             access_token=access_token,
             use_web_source=self.use_web_source,
             use_sharepoint_source=self.use_sharepoint_source,
+            retrieval_reasoning_effort=retrieval_reasoning_effort,
         )
 
         data_points = await self.get_sources_content(
@@ -488,4 +490,17 @@ class ChatReadRetrieveReadApproach(Approach):
             ],
             answer=agentic_results.answer,
         )
+        if retrieval_reasoning_effort == "minimal":
+            extra_info.thoughts.insert(
+                0,
+                self.format_thought_step_for_chatcompletion(
+                    title="Prompt to generate search query",
+                    messages=agentic_results.rewrite_result.messages,
+                    overrides=overrides,
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    usage=agentic_results.rewrite_result.completion.usage,
+                    reasoning_effort=agentic_results.rewrite_result.reasoning_effort,
+                )
+            )
         return extra_info
