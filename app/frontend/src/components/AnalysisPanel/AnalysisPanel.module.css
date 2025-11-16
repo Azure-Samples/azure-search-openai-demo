@@ -103,42 +103,38 @@
 
 .tokenUsageGraph {
     margin: 16px 0;
+    padding: 12px 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tokenBar {
-    height: 20px;
-    margin-bottom: 4px;
-    padding-left: 4px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.tokenBar {
-    height: 20px;
-    margin-bottom: 4px;
-    padding-left: 4px;
-    font-size: 12px;
+    min-height: 28px;
+    height: auto;
+    margin-bottom: 8px;
+    padding: 6px 12px;
+    font-size: inherit;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     background-color: #d7d7d7;
     white-space: nowrap;
     overflow: visible;
-    min-width: max-content;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 /* Adjust tokenLabel to allow bar-specific text color overrides */
 .tokenLabel {
+    font-size: inherit;
     padding-right: 4px;
 }
 
 .primaryBarContainer {
-    width: fit-content;
+    width: 100%;
     display: flex;
-    gap: 4px;
+    gap: 8px;
+    padding: 4px 0;
 }
 
 .primaryBarContainer .tokenBar {
@@ -171,7 +167,8 @@
 }
 
 .segmentWrapper {
-    margin-top: 12px;
+    margin-top: 16px;
+    padding-top: 4px;
 }
 
 .segmentWrapperFirst {

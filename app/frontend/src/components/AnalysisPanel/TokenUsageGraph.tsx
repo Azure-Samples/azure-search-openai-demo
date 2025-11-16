@@ -51,22 +51,40 @@ export const TokenUsageStackedBar: React.FC<TokenUsageStackedBarProps> = ({ toke
     const reasoningValue = includeReasoning ? tokenUsage.reasoning_tokens : 0;
     const outputValue = tokenUsage.completion_tokens - reasoningValue;
     const safeOutputValue = Math.max(outputValue, 0);
+    const promptValue = Math.max(tokenUsage.prompt_tokens, 0);
+    const safeReasoningValue = Math.max(reasoningValue, 0);
+    const promptPercent = calcPercent(promptValue, base);
+    const reasoningPercent = calcPercent(safeReasoningValue, base);
+    const outputPercent = calcPercent(safeOutputValue, base);
+    const minimumFlex = 0.5;
+    const promptFlex = promptValue > 0 ? promptValue : minimumFlex;
+    const reasoningFlex = includeReasoning ? (safeReasoningValue > 0 ? safeReasoningValue : minimumFlex) : 0;
+    const outputFlex = safeOutputValue > 0 ? safeOutputValue : minimumFlex;
 
     return (
         <div className={styles.primaryBarContainer}>
-            <div className={`${styles.tokenBar} ${styles.promptBar}`} style={{ width: calcPercent(tokenUsage.prompt_tokens, base) }}>
+            <div
+                className={`${styles.tokenBar} ${styles.promptBar}`}
+                style={{ flexGrow: promptFlex, flexBasis: promptPercent, maxWidth: promptPercent, minWidth: "fit-content" }}
+            >
                 <span className={styles.tokenLabel}>
                     {labels.prompt}: {tokenUsage.prompt_tokens}
                 </span>
             </div>
             {includeReasoning && (
-                <div className={`${styles.tokenBar} ${styles.reasoningBar}`} style={{ width: calcPercent(reasoningValue, base) }}>
+                <div
+                    className={`${styles.tokenBar} ${styles.reasoningBar}`}
+                    style={{ flexGrow: reasoningFlex, flexBasis: reasoningPercent, maxWidth: reasoningPercent, minWidth: "fit-content" }}
+                >
                     <span className={styles.tokenLabel}>
                         {labels.reasoning ?? "Reasoning"}: {reasoningValue}
                     </span>
                 </div>
             )}
-            <div className={`${styles.tokenBar} ${styles.outputBar}`} style={{ width: calcPercent(safeOutputValue, base) }}>
+            <div
+                className={`${styles.tokenBar} ${styles.outputBar}`}
+                style={{ flexGrow: outputFlex, flexBasis: outputPercent, maxWidth: outputPercent, minWidth: "fit-content" }}
+            >
                 <span className={styles.tokenLabel}>
                     {labels.output}: {safeOutputValue}
                 </span>
@@ -90,9 +108,14 @@ export const TokenUsageValueBar: React.FC<TokenUsageValueBarProps> = ({ label, v
     const toneClass = tone === "primary" ? styles.totalBar : styles.secondaryTotalBar;
     const groupingClass = grouping === "grouped" ? styles.groupedTotalBar : styles.standaloneTotalBar;
     const resolvedBase = base ?? (value || 1);
+    const percent = calcPercent(value, resolvedBase);
+    const flexGrow = value > 0 ? value : 0.5;
 
     return (
-        <div className={`${styles.tokenBar} ${toneClass} ${groupingClass}`} style={{ width: calcPercent(value, resolvedBase) }}>
+        <div
+            className={`${styles.tokenBar} ${toneClass} ${groupingClass}`}
+            style={{ width: percent, flexGrow, flexBasis: percent, maxWidth: percent, minWidth: "fit-content" }}
+        >
             <span className={styles.tokenLabel}>
                 {label}: {value}
             </span>

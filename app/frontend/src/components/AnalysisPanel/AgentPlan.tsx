@@ -43,13 +43,22 @@ const getStepLabel = (step: QueryPlanStep) => STEP_LABELS[step.type] ?? step.typ
 
 const renderDetail = (step: QueryPlanStep) => {
     switch (step.type) {
-        case "modelQueryPlanning":
+        case "modelQueryPlanning": {
+            const usage: TokenUsage = {
+                prompt_tokens: step.input_tokens ?? 0,
+                completion_tokens: step.output_tokens ?? 0,
+                reasoning_tokens: 0,
+                total_tokens: (step.input_tokens ?? 0) + (step.output_tokens ?? 0)
+            };
+
             return (
-                <div className={styles.tPropRow}>
-                    <span className={styles.tProp}>Prompt tokens: {step.input_tokens ?? "—"}</span>
-                    <span className={styles.tProp}>Completion tokens: {step.output_tokens ?? "—"}</span>
-                </div>
+                <TokenUsageGraph
+                    tokenUsage={usage}
+                    labels={{ prompt: "Input Tokens", output: "Output Tokens", total: "Total" }}
+                    title=""
+                />
             );
+        }
         case "searchIndex": {
             const search = step.search_index_arguments?.search ?? "—";
             const sourceFields = (step.search_index_arguments?.source_data_fields ?? [])
@@ -84,20 +93,42 @@ const renderDetail = (step: QueryPlanStep) => {
                 </>
             );
         }
-        case "agenticReasoning":
+        case "agenticReasoning": {
+            const usage: TokenUsage = {
+                prompt_tokens: 0,
+                completion_tokens: step.reasoning_tokens ?? 0,
+                reasoning_tokens: step.reasoning_tokens ?? 0,
+                total_tokens: step.reasoning_tokens ?? 0
+            };
+            const effort = step.retrieval_reasoning_effort?.kind;
+
             return (
-                <div className={styles.tPropRow}>
-                    {step.retrieval_reasoning_effort?.kind && <span className={styles.tProp}>Effort: {step.retrieval_reasoning_effort.kind}</span>}
-                    {typeof step.reasoning_tokens === "number" && <span className={styles.tProp}>Reasoning tokens: {step.reasoning_tokens}</span>}
-                </div>
+                <>
+                    <TokenUsageGraph tokenUsage={usage} labels={{ total: "Agentic Reasoning Tokens" }} variant="totalOnly" title="" />
+                    {effort && (
+                        <div className={styles.tPropRow}>
+                            <span className={styles.tProp}>Effort: {effort}</span>
+                        </div>
+                    )}
+                </>
             );
-        case "modelAnswerSynthesis":
+        }
+        case "modelAnswerSynthesis": {
+            const usage: TokenUsage = {
+                prompt_tokens: step.input_tokens ?? 0,
+                completion_tokens: step.output_tokens ?? 0,
+                reasoning_tokens: 0,
+                total_tokens: (step.input_tokens ?? 0) + (step.output_tokens ?? 0)
+            };
+
             return (
-                <div className={styles.tPropRow}>
-                    <span className={styles.tProp}>Input tokens: {step.input_tokens ?? "—"}</span>
-                    <span className={styles.tProp}>Output tokens: {step.output_tokens ?? "—"}</span>
-                </div>
+                <TokenUsageGraph
+                    tokenUsage={usage}
+                    labels={{ prompt: "Input Tokens", output: "Output Tokens", total: "Total" }}
+                    title=""
+                />
             );
+        }
         default:
             return (
                 <SyntaxHighlighter language="json" wrapLines wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
@@ -112,109 +143,8 @@ interface Props {
 }
 
 export const AgentPlan: React.FC<Props> = ({ query_plan }) => {
-    const planning = query_plan.find(step => step.type === "modelQueryPlanning");
-    const reasoning = query_plan.find(step => step.type === "agenticReasoning");
-    const answerSynthesis = query_plan.find(step => step.type === "modelAnswerSynthesis");
-    const planningUsage: TokenUsage | undefined = planning
-        ? {
-              prompt_tokens: planning.input_tokens ?? 0,
-              completion_tokens: planning.output_tokens ?? 0,
-              reasoning_tokens: 0,
-              total_tokens: (planning.input_tokens ?? 0) + (planning.output_tokens ?? 0)
-          }
-        : undefined;
-    const reasoningUsage: TokenUsage | undefined =
-        typeof reasoning?.reasoning_tokens === "number"
-            ? {
-                  prompt_tokens: 0,
-                  completion_tokens: reasoning.reasoning_tokens,
-                  reasoning_tokens: reasoning.reasoning_tokens,
-                  total_tokens: reasoning.reasoning_tokens
-              }
-            : undefined;
-    const answerUsage: TokenUsage | undefined = answerSynthesis
-        ? {
-              prompt_tokens: answerSynthesis.input_tokens ?? 0,
-              completion_tokens: answerSynthesis.output_tokens ?? 0,
-              reasoning_tokens: 0,
-              total_tokens: (answerSynthesis.input_tokens ?? 0) + (answerSynthesis.output_tokens ?? 0)
-          }
-        : undefined;
-
-    const hasPlanning = Boolean(planningUsage);
-    const hasAnswer = Boolean(answerUsage);
-    const hasReasoning = Boolean(reasoningUsage);
-
-    const supplementaryUsages =
-        hasPlanning && hasAnswer
-            ? [
-                  {
-                      tokenUsage: answerUsage!,
-                      labels: {
-                          prompt: "Answer Synthesis Input Tokens",
-                          output: "Answer Synthesis Output Tokens",
-                          total: "Answer Synthesis Total"
-                      },
-                      totalLabel: "Answer Synthesis Total",
-                      tone: "primary" as const
-                  }
-              ]
-            : [];
-
-    const additionalTotals =
-        hasReasoning && (hasPlanning || hasAnswer)
-            ? [
-                  {
-                      label: "Agentic Reasoning Tokens",
-                      value: reasoningUsage!.total_tokens,
-                      total: reasoningUsage!.total_tokens
-                  }
-              ]
-            : [];
-
-    let mainUsage: TokenUsage | undefined;
-    let mainLabels: Partial<Record<"prompt" | "output" | "reasoning" | "total", string>> | undefined;
-    let mainVariant: "full" | "totalOnly" = "full";
-    let mainTotalLabel: string | undefined;
-    let mainSupplementaryUsages = supplementaryUsages;
-
-    if (hasPlanning) {
-        mainUsage = planningUsage;
-        mainLabels = {
-            prompt: "Query Planning Input Tokens",
-            output: "Query Planning Output Tokens",
-            total: "Query Planning Total"
-        };
-    } else if (hasAnswer) {
-        mainUsage = answerUsage;
-        mainLabels = {
-            prompt: "Answer Synthesis Input Tokens",
-            output: "Answer Synthesis Output Tokens",
-            total: "Answer Synthesis Total"
-        };
-        mainSupplementaryUsages = [];
-    } else if (hasReasoning) {
-        mainUsage = reasoningUsage;
-        mainVariant = "totalOnly";
-        mainTotalLabel = "Agentic Reasoning Tokens";
-        mainSupplementaryUsages = [];
-    }
-
-    const showTokenGraph = Boolean(mainUsage);
-
     return (
         <div>
-            {showTokenGraph && (
-                <TokenUsageGraph
-                    tokenUsage={mainUsage!}
-                    labels={mainLabels}
-                    variant={mainVariant}
-                    totalLabel={mainTotalLabel}
-                    additionalTotals={mainVariant === "full" ? additionalTotals : undefined}
-                    supplementaryUsages={mainSupplementaryUsages}
-                />
-            )}
-
             <div className={styles.header}>Execution steps</div>
             <table className={styles.subqueriesTable}>
                 <thead>
