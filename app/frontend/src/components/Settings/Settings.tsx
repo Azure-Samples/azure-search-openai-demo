@@ -213,18 +213,20 @@ export const Settings = ({
                     onRenderLabel={props => renderLabel(props, includeCategoryId, includeCategoryFieldId, t("helpTexts.resultsMergeStrategy"))}
                 />
             )}
-            <TextField
-                id={retrieveCountFieldId}
-                className={styles.settingsSeparator}
-                label={t("labels.retrieveCount")}
-                type="number"
-                min={1}
-                max={50}
-                defaultValue={retrieveCount.toString()}
-                onChange={(_ev, val) => onChange("retrieveCount", parseInt(val || "3"))}
-                aria-labelledby={retrieveCountId}
-                onRenderLabel={props => renderLabel(props, retrieveCountId, retrieveCountFieldId, t("helpTexts.retrieveNumber"))}
-            />
+            {!useAgenticRetrieval && (
+                <TextField
+                    id={retrieveCountFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.retrieveCount")}
+                    type="number"
+                    min={1}
+                    max={50}
+                    defaultValue={retrieveCount.toString()}
+                    onChange={(_ev, val) => onChange("retrieveCount", parseInt(val || "3"))}
+                    aria-labelledby={retrieveCountId}
+                    onRenderLabel={props => renderLabel(props, retrieveCountId, retrieveCountFieldId, t("helpTexts.retrieveNumber"))}
+                />
+            )}
             <Dropdown
                 id={includeCategoryFieldId}
                 className={styles.settingsSeparator}
