@@ -88,6 +88,12 @@
             "interleaved": "Interleaved",
             "descending": "Descending"
         },
+        "retrievalReasoningEffort": "Retrieval reasoning effort",
+        "retrievalReasoningEffortOptions": {
+            "minimal": "Minimal",
+            "low": "Low",
+            "medium": "Medium"
+        },
         "includeCategory": "Include category",
         "includeCategoryOptions": {
             "all": "All"
@@ -145,6 +151,8 @@
              "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
         "resultsMergeStrategy":
             "Sets the strategy for merging results from multiple subqueries. Interleaved picks the top results from each subquery in round robin order, while descending sorts all results by reranker score.",
+        "retrievalReasoningEffort":
+            "Controls the amount of reasoning the agent uses while planning retrieval subqueries. Higher effort can improve recall at the cost of additional latency and tokens.",
         "includeCategory":
             "Specifies a category to include in the search results. There are no categories used in the default data set.",
          "excludeCategory":

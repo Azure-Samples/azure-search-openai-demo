@@ -89,6 +89,12 @@
             "interleaved": "Przeplatane",
             "descending": "Malejąco"
         },
+        "retrievalReasoningEffort": "Poziom rozumowania przy pobieraniu",
+        "retrievalReasoningEffortOptions": {
+            "minimal": "Minimalny",
+            "low": "Niski",
+            "medium": "Średni"
+        },
         "includeCategory": "Uwzględnij kategorię",
         "includeCategoryOptions": {
             "all": "Wszystkie"
@@ -147,6 +153,8 @@
              "Ustawia liczbę wyników wyszukiwania do pobrania z Azure AI Search. Więcej wyników może zwiększyć szansę znalezienia poprawnej odpowiedzi, ale może sprawić, że model się „zgubi w środku”.",
         "resultsMergeStrategy":
             "Ustawia strategię łączenia wyników z wielu zapytań podrzędnych. „Przeplatane” wybiera najlepsze wyniki z każdego zapytania w kolejności okrężnej, a „Malejąco” sortuje wszystkie wyniki według wyniku sortowania semantycznego.",
+        "retrievalReasoningEffort":
+            "Kontroluje, ile rozumowania agent stosuje podczas budowania planów wielozapytaniowych. Większy wysiłek może poprawić trafność, ale zwiększa liczbę tokenów i opóźnienie.",
         "includeCategory":
             "Określa kategorię do uwzględnienia w wynikach wyszukiwania. W domyślnym zestawie danych nie są używane kategorie.",
          "excludeCategory":

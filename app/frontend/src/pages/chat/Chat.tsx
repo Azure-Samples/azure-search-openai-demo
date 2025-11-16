@@ -36,6 +36,7 @@ const Chat = () => {
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
     const [resultsMergeStrategy, setResultsMergeStrategy] = useState<string>("interleaved");
+    const [retrievalReasoningEffort, setRetrievalReasoningEffort] = useState<string>("minimal");
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
@@ -215,6 +216,7 @@ const Chat = () => {
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
                         results_merge_strategy: resultsMergeStrategy,
+                        ...(useAgenticRetrieval ? { retrieval_reasoning_effort: retrievalReasoningEffort } : {}),
                         temperature: temperature,
                         minimum_reranker_score: minimumRerankerScore,
                         minimum_search_score: minimumSearchScore,
@@ -310,6 +312,9 @@ const Chat = () => {
                 break;
             case "resultsMergeStrategy":
                 setResultsMergeStrategy(value);
+                break;
+            case "retrievalReasoningEffort":
+                setRetrievalReasoningEffort(value);
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -533,6 +538,7 @@ const Chat = () => {
                         temperature={temperature}
                         retrieveCount={retrieveCount}
                         resultsMergeStrategy={resultsMergeStrategy}
+                        retrievalReasoningEffort={retrievalReasoningEffort}
                         seed={seed}
                         minimumSearchScore={minimumSearchScore}
                         minimumRerankerScore={minimumRerankerScore}

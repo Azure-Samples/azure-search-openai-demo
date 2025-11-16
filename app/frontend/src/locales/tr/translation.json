@@ -88,6 +88,12 @@
             "interleaved": "Sırayla karışık",
             "descending": "Azalan"
         },
+        "retrievalReasoningEffort": "Getirme akıl yürütme çabası",
+        "retrievalReasoningEffortOptions": {
+            "minimal": "En az",
+            "low": "Düşük",
+            "medium": "Orta"
+        },
         "includeCategory": "Kategori dahil et",
         "includeCategoryOptions": {
             "all": "Hepsi"
@@ -145,6 +151,8 @@
              "Azure AI arama sonuçlarından getirilecek sonuç sayısını ayarlar. Daha fazla sonuç doğru cevabı bulma olasılığını artırabilir, ancak modelin 'ortada kaybolmasına' da neden olabilir.",
         "resultsMergeStrategy":
              "Birden fazla alt sorgudan gelen sonuçları birleştirme stratejisini ayarlar. 'Sırayla karışık' her alt sorgudan en iyi sonuçları dönüşümlü olarak seçer, 'Azalan' ise tüm sonuçları yeniden sıralayıcı skoruna göre sıralar.",
+        "retrievalReasoningEffort":
+            "Ajans, çoklu sorgu planları oluştururken ne kadar akıl yürütme uygulayacağını kontrol eder. Daha yüksek ayarlar hatırlamayı artırabilir ancak belirteçleri ve gecikmeyi yükseltir.",
         "includeCategory":
             "Arama sonuçlarına dahil edilecek bir kategoriyi belirtir. Varsayılan veri setinde kategori yoktur.",
         "excludeCategory":

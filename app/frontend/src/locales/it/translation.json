@@ -88,6 +88,12 @@
             "interleaved": "Intercalata",
             "descending": "Discendente"
         },
+        "retrievalReasoningEffort": "Sforzo di ragionamento per il recupero",
+        "retrievalReasoningEffortOptions": {
+            "minimal": "Minimo",
+            "low": "Basso",
+            "medium": "Medio"
+        },
         "includeCategory": "Includi categoria",
         "includeCategoryOptions": {
             "all": "Tutte"
@@ -146,6 +152,8 @@
             "Imposta il numero di risultati di ricerca da recuperare da Azure AI Search. Più risultati possono aumentare la probabilità di trovare la risposta giusta, ma possono portare il modello a 'perdersi nel mezzo'.",
         "resultsMergeStrategy":
             "Imposta la strategia per unire i risultati da più sottoquery. 'Intercalata' seleziona i migliori risultati da ciascuna sottoquery a turno, mentre 'Discendente' ordina tutti i risultati per punteggio del reranker.",
+        "retrievalReasoningEffort":
+            "Controlla quanto ragionamento applica l'agente durante la creazione di piani multi-query. Uno sforzo maggiore può migliorare il richiamo ma aumenta token e latenza.",
         "includeCategory":
             "Specifica una categoria da includere nei risultati di ricerca. Non ci sono categorie utilizzate nel set di dati predefinito.",
         "excludeCategory":

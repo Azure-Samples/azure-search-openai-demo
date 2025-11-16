@@ -88,6 +88,12 @@
             "interleaved": "Afgewisseld",
             "descending": "Aflopend"
         },
+        "retrievalReasoningEffort": "Redeneerinspanning voor retrieval",
+        "retrievalReasoningEffortOptions": {
+            "minimal": "Minimaal",
+            "low": "Laag",
+            "medium": "Gemiddeld"
+        },
         "includeCategory": "Categorie opnemen",
         "includeCategoryOptions": {
             "all": "Alle"
@@ -145,6 +151,8 @@
              "Stelt het aantal zoekresultaten in om op te halen van Azure AI zoekfunctie. Meer resultaten vergroten de kans op het juiste antwoord, maar kunnen ook leiden tot het 'lost in the middle' probleem.",
         "resultsMergeStrategy":
             "Stelt de strategie in voor het samenvoegen van resultaten van meerdere subquery's. 'Afgewisseld' kiest om de beurt de beste resultaten van elke subquery, terwijl 'Aflopend' alle resultaten sorteert op reranker-score.",
+        "retrievalReasoningEffort":
+            "Bepaalt hoeveel redeneren de agent toepast bij het opstellen van multi-query plannen. Meer inspanning kan de recall verbeteren, maar verhoogt tokens en latency.",
         "includeCategory":
             "Specificeert een categorie om op te nemen in de zoekresultaten. Er zijn geen categorieën in de standaard dataset.",
         "excludeCategory":

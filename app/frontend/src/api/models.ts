@@ -15,6 +15,7 @@ export type ChatAppRequestOverrides = {
     seed?: number;
     top?: number;
     results_merge_strategy?: string;
+    retrieval_reasoning_effort?: string;
     temperature?: number;
     minimum_search_score?: number;
     minimum_reranker_score?: number;

@@ -14,6 +14,7 @@ export interface SettingsProps {
     temperature: number;
     retrieveCount: number;
     resultsMergeStrategy: string;
+    retrievalReasoningEffort: string;
     seed: number | null;
     minimumSearchScore: number;
     minimumRerankerScore: number;
@@ -54,6 +55,7 @@ export const Settings = ({
     temperature,
     retrieveCount,
     resultsMergeStrategy,
+    retrievalReasoningEffort,
     seed,
     minimumSearchScore,
     minimumRerankerScore,
@@ -106,6 +108,8 @@ export const Settings = ({
     const retrieveCountId = useId("retrieveCount");
     const retrieveCountFieldId = useId("retrieveCountField");
     const resultsMergeStrategyFieldId = useId("resultsMergeStrategy");
+    const retrievalReasoningEffortId = useId("retrievalReasoningEffort");
+    const retrievalReasoningEffortFieldId = useId("retrievalReasoningEffortField");
     const includeCategoryId = useId("includeCategory");
     const includeCategoryFieldId = useId("includeCategoryField");
     const excludeCategoryId = useId("excludeCategory");
@@ -211,6 +215,26 @@ export const Settings = ({
                         { key: "descending", text: t("labels.resultsMergeStrategyOptions.descending") }
                     ]}
                     onRenderLabel={props => renderLabel(props, includeCategoryId, includeCategoryFieldId, t("helpTexts.resultsMergeStrategy"))}
+                />
+            )}
+            {showAgenticRetrievalOption && useAgenticRetrieval && (
+                <Dropdown
+                    id={retrievalReasoningEffortFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.retrievalReasoningEffort")}
+                    selectedKey={retrievalReasoningEffort}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
+                        onChange("retrievalReasoningEffort", option?.key?.toString() ?? retrievalReasoningEffort)
+                    }
+                    aria-labelledby={retrievalReasoningEffortId}
+                    options={[
+                        { key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal") },
+                        { key: "low", text: t("labels.retrievalReasoningEffortOptions.low") },
+                        { key: "medium", text: t("labels.retrievalReasoningEffortOptions.medium") }
+                    ]}
+                    onRenderLabel={props =>
+                        renderLabel(props, retrievalReasoningEffortId, retrievalReasoningEffortFieldId, t("helpTexts.retrievalReasoningEffort"))
+                    }
                 />
             )}
             {!useAgenticRetrieval && (

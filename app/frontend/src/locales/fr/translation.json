@@ -88,6 +88,12 @@
             "interleaved": "Entrelacée",
             "descending": "Descendante"
         },
+        "retrievalReasoningEffort": "Effort de raisonnement pour la récupération",
+        "retrievalReasoningEffortOptions": {
+            "minimal": "Minimal",
+            "low": "Faible",
+            "medium": "Moyen"
+        },
         "includeCategory": "Inclure la catégorie",
         "includeCategoryOptions": {
             "all": "Toutes"
@@ -146,6 +152,8 @@
             "Définit le nombre de résultats de recherche à récupérer d'Azure AI Search. Plus de résultats peuvent augmenter la probabilité de trouver la bonne réponse, mais peuvent amener le modèle à se 'perdre au milieu'.",
         "resultsMergeStrategy":
             "Définit la stratégie de fusion des résultats provenant de plusieurs sous-requêtes. 'Entrelacée' sélectionne les meilleurs résultats de chaque sous-requête à tour de rôle, tandis que 'Descendante' trie tous les résultats par score de reranking.",
+        "retrievalReasoningEffort":
+            "Contrôle la quantité de raisonnement appliquée par l'agent lors de la création de plans multi-requêtes. Un effort plus élevé peut améliorer le rappel, mais augmente les jetons et la latence.",
         "includeCategory":
             "Spécifie une catégorie à inclure dans les résultats de recherche. Il n'y a aucune catégorie utilisée dans l'ensemble de données par défaut.",
         "excludeCategory":

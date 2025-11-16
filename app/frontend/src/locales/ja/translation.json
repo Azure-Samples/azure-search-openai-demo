@@ -88,6 +88,12 @@
             "interleaved": "インターリーブ",
             "descending": "降順"
         },
+        "retrievalReasoningEffort": "検索推論の負荷",
+        "retrievalReasoningEffortOptions": {
+            "minimal": "最小",
+            "low": "低",
+            "medium": "中"
+        },
         "includeCategory": "カテゴリを指定",
         "includeCategoryOptions": {
             "all": "全て"
@@ -145,6 +151,8 @@
             "Azure AI Searchの検索結果から取得する数を設定します。結果が多ければ多いほど、正しい答えを見つける可能性は高まるかもしれませんが、モデルが「途中で迷子になる」可能性もあります。",
         "resultsMergeStrategy":
             "複数のサブクエリからの結果をマージする戦略を設定します。インターリーブは各サブクエリから上位結果をラウンドロビン順で選択し、降順はすべての結果をリランカースコアで並び替えます。",
+        "retrievalReasoningEffort":
+            "エージェントがマルチクエリ計画を構築する際にどの程度推論を行うかを制御します。高い設定では再現率の向上が見込めますが、トークンと待機時間が増加します。",
         "includeCategory": "検索結果に含めるカテゴリを指定します。デフォルトのデータセットはカテゴリを使用していません。",
         "excludeCategory": "検索結果から除外するカテゴリを指定します。デフォルトのデータセットはカテゴリを使用していません。",
         "useSemanticReranker":
