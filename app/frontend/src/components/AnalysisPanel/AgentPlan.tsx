@@ -109,10 +109,9 @@ const renderDetail = (step: QueryPlanStep) => {
 
 interface Props {
     query_plan: QueryPlanStep[];
-    description: any;
 }
 
-export const AgentPlan: React.FC<Props> = ({ query_plan, description: _description }) => {
+export const AgentPlan: React.FC<Props> = ({ query_plan }) => {
     const planning = query_plan.find(step => step.type === "modelQueryPlanning");
     const reasoning = query_plan.find(step => step.type === "agenticReasoning");
     const answerSynthesis = query_plan.find(step => step.type === "modelAnswerSynthesis");
@@ -157,7 +156,7 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, description: _descripti
                           total: "Answer Synthesis Total"
                       },
                       totalLabel: "Answer Synthesis Total",
-                      tone: "primary"
+                      tone: "primary" as const
                   }
               ]
             : [];

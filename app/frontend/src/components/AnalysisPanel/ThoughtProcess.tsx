@@ -42,7 +42,7 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                         {t.props?.token_usage && !hasAgenticPlan && (
                             <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />
                         )}
-                        {hasAgenticPlan && <AgentPlan query_plan={t.props?.query_plan ?? []} description={t.description} />}
+                        {hasAgenticPlan && <AgentPlan query_plan={t.props?.query_plan ?? []} />}
                         {Array.isArray(t.description) || (t.description !== null && typeof t.description === "object") ? (
                             <SyntaxHighlighter language="json" wrapLines wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
                                 {JSON.stringify(t.description, (key, value) => truncateImageUrl(value), 2)}
