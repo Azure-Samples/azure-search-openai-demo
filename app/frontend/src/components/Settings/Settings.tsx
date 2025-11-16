@@ -127,6 +127,8 @@ export const Settings = ({
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
     const suggestFollowupQuestionsFieldId = useId("suggestFollowupQuestionsField");
 
+    const streamingDisabledByReasoning = !!useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
+
     const retrievalReasoningOptions: IDropdownOption[] = [
         ...(!hideMinimalRetrievalReasoningOption ? [{ key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal") }] : []),
         { key: "low", text: t("labels.retrievalReasoningEffortOptions.low") },
@@ -143,10 +145,11 @@ export const Settings = ({
                 <Checkbox
                     id={shouldStreamFieldId}
                     className={styles.settingsSeparator}
-                    checked={shouldStream}
+                    checked={streamingDisabledByReasoning ? false : shouldStream}
                     label={t("labels.shouldStream")}
                     onChange={(_ev, checked) => onChange("shouldStream", !!checked)}
                     aria-labelledby={shouldStreamId}
+                    disabled={streamingDisabledByReasoning}
                     onRenderLabel={props => renderLabel(props, shouldStreamId, shouldStreamFieldId, t("helpTexts.streamChat"))}
                 />
             )}

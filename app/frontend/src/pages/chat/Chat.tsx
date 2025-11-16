@@ -43,6 +43,8 @@ const Chat = () => {
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
     const [streamingEnabled, setStreamingEnabled] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
+    const previousShouldStreamRef = useRef<boolean>(true);
+    const forcedStreamingRef = useRef<boolean>(false);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
@@ -84,6 +86,7 @@ const Chat = () => {
     const [showLLMOptions, setShowLLMOptions] = useState<boolean>(true);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
+    const retrievalReasoningDisablesStreaming = useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
 
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
@@ -112,9 +115,6 @@ const Chat = () => {
             setShowQueryRewritingOption(config.showQueryRewritingOption);
             setShowReasoningEffortOption(config.showReasoningEffortOption);
             setStreamingEnabled(config.streamingEnabled);
-            if (!config.streamingEnabled) {
-                setShouldStream(false);
-            }
             if (config.showReasoningEffortOption) {
                 setReasoningEffort(config.defaultReasoningEffort);
             }
@@ -295,6 +295,37 @@ const Chat = () => {
         getConfig();
     }, []);
 
+    // Preserve streaming preference when agentic retrieval forces streaming off.
+    useEffect(() => {
+        if (!streamingEnabled) {
+            setShouldStream(current => {
+                if (!forcedStreamingRef.current) {
+                    previousShouldStreamRef.current = current;
+                }
+                forcedStreamingRef.current = true;
+                return current ? false : current;
+            });
+            return;
+        }
+
+        if (retrievalReasoningDisablesStreaming) {
+            setShouldStream(current => {
+                if (!forcedStreamingRef.current) {
+                    previousShouldStreamRef.current = current;
+                }
+                forcedStreamingRef.current = true;
+                return current ? false : current;
+            });
+            return;
+        }
+
+        forcedStreamingRef.current = false;
+        setShouldStream(current => {
+            const desiredShouldStream = previousShouldStreamRef.current;
+            return current === desiredShouldStream ? current : desiredShouldStream;
+        });
+    }, [retrievalReasoningDisablesStreaming, streamingEnabled]);
+
     const handleSettingsChange = (field: string, value: any) => {
         switch (field) {
             case "promptTemplate":
@@ -340,7 +371,12 @@ const Chat = () => {
                 setIncludeCategory(value);
                 break;
             case "shouldStream":
-                setShouldStream(value);
+                {
+                    const normalizedShouldStream = !!value;
+                    forcedStreamingRef.current = false;
+                    previousShouldStreamRef.current = normalizedShouldStream;
+                    setShouldStream(normalizedShouldStream);
+                }
                 break;
             case "useSuggestFollowupQuestions":
                 setUseSuggestFollowupQuestions(value);
