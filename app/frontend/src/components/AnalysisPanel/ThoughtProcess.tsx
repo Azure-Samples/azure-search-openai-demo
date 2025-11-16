@@ -27,6 +27,7 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
     return (
         <ul className={styles.tList}>
             {thoughts.map((t, ind) => {
+                const hasAgenticPlan = Array.isArray(t.props?.query_plan) && t.props.query_plan.length > 0;
                 return (
                     <li className={styles.tListItem} key={ind}>
                         <div className={styles.tStep}>{t.title}</div>
@@ -38,8 +39,10 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                                     </span>
                                 ))}
                         </Stack>
-                        {t.props?.token_usage && <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />}
-                        {t.props?.query_plan && <AgentPlan query_plan={t.props.query_plan} description={t.description} />}
+                        {t.props?.token_usage && !hasAgenticPlan && (
+                            <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />
+                        )}
+                        {hasAgenticPlan && <AgentPlan query_plan={t.props?.query_plan ?? []} description={t.description} />}
                         {Array.isArray(t.description) || (t.description !== null && typeof t.description === "object") ? (
                             <SyntaxHighlighter language="json" wrapLines wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
                                 {JSON.stringify(t.description, (key, value) => truncateImageUrl(value), 2)}

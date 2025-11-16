@@ -107,24 +107,6 @@ const renderDetail = (step: QueryPlanStep) => {
     }
 };
 
-const renderMetric = (step: QueryPlanStep) => {
-    switch (step.type) {
-        case "searchIndex":
-        case "web":
-            return step.count ?? "—";
-        case "modelQueryPlanning":
-        case "modelAnswerSynthesis":
-            if (step.input_tokens != null || step.output_tokens != null) {
-                return `In: ${step.input_tokens ?? 0} / Out: ${step.output_tokens ?? 0}`;
-            }
-            return "—";
-        case "agenticReasoning":
-            return step.reasoning_tokens ?? "—";
-        default:
-            return "—";
-    }
-};
-
 interface Props {
     query_plan: QueryPlanStep[];
     description: any;
@@ -132,6 +114,8 @@ interface Props {
 
 export const AgentPlan: React.FC<Props> = ({ query_plan, description: _description }) => {
     const planning = query_plan.find(step => step.type === "modelQueryPlanning");
+    const reasoning = query_plan.find(step => step.type === "agenticReasoning");
+    const answerSynthesis = query_plan.find(step => step.type === "modelAnswerSynthesis");
     const planningUsage: TokenUsage | undefined = planning
         ? {
               prompt_tokens: planning.input_tokens ?? 0,
@@ -140,10 +124,96 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, description: _descripti
               total_tokens: (planning.input_tokens ?? 0) + (planning.output_tokens ?? 0)
           }
         : undefined;
+    const reasoningUsage: TokenUsage | undefined =
+        typeof reasoning?.reasoning_tokens === "number"
+            ? {
+                  prompt_tokens: 0,
+                  completion_tokens: reasoning.reasoning_tokens,
+                  reasoning_tokens: reasoning.reasoning_tokens,
+                  total_tokens: reasoning.reasoning_tokens
+              }
+            : undefined;
+    const answerUsage: TokenUsage | undefined = answerSynthesis
+        ? {
+              prompt_tokens: answerSynthesis.input_tokens ?? 0,
+              completion_tokens: answerSynthesis.output_tokens ?? 0,
+              reasoning_tokens: 0,
+              total_tokens: (answerSynthesis.input_tokens ?? 0) + (answerSynthesis.output_tokens ?? 0)
+          }
+        : undefined;
+
+    const hasPlanning = Boolean(planningUsage);
+    const hasAnswer = Boolean(answerUsage);
+    const hasReasoning = Boolean(reasoningUsage);
+
+    const supplementaryUsages =
+        hasPlanning && hasAnswer
+            ? [
+                  {
+                      tokenUsage: answerUsage!,
+                      labels: {
+                          prompt: "Answer Synthesis Input Tokens",
+                          output: "Answer Synthesis Output Tokens",
+                          total: "Answer Synthesis Total"
+                      },
+                      totalLabel: "Answer Synthesis Total"
+                  }
+              ]
+            : [];
+
+    const additionalTotals =
+        hasReasoning && (hasPlanning || hasAnswer)
+            ? [
+                  {
+                      label: "Agentic Reasoning Tokens",
+                      value: reasoningUsage!.total_tokens,
+                      total: reasoningUsage!.total_tokens
+                  }
+              ]
+            : [];
+
+    let mainUsage: TokenUsage | undefined;
+    let mainLabels: Partial<Record<"prompt" | "output" | "reasoning" | "total", string>> | undefined;
+    let mainVariant: "full" | "totalOnly" = "full";
+    let mainTotalLabel: string | undefined;
+    let mainSupplementaryUsages = supplementaryUsages;
+
+    if (hasPlanning) {
+        mainUsage = planningUsage;
+        mainLabels = {
+            prompt: "Query Planning Input Tokens",
+            output: "Query Planning Output Tokens",
+            total: "Query Planning Total"
+        };
+    } else if (hasAnswer) {
+        mainUsage = answerUsage;
+        mainLabels = {
+            prompt: "Answer Synthesis Input Tokens",
+            output: "Answer Synthesis Output Tokens",
+            total: "Answer Synthesis Total"
+        };
+        mainSupplementaryUsages = [];
+    } else if (hasReasoning) {
+        mainUsage = reasoningUsage;
+        mainVariant = "totalOnly";
+        mainTotalLabel = "Agentic Reasoning Tokens";
+        mainSupplementaryUsages = [];
+    }
+
+    const showTokenGraph = Boolean(mainUsage);
 
     return (
         <div>
-            {planningUsage && <TokenUsageGraph tokenUsage={planningUsage} />}
+            {showTokenGraph && (
+                <TokenUsageGraph
+                    tokenUsage={mainUsage!}
+                    labels={mainLabels}
+                    variant={mainVariant}
+                    totalLabel={mainTotalLabel}
+                    additionalTotals={mainVariant === "full" ? additionalTotals : undefined}
+                    supplementaryUsages={mainSupplementaryUsages}
+                />
+            )}
 
             <div className={styles.header}>Execution steps</div>
             <table className={styles.subqueriesTable}>
@@ -151,7 +221,6 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, description: _descripti
                     <tr>
                         <th>Step</th>
                         <th>Details</th>
-                        <th>Count / Tokens</th>
                         <th>Elapsed MS</th>
                     </tr>
                 </thead>
@@ -160,7 +229,6 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, description: _descripti
                         <tr key={step.id}>
                             <td>{getStepLabel(step)}</td>
                             <td>{renderDetail(step)}</td>
-                            <td>{renderMetric(step)}</td>
                             <td title={step.query_time ?? undefined}>{step.elapsed_ms ?? "—"}</td>
                         </tr>
                     ))}

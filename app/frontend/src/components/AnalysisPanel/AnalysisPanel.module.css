@@ -161,6 +161,27 @@
     color: #ffffff;
 }
 
+.secondaryTotalBar {
+    background-color: #6d6d6d;
+    color: #ffffff;
+}
+
+.segmentWrapper {
+    margin-top: 12px;
+}
+
+.segmentWrapperFirst {
+    margin-top: 0;
+}
+
+.standaloneTotalBar {
+    margin-top: 10px;
+}
+
+.groupedTotalBar {
+    margin-top: 2px;
+}
+
 .subqueriesTable,
 .subqueriesTable th,
 .subqueriesTable td,
