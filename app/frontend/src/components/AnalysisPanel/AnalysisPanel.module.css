@@ -189,3 +189,11 @@
 .subqueriesTable tr {
     background: #fff;
 }
+
+.iterationSection {
+    margin-top: 1.5em;
+}
+
+.iterationSection:first-of-type {
+    margin-top: 0;
+}

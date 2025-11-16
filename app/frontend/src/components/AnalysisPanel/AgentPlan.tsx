@@ -55,24 +55,12 @@ const renderDetail = (step: QueryPlanStep) => {
         }
         case "searchIndex": {
             const search = step.search_index_arguments?.search ?? "—";
-            const sourceFields = (step.search_index_arguments?.source_data_fields ?? [])
-                .map(field => field?.name)
-                .filter((name): name is string => Boolean(name));
             return (
                 <>
                     <div>
                         <strong>Source:</strong> {step.knowledge_source_name ?? "search index"}
                     </div>
                     <div className={styles.tQuery}>{search}</div>
-                    {sourceFields.length > 0 && (
-                        <div className={styles.tPropRow}>
-                            {sourceFields.map(name => (
-                                <span className={styles.tProp} key={name}>
-                                    {name}
-                                </span>
-                            ))}
-                        </div>
-                    )}
                 </>
             );
         }
@@ -131,27 +119,73 @@ interface Props {
 }
 
 export const AgentPlan: React.FC<Props> = ({ query_plan }) => {
+    const iterations = React.useMemo(() => {
+        if (!query_plan || query_plan.length === 0) {
+            return [] as QueryPlanStep[][];
+        }
+
+        const planningIndices = query_plan.reduce<number[]>((indices, step, index) => {
+            if (step.type === "modelQueryPlanning") {
+                indices.push(index);
+            }
+            return indices;
+        }, []);
+
+        if (planningIndices.length <= 1) {
+            return [query_plan];
+        }
+
+        const iterationsList: QueryPlanStep[][] = [];
+        const prePlanningSteps = planningIndices[0] > 0 ? query_plan.slice(0, planningIndices[0]) : [];
+
+        planningIndices.forEach((planningIndex, idx) => {
+            const nextPlanningIndex = planningIndices[idx + 1] ?? query_plan.length;
+            const iterationSteps = query_plan.slice(planningIndex, nextPlanningIndex);
+
+            if (idx === 0 && prePlanningSteps.length > 0) {
+                iterationsList.push([...prePlanningSteps, ...iterationSteps]);
+            } else if (iterationSteps.length > 0) {
+                iterationsList.push(iterationSteps);
+            }
+        });
+
+        return iterationsList;
+    }, [query_plan]);
+
+    if (iterations.length === 0) {
+        return null;
+    }
+
     return (
         <div>
-            <div className={styles.header}>Execution steps</div>
-            <table className={styles.subqueriesTable}>
-                <thead>
-                    <tr>
-                        <th>Step</th>
-                        <th>Details</th>
-                        <th>Elapsed MS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {query_plan.map(step => (
-                        <tr key={step.id}>
-                            <td>{getStepLabel(step)}</td>
-                            <td>{renderDetail(step)}</td>
-                            <td title={step.query_time ?? undefined}>{step.elapsed_ms ?? "—"}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {iterations.map((iterationSteps, iterationIndex) => {
+                const hasMultipleIterations = iterations.length > 1;
+                const headerLabel = hasMultipleIterations ? `Iteration ${iterationIndex + 1} Execution steps` : "Execution steps";
+
+                return (
+                    <div className={styles.iterationSection} key={`iteration-${iterationIndex}`}>
+                        <div className={styles.header}>{headerLabel}</div>
+                        <table className={styles.subqueriesTable}>
+                            <thead>
+                                <tr>
+                                    <th>Step</th>
+                                    <th>Details</th>
+                                    <th>Elapsed MS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {iterationSteps.map(step => (
+                                    <tr key={step.id}>
+                                        <td>{getStepLabel(step)}</td>
+                                        <td>{renderDetail(step)}</td>
+                                        <td title={step.query_time ?? undefined}>{step.elapsed_ms ?? "—"}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                );
+            })}
         </div>
     );
 };
