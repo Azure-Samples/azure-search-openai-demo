@@ -48,6 +48,7 @@ export interface SettingsProps {
     showAgenticRetrievalOption?: boolean;
     useAgenticRetrieval?: boolean;
     llmCustomizationEnabled?: boolean;
+    hideMinimalRetrievalReasoningOption?: boolean;
 }
 
 export const Settings = ({
@@ -88,7 +89,8 @@ export const Settings = ({
     showSuggestFollowupQuestions,
     showAgenticRetrievalOption,
     useAgenticRetrieval,
-    llmCustomizationEnabled = true
+    llmCustomizationEnabled = true,
+    hideMinimalRetrievalReasoningOption = false
 }: SettingsProps) => {
     const { t } = useTranslation();
 
@@ -124,6 +126,12 @@ export const Settings = ({
     const shouldStreamFieldId = useId("shouldStreamField");
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
     const suggestFollowupQuestionsFieldId = useId("suggestFollowupQuestionsField");
+
+    const retrievalReasoningOptions: IDropdownOption[] = [
+        ...(!hideMinimalRetrievalReasoningOption ? [{ key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal") }] : []),
+        { key: "low", text: t("labels.retrievalReasoningEffortOptions.low") },
+        { key: "medium", text: t("labels.retrievalReasoningEffortOptions.medium") }
+    ];
 
     const renderLabel = (props: RenderLabelType | undefined, labelId: string, fieldId: string, helpText: string) => (
         <HelpCallout labelId={labelId} fieldId={fieldId} helpText={helpText} label={props?.label} />
@@ -227,11 +235,7 @@ export const Settings = ({
                         onChange("retrievalReasoningEffort", option?.key?.toString() ?? retrievalReasoningEffort)
                     }
                     aria-labelledby={retrievalReasoningEffortId}
-                    options={[
-                        { key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal") },
-                        { key: "low", text: t("labels.retrievalReasoningEffortOptions.low") },
-                        { key: "medium", text: t("labels.retrievalReasoningEffortOptions.medium") }
-                    ]}
+                    options={retrievalReasoningOptions}
                     onRenderLabel={props =>
                         renderLabel(props, retrievalReasoningEffortId, retrievalReasoningEffortFieldId, t("helpTexts.retrievalReasoningEffort"))
                     }

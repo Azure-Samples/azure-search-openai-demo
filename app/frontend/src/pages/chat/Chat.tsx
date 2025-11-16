@@ -83,6 +83,7 @@ const Chat = () => {
     const [showFollowupQuestionsOption, setShowFollowupQuestionsOption] = useState<boolean>(true);
     const [showLLMOptions, setShowLLMOptions] = useState<boolean>(true);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
+    const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
 
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
@@ -134,6 +135,10 @@ const Chat = () => {
             setShowLLMOptions(config.showLLMOptions);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
+            }
+            setHideMinimalRetrievalReasoningOption(config.webSourceEnabled);
+            if (config.webSourceEnabled) {
+                setRetrievalReasoningEffort(current => (current === "minimal" ? "low" : current));
             }
         });
     };
@@ -314,7 +319,7 @@ const Chat = () => {
                 setResultsMergeStrategy(value);
                 break;
             case "retrievalReasoningEffort":
-                setRetrievalReasoningEffort(value);
+                setRetrievalReasoningEffort(hideMinimalRetrievalReasoningOption && value === "minimal" ? "low" : value);
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -567,6 +572,7 @@ const Chat = () => {
                         showSuggestFollowupQuestions={showFollowupQuestionsOption}
                         showAgenticRetrievalOption={showAgenticRetrievalOption}
                         useAgenticRetrieval={useAgenticRetrieval}
+                        hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                         llmCustomizationEnabled={showLLMOptions}
                         onChange={handleSettingsChange}
                     />

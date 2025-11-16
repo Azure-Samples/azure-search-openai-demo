@@ -306,6 +306,7 @@ def config():
             "ragSendImageSources": current_app.config[CONFIG_RAG_SEND_IMAGE_SOURCES],
             "showFollowupQuestionsOption": not use_web_source,
             "showLLMOptions": not use_web_source,
+            "webSourceEnabled": use_web_source,
         }
     )
 

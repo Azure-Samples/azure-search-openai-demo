@@ -111,6 +111,7 @@ export type Config = {
     ragSendImageSources: boolean;
     showFollowupQuestionsOption: boolean;
     showLLMOptions: boolean;
+    webSourceEnabled: boolean;
 };
 
 export type SimpleAPIResponse = {

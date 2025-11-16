@@ -59,6 +59,7 @@ export function Component(): JSX.Element {
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
     const [showLLMOptions, setShowLLMOptions] = useState<boolean>(true);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
+    const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -114,6 +115,10 @@ export function Component(): JSX.Element {
             setShowLLMOptions(config.showLLMOptions);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
+            }
+            setHideMinimalRetrievalReasoningOption(config.webSourceEnabled);
+            if (config.webSourceEnabled) {
+                setRetrievalReasoningEffort(current => (current === "minimal" ? "low" : current));
             }
         });
     };
@@ -210,7 +215,7 @@ export function Component(): JSX.Element {
                 setResultsMergeStrategy(value);
                 break;
             case "retrievalReasoningEffort":
-                setRetrievalReasoningEffort(value);
+                setRetrievalReasoningEffort(hideMinimalRetrievalReasoningOption && value === "minimal" ? "low" : value);
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -379,6 +384,7 @@ export function Component(): JSX.Element {
                     requireAccessControl={requireAccessControl}
                     showAgenticRetrievalOption={showAgenticRetrievalOption}
                     useAgenticRetrieval={useAgenticRetrieval}
+                    hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                     llmCustomizationEnabled={showLLMOptions}
                     onChange={handleSettingsChange}
                 />
