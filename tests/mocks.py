@@ -445,59 +445,58 @@ def mock_retrieval_response():
         ],
     )
 
+
 def mock_retrieval_response_with_web():
     return KnowledgeBaseRetrievalResponse(
-                response=[
-                    KnowledgeBaseMessage(
-                        role="assistant",
-                        content=[
-                            KnowledgeBaseMessageTextContent(
-                                text="There is a whistleblower policy. [ref_id:0] You can also visit [ref_id:1] for more information."
-                            )
-                        ],
+        response=[
+            KnowledgeBaseMessage(
+                role="assistant",
+                content=[
+                    KnowledgeBaseMessageTextContent(
+                        text="There is a whistleblower policy. [ref_id:0] You can also visit [ref_id:1] for more information."
                     )
                 ],
-                activity=[
-                    KnowledgeBaseModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
-                    KnowledgeBaseSearchIndexActivityRecord(
-                        id=1,
-                        knowledge_source_name="index",
-                        search_index_arguments=KnowledgeBaseSearchIndexActivityArguments(search="whistleblower query"),
-                        count=10,
-                        elapsed_ms=50,
-                    ),
-                    KnowledgeBaseWebActivityRecord(
-                        id=2,
-                        knowledge_source_name="web",
-                        web_arguments=KnowledgeBaseWebActivityArguments(search="contoso policy"),
-                        count=1,
-                        elapsed_ms=100,
-                    ),
-                ],
-                references=[
-                    KnowledgeBaseSearchIndexReference(
-                        id=0,
-                        activity_source=1,
-                        doc_key="file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
-                        reranker_score=3.4577205181121826,
-                        source_data={
-                            "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
-                            "content": "There is a whistleblower policy.",
-                            "sourcepage": "Benefit_Options-2.pdf",
-                            "sourcefile": "Benefit_Options.pdf",
-                        },
-                    ),
-                    KnowledgeBaseWebReference(
-                        id=1,
-                        activity_source=2,
-                        url="https://contoso.example",
-                        title="Contoso site",
-                        snippet="Contoso policy overview",
-                    ),
-                ],
             )
-
-
+        ],
+        activity=[
+            KnowledgeBaseModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
+            KnowledgeBaseSearchIndexActivityRecord(
+                id=1,
+                knowledge_source_name="index",
+                search_index_arguments=KnowledgeBaseSearchIndexActivityArguments(search="whistleblower query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+            KnowledgeBaseWebActivityRecord(
+                id=2,
+                knowledge_source_name="web",
+                web_arguments=KnowledgeBaseWebActivityArguments(search="contoso policy"),
+                count=1,
+                elapsed_ms=100,
+            ),
+        ],
+        references=[
+            KnowledgeBaseSearchIndexReference(
+                id=0,
+                activity_source=1,
+                doc_key="file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                reranker_score=3.4577205181121826,
+                source_data={
+                    "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                    "content": "There is a whistleblower policy.",
+                    "sourcepage": "Benefit_Options-2.pdf",
+                    "sourcefile": "Benefit_Options.pdf",
+                },
+            ),
+            KnowledgeBaseWebReference(
+                id=1,
+                activity_source=2,
+                url="https://contoso.example",
+                title="Contoso site",
+                snippet="Contoso policy overview",
+            ),
+        ],
+    )
 
 
 def mock_retrieval_response_with_sharepoint():

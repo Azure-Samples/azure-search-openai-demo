@@ -10,7 +10,6 @@ from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
     ChatCompletionMessageParam,
-    ChatCompletionToolParam,
 )
 from openai.types.chat.chat_completion import Choice
 from openai.types.chat.chat_completion_message import ChatCompletionMessage
@@ -276,8 +275,9 @@ class ChatReadRetrieveReadApproach(Approach):
                         )
                     ],
                 )
+
             return (extra_info, return_answer())
-    
+
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
             self.get_system_prompt_variables(overrides.get("prompt_template"))
@@ -347,9 +347,11 @@ class ChatReadRetrieveReadApproach(Approach):
             chatgpt_model=self.chatgpt_model,
             chatgpt_deployment=self.chatgpt_deployment,
             user_query=original_user_query,
-            response_token_limit=self.get_response_token_limit(self.chatgpt_model, 100), # Setting too low risks malformed JSON, setting too high may affect performance
+            response_token_limit=self.get_response_token_limit(
+                self.chatgpt_model, 100
+            ),  # Setting too low risks malformed JSON, setting too high may affect performance
             tools=self.query_rewrite_tools,
-            temperature=0.0, # Minimize creativity for search query generation
+            temperature=0.0,  # Minimize creativity for search query generation
             no_response_token=self.NO_RESPONSE,
         )
 
@@ -438,7 +440,7 @@ class ChatReadRetrieveReadApproach(Approach):
         retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
         if self.use_web_source and retrieval_reasoning_effort == "minimal":
             raise Exception("Web source cannot be used with minimal retrieval reasoning effort.")
-        
+
         agentic_results = await self.run_agentic_retrieval(
             messages=messages,
             agent_client=self.agent_client,
@@ -501,6 +503,6 @@ class ChatReadRetrieveReadApproach(Approach):
                     deployment=self.chatgpt_deployment,
                     usage=agentic_results.rewrite_result.completion.usage,
                     reasoning_effort=agentic_results.rewrite_result.reasoning_effort,
-                )
+                ),
             )
         return extra_info

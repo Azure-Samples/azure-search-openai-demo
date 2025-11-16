@@ -362,4 +362,3 @@ def test_replace_all_ref_ids_mixed(chat_approach):
     # ref_id:999 doesn't exist, should remain unchanged
     assert "[ref_id:999]" in result
     assert result == "Check [page1.pdf] and [https://example.com] and also [ref_id:999]."
-

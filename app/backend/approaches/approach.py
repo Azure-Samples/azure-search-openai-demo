@@ -19,14 +19,14 @@ from azure.search.documents.knowledgebases.models import (
     KnowledgeBaseSearchIndexReference,
     KnowledgeBaseWebActivityRecord,
     KnowledgeBaseWebReference,
+    KnowledgeRetrievalLowReasoningEffort,
+    KnowledgeRetrievalMediumReasoningEffort,
+    KnowledgeRetrievalMinimalReasoningEffort,
     KnowledgeRetrievalSemanticIntent,
     KnowledgeSourceParams,
     RemoteSharePointKnowledgeSourceParams,
     SearchIndexKnowledgeSourceParams,
     WebKnowledgeSourceParams,
-    KnowledgeRetrievalMinimalReasoningEffort,
-    KnowledgeRetrievalMediumReasoningEffort,
-    KnowledgeRetrievalLowReasoningEffort
 )
 from azure.search.documents.models import (
     QueryCaptionResult,
@@ -135,12 +135,14 @@ class SharePointResult:
             "search_agent_query": self.search_agent_query,
         }
 
+
 @dataclass
 class RewriteQueryResult:
     query: str
     messages: list[ChatCompletionMessageParam]
     completion: ChatCompletion
     reasoning_effort: ChatCompletionReasoningEffort
+
 
 @dataclass
 class AgenticRetrievalResults:
@@ -157,22 +159,22 @@ class AgenticRetrievalResults:
         """Get all results (documents, web, and SharePoint) in their original reference order."""
         # Combine all results with their ref_ids
         all_results: list[tuple[str, dict[str, Any]]] = []
-        
+
         for doc in self.documents:
             if doc.ref_id:
                 all_results.append((doc.ref_id, doc.serialize_for_results()))
-        
+
         for web in self.web_results:
             if web.id:
                 all_results.append((str(web.id), web.serialize_for_results()))
-        
+
         for sp in self.sharepoint_results:
             if sp.id:
                 all_results.append((str(sp.id), sp.serialize_for_results()))
-        
+
         # Sort by ref_id (numeric order)
-        all_results.sort(key=lambda x: int(x[0]) if x[0].isdigit() else float('inf'))
-        
+        all_results.sort(key=lambda x: int(x[0]) if x[0].isdigit() else float("inf"))
+
         return [result for _, result in all_results]
 
 
@@ -228,6 +230,7 @@ class TokenUsageProps:
 class GPTReasoningModelSupport:
     streaming: bool
     minimal_effort: bool
+
 
 class Approach(ABC):
     # List of GPT reasoning models support
@@ -451,7 +454,7 @@ class Approach(ABC):
         access_token: Optional[str] = None,
         use_web_source: bool = False,
         use_sharepoint_source: bool = False,
-        retrieval_reasoning_effort: Optional[str] = None
+        retrieval_reasoning_effort: Optional[str] = None,
     ) -> AgenticRetrievalResults:
         # STEP 1: Invoke agentic retrieval
 
@@ -487,7 +490,7 @@ class Approach(ABC):
                     knowledge_source_name="sharepoint",
                     include_references=True,
                     include_reference_source_data=True,
-                    always_query_source=True
+                    always_query_source=True,
                 )
             )
 
@@ -505,16 +508,14 @@ class Approach(ABC):
                 chatgpt_model=self.chatgpt_model,
                 chatgpt_deployment=self.chatgpt_deployment,
                 user_query=original_user_query,
-                response_token_limit=self.get_response_token_limit(self.chatgpt_model, 100), # Setting too low risks malformed JSON, setting too high may affect performance
+                response_token_limit=self.get_response_token_limit(
+                    self.chatgpt_model, 100
+                ),  # Setting too low risks malformed JSON, setting too high may affect performance
                 tools=self.query_rewrite_tools,
-                temperature=0.0, # Minimize creativity for search query generation
+                temperature=0.0,  # Minimize creativity for search query generation
                 no_response_token=self.QUERY_REWRITE_NO_RESPONSE,
             )
-            agentic_retrieval_input["intents"] = [
-                KnowledgeRetrievalSemanticIntent(
-                    search=rewrite_result.query
-                )
-            ]
+            agentic_retrieval_input["intents"] = [KnowledgeRetrievalSemanticIntent(search=rewrite_result.query)]
             agentic_retrieval_input["output_mode"] = "extractiveData"
         else:
             agentic_retrieval_input["messages"] = [
@@ -560,9 +561,7 @@ class Approach(ABC):
 
         # No refs? we're done
         if not (response and response.references):
-            return AgenticRetrievalResults(
-                response=response, documents=[], web_results=[], sharepoint_results=[]
-            )
+            return AgenticRetrievalResults(response=response, documents=[], web_results=[], sharepoint_results=[])
 
         # Extract references
         ref_order: dict[str, int] = {}
@@ -571,7 +570,9 @@ class Approach(ABC):
             if ref_id is not None:
                 ref_order[str(ref_id)] = index
 
-        refs = [r for r in response.references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")]
+        refs = [
+            r for r in response.references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")
+        ]
         documents: list[Document] = []
         doc_to_ref_id: dict[str, int] = {}
         # Create documents from reference source data
@@ -630,7 +631,12 @@ class Approach(ABC):
 
         # Extract answer from response if web knowledge source provided one
         answer = None
-        if retrieval_reasoning_effort != "minimal" and response.response and len(response.response) > 0 and len(response.response[0].content) > 0:
+        if (
+            retrieval_reasoning_effort != "minimal"
+            and response.response
+            and len(response.response) > 0
+            and len(response.response[0].content) > 0
+        ):
             content = response.response[0].content[0]
             if isinstance(content, KnowledgeBaseMessageTextContent):
                 raw_answer = content.text
@@ -643,7 +649,7 @@ class Approach(ABC):
             web_results=web_results,
             sharepoint_results=sharepoint_results,
             answer=answer,
-            rewrite_result=rewrite_result
+            rewrite_result=rewrite_result,
         )
 
     def replace_all_ref_ids(

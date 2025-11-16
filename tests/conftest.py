@@ -256,7 +256,9 @@ def mock_openai_chatcompletion(monkeypatch):
                     print(f"DEBUG: System message content length: {len(content)}")
                     print(f"DEBUG: Contains followup?: {'Generate 3 very brief follow-up questions' in content}")
                     if "Generate 3 very brief follow-up questions" in content:
-                        answer = "The capital of France is Paris. [Benefit_Options-2.pdf]. <<What is the capital of Spain?>>"
+                        answer = (
+                            "The capital of France is Paris. [Benefit_Options-2.pdf]. <<What is the capital of Spain?>>"
+                        )
                         break
         if "stream" in kwargs and kwargs["stream"] is True:
             return AsyncChatCompletionIterator(answer, reasoning, completion_usage)

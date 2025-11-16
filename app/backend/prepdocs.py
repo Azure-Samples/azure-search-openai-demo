@@ -208,7 +208,6 @@ if __name__ == "__main__":  # pragma: no cover
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
     use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
     use_sharepoint_source = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
-    
 
     # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
     if tenant_id := os.getenv("AZURE_TENANT_ID"):

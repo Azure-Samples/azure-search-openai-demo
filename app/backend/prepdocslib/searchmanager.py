@@ -493,10 +493,10 @@ class SearchManager:
                 field_names.extend(["oids", "groups"])
             if self.search_images:
                 field_names.append("images/url")
-            
+
             # Create field references using the new SDK pattern
             source_data_fields = [SearchIndexFieldReference(name=field) for field in field_names]
-            
+
             async with self.search_info.create_search_index_client() as search_index_client:
                 search_index_knowledge_source = SearchIndexKnowledgeSource(
                     name=self.search_info.index_name,  # Use the same name for convenience
@@ -513,18 +513,16 @@ class SearchManager:
                 knowledge_sources = [
                     KnowledgeSourceReference(name=search_index_knowledge_source.name),
                 ]
-                
+
                 if self.use_web_source:
                     logger.info("Adding web knowledge source to the knowledge base")
                     web_knowledge_source = WebKnowledgeSource(
                         name="web",
                         description="Default web knowledge source",
                     )
-                    await search_index_client.create_or_update_knowledge_source(
-                        knowledge_source=web_knowledge_source
-                    )
+                    await search_index_client.create_or_update_knowledge_source(knowledge_source=web_knowledge_source)
                     knowledge_sources.append(KnowledgeSourceReference(name=web_knowledge_source.name))
-                
+
                 if self.use_sharepoint_source:
                     logger.info("Adding SharePoint knowledge source to the knowledge base")
                     sharepoint_knowledge_source = RemoteSharePointKnowledgeSource(
@@ -549,7 +547,7 @@ class SearchManager:
                                 )
                             )
                         ],
-                        output_mode=KnowledgeRetrievalOutputMode.ANSWER_SYNTHESIS
+                        output_mode=KnowledgeRetrievalOutputMode.ANSWER_SYNTHESIS,
                     )
                 )
 
