@@ -162,6 +162,7 @@ async def test_app_config_default(monkeypatch, minimal_env):
         assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is True
         assert result["showVectorOption"] is True
+        assert result["defaultRetrievalReasoningEffort"] == "low"
 
 
 @pytest.mark.asyncio

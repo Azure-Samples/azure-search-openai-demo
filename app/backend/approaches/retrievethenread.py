@@ -50,6 +50,7 @@ class RetrieveThenReadApproach(Approach):
         user_blob_manager: Optional[AdlsBlobManager] = None,
         use_web_source: bool = False,
         use_sharepoint_source: bool = False,
+        retrieval_reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -78,6 +79,7 @@ class RetrieveThenReadApproach(Approach):
         self.user_blob_manager = user_blob_manager
         self.use_web_source = use_web_source
         self.use_sharepoint_source = use_sharepoint_source
+        self.retrieval_reasoning_effort = retrieval_reasoning_effort
 
     async def run(
         self,
@@ -235,6 +237,9 @@ class RetrieveThenReadApproach(Approach):
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
+        retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
+        if self.use_web_source and retrieval_reasoning_effort == "minimal":
+            raise Exception("Web source cannot be used with minimal retrieval reasoning effort.")
 
         agentic_results = await self.run_agentic_retrieval(
             messages,
@@ -247,6 +252,7 @@ class RetrieveThenReadApproach(Approach):
             access_token=access_token,
             use_web_source=self.use_web_source,
             use_sharepoint_source=self.use_sharepoint_source,
+            retrieval_reasoning_effort=retrieval_reasoning_effort,
         )
 
         data_points = await self.get_sources_content(
@@ -256,6 +262,7 @@ class RetrieveThenReadApproach(Approach):
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
             web_results=agentic_results.web_results,
+            sharepoint_results=agentic_results.sharepoint_results,
         )
 
         extra_info = ExtraInfo(
@@ -286,5 +293,18 @@ class RetrieveThenReadApproach(Approach):
             ],
             answer=agentic_results.answer,
         )
+        if retrieval_reasoning_effort == "minimal" and agentic_results.rewrite_result:
+            extra_info.thoughts.insert(
+                0,
+                self.format_thought_step_for_chatcompletion(
+                    title="Prompt to generate search query",
+                    messages=agentic_results.rewrite_result.messages,
+                    overrides=overrides,
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    usage=agentic_results.rewrite_result.completion.usage,
+                    reasoning_effort=agentic_results.rewrite_result.reasoning_effort,
+                ),
+            )
 
         return extra_info

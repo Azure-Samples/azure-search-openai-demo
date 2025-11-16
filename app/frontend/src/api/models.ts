@@ -91,6 +91,7 @@ export type ChatAppRequest = {
 
 export type Config = {
     defaultReasoningEffort: string;
+    defaultRetrievalReasoningEffort: string;
     showMultimodalOptions: boolean;
     showSemanticRankerOption: boolean;
     showQueryRewritingOption: boolean;

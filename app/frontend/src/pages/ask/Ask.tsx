@@ -116,10 +116,9 @@ export function Component(): JSX.Element {
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
+            const defaultRetrievalEffort = config.defaultRetrievalReasoningEffort ?? "minimal";
             setHideMinimalRetrievalReasoningOption(config.webSourceEnabled);
-            if (config.webSourceEnabled) {
-                setRetrievalReasoningEffort(current => (current === "minimal" ? "low" : current));
-            }
+            setRetrievalReasoningEffort(config.webSourceEnabled && defaultRetrievalEffort === "minimal" ? "low" : defaultRetrievalEffort);
         });
     };
 

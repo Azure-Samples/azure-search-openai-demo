@@ -100,6 +100,8 @@ param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
 param defaultReasoningEffort string // Set in main.parameters.json
+@description('Controls the default retrieval reasoning effort for agentic retrieval (minimal, low, or medium).')
+param defaultRetrievalReasoningEffort string = 'minimal'
 param useAgenticRetrieval bool // Set in main.parameters.json
 
 param userStorageAccountName string = ''
@@ -500,6 +502,7 @@ var appEnvVariables = {
   AZURE_OPENAI_EMB_DIMENSIONS: embedding.dimensions
   AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
   AZURE_OPENAI_REASONING_EFFORT: defaultReasoningEffort
+  AZURE_SEARCH_AGENTIC_RETRIEVAL_REASONING_EFFORT: defaultRetrievalReasoningEffort
   // Specific to Azure OpenAI
   AZURE_OPENAI_SERVICE: isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
@@ -1451,6 +1454,7 @@ output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.mode
 output AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.deploymentName : ''
 output AZURE_OPENAI_SEARCHAGENT_MODEL string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.modelName : ''
 output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
+output AZURE_SEARCH_AGENT_RETRIEVAL_REASONING_EFFORT string = defaultRetrievalReasoningEffort
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 

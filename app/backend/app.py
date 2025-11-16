@@ -59,6 +59,7 @@ from config import (
     CONFIG_CHAT_HISTORY_COSMOS_ENABLED,
     CONFIG_CREDENTIAL,
     CONFIG_DEFAULT_REASONING_EFFORT,
+    CONFIG_DEFAULT_RETRIEVAL_REASONING_EFFORT,
     CONFIG_GLOBAL_BLOB_MANAGER,
     CONFIG_INGESTER,
     CONFIG_LANGUAGE_PICKER_ENABLED,
@@ -291,6 +292,7 @@ def config():
             "showReasoningEffortOption": current_app.config[CONFIG_REASONING_EFFORT_ENABLED],
             "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED] and not use_web_source,
             "defaultReasoningEffort": current_app.config[CONFIG_DEFAULT_REASONING_EFFORT],
+            "defaultRetrievalReasoningEffort": current_app.config[CONFIG_DEFAULT_RETRIEVAL_REASONING_EFFORT],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],
             "showUserUpload": current_app.config[CONFIG_USER_UPLOAD_ENABLED],
             "showLanguagePicker": current_app.config[CONFIG_LANGUAGE_PICKER_ENABLED],
@@ -474,6 +476,7 @@ async def setup_clients():
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
     USE_AGENTIC_RETRIEVAL = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
+    AZURE_SEARCH_AGENTIC_RETRIEVAL_REASONING_EFFORT = os.getenv("AZURE_SEARCH_AGENTIC_RETRIEVAL_REASONING_EFFORT", "low")
     USE_VECTORS = os.getenv("USE_VECTORS", "").lower() != "false"
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
@@ -656,6 +659,7 @@ async def setup_clients():
         AZURE_SEARCH_QUERY_REWRITING == "true" and AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
     )
     current_app.config[CONFIG_DEFAULT_REASONING_EFFORT] = OPENAI_REASONING_EFFORT
+    current_app.config[CONFIG_DEFAULT_RETRIEVAL_REASONING_EFFORT] = AZURE_SEARCH_AGENTIC_RETRIEVAL_REASONING_EFFORT
     current_app.config[CONFIG_REASONING_EFFORT_ENABLED] = OPENAI_CHATGPT_MODEL in Approach.GPT_REASONING_MODELS
     current_app.config[CONFIG_STREAMING_ENABLED] = (
         OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS
@@ -708,6 +712,7 @@ async def setup_clients():
         user_blob_manager=user_blob_manager,
         use_web_source=current_app.config[CONFIG_WEB_SOURCE_ENABLED],
         use_sharepoint_source=current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED],
+        retrieval_reasoning_effort=AZURE_SEARCH_AGENTIC_RETRIEVAL_REASONING_EFFORT,
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -736,6 +741,7 @@ async def setup_clients():
         user_blob_manager=user_blob_manager,
         use_web_source=current_app.config[CONFIG_WEB_SOURCE_ENABLED],
         use_sharepoint_source=current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED],
+        retrieval_reasoning_effort=AZURE_SEARCH_AGENTIC_RETRIEVAL_REASONING_EFFORT,
     )
 
 
