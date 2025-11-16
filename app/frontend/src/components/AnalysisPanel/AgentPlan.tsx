@@ -156,7 +156,8 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, description: _descripti
                           output: "Answer Synthesis Output Tokens",
                           total: "Answer Synthesis Total"
                       },
-                      totalLabel: "Answer Synthesis Total"
+                      totalLabel: "Answer Synthesis Total",
+                      tone: "primary"
                   }
               ]
             : [];

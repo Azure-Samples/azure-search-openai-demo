@@ -20,6 +20,84 @@ type SupplementaryUsage = {
     tokenUsage: TokenUsage;
     labels?: Partial<Record<TokenLabelKey, string>>;
     totalLabel?: string;
+    tone?: TokenUsageValueBarTone;
+};
+
+type PercentBase = number | undefined;
+
+const calcPercent = (value: number, base: PercentBase) => {
+    if (!base) {
+        return "0%";
+    }
+    const normalized = Math.max(value, 0);
+    const percent = Math.min((normalized / base) * 100, 100);
+    return `${percent}%`;
+};
+
+export interface TokenUsageSegmentLabels {
+    prompt: string;
+    output: string;
+    reasoning?: string;
+}
+
+interface TokenUsageStackedBarProps {
+    tokenUsage: TokenUsage;
+    labels: TokenUsageSegmentLabels;
+    includeReasoning?: boolean;
+}
+
+export const TokenUsageStackedBar: React.FC<TokenUsageStackedBarProps> = ({ tokenUsage, labels, includeReasoning = false }) => {
+    const base = tokenUsage.total_tokens || 1;
+    const reasoningValue = includeReasoning ? tokenUsage.reasoning_tokens : 0;
+    const outputValue = tokenUsage.completion_tokens - reasoningValue;
+    const safeOutputValue = Math.max(outputValue, 0);
+
+    return (
+        <div className={styles.primaryBarContainer}>
+            <div className={`${styles.tokenBar} ${styles.promptBar}`} style={{ width: calcPercent(tokenUsage.prompt_tokens, base) }}>
+                <span className={styles.tokenLabel}>
+                    {labels.prompt}: {tokenUsage.prompt_tokens}
+                </span>
+            </div>
+            {includeReasoning && (
+                <div className={`${styles.tokenBar} ${styles.reasoningBar}`} style={{ width: calcPercent(reasoningValue, base) }}>
+                    <span className={styles.tokenLabel}>
+                        {labels.reasoning ?? "Reasoning"}: {reasoningValue}
+                    </span>
+                </div>
+            )}
+            <div className={`${styles.tokenBar} ${styles.outputBar}`} style={{ width: calcPercent(safeOutputValue, base) }}>
+                <span className={styles.tokenLabel}>
+                    {labels.output}: {safeOutputValue}
+                </span>
+            </div>
+        </div>
+    );
+};
+
+export type TokenUsageValueBarTone = "primary" | "secondary";
+type TokenUsageValueBarGrouping = "grouped" | "standalone";
+
+interface TokenUsageValueBarProps {
+    label: string;
+    value: number;
+    base?: PercentBase;
+    tone?: TokenUsageValueBarTone;
+    grouping?: TokenUsageValueBarGrouping;
+}
+
+export const TokenUsageValueBar: React.FC<TokenUsageValueBarProps> = ({ label, value, base, tone = "primary", grouping = "standalone" }) => {
+    const toneClass = tone === "primary" ? styles.totalBar : styles.secondaryTotalBar;
+    const groupingClass = grouping === "grouped" ? styles.groupedTotalBar : styles.standaloneTotalBar;
+    const resolvedBase = base ?? (value || 1);
+
+    return (
+        <div className={`${styles.tokenBar} ${toneClass} ${groupingClass}`} style={{ width: calcPercent(value, resolvedBase) }}>
+            <span className={styles.tokenLabel}>
+                {label}: {value}
+            </span>
+        </div>
+    );
 };
 
 interface TokenUsageGraphProps {
@@ -43,110 +121,60 @@ export const TokenUsageGraph: React.FC<TokenUsageGraphProps> = ({
     additionalTotals,
     supplementaryUsages
 }) => {
-    const { prompt_tokens, completion_tokens, reasoning_tokens, total_tokens } = tokenUsage;
-
-    const calcPercent = (value: number, base: number = total_tokens) => {
-        if (!base) {
-            return "0%";
-        }
-        const percent = Math.min((value / base) * 100, 100);
-        return `${percent}%`;
-    };
+    const { total_tokens } = tokenUsage;
     const showPrimaryBars = variant !== "totalOnly";
     const promptLabel = labels?.prompt ?? "Prompt";
     const reasoningLabel = labels?.reasoning ?? "Reasoning";
     const outputLabel = labels?.output ?? "Output";
     const resolvedTotalLabel = labels?.total ?? totalLabel;
     const supplementary = supplementaryUsages ?? [];
-
-    const renderSegmentBars = (usage: TokenUsage, segmentLabels: { prompt: string; reasoning: string; output: string }, includeReasoning: boolean) => {
-        const segmentTotal = usage.total_tokens;
-        const reasoningValue = includeReasoning ? usage.reasoning_tokens : 0;
-        const outputValue = usage.completion_tokens - reasoningValue;
-        const safeOutputValue = Math.max(outputValue, 0);
-
-        return (
-            <div className={styles.primaryBarContainer} style={{ width: "100%" }}>
-                <div className={`${styles.tokenBar} ${styles.promptBar}`} style={{ width: calcPercent(usage.prompt_tokens, segmentTotal) }}>
-                    <span className={styles.tokenLabel}>
-                        {segmentLabels.prompt}: {usage.prompt_tokens}
-                    </span>
-                </div>
-                {includeReasoning && (
-                    <div className={`${styles.tokenBar} ${styles.reasoningBar}`} style={{ width: calcPercent(reasoningValue, segmentTotal) }}>
-                        <span className={styles.tokenLabel}>
-                            {segmentLabels.reasoning}: {reasoningValue}
-                        </span>
-                    </div>
-                )}
-                <div className={`${styles.tokenBar} ${styles.outputBar}`} style={{ width: calcPercent(safeOutputValue, segmentTotal) }}>
-                    <span className={styles.tokenLabel}>
-                        {segmentLabels.output}: {safeOutputValue}
-                    </span>
-                </div>
-            </div>
-        );
-    };
-
-    const mainTotalClass = `${styles.tokenBar} ${styles.totalBar} ${showPrimaryBars ? styles.groupedTotalBar : styles.standaloneTotalBar}`;
-    const mainTotal = (
-        <div className={mainTotalClass} style={{ width: calcPercent(total_tokens) }}>
-            <span className={styles.tokenLabel}>
-                {resolvedTotalLabel}: {total_tokens}
-            </span>
-        </div>
-    );
+    const includeReasoning = showPrimaryBars && Boolean(reasoningEffort) && tokenUsage.reasoning_tokens > 0;
 
     return (
         <div className={styles.tokenUsageGraph}>
             {title && <div className={styles.header}>{title}</div>}
             {showPrimaryBars ? (
                 <div className={`${styles.segmentWrapper} ${styles.segmentWrapperFirst}`}>
-                    {renderSegmentBars(
-                        tokenUsage,
-                        {
-                            prompt: promptLabel,
-                            reasoning: reasoningLabel,
-                            output: outputLabel
-                        },
-                        reasoningEffort != null && reasoningEffort !== ""
-                    )}
-                    {mainTotal}
+                    <TokenUsageStackedBar
+                        tokenUsage={tokenUsage}
+                        labels={{ prompt: promptLabel, output: outputLabel, reasoning: reasoningLabel }}
+                        includeReasoning={includeReasoning}
+                    />
+                    <TokenUsageValueBar label={resolvedTotalLabel} value={total_tokens} base={total_tokens} tone="primary" grouping="grouped" />
                 </div>
             ) : (
-                mainTotal
+                <TokenUsageValueBar label={resolvedTotalLabel} value={total_tokens} base={total_tokens} tone="primary" grouping="standalone" />
             )}
             {additionalTotals?.map(extra => (
-                <div
+                <TokenUsageValueBar
                     key={extra.label}
-                    className={`${styles.tokenBar} ${styles.secondaryTotalBar} ${styles.standaloneTotalBar}`}
-                    style={{ width: calcPercent(extra.value, extra.total ?? total_tokens) }}
-                >
-                    <span className={styles.tokenLabel}>
-                        {extra.label}: {extra.value}
-                    </span>
-                </div>
+                    label={extra.label}
+                    value={extra.value}
+                    base={extra.total ?? total_tokens}
+                    tone="secondary"
+                    grouping="standalone"
+                />
             ))}
             {supplementary.map((segment, index) => (
                 <div key={`${segment.totalLabel ?? "supplementary"}-${index}`} className={styles.segmentWrapper}>
-                    {showPrimaryBars &&
-                        renderSegmentBars(
-                            segment.tokenUsage,
-                            {
+                    {showPrimaryBars && (
+                        <TokenUsageStackedBar
+                            tokenUsage={segment.tokenUsage}
+                            labels={{
                                 prompt: segment.labels?.prompt ?? "Prompt",
-                                reasoning: segment.labels?.reasoning ?? "Reasoning",
-                                output: segment.labels?.output ?? "Output"
-                            },
-                            false
-                        )}
-                    <div
-                        className={`${styles.tokenBar} ${styles.secondaryTotalBar} ${showPrimaryBars ? styles.groupedTotalBar : styles.standaloneTotalBar}`}
-                        style={{ width: calcPercent(segment.tokenUsage.total_tokens, segment.tokenUsage.total_tokens || 1) }}
-                    >
-                        <span className={styles.tokenLabel}>{`${
-                            segment.labels?.total ?? segment.totalLabel ?? resolvedTotalLabel
-                        }: ${segment.tokenUsage.total_tokens}`}</span>
-                    </div>
+                                output: segment.labels?.output ?? "Output",
+                                reasoning: segment.labels?.reasoning ?? "Reasoning"
+                            }}
+                            includeReasoning={false}
+                        />
+                    )}
+                    <TokenUsageValueBar
+                        label={segment.labels?.total ?? segment.totalLabel ?? resolvedTotalLabel}
+                        value={segment.tokenUsage.total_tokens}
+                        base={segment.tokenUsage.total_tokens || 1}
+                        tone={segment.tone ?? "secondary"}
+                        grouping={showPrimaryBars ? "grouped" : "standalone"}
+                    />
                 </div>
             ))}
         </div>

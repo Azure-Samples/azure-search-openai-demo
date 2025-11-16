@@ -141,6 +141,10 @@
     gap: 4px;
 }
 
+.primaryBarContainer .tokenBar {
+    margin-bottom: 0;
+}
+
 .promptBar {
     background-color: #a82424;
     color: #ffffff; /* White text for contrast */
