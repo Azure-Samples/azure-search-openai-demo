@@ -1,4 +1,3 @@
-import json
 import re
 from collections.abc import AsyncGenerator, Awaitable
 from typing import Any, Optional, cast
@@ -33,7 +32,7 @@ class ChatReadRetrieveReadApproach(Approach):
     original user question, and search results to OpenAI to generate a response.
     """
 
-    NO_RESPONSE = "0"
+    NO_RESPONSE = Approach.QUERY_REWRITE_NO_RESPONSE
 
     def __init__(
         self,
@@ -62,6 +61,7 @@ class ChatReadRetrieveReadApproach(Approach):
         user_blob_manager: Optional[AdlsBlobManager] = None,
         use_web_source: bool = False,
         use_sharepoint_source: bool = False,
+        retrieval_reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
@@ -91,24 +91,7 @@ class ChatReadRetrieveReadApproach(Approach):
         self.user_blob_manager = user_blob_manager
         self.use_web_source = use_web_source
         self.use_sharepoint_source = use_sharepoint_source
-
-    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
-        response_message = chat_completion.choices[0].message
-
-        if response_message.tool_calls:
-            for tool in response_message.tool_calls:
-                if tool.type != "function":
-                    continue
-                function = tool.function
-                if function.name == "search_sources":
-                    arg = json.loads(function.arguments)
-                    search_query = arg.get("search_query", self.NO_RESPONSE)
-                    if search_query != self.NO_RESPONSE:
-                        return search_query
-        elif query_text := response_message.content:
-            if query_text.strip() != self.NO_RESPONSE:
-                return query_text
-        return user_query
+        self.retrieval_reasoning_effort = retrieval_reasoning_effort
 
     def extract_followup_questions(self, content: Optional[str]):
         if content is None:
@@ -156,12 +139,42 @@ class ChatReadRetrieveReadApproach(Approach):
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=True
         )
-        chat_coroutine = cast(Awaitable[AsyncStream[ChatCompletionChunk]], chat_coroutine)
         yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
 
         followup_questions_started = False
         followup_content = ""
-        async for event_chunk in await chat_coroutine:
+        chat_result = await chat_coroutine
+
+        if isinstance(chat_result, ChatCompletion):
+            message = chat_result.choices[0].message
+            content = message.content or ""
+            role = message.role or "assistant"
+
+            followup_questions: list[str] = []
+            if overrides.get("suggest_followup_questions"):
+                content, followup_questions = self.extract_followup_questions(content)
+                extra_info.followup_questions = followup_questions
+
+            if self.include_token_usage and extra_info.thoughts and chat_result.usage:
+                extra_info.thoughts[-1].update_token_usage(chat_result.usage)
+
+            delta_payload: dict[str, Any] = {"role": role}
+            if content:
+                delta_payload["content"] = content
+            yield {"delta": delta_payload}
+
+            yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+
+            if followup_questions:
+                yield {
+                    "delta": {"role": "assistant"},
+                    "context": {"context": extra_info, "followup_questions": followup_questions},
+                }
+            return
+
+        chat_result = cast(AsyncStream[ChatCompletionChunk], chat_result)
+
+        async for event_chunk in chat_result:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
@@ -321,30 +334,24 @@ class ChatReadRetrieveReadApproach(Approach):
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
 
-        query_messages = self.prompt_manager.render_prompt(
-            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
-        )
-        tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
-
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
 
-        chat_completion = cast(
-            ChatCompletion,
-            await self.create_chat_completion(
-                self.chatgpt_deployment,
-                self.chatgpt_model,
-                messages=query_messages,
-                overrides=overrides,
-                response_token_limit=self.get_response_token_limit(
-                    self.chatgpt_model, 100
-                ),  # Setting too low risks malformed JSON, setting too high may affect performance
-                temperature=0.0,  # Minimize creativity for search query generation
-                tools=tools,
-                reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
-            ),
+        rewrite_reasoning_effort = self.get_lowest_reasoning_effort(self.chatgpt_model)
+        rewrite_result = await self.rewrite_query(
+            prompt_template=self.query_rewrite_prompt,
+            prompt_variables={"user_query": original_user_query, "past_messages": messages[:-1]},
+            overrides=overrides,
+            chatgpt_model=self.chatgpt_model,
+            chatgpt_deployment=self.chatgpt_deployment,
+            user_query=original_user_query,
+            response_token_limit=self.get_response_token_limit(self.chatgpt_model, 100), # Setting too low risks malformed JSON, setting too high may affect performance
+            tools=self.query_rewrite_tools,
+            temperature=0.0, # Minimize creativity for search query generation
+            reasoning_effort=rewrite_reasoning_effort,
+            no_response_token=self.NO_RESPONSE,
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        query_text = rewrite_result.query
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -383,12 +390,12 @@ class ChatReadRetrieveReadApproach(Approach):
             thoughts=[
                 self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate search query",
-                    messages=query_messages,
+                    messages=rewrite_result.messages,
                     overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
-                    usage=chat_completion.usage,
-                    reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
+                    usage=rewrite_result.completion.usage,
+                    reasoning_effort=rewrite_reasoning_effort,
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -426,6 +433,9 @@ class ChatReadRetrieveReadApproach(Approach):
         results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
+        retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
+        if self.use_web_source and retrieval_reasoning_effort == "minimal":
+            raise ValueError("Web source cannot be used with minimal retrieval reasoning effort.")
         # if effort is minimal, then call the query rewriting step first and get back query
         
         agentic_results = await self.run_agentic_retrieval(

@@ -1,4 +1,5 @@
 import base64
+import json
 import re
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
@@ -218,6 +219,13 @@ class GPTReasoningModelSupport:
     minimal_effort: bool
 
 
+@dataclass
+class RewriteQueryResult:
+    query: str
+    messages: list[ChatCompletionMessageParam]
+    completion: ChatCompletion
+
+
 class Approach(ABC):
     # List of GPT reasoning models support
     GPT_REASONING_MODELS = {
@@ -232,6 +240,7 @@ class Approach(ABC):
     # Set a higher token limit for GPT reasoning models
     RESPONSE_DEFAULT_TOKEN_LIMIT = 1024
     RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT = 8192
+    QUERY_REWRITE_NO_RESPONSE = "0"
 
     def __init__(
         self,
@@ -349,6 +358,77 @@ class Approach(ABC):
 
         return qualified_documents
 
+    def extract_rewritten_query(
+        self,
+        chat_completion: ChatCompletion,
+        user_query: str,
+        no_response_token: Optional[str] = None,
+    ) -> str:
+        response_message = chat_completion.choices[0].message
+
+        if response_message.tool_calls:
+            for tool_call in response_message.tool_calls:
+                if tool_call.type != "function":
+                    continue
+                arguments_payload = tool_call.function.arguments or "{}"
+                try:
+                    parsed_arguments = json.loads(arguments_payload)
+                except json.JSONDecodeError:
+                    continue
+                search_query = parsed_arguments.get("search_query")
+                if search_query and (no_response_token is None or search_query != no_response_token):
+                    return search_query
+
+        if response_message.content:
+            candidate = response_message.content.strip()
+            if candidate and (no_response_token is None or candidate != no_response_token):
+                return candidate
+
+        return user_query
+
+    async def rewrite_query(
+        self,
+        *,
+        prompt_template: Any,
+        prompt_variables: dict[str, Any],
+        overrides: dict[str, Any],
+        chatgpt_model: str,
+        chatgpt_deployment: Optional[str],
+        user_query: str,
+        response_token_limit: int,
+        tools: Optional[list[ChatCompletionToolParam]] = None,
+        temperature: float = 0.0,
+        reasoning_effort: Optional[ChatCompletionReasoningEffort] = None,
+        no_response_token: Optional[str] = None,
+    ) -> RewriteQueryResult:
+        query_messages = self.prompt_manager.render_prompt(prompt_template, prompt_variables)
+
+        chat_completion = cast(
+            ChatCompletion,
+            await self.create_chat_completion(
+                chatgpt_deployment,
+                chatgpt_model,
+                messages=query_messages,
+                overrides=overrides,
+                response_token_limit=response_token_limit,
+                temperature=temperature,
+                tools=tools,
+                reasoning_effort=reasoning_effort,
+            ),
+        )
+
+        rewritten_query = self.extract_rewritten_query(
+            chat_completion,
+            user_query,
+            no_response_token=no_response_token,
+        )
+
+        return RewriteQueryResult(
+            query=rewritten_query,
+            messages=query_messages,
+            completion=chat_completion,
+        )
+
     async def run_agentic_retrieval(
         self,
         messages: list[ChatCompletionMessageParam],
@@ -360,7 +440,7 @@ class Approach(ABC):
         results_merge_strategy: Optional[str] = None,
         access_token: Optional[str] = None,
         use_web_source: bool = False,
-        use_sharepoint_source: bool = False,
+        use_sharepoint_source: bool = False
     ) -> AgenticRetrievalResults:
         # STEP 1: Invoke agentic retrieval
 
