@@ -502,7 +502,7 @@ var appEnvVariables = {
   AZURE_OPENAI_EMB_DIMENSIONS: embedding.dimensions
   AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
   AZURE_OPENAI_REASONING_EFFORT: defaultReasoningEffort
-  AZURE_SEARCH_AGENTIC_RETRIEVAL_REASONING_EFFORT: defaultRetrievalReasoningEffort
+  AGENTIC_RETRIEVAL_REASONING_EFFORT: defaultRetrievalReasoningEffort
   // Specific to Azure OpenAI
   AZURE_OPENAI_SERVICE: isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
