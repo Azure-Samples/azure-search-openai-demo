@@ -51,13 +51,7 @@ const renderDetail = (step: QueryPlanStep) => {
                 total_tokens: (step.input_tokens ?? 0) + (step.output_tokens ?? 0)
             };
 
-            return (
-                <TokenUsageGraph
-                    tokenUsage={usage}
-                    labels={{ prompt: "Input Tokens", output: "Output Tokens", total: "Total" }}
-                    title=""
-                />
-            );
+            return <TokenUsageGraph tokenUsage={usage} labels={{ prompt: "Input Tokens", output: "Output Tokens", total: "Total" }} title="" />;
         }
         case "searchIndex": {
             const search = step.search_index_arguments?.search ?? "—";
@@ -121,13 +115,7 @@ const renderDetail = (step: QueryPlanStep) => {
                 total_tokens: (step.input_tokens ?? 0) + (step.output_tokens ?? 0)
             };
 
-            return (
-                <TokenUsageGraph
-                    tokenUsage={usage}
-                    labels={{ prompt: "Input Tokens", output: "Output Tokens", total: "Total" }}
-                    title=""
-                />
-            );
+            return <TokenUsageGraph tokenUsage={usage} labels={{ prompt: "Input Tokens", output: "Output Tokens", total: "Total" }} title="" />;
         }
         default:
             return (
