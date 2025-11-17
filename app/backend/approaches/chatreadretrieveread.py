@@ -259,6 +259,10 @@ class ChatReadRetrieveReadApproach(Approach):
                 raise Exception(
                     "Streaming is not supported with agentic retrieval when retrieval reasoning effort is set to low or medium. Please disable streaming or increase the retrieval reasoning effort."
                 )
+            if should_stream and overrides.get("use_web_source"):
+                raise Exception(
+                    "Streaming is not supported with agentic retrieval when web source is enabled. Please disable streaming or web source."
+                )
             extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)

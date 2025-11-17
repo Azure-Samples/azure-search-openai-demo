@@ -293,7 +293,7 @@ def config():
             "showSemanticRankerOption": current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED],
             "showQueryRewritingOption": current_app.config[CONFIG_QUERY_REWRITING_ENABLED],
             "showReasoningEffortOption": current_app.config[CONFIG_REASONING_EFFORT_ENABLED],
-            "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED] and not use_web_source,
+            "streamingEnabled": current_app.config[CONFIG_STREAMING_ENABLED],
             "defaultReasoningEffort": current_app.config[CONFIG_DEFAULT_REASONING_EFFORT],
             "defaultRetrievalReasoningEffort": current_app.config[CONFIG_DEFAULT_RETRIEVAL_REASONING_EFFORT],
             "showVectorOption": current_app.config[CONFIG_VECTOR_SEARCH_ENABLED],

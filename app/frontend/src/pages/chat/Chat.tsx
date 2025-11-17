@@ -87,6 +87,8 @@ const Chat = () => {
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
     const retrievalReasoningDisablesStreaming = useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
+    const webSourceDisablesStreaming = useAgenticRetrieval && webSourceEnabled;
+    const streamingDisabledByOverrides = retrievalReasoningDisablesStreaming || webSourceDisablesStreaming;
 
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
@@ -195,6 +197,36 @@ const Chat = () => {
     })();
     const historyManager = useHistoryManager(historyProvider);
 
+    const updateStreamingPreference = (isStreamingEnabledOverride: boolean, disablesStreamingOverride: boolean) => {
+        if (!isStreamingEnabledOverride) {
+            setShouldStream(current => {
+                if (!forcedStreamingRef.current) {
+                    previousShouldStreamRef.current = current;
+                }
+                forcedStreamingRef.current = true;
+                return current ? false : current;
+            });
+            return;
+        }
+
+        if (disablesStreamingOverride) {
+            setShouldStream(current => {
+                if (!forcedStreamingRef.current) {
+                    previousShouldStreamRef.current = current;
+                }
+                forcedStreamingRef.current = true;
+                return current ? false : current;
+            });
+            return;
+        }
+
+        forcedStreamingRef.current = false;
+        setShouldStream(current => {
+            const desiredShouldStream = previousShouldStreamRef.current;
+            return current === desiredShouldStream ? current : desiredShouldStream;
+        });
+    };
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -297,34 +329,8 @@ const Chat = () => {
 
     // Preserve streaming preference when agentic retrieval forces streaming off.
     useEffect(() => {
-        if (!streamingEnabled) {
-            setShouldStream(current => {
-                if (!forcedStreamingRef.current) {
-                    previousShouldStreamRef.current = current;
-                }
-                forcedStreamingRef.current = true;
-                return current ? false : current;
-            });
-            return;
-        }
-
-        if (retrievalReasoningDisablesStreaming) {
-            setShouldStream(current => {
-                if (!forcedStreamingRef.current) {
-                    previousShouldStreamRef.current = current;
-                }
-                forcedStreamingRef.current = true;
-                return current ? false : current;
-            });
-            return;
-        }
-
-        forcedStreamingRef.current = false;
-        setShouldStream(current => {
-            const desiredShouldStream = previousShouldStreamRef.current;
-            return current === desiredShouldStream ? current : desiredShouldStream;
-        });
-    }, [retrievalReasoningDisablesStreaming, streamingEnabled]);
+        updateStreamingPreference(streamingEnabled, streamingDisabledByOverrides);
+    }, [streamingDisabledByOverrides, streamingEnabled]);
 
     const handleSettingsChange = (field: string, value: any) => {
         switch (field) {
@@ -349,9 +355,18 @@ const Chat = () => {
             case "resultsMergeStrategy":
                 setResultsMergeStrategy(value);
                 break;
-            case "retrievalReasoningEffort":
+            case "retrievalReasoningEffort": {
                 setRetrievalReasoningEffort(value);
+                let willEnableWebSource = webSourceEnabled;
+                if (value === "minimal" && webSourceEnabled) {
+                    willEnableWebSource = false;
+                    setWebSourceEnabled(false);
+                    setHideMinimalRetrievalReasoningOption(false);
+                }
+                const shouldDisableStreaming = (useAgenticRetrieval && (value === "low" || value === "medium")) || (useAgenticRetrieval && willEnableWebSource);
+                updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
                 break;
+            }
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
                 break;
@@ -398,18 +413,33 @@ const Chat = () => {
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
-            case "useAgenticRetrieval":
+            case "useAgenticRetrieval": {
                 setUseAgenticRetrieval(value);
+                let effectiveWebSource = webSourceEnabled;
+                if (!value && webSourceEnabled) {
+                    effectiveWebSource = false;
+                    setWebSourceEnabled(false);
+                    setHideMinimalRetrievalReasoningOption(false);
+                }
+                const shouldDisableStreaming = !!value && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium" || effectiveWebSource);
+                updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
                 break;
+            }
             case "useWebSource":
                 if (!webSourceSupported) {
                     setWebSourceEnabled(false);
                     return;
                 }
-                setWebSourceEnabled(value);
-                setHideMinimalRetrievalReasoningOption(value);
-                if (value) {
-                    setUseSuggestFollowupQuestions(false);
+                {
+                    const normalizedWebSource = !!value;
+                    setWebSourceEnabled(normalizedWebSource);
+                    setHideMinimalRetrievalReasoningOption(normalizedWebSource);
+                    if (normalizedWebSource) {
+                        setUseSuggestFollowupQuestions(false);
+                    }
+                    const shouldDisableStreaming =
+                        useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium" || normalizedWebSource);
+                    updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
                 }
                 break;
         }

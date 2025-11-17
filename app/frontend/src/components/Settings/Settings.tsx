@@ -134,12 +134,14 @@ export const Settings = ({
     const suggestFollowupQuestionsFieldId = useId("suggestFollowupQuestionsField");
 
     const retrievalReasoningRestrictsSettings = !!useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
+    const webSourceRequiresNoStreaming = !!useAgenticRetrieval && !!useWebSource;
+    const streamingDisabledByOverrides = retrievalReasoningRestrictsSettings || webSourceRequiresNoStreaming;
     const webSourceDisabled = !useAgenticRetrieval || retrievalReasoningEffort === "minimal";
-    const streamingDisabledByReasoning = retrievalReasoningRestrictsSettings;
+    const minimalReasoningDisabled = hideMinimalRetrievalReasoningOption || useWebSource;
     const showLlmAndAnswerSettings = llmCustomizationEnabled && !retrievalReasoningRestrictsSettings;
 
     const retrievalReasoningOptions: IDropdownOption[] = [
-        { key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal"), disabled: hideMinimalRetrievalReasoningOption },
+        { key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal"), disabled: minimalReasoningDisabled },
         { key: "low", text: t("labels.retrievalReasoningEffortOptions.low") },
         { key: "medium", text: t("labels.retrievalReasoningEffortOptions.medium") }
     ];
@@ -150,15 +152,15 @@ export const Settings = ({
 
     return (
         <div className={className}>
-            {streamingEnabled && !streamingDisabledByReasoning && (
+            {streamingEnabled && !streamingDisabledByOverrides && (
                 <Checkbox
                     id={shouldStreamFieldId}
                     className={styles.settingsSeparator}
-                    checked={streamingDisabledByReasoning ? false : shouldStream}
+                    checked={streamingDisabledByOverrides ? false : shouldStream}
                     label={t("labels.shouldStream")}
                     onChange={(_ev, checked) => onChange("shouldStream", !!checked)}
                     aria-labelledby={shouldStreamId}
-                    disabled={streamingDisabledByReasoning}
+                    disabled={streamingDisabledByOverrides}
                     onRenderLabel={props => renderLabel(props, shouldStreamId, shouldStreamFieldId, t("helpTexts.streamChat"))}
                 />
             )}
