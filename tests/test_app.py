@@ -97,28 +97,6 @@ async def test_index(client):
 
 
 @pytest.mark.asyncio
-async def test_index_fallback_when_static_missing(client, monkeypatch):
-    async def raise_not_found(*_args, **_kwargs):
-        raise NotFound()
-
-    monkeypatch.setattr(app.bp, "send_static_file", raise_not_found)
-
-    original_exists = Path.exists
-
-    def fake_exists(self):
-        frontend_suffix = os.path.join("frontend", "index.html")
-        if str(self).endswith(frontend_suffix):
-            return False
-        return original_exists(self)
-
-    monkeypatch.setattr(Path, "exists", fake_exists)
-
-    response = await client.get("/")
-    assert response.status_code == 200
-    assert await response.get_data() == b""
-
-
-@pytest.mark.asyncio
 async def test_redirect(client):
     response = await client.get("/redirect")
     assert response.status_code == 200
@@ -131,29 +109,6 @@ async def test_favicon(client):
     assert response.status_code == 200
     assert response.content_type.startswith("image")
     assert response.content_type.endswith("icon")
-
-
-@pytest.mark.asyncio
-async def test_favicon_fallback_when_missing(client, monkeypatch):
-    async def raise_not_found(*_args, **_kwargs):
-        raise NotFound()
-
-    monkeypatch.setattr(app.bp, "send_static_file", raise_not_found)
-
-    original_exists = Path.exists
-
-    def fake_exists(self):
-        fallback_suffix = os.path.join("frontend", "public", "favicon.ico")
-        if str(self).endswith(fallback_suffix):
-            return False
-        return original_exists(self)
-
-    monkeypatch.setattr(Path, "exists", fake_exists)
-
-    response = await client.get("/favicon.ico")
-    assert response.status_code == 200
-    assert response.headers["Content-Type"] == "image/x-icon"
-    assert await response.get_data() == b""
 
 
 @pytest.mark.asyncio
@@ -264,8 +219,8 @@ async def test_ask_rtr_text(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_ask_rtr_text_agent(agent_client, snapshot):
-    response = await agent_client.post(
+async def test_ask_rtr_text_agent(knowledgebase_client, snapshot):
+    response = await knowledgebase_client.post(
         "/ask",
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
@@ -304,8 +259,8 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
-    response = await agent_auth_client.post(
+async def test_ask_rtr_text_agent_filter(knowledgebase_auth_client, snapshot):
+    response = await knowledgebase_auth_client.post(
         "/ask",
         headers={"Authorization": "Bearer MockToken"},
         json={
@@ -320,8 +275,8 @@ async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
         },
     )
     assert response.status_code == 200
-    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter == "category ne 'excluded'"
-    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].access_token == "MockToken"
+    assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].filter == "category ne 'excluded'"
+    assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].access_token == "MockToken"
 
     result = await response.get_json()
     citation_details = pop_citation_activity_details(result)
@@ -456,19 +411,6 @@ async def test_content_file_missing_content_settings(auth_client, monkeypatch):
 
     response = await auth_client.get("/content/file.pdf", headers={"Authorization": "Bearer token"})
     assert response.status_code == 404
-
-
-@pytest.mark.asyncio
-async def test_upload_missing_file(auth_client):
-    response = await auth_client.post(
-        "/upload",
-        headers={"Authorization": "Bearer token"},
-        data={},
-        content_type="multipart/form-data",
-    )
-    assert response.status_code == 400
-    payload = await response.get_json()
-    assert payload["status"] == "failed"
 
 
 @pytest.mark.asyncio
@@ -675,8 +617,8 @@ async def test_chat_text(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_text_agent(agent_client, snapshot):
-    response = await agent_client.post(
+async def test_chat_text_agent(knowledgebase_client, snapshot):
+    response = await knowledgebase_client.post(
         "/chat",
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
@@ -716,8 +658,8 @@ async def test_chat_text_filter(auth_client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_text_filter_agent(agent_auth_client, snapshot):
-    response = await agent_auth_client.post(
+async def test_chat_text_filter_agent(knowledgebase_auth_client, snapshot):
+    response = await knowledgebase_auth_client.post(
         "/chat",
         headers={"Authorization": "Bearer MockToken"},
         json={
@@ -731,8 +673,8 @@ async def test_chat_text_filter_agent(agent_auth_client, snapshot):
         },
     )
     assert response.status_code == 200
-    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter == "category ne 'excluded'"
-    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].access_token == "MockToken"
+    assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].filter == "category ne 'excluded'"
+    assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].access_token == "MockToken"
     result = await response.get_json()
     citation_details = pop_citation_activity_details(result)
     assert_index_citation_details(citation_details)

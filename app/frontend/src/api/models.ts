@@ -49,7 +49,7 @@ export type WebDataPoint = {
     title?: string;
     url?: string;
     snippet?: string;
-    search_agent_query?: string;
+    knowledgebase_query?: string;
 };
 
 export type CitationActivityDetail = {

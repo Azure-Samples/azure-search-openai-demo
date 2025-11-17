@@ -37,7 +37,7 @@
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": null,
-                        "search_agent_query": "whistleblower query",
+                        "knowledgebase_query": "whistleblower query",
                         "sourcefile": "Benefit_Options.pdf",
                         "sourcepage": "Benefit_Options-2.pdf"
                     }

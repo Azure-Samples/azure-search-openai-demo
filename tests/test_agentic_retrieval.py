@@ -20,11 +20,11 @@ async def test_agentic_retrieval_default_sort(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("sorting"))
 
-    agent_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[],
-        agent_client=agent_client,
+        knowledgebase_client=knowledgebase_client,
         search_index_name="test-index",
         results_merge_strategy=None,  # Default sorting
     )
@@ -34,11 +34,11 @@ async def test_agentic_retrieval_default_sort(chat_approach, monkeypatch):
     # Default sorting preserves original order (doc2, doc1)
     assert agentic_results.documents[0].id == "doc2"
     assert agentic_results.documents[0].content == "Content 2"
-    assert agentic_results.documents[0].search_agent_query == "second query"
+    assert agentic_results.documents[0].knowledgebase_query == "second query"
 
     assert agentic_results.documents[1].id == "doc1"
     assert agentic_results.documents[1].content == "Content 1"
-    assert agentic_results.documents[1].search_agent_query == "first query"
+    assert agentic_results.documents[1].knowledgebase_query == "first query"
 
 
 @pytest.mark.asyncio
@@ -47,11 +47,11 @@ async def test_agentic_retrieval_interleaved_sort(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("sorting"))
 
-    agent_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[],
-        agent_client=agent_client,
+        knowledgebase_client=knowledgebase_client,
         search_index_name="test-index",
         results_merge_strategy="interleaved",
     )
@@ -61,11 +61,11 @@ async def test_agentic_retrieval_interleaved_sort(chat_approach, monkeypatch):
     # Interleaved sorting orders by reference ID (1, 2)
     assert agentic_results.documents[0].id == "doc1"  # ref.id = "1"
     assert agentic_results.documents[0].content == "Content 1"
-    assert agentic_results.documents[0].search_agent_query == "first query"
+    assert agentic_results.documents[0].knowledgebase_query == "first query"
 
     assert agentic_results.documents[1].id == "doc2"  # ref.id = "2"
     assert agentic_results.documents[1].content == "Content 2"
-    assert agentic_results.documents[1].search_agent_query == "second query"
+    assert agentic_results.documents[1].knowledgebase_query == "second query"
 
 
 @pytest.mark.asyncio
@@ -81,10 +81,10 @@ async def test_agentic_retrieval_no_references(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", mock_retrieval)
 
-    agent_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
 
     agentic_results = await chat_approach.run_agentic_retrieval(
-        messages=[], agent_client=agent_client, search_index_name="test-index"
+        messages=[], knowledgebase_client=knowledgebase_client, search_index_name="test-index"
     )
 
     assert len(agentic_results.documents) == 0
@@ -97,11 +97,11 @@ async def test_agentic_retrieval_with_top_limit_during_building(chat_approach, m
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("top_limit"))
 
-    agent_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[],
-        agent_client=agent_client,
+        knowledgebase_client=knowledgebase_client,
         search_index_name="test-index",
         top=5,  # Limit to 5 documents
     )
@@ -120,11 +120,11 @@ async def test_agentic_retrieval_web_results(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("web"))
 
-    agent_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[],
-        agent_client=agent_client,
+        knowledgebase_client=knowledgebase_client,
         search_index_name="test-index",
         results_merge_strategy="interleaved",
     )
@@ -152,11 +152,11 @@ async def test_agentic_retrieval_sharepoint_results(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("sharepoint"))
 
-    agent_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[],
-        agent_client=agent_client,
+        knowledgebase_client=knowledgebase_client,
         search_index_name="test-index",
         use_sharepoint_source=True,
     )
@@ -166,7 +166,7 @@ async def test_agentic_retrieval_sharepoint_results(chat_approach, monkeypatch):
     assert sharepoint_entry.web_url == "https://contoso.sharepoint.com/sites/hr/document"
 
     ordered_results = agentic_results.get_ordered_results()
-    assert any(result["type"] == "sharepoint" for result in ordered_results)
+    assert any(result.get("type") == "sharepoint" for result in ordered_results)
 
 
 @pytest.mark.asyncio
@@ -202,11 +202,11 @@ async def test_agentic_retrieval_minimal_uses_query_rewrite(chat_approach, monke
     monkeypatch.setattr(chat_approach, "rewrite_query", fake_rewrite_query)
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("web"))
 
-    agent_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[{"role": "user", "content": "Original"}],
-        agent_client=agent_client,
+        knowledgebase_client=knowledgebase_client,
         search_index_name="test-index",
         retrieval_reasoning_effort="minimal",
     )
@@ -219,12 +219,12 @@ async def test_agentic_retrieval_minimal_uses_query_rewrite(chat_approach, monke
 async def test_agentic_retrieval_minimal_requires_string(chat_approach):
     """When minimal reasoning is requested the latest message must be a string."""
 
-    agent_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
 
     with pytest.raises(ValueError, match="most recent message content must be a string"):
         await chat_approach.run_agentic_retrieval(
             messages=[{"role": "user", "content": [{"type": "text", "text": "Hello"}]}],
-            agent_client=agent_client,
+            knowledgebase_client=knowledgebase_client,
             search_index_name="test-index",
             retrieval_reasoning_effort="minimal",
         )

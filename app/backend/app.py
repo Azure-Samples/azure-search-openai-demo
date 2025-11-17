@@ -42,7 +42,6 @@ from quart import (
     send_file,
     send_from_directory,
 )
-from werkzeug.exceptions import NotFound
 from quart_cors import cors
 
 from approaches.approach import Approach, DataPoints
@@ -51,10 +50,6 @@ from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
-    CONFIG_AGENT_CLIENT,
-    CONFIG_AGENT_CLIENT_WITH_SHAREPOINT,
-    CONFIG_AGENT_CLIENT_WITH_WEB,
-    CONFIG_AGENT_CLIENT_WITH_WEB_AND_SHAREPOINT,
     CONFIG_AGENTIC_RETRIEVAL_ENABLED,
     CONFIG_ASK_APPROACH,
     CONFIG_AUTH_CLIENT,
@@ -66,6 +61,10 @@ from config import (
     CONFIG_DEFAULT_RETRIEVAL_REASONING_EFFORT,
     CONFIG_GLOBAL_BLOB_MANAGER,
     CONFIG_INGESTER,
+    CONFIG_KNOWLEDGEBASE_CLIENT,
+    CONFIG_KNOWLEDGEBASE_CLIENT_WITH_SHAREPOINT,
+    CONFIG_KNOWLEDGEBASE_CLIENT_WITH_WEB,
+    CONFIG_KNOWLEDGEBASE_CLIENT_WITH_WEB_AND_SHAREPOINT,
     CONFIG_LANGUAGE_PICKER_ENABLED,
     CONFIG_MULTIMODAL_ENABLED,
     CONFIG_OPENAI_CLIENT,
@@ -116,14 +115,7 @@ mimetypes.add_type("text/css", ".css")
 
 @bp.route("/")
 async def index():
-    try:
-        return await bp.send_static_file("index.html")
-    except NotFound:
-        # Allow running without a built frontend by falling back to the source index.html
-        frontend_index = Path(__file__).resolve().parent.parent / "frontend" / "index.html"
-        if frontend_index.exists():
-            return await send_file(frontend_index)
-        return make_response("", 200)
+    return await bp.send_static_file("index.html")
 
 
 # Empty page is recommended for login redirect to work.
@@ -135,13 +127,7 @@ async def redirect():
 
 @bp.route("/favicon.ico")
 async def favicon():
-    try:
-        return await bp.send_static_file("favicon.ico")
-    except NotFound:
-        fallback_favicon = Path(__file__).resolve().parent.parent / "frontend" / "public" / "favicon.ico"
-        if fallback_favicon.exists():
-            return await send_file(fallback_favicon, mimetype="image/x-icon")
-        return make_response("", 200, {"Content-Type": "image/x-icon"})
+    return await bp.send_static_file("favicon.ico")
 
 
 @bp.route("/assets/<path:path>")
@@ -435,13 +421,12 @@ async def setup_clients():
     AZURE_SEARCH_SERVICE = os.environ["AZURE_SEARCH_SERVICE"]
     AZURE_SEARCH_ENDPOINT = f"https://{AZURE_SEARCH_SERVICE}.search.windows.net"
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
-    AZURE_SEARCH_AGENT = os.getenv("AZURE_SEARCH_AGENT", "")
-    AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS = int(os.getenv("AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS", "10000"))
+    AZURE_SEARCH_KNOWLEDGEBASE_NAME = os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME", "")
     # Shared by all OpenAI deployments
     OPENAI_HOST = OpenAIHost(os.getenv("OPENAI_HOST", "azure"))
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
-    AZURE_OPENAI_SEARCHAGENT_MODEL = os.getenv("AZURE_OPENAI_SEARCHAGENT_MODEL")
-    AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT = os.getenv("AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT")
+    AZURE_OPENAI_KNOWLEDGEBASE_MODEL = os.getenv("AZURE_OPENAI_KNOWLEDGEBASE_MODEL")
+    AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT = os.getenv("AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT")
     OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS") or 1536)
     OPENAI_REASONING_EFFORT = os.getenv("AZURE_OPENAI_REASONING_EFFORT")
@@ -545,30 +530,30 @@ async def setup_clients():
         credential=azure_credential,
     )
 
-    agent_client = KnowledgeBaseRetrievalClient(
-        endpoint=AZURE_SEARCH_ENDPOINT, knowledge_base_name=AZURE_SEARCH_AGENT, credential=azure_credential
+    knowledgebase_client = KnowledgeBaseRetrievalClient(
+        endpoint=AZURE_SEARCH_ENDPOINT, knowledge_base_name=AZURE_SEARCH_KNOWLEDGEBASE_NAME, credential=azure_credential
     )
-    agent_client_with_web = None
-    agent_client_with_sharepoint = None
-    agent_client_with_web_and_sharepoint = None
+    knowledgebase_client_with_web = None
+    knowledgebase_client_with_sharepoint = None
+    knowledgebase_client_with_web_and_sharepoint = None
 
-    if AZURE_SEARCH_AGENT:
+    if AZURE_SEARCH_KNOWLEDGEBASE_NAME:
         if USE_WEB_SOURCE:
-            agent_client_with_web = KnowledgeBaseRetrievalClient(
+            knowledgebase_client_with_web = KnowledgeBaseRetrievalClient(
                 endpoint=AZURE_SEARCH_ENDPOINT,
-                knowledge_base_name=f"{AZURE_SEARCH_AGENT}-with-web",
+                knowledge_base_name=f"{AZURE_SEARCH_KNOWLEDGEBASE_NAME}-with-web",
                 credential=azure_credential,
             )
         if USE_SHAREPOINT_SOURCE:
-            agent_client_with_sharepoint = KnowledgeBaseRetrievalClient(
+            knowledgebase_client_with_sharepoint = KnowledgeBaseRetrievalClient(
                 endpoint=AZURE_SEARCH_ENDPOINT,
-                knowledge_base_name=f"{AZURE_SEARCH_AGENT}-with-sp",
+                knowledge_base_name=f"{AZURE_SEARCH_KNOWLEDGEBASE_NAME}-with-sp",
                 credential=azure_credential,
             )
         if USE_WEB_SOURCE and USE_SHAREPOINT_SOURCE:
-            agent_client_with_web_and_sharepoint = KnowledgeBaseRetrievalClient(
+            knowledgebase_client_with_web_and_sharepoint = KnowledgeBaseRetrievalClient(
                 endpoint=AZURE_SEARCH_ENDPOINT,
-                knowledge_base_name=f"{AZURE_SEARCH_AGENT}-with-web-and-sp",
+                knowledge_base_name=f"{AZURE_SEARCH_KNOWLEDGEBASE_NAME}-with-web-and-sp",
                 credential=azure_credential,
             )
 
@@ -659,10 +644,9 @@ async def setup_clients():
             azure_credential=azure_credential,
             use_agentic_retrieval=USE_AGENTIC_RETRIEVAL,
             azure_openai_endpoint=azure_openai_endpoint,
-            agent_name=AZURE_SEARCH_AGENT,
-            agent_max_output_tokens=AZURE_SEARCH_AGENT_MAX_OUTPUT_TOKENS,
-            azure_openai_searchagent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
-            azure_openai_searchagent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
+            knowledgebase_name=AZURE_SEARCH_KNOWLEDGEBASE_NAME,
+            azure_openai_knowledgebase_deployment=AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT,
+            azure_openai_knowledgebase_model=AZURE_OPENAI_KNOWLEDGEBASE_MODEL,
         )
 
         text_embeddings_service = None
@@ -698,10 +682,10 @@ async def setup_clients():
 
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
-    current_app.config[CONFIG_AGENT_CLIENT] = agent_client
-    current_app.config[CONFIG_AGENT_CLIENT_WITH_WEB] = agent_client_with_web
-    current_app.config[CONFIG_AGENT_CLIENT_WITH_SHAREPOINT] = agent_client_with_sharepoint
-    current_app.config[CONFIG_AGENT_CLIENT_WITH_WEB_AND_SHAREPOINT] = agent_client_with_web_and_sharepoint
+    current_app.config[CONFIG_KNOWLEDGEBASE_CLIENT] = knowledgebase_client
+    current_app.config[CONFIG_KNOWLEDGEBASE_CLIENT_WITH_WEB] = knowledgebase_client_with_web
+    current_app.config[CONFIG_KNOWLEDGEBASE_CLIENT_WITH_SHAREPOINT] = knowledgebase_client_with_sharepoint
+    current_app.config[CONFIG_KNOWLEDGEBASE_CLIENT_WITH_WEB_AND_SHAREPOINT] = knowledgebase_client_with_web_and_sharepoint
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
@@ -742,12 +726,12 @@ async def setup_clients():
     current_app.config[CONFIG_ASK_APPROACH] = RetrieveThenReadApproach(
         search_client=search_client,
         search_index_name=AZURE_SEARCH_INDEX,
-        agent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
-        agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
-        agent_client=agent_client,
-        agent_client_with_web=agent_client_with_web,
-        agent_client_with_sharepoint=agent_client_with_sharepoint,
-        agent_client_with_web_and_sharepoint=agent_client_with_web_and_sharepoint,
+        knowledgebase_model=AZURE_OPENAI_KNOWLEDGEBASE_MODEL,
+        knowledgebase_deployment=AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT,
+        knowledgebase_client=knowledgebase_client,
+        knowledgebase_client_with_web=knowledgebase_client_with_web,
+        knowledgebase_client_with_sharepoint=knowledgebase_client_with_sharepoint,
+        knowledgebase_client_with_web_and_sharepoint=knowledgebase_client_with_web_and_sharepoint,
         openai_client=openai_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
@@ -774,12 +758,12 @@ async def setup_clients():
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
         search_client=search_client,
         search_index_name=AZURE_SEARCH_INDEX,
-        agent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
-        agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
-        agent_client=agent_client,
-        agent_client_with_web=agent_client_with_web,
-        agent_client_with_sharepoint=agent_client_with_sharepoint,
-        agent_client_with_web_and_sharepoint=agent_client_with_web_and_sharepoint,
+        knowledgebase_model=AZURE_OPENAI_KNOWLEDGEBASE_MODEL,
+        knowledgebase_deployment=AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT,
+        knowledgebase_client=knowledgebase_client,
+        knowledgebase_client_with_web=knowledgebase_client_with_web,
+        knowledgebase_client_with_sharepoint=knowledgebase_client_with_sharepoint,
+        knowledgebase_client_with_web_and_sharepoint=knowledgebase_client_with_web_and_sharepoint,
         openai_client=openai_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,

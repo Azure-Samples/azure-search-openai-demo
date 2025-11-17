@@ -103,9 +103,7 @@ export const TokenUsageValueBar: React.FC<TokenUsageValueBarProps> = ({ label, v
     const flexGrow = value > 0 ? value : 0.5;
 
     // For standalone bars, use full width; for grouped bars, use percentage-based width
-    const barStyle = grouping === "standalone" 
-        ? { width: "100%" }
-        : { width: percent, flexGrow, flexBasis: percent, minWidth: 0 };
+    const barStyle = grouping === "standalone" ? { width: "100%" } : { width: percent, flexGrow, flexBasis: percent, minWidth: 0 };
 
     return (
         <div className={`${styles.tokenBar} ${toneClass} ${groupingClass}`} style={barStyle}>

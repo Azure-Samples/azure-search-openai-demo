@@ -71,7 +71,7 @@ class Document:
     captions: Optional[list[QueryCaptionResult]] = None
     score: Optional[float] = None
     reranker_score: Optional[float] = None
-    search_agent_query: Optional[str] = None
+    knowledgebase_query: Optional[str] = None
     images: Optional[list[dict[str, Any]]] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
@@ -97,7 +97,7 @@ class Document:
             ),
             "score": self.score,
             "reranker_score": self.reranker_score,
-            "search_agent_query": self.search_agent_query,
+            "knowledgebase_query": self.knowledgebase_query,
             "images": self.images,
         }
         return result_dict
@@ -109,7 +109,7 @@ class WebResult:
     title: Optional[str] = None
     url: Optional[str] = None
     snippet: Optional[str] = None
-    search_agent_query: Optional[str] = None
+    knowledgebase_query: Optional[str] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         return {
@@ -119,7 +119,7 @@ class WebResult:
             "title": self.title,
             "url": self.url,
             "snippet": self.snippet,
-            "search_agent_query": self.search_agent_query,
+            "knowledgebase_query": self.knowledgebase_query,
         }
 
 
@@ -130,7 +130,7 @@ class SharePointResult:
     content: Optional[str] = None
     title: Optional[str] = None
     reranker_score: Optional[float] = None
-    search_agent_query: Optional[str] = None
+    knowledgebase_query: Optional[str] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         return {
@@ -141,7 +141,7 @@ class SharePointResult:
             "content": self.content,
             "title": self.title,
             "reranker_score": self.reranker_score,
-            "search_agent_query": self.search_agent_query,
+            "knowledgebase_query": self.knowledgebase_query,
         }
 
 
@@ -456,7 +456,7 @@ class Approach(ABC):
     async def run_agentic_retrieval(
         self,
         messages: list[ChatCompletionMessageParam],
-        agent_client: KnowledgeBaseRetrievalClient,
+        knowledgebase_client: KnowledgeBaseRetrievalClient,
         search_index_name: str,
         top: Optional[int] = None,
         filter_add_on: Optional[str] = None,
@@ -544,7 +544,7 @@ class Approach(ABC):
             retrieval_effort = KnowledgeRetrievalLowReasoningEffort()
         elif retrieval_reasoning_effort == "medium":
             retrieval_effort = KnowledgeRetrievalMediumReasoningEffort()
-        response = await agent_client.retrieve(
+        response = await knowledgebase_client.retrieve(
             retrieval_request=KnowledgeBaseRetrievalRequest(
                 knowledge_source_params=knowledge_source_params_list,
                 include_activity=True,
@@ -560,7 +560,6 @@ class Approach(ABC):
         activity_details_by_id: dict[str, dict[str, Any]] = {}
 
         for index, activity in enumerate(activities):
-            print("Processing activity:", activity)
             if isinstance(activity, KnowledgeBaseSearchIndexActivityRecord):
                 if activity.search_index_arguments:
                     activity_mapping[activity.id] = activity.search_index_arguments.search
@@ -624,7 +623,7 @@ class Approach(ABC):
                         groups=ref.source_data.get("groups"),
                         reranker_score=getattr(ref, "reranker_score", None),
                         images=ref.source_data.get("images"),
-                        search_agent_query=activity_mapping.get(ref.activity_source),
+                        knowledgebase_query=activity_mapping.get(ref.activity_source),
                     )
                 )
                 doc_to_ref_id[ref.doc_key] = int(ref.id)
@@ -639,7 +638,7 @@ class Approach(ABC):
                 id=ref.id,
                 title=ref.title,
                 url=ref.url,
-                search_agent_query=activity_mapping.get(ref.activity_source),
+                knowledgebase_query=activity_mapping.get(ref.activity_source),
             )
             web_results.append(web_result)
 
@@ -664,7 +663,7 @@ class Approach(ABC):
                 content=content,
                 title=title,
                 reranker_score=getattr(ref, "reranker_score", None),
-                search_agent_query=activity_mapping.get(ref.activity_source),
+                knowledgebase_query=activity_mapping.get(ref.activity_source),
             )
             sharepoint_results.append(sharepoint_result)
 
@@ -816,7 +815,7 @@ class Approach(ABC):
                         "title": web.title,
                         "url": web.url,
                         "snippet": clean_source(web.snippet or ""),
-                        "search_agent_query": web.search_agent_query,
+                        "knowledgebase_query": web.knowledgebase_query,
                     }
                 )
         if sharepoint_results:
@@ -833,7 +832,7 @@ class Approach(ABC):
                         "title": sp.title or "",
                         "url": sp.web_url or "",
                         "snippet": clean_source(sp.content or ""),
-                        "search_agent_query": sp.search_agent_query,
+                        "knowledgebase_query": sp.knowledgebase_query,
                     }
                 )
         return DataPoints(

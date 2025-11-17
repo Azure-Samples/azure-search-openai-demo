@@ -1059,19 +1059,18 @@ async def test_create_index_with_search_images_and_embeddings(monkeypatch, searc
 
 
 @pytest.mark.asyncio
-async def test_create_agent_field_names_with_acls_and_images(monkeypatch, search_info):
-    """Covers create_agent logic adding oids/groups/images and creating knowledge source (lines 443-447,449,457)."""
+async def test_create_knowledgebase_field_names_with_acls_and_images(monkeypatch, search_info):
+    """Covers create_knowledgebase logic adding oids/groups/images and creating knowledge source (lines 443-447,449,457)."""
 
     # Provide a SearchInfo configured for agentic retrieval and image search
-    search_info_agent = SearchInfo(
+    search_info = SearchInfo(
         endpoint=search_info.endpoint,
         credential=search_info.credential,
         index_name=search_info.index_name,
         use_agentic_retrieval=True,
-        agent_name="test-agent",
-        agent_max_output_tokens=1024,
-        azure_openai_searchagent_model="gpt-4o-mini",
-        azure_openai_searchagent_deployment="gpt-4o-mini",
+        knowledgebase_name="test-knowledgebase",
+        azure_openai_knowledgebase_model="gpt-4o-mini",
+        azure_openai_knowledgebase_deployment="gpt-4o-mini",
         azure_openai_endpoint="https://openaidummy.openai.azure.com/",
         azure_vision_endpoint="https://visiondummy.cognitiveservices.azure.com/",
     )
@@ -1100,13 +1099,13 @@ async def test_create_agent_field_names_with_acls_and_images(monkeypatch, search
     monkeypatch.setattr(SearchIndexClient, "create_or_update_knowledge_source", mock_create_or_update_knowledge_source)
     monkeypatch.setattr(SearchIndexClient, "create_or_update_knowledge_base", mock_create_or_update_knowledge_base)
 
-    manager = SearchManager(search_info_agent, use_acls=True, search_images=True, use_web_source=True)
+    manager = SearchManager(search_info, use_acls=True, search_images=True, use_web_source=True)
 
     # Act
     await manager.create_index()
 
     # Assert index created
-    assert len(created_indexes) == 1, "Index should be created before agent creation"
+    assert len(created_indexes) == 1, "Index should be created before Knowledge Base creation"
     # Assert index has images and ACL fields
     index = created_indexes[0]
     assert any(field.name == "images" for field in index.fields), "Index should have images field"
@@ -1126,31 +1125,30 @@ async def test_create_agent_field_names_with_acls_and_images(monkeypatch, search
     # Assert knowledge bases created for default and web-enabled variants
     assert len(knowledge_bases) == 2, "Base and web-enabled knowledge bases should be created"
     kb_by_name = {kb.name: kb for kb in knowledge_bases}
-    assert set(kb_by_name) == {"test-agent", "test-agent-with-web"}
+    assert set(kb_by_name) == {"test-knowledgebase", "test-knowledgebase-with-web"}
 
-    default_kb_sources = {ref.name for ref in kb_by_name["test-agent"].knowledge_sources}
+    default_kb_sources = {ref.name for ref in kb_by_name["test-knowledgebase"].knowledge_sources}
     assert default_kb_sources == {index_ks.name}, "Default knowledge base should reference only the index"
 
-    web_kb_sources = {ref.name for ref in kb_by_name["test-agent-with-web"].knowledge_sources}
+    web_kb_sources = {ref.name for ref in kb_by_name["test-knowledgebase-with-web"].knowledge_sources}
     assert {index_ks.name, web_ks.name} == web_kb_sources, (
         "Web-enabled knowledge base should reference index and web sources"
     )
 
 
 @pytest.mark.asyncio
-async def test_create_agent_with_sharepoint_source(monkeypatch, search_info):
+async def test_create_knowledgebase_with_sharepoint_source(monkeypatch, search_info):
     """Test that SharePoint knowledge source is created when use_sharepoint_source=True."""
 
     # Provide a SearchInfo configured for agentic retrieval
-    search_info_agent = SearchInfo(
+    search_info = SearchInfo(
         endpoint=search_info.endpoint,
         credential=search_info.credential,
         index_name=search_info.index_name,
         use_agentic_retrieval=True,
-        agent_name="test-agent",
-        agent_max_output_tokens=1024,
-        azure_openai_searchagent_model="gpt-4o-mini",
-        azure_openai_searchagent_deployment="gpt-4o-mini",
+        knowledgebase_name="test-knowledgebase",
+        azure_openai_knowledgebase_model="gpt-4o-mini",
+        azure_openai_knowledgebase_deployment="gpt-4o-mini",
         azure_openai_endpoint="https://openaidummy.openai.azure.com/",
     )
 
@@ -1178,13 +1176,13 @@ async def test_create_agent_with_sharepoint_source(monkeypatch, search_info):
     monkeypatch.setattr(SearchIndexClient, "create_or_update_knowledge_source", mock_create_or_update_knowledge_source)
     monkeypatch.setattr(SearchIndexClient, "create_or_update_knowledge_base", mock_create_or_update_knowledge_base)
 
-    manager = SearchManager(search_info_agent, use_sharepoint_source=True)
+    manager = SearchManager(search_info, use_sharepoint_source=True)
 
     # Act
     await manager.create_index()
 
     # Assert index created
-    assert len(created_indexes) == 1, "Index should be created before agent creation"
+    assert len(created_indexes) == 1, "Index should be created before Knowledge Base creation"
 
     # Assert knowledge sources were created (search index + sharepoint)
     assert len(knowledge_sources) == 2, "Two knowledge sources (search index and sharepoint) should be created"
@@ -1197,30 +1195,29 @@ async def test_create_agent_with_sharepoint_source(monkeypatch, search_info):
     # Assert knowledge bases created for default and SharePoint-enabled variants
     assert len(knowledge_bases) == 2, "Base and SharePoint knowledge bases should be created"
     kb_by_name = {kb.name: kb for kb in knowledge_bases}
-    assert set(kb_by_name) == {"test-agent", "test-agent-with-sp"}
+    assert set(kb_by_name) == {"test-knowledgebase", "test-knowledgebase-with-sp"}
 
-    default_kb_sources = {ref.name for ref in kb_by_name["test-agent"].knowledge_sources}
+    default_kb_sources = {ref.name for ref in kb_by_name["test-knowledgebase"].knowledge_sources}
     assert default_kb_sources == {index_ks.name}, "Default knowledge base should reference only the index"
 
-    sharepoint_kb_sources = {ref.name for ref in kb_by_name["test-agent-with-sp"].knowledge_sources}
+    sharepoint_kb_sources = {ref.name for ref in kb_by_name["test-knowledgebase-with-sp"].knowledge_sources}
     assert {index_ks.name, sharepoint_ks.name} == sharepoint_kb_sources, (
         "SharePoint knowledge base should reference index and SharePoint sources"
     )
 
 
 @pytest.mark.asyncio
-async def test_create_agent_with_web_and_sharepoint_sources(monkeypatch, search_info):
+async def test_create_knowledgebase_with_web_and_sharepoint_sources(monkeypatch, search_info):
     """Verify all knowledge base variants exist when both optional sources are enabled."""
 
-    search_info_agent = SearchInfo(
+    search_info = SearchInfo(
         endpoint=search_info.endpoint,
         credential=search_info.credential,
         index_name=search_info.index_name,
         use_agentic_retrieval=True,
-        agent_name="test-agent",
-        agent_max_output_tokens=1024,
-        azure_openai_searchagent_model="gpt-4o-mini",
-        azure_openai_searchagent_deployment="gpt-4o-mini",
+        knowledgebase_name="test-knowledgebase",
+        azure_openai_knowledgebase_model="gpt-4o-mini",
+        azure_openai_knowledgebase_deployment="gpt-4o-mini",
         azure_openai_endpoint="https://openaidummy.openai.azure.com/",
     )
 
@@ -1248,28 +1245,27 @@ async def test_create_agent_with_web_and_sharepoint_sources(monkeypatch, search_
     monkeypatch.setattr(SearchIndexClient, "create_or_update_knowledge_source", mock_create_or_update_knowledge_source)
     monkeypatch.setattr(SearchIndexClient, "create_or_update_knowledge_base", mock_create_or_update_knowledge_base)
 
-    manager = SearchManager(search_info_agent, use_web_source=True, use_sharepoint_source=True)
+    manager = SearchManager(search_info, use_web_source=True, use_sharepoint_source=True)
 
     await manager.create_index()
 
-    assert len(created_indexes) == 1, "Index should be created before agent creation"
-
+    assert len(created_indexes) == 1, "Index should be created before knowledge base creation"
     index_ks = next(ks for ks in knowledge_sources if hasattr(ks, "search_index_parameters"))
     web_ks = next(ks for ks in knowledge_sources if getattr(ks, "name", None) == "web")
     sharepoint_ks = next(ks for ks in knowledge_sources if getattr(ks, "name", None) == "sharepoint")
 
     expected_kb_names = {
-        "test-agent",
-        "test-agent-with-web",
-        "test-agent-with-sp",
-        "test-agent-with-web-and-sp",
+        "test-knowledgebase",
+        "test-knowledgebase-with-web",
+        "test-knowledgebase-with-sp",
+        "test-knowledgebase-with-web-and-sp",
     }
     assert {kb.name for kb in knowledge_bases} == expected_kb_names
 
     kb_map = {kb.name: kb for kb in knowledge_bases}
-    assert {ref.name for ref in kb_map["test-agent"].knowledge_sources} == {index_ks.name}
-    assert {ref.name for ref in kb_map["test-agent-with-web"].knowledge_sources} == {index_ks.name, web_ks.name}
-    assert {ref.name for ref in kb_map["test-agent-with-sp"].knowledge_sources} == {index_ks.name, sharepoint_ks.name}
+    assert {ref.name for ref in kb_map["test-knowledgebase"].knowledge_sources} == {index_ks.name}
+    assert {ref.name for ref in kb_map["test-knowledgebase-with-web"].knowledge_sources} == {index_ks.name, web_ks.name}
+    assert {ref.name for ref in kb_map["test-knowledgebase-with-sp"].knowledge_sources} == {index_ks.name, sharepoint_ks.name}
     assert {
-        ref.name for ref in kb_map["test-agent-with-web-and-sp"].knowledge_sources
+        ref.name for ref in kb_map["test-knowledgebase-with-web-and-sp"].knowledge_sources
     } == {index_ks.name, web_ks.name, sharepoint_ks.name}

@@ -25,6 +25,7 @@ Answer ONLY with the facts listed in the list of sources below. If there isn't e
 If asking a clarifying question to the user would help, ask the question.
 If the question is not in English, answer in the language used in the question.
 Each source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].
+If the source is a full URL, include the full URL like [https://.../FileName.pdf]
 {% if image_sources %}
 Each image source has the document file name in the top left corner of the image with coordinates (10,10) pixels with format <filename.ext#page=N>,
 and the image figure name is right-aligned in the top right corner of the image.

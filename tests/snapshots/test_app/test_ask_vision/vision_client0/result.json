@@ -44,7 +44,7 @@
                         "oids": null,
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
+                        "knowledgebase_query": null,
                         "sourcefile": "Financial Market Analysis Report 2023.pdf",
                         "sourcepage": "Financial Market Analysis Report 2023.pdf#page=7"
                     },
@@ -69,7 +69,7 @@
                         "oids": null,
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
+                        "knowledgebase_query": null,
                         "sourcefile": "Financial Market Analysis Report 2023.pdf",
                         "sourcepage": "Financial Market Analysis Report 2023.pdf#page=8"
                     },
@@ -94,7 +94,7 @@
                         "oids": null,
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
+                        "knowledgebase_query": null,
                         "sourcefile": "Financial Market Analysis Report 2023.pdf",
                         "sourcepage": "Financial Market Analysis Report 2023.pdf#page=2"
                     }

@@ -19,9 +19,9 @@ This repository includes an optional feature that uses [agentic retrieval from A
    To change the model, set the following environment variables appropriately:
 
    ```shell
-   azd env set AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT searchagent
-   azd env set AZURE_OPENAI_SEARCHAGENT_MODEL gpt-4.1-mini
-   azd env set AZURE_OPENAI_SEARCHAGENT_MODEL_VERSION 2025-04-14
+   azd env set AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT knowledgebase
+   azd env set AZURE_OPENAI_KNOWLEDGEBASE_MODEL gpt-4.1-mini
+   azd env set AZURE_OPENAI_KNOWLEDGEBASE_MODEL_VERSION 2025-04-14
    ```
 
    You can only change it to one of the [supported models](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-create#supported-models).
@@ -33,7 +33,7 @@ This repository includes an optional feature that uses [agentic retrieval from A
    Override the default by setting the following environment variable:
 
    ```shell
-   azd env set AZURE_SEARCH_AGENT_RETRIEVAL_REASONING_EFFORT low
+   azd env set AZURE_SEARCH_KNOWLEDGEBASE_NAME_RETRIEVAL_REASONING_EFFORT low
    ```
 
    Use `minimal` for the lightest planning, `low` for additional query expansion, or `medium` for the most exhaustive (and most expensive) retrieval plans.

@@ -104,12 +104,12 @@
                                 "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_2.png"
                             }
                         ],
+                        "knowledgebase_query": null,
                         "oids": [
                             "OID_X"
                         ],
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
                         "sourcefile": "westbrae_jun28.pdf",
                         "sourcepage": "westbrae_jun28.pdf#page=1"
                     },
@@ -141,12 +141,12 @@
                                 "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_2.png"
                             }
                         ],
+                        "knowledgebase_query": null,
                         "oids": [
                             "OID_X"
                         ],
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
                         "sourcefile": "westbrae_jun28.pdf",
                         "sourcepage": "westbrae_jun28.pdf#page=1"
                     },
@@ -157,12 +157,12 @@
                         "groups": [],
                         "id": "file-westbrae_jun28_pdf-77657374627261655F6A756E32382E7064667B276F696473273A205B2766653437353262612D623565652D343531632D623065312D393332316664663365353962275D7D-page-4",
                         "images": [],
+                        "knowledgebase_query": null,
                         "oids": [
                             "OID_X"
                         ],
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
                         "sourcefile": "westbrae_jun28.pdf",
                         "sourcepage": "westbrae_jun28.pdf#page=2"
                     }

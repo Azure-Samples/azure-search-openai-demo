@@ -105,7 +105,7 @@ def test_get_search_query_returns_default(chat_approach):
 
 
 def test_get_search_query_returns_default_on_error(chat_approach, monkeypatch):
-    async def explode(*_args, **_kwargs):
+    def explode(*_args, **_kwargs):
         raise RuntimeError("boom")
 
     monkeypatch.setattr(chat_approach, "extract_rewritten_query", explode)
@@ -277,9 +277,9 @@ async def test_compute_multimodal_embedding_no_client():
     chat_approach = ChatReadRetrieveReadApproach(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
         search_index_name=None,
-        agent_model=None,
-        agent_deployment=None,
-        agent_client=None,
+        knowledgebase_model=None,
+        knowledgebase_deployment=None,
+        knowledgebase_client=None,
         openai_client=None,
         chatgpt_model="gpt-35-turbo",
         chatgpt_deployment="chat",
@@ -435,7 +435,7 @@ async def test_get_sources_content_includes_sharepoint(chat_approach):
             web_url="https://contoso.sharepoint.com/doc",
             content="SharePoint body",
             title="SharePoint Title",
-            search_agent_query="sp query",
+            knowledgebase_query="sp query",
         )
     ]
     activity_details = {"10": {"activityId": "3", "stepLabel": "SharePoint", "stepType": "remoteSharePoint"}}
@@ -455,40 +455,40 @@ async def test_get_sources_content_includes_sharepoint(chat_approach):
     assert data_points.citation_activity_details["https://contoso.sharepoint.com/doc"]["activityId"] == "3"
 
 
-def test_select_agent_client_priorities(chat_approach):
+def test_select_knowledgebase_client_priorities(chat_approach):
     primary = object()
     web = object()
     sharepoint = object()
     both = object()
 
-    chat_approach.agent_client = primary
-    chat_approach.agent_client_with_web = web
-    chat_approach.agent_client_with_sharepoint = sharepoint
-    chat_approach.agent_client_with_web_and_sharepoint = both
+    chat_approach.knowledgebase_client = primary
+    chat_approach.knowledgebase_client_with_web = web
+    chat_approach.knowledgebase_client_with_sharepoint = sharepoint
+    chat_approach.knowledgebase_client_with_web_and_sharepoint = both
 
-    selected, uses_web, uses_sp = chat_approach._select_agent_client(True, True)
+    selected, uses_web, uses_sp = chat_approach._select_knowledgebase_client(True, True)
     assert selected is both
     assert uses_web is True and uses_sp is True
 
-    selected, uses_web, uses_sp = chat_approach._select_agent_client(True, False)
+    selected, uses_web, uses_sp = chat_approach._select_knowledgebase_client(True, False)
     assert selected is web and uses_web is True and uses_sp is False
 
-    selected, uses_web, uses_sp = chat_approach._select_agent_client(False, True)
+    selected, uses_web, uses_sp = chat_approach._select_knowledgebase_client(False, True)
     assert selected is sharepoint and uses_web is False and uses_sp is True
 
-    chat_approach.agent_client_with_web_and_sharepoint = None
-    chat_approach.agent_client_with_sharepoint = None
-    selected, uses_web, uses_sp = chat_approach._select_agent_client(True, True)
+    chat_approach.knowledgebase_client_with_web_and_sharepoint = None
+    chat_approach.knowledgebase_client_with_sharepoint = None
+    selected, uses_web, uses_sp = chat_approach._select_knowledgebase_client(True, True)
     assert selected is web and uses_web is True and uses_sp is False
 
 
-def test_select_agent_client_requires_configuration(chat_approach):
-    chat_approach.agent_client = None
-    chat_approach.agent_client_with_web = None
-    chat_approach.agent_client_with_sharepoint = None
+def test_select_knowledgebase_client_requires_configuration(chat_approach):
+    chat_approach.knowledgebase_client = None
+    chat_approach.knowledgebase_client_with_web = None
+    chat_approach.knowledgebase_client_with_sharepoint = None
 
-    with pytest.raises(ValueError, match="Agentic retrieval requested but no agent client is configured"):
-        chat_approach._select_agent_client(True, False)
+    with pytest.raises(ValueError, match="Agentic retrieval requested but no knowledge base is configured"):
+        chat_approach._select_knowledgebase_client(True, False)
 
 
 @pytest.mark.asyncio
@@ -532,8 +532,8 @@ async def test_run_with_streaming_handles_non_stream_response(chat_approach, mon
 
     assert events[0]["context"] is extra_info
     assert events[1]["delta"]["content"] == "Answer text"
-    assert events[2]["context"]["followup_questions"] == ["Follow up?"]
-    assert extra_info.thoughts[-1].props["token_usage"].total_tokens == 2
+    assert events[2]["context"] is extra_info
+    assert events[3]["context"]["followup_questions"] == ["Follow up?"]
 
 
 @pytest.mark.asyncio

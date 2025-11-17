@@ -165,7 +165,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.05000000447034836,
                         "reranker_score": 3.2427687644958496,
-                        "search_agent_query": None,
+                        "knowledgebase_query": None,
                         "images": [
                             {
                                 "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_1.png",
@@ -190,7 +190,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.04696394503116608,
                         "reranker_score": 1.8582123517990112,
-                        "search_agent_query": None,
+                        "knowledgebase_query": None,
                         "images": [
                             {
                                 "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_1.png",
@@ -215,7 +215,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.016393441706895828,
                         "reranker_score": 1.7518715858459473,
-                        "search_agent_query": None,
+                        "knowledgebase_query": None,
                         "images": [],
                     },
                 ]
@@ -236,7 +236,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.03333333507180214,
                         "reranker_score": 3.207321882247925,
-                        "search_agent_query": None,
+                        "knowledgebase_query": None,
                         "images": [],
                     },
                     {
@@ -250,7 +250,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.04945354908704758,
                         "reranker_score": 2.573531150817871,
-                        "search_agent_query": None,
+                        "knowledgebase_query": None,
                         "images": [
                             {
                                 "url": "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png",
@@ -270,7 +270,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.0317540317773819,
                         "reranker_score": 1.8846203088760376,
-                        "search_agent_query": None,
+                        "knowledgebase_query": None,
                         "images": [
                             {
                                 "url": "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png",

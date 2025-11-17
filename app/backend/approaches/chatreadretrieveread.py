@@ -39,12 +39,12 @@ class ChatReadRetrieveReadApproach(Approach):
         *,
         search_client: SearchClient,
         search_index_name: str,
-        agent_model: Optional[str],
-        agent_deployment: Optional[str],
-        agent_client: Optional[KnowledgeBaseRetrievalClient],
-        agent_client_with_web: Optional[KnowledgeBaseRetrievalClient] = None,
-        agent_client_with_sharepoint: Optional[KnowledgeBaseRetrievalClient] = None,
-        agent_client_with_web_and_sharepoint: Optional[KnowledgeBaseRetrievalClient] = None,
+        knowledgebase_model: Optional[str],
+        knowledgebase_deployment: Optional[str],
+        knowledgebase_client: Optional[KnowledgeBaseRetrievalClient],
+        knowledgebase_client_with_web: Optional[KnowledgeBaseRetrievalClient] = None,
+        knowledgebase_client_with_sharepoint: Optional[KnowledgeBaseRetrievalClient] = None,
+        knowledgebase_client_with_web_and_sharepoint: Optional[KnowledgeBaseRetrievalClient] = None,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -68,12 +68,12 @@ class ChatReadRetrieveReadApproach(Approach):
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
-        self.agent_model = agent_model
-        self.agent_deployment = agent_deployment
-        self.agent_client = agent_client
-        self.agent_client_with_web = agent_client_with_web
-        self.agent_client_with_sharepoint = agent_client_with_sharepoint
-        self.agent_client_with_web_and_sharepoint = agent_client_with_web_and_sharepoint
+        self.knowledgebase_model = knowledgebase_model
+        self.knowledgebase_deployment = knowledgebase_deployment
+        self.knowledgebase_client = knowledgebase_client
+        self.knowledgebase_client_with_web = knowledgebase_client_with_web
+        self.knowledgebase_client_with_sharepoint = knowledgebase_client_with_sharepoint
+        self.knowledgebase_client_with_web_and_sharepoint = knowledgebase_client_with_web_and_sharepoint
         self.openai_client = openai_client
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
@@ -469,14 +469,14 @@ class ChatReadRetrieveReadApproach(Approach):
         if use_web_source and retrieval_reasoning_effort == "minimal":
             raise Exception("Web source cannot be used with minimal retrieval reasoning effort.")
 
-        selected_client, effective_web_source, effective_sharepoint_source = self._select_agent_client(
+        selected_client, effective_web_source, effective_sharepoint_source = self._select_knowledgebase_client(
             use_web_source,
             self.use_sharepoint_source,
         )
 
         agentic_results = await self.run_agentic_retrieval(
             messages=messages,
-            agent_client=selected_client,
+            knowledgebase_client=selected_client,
             search_index_name=self.search_index_name,
             top=top,
             filter_add_on=search_index_filter,
@@ -519,8 +519,8 @@ class ChatReadRetrieveReadApproach(Approach):
                             if agentic_results.response.activity
                             else None
                         ),
-                        "model": self.agent_model,
-                        "deployment": self.agent_deployment,
+                        "model": self.knowledgebase_model,
+                        "deployment": self.knowledgebase_deployment,
                     },
                 ),
             ],
@@ -541,26 +541,25 @@ class ChatReadRetrieveReadApproach(Approach):
             )
         return extra_info
 
-    def _select_agent_client(
+    def _select_knowledgebase_client(
         self,
         use_web_source: bool,
         use_sharepoint_source: bool,
     ) -> tuple[KnowledgeBaseRetrievalClient, bool, bool]:
         if use_web_source and use_sharepoint_source:
-            if self.agent_client_with_web_and_sharepoint:
-                return self.agent_client_with_web_and_sharepoint, True, True
-            if self.agent_client_with_web:
-                return self.agent_client_with_web, True, False
-            if self.agent_client_with_sharepoint:
-                return self.agent_client_with_sharepoint, False, True
+            if self.knowledgebase_client_with_web_and_sharepoint:
+                return self.knowledgebase_client_with_web_and_sharepoint, True, True
+            if self.knowledgebase_client_with_web:
+                return self.knowledgebase_client_with_web, True, False
+            if self.knowledgebase_client_with_sharepoint:
+                return self.knowledgebase_client_with_sharepoint, False, True
 
-        if use_web_source and self.agent_client_with_web:
-            return self.agent_client_with_web, True, False
+        if use_web_source and self.knowledgebase_client_with_web:
+            return self.knowledgebase_client_with_web, True, False
 
-        if use_sharepoint_source and self.agent_client_with_sharepoint:
-            return self.agent_client_with_sharepoint, False, True
+        if use_sharepoint_source and self.knowledgebase_client_with_sharepoint:
+            return self.knowledgebase_client_with_sharepoint, False, True
 
-        if self.agent_client:
-            return self.agent_client, False, False
-
-        raise ValueError("Agentic retrieval requested but no agent client is configured")
+        if self.knowledgebase_client:
+            return self.knowledgebase_client, False, False
+        raise ValueError("Agentic retrieval requested but no knowledge base is configured")

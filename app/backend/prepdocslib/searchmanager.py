@@ -478,11 +478,12 @@ class SearchManager:
 
                     await search_index_client.create_or_update_index(existing_index)
 
-        if self.search_info.use_agentic_retrieval and self.search_info.agent_name:
-            await self.create_agent()
+        if self.search_info.use_agentic_retrieval and self.search_info.knowledgebase_name:
+            await self.create_knowledgebase()
 
-    async def create_agent(self):
-        if self.search_info.agent_name:
+    async def create_knowledgebase(self):
+        """Creates one or more Knowledge Bases in the search index based on desired knowledge sources."""
+        if self.search_info.knowledgebase_name:
             field_names = ["id", "sourcepage", "sourcefile", "content", "category"]
             if self.use_acls:
                 field_names.extend(["oids", "groups"])
@@ -533,26 +534,26 @@ class SearchManager:
                     )
 
                 # Build the set of knowledge bases that should exist based on optional sources
-                base_agent_name = self.search_info.agent_name
+                base_knowledgebase_name = self.search_info.knowledgebase_name
                 knowledge_bases_to_upsert: list[tuple[str, list[KnowledgeSourceReference]]] = [
-                    (base_agent_name, [knowledge_source_refs["index"]])
+                    (base_knowledgebase_name, [knowledge_source_refs["index"]])
                 ]
 
                 if "web" in knowledge_source_refs:
                     knowledge_bases_to_upsert.append(
-                        (f"{base_agent_name}-with-web", [knowledge_source_refs["index"], knowledge_source_refs["web"]])
+                        (f"{base_knowledgebase_name}-with-web", [knowledge_source_refs["index"], knowledge_source_refs["web"]])
                     )
                 if "sharepoint" in knowledge_source_refs:
                     knowledge_bases_to_upsert.append(
                         (
-                            f"{base_agent_name}-with-sp",
+                            f"{base_knowledgebase_name}-with-sp",
                             [knowledge_source_refs["index"], knowledge_source_refs["sharepoint"]],
                         )
                     )
                 if "web" in knowledge_source_refs and "sharepoint" in knowledge_source_refs:
                     knowledge_bases_to_upsert.append(
                         (
-                            f"{base_agent_name}-with-web-and-sp",
+                            f"{base_knowledgebase_name}-with-web-and-sp",
                             [
                                 knowledge_source_refs["index"],
                                 knowledge_source_refs["web"],
@@ -572,8 +573,8 @@ class SearchManager:
                                 KnowledgeBaseAzureOpenAIModel(
                                     azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
                                         resource_url=self.search_info.azure_openai_endpoint,
-                                        deployment_name=self.search_info.azure_openai_searchagent_deployment,
-                                        model_name=self.search_info.azure_openai_searchagent_model,
+                                        deployment_name=self.search_info.azure_openai_knowledgebase_deployment,
+                                        model_name=self.search_info.azure_openai_knowledgebase_model,
                                     )
                                 )
                             ],

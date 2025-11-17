@@ -60,7 +60,7 @@ MockSearchIndex = SearchIndex(
         SearchField(name="groups", type="Collection(Edm.String)"),
     ],
 )
-MockAgent = KnowledgeBase(
+MockKnowledgeBase = KnowledgeBase(
     name="test",
     models=[],
     knowledge_sources=[
@@ -293,11 +293,11 @@ def mock_acs_search(monkeypatch):
 
 
 @pytest.fixture
-def mock_acs_agent(monkeypatch):
+def mock_search_knowledgebase(monkeypatch):
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("auto"))
 
     async def mock_get_knowledge_base(*args, **kwargs):
-        return MockAgent
+        return MockKnowledgeBase
 
     monkeypatch.setattr(SearchIndexClient, "get_knowledge_base", mock_get_knowledge_base)
 
@@ -439,15 +439,15 @@ reasoning_envs = [
     },
 ]
 
-agent_envs = [
+knowledgebase_envs = [
     {
         "OPENAI_HOST": "azure",
         "AZURE_OPENAI_SERVICE": "test-openai-service",
         "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "gpt-4.1-mini",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
-        "AZURE_OPENAI_SEARCHAGENT_MODEL": "gpt-4.1-mini",
-        "AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT": "gpt-4.1-mini",
+        "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
+        "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_RETRIEVAL": "true",
     },
     {
@@ -456,8 +456,8 @@ agent_envs = [
         "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "gpt-4.1-mini",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
-        "AZURE_OPENAI_SEARCHAGENT_MODEL": "gpt-4.1-mini",
-        "AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT": "gpt-4.1-mini",
+        "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
+        "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_RETRIEVAL": "true",
         "USE_WEB_SOURCE": "true",
     },
@@ -467,22 +467,22 @@ agent_envs = [
         "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "gpt-4.1-mini",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
-        "AZURE_OPENAI_SEARCHAGENT_MODEL": "gpt-4.1-mini",
-        "AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT": "gpt-4.1-mini",
+        "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
+        "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_RETRIEVAL": "true",
         "USE_SHAREPOINT_SOURCE": "true",
     },
 ]
 
-agent_auth_envs = [
+knowledgebase_auth_envs = [
     {
         "OPENAI_HOST": "azure",
         "AZURE_OPENAI_SERVICE": "test-openai-service",
         "AZURE_OPENAI_CHATGPT_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_CHATGPT_DEPLOYMENT": "gpt-4.1-mini",
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
-        "AZURE_OPENAI_SEARCHAGENT_MODEL": "gpt-4.1-mini",
-        "AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT": "gpt-4.1-mini",
+        "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
+        "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_RETRIEVAL": "true",
         "AZURE_USE_AUTHENTICATION": "true",
         "AZURE_ENFORCE_ACCESS_CONTROL": "true",
@@ -545,8 +545,8 @@ def mock_reasoning_env(monkeypatch, request):
             yield
 
 
-@pytest.fixture(params=agent_envs, ids=["agent_client0", "agent_client1_web", "agent_client2_sharepoint"])
-def mock_agent_env(monkeypatch, request):
+@pytest.fixture(params=knowledgebase_envs, ids=["knowledgebase_client0", "knowledgebase_client1_web", "knowledgebase_client2_sharepoint"])
+def mock_knowledgebase_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
@@ -556,7 +556,7 @@ def mock_agent_env(monkeypatch, request):
         monkeypatch.setenv("USE_SPEECH_INPUT_BROWSER", "true")
         monkeypatch.setenv("USE_SPEECH_OUTPUT_AZURE", "true")
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
-        monkeypatch.setenv("AZURE_SEARCH_AGENT", "test-search-agent")
+        monkeypatch.setenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME", "test-search-knowledgebase")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_ID", "test-id")
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_LOCATION", "eastus")
@@ -569,8 +569,8 @@ def mock_agent_env(monkeypatch, request):
             yield
 
 
-@pytest.fixture(params=agent_auth_envs, ids=["agent_auth_client0"])
-def mock_agent_auth_env(monkeypatch, request):
+@pytest.fixture(params=knowledgebase_auth_envs, ids=["knowledgebase_auth_client0"])
+def mock_knowledgebase_auth_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
         monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
@@ -580,7 +580,7 @@ def mock_agent_auth_env(monkeypatch, request):
         monkeypatch.setenv("USE_SPEECH_INPUT_BROWSER", "true")
         monkeypatch.setenv("USE_SPEECH_OUTPUT_AZURE", "true")
         monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
-        monkeypatch.setenv("AZURE_SEARCH_AGENT", "test-search-agent")
+        monkeypatch.setenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME", "test-search-knowledgebase")
         monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_ID", "test-id")
         monkeypatch.setenv("AZURE_SPEECH_SERVICE_LOCATION", "eastus")
@@ -670,13 +670,13 @@ async def reasoning_client(
 
 
 @pytest_asyncio.fixture(scope="function")
-async def agent_client(
+async def knowledgebase_client(
     monkeypatch,
-    mock_agent_env,
+    mock_knowledgebase_env,
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_acs_search,
-    mock_acs_agent,
+    mock_search_knowledgebase,
     mock_blob_container_client,
     mock_azurehttp_calls,
 ):
@@ -690,13 +690,13 @@ async def agent_client(
 
 
 @pytest_asyncio.fixture(scope="function")
-async def agent_auth_client(
+async def knowledgebase_auth_client(
     monkeypatch,
-    mock_agent_auth_env,
+    mock_knowledgebase_auth_env,
     mock_openai_chatcompletion,
     mock_openai_embedding,
     mock_acs_search,
-    mock_acs_agent,
+    mock_search_knowledgebase,
     mock_blob_container_client,
     mock_azurehttp_calls,
     mock_confidential_client_success,
@@ -1125,9 +1125,9 @@ def chat_approach():
     return ChatReadRetrieveReadApproach(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
         search_index_name=None,
-        agent_model=None,
-        agent_deployment=None,
-        agent_client=None,
+        knowledgebase_model=None,
+        knowledgebase_deployment=None,
+        knowledgebase_client=None,
         openai_client=None,
         chatgpt_model="gpt-4.1-mini",
         chatgpt_deployment="chat",
