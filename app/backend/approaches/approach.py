@@ -49,6 +49,15 @@ from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
 
+ACTIVITY_TYPE_LABELS: dict[str, str] = {
+    "modelQueryPlanning": "Query planning",
+    "searchIndex": "Search index",
+    "web": "Web search",
+    "agenticReasoning": "Agentic reasoning",
+    "modelAnswerSynthesis": "Answer synthesis",
+}
+
+
 @dataclass
 class Document:
     id: Optional[str] = None
@@ -155,6 +164,7 @@ class AgenticRetrievalResults:
     answer: Optional[str] = None  # Synthesized answer when web knowledge source is used
     rewrite_result: Optional[RewriteQueryResult] = None
     citation_mapping: Optional[dict[str, str]] = None  # Mapping of reference id to activity id
+    citation_metadata_by_ref: Optional[dict[str, dict[str, Any]]] = None
 
     def get_ordered_results(self) -> list[dict[str, Any]]:
         """Get all results (documents, web, and SharePoint) in their original reference order."""
@@ -197,6 +207,7 @@ class DataPoints:
     citations: Optional[list[str]] = None
     web: Optional[list[dict[str, Any]]] = None
     citation_activities: Optional[dict[str, str]] = None
+    citation_activity_details: Optional[dict[str, dict[str, Any]]] = None
 
 
 @dataclass
@@ -548,8 +559,9 @@ class Approach(ABC):
         # Map activity id -> agent's internal search query and citation
         activities = response.activity or []
         activity_mapping: dict[Any, Optional[str]] = {}
+        activity_details_by_id: dict[str, dict[str, Any]] = {}
 
-        for activity in activities:
+        for index, activity in enumerate(activities):
             print("Processing activity:", activity)
             if isinstance(activity, KnowledgeBaseSearchIndexActivityRecord):
                 if activity.search_index_arguments:
@@ -561,6 +573,20 @@ class Approach(ABC):
                 if activity.remote_share_point_arguments:
                     activity_mapping[activity.id] = activity.remote_share_point_arguments.search
 
+            activity_dict = activity.as_dict()
+            activity_id = activity_dict.get("id")
+            if activity_id is None:
+                continue
+            activity_id_str = str(activity_id)
+            activity_type = activity_dict.get("type")
+            activity_details_by_id[activity_id_str] = {
+                "activityId": activity_id_str,
+                "stepNumber": index + 1,
+                "stepType": activity_type,
+                "stepLabel": ACTIVITY_TYPE_LABELS.get(activity_type, activity_type),
+                "stepSource": activity_dict.get("knowledge_source_name") or activity_dict.get("knowledge_source"),
+            }
+
         # No refs? we're done
         if not (response and response.references):
             return AgenticRetrievalResults(response=response, documents=[], web_results=[], sharepoint_results=[])
@@ -568,13 +594,21 @@ class Approach(ABC):
         # Extract references
         ref_order: dict[str, int] = {}
         activity_citation_mapping: dict[str, str] = {}
+        citation_metadata_by_ref: dict[str, dict[str, Any]] = {}
         for index, ref in enumerate(response.references):
             ref_id = getattr(ref, "id", None)
-            if ref_id is not None:
-                ref_order[str(ref_id)] = index
-                for activity in activities:
-                    if ref.activity_source == activity.id:
-                        activity_citation_mapping[str(ref_id)] = str(activity.id)
+            if ref_id is None:
+                continue
+            ref_key = str(ref_id)
+            ref_order[ref_key] = index
+            activity_source = getattr(ref, "activity_source", None)
+            if activity_source is None:
+                continue
+            activity_id_str = str(activity_source)
+            activity_citation_mapping[ref_key] = activity_id_str
+            activity_detail = activity_details_by_id.get(activity_id_str)
+            if activity_detail:
+                citation_metadata_by_ref[ref_key] = dict(activity_detail)
 
         refs = [
             r for r in response.references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")
@@ -657,6 +691,7 @@ class Approach(ABC):
             answer=answer,
             rewrite_result=rewrite_result,
             citation_mapping=activity_citation_mapping,
+            citation_metadata_by_ref=citation_metadata_by_ref or None,
         )
 
     def replace_all_ref_ids(
@@ -697,6 +732,7 @@ class Approach(ABC):
         web_results: Optional[list[WebResult]] = None,
         sharepoint_results: Optional[list[SharePointResult]] = None,
         citation_mapping: Optional[dict[str, str]] = None,
+        citation_metadata_by_ref: Optional[dict[str, dict[str, Any]]] = None,
     ) -> DataPoints:
         """Extract text/image sources & citations from documents.
 
@@ -723,17 +759,27 @@ class Approach(ABC):
         seen_urls = set()
         web_sources: list[dict[str, Any]] = []
         citation_activity_links: dict[str, str] = {}
+        citation_activity_details: dict[str, dict[str, Any]] = {}
 
         def register_activity(citation_value: Optional[str], ref_key: Optional[str]) -> None:
-            if not citation_mapping:
+            if not (citation_mapping or citation_metadata_by_ref):
                 return
-            if not citation_value or citation_value in citation_activity_links:
+            if not citation_value or citation_value in citation_activity_links or citation_value in citation_activity_details:
                 return
             if ref_key is None:
                 return
-            activity_id = citation_mapping.get(str(ref_key))
+            ref_id = str(ref_key)
+            activity_id = citation_mapping.get(ref_id) if citation_mapping else None
+            metadata = citation_metadata_by_ref.get(ref_id) if citation_metadata_by_ref else None
             if activity_id:
                 citation_activity_links[citation_value] = activity_id
+            detail_payload: dict[str, Any] = {}
+            if activity_id:
+                detail_payload["activityId"] = activity_id
+            if metadata:
+                detail_payload.update({k: v for k, v in metadata.items() if v is not None})
+            if detail_payload:
+                citation_activity_details[citation_value] = detail_payload
 
         for doc in results:
             # Get the citation for the source page
@@ -800,6 +846,7 @@ class Approach(ABC):
             citations=citations,
             web=web_sources,
             citation_activities=citation_activity_links or None,
+            citation_activity_details=citation_activity_details or None,
         )
 
     def get_citation(self, sourcepage: Optional[str]):

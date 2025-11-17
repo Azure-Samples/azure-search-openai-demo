@@ -115,15 +115,6 @@ export const Answer = ({
                             const isWeb = citation.isWeb;
                             const displayIndex = citation.index;
                             const reference = citation.reference;
-                            const stepBadge =
-                                citation.stepNumber !== undefined ? (
-                                    <span
-                                        className={`${styles.citationStepBadge} ${styles.citationStepBadgeList}`}
-                                        title={`Linked to Step ${citation.stepNumber}${citation.stepLabel ? `: ${citation.stepLabel}` : ""}`}
-                                    >
-                                        {`Step ${citation.stepNumber}`}
-                                    </span>
-                                ) : null;
                             if (isWeb) {
                                 // Attempt to find the matching web data point to retrieve its title
                                 const webEntry = answer.context.data_points.web?.find(w => w.url === reference);
@@ -133,7 +124,6 @@ export const Answer = ({
                                         <a className={styles.citation} title={reference} href={reference} target="_blank" rel="noopener noreferrer">
                                             {`${displayIndex}. ${titleOrUrl}`}
                                         </a>
-                                        {stepBadge}
                                     </span>
                                 );
                             } else {
@@ -150,7 +140,6 @@ export const Answer = ({
                                         >
                                             {`${displayIndex}. ${reference}`}
                                         </a>
-                                        {stepBadge}
                                     </span>
                                 );
                             }

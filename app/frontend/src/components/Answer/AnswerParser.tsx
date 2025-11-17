@@ -9,6 +9,7 @@ export type CitationDetail = {
     activityId?: string;
     stepNumber?: number;
     stepLabel?: string;
+    stepSource?: string;
 };
 
 type CitationFragment =
@@ -77,6 +78,7 @@ const buildActivityStepMap = (answer: ChatAppResponse): Record<string, ActivityS
 const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { fragments: CitationFragment[]; citations: CitationDetail[] } => {
     const possibleCitations = answer.context.data_points.citations || [];
     const citationActivities: Record<string, string> = answer.context.data_points.citation_activities ?? {};
+    const citationActivityDetails = answer.context.data_points.citation_activity_details ?? {};
     const activitySteps = buildActivityStepMap(answer);
     const parsedAnswer = normalizeAnswerText(answer, isStreaming);
     const parts = parsedAnswer.split(/\[([^\]]+)\]/g);
@@ -103,15 +105,17 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
             return;
         }
 
-        const activityId = citationActivities?.[part];
+        const backendDetail = citationActivityDetails?.[part];
+        const activityId = backendDetail?.activityId ?? citationActivities?.[part];
         const stepMeta = activityId ? activitySteps[String(activityId)] : undefined;
         const detail: CitationDetail = {
             reference: part,
             index: citationList.length + 1,
             isWeb: isWebCitation(part),
             activityId: activityId !== undefined ? String(activityId) : undefined,
-            stepNumber: stepMeta?.stepNumber,
-            stepLabel: stepMeta?.stepLabel
+            stepNumber: backendDetail?.stepNumber ?? stepMeta?.stepNumber,
+            stepLabel: backendDetail?.stepLabel ?? stepMeta?.stepLabel,
+            stepSource: backendDetail?.stepSource
         };
 
         citationMap.set(part, detail);
@@ -123,16 +127,14 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
 };
 
 const renderCitation = (detail: CitationDetail, onCitationClicked: (citationFilePath: string) => void) => {
-    const supElement = <sup>{detail.index}</sup>;
-    const stepBadge =
-        detail.stepNumber !== undefined ? (
-            <span
-                className="citationStepBadge citationStepBadgeInline"
-                title={`Linked to Step ${detail.stepNumber}${detail.stepLabel ? `: ${detail.stepLabel}` : ""}`}
-            >
-                {`Step ${detail.stepNumber}`}
-            </span>
-        ) : null;
+    const stepBadgeLabel = detail.stepSource ?? detail.stepLabel;
+    const stepBadgeTitle =
+        detail.stepNumber !== undefined
+            ? `Linked to Step ${detail.stepNumber}${detail.stepLabel ? `: ${detail.stepLabel}` : ""}${detail.stepSource ? ` (${detail.stepSource})` : ""}`
+            : stepBadgeLabel
+              ? `Linked to ${stepBadgeLabel}`
+              : undefined;
+    const supElement = <sup title={stepBadgeTitle ?? undefined}>{detail.index}</sup>;
 
     if (detail.isWeb) {
         return renderToStaticMarkup(
@@ -147,7 +149,6 @@ const renderCitation = (detail: CitationDetail, onCitationClicked: (citationFile
                 >
                     {supElement}
                 </a>
-                {stepBadge}
             </span>
         );
     }
@@ -166,7 +167,6 @@ const renderCitation = (detail: CitationDetail, onCitationClicked: (citationFile
             >
                 {supElement}
             </a>
-            {stepBadge}
         </span>
     );
 };
