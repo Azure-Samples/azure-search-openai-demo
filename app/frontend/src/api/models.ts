@@ -119,8 +119,6 @@ export type Config = {
     ragSearchImageEmbeddings: boolean;
     ragSendTextSources: boolean;
     ragSendImageSources: boolean;
-    showFollowupQuestionsOption: boolean;
-    showLLMOptions: boolean;
     webSourceEnabled: boolean;
 };
 

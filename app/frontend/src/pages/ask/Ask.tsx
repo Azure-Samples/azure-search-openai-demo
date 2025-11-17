@@ -57,7 +57,7 @@ export function Component(): JSX.Element {
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
-    const [showLLMOptions, setShowLLMOptions] = useState<boolean>(true);
+    const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
 
@@ -112,7 +112,7 @@ export function Component(): JSX.Element {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
-            setShowLLMOptions(config.showLLMOptions);
+            setWebSourceEnabled(config.webSourceEnabled);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
@@ -384,7 +384,7 @@ export function Component(): JSX.Element {
                     showAgenticRetrievalOption={showAgenticRetrievalOption}
                     useAgenticRetrieval={useAgenticRetrieval}
                     hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
-                    llmCustomizationEnabled={showLLMOptions}
+                    llmCustomizationEnabled={!webSourceEnabled}
                     onChange={handleSettingsChange}
                 />
                 {useLogin && <TokenClaimsDisplay />}

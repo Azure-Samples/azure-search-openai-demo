@@ -82,8 +82,7 @@ const Chat = () => {
     const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const [showChatHistoryCosmos, setShowChatHistoryCosmos] = useState<boolean>(false);
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
-    const [showFollowupQuestionsOption, setShowFollowupQuestionsOption] = useState<boolean>(true);
-    const [showLLMOptions, setShowLLMOptions] = useState<boolean>(true);
+    const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
     const retrievalReasoningDisablesStreaming = useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
@@ -131,8 +130,7 @@ const Chat = () => {
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
-            setShowFollowupQuestionsOption(config.showFollowupQuestionsOption);
-            setShowLLMOptions(config.showLLMOptions);
+            setWebSourceEnabled(config.webSourceEnabled);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
@@ -604,11 +602,11 @@ const Chat = () => {
                         shouldStream={shouldStream}
                         streamingEnabled={streamingEnabled}
                         useSuggestFollowupQuestions={useSuggestFollowupQuestions}
-                        showSuggestFollowupQuestions={showFollowupQuestionsOption}
+                        showSuggestFollowupQuestions={!webSourceEnabled}
                         showAgenticRetrievalOption={showAgenticRetrievalOption}
                         useAgenticRetrieval={useAgenticRetrieval}
                         hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
-                        llmCustomizationEnabled={showLLMOptions}
+                        llmCustomizationEnabled={!webSourceEnabled}
                         onChange={handleSettingsChange}
                     />
                     {useLogin && <TokenClaimsDisplay />}
