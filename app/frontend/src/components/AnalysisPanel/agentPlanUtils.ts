@@ -27,6 +27,7 @@ const STEP_LABELS: Record<string, string> = {
     modelQueryPlanning: "Query planning",
     searchIndex: "Search index",
     web: "Web search",
+    remoteSharePoint: "Search SharePoint",
     agenticReasoning: "Agentic reasoning",
     modelAnswerSynthesis: "Answer synthesis"
 };
