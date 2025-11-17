@@ -490,6 +490,37 @@ async def main():
         raise
 
 
+# For gunicorn/ASGI servers: expose the app at module level
+# Initialize server and app for production deployment
+_server_instance: Optional[AgentServer] = None
+
+def get_app() -> Quart:
+    """Get or create the Quart app instance for ASGI servers."""
+    global _server_instance
+    
+    if _server_instance is None:
+        _server_instance = AgentServer()
+        app = _server_instance.app
+        
+        # Add startup hook to initialize the agent asynchronously
+        @app.before_serving
+        async def startup():
+            """Initialize the agent when the server starts."""
+            try:
+                await _server_instance.initialize()
+                logger.info("Agent server initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize agent server: {e}")
+                raise
+        
+        return app
+    
+    return _server_instance.app
+
+# Expose app for gunicorn
+app = get_app()
+
+
 if __name__ == "__main__":
     # Run the agent server
     asyncio.run(main())

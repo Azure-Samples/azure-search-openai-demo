@@ -24,6 +24,7 @@ param searchServiceLocation string = '' // Set in main.parameters.json
 // The free tier does not support managed identity (required) or semantic search (optional)
 @allowed(['free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
 param searchServiceSkuName string // Set in main.parameters.json
+param searchServiceResourceExists bool = false
 param searchIndexName string // Set in main.parameters.json
 param searchAgentName string = useAgenticRetrieval ? '${searchIndexName}-agent-upgrade' : ''
 param searchQueryLanguage string // Set in main.parameters.json
@@ -39,6 +40,7 @@ param storageResourceGroupName string = '' // Set in main.parameters.json
 param storageResourceGroupLocation string = location
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
+param storageResourceExists bool = false
 
 param defaultReasoningEffort string // Set in main.parameters.json
 param useAgenticRetrieval bool // Set in main.parameters.json
@@ -428,12 +430,17 @@ module appServicePlan 'core/host/appserviceplan.bicep' = if (deploymentTarget ==
   }
 }
 
+var storageAccountFinalName = !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
+var storageAccountId = resourceId(subscription().subscriptionId, storageResourceGroup.name, 'Microsoft.Storage/storageAccounts', storageAccountFinalName)
+var searchServiceFinalName = !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
+var searchServiceId = resourceId(subscription().subscriptionId, searchServiceResourceGroup.name, 'Microsoft.Search/searchServices', searchServiceFinalName)
+
 var appEnvVariables = {
-  AZURE_STORAGE_ACCOUNT: storage.outputs.name
+  AZURE_STORAGE_ACCOUNT: storageAccountFinalName
   AZURE_STORAGE_CONTAINER: storageContainerName
   AZURE_SEARCH_INDEX: searchIndexName
   AZURE_SEARCH_AGENT: searchAgentName
-  AZURE_SEARCH_SERVICE: searchService.outputs.name
+  AZURE_SEARCH_SERVICE: searchServiceFinalName
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
   AZURE_SEARCH_QUERY_REWRITING: searchServiceQueryRewriting
   AZURE_VISION_ENDPOINT: useMultimodal ? vision.outputs.endpoint : ''
@@ -563,7 +570,7 @@ var agentsEnvVariables = {
     : ''
   AZURE_OPENAI_API_KEY: azureOpenAiApiKey
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
-  AZURE_SEARCH_ENDPOINT: 'https://${searchService.outputs.name}.search.windows.net'
+  AZURE_SEARCH_ENDPOINT: 'https://${searchServiceFinalName}.search.windows.net'
   AZURE_SEARCH_KEY: '' // Set via Key Vault or use Managed Identity
   AZURE_SEARCH_INDEX: searchIndexName
   // Application Insights
@@ -599,7 +606,7 @@ module agents 'core/host/appservice.bicep' = if (deploymentTarget == 'appservice
     appServicePlanId: deploymentTarget == 'appservice' ? appServicePlan.outputs.id : ''
     runtimeName: 'python'
     runtimeVersion: '3.11'
-    appCommandLine: 'python main.py'
+    appCommandLine: 'python -m hypercorn main:app --bind 0.0.0.0:8000 --log-level info'
     scmDoBuildDuringDeployment: true
     managedIdentity: true
     keyVaultName: enableKeyVault ? keyVault.outputs.name : ''
@@ -884,11 +891,11 @@ module speech 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useSpee
     sku: speechServiceSkuName
   }
 }
-module searchService 'core/search/search-services.bicep' = {
+module searchService 'core/search/search-services.bicep' = if (!searchServiceResourceExists) {
   name: 'search-service'
   scope: searchServiceResourceGroup
   params: {
-    name: !empty(searchServiceName) ? searchServiceName : 'gptkb-${resourceToken}'
+    name: searchServiceFinalName
     location: !empty(searchServiceLocation) ? searchServiceLocation : location
     tags: tags
     disableLocalAuth: true
@@ -899,24 +906,24 @@ module searchService 'core/search/search-services.bicep' = {
     publicNetworkAccess: publicNetworkAccess == 'Enabled'
       ? 'enabled'
       : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
-    sharedPrivateLinkStorageAccounts: (usePrivateEndpoint && useIntegratedVectorization) ? [storage.outputs.id] : []
+    sharedPrivateLinkStorageAccounts: (usePrivateEndpoint && useIntegratedVectorization) ? [storageAccountId] : []
   }
 }
 
-module searchDiagnostics 'core/search/search-diagnostics.bicep' = if (useApplicationInsights) {
+module searchDiagnostics 'core/search/search-diagnostics.bicep' = if (useApplicationInsights && !searchServiceResourceExists) {
   name: 'search-diagnostics'
   scope: searchServiceResourceGroup
   params: {
-    searchServiceName: searchService.outputs.name
+    searchServiceName: searchServiceFinalName
     workspaceId: useApplicationInsights ? monitoring.outputs.logAnalyticsWorkspaceId : ''
   }
 }
 
-module storage 'core/storage/storage-account.bicep' = {
+module storage 'core/storage/storage-account.bicep' = if (!storageResourceExists) {
   name: 'storage'
   scope: storageResourceGroup
   params: {
-    name: !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
+    name: storageAccountFinalName
     location: storageResourceGroupLocation
     tags: tags
     publicNetworkAccess: publicNetworkAccess
@@ -1045,7 +1052,7 @@ module ai 'core/ai/ai-environment.bicep' = if (useAiProject) {
     tags: tags
     hubName: 'aihub-${resourceToken}'
     projectName: 'aiproj-${resourceToken}'
-    storageAccountId: storage.outputs.id
+    storageAccountId: storageAccountId
     applicationInsightsId: !useApplicationInsights ? '' : monitoring.outputs.applicationInsightsId
   }
 }
@@ -1183,7 +1190,7 @@ module openAiRoleBackend 'core/security/role.bicep' = if (isAzureOpenAiHost && d
   }
 }
 
-module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi) {
+module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi && !searchServiceResourceExists) {
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
@@ -1193,7 +1200,7 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   }
 }
 
-module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal) {
+module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal && !searchServiceResourceExists) {
   scope: visionResourceGroup
   name: 'vision-role-searchservice'
   params: {
@@ -1227,7 +1234,7 @@ module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
   }
 }
 
-module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization) {
+module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization && !searchServiceResourceExists) {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
@@ -1237,7 +1244,7 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
   }
 }
 
-module storageRoleContributorSearchService 'core/security/role.bicep' = if (useIntegratedVectorization && useMultimodal) {
+module storageRoleContributorSearchService 'core/security/role.bicep' = if (useIntegratedVectorization && useMultimodal && !searchServiceResourceExists) {
   scope: storageResourceGroup
   name: 'storage-role-contributor-searchservice'
   params: {
@@ -1366,12 +1373,12 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
       {
         groupId: 'blob'
         dnsZoneName: 'privatelink.blob.${environmentData.suffixes.storage}'
-        resourceIds: concat([storage.outputs.id], useUserUpload ? [userStorage.outputs.id] : [])
+        resourceIds: concat([storageAccountId], useUserUpload ? [userStorage.outputs.id] : [])
       }
       {
         groupId: 'searchService'
         dnsZoneName: 'privatelink.search.windows.net'
-        resourceIds: [searchService.outputs.id]
+        resourceIds: [searchServiceId]
       }
       {
         groupId: 'sql'
@@ -1491,10 +1498,10 @@ output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceRe
 
 output AZURE_SEARCH_INDEX string = searchIndexName
 output AZURE_SEARCH_AGENT string = searchAgentName
-output AZURE_SEARCH_SERVICE string = searchService.outputs.name
+output AZURE_SEARCH_SERVICE string = searchServiceFinalName
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
 output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLevel
-output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchService.outputs.principalId
+output AZURE_SEARCH_SERVICE_ASSIGNED_USERID string = searchServiceResourceExists ? '' : searchService.outputs.principalId
 output AZURE_SEARCH_FIELD_NAME_EMBEDDING string = searchFieldNameEmbedding
 
 output AZURE_COSMOSDB_ACCOUNT string = (useAuthentication && useChatHistoryCosmos) ? cosmosDb.outputs.name : ''
@@ -1502,7 +1509,7 @@ output AZURE_CHAT_HISTORY_DATABASE string = chatHistoryDatabaseName
 output AZURE_CHAT_HISTORY_CONTAINER string = chatHistoryContainerName
 output AZURE_CHAT_HISTORY_VERSION string = chatHistoryVersion
 
-output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
+output AZURE_STORAGE_ACCOUNT string = storageAccountFinalName
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 

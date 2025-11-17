@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  agents:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agents-service
+    ports:
+      - "8000:8000"
+    environment:
+      # Bot Framework Configuration
+      - MICROSOFT_APP_ID=${MICROSOFT_APP_ID}
+      - MICROSOFT_APP_PASSWORD=${MICROSOFT_APP_PASSWORD}
+      - MICROSOFT_APP_TENANT_ID=${MICROSOFT_APP_TENANT_ID}
+      
+      # Backend Configuration
+      - BACKEND_URL=${BACKEND_URL:-http://host.docker.internal:50505}
+      
+      # Agent Configuration
+      - AGENT_NAME=${AGENT_NAME:-RAG Assistant}
+      - AGENT_DESCRIPTION=${AGENT_DESCRIPTION:-AI-powered document search and chat assistant}
+      - MAX_CONVERSATION_TURNS=${MAX_CONVERSATION_TURNS:-20}
+      - ENABLE_TYPING_INDICATOR=${ENABLE_TYPING_INDICATOR:-true}
+      
+      # Channel Settings
+      - ENABLE_TEAMS=${ENABLE_TEAMS:-true}
+      - ENABLE_COPILOT=${ENABLE_COPILOT:-true}
+      - ENABLE_WEB_CHAT=${ENABLE_WEB_CHAT:-true}
+      
+      # CORS
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
+      
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RUNNING_IN_PRODUCTION=${RUNNING_IN_PRODUCTION:-false}
+    env_file:
+      - .env
+    volumes:
+      # Mount local .env file if it exists
+      - ./.env:/app/.env:ro
+    networks:
+      - agents-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # Optional: Include backend service for full local testing
+  # Uncomment if you want to run backend locally too
+  # backend:
+  #   image: your-backend-image:latest
+  #   ports:
+  #     - "50505:50505"
+  #   environment:
+  #     - AZURE_SEARCH_SERVICE=${AZURE_SEARCH_SERVICE}
+  #     - AZURE_SEARCH_KEY=${AZURE_SEARCH_KEY}
+  #     # ... other backend env vars
+  #   networks:
+  #     - agents-network
+
+networks:
+  agents-network:
+    driver: bridge
+
+

@@ -56,7 +56,8 @@ class RetrieveThenReadApproach(Approach):
     ):
         # Get openai_host from environment or default to "azure"
         import os
-        from prepdocslib.strategy import OpenAIHost
+        # OpenAIHost enum lives in prepdocs.py (not in prepdocslib.strategy)
+        from prepdocs import OpenAIHost
         openai_host_str = os.getenv("OPENAI_HOST", "azure")
         openai_host = OpenAIHost(openai_host_str).value if hasattr(OpenAIHost, openai_host_str.upper()) else openai_host_str
         

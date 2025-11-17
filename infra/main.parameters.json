@@ -62,6 +62,9 @@
     "searchServiceResourceGroupName": {
       "value": "${AZURE_SEARCH_SERVICE_RESOURCE_GROUP}"
     },
+    "searchServiceResourceExists": {
+      "value": "${SERVICE_SEARCH_RESOURCE_EXISTS=false}"
+    },
     "searchServiceLocation": {
       "value": "${AZURE_SEARCH_SERVICE_LOCATION}"
     },
@@ -91,6 +94,12 @@
     },
     "storageResourceGroupName": {
       "value": "${AZURE_STORAGE_RESOURCE_GROUP}"
+    },
+    "storageResourceGroupLocation": {
+      "value": "${AZURE_STORAGE_LOCATION=${AZURE_LOCATION}}"
+    },
+    "storageResourceExists": {
+      "value": "${SERVICE_STORAGE_RESOURCE_EXISTS=false}"
     },
     "storageSkuName": {
       "value": "${AZURE_STORAGE_SKU=Standard_LRS}"

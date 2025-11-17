@@ -1,0 +1,19 @@
+# Example override file for local development
+# Copy this to docker-compose.override.yml and customize
+
+version: '3.8'
+
+services:
+  agents:
+    # Override for local development
+    environment:
+      - LOG_LEVEL=DEBUG
+      - RUNNING_IN_PRODUCTION=false
+    # Mount source code for hot reload (if using development server)
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    # Use development command instead of production
+    # command: python main.py
+
+
