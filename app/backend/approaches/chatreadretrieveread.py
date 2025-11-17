@@ -1,5 +1,6 @@
 import re
 from collections.abc import AsyncGenerator, Awaitable
+from dataclasses import asdict
 from typing import Any, Optional, cast
 
 from azure.search.documents.aio import SearchClient
@@ -104,6 +105,13 @@ class ChatReadRetrieveReadApproach(Approach):
             return content, []
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
 
+    def get_search_query(self, chat_completion: ChatCompletion, default_query: str) -> str:
+        """Read the optimized search query from a chat completion tool call."""
+        try:
+            return self.extract_rewritten_query(chat_completion, default_query, no_response_token=self.NO_RESPONSE)
+        except Exception:
+            return default_query
+
     async def run_without_streaming(
         self,
         messages: list[ChatCompletionMessageParam],
@@ -128,7 +136,11 @@ class ChatReadRetrieveReadApproach(Approach):
             "message": {"content": content, "role": role},
             "context": {
                 "thoughts": extra_info.thoughts,
-                "data_points": extra_info.data_points,
+                "data_points": {
+                    key: value
+                    for key, value in asdict(extra_info.data_points).items()
+                    if value is not None
+                },
                 "followup_questions": extra_info.followup_questions,
             },
             "session_state": session_state,

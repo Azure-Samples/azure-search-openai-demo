@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -45,6 +46,35 @@ def messages_contains_text(messages, text):
         if text in message["content"]:
             return True
     return False
+
+
+def pop_citation_activity_details(result: dict[str, Any] | None):  # type: ignore[name-defined]
+    if result is None:
+        return None
+    context = result.get("context") if isinstance(result, dict) else None
+    if not isinstance(context, dict):
+        return None
+    data_points = context.get("data_points")
+    if not isinstance(data_points, dict):
+        return None
+    return data_points.pop("citation_activity_details", None)
+
+
+def assert_index_citation_details(citation_details):
+    assert citation_details is not None
+    assert citation_details.get("Benefit_Options-2.pdf") == {
+        "activityId": "1",
+        "stepLabel": "Search index",
+        "stepNumber": 2,
+        "stepSource": "index",
+        "stepType": "searchIndex",
+    }
+    for details in citation_details.values():
+        assert set(details) >= {"activityId", "stepLabel", "stepNumber", "stepSource", "stepType"}
+
+
+def assert_no_citation_activity_details(result):
+    assert pop_citation_activity_details(result) is None
 
 
 @pytest.mark.asyncio
@@ -166,6 +196,8 @@ async def test_ask_rtr_text(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
+    citation_details = pop_citation_activity_details(result)
+    assert citation_details is None
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -182,6 +214,8 @@ async def test_ask_rtr_text_agent(agent_client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
+    citation_details = pop_citation_activity_details(result)
+    assert_index_citation_details(citation_details)
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -228,6 +262,8 @@ async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
     assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].access_token == "MockToken"
 
     result = await response.get_json()
+    citation_details = pop_citation_activity_details(result)
+    assert_index_citation_details(citation_details)
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -548,6 +584,8 @@ async def test_chat_text_agent(agent_client, snapshot):
     assert response.status_code == 200
     result = await response.get_json()
     assert result["context"]["thoughts"][0]["props"]["reranker_threshold"] == 0
+    citation_details = pop_citation_activity_details(result)
+    assert_index_citation_details(citation_details)
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -592,6 +630,8 @@ async def test_chat_text_filter_agent(agent_auth_client, snapshot):
     assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter == "category ne 'excluded'"
     assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].access_token == "MockToken"
     result = await response.get_json()
+    citation_details = pop_citation_activity_details(result)
+    assert_index_citation_details(citation_details)
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 

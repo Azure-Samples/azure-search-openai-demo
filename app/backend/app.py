@@ -42,9 +42,10 @@ from quart import (
     send_file,
     send_from_directory,
 )
+from werkzeug.exceptions import NotFound
 from quart_cors import cors
 
-from approaches.approach import Approach
+from approaches.approach import Approach, DataPoints
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
@@ -115,7 +116,14 @@ mimetypes.add_type("text/css", ".css")
 
 @bp.route("/")
 async def index():
-    return await bp.send_static_file("index.html")
+    try:
+        return await bp.send_static_file("index.html")
+    except NotFound:
+        # Allow running without a built frontend by falling back to the source index.html
+        frontend_index = Path(__file__).resolve().parent.parent / "frontend" / "index.html"
+        if frontend_index.exists():
+            return await send_file(frontend_index)
+        return make_response("", 200)
 
 
 # Empty page is recommended for login redirect to work.
@@ -127,7 +135,13 @@ async def redirect():
 
 @bp.route("/favicon.ico")
 async def favicon():
-    return await bp.send_static_file("favicon.ico")
+    try:
+        return await bp.send_static_file("favicon.ico")
+    except NotFound:
+        fallback_favicon = Path(__file__).resolve().parent.parent / "frontend" / "public" / "favicon.ico"
+        if fallback_favicon.exists():
+            return await send_file(fallback_favicon, mimetype="image/x-icon")
+        return make_response("", 200, {"Content-Type": "image/x-icon"})
 
 
 @bp.route("/assets/<path:path>")
@@ -203,7 +217,14 @@ async def ask(auth_claims: dict[str, Any]):
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):
         if dataclasses.is_dataclass(o) and not isinstance(o, type):
-            return dataclasses.asdict(o)
+            as_dict = dataclasses.asdict(o)
+            if isinstance(o, DataPoints):
+                # Drop optional data point collections that are not populated to keep API surface stable
+                return {k: v for k, v in as_dict.items() if v is not None}
+            data_points_payload = as_dict.get("data_points") if isinstance(as_dict, dict) else None
+            if isinstance(data_points_payload, dict) and data_points_payload.get("citation_activity_details") is None:
+                data_points_payload.pop("citation_activity_details")
+            return as_dict
         return super().default(o)
 
 

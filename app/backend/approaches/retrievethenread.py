@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from typing import Any, Optional, cast
 
 from azure.search.documents.aio import SearchClient
@@ -150,7 +151,11 @@ class RetrieveThenReadApproach(Approach):
             },
             "context": {
                 "thoughts": extra_info.thoughts,
-                "data_points": extra_info.data_points,
+                "data_points": {
+                    key: value
+                    for key, value in asdict(extra_info.data_points).items()
+                    if value is not None
+                },
             },
             "session_state": session_state,
         }

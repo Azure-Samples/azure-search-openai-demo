@@ -6,7 +6,7 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from openai.types.chat import ChatCompletion
 
-from approaches.approach import Document, WebResult
+from approaches.approach import Document, SharePointResult, WebResult
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from prepdocslib.embeddings import ImageEmbeddings
@@ -362,3 +362,19 @@ def test_replace_all_ref_ids_mixed(chat_approach):
     # ref_id:999 doesn't exist, should remain unchanged
     assert "[ref_id:999]" in result
     assert result == "Check [page1.pdf] and [https://example.com] and also [ref_id:999]."
+
+
+def test_replace_all_ref_ids_sharepoint_priority(chat_approach):
+    """SharePoint URLs should be used when present."""
+
+    answer = "See [ref_id:7] for the site link."
+    documents = [
+        Document(id="doc1", ref_id="7", sourcepage="page1.pdf", sourcefile="page1.pdf"),
+    ]
+    sharepoint_results = [
+        SharePointResult(id="7", web_url="https://sharepoint.example.com/documents/7"),
+    ]
+
+    result = chat_approach.replace_all_ref_ids(answer, documents, [], sharepoint_results)
+
+    assert result == "See [https://sharepoint.example.com/documents/7] for the site link."

@@ -696,7 +696,7 @@ class Approach(ABC):
         answer: str,
         documents: list[Document],
         web_results: list[WebResult],
-        sharepoint_results: list[SharePointResult],
+        sharepoint_results: Optional[list[SharePointResult]] = None,
     ) -> str:
         """Replace [ref_id:<id>] tokens with document sourcepage, web URL, or SharePoint web_url.
 
@@ -705,7 +705,8 @@ class Approach(ABC):
         """
         doc_map = {d.ref_id: d.sourcepage for d in documents if d.ref_id and d.sourcepage}
         web_map = {str(w.id): w.url for w in web_results if w.id and w.url}
-        sharepoint_map = {str(sp.id): sp.web_url for sp in sharepoint_results if sp.id and sp.web_url}
+        sharepoint_entries = sharepoint_results or []
+        sharepoint_map = {str(sp.id): sp.web_url for sp in sharepoint_entries if sp.id and sp.web_url}
 
         def _sub(match: re.Match) -> str:
             ref_id = match.group(1)
