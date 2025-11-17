@@ -30,6 +30,7 @@ export type ChatAppRequestOverrides = {
     language: string;
     use_agentic_retrieval: boolean;
     use_web_source?: boolean;
+    use_sharepoint_source?: boolean;
 };
 
 export type ResponseMessage = {
@@ -121,6 +122,7 @@ export type Config = {
     ragSendTextSources: boolean;
     ragSendImageSources: boolean;
     webSourceEnabled: boolean;
+    sharepointSourceEnabled: boolean;
 };
 
 export type SimpleAPIResponse = {

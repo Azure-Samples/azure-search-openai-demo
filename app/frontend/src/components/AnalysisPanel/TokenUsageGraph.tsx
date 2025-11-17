@@ -75,7 +75,7 @@ export const TokenUsageStackedBar: React.FC<TokenUsageStackedBarProps> = ({ toke
                     </span>
                 </div>
             )}
-            <div className={`${styles.tokenBar} ${styles.outputBar}`} style={{ flexGrow: outputFlex, flexBasis: outputPercent, minWidth: 0 }}>
+            <div className={`${styles.tokenBar} ${styles.outputBar}`} style={{ flexGrow: outputFlex, flexBasis: outputPercent }}>
                 <span className={styles.tokenLabel}>
                     {labels.output}: {safeOutputValue}
                 </span>

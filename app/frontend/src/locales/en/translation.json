@@ -111,7 +111,8 @@
         },
         "useSuggestFollowupQuestions": "Suggest follow-up questions",
         "useAgenticRetrieval": "Use agentic retrieval",
-        "useWebSource": "Use web search",
+        "useWebSource": "Include web source",
+        "useSharePointSource": "Include Sharepoint source",
         "llmInputs": "LLM input sources",
         "llmInputsOptions": {
             "texts": "Text sources",

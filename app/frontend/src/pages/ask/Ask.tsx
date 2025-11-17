@@ -59,6 +59,8 @@ export function Component(): JSX.Element {
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
     const [webSourceSupported, setWebSourceSupported] = useState<boolean>(false);
     const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
+    const [sharePointSourceSupported, setSharePointSourceSupported] = useState<boolean>(false);
+    const [sharePointSourceEnabled, setSharePointSourceEnabled] = useState<boolean>(false);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
 
@@ -115,6 +117,8 @@ export function Component(): JSX.Element {
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
             setWebSourceSupported(config.webSourceEnabled);
             setWebSourceEnabled(config.webSourceEnabled);
+            setSharePointSourceSupported(config.sharepointSourceEnabled);
+            setSharePointSourceEnabled(config.sharepointSourceEnabled);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
@@ -171,6 +175,7 @@ export function Component(): JSX.Element {
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
                         use_web_source: webSourceSupported ? webSourceEnabled : false,
+                        use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -218,6 +223,10 @@ export function Component(): JSX.Element {
                 break;
             case "retrievalReasoningEffort":
                 setRetrievalReasoningEffort(value);
+                if (value === "minimal" && webSourceEnabled) {
+                    setWebSourceEnabled(false);
+                    setHideMinimalRetrievalReasoningOption(false);
+                }
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -264,6 +273,13 @@ export function Component(): JSX.Element {
                 }
                 setWebSourceEnabled(value);
                 setHideMinimalRetrievalReasoningOption(value);
+                break;
+            case "useSharePointSource":
+                if (!sharePointSourceSupported) {
+                    setSharePointSourceEnabled(false);
+                    return;
+                }
+                setSharePointSourceEnabled(value);
                 break;
         }
     };
@@ -397,6 +413,8 @@ export function Component(): JSX.Element {
                     useAgenticRetrieval={useAgenticRetrieval}
                     useWebSource={webSourceEnabled}
                     showWebSourceOption={webSourceSupported}
+                    useSharePointSource={sharePointSourceEnabled}
+                    showSharePointSourceOption={sharePointSourceSupported}
                     hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                     llmCustomizationEnabled={!webSourceEnabled}
                     onChange={handleSettingsChange}

@@ -51,6 +51,8 @@ export interface SettingsProps {
     hideMinimalRetrievalReasoningOption?: boolean;
     useWebSource?: boolean;
     showWebSourceOption?: boolean;
+    useSharePointSource?: boolean;
+    showSharePointSourceOption?: boolean;
 }
 
 export const Settings = ({
@@ -94,7 +96,9 @@ export const Settings = ({
     llmCustomizationEnabled = true,
     hideMinimalRetrievalReasoningOption = false,
     useWebSource = false,
-    showWebSourceOption = false
+    showWebSourceOption = false,
+    useSharePointSource = false,
+    showSharePointSourceOption = false
 }: SettingsProps) => {
     const { t } = useTranslation();
 
@@ -109,6 +113,8 @@ export const Settings = ({
     const agenticRetrievalFieldId = useId("agenticRetrievalField");
     const webSourceId = useId("webSource");
     const webSourceFieldId = useId("webSourceField");
+    const sharePointSourceId = useId("sharePointSource");
+    const sharePointSourceFieldId = useId("sharePointSourceField");
     const searchScoreId = useId("searchScore");
     const searchScoreFieldId = useId("searchScoreField");
     const rerankerScoreId = useId("rerankerScore");
@@ -137,6 +143,7 @@ export const Settings = ({
     const webSourceRequiresNoStreaming = !!useAgenticRetrieval && !!useWebSource;
     const streamingDisabledByOverrides = retrievalReasoningRestrictsSettings || webSourceRequiresNoStreaming;
     const webSourceDisabled = !useAgenticRetrieval || retrievalReasoningEffort === "minimal";
+    const sharePointSourceDisabled = !useAgenticRetrieval;
     const minimalReasoningDisabled = hideMinimalRetrievalReasoningOption || useWebSource;
     const showLlmAndAnswerSettings = llmCustomizationEnabled && !retrievalReasoningRestrictsSettings;
 
@@ -192,6 +199,24 @@ export const Settings = ({
                     onRenderLabel={props => renderLabel(props, agenticRetrievalId, agenticRetrievalFieldId, t("helpTexts.useAgenticRetrieval"))}
                 />
             )}
+
+            {showAgenticRetrievalOption && useAgenticRetrieval && (
+                <Dropdown
+                    id={retrievalReasoningEffortFieldId}
+                    className={styles.settingsSeparator}
+                    label={t("labels.retrievalReasoningEffort")}
+                    selectedKey={retrievalReasoningEffort}
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
+                        onChange("retrievalReasoningEffort", option?.key?.toString() ?? retrievalReasoningEffort)
+                    }
+                    aria-labelledby={retrievalReasoningEffortId}
+                    options={retrievalReasoningOptions}
+                    onRenderLabel={props =>
+                        renderLabel(props, retrievalReasoningEffortId, retrievalReasoningEffortFieldId, t("helpTexts.retrievalReasoningEffort"))
+                    }
+                />
+            )}
+
             {showAgenticRetrievalOption && showWebSourceOption && (
                 <Checkbox
                     id={webSourceFieldId}
@@ -202,6 +227,18 @@ export const Settings = ({
                     aria-labelledby={webSourceId}
                     disabled={webSourceDisabled}
                     onRenderLabel={props => renderLabel(props, webSourceId, webSourceFieldId, t("helpTexts.useWebSource"))}
+                />
+            )}
+            {showAgenticRetrievalOption && showSharePointSourceOption && (
+                <Checkbox
+                    id={sharePointSourceFieldId}
+                    className={styles.settingsSeparator}
+                    checked={useSharePointSource}
+                    label={t("labels.useSharePointSource")}
+                    onChange={(_ev, checked) => onChange("useSharePointSource", !!checked)}
+                    aria-labelledby={sharePointSourceId}
+                    disabled={sharePointSourceDisabled}
+                    onRenderLabel={props => renderLabel(props, sharePointSourceId, sharePointSourceFieldId, t("helpTexts.useSharePointSource"))}
                 />
             )}
             {!useAgenticRetrieval && (
@@ -251,22 +288,7 @@ export const Settings = ({
                     onRenderLabel={props => renderLabel(props, includeCategoryId, includeCategoryFieldId, t("helpTexts.resultsMergeStrategy"))}
                 />
             )}
-            {showAgenticRetrievalOption && useAgenticRetrieval && (
-                <Dropdown
-                    id={retrievalReasoningEffortFieldId}
-                    className={styles.settingsSeparator}
-                    label={t("labels.retrievalReasoningEffort")}
-                    selectedKey={retrievalReasoningEffort}
-                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
-                        onChange("retrievalReasoningEffort", option?.key?.toString() ?? retrievalReasoningEffort)
-                    }
-                    aria-labelledby={retrievalReasoningEffortId}
-                    options={retrievalReasoningOptions}
-                    onRenderLabel={props =>
-                        renderLabel(props, retrievalReasoningEffortId, retrievalReasoningEffortFieldId, t("helpTexts.retrievalReasoningEffort"))
-                    }
-                />
-            )}
+
             {!useAgenticRetrieval && (
                 <TextField
                     id={retrieveCountFieldId}

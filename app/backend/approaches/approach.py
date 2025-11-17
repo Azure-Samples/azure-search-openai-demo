@@ -475,7 +475,7 @@ class Approach(ABC):
                 filter_add_on=filter_add_on,
                 include_references=True,
                 include_reference_source_data=True,
-                always_query_source=True,
+                always_query_source=False,
                 reranker_threshold=minimum_reranker_score,
             )
         ]
@@ -490,19 +490,18 @@ class Approach(ABC):
                     knowledge_source_name="web",
                     include_references=True,
                     include_reference_source_data=True,
-                    always_query_source=True
+                    always_query_source=False
                 )
             )
 
         if use_sharepoint_source:
             print("Including SharePoint knowledge source in agentic retrieval")
-            print("Access token", access_token)
             knowledge_source_params_list.append(
                 RemoteSharePointKnowledgeSourceParams(
                     knowledge_source_name="sharepoint",
                     include_references=True,
                     include_reference_source_data=True,
-                    always_query_source=True,
+                    always_query_source=False
                 )
             )
 
@@ -586,10 +585,6 @@ class Approach(ABC):
                 "stepSource": activity_dict.get("knowledge_source_name") or activity_dict.get("knowledge_source"),
             }
 
-        # No refs? we're done
-        if not (response and response.references):
-            return AgenticRetrievalResults(response=response, documents=[], web_results=[], sharepoint_results=[])
-
         # Extract references
         activity_citation_details: dict[str, dict[str, Any]] = {}
         for ref in response.references:
@@ -635,6 +630,7 @@ class Approach(ABC):
                 doc_to_ref_id[ref.doc_key] = int(ref.id)
                 if top and len(documents) >= top:
                     break
+        
         # We need to handle KnowledgeBaseWebReference separately if web knowledge source is used
         web_refs = [r for r in response.references if isinstance(r, KnowledgeBaseWebReference)]
         web_results: list[WebResult] = []
@@ -651,11 +647,22 @@ class Approach(ABC):
         sharepoint_refs = [r for r in response.references if isinstance(r, KnowledgeBaseRemoteSharePointReference)]
         sharepoint_results: list[SharePointResult] = []
         for ref in sharepoint_refs:
+            # Extract content from all sourceData.extracts[].text and concatenate
+            content = None
+            if ref.source_data and "extracts" in ref.source_data and len(ref.source_data["extracts"]) > 0:
+                extracts = [extract.get("text", "") for extract in ref.source_data["extracts"]]
+                content = "\n\n".join(extracts) if extracts else None
+            
+            # Extract title from sourceData.resourceMetadata.title
+            title = None
+            if ref.source_data and "resourceMetadata" in ref.source_data:
+                title = ref.source_data["resourceMetadata"].get("title")
+            
             sharepoint_result = SharePointResult(
                 id=ref.id,
                 web_url=ref.web_url,
-                content=ref.source_data.get("content") if ref.source_data else None,
-                title=ref.source_data.get("title") if ref.source_data else None,
+                content=content,
+                title=title,
                 reranker_score=getattr(ref, "reranker_score", None),
                 search_agent_query=activity_mapping.get(ref.activity_source),
             )

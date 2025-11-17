@@ -20,7 +20,7 @@ const renderDetail = (step: QueryPlanStep) => {
                 total_tokens: (step.input_tokens ?? 0) + (step.output_tokens ?? 0)
             };
 
-            return <TokenUsageGraph tokenUsage={usage} labels={{ prompt: "Input Tokens", output: "Output Tokens", total: "Total" }} title="" />;
+            return <TokenUsageGraph tokenUsage={usage} labels={{ prompt: "Input", output: "Output", total: "Total tokens" }} title="" />;
         }
         case "searchIndex": {
             const search = step.search_index_arguments?.search ?? "—";
@@ -51,16 +51,13 @@ const renderDetail = (step: QueryPlanStep) => {
                 reasoning_tokens: step.reasoning_tokens ?? 0,
                 total_tokens: step.reasoning_tokens ?? 0
             };
-            const effort = step.retrieval_reasoning_effort?.kind;
 
             return (
                 <>
-                    <TokenUsageGraph tokenUsage={usage} labels={{ total: "Agentic Reasoning Tokens" }} variant="totalOnly" title="" />
-                    {effort && (
-                        <div className={styles.tPropRow}>
-                            <span className={styles.tProp}>Effort: {effort}</span>
-                        </div>
-                    )}
+                    <TokenUsageGraph tokenUsage={usage} labels={{ total: "Agentic reasoning tokens" }} variant="totalOnly" title="" />
+                    <div style={{ fontSize: "0.85em", color: "#666", paddingLeft: "6px" }}>
+                        This step uses Azure AI Search models, so the token capacity does not affect the deployed model.
+                    </div>
                 </>
             );
         }
@@ -72,7 +69,7 @@ const renderDetail = (step: QueryPlanStep) => {
                 total_tokens: (step.input_tokens ?? 0) + (step.output_tokens ?? 0)
             };
 
-            return <TokenUsageGraph tokenUsage={usage} labels={{ prompt: "Input Tokens", output: "Output Tokens", total: "Total" }} title="" />;
+            return <TokenUsageGraph tokenUsage={usage} labels={{ prompt: "Input", output: "Output", total: "Total tokens" }} title="" />;
         }
         default:
             return (
@@ -87,9 +84,10 @@ interface Props {
     query_plan: QueryPlanStep[];
     citation_details?: CitationDetail[];
     web_data_points?: WebDataPoint[];
+    onEffortExtracted?: (effort: string | undefined) => void;
 }
 
-export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_data_points }) => {
+export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_data_points, onEffortExtracted }) => {
     const getCitationFontSize = React.useCallback((text: string) => {
         const length = text.length;
         if (length <= 45) {
@@ -146,6 +144,15 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
 
         return iterationsList;
     }, [query_plan]);
+
+    React.useEffect(() => {
+        // Extract effort from first agentic reasoning step
+        const agenticStep = query_plan.find(step => step.type === "agenticReasoning");
+        const effort = agenticStep?.retrieval_reasoning_effort?.kind;
+        if (onEffortExtracted) {
+            onEffortExtracted(effort);
+        }
+    }, [query_plan, onEffortExtracted]);
 
     if (iterations.length === 0) {
         return null;

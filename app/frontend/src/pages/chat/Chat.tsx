@@ -84,6 +84,8 @@ const Chat = () => {
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
     const [webSourceSupported, setWebSourceSupported] = useState<boolean>(false);
     const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
+    const [sharePointSourceSupported, setSharePointSourceSupported] = useState<boolean>(false);
+    const [sharePointSourceEnabled, setSharePointSourceEnabled] = useState<boolean>(false);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
     const retrievalReasoningDisablesStreaming = useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
@@ -135,6 +137,8 @@ const Chat = () => {
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
             setWebSourceSupported(config.webSourceEnabled);
             setWebSourceEnabled(config.webSourceEnabled);
+            setSharePointSourceSupported(config.sharepointSourceEnabled);
+            setSharePointSourceEnabled(config.sharepointSourceEnabled);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
@@ -269,6 +273,7 @@ const Chat = () => {
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
                         use_web_source: webSourceSupported ? webSourceEnabled : false,
+                        use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -361,8 +366,8 @@ const Chat = () => {
                 if (value === "minimal" && webSourceEnabled) {
                     willEnableWebSource = false;
                     setWebSourceEnabled(false);
-                    setHideMinimalRetrievalReasoningOption(false);
                 }
+                setHideMinimalRetrievalReasoningOption(willEnableWebSource);
                 const shouldDisableStreaming = (useAgenticRetrieval && (value === "low" || value === "medium")) || (useAgenticRetrieval && willEnableWebSource);
                 updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
                 break;
@@ -441,6 +446,13 @@ const Chat = () => {
                         useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium" || normalizedWebSource);
                     updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
                 }
+                break;
+            case "useSharePointSource":
+                if (!sharePointSourceSupported) {
+                    setSharePointSourceEnabled(false);
+                    return;
+                }
+                setSharePointSourceEnabled(!!value);
                 break;
         }
     };
@@ -651,6 +663,8 @@ const Chat = () => {
                         useAgenticRetrieval={useAgenticRetrieval}
                         useWebSource={webSourceEnabled}
                         showWebSourceOption={webSourceSupported}
+                        useSharePointSource={sharePointSourceEnabled}
+                        showSharePointSourceOption={sharePointSourceSupported}
                         hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                         llmCustomizationEnabled={!webSourceEnabled}
                         onChange={handleSettingsChange}

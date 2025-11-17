@@ -1,3 +1,4 @@
+import React from "react";
 import { Stack } from "@fluentui/react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
@@ -27,6 +28,8 @@ function truncateImageUrl(val: string) {
 }
 
 export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints }: Props) => {
+    const [effort, setEffort] = React.useState<string | undefined>();
+
     return (
         <ul className={styles.tList}>
             {thoughts.map((t, ind) => {
@@ -41,12 +44,18 @@ export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints }: Pro
                                         {k}: {truncateImageUrl(JSON.stringify(t.props?.[k]))}
                                     </span>
                                 ))}
+                            {hasAgenticPlan && effort && <span className={styles.tProp}>effort: {effort}</span>}
                         </Stack>
                         {t.props?.token_usage && !hasAgenticPlan && (
                             <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />
                         )}
                         {hasAgenticPlan && (
-                            <AgentPlan query_plan={t.props?.query_plan ?? []} citation_details={citationDetails} web_data_points={webDataPoints} />
+                            <AgentPlan
+                                query_plan={t.props?.query_plan ?? []}
+                                citation_details={citationDetails}
+                                web_data_points={webDataPoints}
+                                onEffortExtracted={setEffort}
+                            />
                         )}
                         {Array.isArray(t.description) || (t.description !== null && typeof t.description === "object") ? (
                             <SyntaxHighlighter language="json" wrapLines wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
