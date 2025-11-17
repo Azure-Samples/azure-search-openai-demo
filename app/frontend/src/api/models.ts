@@ -29,6 +29,7 @@ export type ChatAppRequestOverrides = {
     search_image_embeddings: boolean;
     language: string;
     use_agentic_retrieval: boolean;
+    use_web_source?: boolean;
 };
 
 export type ResponseMessage = {

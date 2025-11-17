@@ -49,6 +49,8 @@ export interface SettingsProps {
     useAgenticRetrieval?: boolean;
     llmCustomizationEnabled?: boolean;
     hideMinimalRetrievalReasoningOption?: boolean;
+    useWebSource?: boolean;
+    showWebSourceOption?: boolean;
 }
 
 export const Settings = ({
@@ -88,9 +90,11 @@ export const Settings = ({
     promptTemplateSuffix,
     showSuggestFollowupQuestions,
     showAgenticRetrievalOption,
-    useAgenticRetrieval,
+    useAgenticRetrieval = false,
     llmCustomizationEnabled = true,
-    hideMinimalRetrievalReasoningOption = false
+    hideMinimalRetrievalReasoningOption = false,
+    useWebSource = false,
+    showWebSourceOption = false
 }: SettingsProps) => {
     const { t } = useTranslation();
 
@@ -103,6 +107,8 @@ export const Settings = ({
     const seedFieldId = useId("seedField");
     const agenticRetrievalId = useId("agenticRetrieval");
     const agenticRetrievalFieldId = useId("agenticRetrievalField");
+    const webSourceId = useId("webSource");
+    const webSourceFieldId = useId("webSourceField");
     const searchScoreId = useId("searchScore");
     const searchScoreFieldId = useId("searchScoreField");
     const rerankerScoreId = useId("rerankerScore");
@@ -179,6 +185,18 @@ export const Settings = ({
                     onChange={(_ev, checked) => onChange("useAgenticRetrieval", !!checked)}
                     aria-labelledby={agenticRetrievalId}
                     onRenderLabel={props => renderLabel(props, agenticRetrievalId, agenticRetrievalFieldId, t("helpTexts.useAgenticRetrieval"))}
+                />
+            )}
+            {showAgenticRetrievalOption && showWebSourceOption && (
+                <Checkbox
+                    id={webSourceFieldId}
+                    className={styles.settingsSeparator}
+                    checked={useWebSource}
+                    label={t("labels.useWebSource")}
+                    onChange={(_ev, checked) => onChange("useWebSource", !!checked)}
+                    aria-labelledby={webSourceId}
+                    disabled={!useAgenticRetrieval}
+                    onRenderLabel={props => renderLabel(props, webSourceId, webSourceFieldId, t("helpTexts.useWebSource"))}
                 />
             )}
             {!useAgenticRetrieval && (

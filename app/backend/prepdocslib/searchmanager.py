@@ -483,8 +483,6 @@ class SearchManager:
 
     async def create_agent(self):
         if self.search_info.agent_name:
-            logger.info(f"Creating (or updating) knowledge base '{self.search_info.agent_name}'...")
-
             field_names = ["id", "sourcepage", "sourcefile", "content", "category"]
             if self.use_acls:
                 field_names.extend(["oids", "groups"])
@@ -507,9 +505,9 @@ class SearchManager:
                     knowledge_source=search_index_knowledge_source
                 )
 
-                knowledge_sources = [
-                    KnowledgeSourceReference(name=search_index_knowledge_source.name),
-                ]
+                knowledge_source_refs: dict[str, KnowledgeSourceReference] = {
+                    "index": KnowledgeSourceReference(name=search_index_knowledge_source.name)
+                }
 
                 if self.use_web_source:
                     logger.info("Adding web knowledge source to the knowledge base")
@@ -518,7 +516,7 @@ class SearchManager:
                         description="Default web knowledge source",
                     )
                     await search_index_client.create_or_update_knowledge_source(knowledge_source=web_knowledge_source)
-                    knowledge_sources.append(KnowledgeSourceReference(name=web_knowledge_source.name))
+                    knowledge_source_refs["web"] = KnowledgeSourceReference(name=web_knowledge_source.name)
 
                 if self.use_sharepoint_source:
                     logger.info("Adding SharePoint knowledge source to the knowledge base")
@@ -530,25 +528,65 @@ class SearchManager:
                     await search_index_client.create_or_update_knowledge_source(
                         knowledge_source=sharepoint_knowledge_source
                     )
-                    knowledge_sources.append(KnowledgeSourceReference(name=sharepoint_knowledge_source.name))
-                await search_index_client.create_or_update_knowledge_base(
-                    knowledge_base=KnowledgeBase(
-                        name=self.search_info.agent_name,
-                        knowledge_sources=knowledge_sources,
-                        models=[
-                            KnowledgeBaseAzureOpenAIModel(
-                                azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
-                                    resource_url=self.search_info.azure_openai_endpoint,
-                                    deployment_name=self.search_info.azure_openai_searchagent_deployment,
-                                    model_name=self.search_info.azure_openai_searchagent_model,
-                                )
-                            )
-                        ],
-                        output_mode=KnowledgeRetrievalOutputMode.ANSWER_SYNTHESIS,
+                    knowledge_source_refs["sharepoint"] = KnowledgeSourceReference(
+                        name=sharepoint_knowledge_source.name
                     )
-                )
 
-            logger.info("Knowledge base '%s' created successfully", self.search_info.agent_name)
+                # Build the set of knowledge bases that should exist based on optional sources
+                base_agent_name = self.search_info.agent_name
+                knowledge_bases_to_upsert: list[tuple[str, list[KnowledgeSourceReference]]] = [
+                    (base_agent_name, [knowledge_source_refs["index"]])
+                ]
+
+                if "web" in knowledge_source_refs:
+                    knowledge_bases_to_upsert.append(
+                        (f"{base_agent_name}-with-web", [knowledge_source_refs["index"], knowledge_source_refs["web"]])
+                    )
+                if "sharepoint" in knowledge_source_refs:
+                    knowledge_bases_to_upsert.append(
+                        (
+                            f"{base_agent_name}-with-sp",
+                            [knowledge_source_refs["index"], knowledge_source_refs["sharepoint"]],
+                        )
+                    )
+                if "web" in knowledge_source_refs and "sharepoint" in knowledge_source_refs:
+                    knowledge_bases_to_upsert.append(
+                        (
+                            f"{base_agent_name}-with-web-and-sp",
+                            [
+                                knowledge_source_refs["index"],
+                                knowledge_source_refs["web"],
+                                knowledge_source_refs["sharepoint"],
+                            ],
+                        )
+                    )
+
+                created_kb_names: list[str] = []
+                for kb_name, sources in knowledge_bases_to_upsert:
+                    logger.info("Creating (or updating) knowledge base '%s'...", kb_name)
+                    await search_index_client.create_or_update_knowledge_base(
+                        knowledge_base=KnowledgeBase(
+                            name=kb_name,
+                            knowledge_sources=sources,
+                            models=[
+                                KnowledgeBaseAzureOpenAIModel(
+                                    azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
+                                        resource_url=self.search_info.azure_openai_endpoint,
+                                        deployment_name=self.search_info.azure_openai_searchagent_deployment,
+                                        model_name=self.search_info.azure_openai_searchagent_model,
+                                    )
+                                )
+                            ],
+                            output_mode=KnowledgeRetrievalOutputMode.ANSWER_SYNTHESIS,
+                        )
+                    )
+                    created_kb_names.append(kb_name)
+
+            if created_kb_names:
+                logger.info(
+                    "Knowledge bases created successfully: %s",
+                    ", ".join(created_kb_names),
+                )
 
     async def update_content(self, sections: list[Section], url: Optional[str] = None):
         MAX_BATCH_SIZE = 1000

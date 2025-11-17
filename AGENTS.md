@@ -35,12 +35,14 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/backend/prepdocslib/parser.py: Base parser interface
       * app/backend/prepdocslib/pdfparser.py: Parses PDFs using Azure Document Intelligence or local parser
       * app/backend/prepdocslib/searchmanager.py: Manages Azure AI Search index creation and updates
+        * Agent knowledge bases are created per source combination: base agent uses only the index, with `-with-web`,
+          `-with-sp`, and `-with-web-and-sp` variants provisioned when optional sources are enabled.
       * app/backend/prepdocslib/servicesetup.py: Shared service setup helpers for OpenAI, embeddings, blob storage, etc.
       * app/backend/prepdocslib/strategy.py: Base strategy interface for document ingestion
       * app/backend/prepdocslib/textparser.py: Parses plain text and markdown files
       * app/backend/prepdocslib/textprocessor.py: Processes text chunks for cloud ingestion (merges figures, generates embeddings)
       * app/backend/prepdocslib/textsplitter.py: Splits text into chunks using different strategies
-    * app/backend/app.py: The main entry point for the backend application.
+    * app/backend/app.py: The main entry point for the backend application. Registers the default and optional (with-web, with-sp, with-web-and-sp) knowledge base clients in the app config for approaches that rely on agentic retrieval.
   * app/functions: Azure Functions used for cloud ingestion custom skills (document extraction, figure processing, text processing). Each function bundles a synchronized copy of `prepdocslib`; run `python scripts/copy_prepdocslib.py` to refresh the local copies if you modify the library.
   * app/frontend: Contains the React frontend code, built with TypeScript, built with vite.
     * app/frontend/src/api: Contains the API client code for communicating with the backend.

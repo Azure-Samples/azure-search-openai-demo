@@ -57,6 +57,7 @@ export function Component(): JSX.Element {
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
+    const [webSourceSupported, setWebSourceSupported] = useState<boolean>(false);
     const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
@@ -112,6 +113,7 @@ export function Component(): JSX.Element {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            setWebSourceSupported(config.webSourceEnabled);
             setWebSourceEnabled(config.webSourceEnabled);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
@@ -168,6 +170,7 @@ export function Component(): JSX.Element {
                         send_image_sources: sendImageSources,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
+                        use_web_source: webSourceSupported ? webSourceEnabled : false,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -253,6 +256,18 @@ export function Component(): JSX.Element {
                 break;
             case "useAgenticRetrieval":
                 setUseAgenticRetrieval(value);
+                break;
+            case "useWebSource":
+                if (!webSourceSupported) {
+                    setWebSourceEnabled(false);
+                    return;
+                }
+                setWebSourceEnabled(value);
+                setHideMinimalRetrievalReasoningOption(value);
+                if (value && retrievalReasoningEffort === "minimal") {
+                    setRetrievalReasoningEffort("low");
+                }
+                break;
         }
     };
 
@@ -383,6 +398,8 @@ export function Component(): JSX.Element {
                     requireAccessControl={requireAccessControl}
                     showAgenticRetrievalOption={showAgenticRetrievalOption}
                     useAgenticRetrieval={useAgenticRetrieval}
+                    useWebSource={webSourceEnabled}
+                    showWebSourceOption={webSourceSupported}
                     hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                     llmCustomizationEnabled={!webSourceEnabled}
                     onChange={handleSettingsChange}

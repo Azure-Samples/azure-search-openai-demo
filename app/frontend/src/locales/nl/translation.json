@@ -111,6 +111,7 @@
         },
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
         "useAgenticRetrieval": "Gebruik agentische retrieval",
+        "useWebSource": "Use web search",
         "llmInputs": "Invoer voor LLM",
         "llmInputsOptions": {
             "texts": "Teksten",
@@ -177,7 +178,8 @@
         "streamChat": "Geeft het antwoord in real-time weer in de chat terwijl het wordt gegenereerd.",
         "useOidSecurityFilter": "Filtert zoekresultaten op basis van de OID van de geauthenticeerde gebruiker.",
         "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
+        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
     },
 
     "overallSettings": "Algemene instellingen",

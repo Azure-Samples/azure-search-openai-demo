@@ -51,6 +51,9 @@ from approaches.retrievethenread import RetrieveThenReadApproach
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
     CONFIG_AGENT_CLIENT,
+    CONFIG_AGENT_CLIENT_WITH_SHAREPOINT,
+    CONFIG_AGENT_CLIENT_WITH_WEB,
+    CONFIG_AGENT_CLIENT_WITH_WEB_AND_SHAREPOINT,
     CONFIG_AGENTIC_RETRIEVAL_ENABLED,
     CONFIG_ASK_APPROACH,
     CONFIG_AUTH_CLIENT,
@@ -474,6 +477,8 @@ async def setup_clients():
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
     USE_AGENTIC_RETRIEVAL = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
+    USE_WEB_SOURCE = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+    USE_SHAREPOINT_SOURCE = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
     AGENTIC_RETRIEVAL_REASONING_EFFORT = os.getenv("AGENTIC_RETRIEVAL_REASONING_EFFORT", "low")
     USE_VECTORS = os.getenv("USE_VECTORS", "").lower() != "false"
 
@@ -522,6 +527,29 @@ async def setup_clients():
     agent_client = KnowledgeBaseRetrievalClient(
         endpoint=AZURE_SEARCH_ENDPOINT, knowledge_base_name=AZURE_SEARCH_AGENT, credential=azure_credential
     )
+    agent_client_with_web = None
+    agent_client_with_sharepoint = None
+    agent_client_with_web_and_sharepoint = None
+
+    if AZURE_SEARCH_AGENT:
+        if USE_WEB_SOURCE:
+            agent_client_with_web = KnowledgeBaseRetrievalClient(
+                endpoint=AZURE_SEARCH_ENDPOINT,
+                knowledge_base_name=f"{AZURE_SEARCH_AGENT}-with-web",
+                credential=azure_credential,
+            )
+        if USE_SHAREPOINT_SOURCE:
+            agent_client_with_sharepoint = KnowledgeBaseRetrievalClient(
+                endpoint=AZURE_SEARCH_ENDPOINT,
+                knowledge_base_name=f"{AZURE_SEARCH_AGENT}-with-sp",
+                credential=azure_credential,
+            )
+        if USE_WEB_SOURCE and USE_SHAREPOINT_SOURCE:
+            agent_client_with_web_and_sharepoint = KnowledgeBaseRetrievalClient(
+                endpoint=AZURE_SEARCH_ENDPOINT,
+                knowledge_base_name=f"{AZURE_SEARCH_AGENT}-with-web-and-sp",
+                credential=azure_credential,
+            )
 
     # Set up the global blob storage manager (used for global content/images, but not user uploads)
     global_blob_manager = BlobManager(
@@ -650,6 +678,9 @@ async def setup_clients():
     current_app.config[CONFIG_OPENAI_CLIENT] = openai_client
     current_app.config[CONFIG_SEARCH_CLIENT] = search_client
     current_app.config[CONFIG_AGENT_CLIENT] = agent_client
+    current_app.config[CONFIG_AGENT_CLIENT_WITH_WEB] = agent_client_with_web
+    current_app.config[CONFIG_AGENT_CLIENT_WITH_SHAREPOINT] = agent_client_with_sharepoint
+    current_app.config[CONFIG_AGENT_CLIENT_WITH_WEB_AND_SHAREPOINT] = agent_client_with_web_and_sharepoint
     current_app.config[CONFIG_AUTH_CLIENT] = auth_helper
 
     current_app.config[CONFIG_SEMANTIC_RANKER_DEPLOYED] = AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
@@ -677,10 +708,10 @@ async def setup_clients():
     current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS] = RAG_SEARCH_IMAGE_EMBEDDINGS
     current_app.config[CONFIG_RAG_SEND_TEXT_SOURCES] = RAG_SEND_TEXT_SOURCES
     current_app.config[CONFIG_RAG_SEND_IMAGE_SOURCES] = RAG_SEND_IMAGE_SOURCES
-    current_app.config[CONFIG_WEB_SOURCE_ENABLED] = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+    current_app.config[CONFIG_WEB_SOURCE_ENABLED] = USE_WEB_SOURCE
     if AGENTIC_RETRIEVAL_REASONING_EFFORT == "minimal" and current_app.config[CONFIG_WEB_SOURCE_ENABLED]:
         raise ValueError("Web source cannot be used with minimal retrieval reasoning effort")
-    current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED] = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
+    current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED] = USE_SHAREPOINT_SOURCE
 
     prompt_manager = PromptyManager()
 
@@ -693,6 +724,9 @@ async def setup_clients():
         agent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
         agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
         agent_client=agent_client,
+        agent_client_with_web=agent_client_with_web,
+        agent_client_with_sharepoint=agent_client_with_sharepoint,
+        agent_client_with_web_and_sharepoint=agent_client_with_web_and_sharepoint,
         openai_client=openai_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,
@@ -722,6 +756,9 @@ async def setup_clients():
         agent_model=AZURE_OPENAI_SEARCHAGENT_MODEL,
         agent_deployment=AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT,
         agent_client=agent_client,
+        agent_client_with_web=agent_client_with_web,
+        agent_client_with_sharepoint=agent_client_with_sharepoint,
+        agent_client_with_web_and_sharepoint=agent_client_with_web_and_sharepoint,
         openai_client=openai_client,
         chatgpt_model=OPENAI_CHATGPT_MODEL,
         chatgpt_deployment=AZURE_OPENAI_CHATGPT_DEPLOYMENT,

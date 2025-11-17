@@ -107,6 +107,7 @@
         },
         "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
         "useAgenticRetrieval": "Brug agentisk hentning",
+        "useWebSource": "Use web search",
         "llmInputs": "Input til LLM",
         "llmInputsOptions": {
             "texts": "Tekster",
@@ -157,7 +158,8 @@
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",
         "useOidSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers OID.",
         "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
+        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
     },
     "overallSettings": "Overordnede indstillinger",
     "searchSettings": "Søgeindstillinger",

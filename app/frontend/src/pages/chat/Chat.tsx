@@ -82,6 +82,7 @@ const Chat = () => {
     const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const [showChatHistoryCosmos, setShowChatHistoryCosmos] = useState<boolean>(false);
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
+    const [webSourceSupported, setWebSourceSupported] = useState<boolean>(false);
     const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
@@ -130,6 +131,7 @@ const Chat = () => {
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            setWebSourceSupported(config.webSourceEnabled);
             setWebSourceEnabled(config.webSourceEnabled);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
@@ -234,6 +236,7 @@ const Chat = () => {
                         send_image_sources: sendImageSources,
                         language: i18n.language,
                         use_agentic_retrieval: useAgenticRetrieval,
+                        use_web_source: webSourceSupported ? webSourceEnabled : false,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -397,6 +400,20 @@ const Chat = () => {
                 break;
             case "useAgenticRetrieval":
                 setUseAgenticRetrieval(value);
+                break;
+            case "useWebSource":
+                if (!webSourceSupported) {
+                    setWebSourceEnabled(false);
+                    return;
+                }
+                setWebSourceEnabled(value);
+                setHideMinimalRetrievalReasoningOption(value);
+                if (value && retrievalReasoningEffort === "minimal") {
+                    setRetrievalReasoningEffort("low");
+                }
+                if (value) {
+                    setUseSuggestFollowupQuestions(false);
+                }
                 break;
         }
     };
@@ -605,6 +622,8 @@ const Chat = () => {
                         showSuggestFollowupQuestions={!webSourceEnabled}
                         showAgenticRetrievalOption={showAgenticRetrievalOption}
                         useAgenticRetrieval={useAgenticRetrieval}
+                        useWebSource={webSourceEnabled}
+                        showWebSourceOption={webSourceSupported}
                         hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                         llmCustomizationEnabled={!webSourceEnabled}
                         onChange={handleSettingsChange}

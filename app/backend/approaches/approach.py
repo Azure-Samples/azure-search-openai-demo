@@ -490,6 +490,7 @@ class Approach(ABC):
                     knowledge_source_name="web",
                     include_references=True,
                     include_reference_source_data=True,
+                    always_query_source=True
                 )
             )
 

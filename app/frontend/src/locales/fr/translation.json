@@ -103,6 +103,7 @@
         "useSemanticCaptions": "Utiliser les titres sémantiques",
         "useSuggestFollowupQuestions": "Suggérer des questions de suivi",
         "useAgenticRetrieval": "Utilisez la récupération agentique",
+        "useWebSource": "Use web search",
         "useQueryRewriting": "Utilisez la réécriture des requêtes pour la récupération",
         "reasoningEffort": "Effort de raisonnement",
         "reasoningEffortOptions": {
@@ -178,7 +179,8 @@
         "streamChat": "Diffuse en continu la réponse à l'interface utilisateur du chat au fur et à mesure de sa génération.",
         "useOidSecurityFilter":"Filtrez les résultats de recherche en fonction de l'OID de l'utilisateur authentifié.",
         "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
+        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
     },
 
     "overallSettings": "Paramètres généraux",

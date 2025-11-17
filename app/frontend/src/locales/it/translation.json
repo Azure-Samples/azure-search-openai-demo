@@ -111,6 +111,7 @@
         },
         "useSuggestFollowupQuestions": "Suggerisci domande di follow-up",
         "useAgenticRetrieval": "Usa il recupero agentico",
+        "useWebSource": "Use web search",
         "llmInputs": "Input per LLM",
         "llmInputsOptions": {
             "texts": "Testi",
@@ -178,7 +179,8 @@
         "streamChat": "Trasmette in streaming la risposta all'interfaccia utente della chat man mano che viene generata.",
         "useOidSecurityFilter":"Filtra i risultati di ricerca in base all'OID dell'utente autenticato.",
         "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
+        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
     },
 
     "overallSettings": "Impostazioni generali",

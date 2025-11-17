@@ -30,7 +30,10 @@ class RetrieveThenReadApproach(Approach):
         search_index_name: str,
         agent_model: Optional[str],
         agent_deployment: Optional[str],
-        agent_client: KnowledgeBaseRetrievalClient,
+        agent_client: Optional[KnowledgeBaseRetrievalClient],
+        agent_client_with_web: Optional[KnowledgeBaseRetrievalClient] = None,
+        agent_client_with_sharepoint: Optional[KnowledgeBaseRetrievalClient] = None,
+        agent_client_with_web_and_sharepoint: Optional[KnowledgeBaseRetrievalClient] = None,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -57,6 +60,9 @@ class RetrieveThenReadApproach(Approach):
         self.agent_model = agent_model
         self.agent_deployment = agent_deployment
         self.agent_client = agent_client
+        self.agent_client_with_web = agent_client_with_web
+        self.agent_client_with_sharepoint = agent_client_with_sharepoint
+        self.agent_client_with_web_and_sharepoint = agent_client_with_web_and_sharepoint
         self.chatgpt_deployment = chatgpt_deployment
         self.openai_client = openai_client
         self.chatgpt_model = chatgpt_model
@@ -77,7 +83,8 @@ class RetrieveThenReadApproach(Approach):
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
-        self.use_web_source = use_web_source
+        # Track whether web source retrieval is enabled; overrides may only turn it off.
+        self.web_source_enabled = use_web_source
         self.use_sharepoint_source = use_sharepoint_source
         self.retrieval_reasoning_effort = retrieval_reasoning_effort
 
@@ -238,20 +245,30 @@ class RetrieveThenReadApproach(Approach):
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
         retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
-        if self.use_web_source and retrieval_reasoning_effort == "minimal":
+        # Overrides can only disable web source support configured at construction time.
+        use_web_source = self.web_source_enabled
+        override_use_web_source = overrides.get("use_web_source")
+        if isinstance(override_use_web_source, bool):
+            use_web_source = use_web_source and override_use_web_source
+        if use_web_source and retrieval_reasoning_effort == "minimal":
             raise Exception("Web source cannot be used with minimal retrieval reasoning effort.")
+
+        selected_client, effective_web_source, effective_sharepoint_source = self._select_agent_client(
+            use_web_source,
+            self.use_sharepoint_source,
+        )
 
         agentic_results = await self.run_agentic_retrieval(
             messages,
-            self.agent_client,
+            selected_client,
             search_index_name=self.search_index_name,
             top=top,
             filter_add_on=search_index_filter,
             minimum_reranker_score=minimum_reranker_score,
             results_merge_strategy=results_merge_strategy,
             access_token=access_token,
-            use_web_source=self.use_web_source,
-            use_sharepoint_source=self.use_sharepoint_source,
+            use_web_source=effective_web_source,
+            use_sharepoint_source=effective_sharepoint_source,
             retrieval_reasoning_effort=retrieval_reasoning_effort,
         )
 
@@ -309,3 +326,27 @@ class RetrieveThenReadApproach(Approach):
             )
 
         return extra_info
+
+    def _select_agent_client(
+        self,
+        use_web_source: bool,
+        use_sharepoint_source: bool,
+    ) -> tuple[KnowledgeBaseRetrievalClient, bool, bool]:
+        if use_web_source and use_sharepoint_source:
+            if self.agent_client_with_web_and_sharepoint:
+                return self.agent_client_with_web_and_sharepoint, True, True
+            if self.agent_client_with_web:
+                return self.agent_client_with_web, True, False
+            if self.agent_client_with_sharepoint:
+                return self.agent_client_with_sharepoint, False, True
+
+        if use_web_source and self.agent_client_with_web:
+            return self.agent_client_with_web, True, False
+
+        if use_sharepoint_source and self.agent_client_with_sharepoint:
+            return self.agent_client_with_sharepoint, False, True
+
+        if self.agent_client:
+            return self.agent_client, False, False
+
+        raise ValueError("Agentic retrieval requested but no agent client is configured")

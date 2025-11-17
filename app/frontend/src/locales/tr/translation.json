@@ -111,6 +111,7 @@
         },
         "useSuggestFollowupQuestions": "Takip soruları öner",
         "useAgenticRetrieval": "Ajan temelli getirim kullan",
+        "useWebSource": "Use web search",
         "llmInputs": "LLM için Girdiler",
         "llmInputsOptions": {
             "texts": "Metinler",
@@ -177,7 +178,8 @@
         "streamChat": "Yanıt oluşturulurken sohbet arayüzüne gerçek zamanlı olarak yanıtı sürekli olarak gönderir.",
         "useOidSecurityFilter": "Kimliği doğrulanmış kullanıcının OID'sine göre arama sonuçlarını filtreler.",
         "useGroupsSecurityFilter": "Kimliği doğrulanmış kullanıcının gruplarına göre arama sonuçlarını filtreler.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
+        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
     },
 
     "overallSettings": "Genel ayarlar",
