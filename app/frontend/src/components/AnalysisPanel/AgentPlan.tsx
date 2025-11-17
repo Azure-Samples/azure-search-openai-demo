@@ -4,42 +4,11 @@ import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
 import styles from "./AnalysisPanel.module.css";
+import { QueryPlanStep, getStepLabel } from "./agentPlanUtils";
+import { CitationDetail } from "../Answer/AnswerParser";
+import { getCitationFilePath } from "../../api";
+import answerStyles from "../Answer/Answer.module.css";
 SyntaxHighlighter.registerLanguage("json", json);
-
-type QueryPlanStep = {
-    id: number;
-    type: string;
-    elapsed_ms?: number;
-    knowledge_source_name?: string;
-    search_index_arguments?: {
-        search?: string;
-        search_fields?: string[];
-        semantic_configuration_name?: string;
-        source_data_fields?: { name?: string }[];
-    };
-    web_arguments?: {
-        search?: string;
-    };
-    query_time?: string;
-    count?: number;
-    input_tokens?: number;
-    output_tokens?: number;
-    reasoning_tokens?: number;
-    retrieval_reasoning_effort?: {
-        kind?: string;
-    };
-    [key: string]: unknown;
-};
-
-const STEP_LABELS: Record<string, string> = {
-    modelQueryPlanning: "Query planning",
-    searchIndex: "Search index",
-    web: "Web search",
-    agenticReasoning: "Agentic reasoning",
-    modelAnswerSynthesis: "Answer synthesis"
-};
-
-const getStepLabel = (step: QueryPlanStep) => STEP_LABELS[step.type] ?? step.type;
 
 const renderDetail = (step: QueryPlanStep) => {
     switch (step.type) {
@@ -116,9 +85,34 @@ const renderDetail = (step: QueryPlanStep) => {
 
 interface Props {
     query_plan: QueryPlanStep[];
+    citation_details?: CitationDetail[];
 }
 
-export const AgentPlan: React.FC<Props> = ({ query_plan }) => {
+export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details }) => {
+    const getCitationFontSize = React.useCallback((text: string) => {
+        const length = text.length;
+        if (length <= 45) {
+            return "0.75em";
+        }
+        if (length <= 75) {
+            return "0.7em";
+        }
+        if (length <= 110) {
+            return "0.65em";
+        }
+        return "0.6em";
+    }, []);
+
+    const stepNumberLookup = React.useMemo(() => {
+        const lookup: Record<string, number> = {};
+        query_plan.forEach((step, index) => {
+            if (step != null && step.id !== undefined && step.id !== null) {
+                lookup[String(step.id)] = index + 1;
+            }
+        });
+        return lookup;
+    }, [query_plan]);
+
     const iterations = React.useMemo(() => {
         if (!query_plan || query_plan.length === 0) {
             return [] as QueryPlanStep[][];
@@ -174,13 +168,77 @@ export const AgentPlan: React.FC<Props> = ({ query_plan }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {iterationSteps.map(step => (
-                                    <tr key={step.id}>
-                                        <td>{getStepLabel(step)}</td>
-                                        <td>{renderDetail(step)}</td>
-                                        <td title={step.query_time ?? undefined}>{step.elapsed_ms ?? "—"}</td>
-                                    </tr>
-                                ))}
+                                {iterationSteps.map(step => {
+                                    const stepId = step?.id;
+                                    const relatedCitations = citation_details
+                                        ? citation_details.filter(detail => {
+                                              return stepId !== undefined && detail.activityId === String(stepId);
+                                          })
+                                        : [];
+                                    const sortedCitations = relatedCitations.length ? [...relatedCitations].sort((a, b) => a.index - b.index) : [];
+                                    const stepNumber = stepId !== undefined ? stepNumberLookup[String(stepId)] : undefined;
+
+                                    return (
+                                        <tr key={step.id}>
+                                            <td>
+                                                <div className={styles.stepHeaderCell}>
+                                                    {stepNumber && <span className={styles.stepNumberText}>{`Step ${stepNumber}:`}</span>}
+                                                    <span className={styles.stepLabel}>{getStepLabel(step)}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {renderDetail(step)}
+                                                {sortedCitations.length > 0 && (
+                                                    <div className={styles.stepCitations}>
+                                                        {sortedCitations.map(detail => {
+                                                            if (detail.isWeb) {
+                                                                const citationText = `${detail.index}. ${detail.reference}`;
+                                                                return (
+                                                                    <span
+                                                                        key={`${step.id}-${detail.index}`}
+                                                                        className={`${answerStyles.citationEntry} ${styles.stepCitationEntry}`}
+                                                                    >
+                                                                        <a
+                                                                            className={answerStyles.citation}
+                                                                            title={detail.reference}
+                                                                            href={detail.reference}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            style={{ fontSize: getCitationFontSize(citationText) }}
+                                                                        >
+                                                                            {citationText}
+                                                                        </a>
+                                                                    </span>
+                                                                );
+                                                            }
+
+                                                            const path = getCitationFilePath(detail.reference);
+                                                            const citationText = `${detail.index}. ${detail.reference}`;
+                                                            return (
+                                                                <span
+                                                                    key={`${step.id}-${detail.index}`}
+                                                                    className={`${answerStyles.citationEntry} ${styles.stepCitationEntry}`}
+                                                                >
+                                                                    <a
+                                                                        className={answerStyles.citation}
+                                                                        title={detail.reference}
+                                                                        href={path}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        style={{ fontSize: getCitationFontSize(citationText) }}
+                                                                    >
+                                                                        {citationText}
+                                                                    </a>
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td title={step.query_time ?? undefined}>{step.elapsed_ms ?? "—"}</td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>

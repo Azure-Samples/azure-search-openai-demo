@@ -17,6 +17,7 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/backend/approaches/prompts/chat_query_rewrite.prompty: Prompt used to rewrite the query based off search history into a better search query
       * app/backend/approaches/prompts/chat_query_rewrite_tools.json: Tools used by the query rewriting prompt
       * app/backend/approaches/prompts/chat_answer_question.prompty: Prompt used by the Chat approach to actually answer the question based off sources
+      * Agentic retrieval responses include a `citation_mapping` and populate `DataPoints.citation_activities` so the frontend can link citations to query plan activities.
     * app/backend/prepdocslib: Contains the document ingestion library used by both local and cloud ingestion
       * app/backend/prepdocslib/blobmanager.py: Manages uploads to Azure Blob Storage
       * app/backend/prepdocslib/cloudingestionstrategy.py: Builds the Azure AI Search indexer and skillset for the cloud ingestion pipeline

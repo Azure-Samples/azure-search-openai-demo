@@ -10,7 +10,8 @@ import { MarkdownViewer } from "../MarkdownViewer";
 import { useMsal } from "@azure/msal-react";
 import { getHeaders } from "../../api";
 import { useLogin, getToken } from "../../authConfig";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { extractCitationDetails } from "../Answer/AnswerParser";
 
 interface Props {
     className: string;
@@ -34,6 +35,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
     );
     const isDisabledSupportingContentTab: boolean = !hasSupportingContent;
     const isDisabledCitationTab: boolean = !activeCitation;
+    const citationDetails = useMemo(() => extractCitationDetails(answer), [answer]);
     const [citation, setCitation] = useState("");
 
     const client = useLogin ? useMsal().instance : undefined;
@@ -89,7 +91,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText={t("headerTexts.thoughtProcess")}
                 headerButtonProps={isDisabledThoughtProcessTab ? pivotItemDisabledStyle : undefined}
             >
-                <ThoughtProcess thoughts={answer.context.thoughts || []} />
+                <ThoughtProcess thoughts={answer.context.thoughts || []} citationDetails={citationDetails} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.SupportingContentTab}

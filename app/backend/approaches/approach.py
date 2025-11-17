@@ -154,6 +154,7 @@ class AgenticRetrievalResults:
     sharepoint_results: list[SharePointResult] = field(default_factory=list)
     answer: Optional[str] = None  # Synthesized answer when web knowledge source is used
     rewrite_result: Optional[RewriteQueryResult] = None
+    citation_mapping: Optional[dict[str, str]] = None  # Mapping of reference id to activity id
 
     def get_ordered_results(self) -> list[dict[str, Any]]:
         """Get all results (documents, web, and SharePoint) in their original reference order."""
@@ -195,6 +196,7 @@ class DataPoints:
     images: Optional[list] = None
     citations: Optional[list[str]] = None
     web: Optional[list[dict[str, Any]]] = None
+    citation_activities: Optional[dict[str, str]] = None
 
 
 @dataclass
@@ -543,7 +545,7 @@ class Approach(ABC):
             x_ms_query_source_authorization=access_token,
         )
 
-        # Map activity id -> agent's internal search query
+        # Map activity id -> agent's internal search query and citation
         activities = response.activity or []
         activity_mapping: dict[Any, Optional[str]] = {}
 
@@ -565,10 +567,14 @@ class Approach(ABC):
 
         # Extract references
         ref_order: dict[str, int] = {}
+        activity_citation_mapping: dict[str, str] = {}
         for index, ref in enumerate(response.references):
             ref_id = getattr(ref, "id", None)
             if ref_id is not None:
                 ref_order[str(ref_id)] = index
+                for activity in activities:
+                    if ref.activity_source == activity.id:
+                        activity_citation_mapping[str(ref_id)] = str(activity.id)
 
         refs = [
             r for r in response.references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")
@@ -650,6 +656,7 @@ class Approach(ABC):
             sharepoint_results=sharepoint_results,
             answer=answer,
             rewrite_result=rewrite_result,
+            citation_mapping=activity_citation_mapping,
         )
 
     def replace_all_ref_ids(
@@ -689,6 +696,7 @@ class Approach(ABC):
         user_oid: Optional[str] = None,
         web_results: Optional[list[WebResult]] = None,
         sharepoint_results: Optional[list[SharePointResult]] = None,
+        citation_mapping: Optional[dict[str, str]] = None,
     ) -> DataPoints:
         """Extract text/image sources & citations from documents.
 
@@ -714,12 +722,25 @@ class Approach(ABC):
         image_sources = []
         seen_urls = set()
         web_sources: list[dict[str, Any]] = []
+        citation_activity_links: dict[str, str] = {}
+
+        def register_activity(citation_value: Optional[str], ref_key: Optional[str]) -> None:
+            if not citation_mapping:
+                return
+            if not citation_value or citation_value in citation_activity_links:
+                return
+            if ref_key is None:
+                return
+            activity_id = citation_mapping.get(str(ref_key))
+            if activity_id:
+                citation_activity_links[citation_value] = activity_id
 
         for doc in results:
             # Get the citation for the source page
             citation = self.get_citation(doc.sourcepage)
             if citation not in citations:
                 citations.append(citation)
+            register_activity(citation, doc.ref_id)
 
             # If semantic captions are used, extract captions; otherwise, use content
             if include_text_sources:
@@ -738,12 +759,15 @@ class Approach(ABC):
                     url = await self.download_blob_as_base64(img["url"], user_oid=user_oid)
                     if url:
                         image_sources.append(url)
-                    citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))
+                    image_citation = self.get_image_citation(doc.sourcepage or "", img["url"])
+                    citations.append(image_citation)
+                    register_activity(image_citation, doc.ref_id)
         if web_results:
             for web in web_results:
                 citation = self.get_citation(web.url)
                 if citation and citation not in citations:
                     citations.append(citation)
+                register_activity(citation, str(web.id) if web.id is not None else None)
                 web_sources.append(
                     {
                         "id": web.id,
@@ -758,6 +782,7 @@ class Approach(ABC):
                 citation = self.get_citation(sp.web_url)
                 if citation and citation not in citations:
                     citations.append(citation)
+                register_activity(citation, str(sp.id) if sp.id is not None else None)
                 if include_text_sources and sp.content:
                     text_sources.append(f"{citation}: {clean_source(sp.content)}")
                 web_sources.append(
@@ -774,6 +799,7 @@ class Approach(ABC):
             images=image_sources,
             citations=citations,
             web=web_sources,
+            citation_activities=citation_activity_links or None,
         )
 
     def get_citation(self, sourcepage: Optional[str]):

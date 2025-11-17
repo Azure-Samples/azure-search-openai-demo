@@ -95,6 +95,18 @@ h2 {
     text-decoration: underline;
 }
 
+.citationBadgeContainer {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+}
+
+.citationEntry {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375em;
+}
+
 sup {
     position: relative;
     display: inline-flex;
@@ -113,6 +125,33 @@ sup {
     text-decoration-color: transparent;
     outline: transparent solid 0.0625em;
     cursor: pointer;
+}
+
+.citationStepBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #f4f6ff;
+    color: #123bb6;
+    font-weight: 600;
+    border: 0.0625em solid #d1dbfa;
+}
+
+.citationStepBadgeInline {
+    font-size: 0.55em;
+    min-width: auto;
+    height: auto;
+    padding: 0.125em 0.5em;
+    line-height: 1.1;
+}
+
+.citationStepBadgeList {
+    font-size: 0.75em;
+    min-width: auto;
+    height: auto;
+    padding: 0.125em 0.75em;
+    line-height: 1.1;
 }
 
 .retryButton {

@@ -197,3 +197,34 @@
 .iterationSection:first-of-type {
     margin-top: 0;
 }
+
+.stepHeaderCell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25em;
+}
+
+.stepNumberText {
+    font-weight: 600;
+    color: #123bb6;
+}
+
+.stepLabel {
+    font-weight: 600;
+}
+
+.stepCitations {
+    margin-top: 0.75em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375em;
+}
+
+.stepCitationEntry {
+    white-space: nowrap;
+}
+
+.stepCitationEntry a {
+    white-space: nowrap;
+}

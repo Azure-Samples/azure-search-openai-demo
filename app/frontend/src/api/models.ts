@@ -54,6 +54,7 @@ export type DataPoints = {
     text: string[];
     images: string[];
     citations: string[];
+    citation_activities?: Record<string, string>;
     web?: WebDataPoint[];
 };
 

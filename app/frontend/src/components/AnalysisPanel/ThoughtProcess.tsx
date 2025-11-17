@@ -8,11 +8,13 @@ import styles from "./AnalysisPanel.module.css";
 import { Thoughts } from "../../api";
 import { TokenUsageGraph } from "./TokenUsageGraph";
 import { AgentPlan } from "./AgentPlan";
+import { CitationDetail } from "../Answer/AnswerParser";
 
 SyntaxHighlighter.registerLanguage("json", json);
 
 interface Props {
     thoughts: Thoughts[];
+    citationDetails?: CitationDetail[];
 }
 
 // Helper to truncate URLs
@@ -23,7 +25,7 @@ function truncateImageUrl(val: string) {
     return val;
 }
 
-export const ThoughtProcess = ({ thoughts }: Props) => {
+export const ThoughtProcess = ({ thoughts, citationDetails }: Props) => {
     return (
         <ul className={styles.tList}>
             {thoughts.map((t, ind) => {
@@ -33,16 +35,18 @@ export const ThoughtProcess = ({ thoughts }: Props) => {
                         <div className={styles.tStep}>{t.title}</div>
                         <Stack horizontal tokens={{ childrenGap: 5 }} className={styles.tPropRow}>
                             {t.props &&
-                                (Object.keys(t.props).filter(k => k !== "token_usage" && k !== "query_plan") || []).map((k: any) => (
-                                    <span className={styles.tProp} key={k}>
-                                        {k}: {truncateImageUrl(JSON.stringify(t.props?.[k]))}
-                                    </span>
-                                ))}
+                                (Object.keys(t.props).filter(k => k !== "token_usage" && k !== "query_plan" && k !== "citation_mapping") || []).map(
+                                    (k: any) => (
+                                        <span className={styles.tProp} key={k}>
+                                            {k}: {truncateImageUrl(JSON.stringify(t.props?.[k]))}
+                                        </span>
+                                    )
+                                )}
                         </Stack>
                         {t.props?.token_usage && !hasAgenticPlan && (
                             <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />
                         )}
-                        {hasAgenticPlan && <AgentPlan query_plan={t.props?.query_plan ?? []} />}
+                        {hasAgenticPlan && <AgentPlan query_plan={t.props?.query_plan ?? []} citation_details={citationDetails} />}
                         {Array.isArray(t.description) || (t.description !== null && typeof t.description === "object") ? (
                             <SyntaxHighlighter language="json" wrapLines wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
                                 {JSON.stringify(t.description, (key, value) => truncateImageUrl(value), 2)}
