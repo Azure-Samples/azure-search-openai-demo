@@ -35,13 +35,11 @@ export const ThoughtProcess = ({ thoughts, citationDetails }: Props) => {
                         <div className={styles.tStep}>{t.title}</div>
                         <Stack horizontal tokens={{ childrenGap: 5 }} className={styles.tPropRow}>
                             {t.props &&
-                                (Object.keys(t.props).filter(k => k !== "token_usage" && k !== "query_plan" && k !== "citation_mapping") || []).map(
-                                    (k: any) => (
-                                        <span className={styles.tProp} key={k}>
-                                            {k}: {truncateImageUrl(JSON.stringify(t.props?.[k]))}
-                                        </span>
-                                    )
-                                )}
+                                (Object.keys(t.props).filter(k => k !== "token_usage" && k !== "query_plan") || []).map((k: any) => (
+                                    <span className={styles.tProp} key={k}>
+                                        {k}: {truncateImageUrl(JSON.stringify(t.props?.[k]))}
+                                    </span>
+                                ))}
                         </Stack>
                         {t.props?.token_usage && !hasAgenticPlan && (
                             <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />

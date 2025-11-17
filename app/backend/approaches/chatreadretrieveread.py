@@ -463,8 +463,7 @@ class ChatReadRetrieveReadApproach(Approach):
             user_oid=auth_claims.get("oid"),
             web_results=agentic_results.web_results,
             sharepoint_results=agentic_results.sharepoint_results,
-            citation_mapping=agentic_results.citation_mapping,
-            citation_metadata_by_ref=agentic_results.citation_metadata_by_ref,
+            citation_details_by_ref=agentic_results.citation_details_by_ref,
         )
         extra_info = ExtraInfo(
             data_points,
@@ -489,7 +488,6 @@ class ChatReadRetrieveReadApproach(Approach):
                         ),
                         "model": self.agent_model,
                         "deployment": self.agent_deployment,
-                        "citation_mapping" : agentic_results.citation_mapping
                     },
                 ),
             ],

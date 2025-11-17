@@ -77,7 +77,6 @@ const buildActivityStepMap = (answer: ChatAppResponse): Record<string, ActivityS
 
 const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { fragments: CitationFragment[]; citations: CitationDetail[] } => {
     const possibleCitations = answer.context.data_points.citations || [];
-    const citationActivities: Record<string, string> = answer.context.data_points.citation_activities ?? {};
     const citationActivityDetails = answer.context.data_points.citation_activity_details ?? {};
     const activitySteps = buildActivityStepMap(answer);
     const parsedAnswer = normalizeAnswerText(answer, isStreaming);
@@ -106,7 +105,7 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
         }
 
         const backendDetail = citationActivityDetails?.[part];
-        const activityId = backendDetail?.activityId ?? citationActivities?.[part];
+        const activityId = backendDetail?.activityId;
         const stepMeta = activityId ? activitySteps[String(activityId)] : undefined;
         const detail: CitationDetail = {
             reference: part,

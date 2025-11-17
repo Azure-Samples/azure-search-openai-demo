@@ -62,7 +62,6 @@ export type DataPoints = {
     text: string[];
     images: string[];
     citations: string[];
-    citation_activities?: Record<string, string>;
     citation_activity_details?: Record<string, CitationActivityDetail>;
     web?: WebDataPoint[];
 };
