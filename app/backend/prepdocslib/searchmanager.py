@@ -138,10 +138,7 @@ class SearchManager:
                         enable_rescoring=True,
                         default_oversampling=10,
                         rescore_storage_method=VectorSearchCompressionRescoreStorageMethod.PRESERVE_ORIGINALS,
-                    ),
-                    # Explicitly set deprecated parameters to None
-                    rerank_with_original_vectors=None,
-                    default_oversampling=None,
+                    )
                 )
                 text_vector_search_profile = VectorSearchProfile(
                     name=f"{self.field_name_embedding}-profile",
