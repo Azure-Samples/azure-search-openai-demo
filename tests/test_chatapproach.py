@@ -4,9 +4,10 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
+from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion
 
-from approaches.approach import Document, SharePointResult, WebResult
+from approaches.approach import DataPoints, Document, ExtraInfo, SharePointResult, ThoughtStep, WebResult
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from prepdocslib.embeddings import ImageEmbeddings
@@ -101,6 +102,49 @@ def test_get_search_query_returns_default(chat_approach):
     query = chat_approach.get_search_query(chatcompletions, default_query)
 
     assert query == default_query
+
+
+def test_get_search_query_returns_default_on_error(chat_approach, monkeypatch):
+    async def explode(*_args, **_kwargs):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(chat_approach, "extract_rewritten_query", explode)
+
+    payload = '{"id":"chatcmpl-1","object":"chat.completion","created":0,"model":"gpt-4.1-mini","choices":[{"index":0,"finish_reason":"stop","message":{"role":"assistant","content":"anything"}}]}'
+    chatcompletions = ChatCompletion.model_validate(json.loads(payload), strict=False)
+
+    assert chat_approach.get_search_query(chatcompletions, "default") == "default"
+
+
+def test_extract_rewritten_query_invalid_json(chat_approach):
+    payload = {
+        "id": "chatcmpl-2",
+        "object": "chat.completion",
+        "created": 0,
+        "model": "gpt-4.1-mini",
+        "choices": [
+            {
+                "index": 0,
+                "finish_reason": "function_call",
+                "message": {
+                    "role": "assistant",
+                    "content": "fallback query",
+                    "tool_calls": [
+                        {
+                            "id": "tool-1",
+                            "type": "function",
+                            "function": {"name": "search_sources", "arguments": "{not-json"},
+                        }
+                    ],
+                },
+            }
+        ],
+    }
+    completion = ChatCompletion.model_validate(payload, strict=False)
+
+    result = chat_approach.extract_rewritten_query(completion, "original", no_response_token=chat_approach.NO_RESPONSE)
+
+    assert result == "fallback query"
 
 
 def test_extract_followup_questions(chat_approach):
@@ -378,3 +422,137 @@ def test_replace_all_ref_ids_sharepoint_priority(chat_approach):
     result = chat_approach.replace_all_ref_ids(answer, documents, [], sharepoint_results)
 
     assert result == "See [https://sharepoint.example.com/documents/7] for the site link."
+
+
+@pytest.mark.asyncio
+async def test_get_sources_content_includes_sharepoint(chat_approach):
+    documents = [
+        Document(id="doc1", ref_id="1", sourcepage="page1.pdf", content="Doc content"),
+    ]
+    sharepoint_results = [
+        SharePointResult(
+            id="10",
+            web_url="https://contoso.sharepoint.com/doc",
+            content="SharePoint body",
+            title="SharePoint Title",
+            search_agent_query="sp query",
+        )
+    ]
+    activity_details = {"10": {"activityId": "3", "stepLabel": "SharePoint", "stepType": "remoteSharePoint"}}
+
+    data_points = await chat_approach.get_sources_content(
+        documents,
+        use_semantic_captions=False,
+        include_text_sources=True,
+        download_image_sources=False,
+        sharepoint_results=sharepoint_results,
+        citation_details_by_ref=activity_details,
+    )
+
+    assert "https://contoso.sharepoint.com/doc" in data_points.citations
+    assert data_points.web and data_points.web[0]["title"] == "SharePoint Title"
+    assert data_points.citation_activity_details is not None
+    assert data_points.citation_activity_details["https://contoso.sharepoint.com/doc"]["activityId"] == "3"
+
+
+def test_select_agent_client_priorities(chat_approach):
+    primary = object()
+    web = object()
+    sharepoint = object()
+    both = object()
+
+    chat_approach.agent_client = primary
+    chat_approach.agent_client_with_web = web
+    chat_approach.agent_client_with_sharepoint = sharepoint
+    chat_approach.agent_client_with_web_and_sharepoint = both
+
+    selected, uses_web, uses_sp = chat_approach._select_agent_client(True, True)
+    assert selected is both
+    assert uses_web is True and uses_sp is True
+
+    selected, uses_web, uses_sp = chat_approach._select_agent_client(True, False)
+    assert selected is web and uses_web is True and uses_sp is False
+
+    selected, uses_web, uses_sp = chat_approach._select_agent_client(False, True)
+    assert selected is sharepoint and uses_web is False and uses_sp is True
+
+    chat_approach.agent_client_with_web_and_sharepoint = None
+    chat_approach.agent_client_with_sharepoint = None
+    selected, uses_web, uses_sp = chat_approach._select_agent_client(True, True)
+    assert selected is web and uses_web is True and uses_sp is False
+
+
+def test_select_agent_client_requires_configuration(chat_approach):
+    chat_approach.agent_client = None
+    chat_approach.agent_client_with_web = None
+    chat_approach.agent_client_with_sharepoint = None
+
+    with pytest.raises(ValueError, match="Agentic retrieval requested but no agent client is configured"):
+        chat_approach._select_agent_client(True, False)
+
+
+@pytest.mark.asyncio
+async def test_run_with_streaming_handles_non_stream_response(chat_approach, monkeypatch):
+    extra_info = ExtraInfo(
+        data_points=DataPoints(text=[], images=[], citations=[]),
+        thoughts=[ThoughtStep("Final", None, props={})],
+    )
+
+    async def fake_completion():
+        payload = {
+            "id": "chatcmpl-stream",
+            "object": "chat.completion",
+            "created": 0,
+            "model": "gpt-4.1-mini",
+            "choices": [
+                {
+                    "index": 0,
+                    "finish_reason": "stop",
+                    "message": {"role": "assistant", "content": "Answer text<<Follow up?>>"},
+                }
+            ],
+            "usage": {"completion_tokens": 1, "prompt_tokens": 1, "total_tokens": 2},
+        }
+        return ChatCompletion.model_validate(payload, strict=False)
+
+    async def fake_run_until_final_call(messages, overrides, auth_claims, should_stream):
+        assert should_stream is True
+        return extra_info, fake_completion()
+
+    monkeypatch.setattr(chat_approach, "run_until_final_call", fake_run_until_final_call)
+
+    events = []
+    async for event in chat_approach.run_with_streaming(
+        messages=[{"role": "user", "content": "Hello"}],
+        overrides={"suggest_followup_questions": True},
+        auth_claims={},
+        session_state="state",
+    ):
+        events.append(event)
+
+    assert events[0]["context"] is extra_info
+    assert events[1]["delta"]["content"] == "Answer text"
+    assert events[2]["context"]["followup_questions"] == ["Follow up?"]
+    assert extra_info.thoughts[-1].props["token_usage"].total_tokens == 2
+
+
+@pytest.mark.asyncio
+async def test_run_until_final_call_rejects_low_effort_streaming(chat_approach):
+    with pytest.raises(Exception, match="retrieval reasoning effort is set to low or medium"):
+        await chat_approach.run_until_final_call(
+            messages=[{"role": "user", "content": "Hello"}],
+            overrides={"use_agentic_retrieval": True, "retrieval_reasoning_effort": "low"},
+            auth_claims={},
+            should_stream=True,
+        )
+
+
+@pytest.mark.asyncio
+async def test_run_until_final_call_rejects_web_streaming(chat_approach):
+    with pytest.raises(Exception, match="web source is enabled"):
+        await chat_approach.run_until_final_call(
+            messages=[{"role": "user", "content": "Hello"}],
+            overrides={"use_agentic_retrieval": True, "use_web_source": True},
+            auth_claims={},
+            should_stream=True,
+        )

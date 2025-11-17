@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 from typing import Any
 from unittest import mock
 
@@ -7,6 +8,8 @@ import pytest
 import quart.testing.app
 from httpx import Request, Response
 from openai import BadRequestError
+from quart import Response as QuartResponse
+from werkzeug.exceptions import NotFound
 
 import app
 
@@ -94,6 +97,28 @@ async def test_index(client):
 
 
 @pytest.mark.asyncio
+async def test_index_fallback_when_static_missing(client, monkeypatch):
+    async def raise_not_found(*_args, **_kwargs):
+        raise NotFound()
+
+    monkeypatch.setattr(app.bp, "send_static_file", raise_not_found)
+
+    original_exists = Path.exists
+
+    def fake_exists(self):
+        frontend_suffix = os.path.join("frontend", "index.html")
+        if str(self).endswith(frontend_suffix):
+            return False
+        return original_exists(self)
+
+    monkeypatch.setattr(Path, "exists", fake_exists)
+
+    response = await client.get("/")
+    assert response.status_code == 200
+    assert await response.get_data() == b""
+
+
+@pytest.mark.asyncio
 async def test_redirect(client):
     response = await client.get("/redirect")
     assert response.status_code == 200
@@ -109,9 +134,46 @@ async def test_favicon(client):
 
 
 @pytest.mark.asyncio
+async def test_favicon_fallback_when_missing(client, monkeypatch):
+    async def raise_not_found(*_args, **_kwargs):
+        raise NotFound()
+
+    monkeypatch.setattr(app.bp, "send_static_file", raise_not_found)
+
+    original_exists = Path.exists
+
+    def fake_exists(self):
+        fallback_suffix = os.path.join("frontend", "public", "favicon.ico")
+        if str(self).endswith(fallback_suffix):
+            return False
+        return original_exists(self)
+
+    monkeypatch.setattr(Path, "exists", fake_exists)
+
+    response = await client.get("/favicon.ico")
+    assert response.status_code == 200
+    assert response.headers["Content-Type"] == "image/x-icon"
+    assert await response.get_data() == b""
+
+
+@pytest.mark.asyncio
 async def test_cors_notallowed(client) -> None:
     response = await client.get("/", headers={"Origin": "https://quart.com"})
     assert "Access-Control-Allow-Origin" not in response.headers
+
+
+@pytest.mark.asyncio
+async def test_assets_route_delegates_to_send_from_directory(client, monkeypatch):
+    async def fake_send_from_directory(directory, requested_path):
+        assert "assets" in str(directory)
+        assert requested_path == "bundle.js"
+        return QuartResponse("console.log('hi')", mimetype="application/javascript")
+
+    monkeypatch.setattr(app, "send_from_directory", fake_send_from_directory)
+
+    response = await client.get("/assets/bundle.js")
+    assert response.status_code == 200
+    assert await response.get_data() == b"console.log('hi')"
 
 
 @pytest.mark.asyncio
@@ -384,11 +446,53 @@ async def test_chat_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
+async def test_content_file_missing_content_settings(auth_client, monkeypatch):
+    blob_manager = auth_client.config[app.CONFIG_GLOBAL_BLOB_MANAGER]
+
+    async def fake_download_blob(_path):
+        return b"data", {}
+
+    monkeypatch.setattr(blob_manager, "download_blob", fake_download_blob)
+
+    response = await auth_client.get("/content/file.pdf", headers={"Authorization": "Bearer token"})
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_upload_missing_file(auth_client):
+    response = await auth_client.post(
+        "/upload",
+        headers={"Authorization": "Bearer token"},
+        data={},
+        content_type="multipart/form-data",
+    )
+    assert response.status_code == 400
+    payload = await response.get_json()
+    assert payload["status"] == "failed"
+
+
+@pytest.mark.asyncio
 async def test_chat_stream_request_must_be_json(client):
     response = await client.post("/chat/stream")
     assert response.status_code == 415
     result = await response.get_json()
     assert result["error"] == "request must be json"
+
+
+def test_json_encoder_drops_optional_fields():
+    data_points = app.DataPoints(text=["One"], citations=["a"], web=None, citation_activity_details=None)
+    encoded = app.JSONEncoder().encode(data_points)
+    assert "citation_activity_details" not in encoded
+    assert '"text": ["One"]' in encoded
+
+
+@pytest.mark.asyncio
+async def test_auth_setup_returns_payload(client):
+    response = await client.get("/auth_setup")
+    assert response.status_code == 200
+    payload = await response.get_json()
+    assert isinstance(payload, dict)
+    assert payload  # should contain configuration values
 
 
 @pytest.mark.asyncio

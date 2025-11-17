@@ -17,6 +17,9 @@ from azure.search.documents.knowledgebases.models import (
     KnowledgeBaseMessage,
     KnowledgeBaseMessageTextContent,
     KnowledgeBaseModelQueryPlanningActivityRecord,
+    KnowledgeBaseRemoteSharePointActivityArguments,
+    KnowledgeBaseRemoteSharePointActivityRecord,
+    KnowledgeBaseRemoteSharePointReference,
     KnowledgeBaseRetrievalResponse,
     KnowledgeBaseSearchIndexActivityArguments,
     KnowledgeBaseSearchIndexActivityRecord,
@@ -511,6 +514,13 @@ def mock_retrieval_response_with_sharepoint():
                 count=10,
                 elapsed_ms=50,
             ),
+            KnowledgeBaseRemoteSharePointActivityRecord(
+                id=2,
+                knowledge_source_name="sharepoint",
+                remote_share_point_arguments=KnowledgeBaseRemoteSharePointActivityArguments(search="sharepoint policy"),
+                count=1,
+                elapsed_ms=75,
+            ),
         ],
         references=[
             KnowledgeBaseSearchIndexReference(
@@ -524,6 +534,16 @@ def mock_retrieval_response_with_sharepoint():
                     "sourcepage": "Benefit_Options-2.pdf",
                     "sourcefile": "Benefit_Options.pdf",
                 },
+            ),
+            KnowledgeBaseRemoteSharePointReference(
+                id="10",
+                activity_source=2,
+                web_url="https://contoso.sharepoint.com/sites/hr/document",
+                source_data={
+                    "content": "SharePoint policy content snippet.",
+                    "title": "SharePoint HR Policy",
+                },
+                reranker_score=3.2,
             ),
         ],
     )
