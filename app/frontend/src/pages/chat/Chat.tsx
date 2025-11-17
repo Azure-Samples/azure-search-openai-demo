@@ -138,7 +138,7 @@ const Chat = () => {
             }
             const defaultRetrievalEffort = config.defaultRetrievalReasoningEffort ?? "minimal";
             setHideMinimalRetrievalReasoningOption(config.webSourceEnabled);
-            setRetrievalReasoningEffort(config.webSourceEnabled && defaultRetrievalEffort === "minimal" ? "low" : defaultRetrievalEffort);
+            setRetrievalReasoningEffort(defaultRetrievalEffort);
         });
     };
 
@@ -350,7 +350,7 @@ const Chat = () => {
                 setResultsMergeStrategy(value);
                 break;
             case "retrievalReasoningEffort":
-                setRetrievalReasoningEffort(hideMinimalRetrievalReasoningOption && value === "minimal" ? "low" : value);
+                setRetrievalReasoningEffort(value);
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -408,9 +408,6 @@ const Chat = () => {
                 }
                 setWebSourceEnabled(value);
                 setHideMinimalRetrievalReasoningOption(value);
-                if (value && retrievalReasoningEffort === "minimal") {
-                    setRetrievalReasoningEffort("low");
-                }
                 if (value) {
                     setUseSuggestFollowupQuestions(false);
                 }

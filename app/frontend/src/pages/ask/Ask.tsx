@@ -120,7 +120,7 @@ export function Component(): JSX.Element {
             }
             const defaultRetrievalEffort = config.defaultRetrievalReasoningEffort ?? "minimal";
             setHideMinimalRetrievalReasoningOption(config.webSourceEnabled);
-            setRetrievalReasoningEffort(config.webSourceEnabled && defaultRetrievalEffort === "minimal" ? "low" : defaultRetrievalEffort);
+            setRetrievalReasoningEffort(defaultRetrievalEffort);
         });
     };
 
@@ -217,7 +217,7 @@ export function Component(): JSX.Element {
                 setResultsMergeStrategy(value);
                 break;
             case "retrievalReasoningEffort":
-                setRetrievalReasoningEffort(hideMinimalRetrievalReasoningOption && value === "minimal" ? "low" : value);
+                setRetrievalReasoningEffort(value);
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -264,9 +264,6 @@ export function Component(): JSX.Element {
                 }
                 setWebSourceEnabled(value);
                 setHideMinimalRetrievalReasoningOption(value);
-                if (value && retrievalReasoningEffort === "minimal") {
-                    setRetrievalReasoningEffort("low");
-                }
                 break;
         }
     };

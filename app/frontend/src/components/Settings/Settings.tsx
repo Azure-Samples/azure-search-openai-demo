@@ -133,10 +133,13 @@ export const Settings = ({
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
     const suggestFollowupQuestionsFieldId = useId("suggestFollowupQuestionsField");
 
-    const streamingDisabledByReasoning = !!useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
+    const retrievalReasoningRestrictsSettings = !!useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
+    const webSourceDisabled = !useAgenticRetrieval || retrievalReasoningEffort === "minimal";
+    const streamingDisabledByReasoning = retrievalReasoningRestrictsSettings;
+    const showLlmAndAnswerSettings = llmCustomizationEnabled && !retrievalReasoningRestrictsSettings;
 
     const retrievalReasoningOptions: IDropdownOption[] = [
-        ...(!hideMinimalRetrievalReasoningOption ? [{ key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal") }] : []),
+        { key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal"), disabled: hideMinimalRetrievalReasoningOption },
         { key: "low", text: t("labels.retrievalReasoningEffortOptions.low") },
         { key: "medium", text: t("labels.retrievalReasoningEffortOptions.medium") }
     ];
@@ -147,7 +150,7 @@ export const Settings = ({
 
     return (
         <div className={className}>
-            {streamingEnabled && (
+            {streamingEnabled && !streamingDisabledByReasoning && (
                 <Checkbox
                     id={shouldStreamFieldId}
                     className={styles.settingsSeparator}
@@ -160,7 +163,7 @@ export const Settings = ({
                 />
             )}
 
-            {showSuggestFollowupQuestions && (
+            {showSuggestFollowupQuestions && !retrievalReasoningRestrictsSettings && (
                 <Checkbox
                     id={suggestFollowupQuestionsFieldId}
                     className={styles.settingsSeparator}
@@ -195,7 +198,7 @@ export const Settings = ({
                     label={t("labels.useWebSource")}
                     onChange={(_ev, checked) => onChange("useWebSource", !!checked)}
                     aria-labelledby={webSourceId}
-                    disabled={!useAgenticRetrieval}
+                    disabled={webSourceDisabled}
                     onRenderLabel={props => renderLabel(props, webSourceId, webSourceFieldId, t("helpTexts.useWebSource"))}
                 />
             )}
@@ -368,7 +371,7 @@ export const Settings = ({
                 </>
             )}
 
-            {llmCustomizationEnabled && (
+            {showLlmAndAnswerSettings && (
                 <>
                     <h3 className={styles.sectionHeader}>{t("llmSettings")}</h3>
                     <TextField
