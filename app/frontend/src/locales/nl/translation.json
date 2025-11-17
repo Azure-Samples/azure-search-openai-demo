@@ -111,7 +111,8 @@
         },
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
         "useAgenticRetrieval": "Gebruik agentische retrieval",
-        "useWebSource": "Use web search",
+        "useWebSource": "Websearch opnemen",
+        "useSharePointSource": "SharePoint-bron opnemen",
         "llmInputs": "Invoer voor LLM",
         "llmInputsOptions": {
             "texts": "Teksten",
@@ -178,8 +179,9 @@
         "streamChat": "Geeft het antwoord in real-time weer in de chat terwijl het wordt gegenereerd.",
         "useOidSecurityFilter": "Filtert zoekresultaten op basis van de OID van de geauthenticeerde gebruiker.",
         "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
-        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
+        "useAgenticRetrieval": "Gebruik agentische retrieval van Azure AI Search voor meervoudige query-planning. Gebruikt altijd semantische rangschikking.",
+        "useWebSource": "Breid retrieval uit met websearch resultaten naast je geïndexeerde dataset.",
+        "useSharePointSource": "Breid retrieval uit met SharePoint-inhoud naast je geïndexeerde dataset."
     },
 
     "overallSettings": "Algemene instellingen",

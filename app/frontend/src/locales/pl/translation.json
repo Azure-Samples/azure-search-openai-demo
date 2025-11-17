@@ -112,6 +112,8 @@
         },
         "useSuggestFollowupQuestions": "Sugeruj pytania uzupełniające",
         "useAgenticRetrieval": "Użyj agentowego pobierania",
+        "useWebSource": "Uwzględnij wyszukiwanie w sieci",
+        "useSharePointSource": "Uwzględnij źródło SharePoint",
         "llmInputs": "Źródła danych wejściowych LLM",
         "llmInputsOptions": {
                 "texts": "Tekst",
@@ -177,7 +179,9 @@
         "streamChat": "Ciągle przesyła odpowiedź do interfejsu czatu w miarę jej generowania.",
         "useOidSecurityFilter": "Filtruj wyniki wyszukiwania na podstawie OID uwierzytelnionego użytkownika.",
         "useGroupsSecurityFilter": "Filtruj wyniki wyszukiwania na podstawie grup uwierzytelnionego użytkownika.",
-        "useAgenticRetrieval": "Użyj agentowego pobierania z Azure AI Search do planowania wielozapytaniowego. Zawsze używa semantycznego rankera."
+        "useAgenticRetrieval": "Użyj agentowego pobierania z Azure AI Search do planowania wielozapytaniowego. Zawsze używa semantycznego rankera.",
+        "useWebSource": "Rozszerz pobieranie o wyniki wyszukiwania w sieci wraz z indeksowanym zestawem danych.",
+        "useSharePointSource": "Rozszerz pobieranie o zawartość SharePoint wraz z indeksowanym zestawem danych."
     },
 
     "overallSettings": "Overall settings",

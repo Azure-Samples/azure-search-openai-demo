@@ -107,7 +107,8 @@
         },
         "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
         "useAgenticRetrieval": "Brug agentisk hentning",
-        "useWebSource": "Use web search",
+        "useWebSource": "Inkludér websøgning",
+        "useSharePointSource": "Inkludér SharePoint-kilde",
         "llmInputs": "Input til LLM",
         "llmInputsOptions": {
             "texts": "Tekster",
@@ -158,8 +159,9 @@
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",
         "useOidSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers OID.",
         "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
-        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
+        "useAgenticRetrieval": "Brug agentisk hentning fra Azure AI Search til planlægning af flere forespørgsler. Bruger altid semantisk rangering.",
+        "useWebSource": "Udvid hentning med websøgeresultater sammen med dit indekserede datasæt.",
+        "useSharePointSource": "Udvid hentning med SharePoint-indhold sammen med dit indekserede datasæt."
     },
     "overallSettings": "Overordnede indstillinger",
     "searchSettings": "Søgeindstillinger",

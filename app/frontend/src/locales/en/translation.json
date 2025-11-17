@@ -178,7 +178,8 @@
         "useOidSecurityFilter": "Filter search results based on the authenticated user's OID.",
         "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
         "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
-        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
+        "useWebSource": "Augment retrieval with web search results alongside your indexed data set.",
+        "useSharePointSource": "Augment retrieval with SharePoint content alongside your indexed data set."
     },
 
     "overallSettings": "Overall settings",

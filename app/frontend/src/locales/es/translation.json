@@ -111,7 +111,8 @@
         },
         "useSuggestFollowupQuestions": "Sugerir preguntas de seguimiento",
         "useAgenticRetrieval": "Usar la recuperación agéntica",
-        "useWebSource": "Use web search",
+        "useWebSource": "Incluir búsqueda web",
+        "useSharePointSource": "Incluir fuente de SharePoint",
         "llmInputs": "Entradas para LLM",
         "llmInputsOptions": {
             "texts": "Textos",
@@ -179,8 +180,9 @@
         "streamChat": "Transmite continuamente la respuesta a la interfaz de usuario del chat mientras se genera.",
         "useOidSecurityFilter": "Filtra los resultados de búsqueda en función del OID del usuario autenticado.",
         "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
-        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
+        "useAgenticRetrieval": "Usa la recuperación agéntica de Azure AI Search para la planificación de consultas múltiples. Siempre utiliza el clasificador semántico.",
+        "useWebSource": "Potencia la recuperación con resultados de búsqueda web junto con tu conjunto de datos indexado.",
+        "useSharePointSource": "Potencia la recuperación incorporando contenido de SharePoint junto con tu conjunto de datos indexado."
     },
 
     "overallSettings": "Configuración general",

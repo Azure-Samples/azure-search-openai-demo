@@ -103,7 +103,8 @@
         "useSemanticCaptions": "Usar legendas semânticas",
         "useSuggestFollowupQuestions": "Sugerir perguntas complementares",
         "useAgenticRetrieval": "Usar a recuperação agêntica",
-        "useWebSource": "Use web search",
+        "useWebSource": "Incluir pesquisa web",
+        "useSharePointSource": "Incluir fonte SharePoint",
         "useQueryRewriting": "Utilize a reescrita de consultas para a recuperação",
         "reasoningEffort": "Esforço de raciocínio",
         "reasoningEffortOptions": {
@@ -178,8 +179,9 @@
         "streamChat": "Transmite continuamente a resposta para a interface do chat conforme é gerada.",
         "useOidSecurityFilter": "Filtra os resultados da pesquisa com base no OID do usuário autenticado.",
         "useGroupsSecurityFilter": "Filtra os resultados da pesquisa com base nos grupos do usuário autenticado.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
-        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
+        "useAgenticRetrieval": "Use a recuperação agêntica do Azure AI Search para planejamento de múltiplas consultas. Sempre usa o rankeador semântico.",
+        "useWebSource": "Aumente a recuperação com resultados de pesquisa web junto com seu conjunto de dados indexado.",
+        "useSharePointSource": "Aumente a recuperação com conteúdo do SharePoint junto com seu conjunto de dados indexado."
     },
 
     "overallSettings": "Configurações gerais",

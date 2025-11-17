@@ -111,7 +111,8 @@
         },
         "useSuggestFollowupQuestions": "フォローアップの質問を提案",
         "useAgenticRetrieval": "エージェント型リトリーバルを使用",
-        "useWebSource": "Use web search",
+        "useWebSource": "Web検索を含める",
+        "useSharePointSource": "SharePointソースを含める",
         "llmInputs": "LLMの入力",
         "llmInputsOptions": {
             "texts": "テキスト",
@@ -177,7 +178,8 @@
         "useOidSecurityFilter": "認証ユーザーのOIDに基づいて検索結果をフィルタリングします。",
         "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。",
         "useAgenticRetrieval": "Azure AI Search のエージェント型リトリーバルを使用してマルチクエリの計画を行います。常にセマンティック ランカーを使用します。",
-        "useWebSource": "Augment retrieval with web search results alongside your indexed data set."
+        "useWebSource": "インデックス化されたデータセットと並行してWeb検索結果で検索を拡張します。",
+        "useSharePointSource": "インデックス化されたデータセットと並行してSharePointコンテンツで検索を拡張します。"
     },
     "overallSettings": "全体設定",
     "searchSettings": "検索設定",

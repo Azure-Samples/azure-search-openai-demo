@@ -527,6 +527,8 @@ class ChatReadRetrieveReadApproach(Approach):
             answer=agentic_results.answer,
         )
         if retrieval_reasoning_effort == "minimal":
+            if agentic_results.rewrite_result is None:
+                raise ValueError("A rewrite result is required for minimal retrieval reasoning effort")
             extra_info.thoughts.insert(
                 0,
                 self.format_thought_step_for_chatcompletion(
