@@ -5,7 +5,7 @@ import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import styles from "./AnalysisPanel.module.css";
 
-import { Thoughts } from "../../api";
+import { Thoughts, WebDataPoint } from "../../api";
 import { TokenUsageGraph } from "./TokenUsageGraph";
 import { AgentPlan } from "./AgentPlan";
 import { CitationDetail } from "../Answer/AnswerParser";
@@ -15,6 +15,7 @@ SyntaxHighlighter.registerLanguage("json", json);
 interface Props {
     thoughts: Thoughts[];
     citationDetails?: CitationDetail[];
+    webDataPoints?: WebDataPoint[];
 }
 
 // Helper to truncate URLs
@@ -25,7 +26,7 @@ function truncateImageUrl(val: string) {
     return val;
 }
 
-export const ThoughtProcess = ({ thoughts, citationDetails }: Props) => {
+export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints }: Props) => {
     return (
         <ul className={styles.tList}>
             {thoughts.map((t, ind) => {
@@ -44,7 +45,9 @@ export const ThoughtProcess = ({ thoughts, citationDetails }: Props) => {
                         {t.props?.token_usage && !hasAgenticPlan && (
                             <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />
                         )}
-                        {hasAgenticPlan && <AgentPlan query_plan={t.props?.query_plan ?? []} citation_details={citationDetails} />}
+                        {hasAgenticPlan && (
+                            <AgentPlan query_plan={t.props?.query_plan ?? []} citation_details={citationDetails} web_data_points={webDataPoints} />
+                        )}
                         {Array.isArray(t.description) || (t.description !== null && typeof t.description === "object") ? (
                             <SyntaxHighlighter language="json" wrapLines wrapLongLines className={styles.tCodeBlock} style={a11yLight}>
                                 {JSON.stringify(t.description, (key, value) => truncateImageUrl(value), 2)}

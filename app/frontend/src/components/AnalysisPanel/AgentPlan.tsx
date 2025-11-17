@@ -6,7 +6,7 @@ import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
 import styles from "./AnalysisPanel.module.css";
 import { QueryPlanStep, getStepLabel } from "./agentPlanUtils";
 import { CitationDetail } from "../Answer/AnswerParser";
-import { getCitationFilePath } from "../../api";
+import { getCitationFilePath, WebDataPoint } from "../../api";
 import answerStyles from "../Answer/Answer.module.css";
 SyntaxHighlighter.registerLanguage("json", json);
 
@@ -86,9 +86,10 @@ const renderDetail = (step: QueryPlanStep) => {
 interface Props {
     query_plan: QueryPlanStep[];
     citation_details?: CitationDetail[];
+    web_data_points?: WebDataPoint[];
 }
 
-export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details }) => {
+export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_data_points }) => {
     const getCitationFontSize = React.useCallback((text: string) => {
         const length = text.length;
         if (length <= 45) {
@@ -192,7 +193,11 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details }) => 
                                                     <div className={styles.stepCitations}>
                                                         {sortedCitations.map(detail => {
                                                             if (detail.isWeb) {
-                                                                const citationText = `${detail.index}. ${detail.reference}`;
+                                                                const matchingWebEntry = web_data_points?.find(entry => entry.url === detail.reference);
+                                                                const webDisplayLabel = matchingWebEntry?.title?.trim()
+                                                                    ? matchingWebEntry.title
+                                                                    : detail.reference;
+                                                                const citationText = `${detail.index}. ${webDisplayLabel}`;
                                                                 return (
                                                                     <span
                                                                         key={`${step.id}-${detail.index}`}
@@ -200,7 +205,11 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details }) => 
                                                                     >
                                                                         <a
                                                                             className={answerStyles.citation}
-                                                                            title={detail.reference}
+                                                                            title={
+                                                                                matchingWebEntry?.title?.trim()
+                                                                                    ? `${matchingWebEntry.title} (${detail.reference})`
+                                                                                    : detail.reference
+                                                                            }
                                                                             href={detail.reference}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"

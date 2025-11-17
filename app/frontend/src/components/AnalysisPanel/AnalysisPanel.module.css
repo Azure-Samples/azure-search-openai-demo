@@ -118,8 +118,10 @@
     flex-wrap: wrap;
     align-items: center;
     background-color: #d7d7d7;
-    white-space: nowrap;
-    overflow: visible;
+    white-space: normal;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: anywhere;
     min-width: 0;
     box-sizing: border-box;
 }
@@ -128,6 +130,9 @@
 .tokenLabel {
     font-size: inherit;
     padding-right: 4px;
+    flex: 1 1 auto;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .primaryBarContainer {
@@ -135,6 +140,7 @@
     display: flex;
     gap: 8px;
     padding: 4px 0;
+    flex-wrap: wrap;
 }
 
 .primaryBarContainer .tokenBar {
@@ -222,9 +228,20 @@
 }
 
 .stepCitationEntry {
-    white-space: nowrap;
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25em;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 100%;
 }
 
 .stepCitationEntry a {
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-align: left;
+    max-width: 100%;
 }

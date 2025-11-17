@@ -91,7 +91,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText={t("headerTexts.thoughtProcess")}
                 headerButtonProps={isDisabledThoughtProcessTab ? pivotItemDisabledStyle : undefined}
             >
-                <ThoughtProcess thoughts={answer.context.thoughts || []} citationDetails={citationDetails} />
+                <ThoughtProcess thoughts={answer.context.thoughts || []} citationDetails={citationDetails} webDataPoints={answer.context.data_points.web} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.SupportingContentTab}

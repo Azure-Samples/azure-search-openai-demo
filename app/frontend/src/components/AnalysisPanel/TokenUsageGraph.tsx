@@ -63,28 +63,19 @@ export const TokenUsageStackedBar: React.FC<TokenUsageStackedBarProps> = ({ toke
 
     return (
         <div className={styles.primaryBarContainer}>
-            <div
-                className={`${styles.tokenBar} ${styles.promptBar}`}
-                style={{ flexGrow: promptFlex, flexBasis: promptPercent, maxWidth: promptPercent, minWidth: "fit-content" }}
-            >
+            <div className={`${styles.tokenBar} ${styles.promptBar}`} style={{ flexGrow: promptFlex, flexBasis: promptPercent, minWidth: 0 }}>
                 <span className={styles.tokenLabel}>
                     {labels.prompt}: {tokenUsage.prompt_tokens}
                 </span>
             </div>
             {includeReasoning && (
-                <div
-                    className={`${styles.tokenBar} ${styles.reasoningBar}`}
-                    style={{ flexGrow: reasoningFlex, flexBasis: reasoningPercent, maxWidth: reasoningPercent, minWidth: "fit-content" }}
-                >
+                <div className={`${styles.tokenBar} ${styles.reasoningBar}`} style={{ flexGrow: reasoningFlex, flexBasis: reasoningPercent, minWidth: 0 }}>
                     <span className={styles.tokenLabel}>
                         {labels.reasoning ?? "Reasoning"}: {reasoningValue}
                     </span>
                 </div>
             )}
-            <div
-                className={`${styles.tokenBar} ${styles.outputBar}`}
-                style={{ flexGrow: outputFlex, flexBasis: outputPercent, maxWidth: outputPercent, minWidth: "fit-content" }}
-            >
+            <div className={`${styles.tokenBar} ${styles.outputBar}`} style={{ flexGrow: outputFlex, flexBasis: outputPercent, minWidth: 0 }}>
                 <span className={styles.tokenLabel}>
                     {labels.output}: {safeOutputValue}
                 </span>
@@ -112,10 +103,7 @@ export const TokenUsageValueBar: React.FC<TokenUsageValueBarProps> = ({ label, v
     const flexGrow = value > 0 ? value : 0.5;
 
     return (
-        <div
-            className={`${styles.tokenBar} ${toneClass} ${groupingClass}`}
-            style={{ width: percent, flexGrow, flexBasis: percent, maxWidth: percent, minWidth: "fit-content" }}
-        >
+        <div className={`${styles.tokenBar} ${toneClass} ${groupingClass}`} style={{ width: percent, flexGrow, flexBasis: percent, minWidth: 0 }}>
             <span className={styles.tokenLabel}>
                 {label}: {value}
             </span>
