@@ -13,7 +13,6 @@ from prepdocslib.listfilestrategy import File
 
 from .mocks import MockAzureCredential
 
-
 WINDOWS = sys.platform.startswith("win")
 
 

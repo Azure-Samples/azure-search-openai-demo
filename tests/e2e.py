@@ -248,7 +248,7 @@ def test_chat_customization_multimodal(page: Page, live_server_url: str):
                 assert overrides["send_image_sources"] is True
                 assert overrides["search_text_embeddings"] is False
                 assert overrides["search_image_embeddings"] is True
-                assert overrides["retrievalMode"] == "vectors"
+                assert overrides["retrieval_mode"] == "vectors"
         except Exception as e:
             print(f"Error in handle_chat: {e}")
 
@@ -262,14 +262,28 @@ def test_chat_customization_multimodal(page: Page, live_server_url: str):
         route.fulfill(
             body=json.dumps(
                 {
+                    "defaultReasoningEffort": "",
+                    "defaultRetrievalReasoningEffort": "minimal",
                     "showMultimodalOptions": True,
                     "showSemanticRankerOption": True,
-                    "showVectorOption": True,
+                    "showQueryRewritingOption": False,
+                    "showReasoningEffortOption": False,
                     "streamingEnabled": True,
+                    "showVectorOption": True,
+                    "showUserUpload": False,
+                    "showLanguagePicker": False,
+                    "showSpeechInput": False,
+                    "showSpeechOutputBrowser": False,
+                    "showSpeechOutputAzure": False,
+                    "showChatHistoryBrowser": False,
+                    "showChatHistoryCosmos": False,
+                    "showAgenticRetrievalOption": False,
                     "ragSearchImageEmbeddings": True,
                     "ragSearchTextEmbeddings": True,
                     "ragSendImageSources": True,
                     "ragSendTextSources": True,
+                    "webSourceEnabled": False,
+                    "sharepointSourceEnabled": False,
                 }
             ),
             status=200,
@@ -479,10 +493,28 @@ def test_upload_hidden(page: Page, live_server_url: str):
         route.fulfill(
             body=json.dumps(
                 {
+                    "defaultReasoningEffort": "",
+                    "defaultRetrievalReasoningEffort": "minimal",
                     "showMultimodalOptions": False,
                     "showSemanticRankerOption": True,
-                    "showUserUpload": False,
+                    "showQueryRewritingOption": False,
+                    "showReasoningEffortOption": False,
+                    "streamingEnabled": True,
                     "showVectorOption": True,
+                    "showUserUpload": False,
+                    "showLanguagePicker": False,
+                    "showSpeechInput": False,
+                    "showSpeechOutputBrowser": False,
+                    "showSpeechOutputAzure": False,
+                    "showChatHistoryBrowser": False,
+                    "showChatHistoryCosmos": False,
+                    "showAgenticRetrievalOption": False,
+                    "ragSearchImageEmbeddings": False,
+                    "ragSearchTextEmbeddings": True,
+                    "ragSendImageSources": False,
+                    "ragSendTextSources": True,
+                    "webSourceEnabled": False,
+                    "sharepointSourceEnabled": False,
                 }
             ),
             status=200,
@@ -511,10 +543,28 @@ def test_upload_disabled(page: Page, live_server_url: str):
         route.fulfill(
             body=json.dumps(
                 {
+                    "defaultReasoningEffort": "",
+                    "defaultRetrievalReasoningEffort": "minimal",
                     "showMultimodalOptions": False,
                     "showSemanticRankerOption": True,
-                    "showUserUpload": True,
+                    "showQueryRewritingOption": False,
+                    "showReasoningEffortOption": False,
+                    "streamingEnabled": True,
                     "showVectorOption": True,
+                    "showUserUpload": True,
+                    "showLanguagePicker": False,
+                    "showSpeechInput": False,
+                    "showSpeechOutputBrowser": False,
+                    "showSpeechOutputAzure": False,
+                    "showChatHistoryBrowser": False,
+                    "showChatHistoryCosmos": False,
+                    "showAgenticRetrievalOption": False,
+                    "ragSearchImageEmbeddings": False,
+                    "ragSearchTextEmbeddings": True,
+                    "ragSendImageSources": False,
+                    "ragSendTextSources": True,
+                    "webSourceEnabled": False,
+                    "sharepointSourceEnabled": False,
                 }
             ),
             status=200,

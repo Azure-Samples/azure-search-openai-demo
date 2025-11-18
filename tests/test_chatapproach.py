@@ -4,17 +4,16 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
-from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion
 
 from approaches.approach import (
+    ActivityDetail,
     DataPoints,
     Document,
     ExtraInfo,
     SharePointResult,
     ThoughtStep,
     WebResult,
-    ActivityDetail,
 )
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager

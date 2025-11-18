@@ -3,7 +3,7 @@ import json
 import re
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from typing import Any, Optional, TypedDict, cast
 
 from azure.search.documents.aio import SearchClient

@@ -1,6 +1,5 @@
 import json
 import os
-from pathlib import Path
 from typing import Any
 from unittest import mock
 
@@ -9,7 +8,6 @@ import quart.testing.app
 from httpx import Request, Response
 from openai import BadRequestError
 from quart import Response as QuartResponse
-from werkzeug.exceptions import NotFound
 
 import app
 
