@@ -255,12 +255,17 @@ class RetrieveThenReadApproach(Approach):
         override_use_web_source = overrides.get("use_web_source")
         if isinstance(override_use_web_source, bool):
             use_web_source = use_web_source and override_use_web_source
+        # Overrides can only disable sharepoint source support configured at construction time.
+        use_sharepoint_source = self.use_sharepoint_source
+        override_use_sharepoint_source = overrides.get("use_sharepoint_source")
+        if isinstance(override_use_sharepoint_source, bool):
+            use_sharepoint_source = use_sharepoint_source and override_use_sharepoint_source
         if use_web_source and retrieval_reasoning_effort == "minimal":
             raise Exception("Web source cannot be used with minimal retrieval reasoning effort.")
 
         selected_client, effective_web_source, effective_sharepoint_source = self._select_knowledgebase_client(
             use_web_source,
-            self.use_sharepoint_source,
+            use_sharepoint_source,
         )
 
         agentic_results = await self.run_agentic_retrieval(
@@ -275,6 +280,7 @@ class RetrieveThenReadApproach(Approach):
             use_web_source=effective_web_source,
             use_sharepoint_source=effective_sharepoint_source,
             retrieval_reasoning_effort=retrieval_reasoning_effort,
+            should_rewrite_query=False
         )
 
         data_points = await self.get_sources_content(
@@ -287,45 +293,11 @@ class RetrieveThenReadApproach(Approach):
             sharepoint_results=agentic_results.sharepoint_results,
             citation_details_by_ref=agentic_results.citation_details_by_ref,
         )
-
-        thoughts = []
-        if agentic_results.thought_step:
-            thoughts.append(agentic_results.thought_step)
-        thoughts.append(
-            ThoughtStep(
-                f"Agentic retrieval results (top {top})",
-                agentic_results.get_ordered_results(),
-                {
-                    "query_plan": (
-                        [activity.as_dict() for activity in agentic_results.response.activity]
-                        if agentic_results.response.activity
-                        else None
-                    ),
-                    "model": self.knowledgebase_model,
-                    "deployment": self.knowledgebase_deployment,
-                },
-            )
-        )
-        extra_info = ExtraInfo(
+        return ExtraInfo(
             data_points,
-            thoughts=thoughts,
+            thoughts=agentic_results.thoughts,
             answer=agentic_results.answer,
         )
-        if retrieval_reasoning_effort == "minimal" and agentic_results.rewrite_result:
-            extra_info.thoughts.insert(
-                0,
-                self.format_thought_step_for_chatcompletion(
-                    title="Prompt to generate search query",
-                    messages=agentic_results.rewrite_result.messages,
-                    overrides=overrides,
-                    model=self.chatgpt_model,
-                    deployment=self.chatgpt_deployment,
-                    usage=agentic_results.rewrite_result.completion.usage,
-                    reasoning_effort=agentic_results.rewrite_result.reasoning_effort,
-                ),
-            )
-
-        return extra_info
 
     def _select_knowledgebase_client(
         self,

@@ -123,13 +123,15 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
             return;
         }
 
-        const existing = citationMap.get(part);
+        // Resolve SharePoint filename to URL if applicable
+        const resolvedReference = resolveSharePointUrl(part);
+
+        // Check if this resolved reference already exists
+        const existing = citationMap.get(resolvedReference);
         if (existing) {
             fragments.push({ type: "citation", detail: existing });
             return;
         }
-        // Resolve SharePoint filename to URL if applicable
-        const resolvedReference = resolveSharePointUrl(part);
 
         const backendDetail = citationActivityDetails?.[part];
         const activityId = backendDetail?.activityId;
@@ -144,7 +146,7 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
             stepSource: backendDetail?.stepSource
         };
 
-        citationMap.set(part, detail);
+        citationMap.set(resolvedReference, detail);
         citationList.push(detail);
         fragments.push({ type: "citation", detail });
     });

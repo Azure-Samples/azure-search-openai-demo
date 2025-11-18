@@ -147,7 +147,7 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
             } else if (step.type === "remoteSharePoint") {
                 return result.type === "sharepoint"; // SharePoint results
             } else if (step.type === "web") {
-                return result.url && !result.type; // Web results (have url but no type field)
+                return result.type === "web"; // Web results have type: "web"
             }
             return false;
         });

@@ -462,12 +462,17 @@ class ChatReadRetrieveReadApproach(Approach):
         override_use_web_source = overrides.get("use_web_source")
         if isinstance(override_use_web_source, bool):
             use_web_source = use_web_source and override_use_web_source
+        # Overrides can only disable sharepoint source support configured at construction time.
+        use_sharepoint_source = self.use_sharepoint_source
+        override_use_sharepoint_source = overrides.get("use_sharepoint_source")
+        if isinstance(override_use_sharepoint_source, bool):
+            use_sharepoint_source = use_sharepoint_source and override_use_sharepoint_source
         if use_web_source and retrieval_reasoning_effort == "minimal":
             raise Exception("Web source cannot be used with minimal retrieval reasoning effort.")
 
         selected_client, effective_web_source, effective_sharepoint_source = self._select_knowledgebase_client(
             use_web_source,
-            self.use_sharepoint_source,
+            use_sharepoint_source,
         )
 
         agentic_results = await self.run_agentic_retrieval(

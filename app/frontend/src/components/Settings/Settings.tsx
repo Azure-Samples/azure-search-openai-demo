@@ -150,30 +150,32 @@ export const Settings = ({
     return (
         <div className={className}>
             {streamingEnabled && (
-                <Checkbox
-                    id={shouldStreamFieldId}
-                    className={styles.settingsSeparator}
-                    checked={webSourceDisablesStreamingAndFollowup ? false : shouldStream}
-                    label={t("labels.shouldStream")}
-                    onChange={(_ev, checked) => onChange("shouldStream", !!checked)}
-                    aria-labelledby={shouldStreamId}
-                    disabled={webSourceDisablesStreamingAndFollowup}
-                    onRenderLabel={props => renderLabel(props, shouldStreamId, shouldStreamFieldId, t("helpTexts.streamChat"))}
-                />
-            )}
+                <>
+                    <Checkbox
+                        id={shouldStreamFieldId}
+                        className={styles.settingsSeparator}
+                        checked={webSourceDisablesStreamingAndFollowup ? false : shouldStream}
+                        label={t("labels.shouldStream")}
+                        onChange={(_ev, checked) => onChange("shouldStream", !!checked)}
+                        aria-labelledby={shouldStreamId}
+                        disabled={webSourceDisablesStreamingAndFollowup}
+                        onRenderLabel={props => renderLabel(props, shouldStreamId, shouldStreamFieldId, t("helpTexts.streamChat"))}
+                    />
 
-            <Checkbox
-                id={suggestFollowupQuestionsFieldId}
-                className={styles.settingsSeparator}
-                checked={webSourceDisablesStreamingAndFollowup ? false : useSuggestFollowupQuestions}
-                label={t("labels.useSuggestFollowupQuestions")}
-                onChange={(_ev, checked) => onChange("useSuggestFollowupQuestions", !!checked)}
-                aria-labelledby={suggestFollowupQuestionsId}
-                disabled={webSourceDisablesStreamingAndFollowup}
-                onRenderLabel={props =>
-                    renderLabel(props, suggestFollowupQuestionsId, suggestFollowupQuestionsFieldId, t("helpTexts.suggestFollowupQuestions"))
-                }
-            />
+                    <Checkbox
+                        id={suggestFollowupQuestionsFieldId}
+                        className={styles.settingsSeparator}
+                        checked={webSourceDisablesStreamingAndFollowup ? false : useSuggestFollowupQuestions}
+                        label={t("labels.useSuggestFollowupQuestions")}
+                        onChange={(_ev, checked) => onChange("useSuggestFollowupQuestions", !!checked)}
+                        aria-labelledby={suggestFollowupQuestionsId}
+                        disabled={webSourceDisablesStreamingAndFollowup}
+                        onRenderLabel={props =>
+                            renderLabel(props, suggestFollowupQuestionsId, suggestFollowupQuestionsFieldId, t("helpTexts.suggestFollowupQuestions"))
+                        }
+                    />
+                </>
+            )}
 
             <h3 className={styles.sectionHeader}>{t("searchSettings")}</h3>
 

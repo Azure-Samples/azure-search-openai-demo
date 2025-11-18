@@ -445,6 +445,7 @@ class Approach(ABC):
         use_web_source: bool = False,
         use_sharepoint_source: bool = False,
         retrieval_reasoning_effort: Optional[str] = None,
+        should_rewrite_query: bool = True,
     ) -> AgenticRetrievalResults:
         # STEP 1: Invoke agentic retrieval
         thoughts = []
@@ -486,7 +487,7 @@ class Approach(ABC):
 
         agentic_retrieval_input = {}
         rewrite_result = None
-        if retrieval_reasoning_effort == "minimal":
+        if retrieval_reasoning_effort == "minimal" and should_rewrite_query:
             original_user_query = messages[-1]["content"]
             if not isinstance(original_user_query, str):
                 raise ValueError("The most recent message content must be a string.")
@@ -514,8 +515,8 @@ class Approach(ABC):
                     usage=rewrite_result.completion.usage,
                     reasoning_effort=rewrite_result.reasoning_effort,
             ))
-            
-            agentic_retrieval_input["intents"] = [KnowledgeRetrievalSemanticIntent(search=rewrite_result.query)]
+        elif retrieval_reasoning_effort == "minimal":
+            agentic_retrieval_input["intents"] = [KnowledgeRetrievalSemanticIntent(search=messages[-1]["content"])]
         else:
             agentic_retrieval_input["messages"] = [
                 KnowledgeBaseMessage(
