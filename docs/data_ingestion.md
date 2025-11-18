@@ -88,7 +88,7 @@ Here's an example of what a final indexed chunk document looks like:
 ```json
 {
     "id": "file-Northwind_Health_Plus_Benefits_Details_pdf-4E6F72746877696E645F4865616C74685F506C75735F42656E65666974735F44657461696C732E706466-page-0",
-    "content": "# Contoso Electronics\n\nNorthwind Health Plus Plan\n...",
+    "content": "# Zava\n\nNorthwind Health Plus Plan\n...",
     "category": null,
     "sourcepage": "Northwind_Health_Plus_Benefits_Details.pdf#page=1",
     "sourcefile": "Northwind_Health_Plus_Benefits_Details.pdf",
