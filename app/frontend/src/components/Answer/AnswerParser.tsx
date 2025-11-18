@@ -89,7 +89,6 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
         if (isWebCitation(citation)) {
             return citation;
         }
-
         // Check if this looks like a filename (has an extension)
         const hasFileExtension = /\.(pdf|docx?|xlsx?|pptx?|txt|html?|csv)$/i.test(citation);
         if (!hasFileExtension) {
@@ -118,7 +117,7 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
             return;
         }
 
-        const isValidCitation = possibleCitations.some(citation => citation.startsWith(part));
+        const isValidCitation = possibleCitations.some(citation => citation.endsWith(part));
         if (!isValidCitation) {
             fragments.push({ type: "text", value: `[${part}]` });
             return;
@@ -129,7 +128,6 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
             fragments.push({ type: "citation", detail: existing });
             return;
         }
-
         // Resolve SharePoint filename to URL if applicable
         const resolvedReference = resolveSharePointUrl(part);
 
