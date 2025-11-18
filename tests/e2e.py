@@ -583,6 +583,7 @@ def test_upload_disabled(page: Page, live_server_url: str):
 
 def test_agentic_retrieval_effort_minimal_disables_web(page: Page, live_server_url: str):
     """Test that selecting 'Minimal' effort deselects and disables the web source checkbox."""
+
     # Set up a mock route to the /chat endpoint
     def handle(route: Route):
         try:
