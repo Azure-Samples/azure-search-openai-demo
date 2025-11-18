@@ -24,7 +24,7 @@ async-timeout==5.0.1
     # via aiohttp
 attrs==25.3.0
     # via aiohttp
-azure-ai-documentintelligence==1.0.2
+azure-ai-documentintelligence==1.0.0b4
     # via -r requirements.in
 azure-cognitiveservices-speech==1.40.0
     # via -r requirements.in
