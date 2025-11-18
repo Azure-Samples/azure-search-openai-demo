@@ -1,22 +1,19 @@
-import React from "react";
 import { Stack } from "@fluentui/react";
+import React from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
 import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import styles from "./AnalysisPanel.module.css";
 
-import { Thoughts, ExternalResultMetadata } from "../../api";
-import { TokenUsageGraph } from "./TokenUsageGraph";
+import { Thoughts } from "../../api";
 import { AgentPlan } from "./AgentPlan";
-import { CitationDetail } from "../Answer/AnswerParser";
+import { TokenUsageGraph } from "./TokenUsageGraph";
 
 SyntaxHighlighter.registerLanguage("json", json);
 
 interface Props {
     thoughts: Thoughts[];
-    citationDetails?: CitationDetail[];
-    webDataPoints?: ExternalResultMetadata[];
     onCitationClicked?: (citationFilePath: string) => void;
 }
 
@@ -28,7 +25,7 @@ function truncateImageUrl(val: string) {
     return val;
 }
 
-export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints, onCitationClicked }: Props) => {
+export const ThoughtProcess = ({ thoughts, onCitationClicked }: Props) => {
     const [effort, setEffort] = React.useState<string | undefined>();
 
     return (
@@ -52,9 +49,7 @@ export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints, onCit
                         )}
                         {hasAgenticPlan && (
                             <AgentPlan
-                                query_plan={t.props?.query_plan ?? []}
-                                citation_details={citationDetails}
-                                web_data_points={webDataPoints}
+                                queryPlan={t.props?.query_plan ?? []}
                                 onEffortExtracted={setEffort}
                                 onCitationClicked={onCitationClicked}
                                 results={Array.isArray(t.description) ? t.description : []}

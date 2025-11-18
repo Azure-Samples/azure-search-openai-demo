@@ -1,17 +1,13 @@
 import React from "react";
-import { TokenUsageGraph, TokenUsage } from "./TokenUsageGraph";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
-import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
-import styles from "./AnalysisPanel.module.css";
-import { memo, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
-import { getCitationFilePath, ExternalResultMetadata } from "../../api";
-
+import { getCitationFilePath } from "../../api";
 import { QueryPlanStep, getStepLabel } from "./agentPlanUtils";
-import { CitationDetail } from "../Answer/AnswerParser";
-import answerStyles from "../Answer/Answer.module.css";
+import styles from "./AnalysisPanel.module.css";
+import { TokenUsage, TokenUsageGraph } from "./TokenUsageGraph";
+
 SyntaxHighlighter.registerLanguage("json", json);
 
 const renderDetail = (step: QueryPlanStep) => {
@@ -104,29 +100,13 @@ const renderDetail = (step: QueryPlanStep) => {
 };
 
 interface Props {
-    query_plan: QueryPlanStep[];
-    citation_details?: CitationDetail[];
-    web_data_points?: ExternalResultMetadata[];
+    queryPlan: QueryPlanStep[];
     onEffortExtracted?: (effort: string | undefined) => void;
     onCitationClicked?: (citationFilePath: string) => void;
     results?: any[];
 }
 
-export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_data_points, onEffortExtracted, onCitationClicked, results }) => {
-    const getCitationFontSize = React.useCallback((text: string) => {
-        const length = text.length;
-        if (length <= 45) {
-            return "0.75em";
-        }
-        if (length <= 75) {
-            return "0.7em";
-        }
-        if (length <= 110) {
-            return "0.65em";
-        }
-        return "0.6em";
-    }, []);
-
+export const AgentPlan: React.FC<Props> = ({ queryPlan, onEffortExtracted, onCitationClicked, results }) => {
     // Helper to get search query for a step
     const getStepQuery = (step: QueryPlanStep): string | undefined => {
         if (step.search_index_arguments?.search) return step.search_index_arguments.search;
@@ -149,20 +129,20 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
 
     const stepNumberLookup = React.useMemo(() => {
         const lookup: Record<string, number> = {};
-        query_plan.forEach((step, index) => {
+        queryPlan.forEach((step, index) => {
             if (step != null && step.id !== undefined && step.id !== null) {
                 lookup[String(step.id)] = index + 1;
             }
         });
         return lookup;
-    }, [query_plan]);
+    }, [queryPlan]);
 
     const iterations = React.useMemo(() => {
-        if (!query_plan || query_plan.length === 0) {
+        if (!queryPlan || queryPlan.length === 0) {
             return [] as QueryPlanStep[][];
         }
 
-        const planningIndices = query_plan.reduce<number[]>((indices, step, index) => {
+        const planningIndices = queryPlan.reduce<number[]>((indices, step, index) => {
             if (step.type === "modelQueryPlanning") {
                 indices.push(index);
             }
@@ -170,15 +150,15 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
         }, []);
 
         if (planningIndices.length <= 1) {
-            return [query_plan];
+            return [queryPlan];
         }
 
         const iterationsList: QueryPlanStep[][] = [];
-        const prePlanningSteps = planningIndices[0] > 0 ? query_plan.slice(0, planningIndices[0]) : [];
+        const prePlanningSteps = planningIndices[0] > 0 ? queryPlan.slice(0, planningIndices[0]) : [];
 
         planningIndices.forEach((planningIndex, idx) => {
-            const nextPlanningIndex = planningIndices[idx + 1] ?? query_plan.length;
-            const iterationSteps = query_plan.slice(planningIndex, nextPlanningIndex);
+            const nextPlanningIndex = planningIndices[idx + 1] ?? queryPlan.length;
+            const iterationSteps = queryPlan.slice(planningIndex, nextPlanningIndex);
 
             if (idx === 0 && prePlanningSteps.length > 0) {
                 iterationsList.push([...prePlanningSteps, ...iterationSteps]);
@@ -188,16 +168,16 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
         });
 
         return iterationsList;
-    }, [query_plan]);
+    }, [queryPlan]);
 
     React.useEffect(() => {
         // Extract effort from first agentic reasoning step
-        const agenticStep = query_plan.find(step => step.type === "agenticReasoning");
+        const agenticStep = queryPlan.find(step => step.type === "agenticReasoning");
         const effort = agenticStep?.retrieval_reasoning_effort?.kind;
         if (onEffortExtracted) {
             onEffortExtracted(effort);
         }
-    }, [query_plan, onEffortExtracted]);
+    }, [queryPlan, onEffortExtracted]);
 
     if (iterations.length === 0) {
         return null;
@@ -223,12 +203,6 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
                             <tbody>
                                 {iterationSteps.map(step => {
                                     const stepId = step?.id;
-                                    const relatedCitations = citation_details
-                                        ? citation_details.filter(detail => {
-                                              return stepId !== undefined && detail.activityId === String(stepId);
-                                          })
-                                        : [];
-                                    const sortedCitations = relatedCitations.length ? [...relatedCitations].sort((a, b) => a.index - b.index) : [];
                                     const stepNumber = stepId !== undefined ? stepNumberLookup[String(stepId)] : undefined;
                                     const stepResults = getResultsForStep(step);
 

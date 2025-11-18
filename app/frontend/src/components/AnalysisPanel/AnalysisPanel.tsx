@@ -1,17 +1,15 @@
-import { Stack, Pivot, PivotItem } from "@fluentui/react";
+import { useMsal } from "@azure/msal-react";
+import { Pivot, PivotItem } from "@fluentui/react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import styles from "./AnalysisPanel.module.css";
 
+import { ChatAppResponse, getHeaders } from "../../api";
+import { getToken, useLogin } from "../../authConfig";
+import { MarkdownViewer } from "../MarkdownViewer";
 import { SupportingContent } from "../SupportingContent";
-import { ChatAppResponse } from "../../api";
+import styles from "./AnalysisPanel.module.css";
 import { AnalysisPanelTabs } from "./AnalysisPanelTabs";
 import { ThoughtProcess } from "./ThoughtProcess";
-import { MarkdownViewer } from "../MarkdownViewer";
-import { useMsal } from "@azure/msal-react";
-import { getHeaders } from "../../api";
-import { useLogin, getToken } from "../../authConfig";
-import { useState, useEffect, useMemo } from "react";
-import { extractCitationDetails } from "../Answer/AnswerParser";
 
 interface Props {
     className: string;
@@ -36,7 +34,6 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
     );
     const isDisabledSupportingContentTab: boolean = !hasSupportingContent;
     const isDisabledCitationTab: boolean = !activeCitation;
-    const citationDetails = useMemo(() => extractCitationDetails(answer), [answer]);
     const [citation, setCitation] = useState("");
 
     const client = useLogin ? useMsal().instance : undefined;
@@ -92,12 +89,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText={t("headerTexts.thoughtProcess")}
                 headerButtonProps={isDisabledThoughtProcessTab ? pivotItemDisabledStyle : undefined}
             >
-                <ThoughtProcess
-                    thoughts={answer.context.thoughts || []}
-                    citationDetails={citationDetails}
-                    webDataPoints={answer.context.data_points.external_results_metadata}
-                    onCitationClicked={onCitationClicked}
-                />
+                <ThoughtProcess thoughts={answer.context.thoughts || []} onCitationClicked={onCitationClicked} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.SupportingContentTab}
