@@ -288,32 +288,27 @@ class RetrieveThenReadApproach(Approach):
             citation_details_by_ref=agentic_results.citation_details_by_ref,
         )
 
+        thoughts = []
+        if agentic_results.thought_step:
+            thoughts.append(agentic_results.thought_step)
+        thoughts.append(
+            ThoughtStep(
+                f"Agentic retrieval results (top {top})",
+                agentic_results.get_ordered_results(),
+                {
+                    "query_plan": (
+                        [activity.as_dict() for activity in agentic_results.response.activity]
+                        if agentic_results.response.activity
+                        else None
+                    ),
+                    "model": self.knowledgebase_model,
+                    "deployment": self.knowledgebase_deployment,
+                },
+            )
+        )
         extra_info = ExtraInfo(
             data_points,
-            thoughts=[
-                ThoughtStep(
-                    "Send question to agentic retrieval",
-                    messages,
-                    {
-                        "reranker_threshold": minimum_reranker_score,
-                        "results_merge_strategy": results_merge_strategy,
-                        "filter": search_index_filter,
-                    },
-                ),
-                ThoughtStep(
-                    f"Agentic retrieval results (top {top})",
-                    agentic_results.get_ordered_results(),
-                    {
-                        "query_plan": (
-                            [activity.as_dict() for activity in agentic_results.response.activity]
-                            if agentic_results.response.activity
-                            else None
-                        ),
-                        "model": self.knowledgebase_model,
-                        "deployment": self.knowledgebase_deployment,
-                    },
-                ),
-            ],
+            thoughts=thoughts,
             answer=agentic_results.answer,
         )
         if retrieval_reasoning_effort == "minimal" and agentic_results.rewrite_result:

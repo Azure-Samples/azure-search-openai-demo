@@ -154,41 +154,6 @@ class RewriteQueryResult:
 
 
 @dataclass
-class AgenticRetrievalResults:
-    """Results from agentic retrieval including activities, documents, web results, SharePoint results, and optional answer."""
-
-    response: KnowledgeBaseRetrievalResponse
-    documents: list[Document]
-    web_results: list[WebResult]
-    sharepoint_results: list[SharePointResult] = field(default_factory=list)
-    answer: Optional[str] = None  # Synthesized answer when web knowledge source is used
-    rewrite_result: Optional[RewriteQueryResult] = None
-    citation_details_by_ref: Optional[dict[str, dict[str, Any]]] = None
-
-    def get_ordered_results(self) -> list[dict[str, Any]]:
-        """Get all results (documents, web, and SharePoint) in their original reference order."""
-        # Combine all results with their ref_ids
-        all_results: list[tuple[str, dict[str, Any]]] = []
-
-        for doc in self.documents:
-            if doc.ref_id:
-                all_results.append((doc.ref_id, doc.serialize_for_results()))
-
-        for web in self.web_results:
-            if web.id:
-                all_results.append((str(web.id), web.serialize_for_results()))
-
-        for sp in self.sharepoint_results:
-            if sp.id:
-                all_results.append((str(sp.id), sp.serialize_for_results()))
-
-        # Sort by ref_id (numeric order)
-        all_results.sort(key=lambda x: int(x[0]) if x[0].isdigit() else float("inf"))
-
-        return [result for _, result in all_results]
-
-
-@dataclass
 class ThoughtStep:
     title: str
     description: Optional[Any]
@@ -200,11 +165,25 @@ class ThoughtStep:
 
 
 @dataclass
+class AgenticRetrievalResults:
+    """Results from agentic retrieval including activities, documents, web results, SharePoint results, and optional answer."""
+
+    response: KnowledgeBaseRetrievalResponse
+    documents: list[Document]
+    web_results: list[WebResult]
+    sharepoint_results: list[SharePointResult] = field(default_factory=list)
+    answer: Optional[str] = None  # Synthesized answer when web knowledge source is used
+    rewrite_result: Optional[RewriteQueryResult] = None
+    citation_details_by_ref: Optional[dict[str, dict[str, Any]]] = None
+    thoughts: list[ThoughtStep] = field(default_factory=list)
+
+
+@dataclass
 class DataPoints:
     text: Optional[list[str]] = None
     images: Optional[list] = None
     citations: Optional[list[str]] = None
-    web: Optional[list[dict[str, Any]]] = None
+    external_results_metadata: Optional[list[dict[str, Any]]] = None
     citation_activity_details: Optional[dict[str, dict[str, Any]]] = None
 
 
@@ -468,6 +447,7 @@ class Approach(ABC):
         retrieval_reasoning_effort: Optional[str] = None,
     ) -> AgenticRetrievalResults:
         # STEP 1: Invoke agentic retrieval
+        thoughts = []
 
         knowledge_source_params = [
             SearchIndexKnowledgeSourceParams(
@@ -495,7 +475,6 @@ class Approach(ABC):
             )
 
         if use_sharepoint_source:
-            print("Including SharePoint knowledge source in agentic retrieval")
             knowledge_source_params_list.append(
                 RemoteSharePointKnowledgeSourceParams(
                     knowledge_source_name="sharepoint",
@@ -526,8 +505,26 @@ class Approach(ABC):
                 temperature=0.0,  # Minimize creativity for search query generation
                 no_response_token=self.QUERY_REWRITE_NO_RESPONSE,
             )
+            thoughts.append(self.format_thought_step_for_chatcompletion(
+                    title="Prompt to generate search query",
+                    messages=rewrite_result.messages,
+                    overrides={},
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    usage=rewrite_result.completion.usage,
+                    reasoning_effort=rewrite_result.reasoning_effort,
+            ))
+            
             agentic_retrieval_input["intents"] = [KnowledgeRetrievalSemanticIntent(search=rewrite_result.query)]
-            agentic_retrieval_input["output_mode"] = "extractiveData"
+            thoughts.append(ThoughtStep(
+                "Send intents to agentic retrieval",
+                rewrite_result.query,
+                {
+                    "reranker_threshold": minimum_reranker_score,
+                    "results_merge_strategy": results_merge_strategy,
+                    "filter": filter_add_on,
+                },
+            ))
         else:
             agentic_retrieval_input["messages"] = [
                 KnowledgeBaseMessage(
@@ -536,6 +533,19 @@ class Approach(ABC):
                 for msg in messages
                 if msg["role"] != "system"
             ]
+            thoughts.append(ThoughtStep(
+                "Send messages to agentic retrieval",
+                messages,
+                {
+                    "reranker_threshold": minimum_reranker_score,
+                    "results_merge_strategy": results_merge_strategy,
+                    "filter": filter_add_on,
+                },
+            ))
+        # When we're not using a web source, set output mode to extractiveData to avoid synthesized answer
+        if not use_web_source:
+            agentic_retrieval_input["output_mode"] = "extractiveData"
+
 
         retrieval_effort = None
         if retrieval_reasoning_effort == "minimal":
@@ -585,8 +595,10 @@ class Approach(ABC):
             }
 
         # Extract references
+        references = response.references or []
+
         activity_citation_details: dict[str, dict[str, Any]] = {}
-        for ref in response.references:
+        for ref in references:
             ref_id = getattr(ref, "id", None)
             if ref_id is None:
                 continue
@@ -603,7 +615,7 @@ class Approach(ABC):
                 activity_citation_details[ref_key] = detail_payload
 
         refs = [
-            r for r in response.references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")
+            r for r in references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")
         ]
         documents: list[Document] = []
         doc_to_ref_id: dict[str, int] = {}
@@ -631,7 +643,7 @@ class Approach(ABC):
                     break
         
         # We need to handle KnowledgeBaseWebReference separately if web knowledge source is used
-        web_refs = [r for r in response.references if isinstance(r, KnowledgeBaseWebReference)]
+        web_refs = [r for r in references if isinstance(r, KnowledgeBaseWebReference)]
         web_results: list[WebResult] = []
         for ref in web_refs:
             web_result = WebResult(
@@ -642,8 +654,9 @@ class Approach(ABC):
             )
             web_results.append(web_result)
 
+
         # Handle KnowledgeBaseRemoteSharePointReference if SharePoint knowledge source is used
-        sharepoint_refs = [r for r in response.references if isinstance(r, KnowledgeBaseRemoteSharePointReference)]
+        sharepoint_refs = [r for r in references if isinstance(r, KnowledgeBaseRemoteSharePointReference)]
         sharepoint_results: list[SharePointResult] = []
         for ref in sharepoint_refs:
             # Extract content from all sourceData.extracts[].text and concatenate
@@ -675,8 +688,7 @@ class Approach(ABC):
 
         # Extract answer from response if web knowledge source provided one
         answer = None
-        if (
-            retrieval_reasoning_effort != "minimal"
+        if (use_web_source
             and response.response
             and len(response.response) > 0
             and len(response.response[0].content) > 0
@@ -687,6 +699,20 @@ class Approach(ABC):
                 # Replace all ref_id tokens (web -> URL, documents -> sourcepage, SharePoint -> web_url)
                 answer = self.replace_all_ref_ids(raw_answer, documents, web_results, sharepoint_results)
 
+        thoughts.append(ThoughtStep(
+            "Agentic retrieval response",
+            [doc.serialize_for_results() for doc in documents + web_results + sharepoint_results],
+            {
+                "query_plan": (
+                    [activity.as_dict() for activity in response.activity]
+                    if response.activity
+                    else None
+                ),
+                "model": self.knowledgebase_model,
+                "deployment": self.knowledgebase_deployment,
+            },
+        ))
+    
         return AgenticRetrievalResults(
             response=response,
             documents=documents,
@@ -695,6 +721,7 @@ class Approach(ABC):
             answer=answer,
             rewrite_result=rewrite_result,
             citation_details_by_ref=activity_citation_details or None,
+            thoughts=thoughts,
         )
 
     def replace_all_ref_ids(
@@ -839,7 +866,7 @@ class Approach(ABC):
             text=text_sources,
             images=image_sources,
             citations=citations,
-            web=web_sources,
+            external_results_metadata=web_sources,
             citation_activity_details=citation_activity_details or None,
         )
 

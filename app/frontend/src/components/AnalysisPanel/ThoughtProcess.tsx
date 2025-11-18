@@ -6,7 +6,7 @@ import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import styles from "./AnalysisPanel.module.css";
 
-import { Thoughts, WebDataPoint } from "../../api";
+import { Thoughts, ExternalResultMetadata } from "../../api";
 import { TokenUsageGraph } from "./TokenUsageGraph";
 import { AgentPlan } from "./AgentPlan";
 import { CitationDetail } from "../Answer/AnswerParser";
@@ -16,7 +16,8 @@ SyntaxHighlighter.registerLanguage("json", json);
 interface Props {
     thoughts: Thoughts[];
     citationDetails?: CitationDetail[];
-    webDataPoints?: WebDataPoint[];
+    webDataPoints?: ExternalResultMetadata[];
+    onCitationClicked?: (citationFilePath: string) => void;
 }
 
 // Helper to truncate URLs
@@ -27,7 +28,7 @@ function truncateImageUrl(val: string) {
     return val;
 }
 
-export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints }: Props) => {
+export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints, onCitationClicked }: Props) => {
     const [effort, setEffort] = React.useState<string | undefined>();
 
     return (
@@ -55,6 +56,7 @@ export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints }: Pro
                                 citation_details={citationDetails}
                                 web_data_points={webDataPoints}
                                 onEffortExtracted={setEffort}
+                                onCitationClicked={onCitationClicked}
                             />
                         )}
                         {Array.isArray(t.description) || (t.description !== null && typeof t.description === "object") ? (

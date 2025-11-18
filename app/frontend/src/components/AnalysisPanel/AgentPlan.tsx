@@ -6,7 +6,7 @@ import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
 import styles from "./AnalysisPanel.module.css";
 import { QueryPlanStep, getStepLabel } from "./agentPlanUtils";
 import { CitationDetail } from "../Answer/AnswerParser";
-import { getCitationFilePath, WebDataPoint } from "../../api";
+import { getCitationFilePath, ExternalResultMetadata } from "../../api";
 import answerStyles from "../Answer/Answer.module.css";
 SyntaxHighlighter.registerLanguage("json", json);
 
@@ -83,11 +83,12 @@ const renderDetail = (step: QueryPlanStep) => {
 interface Props {
     query_plan: QueryPlanStep[];
     citation_details?: CitationDetail[];
-    web_data_points?: WebDataPoint[];
+    web_data_points?: ExternalResultMetadata[];
     onEffortExtracted?: (effort: string | undefined) => void;
+    onCitationClicked?: (citationFilePath: string) => void;
 }
 
-export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_data_points, onEffortExtracted }) => {
+export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_data_points, onEffortExtracted, onCitationClicked }) => {
     const getCitationFontSize = React.useCallback((text: string) => {
         const length = text.length;
         if (length <= 45) {
@@ -238,10 +239,13 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
                                                                     <a
                                                                         className={answerStyles.citation}
                                                                         title={detail.reference}
-                                                                        href={path}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        style={{ fontSize: getCitationFontSize(citationText) }}
+                                                                        onClick={e => {
+                                                                            e.preventDefault();
+                                                                            if (onCitationClicked) {
+                                                                                onCitationClicked(path);
+                                                                            }
+                                                                        }}
+                                                                        style={{ fontSize: getCitationFontSize(citationText), cursor: "pointer" }}
                                                                     >
                                                                         {citationText}
                                                                     </a>

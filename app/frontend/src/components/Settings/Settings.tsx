@@ -44,10 +44,8 @@ export interface SettingsProps {
     useSuggestFollowupQuestions?: boolean; // Only used in Chat
     promptTemplatePrefix?: string;
     promptTemplateSuffix?: string;
-    showSuggestFollowupQuestions?: boolean;
     showAgenticRetrievalOption?: boolean;
     useAgenticRetrieval?: boolean;
-    llmCustomizationEnabled?: boolean;
     hideMinimalRetrievalReasoningOption?: boolean;
     useWebSource?: boolean;
     showWebSourceOption?: boolean;
@@ -90,10 +88,8 @@ export const Settings = ({
     useSuggestFollowupQuestions,
     promptTemplatePrefix,
     promptTemplateSuffix,
-    showSuggestFollowupQuestions,
     showAgenticRetrievalOption,
     useAgenticRetrieval = false,
-    llmCustomizationEnabled = true,
     hideMinimalRetrievalReasoningOption = false,
     useWebSource = false,
     showWebSourceOption = false,
@@ -139,16 +135,10 @@ export const Settings = ({
     const suggestFollowupQuestionsId = useId("suggestFollowupQuestions");
     const suggestFollowupQuestionsFieldId = useId("suggestFollowupQuestionsField");
 
-    const retrievalReasoningRestrictsSettings = !!useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
-    const webSourceRequiresNoStreaming = !!useAgenticRetrieval && !!useWebSource;
-    const streamingDisabledByOverrides = retrievalReasoningRestrictsSettings || webSourceRequiresNoStreaming;
-    const webSourceDisabled = !useAgenticRetrieval || retrievalReasoningEffort === "minimal";
-    const sharePointSourceDisabled = !useAgenticRetrieval;
-    const minimalReasoningDisabled = hideMinimalRetrievalReasoningOption || useWebSource;
-    const showLlmAndAnswerSettings = llmCustomizationEnabled && !retrievalReasoningRestrictsSettings;
+    const webSourceDisablesStreamingAndFollowup = !!useWebSource;
 
     const retrievalReasoningOptions: IDropdownOption[] = [
-        { key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal"), disabled: minimalReasoningDisabled },
+        { key: "minimal", text: t("labels.retrievalReasoningEffortOptions.minimal") },
         { key: "low", text: t("labels.retrievalReasoningEffortOptions.low") },
         { key: "medium", text: t("labels.retrievalReasoningEffortOptions.medium") }
     ];
@@ -159,32 +149,31 @@ export const Settings = ({
 
     return (
         <div className={className}>
-            {streamingEnabled && !streamingDisabledByOverrides && (
+            {streamingEnabled && (
                 <Checkbox
                     id={shouldStreamFieldId}
                     className={styles.settingsSeparator}
-                    checked={streamingDisabledByOverrides ? false : shouldStream}
+                    checked={webSourceDisablesStreamingAndFollowup ? false : shouldStream}
                     label={t("labels.shouldStream")}
                     onChange={(_ev, checked) => onChange("shouldStream", !!checked)}
                     aria-labelledby={shouldStreamId}
-                    disabled={streamingDisabledByOverrides}
+                    disabled={webSourceDisablesStreamingAndFollowup}
                     onRenderLabel={props => renderLabel(props, shouldStreamId, shouldStreamFieldId, t("helpTexts.streamChat"))}
                 />
             )}
 
-            {showSuggestFollowupQuestions && !retrievalReasoningRestrictsSettings && (
-                <Checkbox
-                    id={suggestFollowupQuestionsFieldId}
-                    className={styles.settingsSeparator}
-                    checked={useSuggestFollowupQuestions}
-                    label={t("labels.useSuggestFollowupQuestions")}
-                    onChange={(_ev, checked) => onChange("useSuggestFollowupQuestions", !!checked)}
-                    aria-labelledby={suggestFollowupQuestionsId}
-                    onRenderLabel={props =>
-                        renderLabel(props, suggestFollowupQuestionsId, suggestFollowupQuestionsFieldId, t("helpTexts.suggestFollowupQuestions"))
-                    }
-                />
-            )}
+            <Checkbox
+                id={suggestFollowupQuestionsFieldId}
+                className={styles.settingsSeparator}
+                checked={webSourceDisablesStreamingAndFollowup ? false : useSuggestFollowupQuestions}
+                label={t("labels.useSuggestFollowupQuestions")}
+                onChange={(_ev, checked) => onChange("useSuggestFollowupQuestions", !!checked)}
+                aria-labelledby={suggestFollowupQuestionsId}
+                disabled={webSourceDisablesStreamingAndFollowup}
+                onRenderLabel={props =>
+                    renderLabel(props, suggestFollowupQuestionsId, suggestFollowupQuestionsFieldId, t("helpTexts.suggestFollowupQuestions"))
+                }
+            />
 
             <h3 className={styles.sectionHeader}>{t("searchSettings")}</h3>
 
@@ -206,9 +195,14 @@ export const Settings = ({
                     className={styles.settingsSeparator}
                     label={t("labels.retrievalReasoningEffort")}
                     selectedKey={retrievalReasoningEffort}
-                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) =>
-                        onChange("retrievalReasoningEffort", option?.key?.toString() ?? retrievalReasoningEffort)
-                    }
+                    onChange={(_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, option?: IDropdownOption) => {
+                        const newValue = option?.key?.toString() ?? retrievalReasoningEffort;
+                        onChange("retrievalReasoningEffort", newValue);
+                        // If selecting minimal, disable and deselect web source
+                        if (newValue === "minimal" && useWebSource) {
+                            onChange("useWebSource", false);
+                        }
+                    }}
                     aria-labelledby={retrievalReasoningEffortId}
                     options={retrievalReasoningOptions}
                     onRenderLabel={props =>
@@ -217,19 +211,30 @@ export const Settings = ({
                 />
             )}
 
-            {showAgenticRetrievalOption && showWebSourceOption && (
+            {showAgenticRetrievalOption && useAgenticRetrieval && showWebSourceOption && (
                 <Checkbox
                     id={webSourceFieldId}
                     className={styles.settingsSeparator}
                     checked={useWebSource}
                     label={t("labels.useWebSource")}
-                    onChange={(_ev, checked) => onChange("useWebSource", !!checked)}
+                    onChange={(_ev, checked) => {
+                        onChange("useWebSource", !!checked);
+                        // If enabling web source, disable streaming and follow-up questions
+                        if (checked) {
+                            if (shouldStream) {
+                                onChange("shouldStream", false);
+                            }
+                            if (useSuggestFollowupQuestions) {
+                                onChange("useSuggestFollowupQuestions", false);
+                            }
+                        }
+                    }}
                     aria-labelledby={webSourceId}
-                    disabled={webSourceDisabled}
+                    disabled={!useAgenticRetrieval || retrievalReasoningEffort === "minimal"}
                     onRenderLabel={props => renderLabel(props, webSourceId, webSourceFieldId, t("helpTexts.useWebSource"))}
                 />
             )}
-            {showAgenticRetrievalOption && showSharePointSourceOption && (
+            {showAgenticRetrievalOption && useAgenticRetrieval && showSharePointSourceOption && (
                 <Checkbox
                     id={sharePointSourceFieldId}
                     className={styles.settingsSeparator}
@@ -237,7 +242,7 @@ export const Settings = ({
                     label={t("labels.useSharePointSource")}
                     onChange={(_ev, checked) => onChange("useSharePointSource", !!checked)}
                     aria-labelledby={sharePointSourceId}
-                    disabled={sharePointSourceDisabled}
+                    disabled={!useAgenticRetrieval}
                     onRenderLabel={props => renderLabel(props, sharePointSourceId, sharePointSourceFieldId, t("helpTexts.useSharePointSource"))}
                 />
             )}
@@ -395,7 +400,7 @@ export const Settings = ({
                 </>
             )}
 
-            {showLlmAndAnswerSettings && (
+            {!useWebSource && (
                 <>
                     <h3 className={styles.sectionHeader}>{t("llmSettings")}</h3>
                     <TextField

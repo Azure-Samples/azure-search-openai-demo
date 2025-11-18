@@ -267,10 +267,6 @@ class ChatReadRetrieveReadApproach(Approach):
                 f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
             )
         if use_agentic_retrieval:
-            if should_stream and overrides.get("retrieval_reasoning_effort") in ["low", "medium"]:
-                raise Exception(
-                    "Streaming is not supported with agentic retrieval when retrieval reasoning effort is set to low or medium. Please disable streaming or increase the retrieval reasoning effort."
-                )
             if should_stream and overrides.get("use_web_source"):
                 raise Exception(
                     "Streaming is not supported with agentic retrieval when web source is enabled. Please disable streaming or web source."
@@ -498,50 +494,11 @@ class ChatReadRetrieveReadApproach(Approach):
             sharepoint_results=agentic_results.sharepoint_results,
             citation_details_by_ref=agentic_results.citation_details_by_ref,
         )
-        extra_info = ExtraInfo(
+        return ExtraInfo(
             data_points,
-            thoughts=[
-                ThoughtStep(
-                    "Send conversation to agentic retrieval",
-                    messages,
-                    {
-                        "reranker_threshold": minimum_reranker_score,
-                        "results_merge_strategy": results_merge_strategy,
-                        "filter": search_index_filter,
-                    },
-                ),
-                ThoughtStep(
-                    "Agentic retrieval response",
-                    agentic_results.get_ordered_results(),
-                    {
-                        "query_plan": (
-                            [activity.as_dict() for activity in agentic_results.response.activity]
-                            if agentic_results.response.activity
-                            else None
-                        ),
-                        "model": self.knowledgebase_model,
-                        "deployment": self.knowledgebase_deployment,
-                    },
-                ),
-            ],
+            thoughts=agentic_results.thoughts,
             answer=agentic_results.answer,
         )
-        if retrieval_reasoning_effort == "minimal":
-            if agentic_results.rewrite_result is None:
-                raise ValueError("A rewrite result is required for minimal retrieval reasoning effort")
-            extra_info.thoughts.insert(
-                0,
-                self.format_thought_step_for_chatcompletion(
-                    title="Prompt to generate search query",
-                    messages=agentic_results.rewrite_result.messages,
-                    overrides=overrides,
-                    model=self.chatgpt_model,
-                    deployment=self.chatgpt_deployment,
-                    usage=agentic_results.rewrite_result.completion.usage,
-                    reasoning_effort=agentic_results.rewrite_result.reasoning_effort,
-                ),
-            )
-        return extra_info
 
     def _select_knowledgebase_client(
         self,

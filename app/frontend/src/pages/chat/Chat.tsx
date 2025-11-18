@@ -88,9 +88,7 @@ const Chat = () => {
     const [sharePointSourceEnabled, setSharePointSourceEnabled] = useState<boolean>(false);
     const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
-    const retrievalReasoningDisablesStreaming = useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium");
-    const webSourceDisablesStreaming = useAgenticRetrieval && webSourceEnabled;
-    const streamingDisabledByOverrides = retrievalReasoningDisablesStreaming || webSourceDisablesStreaming;
+    const streamingDisabledByOverrides = useAgenticRetrieval && webSourceEnabled;
 
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
@@ -362,14 +360,13 @@ const Chat = () => {
                 break;
             case "retrievalReasoningEffort": {
                 setRetrievalReasoningEffort(value);
-                let willEnableWebSource = webSourceEnabled;
+                // If selecting minimal while web source is enabled, disable web source
                 if (value === "minimal" && webSourceEnabled) {
-                    willEnableWebSource = false;
                     setWebSourceEnabled(false);
+                    setHideMinimalRetrievalReasoningOption(false);
+                    // Web source was disabled, so restore streaming
+                    updateStreamingPreference(streamingEnabled, false);
                 }
-                setHideMinimalRetrievalReasoningOption(willEnableWebSource);
-                const shouldDisableStreaming = (useAgenticRetrieval && (value === "low" || value === "medium")) || (useAgenticRetrieval && willEnableWebSource);
-                updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
                 break;
             }
             case "useSemanticRanker":
@@ -426,7 +423,8 @@ const Chat = () => {
                     setWebSourceEnabled(false);
                     setHideMinimalRetrievalReasoningOption(false);
                 }
-                const shouldDisableStreaming = !!value && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium" || effectiveWebSource);
+                // Only web source disables streaming
+                const shouldDisableStreaming = !!value && effectiveWebSource;
                 updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
                 break;
             }
@@ -435,17 +433,15 @@ const Chat = () => {
                     setWebSourceEnabled(false);
                     return;
                 }
-                {
-                    const normalizedWebSource = !!value;
-                    setWebSourceEnabled(normalizedWebSource);
-                    setHideMinimalRetrievalReasoningOption(normalizedWebSource);
-                    if (normalizedWebSource) {
-                        setUseSuggestFollowupQuestions(false);
-                    }
-                    const shouldDisableStreaming =
-                        useAgenticRetrieval && (retrievalReasoningEffort === "low" || retrievalReasoningEffort === "medium" || normalizedWebSource);
-                    updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
+                const normalizedWebSource = !!value;
+                setWebSourceEnabled(normalizedWebSource);
+                setHideMinimalRetrievalReasoningOption(normalizedWebSource);
+                // When enabling web source, disable follow-up questions and streaming
+                if (normalizedWebSource) {
+                    setUseSuggestFollowupQuestions(false);
                 }
+                const shouldDisableStreaming = useAgenticRetrieval && normalizedWebSource;
+                updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
                 break;
             case "useSharePointSource":
                 if (!sharePointSourceSupported) {
@@ -601,6 +597,7 @@ const Chat = () => {
                         citationHeight="810px"
                         answer={answers[selectedAnswer][1]}
                         activeTab={activeAnalysisPanelTab}
+                        onCitationClicked={c => onShowCitation(c, selectedAnswer)}
                     />
                 )}
 
@@ -658,7 +655,6 @@ const Chat = () => {
                         shouldStream={shouldStream}
                         streamingEnabled={streamingEnabled}
                         useSuggestFollowupQuestions={useSuggestFollowupQuestions}
-                        showSuggestFollowupQuestions={!webSourceEnabled}
                         showAgenticRetrievalOption={showAgenticRetrievalOption}
                         useAgenticRetrieval={useAgenticRetrieval}
                         useWebSource={webSourceEnabled}
@@ -666,7 +662,6 @@ const Chat = () => {
                         useSharePointSource={sharePointSourceEnabled}
                         showSharePointSourceOption={sharePointSourceSupported}
                         hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
-                        llmCustomizationEnabled={!webSourceEnabled}
                         onChange={handleSettingsChange}
                     />
                     {useLogin && <TokenClaimsDisplay />}

@@ -12,7 +12,7 @@ interface Props {
 export const SupportingContent = ({ supportingContent }: Props) => {
     const textItems = supportingContent?.text ?? [];
     const imageItems = supportingContent?.images ?? [];
-    const webItems = supportingContent?.web ?? [];
+    const webItems = supportingContent?.external_results_metadata ?? [];
     return (
         <ul className={styles.supportingContentNavList}>
             {textItems.map((c, ind) => {

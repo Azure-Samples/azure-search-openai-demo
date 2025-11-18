@@ -44,7 +44,7 @@ export type Thoughts = {
     props?: { [key: string]: any };
 };
 
-export type WebDataPoint = {
+export type ExternalResultMetadata = {
     id?: string;
     title?: string;
     url?: string;
@@ -65,7 +65,7 @@ export type DataPoints = {
     images: string[];
     citations: string[];
     citation_activity_details?: Record<string, CitationActivityDetail>;
-    web?: WebDataPoint[];
+    external_results_metadata?: ExternalResultMetadata[];
 };
 
 export type ResponseContext = {

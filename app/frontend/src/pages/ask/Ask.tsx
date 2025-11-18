@@ -366,6 +366,7 @@ export function Component(): JSX.Element {
                         citationHeight="600px"
                         answer={answer}
                         activeTab={activeAnalysisPanelTab}
+                        onCitationClicked={onShowCitation}
                     />
                 )}
             </div>
@@ -416,7 +417,6 @@ export function Component(): JSX.Element {
                     useSharePointSource={sharePointSourceEnabled}
                     showSharePointSourceOption={sharePointSourceSupported}
                     hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
-                    llmCustomizationEnabled={!webSourceEnabled}
                     onChange={handleSettingsChange}
                 />
                 {useLogin && <TokenClaimsDisplay />}

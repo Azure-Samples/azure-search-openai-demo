@@ -20,18 +20,19 @@ interface Props {
     activeCitation: string | undefined;
     citationHeight: string;
     answer: ChatAppResponse;
+    onCitationClicked?: (citationFilePath: string) => void;
 }
 
 const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
-export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
+export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged, onCitationClicked }: Props) => {
     const isDisabledThoughtProcessTab: boolean = !answer.context.thoughts;
     const dataPoints = answer.context.data_points;
     const hasSupportingContent = Boolean(
         dataPoints &&
             ((dataPoints.text && dataPoints.text.length > 0) ||
                 (dataPoints.images && dataPoints.images.length > 0) ||
-                (dataPoints.web && dataPoints.web.length > 0))
+                (dataPoints.external_results_metadata && dataPoints.external_results_metadata.length > 0))
     );
     const isDisabledSupportingContentTab: boolean = !hasSupportingContent;
     const isDisabledCitationTab: boolean = !activeCitation;
@@ -91,7 +92,12 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText={t("headerTexts.thoughtProcess")}
                 headerButtonProps={isDisabledThoughtProcessTab ? pivotItemDisabledStyle : undefined}
             >
-                <ThoughtProcess thoughts={answer.context.thoughts || []} citationDetails={citationDetails} webDataPoints={answer.context.data_points.web} />
+                <ThoughtProcess
+                    thoughts={answer.context.thoughts || []}
+                    citationDetails={citationDetails}
+                    webDataPoints={answer.context.data_points.external_results_metadata}
+                    onCitationClicked={onCitationClicked}
+                />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.SupportingContentTab}
