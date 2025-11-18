@@ -243,6 +243,8 @@ class Approach(ABC):
         self,
         search_client: SearchClient,
         openai_client: AsyncOpenAI,
+        knowledgebase_model: Optional[str],
+        knowledgebase_deployment: Optional[str],
         query_language: Optional[str],
         query_speller: Optional[str],
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -263,6 +265,8 @@ class Approach(ABC):
         self.openai_client = openai_client
         self.query_language = query_language
         self.query_speller = query_speller
+        self.knowledgebase_model = knowledgebase_model
+        self.knowledgebase_deployment = knowledgebase_deployment
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
@@ -271,6 +275,8 @@ class Approach(ABC):
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.prompt_manager = prompt_manager
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
+        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
