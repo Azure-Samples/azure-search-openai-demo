@@ -137,9 +137,7 @@ class ChatReadRetrieveReadApproach(Approach):
             "context": {
                 "thoughts": extra_info.thoughts,
                 "data_points": {
-                    key: value
-                    for key, value in asdict(extra_info.data_points).items()
-                    if value is not None
+                    key: value for key, value in asdict(extra_info.data_points).items() if value is not None
                 },
                 "followup_questions": extra_info.followup_questions,
             },
@@ -204,17 +202,19 @@ class ChatReadRetrieveReadApproach(Approach):
                     }
                 }
                 # if event contains << and not >>, it is start of follow-up question, truncate
-                content = completion["delta"].get("content")
-                content = content or ""  # content may either not exist in delta, or explicitly be None
-                if overrides.get("suggest_followup_questions") and "<<" in content:
+                delta_content_raw = completion["delta"].get("content")
+                delta_content: str = (
+                    delta_content_raw or ""
+                )  # content may either not exist in delta, or explicitly be None
+                if overrides.get("suggest_followup_questions") and "<<" in delta_content:
                     followup_questions_started = True
-                    earlier_content = content[: content.index("<<")]
+                    earlier_content = delta_content[: delta_content.index("<<")]
                     if earlier_content:
                         completion["delta"]["content"] = earlier_content
                         yield completion
-                    followup_content += content[content.index("<<") :]
+                    followup_content += delta_content[delta_content.index("<<") :]
                 elif followup_questions_started:
-                    followup_content += content
+                    followup_content += delta_content
                 else:
                     yield completion
             else:

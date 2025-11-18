@@ -138,7 +138,7 @@ class SearchManager:
                         enable_rescoring=True,
                         default_oversampling=10,
                         rescore_storage_method=VectorSearchCompressionRescoreStorageMethod.PRESERVE_ORIGINALS,
-                    )
+                    ),
                 )
                 text_vector_search_profile = VectorSearchProfile(
                     name=f"{self.field_name_embedding}-profile",
@@ -541,7 +541,10 @@ class SearchManager:
 
                 if "web" in knowledge_source_refs:
                     knowledge_bases_to_upsert.append(
-                        (f"{base_knowledgebase_name}-with-web", [knowledge_source_refs["index"], knowledge_source_refs["web"]])
+                        (
+                            f"{base_knowledgebase_name}-with-web",
+                            [knowledge_source_refs["index"], knowledge_source_refs["web"]],
+                        )
                     )
                 if "sharepoint" in knowledge_source_refs:
                     knowledge_bases_to_upsert.append(

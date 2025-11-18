@@ -152,9 +152,7 @@ class RetrieveThenReadApproach(Approach):
             "context": {
                 "thoughts": extra_info.thoughts,
                 "data_points": {
-                    key: value
-                    for key, value in asdict(extra_info.data_points).items()
-                    if value is not None
+                    key: value for key, value in asdict(extra_info.data_points).items() if value is not None
                 },
             },
             "session_state": session_state,
@@ -280,7 +278,7 @@ class RetrieveThenReadApproach(Approach):
             use_web_source=effective_web_source,
             use_sharepoint_source=effective_sharepoint_source,
             retrieval_reasoning_effort=retrieval_reasoning_effort,
-            should_rewrite_query=False
+            should_rewrite_query=False,
         )
 
         data_points = await self.get_sources_content(
