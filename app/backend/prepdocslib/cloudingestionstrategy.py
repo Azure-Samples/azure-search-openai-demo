@@ -71,6 +71,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         use_acls: bool = False,
         use_multimodal: bool = False,
         enforce_access_control: bool = False,
+        use_web_source: bool = False,
         search_user_assigned_identity_resource_id: str,
     ) -> None:
         self.list_file_strategy = list_file_strategy
@@ -83,6 +84,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         self.use_acls = use_acls
         self.use_multimodal = use_multimodal
         self.enforce_access_control = enforce_access_control
+        self.use_web_source = use_web_source
         self.subscription_id = subscription_id
 
         prefix = f"{self.search_info.index_name}-cloud"
@@ -280,6 +282,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
             field_name_embedding=self.search_field_name_embedding,
             search_images=self.use_multimodal,
             enforce_access_control=self.enforce_access_control,
+            use_web_source=self.use_web_source,
         )
 
         await self._search_manager.create_index()

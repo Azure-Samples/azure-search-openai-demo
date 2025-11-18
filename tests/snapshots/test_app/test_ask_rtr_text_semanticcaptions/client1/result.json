@@ -4,6 +4,7 @@
             "citations": [
                 "Benefit_Options-2.pdf"
             ],
+            "external_results_metadata": [],
             "images": [],
             "text": [
                 "Benefit_Options-2.pdf: Caption: A whistleblower policy."
@@ -28,6 +29,7 @@
             {
                 "description": [
                     {
+                        "activity": null,
                         "captions": [
                             {
                                 "additional_properties": {},
@@ -43,9 +45,9 @@
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": 0.03279569745063782,
-                        "search_agent_query": null,
                         "sourcefile": "Benefit_Options.pdf",
-                        "sourcepage": "Benefit_Options-2.pdf"
+                        "sourcepage": "Benefit_Options-2.pdf",
+                        "type": "searchIndex"
                     }
                 ],
                 "props": null,

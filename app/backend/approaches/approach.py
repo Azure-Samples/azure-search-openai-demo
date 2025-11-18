@@ -1,20 +1,33 @@
 import base64
+import json
+import re
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Any, Optional, TypedDict, cast
 
-from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
-from azure.search.documents.agent.models import (
-    KnowledgeAgentMessage,
-    KnowledgeAgentMessageTextContent,
-    KnowledgeAgentRetrievalRequest,
-    KnowledgeAgentRetrievalResponse,
-    KnowledgeAgentSearchIndexActivityRecord,
-    KnowledgeAgentSearchIndexReference,
-    SearchIndexKnowledgeSourceParams,
-)
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
+from azure.search.documents.knowledgebases.models import (
+    KnowledgeBaseMessage,
+    KnowledgeBaseMessageTextContent,
+    KnowledgeBaseRemoteSharePointActivityRecord,
+    KnowledgeBaseRemoteSharePointReference,
+    KnowledgeBaseRetrievalRequest,
+    KnowledgeBaseRetrievalResponse,
+    KnowledgeBaseSearchIndexActivityRecord,
+    KnowledgeBaseSearchIndexReference,
+    KnowledgeBaseWebActivityRecord,
+    KnowledgeBaseWebReference,
+    KnowledgeRetrievalLowReasoningEffort,
+    KnowledgeRetrievalMediumReasoningEffort,
+    KnowledgeRetrievalMinimalReasoningEffort,
+    KnowledgeRetrievalSemanticIntent,
+    KnowledgeSourceParams,
+    RemoteSharePointKnowledgeSourceParams,
+    SearchIndexKnowledgeSourceParams,
+    WebKnowledgeSourceParams,
+)
 from azure.search.documents.models import (
     QueryCaptionResult,
     QueryType,
@@ -37,8 +50,18 @@ from prepdocslib.embeddings import ImageEmbeddings
 
 
 @dataclass
+class ActivityDetail:
+    id: int
+    number: int
+    type: str
+    source: str
+    query: str
+
+
+@dataclass
 class Document:
     id: Optional[str] = None
+    ref_id: Optional[str] = None  # Reference id from agentic retrieval (if applicable)
     content: Optional[str] = None
     category: Optional[str] = None
     sourcepage: Optional[str] = None
@@ -48,11 +71,12 @@ class Document:
     captions: Optional[list[QueryCaptionResult]] = None
     score: Optional[float] = None
     reranker_score: Optional[float] = None
-    search_agent_query: Optional[str] = None
+    activity: Optional[ActivityDetail] = None
     images: Optional[list[dict[str, Any]]] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         result_dict = {
+            "type": "searchIndex",
             "id": self.id,
             "content": self.content,
             "category": self.category,
@@ -74,10 +98,60 @@ class Document:
             ),
             "score": self.score,
             "reranker_score": self.reranker_score,
-            "search_agent_query": self.search_agent_query,
+            "activity": asdict(self.activity) if self.activity else None,
             "images": self.images,
         }
         return result_dict
+
+
+@dataclass
+class WebResult:
+    id: Optional[str] = None
+    title: Optional[str] = None
+    url: Optional[str] = None
+    snippet: Optional[str] = None
+    activity: Optional[ActivityDetail] = None
+
+    def serialize_for_results(self) -> dict[str, Any]:
+        return {
+            "type": "web",
+            "id": self.id,
+            "ref_id": str(self.id),
+            "title": self.title,
+            "url": self.url,
+            "snippet": self.snippet,
+            "activity": asdict(self.activity) if self.activity else None,
+        }
+
+
+@dataclass
+class SharePointResult:
+    id: Optional[str] = None
+    web_url: Optional[str] = None
+    content: Optional[str] = None
+    title: Optional[str] = None
+    reranker_score: Optional[float] = None
+    activity: Optional[ActivityDetail] = None
+
+    def serialize_for_results(self) -> dict[str, Any]:
+        return {
+            "type": "remoteSharePoint",
+            "id": self.id,
+            "ref_id": str(self.id),
+            "web_url": self.web_url,
+            "content": self.content,
+            "title": self.title,
+            "reranker_score": self.reranker_score,
+            "activity": asdict(self.activity) if self.activity else None,
+        }
+
+
+@dataclass
+class RewriteQueryResult:
+    query: str
+    messages: list[ChatCompletionMessageParam]
+    completion: ChatCompletion
+    reasoning_effort: ChatCompletionReasoningEffort
 
 
 @dataclass
@@ -92,10 +166,26 @@ class ThoughtStep:
 
 
 @dataclass
+class AgenticRetrievalResults:
+    """Results from agentic retrieval including activities, documents, web results, SharePoint results, and optional answer."""
+
+    response: KnowledgeBaseRetrievalResponse
+    documents: list[Document]
+    web_results: list[WebResult]
+    sharepoint_results: list[SharePointResult] = field(default_factory=list)
+    answer: Optional[str] = None  # Synthesized answer when web knowledge source is used
+    rewrite_result: Optional[RewriteQueryResult] = None
+    activity_details_by_id: Optional[dict[int, ActivityDetail]] = None
+    thoughts: list[ThoughtStep] = field(default_factory=list)
+
+
+@dataclass
 class DataPoints:
     text: Optional[list[str]] = None
     images: Optional[list] = None
     citations: Optional[list[str]] = None
+    external_results_metadata: Optional[list[dict[str, Any]]] = None
+    citation_activity_details: Optional[dict[str, dict[str, Any]]] = None
 
 
 @dataclass
@@ -103,6 +193,7 @@ class ExtraInfo:
     data_points: DataPoints
     thoughts: list[ThoughtStep] = field(default_factory=list)
     followup_questions: Optional[list[Any]] = None
+    answer: Optional[str] = None  # Only when web knowledge source is used
 
 
 @dataclass
@@ -146,11 +237,14 @@ class Approach(ABC):
     # Set a higher token limit for GPT reasoning models
     RESPONSE_DEFAULT_TOKEN_LIMIT = 1024
     RESPONSE_REASONING_DEFAULT_TOKEN_LIMIT = 8192
+    QUERY_REWRITE_NO_RESPONSE = "0"
 
     def __init__(
         self,
         search_client: SearchClient,
         openai_client: AsyncOpenAI,
+        knowledgebase_model: Optional[str],
+        knowledgebase_deployment: Optional[str],
         query_language: Optional[str],
         query_speller: Optional[str],
         embedding_deployment: Optional[str],  # Not needed for non-Azure OpenAI or for retrieval_mode="text"
@@ -158,6 +252,8 @@ class Approach(ABC):
         embedding_dimensions: int,
         embedding_field: str,
         openai_host: str,
+        chatgpt_model: str,
+        chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
         prompt_manager: PromptManager,
         reasoning_effort: Optional[str] = None,
         multimodal_enabled: bool = False,
@@ -169,12 +265,18 @@ class Approach(ABC):
         self.openai_client = openai_client
         self.query_language = query_language
         self.query_speller = query_speller
+        self.knowledgebase_model = knowledgebase_model
+        self.knowledgebase_deployment = knowledgebase_deployment
         self.embedding_deployment = embedding_deployment
         self.embedding_model = embedding_model
         self.embedding_dimensions = embedding_dimensions
         self.embedding_field = embedding_field
         self.openai_host = openai_host
+        self.chatgpt_model = chatgpt_model
+        self.chatgpt_deployment = chatgpt_deployment
         self.prompt_manager = prompt_manager
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
+        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
@@ -263,93 +365,360 @@ class Approach(ABC):
 
         return qualified_documents
 
+    def extract_rewritten_query(
+        self,
+        chat_completion: ChatCompletion,
+        user_query: str,
+        no_response_token: Optional[str] = None,
+    ) -> str:
+        response_message = chat_completion.choices[0].message
+
+        if response_message.tool_calls:
+            for tool_call in response_message.tool_calls:
+                if tool_call.type != "function":
+                    continue
+                arguments_payload = tool_call.function.arguments or "{}"
+                try:
+                    parsed_arguments = json.loads(arguments_payload)
+                except json.JSONDecodeError:
+                    continue
+                search_query = parsed_arguments.get("search_query")
+                if search_query and (no_response_token is None or search_query != no_response_token):
+                    return search_query
+
+        if response_message.content:
+            candidate = response_message.content.strip()
+            if candidate and (no_response_token is None or candidate != no_response_token):
+                return candidate
+
+        return user_query
+
+    async def rewrite_query(
+        self,
+        *,
+        prompt_template: Any,
+        prompt_variables: dict[str, Any],
+        overrides: dict[str, Any],
+        chatgpt_model: str,
+        chatgpt_deployment: Optional[str],
+        user_query: str,
+        response_token_limit: int,
+        tools: Optional[list[ChatCompletionToolParam]] = None,
+        temperature: float = 0.0,
+        no_response_token: Optional[str] = None,
+    ) -> RewriteQueryResult:
+        query_messages = self.prompt_manager.render_prompt(prompt_template, prompt_variables)
+        rewrite_reasoning_effort = self.get_lowest_reasoning_effort(self.chatgpt_model)
+
+        chat_completion = cast(
+            ChatCompletion,
+            await self.create_chat_completion(
+                chatgpt_deployment,
+                chatgpt_model,
+                messages=query_messages,
+                overrides=overrides,
+                response_token_limit=response_token_limit,
+                temperature=temperature,
+                tools=tools,
+                reasoning_effort=rewrite_reasoning_effort,
+            ),
+        )
+
+        rewritten_query = self.extract_rewritten_query(
+            chat_completion,
+            user_query,
+            no_response_token=no_response_token,
+        )
+
+        return RewriteQueryResult(
+            query=rewritten_query,
+            messages=query_messages,
+            completion=chat_completion,
+            reasoning_effort=rewrite_reasoning_effort,
+        )
+
     async def run_agentic_retrieval(
         self,
         messages: list[ChatCompletionMessageParam],
-        agent_client: KnowledgeAgentRetrievalClient,
+        knowledgebase_client: KnowledgeBaseRetrievalClient,
         search_index_name: str,
-        top: Optional[int] = None,
         filter_add_on: Optional[str] = None,
         minimum_reranker_score: Optional[float] = None,
-        results_merge_strategy: Optional[str] = None,
         access_token: Optional[str] = None,
-    ) -> tuple[KnowledgeAgentRetrievalResponse, list[Document]]:
+        use_web_source: bool = False,
+        use_sharepoint_source: bool = False,
+        retrieval_reasoning_effort: Optional[str] = None,
+        should_rewrite_query: bool = True,
+    ) -> AgenticRetrievalResults:
         # STEP 1: Invoke agentic retrieval
-        response = await agent_client.retrieve(
-            retrieval_request=KnowledgeAgentRetrievalRequest(
-                messages=[
-                    KnowledgeAgentMessage(
-                        role=str(msg["role"]), content=[KnowledgeAgentMessageTextContent(text=str(msg["content"]))]
-                    )
-                    for msg in messages
-                    if msg["role"] != "system"
-                ],
-                knowledge_source_params=[
-                    SearchIndexKnowledgeSourceParams(
-                        knowledge_source_name=search_index_name,
-                        filter_add_on=filter_add_on,
-                    )
-                ],
-            ),
+        thoughts = []
+
+        knowledge_source_params = [
+            SearchIndexKnowledgeSourceParams(
+                knowledge_source_name=search_index_name,
+                filter_add_on=filter_add_on,
+                include_references=True,
+                include_reference_source_data=True,
+                always_query_source=False,
+                reranker_threshold=minimum_reranker_score,
+            )
+        ]
+        # Build list as KnowledgeSourceParams for type variance
+        knowledge_source_params_list: list[KnowledgeSourceParams] = cast(
+            list[KnowledgeSourceParams], knowledge_source_params
+        )
+
+        if use_web_source:
+            knowledge_source_params_list.append(
+                WebKnowledgeSourceParams(
+                    knowledge_source_name="web",
+                    include_references=True,
+                    include_reference_source_data=True,
+                    always_query_source=False,
+                )
+            )
+
+        if use_sharepoint_source:
+            knowledge_source_params_list.append(
+                RemoteSharePointKnowledgeSourceParams(
+                    knowledge_source_name="sharepoint",
+                    include_references=True,
+                    include_reference_source_data=True,
+                    always_query_source=False,
+                )
+            )
+
+        agentic_retrieval_input: dict[str, Any] = {}
+        rewrite_result = None
+        if retrieval_reasoning_effort == "minimal" and should_rewrite_query:
+            original_user_query = messages[-1]["content"]
+            if not isinstance(original_user_query, str):
+                raise ValueError("The most recent message content must be a string.")
+
+            rewrite_result = await self.rewrite_query(
+                prompt_template=self.query_rewrite_prompt,
+                prompt_variables={"user_query": original_user_query, "past_messages": messages[:-1]},
+                overrides={},
+                chatgpt_model=self.chatgpt_model,
+                chatgpt_deployment=self.chatgpt_deployment,
+                user_query=original_user_query,
+                response_token_limit=self.get_response_token_limit(
+                    self.chatgpt_model, 100
+                ),  # Setting too low risks malformed JSON, setting too high may affect performance
+                tools=self.query_rewrite_tools,
+                temperature=0.0,  # Minimize creativity for search query generation
+                no_response_token=self.QUERY_REWRITE_NO_RESPONSE,
+            )
+            thoughts.append(
+                self.format_thought_step_for_chatcompletion(
+                    title="Prompt to generate search query",
+                    messages=rewrite_result.messages,
+                    overrides={},
+                    model=self.chatgpt_model,
+                    deployment=self.chatgpt_deployment,
+                    usage=rewrite_result.completion.usage,
+                    reasoning_effort=rewrite_result.reasoning_effort,
+                )
+            )
+            agentic_retrieval_input["intents"] = [KnowledgeRetrievalSemanticIntent(search=rewrite_result.query)]
+        elif retrieval_reasoning_effort == "minimal":
+            last_content = messages[-1]["content"]
+            if not isinstance(last_content, str):
+                raise ValueError("The most recent message content must be a string.")
+            agentic_retrieval_input["intents"] = [KnowledgeRetrievalSemanticIntent(search=last_content)]
+        else:
+            kb_messages: list[KnowledgeBaseMessage] = [
+                KnowledgeBaseMessage(
+                    role=str(msg["role"]), content=[KnowledgeBaseMessageTextContent(text=str(msg["content"]))]
+                )
+                for msg in messages
+                if msg["role"] != "system"
+            ]
+            agentic_retrieval_input["messages"] = kb_messages
+        # When we're not using a web source, set output mode to extractiveData to avoid synthesized answer
+        if not use_web_source:
+            agentic_retrieval_input["output_mode"] = "extractiveData"
+
+        retrieval_effort: Optional[
+            KnowledgeRetrievalMinimalReasoningEffort
+            | KnowledgeRetrievalLowReasoningEffort
+            | KnowledgeRetrievalMediumReasoningEffort
+        ] = None
+        if retrieval_reasoning_effort == "minimal":
+            retrieval_effort = KnowledgeRetrievalMinimalReasoningEffort()
+        elif retrieval_reasoning_effort == "low":
+            retrieval_effort = KnowledgeRetrievalLowReasoningEffort()
+        elif retrieval_reasoning_effort == "medium":
+            retrieval_effort = KnowledgeRetrievalMediumReasoningEffort()
+
+        request_kwargs: dict[str, Any] = {
+            "knowledge_source_params": knowledge_source_params_list,
+            "include_activity": True,
+            "retrieval_reasoning_effort": retrieval_effort,
+        }
+        request_kwargs.update(agentic_retrieval_input)
+
+        response = await knowledgebase_client.retrieve(
+            retrieval_request=KnowledgeBaseRetrievalRequest(**request_kwargs),
             x_ms_query_source_authorization=access_token,
         )
 
-        # Map activity id -> agent's internal search query
-        activities = response.activity
-        activity_mapping: dict[int, str] = (
-            {
-                activity.id: activity.search_index_arguments.search
-                for activity in activities
-                if (
-                    isinstance(activity, KnowledgeAgentSearchIndexActivityRecord)
-                    and activity.search_index_arguments
-                    and activity.search_index_arguments.search is not None
-                )
-            }
-            if activities
-            else {}
-        )
+        # Map activity id -> agent's internal search query and citation
+        activities = response.activity or []
+        activity_details_by_id: dict[int, ActivityDetail] = {}
 
-        # No refs? we're done
-        if not (response and response.references):
-            return response, []
+        for index, activity in enumerate(activities):
+            search_query = None
+            if isinstance(activity, KnowledgeBaseSearchIndexActivityRecord):
+                if activity.search_index_arguments:
+                    search_query = activity.search_index_arguments.search
+            elif isinstance(activity, KnowledgeBaseWebActivityRecord):
+                if activity.web_arguments:
+                    search_query = activity.web_arguments.search
+            elif isinstance(activity, KnowledgeBaseRemoteSharePointActivityRecord):
+                if activity.remote_share_point_arguments:
+                    search_query = activity.remote_share_point_arguments.search
+
+            activity_details_by_id[activity.id] = ActivityDetail(
+                id=activity.id,
+                number=index + 1,
+                type=activity.type or "",
+                source=getattr(activity, "knowledge_source_name", "")
+                or "",  # Not all activity types have knowledge_source_name
+                query=search_query or "",
+            )
 
         # Extract references
-        refs = [r for r in response.references if isinstance(r, KnowledgeAgentSearchIndexReference)]
-        documents: list[Document] = []
-        doc_to_ref_id: dict[str, str] = {}
+        references = response.references or []
 
+        document_refs = [
+            r for r in references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")
+        ]
+        document_results: list[Document] = []
         # Create documents from reference source data
-        for ref in refs:
+        for ref in document_refs:
             if ref.source_data and ref.doc_key:
                 # Note that ref.doc_key is the same as source_data["id"]
-                documents.append(
+                document_results.append(
                     Document(
                         id=ref.doc_key,
+                        ref_id=ref.id,
                         content=ref.source_data.get("content"),
                         category=ref.source_data.get("category"),
                         sourcepage=ref.source_data.get("sourcepage"),
                         sourcefile=ref.source_data.get("sourcefile"),
                         oids=ref.source_data.get("oids"),
                         groups=ref.source_data.get("groups"),
-                        reranker_score=ref.reranker_score,
+                        reranker_score=getattr(ref, "reranker_score", None),
                         images=ref.source_data.get("images"),
-                        search_agent_query=activity_mapping[ref.activity_source],
+                        activity=activity_details_by_id[ref.activity_source],
                     )
                 )
-                doc_to_ref_id[ref.doc_key] = ref.id
-                if top and len(documents) >= top:
-                    break
 
-        if minimum_reranker_score is not None:
-            documents = [doc for doc in documents if (doc.reranker_score or 0) >= minimum_reranker_score]
-
-        if results_merge_strategy == "interleaved":
-            documents = sorted(
-                documents,
-                key=lambda d: int(doc_to_ref_id.get(d.id, 0)) if d.id and doc_to_ref_id.get(d.id) else 0,
+        # We need to handle KnowledgeBaseWebReference separately if web knowledge source is used
+        web_refs = [r for r in references if isinstance(r, KnowledgeBaseWebReference)]
+        web_results: list[WebResult] = []
+        for ref in web_refs:
+            web_result = WebResult(
+                id=ref.id, title=ref.title, url=ref.url, activity=activity_details_by_id[ref.activity_source]
             )
-        return response, documents
+            web_results.append(web_result)
+
+        # Handle KnowledgeBaseRemoteSharePointReference if SharePoint knowledge source is used
+        sharepoint_refs = [r for r in references if isinstance(r, KnowledgeBaseRemoteSharePointReference)]
+        sharepoint_results: list[SharePointResult] = []
+        for ref in sharepoint_refs:
+            # Extract content from all sourceData.extracts[].text and concatenate
+            content = None
+            if ref.source_data and "extracts" in ref.source_data and len(ref.source_data["extracts"]) > 0:
+                extracts = [extract.get("text", "") for extract in ref.source_data["extracts"]]
+                content = "\n\n".join(extracts) if extracts else None
+
+            # Extract title from sourceData.resourceMetadata.title
+            title = None
+            if ref.source_data and "resourceMetadata" in ref.source_data:
+                title = ref.source_data["resourceMetadata"].get("title")
+
+            sharepoint_result = SharePointResult(
+                id=ref.id,
+                web_url=ref.web_url,
+                content=content,
+                title=title,
+                reranker_score=getattr(ref, "reranker_score", None),
+                activity=activity_details_by_id[ref.activity_source],
+            )
+            sharepoint_results.append(sharepoint_result)
+
+        # Extract answer from response if web knowledge source provided one
+        answer: Optional[str] = None
+        if (
+            use_web_source
+            and response.response
+            and len(response.response) > 0
+            and len(response.response[0].content) > 0
+        ):
+            message_content = response.response[0].content[0]
+            if isinstance(message_content, KnowledgeBaseMessageTextContent):
+                raw_answer: Optional[str] = message_content.text
+                # Replace all ref_id tokens (web -> URL, documents -> sourcepage, SharePoint -> web_url)
+                if raw_answer:
+                    answer = self.replace_all_ref_ids(raw_answer, document_results, web_results, sharepoint_results)
+
+        thoughts.append(
+            ThoughtStep(
+                "Agentic retrieval response",
+                [result.serialize_for_results() for result in document_results + web_results + sharepoint_results],
+                {
+                    "query_plan": (
+                        [activity.as_dict() for activity in response.activity] if response.activity else None
+                    ),
+                    "model": self.knowledgebase_model,
+                    "deployment": self.knowledgebase_deployment,
+                    "reranker_threshold": minimum_reranker_score,
+                    "filter": filter_add_on,
+                },
+            )
+        )
+
+        return AgenticRetrievalResults(
+            response=response,
+            documents=document_results,
+            web_results=web_results,
+            sharepoint_results=sharepoint_results,
+            answer=answer,
+            rewrite_result=rewrite_result,
+            activity_details_by_id=activity_details_by_id,
+            thoughts=thoughts,
+        )
+
+    def replace_all_ref_ids(
+        self,
+        answer: str,
+        documents: list[Document],
+        web_results: list[WebResult],
+        sharepoint_results: Optional[list[SharePointResult]] = None,
+    ) -> str:
+        """Replace [ref_id:<id>] tokens with document sourcepage, web URL, or SharePoint web_url.
+
+        Priority: web result -> SharePoint result -> document.
+        Unknown ids left untouched.
+        """
+        doc_map = {d.ref_id: d.sourcepage for d in documents if d.ref_id and d.sourcepage}
+        web_map = {str(w.id): w.url for w in web_results if w.id and w.url}
+        sharepoint_entries = sharepoint_results or []
+        sharepoint_map = {str(sp.id): sp.web_url.split("/")[-1] for sp in sharepoint_entries if sp.id and sp.web_url}
+
+        def _sub(match: re.Match) -> str:
+            ref_id = match.group(1)
+            if ref_id in web_map and web_map[ref_id]:
+                return f"[{web_map[ref_id]}]"
+            if ref_id in sharepoint_map and sharepoint_map[ref_id]:
+                return f"[{sharepoint_map[ref_id]}]"
+            if ref_id in doc_map and doc_map[ref_id]:
+                return f"[{doc_map[ref_id]}]"
+            return match.group(0)
+
+        return re.sub(r"\[ref_id:([^\]]+)\]", _sub, answer)
 
     async def get_sources_content(
         self,
@@ -358,6 +727,8 @@ class Approach(ABC):
         include_text_sources: bool,
         download_image_sources: bool,
         user_oid: Optional[str] = None,
+        web_results: Optional[list[WebResult]] = None,
+        sharepoint_results: Optional[list[SharePointResult]] = None,
     ) -> DataPoints:
         """Extract text/image sources & citations from documents.
 
@@ -366,6 +737,8 @@ class Approach(ABC):
             use_semantic_captions: Whether to use semantic captions instead of full content text.
             download_image_sources: Whether to attempt downloading & base64 encoding referenced images.
             user_oid: Optional user object id for per-user storage access (ADLS scenarios).
+            web_results: Optional list of web retrieval results to expose to clients.
+            sharepoint_results: Optional list of SharePoint retrieval results to expose to clients.
 
         Returns:
             DataPoints: with text (list[str]), images (list[str - base64 data URI]), citations (list[str]).
@@ -380,12 +753,17 @@ class Approach(ABC):
         text_sources = []
         image_sources = []
         seen_urls = set()
+        external_results_metadata: list[dict[str, Any]] = []
+        citation_activity_details: dict[str, dict[str, Any]] = {}
 
         for doc in results:
             # Get the citation for the source page
             citation = self.get_citation(doc.sourcepage)
             if citation not in citations:
                 citations.append(citation)
+                # Add activity details if available
+                if doc.activity:
+                    citation_activity_details[citation] = asdict(doc.activity)
 
             # If semantic captions are used, extract captions; otherwise, use content
             if include_text_sources:
@@ -404,8 +782,54 @@ class Approach(ABC):
                     url = await self.download_blob_as_base64(img["url"], user_oid=user_oid)
                     if url:
                         image_sources.append(url)
-                    citations.append(self.get_image_citation(doc.sourcepage or "", img["url"]))
-        return DataPoints(text=text_sources, images=image_sources, citations=citations)
+                    image_citation = self.get_image_citation(doc.sourcepage or "", img["url"])
+                    citations.append(image_citation)
+        if web_results:
+            for web in web_results:
+                citation = self.get_citation(web.url)
+                if citation and citation not in citations:
+                    citations.append(citation)
+                    # Add activity details if available
+                    if web.activity:
+                        citation_activity_details[citation] = asdict(web.activity)
+                external_results_metadata.append(
+                    {
+                        "id": web.id,
+                        "title": web.title,
+                        "url": web.url,
+                        "snippet": clean_source(web.snippet or ""),
+                        "activity": asdict(web.activity) if web.activity else None,
+                    }
+                )
+        if sharepoint_results:
+            for sp in sharepoint_results:
+                # Extract filename from web_url for citation
+                filename = sp.web_url.split("/")[-1] if sp.web_url else ""
+                citation = self.get_citation(filename)
+                if citation and citation not in citations:
+                    citations.append(citation)
+                    # Add activity details if available
+                    if sp.activity:
+                        citation_activity_details[citation] = asdict(sp.activity)
+                if include_text_sources and sp.content:
+                    text_sources.append(f"{citation}: {clean_source(sp.content)}")
+                external_results_metadata.append(
+                    {
+                        "id": sp.id,
+                        "title": sp.title or "",
+                        "url": sp.web_url or "",
+                        "snippet": clean_source(sp.content or ""),
+                        "activity": asdict(sp.activity) if sp.activity else None,
+                    }
+                )
+
+        return DataPoints(
+            text=text_sources,
+            images=image_sources,
+            citations=citations,
+            external_results_metadata=external_results_metadata,
+            citation_activity_details=citation_activity_details if citation_activity_details else None,
+        )
 
     def get_citation(self, sourcepage: Optional[str]):
         return sourcepage or ""
@@ -475,13 +899,13 @@ class Approach(ABC):
         query_vector = embedding.data[0].embedding
         # This performs an oversampling due to how the search index was setup,
         # so we do not need to explicitly pass in an oversampling parameter here
-        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
+        return VectorizedQuery(vector=query_vector, k=50, fields=self.embedding_field)
 
     async def compute_multimodal_embedding(self, q: str):
         if not self.image_embeddings_client:
             raise ValueError("Approach is missing an image embeddings client for multimodal queries")
         multimodal_query_vector = await self.image_embeddings_client.create_embedding_for_text(q)
-        return VectorizedQuery(vector=multimodal_query_vector, k_nearest_neighbors=50, fields="images/embedding")
+        return VectorizedQuery(vector=multimodal_query_vector, k=50, fields="images/embedding")
 
     def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>

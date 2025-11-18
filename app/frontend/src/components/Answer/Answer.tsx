@@ -43,14 +43,17 @@ export const Answer = ({
     showSpeechOutputBrowser
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer, isStreaming, onCitationClicked), [answer]);
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer, isStreaming, onCitationClicked), [answer, isStreaming, onCitationClicked]);
     const { t } = useTranslation();
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
-        // Single replace to remove all HTML tags to remove the citations
-        const textToCopy = sanitizedAnswerHtml.replace(/<a [^>]*><sup>\d+<\/sup><\/a>|<[^>]+>/g, "");
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = sanitizedAnswerHtml;
+        tempElement.querySelectorAll("sup").forEach(node => node.remove());
+        tempElement.querySelectorAll(".citationStepBadge").forEach(node => node.remove());
+        const textToCopy = tempElement.textContent ?? "";
 
         navigator.clipboard
             .writeText(textToCopy)
@@ -108,15 +111,38 @@ export const Answer = ({
                 <Stack.Item>
                     <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
                         <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
-                        {parsedAnswer.citations.map((x, i) => {
-                            const path = getCitationFilePath(x);
-                            // Strip out the image filename in parentheses if it exists
-                            const strippedPath = path.replace(/\([^)]*\)$/, "");
-                            return (
-                                <a key={i} className={styles.citation} title={x} onClick={() => onCitationClicked(strippedPath)}>
-                                    {`${++i}. ${x}`}
-                                </a>
-                            );
+                        {parsedAnswer.citations.map(citation => {
+                            const isWeb = citation.isWeb;
+                            const displayIndex = citation.index;
+                            const reference = citation.reference;
+                            if (isWeb) {
+                                // Attempt to find the matching web data point to retrieve its title
+                                const webEntry = answer.context.data_points.external_results_metadata?.find(w => w.url === reference);
+                                const titleOrUrl = webEntry?.title?.trim() ? webEntry.title : reference;
+                                return (
+                                    <span key={`${reference}-${displayIndex}`} className={styles.citationEntry}>
+                                        <a className={styles.citation} title={reference} href={reference} target="_blank" rel="noopener noreferrer">
+                                            {`${displayIndex}. ${titleOrUrl}`}
+                                        </a>
+                                    </span>
+                                );
+                            } else {
+                                const path = getCitationFilePath(reference);
+                                return (
+                                    <span key={`${reference}-${displayIndex}`} className={styles.citationEntry}>
+                                        <a
+                                            className={styles.citation}
+                                            title={reference}
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                onCitationClicked(path);
+                                            }}
+                                        >
+                                            {`${displayIndex}. ${reference}`}
+                                        </a>
+                                    </span>
+                                );
+                            }
                         })}
                     </Stack>
                 </Stack.Item>

@@ -1,8 +1,40 @@
 {
     "context": {
         "data_points": {
+            "citation_activity_details": {
+                "Benefit_Options-2.pdf": {
+                    "id": 1,
+                    "number": 2,
+                    "query": "whistleblower query",
+                    "source": "index",
+                    "type": "searchIndex"
+                },
+                "https://contoso.example": {
+                    "id": 2,
+                    "number": 3,
+                    "query": "contoso policy",
+                    "source": "web",
+                    "type": "web"
+                }
+            },
             "citations": [
-                "Benefit_Options-2.pdf"
+                "Benefit_Options-2.pdf",
+                "https://contoso.example"
+            ],
+            "external_results_metadata": [
+                {
+                    "activity": {
+                        "id": 2,
+                        "number": 3,
+                        "query": "contoso policy",
+                        "source": "web",
+                        "type": "web"
+                    },
+                    "id": 1,
+                    "snippet": "",
+                    "title": "Contoso site",
+                    "url": "https://contoso.example"
+                }
             ],
             "images": [],
             "text": [
@@ -13,20 +45,13 @@
             {
                 "description": [
                     {
-                        "content": "What is the capital of France?",
-                        "role": "user"
-                    }
-                ],
-                "props": {
-                    "filter": "category ne 'excluded'",
-                    "reranker_threshold": 0,
-                    "results_merge_strategy": "interleaved"
-                },
-                "title": "Use agentic retrieval"
-            },
-            {
-                "description": [
-                    {
+                        "activity": {
+                            "id": 1,
+                            "number": 2,
+                            "query": "whistleblower query",
+                            "source": "index",
+                            "type": "searchIndex"
+                        },
                         "captions": [],
                         "category": null,
                         "content": "There is a whistleblower policy.",
@@ -36,13 +61,29 @@
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": null,
-                        "search_agent_query": "whistleblower query",
                         "sourcefile": "Benefit_Options.pdf",
-                        "sourcepage": "Benefit_Options-2.pdf"
+                        "sourcepage": "Benefit_Options-2.pdf",
+                        "type": "searchIndex"
+                    },
+                    {
+                        "activity": {
+                            "id": 2,
+                            "number": 3,
+                            "query": "contoso policy",
+                            "source": "web",
+                            "type": "web"
+                        },
+                        "id": 1,
+                        "ref_id": "1",
+                        "snippet": null,
+                        "title": "Contoso site",
+                        "type": "web",
+                        "url": "https://contoso.example"
                     }
                 ],
                 "props": {
                     "deployment": "gpt-4.1-mini",
+                    "filter": null,
                     "model": "gpt-4.1-mini",
                     "query_plan": [
                         {
@@ -61,15 +102,26 @@
                                 "search": "whistleblower query"
                             },
                             "type": "searchIndex"
+                        },
+                        {
+                            "count": 1,
+                            "elapsed_ms": 100,
+                            "id": 2,
+                            "knowledge_source_name": "web",
+                            "type": "web",
+                            "web_arguments": {
+                                "search": "contoso policy"
+                            }
                         }
-                    ]
+                    ],
+                    "reranker_threshold": 0
                 },
-                "title": "Agentic retrieval results (top 3)"
+                "title": "Agentic retrieval response"
             },
             {
                 "description": [
                     {
-                        "content": "Assistant helps the company employees with their questions about internal documents. Be brief in your answers.\nAnswer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below.\nYou CANNOT ask clarifying questions to the user, since the user will have no way to reply.\nIf the question is not in English, answer in the language used in the question.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].\n\nPossible citations for current question:  [Benefit_Options-2.pdf]",
+                        "content": "Assistant helps the company employees with their questions about internal documents. Be brief in your answers.\nAnswer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below.\nYou CANNOT ask clarifying questions to the user, since the user will have no way to reply.\nIf the question is not in English, answer in the language used in the question.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].\n\nPossible citations for current question:  [Benefit_Options-2.pdf]  [https://contoso.example]",
                         "role": "system"
                     },
                     {

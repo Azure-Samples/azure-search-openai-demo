@@ -83,10 +83,11 @@
         "minimumSearchScore": "Minimum arama skoru",
         "minimumRerankerScore": "Minimum yeniden sıralayıcı skoru",
         "retrieveCount": "Bu kadar arama sonucu getir:",
-        "resultsMergeStrategy": "Sonuç birleştirme stratejisi",
-        "resultsMergeStrategyOptions": {
-            "interleaved": "Sırayla karışık",
-            "descending": "Azalan"
+        "agenticReasoningEffort": "Getirme akıl yürütme çabası",
+        "agenticReasoningEffortOptions": {
+            "minimal": "En az",
+            "low": "Düşük",
+            "medium": "Orta"
         },
         "includeCategory": "Kategori dahil et",
         "includeCategoryOptions": {
@@ -104,7 +105,9 @@
             "high": "Yüksek"
         },
         "useSuggestFollowupQuestions": "Takip soruları öner",
-        "useAgenticRetrieval": "Ajan temelli getirim kullan",
+        "useAgenticKnowledgeBase": "Ajan temelli getirim kullan",
+        "useWebSource": "Web aramasını dahil et",
+        "useSharePointSource": "SharePoint kaynağını dahil et",
         "llmInputs": "LLM için Girdiler",
         "llmInputsOptions": {
             "texts": "Metinler",
@@ -143,8 +146,8 @@
              "Anlamsal sıralayıcıdan gelen arama sonuçları için minimum skoru ayarlar. Skor her zaman 0-4 arasında değişir. Daha yüksek skor, sonucun soruya daha anlamsal olarak uygun olduğunu gösterir.",
         "retrieveNumber":
              "Azure AI arama sonuçlarından getirilecek sonuç sayısını ayarlar. Daha fazla sonuç doğru cevabı bulma olasılığını artırabilir, ancak modelin 'ortada kaybolmasına' da neden olabilir.",
-        "resultsMergeStrategy":
-             "Birden fazla alt sorgudan gelen sonuçları birleştirme stratejisini ayarlar. 'Sırayla karışık' her alt sorgudan en iyi sonuçları dönüşümlü olarak seçer, 'Azalan' ise tüm sonuçları yeniden sıralayıcı skoruna göre sıralar.",
+        "agenticReasoningEffort":
+            "Ajans, çoklu sorgu planları oluştururken ne kadar akıl yürütme uygulayacağını kontrol eder. Daha yüksek ayarlar hatırlamayı artırabilir ancak belirteçleri ve gecikmeyi yükseltir.",
         "includeCategory":
             "Arama sonuçlarına dahil edilecek bir kategoriyi belirtir. Varsayılan veri setinde kategori yoktur.",
         "excludeCategory":
@@ -169,7 +172,9 @@
         "streamChat": "Yanıt oluşturulurken sohbet arayüzüne gerçek zamanlı olarak yanıtı sürekli olarak gönderir.",
         "useOidSecurityFilter": "Kimliği doğrulanmış kullanıcının OID'sine göre arama sonuçlarını filtreler.",
         "useGroupsSecurityFilter": "Kimliği doğrulanmış kullanıcının gruplarına göre arama sonuçlarını filtreler.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+        "useAgenticKnowledgeBase": "Çoklu sorgu planlaması için Azure AI Search'ten agent temelli getirimi kullanın. Her zaman semantik sıralayıcı kullanır.",
+        "useWebSource": "İndekslenmiş veri setinizin yanı sıra web arama sonuçlarıyla getirimi genişletin.",
+        "useSharePointSource": "İndekslenmiş veri setinizin yanı sıra SharePoint içeriğiyle getirimi genişletin."
     },
 
     "overallSettings": "Genel ayarlar",

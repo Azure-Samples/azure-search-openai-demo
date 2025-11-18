@@ -1,4 +1,5 @@
 import json
+import os
 from collections import namedtuple
 from io import BytesIO
 from typing import Optional
@@ -12,14 +13,20 @@ from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     HttpRequest,
 )
-from azure.search.documents.agent.models import (
-    KnowledgeAgentMessage,
-    KnowledgeAgentMessageTextContent,
-    KnowledgeAgentModelQueryPlanningActivityRecord,
-    KnowledgeAgentRetrievalResponse,
-    KnowledgeAgentSearchIndexActivityArguments,
-    KnowledgeAgentSearchIndexActivityRecord,
-    KnowledgeAgentSearchIndexReference,
+from azure.search.documents.knowledgebases.models import (
+    KnowledgeBaseMessage,
+    KnowledgeBaseMessageTextContent,
+    KnowledgeBaseModelQueryPlanningActivityRecord,
+    KnowledgeBaseRemoteSharePointActivityArguments,
+    KnowledgeBaseRemoteSharePointActivityRecord,
+    KnowledgeBaseRemoteSharePointReference,
+    KnowledgeBaseRetrievalResponse,
+    KnowledgeBaseSearchIndexActivityArguments,
+    KnowledgeBaseSearchIndexActivityRecord,
+    KnowledgeBaseSearchIndexReference,
+    KnowledgeBaseWebActivityArguments,
+    KnowledgeBaseWebActivityRecord,
+    KnowledgeBaseWebReference,
 )
 from azure.search.documents.models import (
     VectorQuery,
@@ -158,7 +165,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.05000000447034836,
                         "reranker_score": 3.2427687644958496,
-                        "search_agent_query": None,
+                        "activity": None,
                         "images": [
                             {
                                 "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_1.png",
@@ -183,7 +190,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.04696394503116608,
                         "reranker_score": 1.8582123517990112,
-                        "search_agent_query": None,
+                        "activity": None,
                         "images": [
                             {
                                 "url": "https://userst5gj4l5eootrlo.dfs.core.windows.net/user-content/OID_X/images/westbrae_jun28.pdf/page_0/figure1_1.png",
@@ -208,7 +215,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.016393441706895828,
                         "reranker_score": 1.7518715858459473,
-                        "search_agent_query": None,
+                        "activity": None,
                         "images": [],
                     },
                 ]
@@ -229,7 +236,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.03333333507180214,
                         "reranker_score": 3.207321882247925,
-                        "search_agent_query": None,
+                        "activity": None,
                         "images": [],
                     },
                     {
@@ -243,7 +250,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.04945354908704758,
                         "reranker_score": 2.573531150817871,
-                        "search_agent_query": None,
+                        "activity": None,
                         "images": [
                             {
                                 "url": "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png",
@@ -263,7 +270,7 @@ class MockAsyncSearchResultsIterator:
                         "captions": [],
                         "score": 0.0317540317773819,
                         "reranker_score": 1.8846203088760376,
-                        "search_agent_query": None,
+                        "activity": None,
                         "images": [
                             {
                                 "url": "https://sticygqdubf4x6w.blob.core.windows.net/images/Financial%20Market%20Analysis%20Report%202023.pdf/page7/figure8_1.png",
@@ -365,30 +372,68 @@ def mock_vision_response():
     )
 
 
+def create_mock_retrieve(response_type="default"):
+    """Create a mock_retrieve function that returns different response types.
+
+    Supported response_type values:
+      - "default": single reference response
+      - "sorting": multiple refs to test ordering / interleaving
+      - "top_limit": many refs to test early breaking via top limit
+      - "web": includes web knowledge source
+      - "sharepoint": includes SharePoint knowledge source
+      - "auto": checks os.environ for USE_WEB_SOURCE and USE_SHAREPOINT_SOURCE
+    """
+
+    async def mock_retrieve_parameterized(self, *args, **kwargs):
+        retrieval_request = kwargs.get("retrieval_request")
+        assert retrieval_request is not None
+        assert retrieval_request.knowledge_source_params is not None
+        assert len(retrieval_request.knowledge_source_params) >= 1
+        params_list = retrieval_request.knowledge_source_params
+        params = params_list[0]
+        self.filter = getattr(params, "filter_add_on", None)
+        self.access_token = kwargs.get("x_ms_query_source_authorization", None)
+
+        # Determine response type from environment if "auto"
+        actual_response_type = response_type
+        if response_type == "auto":
+            use_web = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+            use_sharepoint = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
+            if use_web:
+                actual_response_type = "web"
+            elif use_sharepoint:
+                actual_response_type = "sharepoint"
+            else:
+                actual_response_type = "default"
+
+        if actual_response_type == "sorting":
+            return mock_retrieval_response_with_sorting()
+        elif actual_response_type == "top_limit":
+            return mock_retrieval_response_with_top_limit()
+        elif actual_response_type == "web":
+            return mock_retrieval_response_with_web()
+        elif actual_response_type == "sharepoint":
+            return mock_retrieval_response_with_sharepoint()
+        else:  # default
+            return mock_retrieval_response()
+
+    return mock_retrieve_parameterized
+
+
 def mock_retrieval_response():
-    return KnowledgeAgentRetrievalResponse(
-        response=[
-            KnowledgeAgentMessage(
-                role="assistant",
-                content=[
-                    KnowledgeAgentMessageTextContent(
-                        text=r'[{"ref_id":0,"title":"Benefit_Options-2.pdf","content":"There is a whistleblower policy."}]'
-                    )
-                ],
-            )
-        ],
+    return KnowledgeBaseRetrievalResponse(
         activity=[
-            KnowledgeAgentModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
-            KnowledgeAgentSearchIndexActivityRecord(
+            KnowledgeBaseModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
+            KnowledgeBaseSearchIndexActivityRecord(
                 id=1,
                 knowledge_source_name="index",
-                search_index_arguments=KnowledgeAgentSearchIndexActivityArguments(search="whistleblower query"),
+                search_index_arguments=KnowledgeBaseSearchIndexActivityArguments(search="whistleblower query"),
                 count=10,
                 elapsed_ms=50,
             ),
         ],
         references=[
-            KnowledgeAgentSearchIndexReference(
+            KnowledgeBaseSearchIndexReference(
                 id=0,
                 activity_source=1,
                 doc_key="file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
@@ -404,41 +449,135 @@ def mock_retrieval_response():
     )
 
 
-def mock_retrieval_response_with_sorting():
-    """Mock response with multiple references for testing sorting"""
-    return KnowledgeAgentRetrievalResponse(
+def mock_retrieval_response_with_web():
+    return KnowledgeBaseRetrievalResponse(
         response=[
-            KnowledgeAgentMessage(
+            KnowledgeBaseMessage(
                 role="assistant",
-                content=[KnowledgeAgentMessageTextContent(text="Test response")],
+                content=[
+                    KnowledgeBaseMessageTextContent(
+                        text="There is a whistleblower policy. [ref_id:0] You can also visit [ref_id:1] for more information."
+                    )
+                ],
             )
         ],
         activity=[
-            KnowledgeAgentSearchIndexActivityRecord(
+            KnowledgeBaseModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
+            KnowledgeBaseSearchIndexActivityRecord(
                 id=1,
                 knowledge_source_name="index",
-                search_index_arguments=KnowledgeAgentSearchIndexActivityArguments(search="first query"),
+                search_index_arguments=KnowledgeBaseSearchIndexActivityArguments(search="whistleblower query"),
                 count=10,
                 elapsed_ms=50,
             ),
-            KnowledgeAgentSearchIndexActivityRecord(
+            KnowledgeBaseWebActivityRecord(
+                id=2,
+                knowledge_source_name="web",
+                web_arguments=KnowledgeBaseWebActivityArguments(search="contoso policy"),
+                count=1,
+                elapsed_ms=100,
+            ),
+        ],
+        references=[
+            KnowledgeBaseSearchIndexReference(
+                id=0,
+                activity_source=1,
+                doc_key="file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                reranker_score=3.4577205181121826,
+                source_data={
+                    "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                    "content": "There is a whistleblower policy.",
+                    "sourcepage": "Benefit_Options-2.pdf",
+                    "sourcefile": "Benefit_Options.pdf",
+                },
+            ),
+            KnowledgeBaseWebReference(
+                id=1,
+                activity_source=2,
+                url="https://contoso.example",
+                title="Contoso site",
+                snippet="Contoso policy overview",
+            ),
+        ],
+    )
+
+
+def mock_retrieval_response_with_sharepoint():
+    """Mock response with SharePoint knowledge source"""
+    return KnowledgeBaseRetrievalResponse(
+        activity=[
+            KnowledgeBaseModelQueryPlanningActivityRecord(id=0, input_tokens=10, output_tokens=20, elapsed_ms=200),
+            KnowledgeBaseSearchIndexActivityRecord(
+                id=1,
+                knowledge_source_name="index",
+                search_index_arguments=KnowledgeBaseSearchIndexActivityArguments(search="whistleblower query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+            KnowledgeBaseRemoteSharePointActivityRecord(
+                id=2,
+                knowledge_source_name="sharepoint",
+                remote_share_point_arguments=KnowledgeBaseRemoteSharePointActivityArguments(search="sharepoint policy"),
+                count=1,
+                elapsed_ms=75,
+            ),
+        ],
+        references=[
+            KnowledgeBaseSearchIndexReference(
+                id=0,
+                activity_source=1,
+                doc_key="file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                reranker_score=3.4577205181121826,
+                source_data={
+                    "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
+                    "content": "There is a whistleblower policy.",
+                    "sourcepage": "Benefit_Options-2.pdf",
+                    "sourcefile": "Benefit_Options.pdf",
+                },
+            ),
+            KnowledgeBaseRemoteSharePointReference(
+                id="10",
+                activity_source=2,
+                web_url="https://contoso.sharepoint.com/sites/hr/document",
+                source_data={
+                    "extracts": [{"text": "SharePoint content"}],
+                    "resourceMetadata": {"title": "SharePoint Title"},
+                },
+                reranker_score=3.2,
+            ),
+        ],
+    )
+
+
+def mock_retrieval_response_with_sorting():
+    """Mock response with multiple references for testing sorting"""
+    return KnowledgeBaseRetrievalResponse(
+        activity=[
+            KnowledgeBaseSearchIndexActivityRecord(
+                id=1,
+                knowledge_source_name="index",
+                search_index_arguments=KnowledgeBaseSearchIndexActivityArguments(search="first query"),
+                count=10,
+                elapsed_ms=50,
+            ),
+            KnowledgeBaseSearchIndexActivityRecord(
                 id=2,
                 knowledge_source_name="index",
-                search_index_arguments=KnowledgeAgentSearchIndexActivityArguments(search="second query"),
+                search_index_arguments=KnowledgeBaseSearchIndexActivityArguments(search="second query"),
                 count=10,
                 elapsed_ms=50,
             ),
         ],
         references=[
-            KnowledgeAgentSearchIndexReference(
-                id="2",  # Higher ID for testing interleaved sorting
+            KnowledgeBaseSearchIndexReference(
+                id="2",
                 activity_source=2,
                 doc_key="doc2",
                 source_data={"id": "doc2", "content": "Content 2", "sourcepage": "page2.pdf"},
                 reranker_score=3.7,
             ),
-            KnowledgeAgentSearchIndexReference(
-                id="1",  # Lower ID for testing interleaved sorting
+            KnowledgeBaseSearchIndexReference(
+                id="1",
                 activity_source=1,
                 doc_key="doc1",
                 source_data={"id": "doc1", "content": "Content 1", "sourcepage": "page1.pdf"},
@@ -453,7 +592,7 @@ def mock_retrieval_response_with_top_limit():
     references = []
     for i in range(15):  # More than any reasonable top limit
         references.append(
-            KnowledgeAgentSearchIndexReference(
+            KnowledgeBaseSearchIndexReference(
                 id=str(i),
                 activity_source=1,
                 doc_key=f"doc{i}",
@@ -461,18 +600,12 @@ def mock_retrieval_response_with_top_limit():
             )
         )
 
-    return KnowledgeAgentRetrievalResponse(
-        response=[
-            KnowledgeAgentMessage(
-                role="assistant",
-                content=[KnowledgeAgentMessageTextContent(text="Test response")],
-            )
-        ],
+    return KnowledgeBaseRetrievalResponse(
         activity=[
-            KnowledgeAgentSearchIndexActivityRecord(
+            KnowledgeBaseSearchIndexActivityRecord(
                 id=1,
                 knowledge_source_name="index",
-                search_index_arguments=KnowledgeAgentSearchIndexActivityArguments(search="query"),
+                search_index_arguments=KnowledgeBaseSearchIndexActivityArguments(search="query"),
                 count=10,
                 elapsed_ms=50,
             ),

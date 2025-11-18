@@ -84,7 +84,7 @@ param searchServiceLocation string = '' // Set in main.parameters.json
 @allowed(['free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
 param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
-param searchAgentName string = useAgenticRetrieval ? '${searchIndexName}-agent-upgrade' : ''
+param knowledgeBaseName string = useAgenticKnowledgeBase ? '${searchIndexName}-agent-upgrade' : ''
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 param searchServiceSemanticRankerLevel string // Set in main.parameters.json
@@ -100,7 +100,9 @@ param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
 param defaultReasoningEffort string // Set in main.parameters.json
-param useAgenticRetrieval bool // Set in main.parameters.json
+@description('Controls the default retrieval reasoning effort for agentic retrieval (minimal, low, or medium).')
+param defaultRetrievalReasoningEffort string = 'minimal'
+param useAgenticKnowledgeBase bool // Set in main.parameters.json
 
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
@@ -246,17 +248,17 @@ var eval = {
   deploymentCapacity: evalDeploymentCapacity != 0 ? evalDeploymentCapacity : 30
 }
 
-param searchAgentModelName string = ''
-param searchAgentDeploymentName string = ''
-param searchAgentModelVersion string = ''
-param searchAgentDeploymentSkuName string = ''
-param searchAgentDeploymentCapacity int = 0
-var searchAgent = {
-  modelName: !empty(searchAgentModelName) ? searchAgentModelName : 'gpt-4.1-mini'
-  deploymentName: !empty(searchAgentDeploymentName) ? searchAgentDeploymentName : 'searchagent'
-  deploymentVersion: !empty(searchAgentModelVersion) ? searchAgentModelVersion : '2025-04-14'
-  deploymentSkuName: !empty(searchAgentDeploymentSkuName) ? searchAgentDeploymentSkuName : 'GlobalStandard'
-  deploymentCapacity: searchAgentDeploymentCapacity != 0 ? searchAgentDeploymentCapacity : 30
+param knowledgeBaseModelName string = ''
+param knowledgeBaseDeploymentName string = ''
+param knowledgeBaseModelVersion string = ''
+param knowledgeBaseDeploymentSkuName string = ''
+param knowledgeBaseDeploymentCapacity int = 0
+var knowledgeBase = {
+  modelName: !empty(knowledgeBaseModelName) ? knowledgeBaseModelName : 'gpt-4.1-mini'
+  deploymentName: !empty(knowledgeBaseDeploymentName) ? knowledgeBaseDeploymentName : 'knowledgebase'
+  deploymentVersion: !empty(knowledgeBaseModelVersion) ? knowledgeBaseModelVersion : '2025-04-14'
+  deploymentSkuName: !empty(knowledgeBaseDeploymentSkuName) ? knowledgeBaseDeploymentSkuName : 'GlobalStandard'
+  deploymentCapacity: knowledgeBaseDeploymentCapacity != 0 ? knowledgeBaseDeploymentCapacity : 100
 }
 
 
@@ -360,6 +362,10 @@ param ragSearchImageEmbeddings bool = true
 param ragSendTextSources bool = true
 @description('Whether to send image sources to LLM for RAG responses')
 param ragSendImageSources bool = true
+@description('Whether to enable web sources for agentic retrieval')
+param useWebSource bool = false
+@description('Whether to enable SharePoint sources for agentic retrieval')
+param useSharePointSource bool = false
 
 param acaIdentityName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-identity' : ''
 param acaManagedEnvironmentName string = deploymentTarget == 'containerapps' ? '${environmentName}-aca-env' : ''
@@ -464,7 +470,7 @@ var appEnvVariables = {
   AZURE_STORAGE_ACCOUNT: storage.outputs.name
   AZURE_STORAGE_CONTAINER: storageContainerName
   AZURE_SEARCH_INDEX: searchIndexName
-  AZURE_SEARCH_AGENT: searchAgentName
+  AZURE_SEARCH_KNOWLEDGEBASE_NAME: knowledgeBaseName
   AZURE_SEARCH_SERVICE: searchService.outputs.name
   AZURE_SEARCH_SEMANTIC_RANKER: actualSearchServiceSemanticRankerLevel
   AZURE_SEARCH_QUERY_REWRITING: searchServiceQueryRewriting
@@ -482,7 +488,7 @@ var appEnvVariables = {
   USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
   USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
-  USE_AGENTIC_RETRIEVAL: useAgenticRetrieval
+  USE_AGENTIC_KNOWLEDGEBASE: useAgenticKnowledgeBase
   // Chat history settings
   USE_CHAT_HISTORY_BROWSER: useChatHistoryBrowser
   USE_CHAT_HISTORY_COSMOS: useChatHistoryCosmos
@@ -496,12 +502,13 @@ var appEnvVariables = {
   AZURE_OPENAI_EMB_DIMENSIONS: embedding.dimensions
   AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
   AZURE_OPENAI_REASONING_EFFORT: defaultReasoningEffort
+  AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT: defaultRetrievalReasoningEffort
   // Specific to Azure OpenAI
   AZURE_OPENAI_SERVICE: isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
   AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
-  AZURE_OPENAI_SEARCHAGENT_MODEL: searchAgent.modelName
-  AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT: searchAgent.deploymentName
+  AZURE_OPENAI_knowledgeBase_MODEL: knowledgeBase.modelName
+  AZURE_OPENAI_knowledgeBase_DEPLOYMENT: knowledgeBase.deploymentName
   AZURE_OPENAI_API_KEY_OVERRIDE: azureOpenAiApiKey
   AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
   // Used only with non-Azure OpenAI deployments
@@ -536,6 +543,8 @@ var appEnvVariables = {
   RAG_SEARCH_IMAGE_EMBEDDINGS: ragSearchImageEmbeddings
   RAG_SEND_TEXT_SOURCES: ragSendTextSources
   RAG_SEND_IMAGE_SOURCES: ragSendImageSources
+  USE_WEB_SOURCE: useWebSource
+  USE_SHAREPOINT_SOURCE: useSharePointSource
 }
 
 // App Service for the web application (Python Quart app with JS frontend)
@@ -725,18 +734,18 @@ var openAiDeployments = concat(
         }
       }
     ] : [],
-  useAgenticRetrieval
+  useAgenticKnowledgeBase
     ? [
         {
-          name: searchAgent.deploymentName
+          name: knowledgeBase.deploymentName
           model: {
             format: 'OpenAI'
-            name: searchAgent.modelName
-            version: searchAgent.deploymentVersion
+            name: knowledgeBase.modelName
+            version: knowledgeBase.deploymentVersion
           }
           sku: {
-            name: searchAgent.deploymentSkuName
-            capacity: searchAgent.deploymentCapacity
+            name: knowledgeBase.deploymentSkuName
+            capacity: knowledgeBase.deploymentCapacity
           }
         }
       ]
@@ -1442,9 +1451,10 @@ output AZURE_OPENAI_EVAL_DEPLOYMENT string = isAzureOpenAiHost && useEval ? eval
 output AZURE_OPENAI_EVAL_DEPLOYMENT_VERSION string = isAzureOpenAiHost && useEval ? eval.deploymentVersion : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT_SKU string = isAzureOpenAiHost && useEval ? eval.deploymentSkuName : ''
 output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.modelName : ''
-output AZURE_OPENAI_SEARCHAGENT_DEPLOYMENT string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.deploymentName : ''
-output AZURE_OPENAI_SEARCHAGENT_MODEL string = isAzureOpenAiHost && useAgenticRetrieval ? searchAgent.modelName : ''
+output AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT string = isAzureOpenAiHost && useAgenticKnowledgeBase ? knowledgeBase.deploymentName : ''
+output AZURE_OPENAI_KNOWLEDGEBASE_MODEL string = isAzureOpenAiHost && useAgenticKnowledgeBase ? knowledgeBase.modelName : ''
 output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
+output AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT string = defaultRetrievalReasoningEffort
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech.outputs.location : ''
 
@@ -1455,7 +1465,7 @@ output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.
 output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name
 
 output AZURE_SEARCH_INDEX string = searchIndexName
-output AZURE_SEARCH_AGENT string = searchAgentName
+output AZURE_SEARCH_KNOWLEDGEBASE_NAME string = knowledgeBaseName
 output AZURE_SEARCH_SERVICE string = searchService.outputs.name
 output AZURE_SEARCH_SERVICE_RESOURCE_GROUP string = searchServiceResourceGroup.name
 output AZURE_SEARCH_SEMANTIC_RANKER string = actualSearchServiceSemanticRankerLevel

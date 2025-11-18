@@ -1,18 +1,19 @@
-import json
 import re
 from collections.abc import AsyncGenerator, Awaitable
+from dataclasses import asdict
 from typing import Any, Optional, cast
 
-from azure.search.documents.agent.aio import KnowledgeAgentRetrievalClient
 from azure.search.documents.aio import SearchClient
+from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
 from azure.search.documents.models import VectorQuery
 from openai import AsyncOpenAI, AsyncStream
 from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
     ChatCompletionMessageParam,
-    ChatCompletionToolParam,
 )
+from openai.types.chat.chat_completion import Choice
+from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
 from approaches.approach import (
     Approach,
@@ -31,16 +32,19 @@ class ChatReadRetrieveReadApproach(Approach):
     original user question, and search results to OpenAI to generate a response.
     """
 
-    NO_RESPONSE = "0"
+    NO_RESPONSE = Approach.QUERY_REWRITE_NO_RESPONSE
 
     def __init__(
         self,
         *,
         search_client: SearchClient,
         search_index_name: str,
-        agent_model: Optional[str],
-        agent_deployment: Optional[str],
-        agent_client: KnowledgeAgentRetrievalClient,
+        knowledgebase_model: Optional[str],
+        knowledgebase_deployment: Optional[str],
+        knowledgebase_client: Optional[KnowledgeBaseRetrievalClient],
+        knowledgebase_client_with_web: Optional[KnowledgeBaseRetrievalClient] = None,
+        knowledgebase_client_with_sharepoint: Optional[KnowledgeBaseRetrievalClient] = None,
+        knowledgebase_client_with_web_and_sharepoint: Optional[KnowledgeBaseRetrievalClient] = None,
         openai_client: AsyncOpenAI,
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],  # Not needed for non-Azure OpenAI
@@ -58,12 +62,18 @@ class ChatReadRetrieveReadApproach(Approach):
         image_embeddings_client: Optional[ImageEmbeddings] = None,
         global_blob_manager: Optional[BlobManager] = None,
         user_blob_manager: Optional[AdlsBlobManager] = None,
+        use_web_source: bool = False,
+        use_sharepoint_source: bool = False,
+        retrieval_reasoning_effort: Optional[str] = None,
     ):
         self.search_client = search_client
         self.search_index_name = search_index_name
-        self.agent_model = agent_model
-        self.agent_deployment = agent_deployment
-        self.agent_client = agent_client
+        self.knowledgebase_model = knowledgebase_model
+        self.knowledgebase_deployment = knowledgebase_deployment
+        self.knowledgebase_client = knowledgebase_client
+        self.knowledgebase_client_with_web = knowledgebase_client_with_web
+        self.knowledgebase_client_with_sharepoint = knowledgebase_client_with_sharepoint
+        self.knowledgebase_client_with_web_and_sharepoint = knowledgebase_client_with_web_and_sharepoint
         self.openai_client = openai_client
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
@@ -85,29 +95,22 @@ class ChatReadRetrieveReadApproach(Approach):
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
-
-    def get_search_query(self, chat_completion: ChatCompletion, user_query: str):
-        response_message = chat_completion.choices[0].message
-
-        if response_message.tool_calls:
-            for tool in response_message.tool_calls:
-                if tool.type != "function":
-                    continue
-                function = tool.function
-                if function.name == "search_sources":
-                    arg = json.loads(function.arguments)
-                    search_query = arg.get("search_query", self.NO_RESPONSE)
-                    if search_query != self.NO_RESPONSE:
-                        return search_query
-        elif query_text := response_message.content:
-            if query_text.strip() != self.NO_RESPONSE:
-                return query_text
-        return user_query
+        # Track whether web source retrieval is enabled for this deployment; overrides may only disable it.
+        self.web_source_enabled = use_web_source
+        self.use_sharepoint_source = use_sharepoint_source
+        self.retrieval_reasoning_effort = retrieval_reasoning_effort
 
     def extract_followup_questions(self, content: Optional[str]):
         if content is None:
             return content, []
         return content.split("<<")[0], re.findall(r"<<([^>>]+)>>", content)
+
+    def get_search_query(self, chat_completion: ChatCompletion, default_query: str) -> str:
+        """Read the optimized search query from a chat completion tool call."""
+        try:
+            return self.extract_rewritten_query(chat_completion, default_query, no_response_token=self.NO_RESPONSE)
+        except Exception:
+            return default_query
 
     async def run_without_streaming(
         self,
@@ -126,11 +129,18 @@ class ChatReadRetrieveReadApproach(Approach):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
         # Assume last thought is for generating answer
+        # TODO: Update for agentic? This isn't still true?
         if self.include_token_usage and extra_info.thoughts and chat_completion_response.usage:
             extra_info.thoughts[-1].update_token_usage(chat_completion_response.usage)
         chat_app_response = {
             "message": {"content": content, "role": role},
-            "context": extra_info,
+            "context": {
+                "thoughts": extra_info.thoughts,
+                "data_points": {
+                    key: value for key, value in asdict(extra_info.data_points).items() if value is not None
+                },
+                "followup_questions": extra_info.followup_questions,
+            },
             "session_state": session_state,
         }
         return chat_app_response
@@ -145,12 +155,42 @@ class ChatReadRetrieveReadApproach(Approach):
         extra_info, chat_coroutine = await self.run_until_final_call(
             messages, overrides, auth_claims, should_stream=True
         )
-        chat_coroutine = cast(Awaitable[AsyncStream[ChatCompletionChunk]], chat_coroutine)
         yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
 
         followup_questions_started = False
         followup_content = ""
-        async for event_chunk in await chat_coroutine:
+        chat_result = await chat_coroutine
+
+        if isinstance(chat_result, ChatCompletion):
+            message = chat_result.choices[0].message
+            content = message.content or ""
+            role = message.role or "assistant"
+
+            followup_questions: list[str] = []
+            if overrides.get("suggest_followup_questions"):
+                content, followup_questions = self.extract_followup_questions(content)
+                extra_info.followup_questions = followup_questions
+
+            if self.include_token_usage and extra_info.thoughts and chat_result.usage:
+                extra_info.thoughts[-1].update_token_usage(chat_result.usage)
+
+            delta_payload: dict[str, Any] = {"role": role}
+            if content:
+                delta_payload["content"] = content
+            yield {"delta": delta_payload}
+
+            yield {"delta": {"role": "assistant"}, "context": extra_info, "session_state": session_state}
+
+            if followup_questions:
+                yield {
+                    "delta": {"role": "assistant"},
+                    "context": {"context": extra_info, "followup_questions": followup_questions},
+                }
+            return
+
+        chat_result = cast(AsyncStream[ChatCompletionChunk], chat_result)
+
+        async for event_chunk in chat_result:
             # "2023-07-01-preview" API version has a bug where first response has empty choices
             event = event_chunk.model_dump()  # Convert pydantic model to dict
             if event["choices"]:
@@ -162,17 +202,19 @@ class ChatReadRetrieveReadApproach(Approach):
                     }
                 }
                 # if event contains << and not >>, it is start of follow-up question, truncate
-                content = completion["delta"].get("content")
-                content = content or ""  # content may either not exist in delta, or explicitly be None
-                if overrides.get("suggest_followup_questions") and "<<" in content:
+                delta_content_raw = completion["delta"].get("content")
+                delta_content: str = (
+                    delta_content_raw or ""
+                )  # content may either not exist in delta, or explicitly be None
+                if overrides.get("suggest_followup_questions") and "<<" in delta_content:
                     followup_questions_started = True
-                    earlier_content = content[: content.index("<<")]
+                    earlier_content = delta_content[: delta_content.index("<<")]
                     if earlier_content:
                         completion["delta"]["content"] = earlier_content
                         yield completion
-                    followup_content += content[content.index("<<") :]
+                    followup_content += delta_content[delta_content.index("<<") :]
                 elif followup_questions_started:
-                    followup_content += content
+                    followup_content += delta_content
                 else:
                     yield completion
             else:
@@ -216,7 +258,7 @@ class ChatReadRetrieveReadApproach(Approach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
-        use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
+        use_agentic_knowledgebase = True if overrides.get("use_agentic_knowledgebase") else False
         original_user_query = messages[-1]["content"]
 
         reasoning_model_support = self.GPT_REASONING_MODELS.get(self.chatgpt_model)
@@ -224,10 +266,36 @@ class ChatReadRetrieveReadApproach(Approach):
             raise Exception(
                 f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
             )
-        if use_agentic_retrieval:
+        if use_agentic_knowledgebase:
+            if should_stream and overrides.get("use_web_source"):
+                raise Exception(
+                    "Streaming is not supported with agentic retrieval when web source is enabled. Please disable streaming or web source."
+                )
             extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)
+
+        if extra_info.answer:
+            # If agentic retrieval already provided an answer, skip final call to LLM
+            async def return_answer() -> ChatCompletion:
+                return ChatCompletion(
+                    id="no-final-call",
+                    object="chat.completion",
+                    created=0,
+                    model=self.chatgpt_model,
+                    choices=[
+                        Choice(
+                            message=ChatCompletionMessage(
+                                role="assistant",
+                                content=extra_info.answer,
+                            ),
+                            finish_reason="stop",
+                            index=0,
+                        )
+                    ],
+                )
+
+            return (extra_info, return_answer())
 
         messages = self.prompt_manager.render_prompt(
             self.answer_prompt,
@@ -289,30 +357,24 @@ class ChatReadRetrieveReadApproach(Approach):
         if not isinstance(original_user_query, str):
             raise ValueError("The most recent message content must be a string.")
 
-        query_messages = self.prompt_manager.render_prompt(
-            self.query_rewrite_prompt, {"user_query": original_user_query, "past_messages": messages[:-1]}
-        )
-        tools: list[ChatCompletionToolParam] = self.query_rewrite_tools
-
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
 
-        chat_completion = cast(
-            ChatCompletion,
-            await self.create_chat_completion(
-                self.chatgpt_deployment,
-                self.chatgpt_model,
-                messages=query_messages,
-                overrides=overrides,
-                response_token_limit=self.get_response_token_limit(
-                    self.chatgpt_model, 100
-                ),  # Setting too low risks malformed JSON, setting too high may affect performance
-                temperature=0.0,  # Minimize creativity for search query generation
-                tools=tools,
-                reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
-            ),
+        rewrite_result = await self.rewrite_query(
+            prompt_template=self.query_rewrite_prompt,
+            prompt_variables={"user_query": original_user_query, "past_messages": messages[:-1]},
+            overrides=overrides,
+            chatgpt_model=self.chatgpt_model,
+            chatgpt_deployment=self.chatgpt_deployment,
+            user_query=original_user_query,
+            response_token_limit=self.get_response_token_limit(
+                self.chatgpt_model, 100
+            ),  # Setting too low risks malformed JSON, setting too high may affect performance
+            tools=self.query_rewrite_tools,
+            temperature=0.0,  # Minimize creativity for search query generation
+            no_response_token=self.NO_RESPONSE,
         )
 
-        query_text = self.get_search_query(chat_completion, original_user_query)
+        query_text = rewrite_result.query
 
         # STEP 2: Retrieve relevant documents from the search index with the GPT optimized query
 
@@ -351,12 +413,12 @@ class ChatReadRetrieveReadApproach(Approach):
             thoughts=[
                 self.format_thought_step_for_chatcompletion(
                     title="Prompt to generate search query",
-                    messages=query_messages,
+                    messages=rewrite_result.messages,
                     overrides=overrides,
                     model=self.chatgpt_model,
                     deployment=self.chatgpt_deployment,
-                    usage=chat_completion.usage,
-                    reasoning_effort=self.get_lowest_reasoning_effort(self.chatgpt_model),
+                    usage=rewrite_result.completion.usage,
+                    reasoning_effort=rewrite_result.reasoning_effort,
                 ),
                 ThoughtStep(
                     "Search using generated search query",
@@ -390,52 +452,74 @@ class ChatReadRetrieveReadApproach(Approach):
         search_index_filter = self.build_filter(overrides)
         access_token = auth_claims.get("access_token")
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
-        top = overrides.get("top", 3)
-        results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
+        retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
+        # Overrides can only disable web source support configured at construction time.
+        use_web_source = self.web_source_enabled
+        override_use_web_source = overrides.get("use_web_source")
+        if isinstance(override_use_web_source, bool):
+            use_web_source = use_web_source and override_use_web_source
+        # Overrides can only disable sharepoint source support configured at construction time.
+        use_sharepoint_source = self.use_sharepoint_source
+        override_use_sharepoint_source = overrides.get("use_sharepoint_source")
+        if isinstance(override_use_sharepoint_source, bool):
+            use_sharepoint_source = use_sharepoint_source and override_use_sharepoint_source
+        if use_web_source and retrieval_reasoning_effort == "minimal":
+            raise Exception("Web source cannot be used with minimal retrieval reasoning effort.")
 
-        response, results = await self.run_agentic_retrieval(
+        selected_client, effective_web_source, effective_sharepoint_source = self._select_knowledgebase_client(
+            use_web_source,
+            use_sharepoint_source,
+        )
+
+        agentic_results = await self.run_agentic_retrieval(
             messages=messages,
-            agent_client=self.agent_client,
+            knowledgebase_client=selected_client,
             search_index_name=self.search_index_name,
-            top=top,
             filter_add_on=search_index_filter,
             minimum_reranker_score=minimum_reranker_score,
-            results_merge_strategy=results_merge_strategy,
             access_token=access_token,
+            use_web_source=effective_web_source,
+            use_sharepoint_source=effective_sharepoint_source,
+            retrieval_reasoning_effort=retrieval_reasoning_effort,
         )
 
         data_points = await self.get_sources_content(
-            results,
+            agentic_results.documents,
             use_semantic_captions=False,
             include_text_sources=send_text_sources,
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
+            web_results=agentic_results.web_results,
+            sharepoint_results=agentic_results.sharepoint_results,
         )
-        extra_info = ExtraInfo(
+
+        return ExtraInfo(
             data_points,
-            thoughts=[
-                ThoughtStep(
-                    "Use agentic retrieval",
-                    messages,
-                    {
-                        "reranker_threshold": minimum_reranker_score,
-                        "results_merge_strategy": results_merge_strategy,
-                        "filter": search_index_filter,
-                    },
-                ),
-                ThoughtStep(
-                    f"Agentic retrieval results (top {top})",
-                    [result.serialize_for_results() for result in results],
-                    {
-                        "query_plan": (
-                            [activity.as_dict() for activity in response.activity] if response.activity else None
-                        ),
-                        "model": self.agent_model,
-                        "deployment": self.agent_deployment,
-                    },
-                ),
-            ],
+            thoughts=agentic_results.thoughts,
+            answer=agentic_results.answer,
         )
-        return extra_info
+
+    def _select_knowledgebase_client(
+        self,
+        use_web_source: bool,
+        use_sharepoint_source: bool,
+    ) -> tuple[KnowledgeBaseRetrievalClient, bool, bool]:
+        if use_web_source and use_sharepoint_source:
+            if self.knowledgebase_client_with_web_and_sharepoint:
+                return self.knowledgebase_client_with_web_and_sharepoint, True, True
+            if self.knowledgebase_client_with_web:
+                return self.knowledgebase_client_with_web, True, False
+            if self.knowledgebase_client_with_sharepoint:
+                return self.knowledgebase_client_with_sharepoint, False, True
+
+        if use_web_source and self.knowledgebase_client_with_web:
+            return self.knowledgebase_client_with_web, True, False
+
+        if use_sharepoint_source and self.knowledgebase_client_with_sharepoint:
+            return self.knowledgebase_client_with_sharepoint, False, True
+
+        if self.knowledgebase_client:
+            return self.knowledgebase_client, False, False
+        raise ValueError("Agentic retrieval requested but no knowledge base is configured")
