@@ -5,11 +5,7 @@
                 "Benefit_Options-2.pdf",
                 "https://contoso.example"
             ],
-            "images": [],
-            "text": [
-                "Benefit_Options-2.pdf: There is a whistleblower policy."
-            ],
-            "web": [
+            "external_results_metadata": [
                 {
                     "id": 1,
                     "knowledgebase_query": "contoso policy",
@@ -17,24 +13,14 @@
                     "title": "Contoso site",
                     "url": "https://contoso.example"
                 }
+            ],
+            "images": [],
+            "text": [
+                "Benefit_Options-2.pdf: There is a whistleblower policy."
             ]
         },
         "followup_questions": null,
         "thoughts": [
-            {
-                "description": [
-                    {
-                        "content": "What is the capital of France?",
-                        "role": "user"
-                    }
-                ],
-                "props": {
-                    "filter": null,
-                    "reranker_threshold": 0,
-                    "results_merge_strategy": "interleaved"
-                },
-                "title": "Send conversation to agentic retrieval"
-            },
             {
                 "description": [
                     {
@@ -63,6 +49,7 @@
                 ],
                 "props": {
                     "deployment": "gpt-4.1-mini",
+                    "filter": null,
                     "model": "gpt-4.1-mini",
                     "query_plan": [
                         {
@@ -92,7 +79,8 @@
                                 "search": "contoso policy"
                             }
                         }
-                    ]
+                    ],
+                    "reranker_threshold": 0
                 },
                 "title": "Agentic retrieval response"
             }

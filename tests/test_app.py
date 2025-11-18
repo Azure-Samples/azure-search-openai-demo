@@ -422,7 +422,7 @@ async def test_chat_stream_request_must_be_json(client):
 
 
 def test_json_encoder_drops_optional_fields():
-    data_points = app.DataPoints(text=["One"], citations=["a"], web=None, citation_activity_details=None)
+    data_points = app.DataPoints(text=["One"], citations=["a"], external_results_metadata=None, citation_activity_details=None)
     encoded = app.JSONEncoder().encode(data_points)
     assert "citation_activity_details" not in encoded
     assert '"text": ["One"]' in encoded

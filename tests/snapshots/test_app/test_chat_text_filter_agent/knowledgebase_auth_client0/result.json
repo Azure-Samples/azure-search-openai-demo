@@ -4,28 +4,14 @@
             "citations": [
                 "Benefit_Options-2.pdf"
             ],
+            "external_results_metadata": [],
             "images": [],
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
-            ],
-            "web": []
+            ]
         },
         "followup_questions": null,
         "thoughts": [
-            {
-                "description": [
-                    {
-                        "content": "What is the capital of France?",
-                        "role": "user"
-                    }
-                ],
-                "props": {
-                    "filter": "category ne 'excluded'",
-                    "reranker_threshold": 0,
-                    "results_merge_strategy": "interleaved"
-                },
-                "title": "Send conversation to agentic retrieval"
-            },
             {
                 "description": [
                     {
@@ -45,6 +31,7 @@
                 ],
                 "props": {
                     "deployment": "gpt-4.1-mini",
+                    "filter": "category ne 'excluded'",
                     "model": "gpt-4.1-mini",
                     "query_plan": [
                         {
@@ -64,7 +51,8 @@
                             },
                             "type": "searchIndex"
                         }
-                    ]
+                    ],
+                    "reranker_threshold": 0
                 },
                 "title": "Agentic retrieval response"
             },

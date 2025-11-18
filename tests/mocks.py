@@ -540,8 +540,8 @@ def mock_retrieval_response_with_sharepoint():
                 activity_source=2,
                 web_url="https://contoso.sharepoint.com/sites/hr/document",
                 source_data={
-                    "content": "SharePoint policy content snippet.",
-                    "title": "SharePoint HR Policy",
+                    "extracts": [{"text": "SharePoint content"}],
+                    "resourceMetadata": {"title": "SharePoint Title"},
                 },
                 reranker_score=3.2,
             ),

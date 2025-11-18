@@ -141,8 +141,8 @@ async def test_agentic_retrieval_web_results(chat_approach, monkeypatch):
         web_results=agentic_results.web_results,
     )
 
-    assert data_points.web is not None
-    assert data_points.web[0]["url"] == "https://contoso.example"
+    assert data_points.external_results_metadata is not None
+    assert data_points.external_results_metadata[0]["url"] == "https://contoso.example"
     assert "https://contoso.example" in data_points.citations
 
 
@@ -165,8 +165,9 @@ async def test_agentic_retrieval_sharepoint_results(chat_approach, monkeypatch):
     sharepoint_entry = agentic_results.sharepoint_results[0]
     assert sharepoint_entry.web_url == "https://contoso.sharepoint.com/sites/hr/document"
 
-    ordered_results = agentic_results.get_ordered_results()
-    assert any(result.get("type") == "sharepoint" for result in ordered_results)
+    # Verify SharePoint results are captured
+    assert sharepoint_entry.title == "SharePoint Title"
+    assert sharepoint_entry.content == "SharePoint content"
 
 
 @pytest.mark.asyncio
