@@ -520,6 +520,7 @@ class Approach(ABC):
                     reasoning_effort=rewrite_result.reasoning_effort,
                 )
             )
+            agentic_retrieval_input["intents"] = [KnowledgeRetrievalSemanticIntent(search=rewrite_result.query)]
         elif retrieval_reasoning_effort == "minimal":
             last_content = messages[-1]["content"]
             if not isinstance(last_content, str):

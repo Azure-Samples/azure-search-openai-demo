@@ -247,7 +247,7 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
                                                         <div className={styles.stepResults}>
                                                             {stepResults.map((result, idx) => {
                                                                 // Handle different result types
-                                                                if (result.type === "sharepoint" && result.web_url) {
+                                                                if (result.type === "remoteSharePoint" && result.web_url) {
                                                                     return (
                                                                         <div key={idx} className={styles.stepResult}>
                                                                             <a href={result.web_url} target="_blank" rel="noopener noreferrer">
