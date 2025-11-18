@@ -87,7 +87,7 @@
       "value": "${AZURE_OPENAI_REASONING_EFFORT=medium}"
     },
     "defaultRetrievalReasoningEffort": {
-      "value": "${AZURE_SEARCH_KNOWLEDGEBASE_NAME_RETRIEVAL_REASONING_EFFORT=low}"
+      "value": "${AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT=low}"
     },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"

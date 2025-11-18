@@ -33,7 +33,7 @@ This repository includes an optional feature that uses [agentic retrieval from A
    Override the default by setting the following environment variable:
 
    ```shell
-   azd env set AZURE_SEARCH_KNOWLEDGEBASE_NAME_RETRIEVAL_REASONING_EFFORT low
+   azd env set AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT low
    ```
 
    Use `minimal` for the lightest planning, `low` for additional query expansion, or `medium` for the most exhaustive (and most expensive) retrieval plans.
