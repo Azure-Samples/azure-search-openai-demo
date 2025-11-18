@@ -724,7 +724,7 @@ class Approach(ABC):
         doc_map = {d.ref_id: d.sourcepage for d in documents if d.ref_id and d.sourcepage}
         web_map = {str(w.id): w.url for w in web_results if w.id and w.url}
         sharepoint_entries = sharepoint_results or []
-        sharepoint_map = {str(sp.id): sp.web_url for sp in sharepoint_entries if sp.id and sp.web_url}
+        sharepoint_map = {str(sp.id): sp.web_url.split("/")[-1] for sp in sharepoint_entries if sp.id and sp.web_url}
 
         def _sub(match: re.Match) -> str:
             ref_id = match.group(1)
@@ -832,7 +832,9 @@ class Approach(ABC):
                 )
         if sharepoint_results:
             for sp in sharepoint_results:
-                citation = self.get_citation(sp.web_url)
+                # Extract filename from web_url for citation
+                filename = sp.web_url.split("/")[-1] if sp.web_url else ""
+                citation = self.get_citation(filename)
                 if citation and citation not in citations:
                     citations.append(citation)
                 register_activity(citation, str(sp.id) if sp.id is not None else None)
