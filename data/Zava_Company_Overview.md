@@ -43,6 +43,6 @@ Recognizing the hard work and dedication of our employees is at the core of our 
 
 ## Join Us!
 
-Zava is always on the lookout for talented individuals who share our passion for innovation. If you're ready to be part of a dynamic team shaping the future of technology, check out our [careers page](http://www.zava.com/careers) for exciting opportunities.
+Zava is always on the lookout for talented individuals who share our passion for innovation. If you're ready to be part of a dynamic team shaping the future of technology, check out our [careers page](http://www.example.org) for exciting opportunities.
 
-[Learn more about Zava!](http://www.zava.com)
+[Learn more about Zava!](http://www.example.org)
