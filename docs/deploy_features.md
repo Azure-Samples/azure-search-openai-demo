@@ -8,6 +8,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using different embedding models](#using-different-embedding-models)
 * [Enabling multimodal embeddings and answering](#enabling-multimodal-embeddings-and-answering)
 * [Enabling media description with Azure Content Understanding](#enabling-media-description-with-azure-content-understanding)
+* [Enabling cloud data ingestion](#enabling-cloud-data-ingestion)
 * [Enabling client-side chat history](#enabling-client-side-chat-history)
 * [Enabling persistent chat history with Azure Cosmos DB](#enabling-persistent-chat-history-with-azure-cosmos-db)
 * [Enabling language picker](#enabling-language-picker)
@@ -256,6 +257,12 @@ first [remove the existing documents](./data_ingestion.md#removing-documents) an
 ⚠️ This feature does not yet support DOCX, PPTX, or XLSX formats. If you have figures in those formats, they will be ignored.
 Convert them first to PDF or image formats to enable media description.
 
+## Enabling cloud data ingestion
+
+By default, this project runs a local script in order to ingest data. Once you move beyond the sample documents, you may want to enable [cloud ingestion](./data_ingestion.md#cloud-ingestion), which uses Azure AI Search indexers and custom Azure AI Search skills based off the same code used by the local ingestion. That approach scales better to larger amounts of data.
+
+Learn more in the [cloud ingestion guide](./data_ingestion.md#cloud-ingestion).
+
 ## Enabling client-side chat history
 
 [📺 Watch: (RAG Deep Dive series) Storing chat history](https://www.youtube.com/watch?v=1YiTFnnLVIA)
@@ -321,36 +328,6 @@ Alternatively you can use the browser's built-in [Speech Synthesis API](https://
 ```shell
 azd env set USE_SPEECH_OUTPUT_BROWSER true
 ```
-
-## Enabling cloud data ingestion
-
-By default, this project runs a local script in order to ingest data. Once you move beyond the sample documents, you may want cloud ingestion, which uses Azure AI Search indexers and custom Azure AI Search skills based off the same code used by the local ingestion. That approach scales better to larger amounts of data.
-
-To enable cloud ingestion:
-
-1. If you've previously deployed, delete the existing search index or create a new index using:
-
-    ```shell
-    azd env set AZURE_SEARCH_INDEX cloudindex
-    ```
-
-2. Run this command:
-
-    ```shell
-    azd env set USE_CLOUD_INGESTION true
-    ```
-
-3. Open `azure.yaml` and un-comment the document-extractor, figure-processor, and text-processor sections. Those are the Azure Functions apps that will be deployed and serve as Azure AI Search skills.
-
-4. Provision the new Azure Functions resources, deploy the function apps, and update the search indexer with:
-
-    ```shell
-    azd up
-    ```
-
-5. That will upload the documents in the `data/` folder to the Blob storage container, create the indexer and skillset, and run the indexer to ingest the data. You can monitor the indexer status from the portal.
-
-6. When you have new documents to ingest, you can upload documents to the Blob storage container and run the indexer from the Azure Portal to ingest new documents.
 
 ## Enabling authentication
 
