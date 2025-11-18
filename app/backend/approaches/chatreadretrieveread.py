@@ -482,7 +482,7 @@ class ChatReadRetrieveReadApproach(Approach):
             access_token=access_token,
             use_web_source=effective_web_source,
             use_sharepoint_source=effective_sharepoint_source,
-            retrieval_reasoning_effort=retrieval_reasoning_effort
+            retrieval_reasoning_effort=retrieval_reasoning_effort,
         )
 
         data_points = await self.get_sources_content(
