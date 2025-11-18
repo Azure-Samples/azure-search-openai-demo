@@ -63,23 +63,6 @@ def pop_citation_activity_details(result: dict[str, Any] | None):  # type: ignor
     return data_points.pop("citation_activity_details", None)
 
 
-def assert_index_citation_details(citation_details):
-    assert citation_details is not None
-    assert citation_details.get("Benefit_Options-2.pdf") == {
-        "activityId": "1",
-        "stepLabel": "Search index",
-        "stepNumber": 2,
-        "stepSource": "index",
-        "stepType": "searchIndex",
-    }
-    for details in citation_details.values():
-        assert set(details) >= {"activityId", "stepLabel", "stepNumber", "stepSource", "stepType"}
-
-
-def assert_no_citation_activity_details(result):
-    assert pop_citation_activity_details(result) is None
-
-
 @pytest.mark.asyncio
 async def test_missing_env_vars():
     with mock.patch.dict(os.environ, clear=True):
@@ -225,14 +208,12 @@ async def test_ask_rtr_text_agent(knowledgebase_client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "text", "use_agentic_retrieval": True, "use_web_source": False},
+                "overrides": {"retrieval_mode": "text", "use_agentic_knowledgebase": True, "use_web_source": False},
             },
         },
     )
     assert response.status_code == 200
     result = await response.get_json()
-    citation_details = pop_citation_activity_details(result)
-    assert_index_citation_details(citation_details)
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -269,7 +250,7 @@ async def test_ask_rtr_text_agent_filter(knowledgebase_auth_client, snapshot):
                 "overrides": {
                     "retrieval_mode": "text",
                     "exclude_category": "excluded",
-                    "use_agentic_retrieval": True,
+                    "use_agentic_knowledgebase": True,
                 },
             },
         },
@@ -279,8 +260,6 @@ async def test_ask_rtr_text_agent_filter(knowledgebase_auth_client, snapshot):
     assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].access_token == "MockToken"
 
     result = await response.get_json()
-    citation_details = pop_citation_activity_details(result)
-    assert_index_citation_details(citation_details)
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -623,15 +602,13 @@ async def test_chat_text_agent(knowledgebase_client, snapshot):
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"use_agentic_retrieval": True},
+                "overrides": {"use_agentic_knowledgebase": True},
             },
         },
     )
     assert response.status_code == 200
     result = await response.get_json()
     assert result["context"]["thoughts"][0]["props"]["reranker_threshold"] == 0
-    citation_details = pop_citation_activity_details(result)
-    assert_index_citation_details(citation_details)
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
@@ -666,7 +643,7 @@ async def test_chat_text_filter_agent(knowledgebase_auth_client, snapshot):
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_agentic_retrieval": True,
+                    "use_agentic_knowledgebase": True,
                     "exclude_category": "excluded",
                 },
             },
@@ -676,8 +653,6 @@ async def test_chat_text_filter_agent(knowledgebase_auth_client, snapshot):
     assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].filter == "category ne 'excluded'"
     assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].access_token == "MockToken"
     result = await response.get_json()
-    citation_details = pop_citation_activity_details(result)
-    assert_index_citation_details(citation_details)
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 

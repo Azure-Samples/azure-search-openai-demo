@@ -338,8 +338,8 @@
     "useAiProject": {
       "value": "${USE_AI_PROJECT=false}"
     },
-    "useAgenticRetrieval": {
-      "value": "${USE_AGENTIC_RETRIEVAL=false}"
+    "useAgenticKnowledgeBase": {
+      "value": "${USE_AGENTIC_KNOWLEDGEBASE=false}"
     },
     "ragSearchTextEmbeddings": {
       "value": "${RAG_SEARCH_TEXT_EMBEDDINGS=true}"

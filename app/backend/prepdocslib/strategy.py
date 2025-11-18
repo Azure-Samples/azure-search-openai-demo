@@ -21,7 +21,7 @@ class SearchInfo:
         endpoint: str,
         credential: AsyncTokenCredential | AzureKeyCredential,
         index_name: str,
-        use_agentic_retrieval: Optional[bool] = False,
+        use_agentic_knowledgebase: Optional[bool] = False,
         knowledgebase_name: Optional[str] = None,
         azure_openai_knowledgebase_model: Optional[str] = None,
         azure_openai_knowledgebase_deployment: Optional[str] = None,
@@ -32,7 +32,7 @@ class SearchInfo:
         self.credential = credential
         self.index_name = index_name
         self.knowledgebase_name = knowledgebase_name
-        self.use_agentic_retrieval = use_agentic_retrieval
+        self.use_agentic_knowledgebase = use_agentic_knowledgebase
         self.azure_openai_knowledgebase_model = azure_openai_knowledgebase_model
         self.azure_openai_knowledgebase_deployment = azure_openai_knowledgebase_deployment
         self.azure_openai_endpoint = azure_openai_endpoint

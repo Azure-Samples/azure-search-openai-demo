@@ -9,7 +9,7 @@ This repository includes an optional feature that uses [agentic retrieval from A
    Set the azd environment variable to enable the agentic retrieval feature:
 
    ```shell
-   azd env set USE_AGENTIC_RETRIEVAL true
+   azd env set USE_AGENTIC_KNOWLEDGEBASE true
    ```
 
 2. **(Optional) Customize the agentic retrieval model**

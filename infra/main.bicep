@@ -84,7 +84,7 @@ param searchServiceLocation string = '' // Set in main.parameters.json
 @allowed(['free', 'basic', 'standard', 'standard2', 'standard3', 'storage_optimized_l1', 'storage_optimized_l2'])
 param searchServiceSkuName string // Set in main.parameters.json
 param searchIndexName string // Set in main.parameters.json
-param knowledgeBaseName string = useAgenticRetrieval ? '${searchIndexName}-agent-upgrade' : ''
+param knowledgeBaseName string = useAgenticKnowledgeBase ? '${searchIndexName}-agent-upgrade' : ''
 param searchQueryLanguage string // Set in main.parameters.json
 param searchQuerySpeller string // Set in main.parameters.json
 param searchServiceSemanticRankerLevel string // Set in main.parameters.json
@@ -102,7 +102,7 @@ param storageSkuName string // Set in main.parameters.json
 param defaultReasoningEffort string // Set in main.parameters.json
 @description('Controls the default retrieval reasoning effort for agentic retrieval (minimal, low, or medium).')
 param defaultRetrievalReasoningEffort string = 'minimal'
-param useAgenticRetrieval bool // Set in main.parameters.json
+param useAgenticKnowledgeBase bool // Set in main.parameters.json
 
 param userStorageAccountName string = ''
 param userStorageContainerName string = 'user-content'
@@ -488,7 +488,7 @@ var appEnvVariables = {
   USE_SPEECH_INPUT_BROWSER: useSpeechInputBrowser
   USE_SPEECH_OUTPUT_BROWSER: useSpeechOutputBrowser
   USE_SPEECH_OUTPUT_AZURE: useSpeechOutputAzure
-  USE_AGENTIC_RETRIEVAL: useAgenticRetrieval
+  USE_AGENTIC_KNOWLEDGEBASE: useAgenticKnowledgeBase
   // Chat history settings
   USE_CHAT_HISTORY_BROWSER: useChatHistoryBrowser
   USE_CHAT_HISTORY_COSMOS: useChatHistoryCosmos
@@ -502,7 +502,7 @@ var appEnvVariables = {
   AZURE_OPENAI_EMB_DIMENSIONS: embedding.dimensions
   AZURE_OPENAI_CHATGPT_MODEL: chatGpt.modelName
   AZURE_OPENAI_REASONING_EFFORT: defaultReasoningEffort
-  AGENTIC_RETRIEVAL_REASONING_EFFORT: defaultRetrievalReasoningEffort
+  AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT: defaultRetrievalReasoningEffort
   // Specific to Azure OpenAI
   AZURE_OPENAI_SERVICE: isAzureOpenAiHost && deployAzureOpenAi ? openAi.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
@@ -734,7 +734,7 @@ var openAiDeployments = concat(
         }
       }
     ] : [],
-  useAgenticRetrieval
+  useAgenticKnowledgeBase
     ? [
         {
           name: knowledgeBase.deploymentName
@@ -1451,8 +1451,8 @@ output AZURE_OPENAI_EVAL_DEPLOYMENT string = isAzureOpenAiHost && useEval ? eval
 output AZURE_OPENAI_EVAL_DEPLOYMENT_VERSION string = isAzureOpenAiHost && useEval ? eval.deploymentVersion : ''
 output AZURE_OPENAI_EVAL_DEPLOYMENT_SKU string = isAzureOpenAiHost && useEval ? eval.deploymentSkuName : ''
 output AZURE_OPENAI_EVAL_MODEL string = isAzureOpenAiHost && useEval ? eval.modelName : ''
-output AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT string = isAzureOpenAiHost && useAgenticRetrieval ? knowledgeBase.deploymentName : ''
-output AZURE_OPENAI_KNOWLEDGEBASE_MODEL string = isAzureOpenAiHost && useAgenticRetrieval ? knowledgeBase.modelName : ''
+output AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT string = isAzureOpenAiHost && useAgenticKnowledgeBase ? knowledgeBase.deploymentName : ''
+output AZURE_OPENAI_KNOWLEDGEBASE_MODEL string = isAzureOpenAiHost && useAgenticKnowledgeBase ? knowledgeBase.modelName : ''
 output AZURE_OPENAI_REASONING_EFFORT string  = defaultReasoningEffort
 output AZURE_SEARCH_KNOWLEDGEBASE_NAME_RETRIEVAL_REASONING_EFFORT string = defaultRetrievalReasoningEffort
 output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech.outputs.resourceId : ''

@@ -3,7 +3,7 @@ import json
 import re
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from typing import Any, Optional, TypedDict, cast
 
 from azure.search.documents.aio import SearchClient
@@ -48,13 +48,14 @@ from approaches.promptmanager import PromptManager
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 from prepdocslib.embeddings import ImageEmbeddings
 
-ACTIVITY_TYPE_LABELS: dict[str, str] = {
-    "modelQueryPlanning": "Query planning",
-    "searchIndex": "Search index",
-    "web": "Web search",
-    "agenticReasoning": "Agentic reasoning",
-    "modelAnswerSynthesis": "Answer synthesis",
-}
+
+@dataclass
+class ActivityDetail:
+    id: int
+    number: int
+    type: str
+    source: str
+    query: str
 
 
 @dataclass
@@ -70,11 +71,12 @@ class Document:
     captions: Optional[list[QueryCaptionResult]] = None
     score: Optional[float] = None
     reranker_score: Optional[float] = None
-    knowledgebase_query: Optional[str] = None
+    activity: Optional[ActivityDetail] = None
     images: Optional[list[dict[str, Any]]] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         result_dict = {
+            "type": "searchIndex",
             "id": self.id,
             "content": self.content,
             "category": self.category,
@@ -96,7 +98,7 @@ class Document:
             ),
             "score": self.score,
             "reranker_score": self.reranker_score,
-            "knowledgebase_query": self.knowledgebase_query,
+            "activity": asdict(self.activity) if self.activity else None,
             "images": self.images,
         }
         return result_dict
@@ -108,7 +110,7 @@ class WebResult:
     title: Optional[str] = None
     url: Optional[str] = None
     snippet: Optional[str] = None
-    knowledgebase_query: Optional[str] = None
+    activity: Optional[ActivityDetail] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         return {
@@ -118,7 +120,7 @@ class WebResult:
             "title": self.title,
             "url": self.url,
             "snippet": self.snippet,
-            "knowledgebase_query": self.knowledgebase_query,
+            "activity": asdict(self.activity) if self.activity else None,
         }
 
 
@@ -129,18 +131,18 @@ class SharePointResult:
     content: Optional[str] = None
     title: Optional[str] = None
     reranker_score: Optional[float] = None
-    knowledgebase_query: Optional[str] = None
+    activity: Optional[ActivityDetail] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
         return {
-            "type": "sharepoint",
+            "type": "remoteSharePoint",
             "id": self.id,
             "ref_id": str(self.id),
             "web_url": self.web_url,
             "content": self.content,
             "title": self.title,
             "reranker_score": self.reranker_score,
-            "knowledgebase_query": self.knowledgebase_query,
+            "activity": asdict(self.activity) if self.activity else None,
         }
 
 
@@ -173,7 +175,7 @@ class AgenticRetrievalResults:
     sharepoint_results: list[SharePointResult] = field(default_factory=list)
     answer: Optional[str] = None  # Synthesized answer when web knowledge source is used
     rewrite_result: Optional[RewriteQueryResult] = None
-    citation_details_by_ref: Optional[dict[str, dict[str, Any]]] = None
+    activity_details_by_id: Optional[dict[int, ActivityDetail]] = None
     thoughts: list[ThoughtStep] = field(default_factory=list)
 
 
@@ -275,10 +277,6 @@ class Approach(ABC):
         self.image_embeddings_client = image_embeddings_client
         self.global_blob_manager = global_blob_manager
         self.user_blob_manager = user_blob_manager
-        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
-        self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
-        self.knowledgebase_model: Optional[str] = None
-        self.knowledgebase_deployment: Optional[str] = None
 
     def build_filter(self, overrides: dict[str, Any]) -> Optional[str]:
         include_category = overrides.get("include_category")
@@ -438,10 +436,8 @@ class Approach(ABC):
         messages: list[ChatCompletionMessageParam],
         knowledgebase_client: KnowledgeBaseRetrievalClient,
         search_index_name: str,
-        top: Optional[int] = None,
         filter_add_on: Optional[str] = None,
         minimum_reranker_score: Optional[float] = None,
-        results_merge_strategy: Optional[str] = None,
         access_token: Optional[str] = None,
         use_web_source: bool = False,
         use_sharepoint_source: bool = False,
@@ -562,69 +558,41 @@ class Approach(ABC):
 
         # Map activity id -> agent's internal search query and citation
         activities = response.activity or []
-        activity_mapping: dict[Any, Optional[str]] = {}
-        activity_details_by_id: dict[str, dict[str, Any]] = {}
-
+        activity_details_by_id: dict[int, ActivityDetail] = {}
+        
         for index, activity in enumerate(activities):
+            search_query = None
             if isinstance(activity, KnowledgeBaseSearchIndexActivityRecord):
                 if activity.search_index_arguments:
-                    activity_mapping[activity.id] = activity.search_index_arguments.search
+                    search_query = activity.search_index_arguments.search
             elif isinstance(activity, KnowledgeBaseWebActivityRecord):
                 if activity.web_arguments:
-                    activity_mapping[activity.id] = activity.web_arguments.search
+                    search_query = activity.web_arguments.search
             elif isinstance(activity, KnowledgeBaseRemoteSharePointActivityRecord):
                 if activity.remote_share_point_arguments:
-                    activity_mapping[activity.id] = activity.remote_share_point_arguments.search
+                    search_query = activity.remote_share_point_arguments.search
 
-            activity_dict = activity.as_dict()
-            activity_id = activity_dict.get("id")
-            if activity_id is None:
-                continue
-            activity_id_str = str(activity_id)
-            activity_type_raw = activity_dict.get("type")
-            activity_type = str(activity_type_raw) if activity_type_raw is not None else ""
-            source_name = activity_dict.get("knowledge_source_name")
-            source = activity_dict.get("knowledge_source")
-            step_source = str(source_name) if source_name is not None else (str(source) if source is not None else None)
-            activity_details_by_id[activity_id_str] = {
-                "activityId": activity_id_str,
-                "stepNumber": index + 1,
-                "stepType": activity_type,
-                "stepLabel": ACTIVITY_TYPE_LABELS.get(activity_type, activity_type),
-                "stepSource": step_source,
-            }
+            activity_details_by_id[activity.id] = ActivityDetail(
+                id=activity.id,
+                number=index + 1,
+                type=activity.type or "",
+                source=getattr(activity, "knowledge_source_name", "") or "", # Not all activity types have knowledge_source_name
+                query=search_query or "",
+            )
 
         # Extract references
         references = response.references or []
 
-        activity_citation_details: dict[str, dict[str, Any]] = {}
-        for ref in references:
-            ref_id = getattr(ref, "id", None)
-            if ref_id is None:
-                continue
-            ref_key = str(ref_id)
-            activity_source = getattr(ref, "activity_source", None)
-            if activity_source is None:
-                continue
-            activity_id_str = str(activity_source)
-            activity_detail = activity_details_by_id.get(activity_id_str, {})
-            detail_payload = dict(activity_detail)
-            if activity_id_str:
-                detail_payload.setdefault("activityId", activity_id_str)
-            if detail_payload:
-                activity_citation_details[ref_key] = detail_payload
-
-        refs = [r for r in references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")]
-        documents: list[Document] = []
-        doc_to_ref_id: dict[str, int] = {}
+        document_refs = [r for r in references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")]
+        document_results: list[Document] = []
         # Create documents from reference source data
-        for ref in refs:
+        for ref in document_refs:
             if ref.source_data and ref.doc_key:
                 # Note that ref.doc_key is the same as source_data["id"]
-                documents.append(
+                document_results.append(
                     Document(
                         id=ref.doc_key,
-                        ref_id=str(getattr(ref, "id", "")),
+                        ref_id=ref.id,
                         content=ref.source_data.get("content"),
                         category=ref.source_data.get("category"),
                         sourcepage=ref.source_data.get("sourcepage"),
@@ -633,12 +601,9 @@ class Approach(ABC):
                         groups=ref.source_data.get("groups"),
                         reranker_score=getattr(ref, "reranker_score", None),
                         images=ref.source_data.get("images"),
-                        knowledgebase_query=activity_mapping.get(ref.activity_source),
+                        activity=activity_details_by_id[ref.activity_source]
                     )
                 )
-                doc_to_ref_id[ref.doc_key] = int(ref.id)
-                if top and len(documents) >= top:
-                    break
 
         # We need to handle KnowledgeBaseWebReference separately if web knowledge source is used
         web_refs = [r for r in references if isinstance(r, KnowledgeBaseWebReference)]
@@ -648,7 +613,7 @@ class Approach(ABC):
                 id=ref.id,
                 title=ref.title,
                 url=ref.url,
-                knowledgebase_query=activity_mapping.get(ref.activity_source),
+                activity=activity_details_by_id[ref.activity_source]
             )
             web_results.append(web_result)
 
@@ -673,15 +638,9 @@ class Approach(ABC):
                 content=content,
                 title=title,
                 reranker_score=getattr(ref, "reranker_score", None),
-                knowledgebase_query=activity_mapping.get(ref.activity_source),
+                activity=activity_details_by_id[ref.activity_source]
             )
             sharepoint_results.append(sharepoint_result)
-
-        if results_merge_strategy == "interleaved":
-            documents = sorted(
-                documents,
-                key=lambda d: int(doc_to_ref_id.get(d.id, 0)) if d.id and doc_to_ref_id.get(d.id) else 0,
-            )
 
         # Extract answer from response if web knowledge source provided one
         answer: Optional[str] = None
@@ -696,12 +655,12 @@ class Approach(ABC):
                 raw_answer: Optional[str] = message_content.text
                 # Replace all ref_id tokens (web -> URL, documents -> sourcepage, SharePoint -> web_url)
                 if raw_answer:
-                    answer = self.replace_all_ref_ids(raw_answer, documents, web_results, sharepoint_results)
+                    answer = self.replace_all_ref_ids(raw_answer, document_results, web_results, sharepoint_results)
 
         thoughts.append(
             ThoughtStep(
                 "Agentic retrieval response",
-                [doc.serialize_for_results() for doc in documents + web_results + sharepoint_results],
+                [result.serialize_for_results() for result in document_results + web_results + sharepoint_results],
                 {
                     "query_plan": (
                         [activity.as_dict() for activity in response.activity] if response.activity else None
@@ -716,12 +675,12 @@ class Approach(ABC):
 
         return AgenticRetrievalResults(
             response=response,
-            documents=documents,
+            documents=document_results,
             web_results=web_results,
             sharepoint_results=sharepoint_results,
             answer=answer,
             rewrite_result=rewrite_result,
-            citation_details_by_ref=activity_citation_details or None,
+            activity_details_by_id=activity_details_by_id,
             thoughts=thoughts,
         )
 
@@ -763,7 +722,6 @@ class Approach(ABC):
         user_oid: Optional[str] = None,
         web_results: Optional[list[WebResult]] = None,
         sharepoint_results: Optional[list[SharePointResult]] = None,
-        citation_details_by_ref: Optional[dict[str, dict[str, Any]]] = None,
     ) -> DataPoints:
         """Extract text/image sources & citations from documents.
 
@@ -788,28 +746,17 @@ class Approach(ABC):
         text_sources = []
         image_sources = []
         seen_urls = set()
-        web_sources: list[dict[str, Any]] = []
+        external_results_metadata: list[dict[str, Any]] = []
         citation_activity_details: dict[str, dict[str, Any]] = {}
-
-        def register_activity(citation_value: Optional[str], ref_key: Optional[str]) -> None:
-            if not citation_details_by_ref:
-                return
-            if ref_key is None:
-                return
-            if not citation_value or citation_value in citation_activity_details:
-                return
-            detail_payload = citation_details_by_ref.get(str(ref_key))
-            if not detail_payload:
-                return
-            # Filter out None values so the payload stays compact
-            citation_activity_details[citation_value] = {k: v for k, v in detail_payload.items() if v is not None}
 
         for doc in results:
             # Get the citation for the source page
             citation = self.get_citation(doc.sourcepage)
             if citation not in citations:
                 citations.append(citation)
-            register_activity(citation, doc.ref_id)
+                # Add activity details if available
+                if doc.activity:
+                    citation_activity_details[citation] = asdict(doc.activity)
 
             # If semantic captions are used, extract captions; otherwise, use content
             if include_text_sources:
@@ -830,20 +777,21 @@ class Approach(ABC):
                         image_sources.append(url)
                     image_citation = self.get_image_citation(doc.sourcepage or "", img["url"])
                     citations.append(image_citation)
-                    register_activity(image_citation, doc.ref_id)
         if web_results:
             for web in web_results:
                 citation = self.get_citation(web.url)
                 if citation and citation not in citations:
                     citations.append(citation)
-                register_activity(citation, str(web.id) if web.id is not None else None)
-                web_sources.append(
+                    # Add activity details if available
+                    if web.activity:
+                        citation_activity_details[citation] = asdict(web.activity)
+                external_results_metadata.append(
                     {
                         "id": web.id,
                         "title": web.title,
                         "url": web.url,
                         "snippet": clean_source(web.snippet or ""),
-                        "knowledgebase_query": web.knowledgebase_query,
+                        "activity": asdict(web.activity) if web.activity else None,
                     }
                 )
         if sharepoint_results:
@@ -853,24 +801,27 @@ class Approach(ABC):
                 citation = self.get_citation(filename)
                 if citation and citation not in citations:
                     citations.append(citation)
-                register_activity(citation, str(sp.id) if sp.id is not None else None)
+                    # Add activity details if available
+                    if sp.activity:
+                        citation_activity_details[citation] = asdict(sp.activity)
                 if include_text_sources and sp.content:
                     text_sources.append(f"{citation}: {clean_source(sp.content)}")
-                web_sources.append(
+                external_results_metadata.append(
                     {
                         "id": sp.id,
                         "title": sp.title or "",
                         "url": sp.web_url or "",
                         "snippet": clean_source(sp.content or ""),
-                        "knowledgebase_query": sp.knowledgebase_query,
+                        "activity": asdict(sp.activity) if sp.activity else None,
                     }
                 )
+
         return DataPoints(
             text=text_sources,
             images=image_sources,
             citations=citations,
-            external_results_metadata=web_sources,
-            citation_activity_details=citation_activity_details or None,
+            external_results_metadata=external_results_metadata,
+            citation_activity_details=citation_activity_details if citation_activity_details else None
         )
 
     def get_citation(self, sourcepage: Optional[str]):

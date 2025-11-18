@@ -30,8 +30,7 @@ export function Component(): JSX.Element {
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
-    const [resultsMergeStrategy, setResultsMergeStrategy] = useState<string>("interleaved");
-    const [retrievalReasoningEffort, setRetrievalReasoningEffort] = useState<string>("minimal");
+    const [agenticReasoningEffort, setRetrievalReasoningEffort] = useState<string>("minimal");
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
@@ -61,7 +60,7 @@ export function Component(): JSX.Element {
     const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
     const [sharePointSourceSupported, setSharePointSourceSupported] = useState<boolean>(false);
     const [sharePointSourceEnabled, setSharePointSourceEnabled] = useState<boolean>(false);
-    const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
+    const [useAgenticKnowledgeBase, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
@@ -158,8 +157,7 @@ export function Component(): JSX.Element {
                         include_category: includeCategory.length === 0 ? undefined : includeCategory,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
-                        results_merge_strategy: resultsMergeStrategy,
-                        ...(useAgenticRetrieval ? { retrieval_reasoning_effort: retrievalReasoningEffort } : {}),
+                        ...(useAgenticKnowledgeBase ? { retrieval_reasoning_effort: agenticReasoningEffort } : {}),
                         temperature: temperature,
                         minimum_reranker_score: minimumRerankerScore,
                         minimum_search_score: minimumSearchScore,
@@ -173,7 +171,7 @@ export function Component(): JSX.Element {
                         send_text_sources: sendTextSources,
                         send_image_sources: sendImageSources,
                         language: i18n.language,
-                        use_agentic_retrieval: useAgenticRetrieval,
+                        use_agentic_knowledgebase: useAgenticKnowledgeBase,
                         use_web_source: webSourceSupported ? webSourceEnabled : false,
                         use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false,
                         ...(seed !== null ? { seed: seed } : {})
@@ -218,10 +216,7 @@ export function Component(): JSX.Element {
             case "retrieveCount":
                 setRetrieveCount(value);
                 break;
-            case "resultsMergeStrategy":
-                setResultsMergeStrategy(value);
-                break;
-            case "retrievalReasoningEffort":
+            case "agenticReasoningEffort":
                 setRetrievalReasoningEffort(value);
                 if (value === "minimal" && webSourceEnabled) {
                     setWebSourceEnabled(false);
@@ -263,7 +258,7 @@ export function Component(): JSX.Element {
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
-            case "useAgenticRetrieval":
+            case "useAgenticKnowledgeBase":
                 setUseAgenticRetrieval(value);
                 break;
             case "useWebSource":
@@ -386,8 +381,7 @@ export function Component(): JSX.Element {
                     promptTemplateSuffix={promptTemplateSuffix}
                     temperature={temperature}
                     retrieveCount={retrieveCount}
-                    resultsMergeStrategy={resultsMergeStrategy}
-                    retrievalReasoningEffort={retrievalReasoningEffort}
+                    agenticReasoningEffort={agenticReasoningEffort}
                     seed={seed}
                     minimumSearchScore={minimumSearchScore}
                     minimumRerankerScore={minimumRerankerScore}
@@ -411,7 +405,7 @@ export function Component(): JSX.Element {
                     loggedIn={loggedIn}
                     requireAccessControl={requireAccessControl}
                     showAgenticRetrievalOption={showAgenticRetrievalOption}
-                    useAgenticRetrieval={useAgenticRetrieval}
+                    useAgenticKnowledgeBase={useAgenticKnowledgeBase}
                     useWebSource={webSourceEnabled}
                     showWebSourceOption={webSourceSupported}
                     useSharePointSource={sharePointSourceEnabled}

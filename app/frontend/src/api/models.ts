@@ -14,7 +14,6 @@ export type ChatAppRequestOverrides = {
     exclude_category?: string;
     seed?: number;
     top?: number;
-    results_merge_strategy?: string;
     retrieval_reasoning_effort?: string;
     temperature?: number;
     minimum_search_score?: number;
@@ -28,7 +27,7 @@ export type ChatAppRequestOverrides = {
     search_text_embeddings: boolean;
     search_image_embeddings: boolean;
     language: string;
-    use_agentic_retrieval: boolean;
+    use_agentic_knowledgebase: boolean;
     use_web_source?: boolean;
     use_sharepoint_source?: boolean;
 };
@@ -44,20 +43,29 @@ export type Thoughts = {
     props?: { [key: string]: any };
 };
 
+export type ActivityDetail = {
+    id?: number;
+    number?: number;
+    type?: string;
+    label?: string;
+    source?: string;
+    query?: string;
+};
+
 export type ExternalResultMetadata = {
     id?: string;
     title?: string;
     url?: string;
     snippet?: string;
-    knowledgebase_query?: string;
+    activity?: ActivityDetail;
 };
 
 export type CitationActivityDetail = {
-    activityId?: string;
-    stepNumber?: number;
-    stepLabel?: string;
-    stepType?: string;
-    stepSource?: string;
+    id?: string;
+    number?: number;
+    type?: string;
+    source?: string;
+    query?: string;
 };
 
 export type DataPoints = {

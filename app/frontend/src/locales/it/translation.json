@@ -83,13 +83,8 @@
         "minimumSearchScore": "Punteggio minimo di ricerca",
         "minimumRerankerScore": "Punteggio minimo del reranker semantico",
         "retrieveCount": "Recupera questo numero di risultati di ricerca:",
-        "resultsMergeStrategy": "Strategia di unione dei risultati",
-        "resultsMergeStrategyOptions": {
-            "interleaved": "Intercalata",
-            "descending": "Discendente"
-        },
-        "retrievalReasoningEffort": "Sforzo di ragionamento per il recupero",
-        "retrievalReasoningEffortOptions": {
+        "agenticReasoningEffort": "Sforzo di ragionamento per il recupero",
+        "agenticReasoningEffortOptions": {
             "minimal": "Minimo",
             "low": "Basso",
             "medium": "Medio"
@@ -110,7 +105,7 @@
             "high": "Alto"
         },
         "useSuggestFollowupQuestions": "Suggerisci domande di follow-up",
-        "useAgenticRetrieval": "Usa il recupero agentico",
+        "useAgenticKnowledgeBase": "Usa il recupero agentico",
         "useWebSource": "Includi ricerca web",
         "useSharePointSource": "Includi la sorgente SharePoint",
         "llmInputs": "Input per LLM",
@@ -152,9 +147,7 @@
             "Imposta un punteggio minimo per i risultati di ricerca provenienti dal reranker semantico. Il punteggio varia sempre tra 0 e 4. Più alto è il punteggio, più il risultato è semanticamente rilevante rispetto alla domanda.",
         "retrieveNumber":
             "Imposta il numero di risultati di ricerca da recuperare da Azure AI Search. Più risultati possono aumentare la probabilità di trovare la risposta giusta, ma possono portare il modello a 'perdersi nel mezzo'.",
-        "resultsMergeStrategy":
-            "Imposta la strategia per unire i risultati da più sottoquery. 'Intercalata' seleziona i migliori risultati da ciascuna sottoquery a turno, mentre 'Discendente' ordina tutti i risultati per punteggio del reranker.",
-        "retrievalReasoningEffort":
+        "agenticReasoningEffort":
             "Controlla quanto ragionamento applica l'agente durante la creazione di piani multi-query. Uno sforzo maggiore può migliorare il richiamo ma aumenta token e latenza.",
         "includeCategory":
             "Specifica una categoria da includere nei risultati di ricerca. Non ci sono categorie utilizzate nel set di dati predefinito.",
@@ -180,7 +173,7 @@
         "streamChat": "Trasmette in streaming la risposta all'interfaccia utente della chat man mano che viene generata.",
         "useOidSecurityFilter":"Filtra i risultati di ricerca in base all'OID dell'utente autenticato.",
         "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato.",
-        "useAgenticRetrieval": "Usa l'agentic retrieval da Azure AI Search per la pianificazione multi-query. Usa sempre il ranking semantico.",
+        "useAgenticKnowledgeBase": "Usa l'agentic retrieval da Azure AI Search per la pianificazione multi-query. Usa sempre il ranking semantico.",
         "useWebSource": "Arricchisci i risultati con la ricerca web in aggiunta al tuo set di dati indicizzati.",
         "useSharePointSource": "Arricchisci il recupero con contenuto SharePoint insieme al tuo set di dati indicizzati."
     },

@@ -23,7 +23,7 @@
             "use_gpt4v": false,
             "gpt4v_input": "textAndImages",
             "language": "en",
-            "use_agentic_retrieval": false,
+            "use_agentic_knowledgebase": false,
             "seed": 1
         }
     },

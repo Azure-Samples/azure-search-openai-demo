@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { ChatAppResponse, getCitationFilePath } from "../../api";
-import { getStepLabel, QueryPlanStep } from "../AnalysisPanel/agentPlanUtils";
+import { QueryPlanStep, getStepLabel, activityTypeLabels } from "../AnalysisPanel/agentPlanUtils";
 
 export type CitationDetail = {
     reference: string;
@@ -134,16 +134,20 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
         }
 
         const backendDetail = citationActivityDetails?.[part];
-        const activityId = backendDetail?.activityId;
+        const activityId = backendDetail?.id;
         const stepMeta = activityId ? activitySteps[String(activityId)] : undefined;
+
+        // Get label from backend type using our mapping, or fallback to stepMeta
+        const activityLabel = backendDetail?.type ? activityTypeLabels[backendDetail.type] || backendDetail.type : undefined;
+
         const detail: CitationDetail = {
             reference: resolvedReference,
             index: citationList.length + 1,
             isWeb: isWebCitation(resolvedReference),
             activityId: activityId !== undefined ? String(activityId) : undefined,
-            stepNumber: backendDetail?.stepNumber ?? stepMeta?.stepNumber,
-            stepLabel: backendDetail?.stepLabel ?? stepMeta?.stepLabel,
-            stepSource: backendDetail?.stepSource
+            stepNumber: backendDetail?.number ?? stepMeta?.stepNumber,
+            stepLabel: activityLabel ?? stepMeta?.stepLabel,
+            stepSource: backendDetail?.source
         };
 
         citationMap.set(resolvedReference, detail);

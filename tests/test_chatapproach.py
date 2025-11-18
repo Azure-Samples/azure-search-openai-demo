@@ -7,7 +7,7 @@ from azure.search.documents.models import VectorizedQuery
 from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion
 
-from approaches.approach import DataPoints, Document, ExtraInfo, SharePointResult, ThoughtStep, WebResult
+from approaches.approach import DataPoints, Document, ExtraInfo, SharePointResult, ThoughtStep, WebResult, ActivityDetail
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from prepdocslib.embeddings import ImageEmbeddings
@@ -427,6 +427,7 @@ def test_replace_all_ref_ids_sharepoint_priority(chat_approach):
 
 @pytest.mark.asyncio
 async def test_get_sources_content_includes_sharepoint(chat_approach):
+    
     documents = [
         Document(id="doc1", ref_id="1", sourcepage="page1.pdf", content="Doc content"),
     ]
@@ -436,10 +437,9 @@ async def test_get_sources_content_includes_sharepoint(chat_approach):
             web_url="https://contoso.sharepoint.com/doc",
             content="SharePoint body",
             title="SharePoint Title",
-            knowledgebase_query="sp query",
+            activity=ActivityDetail(id=3, number=1, type="remoteSharePoint", source="sharepoint", query="sp query"),
         )
     ]
-    activity_details = {"10": {"activityId": "3", "stepLabel": "SharePoint", "stepType": "remoteSharePoint"}}
 
     data_points = await chat_approach.get_sources_content(
         documents,
@@ -447,14 +447,11 @@ async def test_get_sources_content_includes_sharepoint(chat_approach):
         include_text_sources=True,
         download_image_sources=False,
         sharepoint_results=sharepoint_results,
-        citation_details_by_ref=activity_details,
     )
 
     # SharePoint extracts filename from URL (last part after /)
     assert "doc" in data_points.citations
     assert data_points.external_results_metadata and data_points.external_results_metadata[0]["title"] == "SharePoint Title"
-    assert data_points.citation_activity_details is not None
-    assert data_points.citation_activity_details["doc"]["activityId"] == "3"
 
 
 def test_select_knowledgebase_client_priorities(chat_approach):
@@ -539,47 +536,11 @@ async def test_run_with_streaming_handles_non_stream_response(chat_approach, mon
 
 
 @pytest.mark.asyncio
-async def test_run_until_final_call_rejects_low_effort_streaming(chat_approach):
-    from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
-
-    # Configure a knowledgebase client so we can test the intended validation
-    chat_approach.knowledgebase_client = KnowledgeBaseRetrievalClient(
-        endpoint="", knowledge_base_name="", credential=AzureKeyCredential("")
-    )
-    with pytest.raises(Exception, match="retrieval reasoning effort is set to low or medium"):
-        await chat_approach.run_until_final_call(
-            messages=[{"role": "user", "content": "Hello"}],
-            overrides={"use_agentic_retrieval": True, "retrieval_reasoning_effort": "low"},
-            auth_claims={},
-            should_stream=True,
-        )
-
-
-@pytest.mark.asyncio
-async def test_run_until_final_call_rejects_medium_effort_streaming(chat_approach):
-    from azure.core.credentials import AzureKeyCredential
-    from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
-
-    # Configure a knowledgebase client so we can test the intended validation
-    chat_approach.knowledgebase_client = KnowledgeBaseRetrievalClient(
-        endpoint="", knowledge_base_name="", credential=AzureKeyCredential("")
-    )
-    with pytest.raises(Exception, match="retrieval reasoning effort is set to low or medium"):
-        await chat_approach.run_until_final_call(
-            messages=[{"role": "user", "content": "Hello"}],
-            overrides={"use_agentic_retrieval": True, "retrieval_reasoning_effort": "medium"},
-            auth_claims={},
-            should_stream=True,
-        )
-
-
-@pytest.mark.asyncio
 async def test_run_until_final_call_rejects_web_streaming(chat_approach):
     with pytest.raises(Exception, match="web source is enabled"):
         await chat_approach.run_until_final_call(
             messages=[{"role": "user", "content": "Hello"}],
-            overrides={"use_agentic_retrieval": True, "use_web_source": True},
+            overrides={"use_agentic_knowledgebase": True, "use_web_source": True},
             auth_claims={},
             should_stream=True,
         )

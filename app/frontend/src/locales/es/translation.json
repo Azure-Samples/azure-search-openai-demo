@@ -83,13 +83,8 @@
         "minimumSearchScore": "Puntuación mínima de búsqueda",
         "minimumRerankerScore": "Puntuación mínima de reclasificación",
         "retrieveCount": "Número de resultados a recuperar de la búsqueda:",
-        "resultsMergeStrategy": "Estrategia de fusión de resultados",
-        "resultsMergeStrategyOptions": {
-            "interleaved": "Intercalado",
-            "descending": "Descendente"
-        },
-        "retrievalReasoningEffort": "Esfuerzo de razonamiento de recuperación",
-        "retrievalReasoningEffortOptions": {
+        "agenticReasoningEffort": "Esfuerzo de razonamiento de recuperación",
+        "agenticReasoningEffortOptions": {
             "minimal": "Mínimo",
             "low": "Bajo",
             "medium": "Medio"
@@ -110,7 +105,7 @@
             "high": "Alto"
         },
         "useSuggestFollowupQuestions": "Sugerir preguntas de seguimiento",
-        "useAgenticRetrieval": "Usar la recuperación agéntica",
+        "useAgenticKnowledgeBase": "Usar la recuperación agéntica",
         "useWebSource": "Incluir búsqueda web",
         "useSharePointSource": "Incluir fuente de SharePoint",
         "llmInputs": "Entradas para LLM",
@@ -152,9 +147,7 @@
             "Establece una puntuación mínima para los resultados de búsqueda que devuelve el reclasificador semántico. La puntuación siempre varía entre 0 y 4. Cuanto mayor sea la puntuación, más relevante será el resultado con respecto a la pregunta.",
         "retrieveNumber":
             "Establece el número de resultados de búsqueda que se recuperarán de Azure AI Search. Más resultados pueden aumentar la probabilidad de encontrar la respuesta correcta, pero también pueden hacer que el modelo se distraiga entre demasiada información.",
-        "resultsMergeStrategy":
-            "Configura la estrategia para la fusión de resultados de múltiples subconsultas. 'Intercalado' selecciona los mejores resultados de cada subconsulta en orden rotativo, mientras que 'Descendente' ordena todos los resultados según la puntuación del reclasificador.",
-        "retrievalReasoningEffort":
+        "agenticReasoningEffort":
             "Controla cuánto razonamiento aplica el agente al construir planes de consultas múltiples. Un esfuerzo mayor puede mejorar la recuperación, pero incrementa los tokens y la latencia.",
         "includeCategory":
             "Especifica una categoría para incluir en los resultados de búsqueda. No se aplican categorías en el conjunto de datos predeterminado.",
@@ -180,7 +173,7 @@
         "streamChat": "Transmite continuamente la respuesta a la interfaz de usuario del chat mientras se genera.",
         "useOidSecurityFilter": "Filtra los resultados de búsqueda en función del OID del usuario autenticado.",
         "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado.",
-        "useAgenticRetrieval": "Usa la recuperación agéntica de Azure AI Search para la planificación de consultas múltiples. Siempre utiliza el clasificador semántico.",
+        "useAgenticKnowledgeBase": "Usa la recuperación agéntica de Azure AI Search para la planificación de consultas múltiples. Siempre utiliza el clasificador semántico.",
         "useWebSource": "Potencia la recuperación con resultados de búsqueda web junto con tu conjunto de datos indexado.",
         "useSharePointSource": "Potencia la recuperación incorporando contenido de SharePoint junto con tu conjunto de datos indexado."
     },

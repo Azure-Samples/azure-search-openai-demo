@@ -258,7 +258,7 @@ class ChatReadRetrieveReadApproach(Approach):
         auth_claims: dict[str, Any],
         should_stream: bool = False,
     ) -> tuple[ExtraInfo, Awaitable[ChatCompletion] | Awaitable[AsyncStream[ChatCompletionChunk]]]:
-        use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
+        use_agentic_knowledgebase = True if overrides.get("use_agentic_knowledgebase") else False
         original_user_query = messages[-1]["content"]
 
         reasoning_model_support = self.GPT_REASONING_MODELS.get(self.chatgpt_model)
@@ -266,15 +266,10 @@ class ChatReadRetrieveReadApproach(Approach):
             raise Exception(
                 f"{self.chatgpt_model} does not support streaming. Please use a different model or disable streaming."
             )
-        if use_agentic_retrieval:
+        if use_agentic_knowledgebase:
             if should_stream and overrides.get("use_web_source"):
                 raise Exception(
                     "Streaming is not supported with agentic retrieval when web source is enabled. Please disable streaming or web source."
-                )
-            retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
-            if should_stream and retrieval_reasoning_effort in ["low", "medium"]:
-                raise Exception(
-                    f"Streaming is not supported with agentic retrieval when retrieval reasoning effort is set to low or medium. Please use minimal reasoning effort or disable streaming."
                 )
             extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
         else:
@@ -457,8 +452,6 @@ class ChatReadRetrieveReadApproach(Approach):
         search_index_filter = self.build_filter(overrides)
         access_token = auth_claims.get("access_token")
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
-        top = overrides.get("top", 3)
-        results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
         retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
@@ -484,10 +477,8 @@ class ChatReadRetrieveReadApproach(Approach):
             messages=messages,
             knowledgebase_client=selected_client,
             search_index_name=self.search_index_name,
-            top=top,
             filter_add_on=search_index_filter,
             minimum_reranker_score=minimum_reranker_score,
-            results_merge_strategy=results_merge_strategy,
             access_token=access_token,
             use_web_source=effective_web_source,
             use_sharepoint_source=effective_sharepoint_source,
@@ -501,9 +492,8 @@ class ChatReadRetrieveReadApproach(Approach):
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
             web_results=agentic_results.web_results,
-            sharepoint_results=agentic_results.sharepoint_results,
-            citation_details_by_ref=agentic_results.citation_details_by_ref,
-        )
+            sharepoint_results=agentic_results.sharepoint_results)
+
         return ExtraInfo(
             data_points,
             thoughts=agentic_results.thoughts,

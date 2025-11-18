@@ -97,12 +97,12 @@ class RetrieveThenReadApproach(Approach):
     ) -> dict[str, Any]:
         overrides = context.get("overrides", {})
         auth_claims = context.get("auth_claims", {})
-        use_agentic_retrieval = True if overrides.get("use_agentic_retrieval") else False
+        use_agentic_knowledgebase = True if overrides.get("use_agentic_knowledgebase") else False
         q = messages[-1]["content"]
         if not isinstance(q, str):
             raise ValueError("The most recent message content must be a string.")
 
-        if use_agentic_retrieval:
+        if use_agentic_knowledgebase:
             extra_info = await self.run_agentic_retrieval_approach(messages, overrides, auth_claims)
         else:
             extra_info = await self.run_search_approach(messages, overrides, auth_claims)
@@ -243,8 +243,6 @@ class RetrieveThenReadApproach(Approach):
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0)
         search_index_filter = self.build_filter(overrides)
         access_token = auth_claims.get("access_token")
-        top = overrides.get("top", 3)
-        results_merge_strategy = overrides.get("results_merge_strategy", "interleaved")
         send_text_sources = overrides.get("send_text_sources", True)
         send_image_sources = overrides.get("send_image_sources", self.multimodal_enabled) and self.multimodal_enabled
         retrieval_reasoning_effort = overrides.get("retrieval_reasoning_effort", self.retrieval_reasoning_effort)
@@ -270,10 +268,8 @@ class RetrieveThenReadApproach(Approach):
             messages,
             selected_client,
             search_index_name=self.search_index_name,
-            top=top,
             filter_add_on=search_index_filter,
             minimum_reranker_score=minimum_reranker_score,
-            results_merge_strategy=results_merge_strategy,
             access_token=access_token,
             use_web_source=effective_web_source,
             use_sharepoint_source=effective_sharepoint_source,
@@ -289,7 +285,6 @@ class RetrieveThenReadApproach(Approach):
             user_oid=auth_claims.get("oid"),
             web_results=agentic_results.web_results,
             sharepoint_results=agentic_results.sharepoint_results,
-            citation_details_by_ref=agentic_results.citation_details_by_ref,
         )
         return ExtraInfo(
             data_points,

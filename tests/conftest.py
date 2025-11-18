@@ -448,7 +448,7 @@ knowledgebase_envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
-        "USE_AGENTIC_RETRIEVAL": "true",
+        "USE_AGENTIC_KNOWLEDGEBASE": "true",
     },
     {
         "OPENAI_HOST": "azure",
@@ -458,7 +458,7 @@ knowledgebase_envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
-        "USE_AGENTIC_RETRIEVAL": "true",
+        "USE_AGENTIC_KNOWLEDGEBASE": "true",
         "USE_WEB_SOURCE": "true",
     },
     {
@@ -469,7 +469,7 @@ knowledgebase_envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
-        "USE_AGENTIC_RETRIEVAL": "true",
+        "USE_AGENTIC_KNOWLEDGEBASE": "true",
         "USE_SHAREPOINT_SOURCE": "true",
     },
 ]
@@ -483,7 +483,7 @@ knowledgebase_auth_envs = [
         "AZURE_OPENAI_EMB_DEPLOYMENT": "test-ada",
         "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
-        "USE_AGENTIC_RETRIEVAL": "true",
+        "USE_AGENTIC_KNOWLEDGEBASE": "true",
         "AZURE_USE_AUTHENTICATION": "true",
         "AZURE_ENFORCE_ACCESS_CONTROL": "true",
         "AZURE_SERVER_APP_ID": "SERVER_APP",

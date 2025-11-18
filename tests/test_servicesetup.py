@@ -239,7 +239,7 @@ def test_setup_search_info_agentic_retrieval_without_model():
             azure_credential=MockAzureCredential(),
             search_service="mysearch",
             index_name="myindex",
-            use_agentic_retrieval=True,
+            use_agentic_knowledgebase=True,
             azure_openai_knowledgebase_deployment=None,
         )
 

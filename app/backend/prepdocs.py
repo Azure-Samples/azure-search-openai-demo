@@ -204,7 +204,7 @@ if __name__ == "__main__":  # pragma: no cover
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     enable_global_documents = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "").lower() == "true"
     dont_use_vectors = os.getenv("USE_VECTORS", "").lower() == "false"
-    use_agentic_retrieval = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
+    use_agentic_knowledgebase = os.getenv("USE_AGENTIC_KNOWLEDGEBASE", "").lower() == "true"
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
     use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
     use_sharepoint_source = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
@@ -230,13 +230,13 @@ if __name__ == "__main__":  # pragma: no cover
     OPENAI_HOST = OpenAIHost(os.environ["OPENAI_HOST"])
     # Check for incompatibility
     # if openai host is not azure
-    if use_agentic_retrieval and OPENAI_HOST not in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
+    if use_agentic_knowledgebase and OPENAI_HOST not in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
         raise Exception("Agentic retrieval requires an Azure OpenAI chat completion service")
 
     search_info = setup_search_info(
         search_service=os.environ["AZURE_SEARCH_SERVICE"],
         index_name=os.environ["AZURE_SEARCH_INDEX"],
-        use_agentic_retrieval=use_agentic_retrieval,
+        use_agentic_knowledgebase=use_agentic_knowledgebase,
         knowledgebase_name=os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME"),
         azure_openai_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
         azure_openai_knowledgebase_deployment=os.getenv("AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT"),

@@ -1,6 +1,7 @@
 export type QueryPlanStep = {
     id: number | string;
     type: string;
+    label?: string;
     elapsed_ms?: number;
     knowledge_source_name?: string;
     search_index_arguments?: {
@@ -26,13 +27,15 @@ export type QueryPlanStep = {
     [key: string]: unknown;
 };
 
-const STEP_LABELS: Record<string, string> = {
+export const activityTypeLabels: Record<string, string> = {
     modelQueryPlanning: "Query planning",
-    searchIndex: "Search index",
+    searchIndex: "Index search",
     web: "Web search",
-    remoteSharePoint: "Search SharePoint",
+    remoteSharePoint: "SharePoint search",
     agenticReasoning: "Agentic reasoning",
     modelAnswerSynthesis: "Answer synthesis"
 };
 
-export const getStepLabel = (step: QueryPlanStep) => STEP_LABELS[step.type] ?? step.type;
+export function getStepLabel(step: QueryPlanStep): string {
+    return step.label || activityTypeLabels[step.type] || step.type;
+}

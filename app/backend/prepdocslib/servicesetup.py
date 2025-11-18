@@ -53,7 +53,7 @@ def setup_search_info(
     search_service: str,
     index_name: str,
     azure_credential: AsyncTokenCredential,
-    use_agentic_retrieval: Optional[bool] = None,
+    use_agentic_knowledgebase: Optional[bool] = None,
     azure_openai_endpoint: Optional[str] = None,
     knowledgebase_name: Optional[str] = None,
     azure_openai_knowledgebase_deployment: Optional[str] = None,
@@ -65,7 +65,7 @@ def setup_search_info(
     search_creds: AsyncTokenCredential | AzureKeyCredential = (
         azure_credential if search_key is None else AzureKeyCredential(search_key)
     )
-    if use_agentic_retrieval and azure_openai_knowledgebase_deployment is None:
+    if use_agentic_knowledgebase and azure_openai_knowledgebase_deployment is None:
         raise ValueError("Azure OpenAI deployment for Knowledge Base must be specified for agentic retrieval.")
 
     return SearchInfo(
@@ -73,7 +73,7 @@ def setup_search_info(
         credential=search_creds,
         index_name=index_name,
         knowledgebase_name=knowledgebase_name,
-        use_agentic_retrieval=use_agentic_retrieval,
+        use_agentic_knowledgebase=use_agentic_knowledgebase,
         azure_openai_endpoint=azure_openai_endpoint,
         azure_openai_knowledgebase_model=azure_openai_knowledgebase_model,
         azure_openai_knowledgebase_deployment=azure_openai_knowledgebase_deployment,

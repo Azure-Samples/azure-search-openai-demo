@@ -76,6 +76,7 @@
             {
                 "description": [
                     {
+                        "activity": null,
                         "captions": [
                             {
                                 "additional_properties": {},
@@ -88,12 +89,12 @@
                         "groups": null,
                         "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
                         "images": null,
-                        "knowledgebase_query": null,
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": 0.03279569745063782,
                         "sourcefile": "Benefit_Options.pdf",
-                        "sourcepage": "Benefit_Options-2.pdf"
+                        "sourcepage": "Benefit_Options-2.pdf",
+                        "type": "searchIndex"
                     }
                 ],
                 "props": null,

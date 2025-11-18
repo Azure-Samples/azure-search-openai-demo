@@ -4,9 +4,13 @@ import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
 import styles from "./AnalysisPanel.module.css";
+import { memo, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+
+import { getCitationFilePath, ExternalResultMetadata } from "../../api";
+
 import { QueryPlanStep, getStepLabel } from "./agentPlanUtils";
 import { CitationDetail } from "../Answer/AnswerParser";
-import { getCitationFilePath, ExternalResultMetadata } from "../../api";
 import answerStyles from "../Answer/Answer.module.css";
 SyntaxHighlighter.registerLanguage("json", json);
 
@@ -137,20 +141,10 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
         const stepQuery = getStepQuery(step);
         if (!stepQuery) return [];
 
-        // Filter by both query and step type
-        return results.filter(result => {
-            if (result.knowledgebase_query !== stepQuery) return false;
-
-            // Match result type to step type
-            if (step.type === "searchIndex") {
-                return result.sourcepage && !result.type; // Documents from search index
-            } else if (step.type === "remoteSharePoint") {
-                return result.type === "sharepoint"; // SharePoint results
-            } else if (step.type === "web") {
-                return result.type === "web"; // Web results have type: "web"
-            }
-            return false;
-        });
+        // Filter by both query and step type, then de-duplicate by filename
+        const filtered = results.filter(result => result.activity?.query === stepQuery && result.type == step.type);
+        const uniqueMap = new Map(filtered.map(r => [r.sourcepage || r.web_url || r.url, r]));
+        return Array.from(uniqueMap.values());
     };
 
     const stepNumberLookup = React.useMemo(() => {

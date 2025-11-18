@@ -83,13 +83,8 @@
         "minimumSearchScore": "Minimum search score",
         "minimumRerankerScore": "Minimum reranker score",
         "retrieveCount": "Retrieve this many search results:",
-        "resultsMergeStrategy": "Results merge strategy",
-        "resultsMergeStrategyOptions": {
-            "interleaved": "Interleaved",
-            "descending": "Descending"
-        },
-        "retrievalReasoningEffort": "Retrieval reasoning effort",
-        "retrievalReasoningEffortOptions": {
+        "agenticReasoningEffort": "Retrieval reasoning effort",
+        "agenticReasoningEffortOptions": {
             "minimal": "Minimal",
             "low": "Low",
             "medium": "Medium"
@@ -110,7 +105,7 @@
             "high": "High"
         },
         "useSuggestFollowupQuestions": "Suggest follow-up questions",
-        "useAgenticRetrieval": "Use agentic retrieval",
+        "useAgenticKnowledgeBase": "Use agentic retrieval",
         "useWebSource": "Include web source",
         "useSharePointSource": "Include Sharepoint source",
         "llmInputs": "LLM input sources",
@@ -151,9 +146,7 @@
              "Sets a minimum score for search results coming back from the semantic reranker. The score always ranges between 0-4. The higher the score, the more semantically relevant the result is to the question.",
         "retrieveNumber":
              "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
-        "resultsMergeStrategy":
-            "Sets the strategy for merging results from multiple subqueries. Interleaved picks the top results from each subquery in round robin order, while descending sorts all results by reranker score.",
-        "retrievalReasoningEffort":
+        "agenticReasoningEffort":
             "Controls the amount of reasoning the agent uses while planning retrieval subqueries. Higher effort can improve recall at the cost of additional latency and tokens.",
         "includeCategory":
             "Specifies a category to include in the search results. There are no categories used in the default data set.",
@@ -177,7 +170,7 @@
         "streamChat": "Continuously streams the response to the chat UI as it is generated.",
         "useOidSecurityFilter": "Filter search results based on the authenticated user's OID.",
         "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
+        "useAgenticKnowledgeBase": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
         "useWebSource": "Augment retrieval with web search results alongside your indexed data set.",
         "useSharePointSource": "Augment retrieval with SharePoint content alongside your indexed data set."
     },

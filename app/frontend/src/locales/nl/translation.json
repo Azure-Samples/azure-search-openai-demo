@@ -83,13 +83,8 @@
         "minimumSearchScore": "Minimale zoekscore",
         "minimumRerankerScore": "Minimale reranker score",
         "retrieveCount": "Dit aantal zoekresultaten ophalen:",
-        "resultsMergeStrategy": "Strategie voor het samenvoegen van resultaten",
-        "resultsMergeStrategyOptions": {
-            "interleaved": "Afgewisseld",
-            "descending": "Aflopend"
-        },
-        "retrievalReasoningEffort": "Redeneerinspanning voor retrieval",
-        "retrievalReasoningEffortOptions": {
+        "agenticReasoningEffort": "Redeneerinspanning voor retrieval",
+        "agenticReasoningEffortOptions": {
             "minimal": "Minimaal",
             "low": "Laag",
             "medium": "Gemiddeld"
@@ -110,7 +105,7 @@
             "high": "Hoog"
         },
         "useSuggestFollowupQuestions": "Vervolgvragen voorstellen",
-        "useAgenticRetrieval": "Gebruik agentische retrieval",
+        "useAgenticKnowledgeBase": "Gebruik agentische retrieval",
         "useWebSource": "Websearch opnemen",
         "useSharePointSource": "SharePoint-bron opnemen",
         "llmInputs": "Invoer voor LLM",
@@ -151,9 +146,7 @@
              "Stelt een minimale score in voor zoekresultaten van de semantische ranker. De score varieert van 0 tot 4, waarbij een hogere score aangeeft dat het resultaat semantisch relevanter is voor de vraag.",
         "retrieveNumber":
              "Stelt het aantal zoekresultaten in om op te halen van Azure AI zoekfunctie. Meer resultaten vergroten de kans op het juiste antwoord, maar kunnen ook leiden tot het 'lost in the middle' probleem.",
-        "resultsMergeStrategy":
-            "Stelt de strategie in voor het samenvoegen van resultaten van meerdere subquery's. 'Afgewisseld' kiest om de beurt de beste resultaten van elke subquery, terwijl 'Aflopend' alle resultaten sorteert op reranker-score.",
-        "retrievalReasoningEffort":
+        "agenticReasoningEffort":
             "Bepaalt hoeveel redeneren de agent toepast bij het opstellen van multi-query plannen. Meer inspanning kan de recall verbeteren, maar verhoogt tokens en latency.",
         "includeCategory":
             "Specificeert een categorie om op te nemen in de zoekresultaten. Er zijn geen categorieën in de standaard dataset.",
@@ -179,7 +172,7 @@
         "streamChat": "Geeft het antwoord in real-time weer in de chat terwijl het wordt gegenereerd.",
         "useOidSecurityFilter": "Filtert zoekresultaten op basis van de OID van de geauthenticeerde gebruiker.",
         "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker.",
-        "useAgenticRetrieval": "Gebruik agentische retrieval van Azure AI Search voor meervoudige query-planning. Gebruikt altijd semantische rangschikking.",
+        "useAgenticKnowledgeBase": "Gebruik agentische retrieval van Azure AI Search voor meervoudige query-planning. Gebruikt altijd semantische rangschikking.",
         "useWebSource": "Breid retrieval uit met websearch resultaten naast je geïndexeerde dataset.",
         "useSharePointSource": "Breid retrieval uit met SharePoint-inhoud naast je geïndexeerde dataset."
     },

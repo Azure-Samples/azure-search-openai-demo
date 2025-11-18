@@ -478,7 +478,7 @@ class SearchManager:
 
                     await search_index_client.create_or_update_index(existing_index)
 
-        if self.search_info.use_agentic_retrieval and self.search_info.knowledgebase_name:
+        if self.search_info.use_agentic_knowledgebase and self.search_info.knowledgebase_name:
             await self.create_knowledgebase()
 
     async def create_knowledgebase(self):

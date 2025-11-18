@@ -50,7 +50,7 @@ from approaches.promptmanager import PromptyManager
 from approaches.retrievethenread import RetrieveThenReadApproach
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
-    CONFIG_AGENTIC_RETRIEVAL_ENABLED,
+    CONFIG_AGENTIC_KNOWLEDGEBASE_ENABLED,
     CONFIG_ASK_APPROACH,
     CONFIG_AUTH_CLIENT,
     CONFIG_CHAT_APPROACH,
@@ -310,7 +310,7 @@ def config():
             "showSpeechOutputAzure": current_app.config[CONFIG_SPEECH_OUTPUT_AZURE_ENABLED],
             "showChatHistoryBrowser": current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED],
             "showChatHistoryCosmos": current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED],
-            "showAgenticRetrievalOption": current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED],
+            "showAgenticRetrievalOption": current_app.config[CONFIG_AGENTIC_KNOWLEDGEBASE_ENABLED],
             "ragSearchTextEmbeddings": current_app.config[CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS],
             "ragSearchImageEmbeddings": current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS],
             "ragSendTextSources": current_app.config[CONFIG_RAG_SEND_TEXT_SOURCES],
@@ -482,10 +482,10 @@ async def setup_clients():
     USE_SPEECH_OUTPUT_AZURE = os.getenv("USE_SPEECH_OUTPUT_AZURE", "").lower() == "true"
     USE_CHAT_HISTORY_BROWSER = os.getenv("USE_CHAT_HISTORY_BROWSER", "").lower() == "true"
     USE_CHAT_HISTORY_COSMOS = os.getenv("USE_CHAT_HISTORY_COSMOS", "").lower() == "true"
-    USE_AGENTIC_RETRIEVAL = os.getenv("USE_AGENTIC_RETRIEVAL", "").lower() == "true"
+    USE_AGENTIC_KNOWLEDGEBASE = os.getenv("USE_AGENTIC_KNOWLEDGEBASE", "").lower() == "true"
     USE_WEB_SOURCE = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
     USE_SHAREPOINT_SOURCE = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
-    AGENTIC_RETRIEVAL_REASONING_EFFORT = os.getenv("AGENTIC_RETRIEVAL_REASONING_EFFORT", "low")
+    AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT = os.getenv("AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT", "low")
     USE_VECTORS = os.getenv("USE_VECTORS", "").lower() != "false"
 
     # WEBSITE_HOSTNAME is always set by App Service, RUNNING_IN_PRODUCTION is set in main.bicep
@@ -642,7 +642,7 @@ async def setup_clients():
             search_service=AZURE_SEARCH_SERVICE,
             index_name=AZURE_SEARCH_INDEX,
             azure_credential=azure_credential,
-            use_agentic_retrieval=USE_AGENTIC_RETRIEVAL,
+            use_agentic_knowledgebase=USE_AGENTIC_KNOWLEDGEBASE,
             azure_openai_endpoint=azure_openai_endpoint,
             knowledgebase_name=AZURE_SEARCH_KNOWLEDGEBASE_NAME,
             azure_openai_knowledgebase_deployment=AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT,
@@ -695,7 +695,7 @@ async def setup_clients():
         AZURE_SEARCH_QUERY_REWRITING == "true" and AZURE_SEARCH_SEMANTIC_RANKER != "disabled"
     )
     current_app.config[CONFIG_DEFAULT_REASONING_EFFORT] = OPENAI_REASONING_EFFORT
-    current_app.config[CONFIG_DEFAULT_RETRIEVAL_REASONING_EFFORT] = AGENTIC_RETRIEVAL_REASONING_EFFORT
+    current_app.config[CONFIG_DEFAULT_RETRIEVAL_REASONING_EFFORT] = AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT
     current_app.config[CONFIG_REASONING_EFFORT_ENABLED] = OPENAI_CHATGPT_MODEL in Approach.GPT_REASONING_MODELS
     current_app.config[CONFIG_STREAMING_ENABLED] = (
         OPENAI_CHATGPT_MODEL not in Approach.GPT_REASONING_MODELS
@@ -709,14 +709,14 @@ async def setup_clients():
     current_app.config[CONFIG_SPEECH_OUTPUT_AZURE_ENABLED] = USE_SPEECH_OUTPUT_AZURE
     current_app.config[CONFIG_CHAT_HISTORY_BROWSER_ENABLED] = USE_CHAT_HISTORY_BROWSER
     current_app.config[CONFIG_CHAT_HISTORY_COSMOS_ENABLED] = USE_CHAT_HISTORY_COSMOS
-    current_app.config[CONFIG_AGENTIC_RETRIEVAL_ENABLED] = USE_AGENTIC_RETRIEVAL
+    current_app.config[CONFIG_AGENTIC_KNOWLEDGEBASE_ENABLED] = USE_AGENTIC_KNOWLEDGEBASE
     current_app.config[CONFIG_MULTIMODAL_ENABLED] = USE_MULTIMODAL
     current_app.config[CONFIG_RAG_SEARCH_TEXT_EMBEDDINGS] = RAG_SEARCH_TEXT_EMBEDDINGS
     current_app.config[CONFIG_RAG_SEARCH_IMAGE_EMBEDDINGS] = RAG_SEARCH_IMAGE_EMBEDDINGS
     current_app.config[CONFIG_RAG_SEND_TEXT_SOURCES] = RAG_SEND_TEXT_SOURCES
     current_app.config[CONFIG_RAG_SEND_IMAGE_SOURCES] = RAG_SEND_IMAGE_SOURCES
     current_app.config[CONFIG_WEB_SOURCE_ENABLED] = USE_WEB_SOURCE
-    if AGENTIC_RETRIEVAL_REASONING_EFFORT == "minimal" and current_app.config[CONFIG_WEB_SOURCE_ENABLED]:
+    if AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT == "minimal" and current_app.config[CONFIG_WEB_SOURCE_ENABLED]:
         raise ValueError("Web source cannot be used with minimal retrieval reasoning effort")
     current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED] = USE_SHAREPOINT_SOURCE
 
@@ -753,7 +753,7 @@ async def setup_clients():
         user_blob_manager=user_blob_manager,
         use_web_source=current_app.config[CONFIG_WEB_SOURCE_ENABLED],
         use_sharepoint_source=current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED],
-        retrieval_reasoning_effort=AGENTIC_RETRIEVAL_REASONING_EFFORT,
+        retrieval_reasoning_effort=AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT,
     )
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
@@ -785,7 +785,7 @@ async def setup_clients():
         user_blob_manager=user_blob_manager,
         use_web_source=current_app.config[CONFIG_WEB_SOURCE_ENABLED],
         use_sharepoint_source=current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED],
-        retrieval_reasoning_effort=AGENTIC_RETRIEVAL_REASONING_EFFORT,
+        retrieval_reasoning_effort=AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT,
     )
 
 

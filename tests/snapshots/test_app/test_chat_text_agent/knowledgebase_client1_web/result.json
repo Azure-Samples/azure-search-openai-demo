@@ -1,14 +1,36 @@
 {
     "context": {
         "data_points": {
+            "citation_activity_details": {
+                "Benefit_Options-2.pdf": {
+                    "id": 1,
+                    "number": 2,
+                    "query": "whistleblower query",
+                    "source": "index",
+                    "type": "searchIndex"
+                },
+                "https://contoso.example": {
+                    "id": 2,
+                    "number": 3,
+                    "query": "contoso policy",
+                    "source": "web",
+                    "type": "web"
+                }
+            },
             "citations": [
                 "Benefit_Options-2.pdf",
                 "https://contoso.example"
             ],
             "external_results_metadata": [
                 {
+                    "activity": {
+                        "id": 2,
+                        "number": 3,
+                        "query": "contoso policy",
+                        "source": "web",
+                        "type": "web"
+                    },
                     "id": 1,
-                    "knowledgebase_query": "contoso policy",
                     "snippet": "",
                     "title": "Contoso site",
                     "url": "https://contoso.example"
@@ -24,22 +46,35 @@
             {
                 "description": [
                     {
+                        "activity": {
+                            "id": 1,
+                            "number": 2,
+                            "query": "whistleblower query",
+                            "source": "index",
+                            "type": "searchIndex"
+                        },
                         "captions": [],
                         "category": null,
                         "content": "There is a whistleblower policy.",
                         "groups": null,
                         "id": "file-Benefit_Options_pdf-42656E656669745F4F7074696F6E732E706466-page-2",
                         "images": null,
-                        "knowledgebase_query": "whistleblower query",
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": null,
                         "sourcefile": "Benefit_Options.pdf",
-                        "sourcepage": "Benefit_Options-2.pdf"
+                        "sourcepage": "Benefit_Options-2.pdf",
+                        "type": "searchIndex"
                     },
                     {
+                        "activity": {
+                            "id": 2,
+                            "number": 3,
+                            "query": "contoso policy",
+                            "source": "web",
+                            "type": "web"
+                        },
                         "id": 1,
-                        "knowledgebase_query": "contoso policy",
                         "ref_id": "1",
                         "snippet": null,
                         "title": "Contoso site",
@@ -87,7 +122,7 @@
         ]
     },
     "message": {
-        "content": "There is a whistleblower policy. [Benefit_Options-2.pdf] You can also visit [https://contoso.example] for more information.",
+        "content": "There is a whistleblower policy. [ref_id:0] You can also visit [https://contoso.example] for more information.",
         "role": "assistant"
     },
     "session_state": null
