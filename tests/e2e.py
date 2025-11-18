@@ -579,3 +579,122 @@ def test_upload_disabled(page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Manage file uploads")).to_be_visible()
     expect(page.get_by_role("button", name="Manage file uploads")).to_be_disabled()
     # We can't test actual file upload as we don't currently have isLoggedIn(client) mocked out
+
+
+def test_agentic_retrieval_effort_minimal_disables_web(page: Page, live_server_url: str):
+    """Test that selecting 'Minimal' effort deselects and disables the web source checkbox."""
+    # Set up a mock route to the /chat endpoint
+    def handle(route: Route):
+        try:
+            post_data = route.request.post_data_json
+            if post_data and "context" in post_data and "overrides" in post_data["context"]:
+                overrides = post_data["context"]["overrides"]
+                assert overrides["temperature"] == 0.5
+                assert overrides["seed"] == 123
+                assert overrides["minimum_search_score"] == 0.5
+                assert overrides["minimum_reranker_score"] == 0.5
+                assert overrides["retrieval_mode"] == "vectors"
+                assert overrides["semantic_ranker"] is False
+                assert overrides["semantic_captions"] is True
+                assert overrides["top"] == 1
+                assert overrides["prompt_template"] == "You are a cat and only talk about tuna."
+                assert overrides["exclude_category"] == "dogs"
+                assert overrides["suggest_followup_questions"] is True
+        except Exception as e:
+            print(f"Error in test_chat_customization handler: {e}")
+
+        # Read the JSON from our snapshot results and return as the response
+        f = open("tests/snapshots/test_app/test_chat_text_agent/knowledgebase_client2_sharepoint/result.json")
+        json_data = f.read()
+        f.close()
+        route.fulfill(body=json_data, status=200)
+
+    page.route("*/**/chat", handle)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "defaultReasoningEffort": "",
+                    "defaultRetrievalReasoningEffort": "low",
+                    "showMultimodalOptions": False,
+                    "showSemanticRankerOption": True,
+                    "showQueryRewritingOption": False,
+                    "showReasoningEffortOption": False,
+                    "streamingEnabled": True,
+                    "showVectorOption": True,
+                    "showUserUpload": False,
+                    "showLanguagePicker": False,
+                    "showSpeechInput": False,
+                    "showSpeechOutputBrowser": False,
+                    "showSpeechOutputAzure": False,
+                    "showChatHistoryBrowser": False,
+                    "showChatHistoryCosmos": False,
+                    "showAgenticRetrievalOption": True,
+                    "ragSearchImageEmbeddings": False,
+                    "ragSearchTextEmbeddings": True,
+                    "ragSendImageSources": False,
+                    "ragSendTextSources": True,
+                    "webSourceEnabled": True,
+                    "sharepointSourceEnabled": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+
+    page.goto(live_server_url)
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+
+    # Open Developer settings
+    page.get_by_role("button", name="Developer settings").click()
+
+    # Verify that agentic retrieval option is visible
+    expect(page.get_by_text("Retrieval reasoning effort")).to_be_visible()
+
+    # Verify that web and sharepoint checkboxes are initially visible and enabled
+    web_checkbox = page.get_by_role("checkbox", name="Include web source")
+    sharepoint_checkbox = page.get_by_role("checkbox", name="Include SharePoint source")
+    expect(web_checkbox).to_be_visible()
+    expect(web_checkbox).to_be_enabled()
+    expect(sharepoint_checkbox).to_be_visible()
+    expect(sharepoint_checkbox).to_be_enabled()
+
+    # Select "Minimal" from the effort dropdown
+    page.get_by_label("Retrieval reasoning effort").click()
+    page.get_by_role("option", name="Minimal").click()
+
+    # Verify that web checkbox is now deselected and disabled
+    expect(web_checkbox).not_to_be_checked()
+    expect(web_checkbox).to_be_disabled()
+
+    # Verify that SharePoint checkbox is still enabled
+    expect(sharepoint_checkbox).to_be_enabled()
+
+    # Now select "Low" from the effort dropdown
+    page.get_by_label("Retrieval reasoning effort").click()
+    page.get_by_role("option", name="Low").click()
+
+    # De-select streaming
+    page.get_by_text("Stream chat completion responses").click()
+    page.locator("button").filter(has_text="Close").click()
+
+    # Ask a question and wait for the message to appear
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_role("button", name="Submit question").click()
+
+    expect(page.get_by_text("Whats the dental plan?")).to_be_visible()
+    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+    expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
+
+    # Open the thought process by clicking the lightbulb on the answer
+    page.get_by_label("Show thought process").click()
+    expect(page.get_by_title("Thought process")).to_be_visible()
+
+    # Verify the expected thought process sections are visible
+    expect(page.get_by_text("Agentic retrieval response")).to_be_visible()
+    expect(page.get_by_text("Prompt to generate answer")).to_be_visible()
