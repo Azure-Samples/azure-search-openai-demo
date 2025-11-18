@@ -7,7 +7,15 @@ from azure.search.documents.models import VectorizedQuery
 from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion
 
-from approaches.approach import DataPoints, Document, ExtraInfo, SharePointResult, ThoughtStep, WebResult, ActivityDetail
+from approaches.approach import (
+    DataPoints,
+    Document,
+    ExtraInfo,
+    SharePointResult,
+    ThoughtStep,
+    WebResult,
+    ActivityDetail,
+)
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from prepdocslib.embeddings import ImageEmbeddings
@@ -427,7 +435,7 @@ def test_replace_all_ref_ids_sharepoint_priority(chat_approach):
 
 @pytest.mark.asyncio
 async def test_get_sources_content_includes_sharepoint(chat_approach):
-    
+
     documents = [
         Document(id="doc1", ref_id="1", sourcepage="page1.pdf", content="Doc content"),
     ]
@@ -451,7 +459,10 @@ async def test_get_sources_content_includes_sharepoint(chat_approach):
 
     # SharePoint extracts filename from URL (last part after /)
     assert "doc" in data_points.citations
-    assert data_points.external_results_metadata and data_points.external_results_metadata[0]["title"] == "SharePoint Title"
+    assert (
+        data_points.external_results_metadata
+        and data_points.external_results_metadata[0]["title"] == "SharePoint Title"
+    )
 
 
 def test_select_knowledgebase_client_priorities(chat_approach):

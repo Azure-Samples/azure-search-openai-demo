@@ -492,7 +492,8 @@ class ChatReadRetrieveReadApproach(Approach):
             download_image_sources=send_image_sources,
             user_oid=auth_claims.get("oid"),
             web_results=agentic_results.web_results,
-            sharepoint_results=agentic_results.sharepoint_results)
+            sharepoint_results=agentic_results.sharepoint_results,
+        )
 
         return ExtraInfo(
             data_points,

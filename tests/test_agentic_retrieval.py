@@ -20,12 +20,13 @@ async def test_agentic_retrieval_default_sort(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("sorting"))
 
-    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(
+        endpoint="", knowledge_base_name="", credential=AzureKeyCredential("")
+    )
 
     agentic_results = await chat_approach.run_agentic_retrieval(
-        messages=[],
-        knowledgebase_client=knowledgebase_client,
-        search_index_name="test-index")
+        messages=[], knowledgebase_client=knowledgebase_client, search_index_name="test-index"
+    )
 
     assert len(agentic_results.documents) == 2
     assert agentic_results.web_results == []
@@ -52,7 +53,9 @@ async def test_agentic_retrieval_no_references(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", mock_retrieval)
 
-    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(
+        endpoint="", knowledge_base_name="", credential=AzureKeyCredential("")
+    )
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[], knowledgebase_client=knowledgebase_client, search_index_name="test-index"
@@ -68,12 +71,12 @@ async def test_agentic_retrieval_web_results(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("web"))
 
-    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(
+        endpoint="", knowledge_base_name="", credential=AzureKeyCredential("")
+    )
 
     agentic_results = await chat_approach.run_agentic_retrieval(
-        messages=[],
-        knowledgebase_client=knowledgebase_client,
-        search_index_name="test-index"
+        messages=[], knowledgebase_client=knowledgebase_client, search_index_name="test-index"
     )
 
     assert len(agentic_results.documents) == 1
@@ -99,7 +102,9 @@ async def test_agentic_retrieval_sharepoint_results(chat_approach, monkeypatch):
 
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("sharepoint"))
 
-    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(
+        endpoint="", knowledge_base_name="", credential=AzureKeyCredential("")
+    )
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[],
@@ -150,7 +155,9 @@ async def test_agentic_retrieval_minimal_uses_query_rewrite(chat_approach, monke
     monkeypatch.setattr(chat_approach, "rewrite_query", fake_rewrite_query)
     monkeypatch.setattr(KnowledgeBaseRetrievalClient, "retrieve", create_mock_retrieve("web"))
 
-    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(
+        endpoint="", knowledge_base_name="", credential=AzureKeyCredential("")
+    )
 
     agentic_results = await chat_approach.run_agentic_retrieval(
         messages=[{"role": "user", "content": "Original"}],
@@ -167,7 +174,9 @@ async def test_agentic_retrieval_minimal_uses_query_rewrite(chat_approach, monke
 async def test_agentic_retrieval_minimal_requires_string(chat_approach):
     """When minimal reasoning is requested the latest message must be a string."""
 
-    knowledgebase_client = KnowledgeBaseRetrievalClient(endpoint="", knowledge_base_name="", credential=AzureKeyCredential(""))
+    knowledgebase_client = KnowledgeBaseRetrievalClient(
+        endpoint="", knowledge_base_name="", credential=AzureKeyCredential("")
+    )
 
     with pytest.raises(ValueError, match="most recent message content must be a string"):
         await chat_approach.run_agentic_retrieval(

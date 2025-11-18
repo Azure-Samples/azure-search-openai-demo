@@ -1131,9 +1131,10 @@ async def test_create_knowledgebase_field_names_with_acls_and_images(monkeypatch
     assert default_kb_sources == {index_ks.name}, "Default knowledge base should reference only the index"
 
     web_kb_sources = {ref.name for ref in kb_by_name["test-knowledgebase-with-web"].knowledge_sources}
-    assert {index_ks.name, web_ks.name} == web_kb_sources, (
-        "Web-enabled knowledge base should reference index and web sources"
-    )
+    assert {
+        index_ks.name,
+        web_ks.name,
+    } == web_kb_sources, "Web-enabled knowledge base should reference index and web sources"
 
 
 @pytest.mark.asyncio
@@ -1201,9 +1202,10 @@ async def test_create_knowledgebase_with_sharepoint_source(monkeypatch, search_i
     assert default_kb_sources == {index_ks.name}, "Default knowledge base should reference only the index"
 
     sharepoint_kb_sources = {ref.name for ref in kb_by_name["test-knowledgebase-with-sp"].knowledge_sources}
-    assert {index_ks.name, sharepoint_ks.name} == sharepoint_kb_sources, (
-        "SharePoint knowledge base should reference index and SharePoint sources"
-    )
+    assert {
+        index_ks.name,
+        sharepoint_ks.name,
+    } == sharepoint_kb_sources, "SharePoint knowledge base should reference index and SharePoint sources"
 
 
 @pytest.mark.asyncio
@@ -1265,7 +1267,12 @@ async def test_create_knowledgebase_with_web_and_sharepoint_sources(monkeypatch,
     kb_map = {kb.name: kb for kb in knowledge_bases}
     assert {ref.name for ref in kb_map["test-knowledgebase"].knowledge_sources} == {index_ks.name}
     assert {ref.name for ref in kb_map["test-knowledgebase-with-web"].knowledge_sources} == {index_ks.name, web_ks.name}
-    assert {ref.name for ref in kb_map["test-knowledgebase-with-sp"].knowledge_sources} == {index_ks.name, sharepoint_ks.name}
-    assert {
-        ref.name for ref in kb_map["test-knowledgebase-with-web-and-sp"].knowledge_sources
-    } == {index_ks.name, web_ks.name, sharepoint_ks.name}
+    assert {ref.name for ref in kb_map["test-knowledgebase-with-sp"].knowledge_sources} == {
+        index_ks.name,
+        sharepoint_ks.name,
+    }
+    assert {ref.name for ref in kb_map["test-knowledgebase-with-web-and-sp"].knowledge_sources} == {
+        index_ks.name,
+        web_ks.name,
+        sharepoint_ks.name,
+    }

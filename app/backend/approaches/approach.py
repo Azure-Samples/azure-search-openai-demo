@@ -565,7 +565,7 @@ class Approach(ABC):
         # Map activity id -> agent's internal search query and citation
         activities = response.activity or []
         activity_details_by_id: dict[int, ActivityDetail] = {}
-        
+
         for index, activity in enumerate(activities):
             search_query = None
             if isinstance(activity, KnowledgeBaseSearchIndexActivityRecord):
@@ -582,14 +582,17 @@ class Approach(ABC):
                 id=activity.id,
                 number=index + 1,
                 type=activity.type or "",
-                source=getattr(activity, "knowledge_source_name", "") or "", # Not all activity types have knowledge_source_name
+                source=getattr(activity, "knowledge_source_name", "")
+                or "",  # Not all activity types have knowledge_source_name
                 query=search_query or "",
             )
 
         # Extract references
         references = response.references or []
 
-        document_refs = [r for r in references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")]
+        document_refs = [
+            r for r in references if isinstance(r, KnowledgeBaseSearchIndexReference) or hasattr(r, "doc_key")
+        ]
         document_results: list[Document] = []
         # Create documents from reference source data
         for ref in document_refs:
@@ -607,7 +610,7 @@ class Approach(ABC):
                         groups=ref.source_data.get("groups"),
                         reranker_score=getattr(ref, "reranker_score", None),
                         images=ref.source_data.get("images"),
-                        activity=activity_details_by_id[ref.activity_source]
+                        activity=activity_details_by_id[ref.activity_source],
                     )
                 )
 
@@ -616,10 +619,7 @@ class Approach(ABC):
         web_results: list[WebResult] = []
         for ref in web_refs:
             web_result = WebResult(
-                id=ref.id,
-                title=ref.title,
-                url=ref.url,
-                activity=activity_details_by_id[ref.activity_source]
+                id=ref.id, title=ref.title, url=ref.url, activity=activity_details_by_id[ref.activity_source]
             )
             web_results.append(web_result)
 
@@ -644,7 +644,7 @@ class Approach(ABC):
                 content=content,
                 title=title,
                 reranker_score=getattr(ref, "reranker_score", None),
-                activity=activity_details_by_id[ref.activity_source]
+                activity=activity_details_by_id[ref.activity_source],
             )
             sharepoint_results.append(sharepoint_result)
 
@@ -827,7 +827,7 @@ class Approach(ABC):
             images=image_sources,
             citations=citations,
             external_results_metadata=external_results_metadata,
-            citation_activity_details=citation_activity_details if citation_activity_details else None
+            citation_activity_details=citation_activity_details if citation_activity_details else None,
         )
 
     def get_citation(self, sourcepage: Optional[str]):

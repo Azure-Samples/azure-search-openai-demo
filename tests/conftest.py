@@ -545,7 +545,10 @@ def mock_reasoning_env(monkeypatch, request):
             yield
 
 
-@pytest.fixture(params=knowledgebase_envs, ids=["knowledgebase_client0", "knowledgebase_client1_web", "knowledgebase_client2_sharepoint"])
+@pytest.fixture(
+    params=knowledgebase_envs,
+    ids=["knowledgebase_client0", "knowledgebase_client1_web", "knowledgebase_client2_sharepoint"],
+)
 def mock_knowledgebase_env(monkeypatch, request):
     with mock.patch.dict(os.environ, clear=True):
         monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
