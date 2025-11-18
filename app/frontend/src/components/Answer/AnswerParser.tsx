@@ -79,8 +79,34 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
     const possibleCitations = answer.context.data_points.citations || [];
     const citationActivityDetails = answer.context.data_points.citation_activity_details ?? {};
     const activitySteps = buildActivityStepMap(answer);
+    const externalResults = answer.context.data_points.external_results_metadata || [];
     const parsedAnswer = normalizeAnswerText(answer, isStreaming);
     const parts = parsedAnswer.split(/\[([^\]]+)\]/g);
+
+    // Helper to resolve SharePoint filename to URL
+    const resolveSharePointUrl = (citation: string): string => {
+        // If it's already a URL, return as-is
+        if (isWebCitation(citation)) {
+            return citation;
+        }
+
+        // Check if this looks like a filename (has an extension)
+        const hasFileExtension = /\.(pdf|docx?|xlsx?|pptx?|txt|html?|csv)$/i.test(citation);
+        if (!hasFileExtension) {
+            return citation;
+        }
+
+        // Look for matching SharePoint URL in external_results_metadata
+        // Match by checking if the URL ends with the filename
+        const matchingResult = externalResults.find(result => {
+            if (!result.url) return false;
+            const urlParts = result.url.split("/");
+            const urlFilename = urlParts[urlParts.length - 1];
+            return urlFilename === citation || decodeURIComponent(urlFilename) === citation;
+        });
+
+        return matchingResult?.url || citation;
+    };
 
     const fragments: CitationFragment[] = [];
     const citationMap = new Map<string, CitationDetail>();
@@ -104,13 +130,16 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
             return;
         }
 
+        // Resolve SharePoint filename to URL if applicable
+        const resolvedReference = resolveSharePointUrl(part);
+
         const backendDetail = citationActivityDetails?.[part];
         const activityId = backendDetail?.activityId;
         const stepMeta = activityId ? activitySteps[String(activityId)] : undefined;
         const detail: CitationDetail = {
-            reference: part,
+            reference: resolvedReference,
             index: citationList.length + 1,
-            isWeb: isWebCitation(part),
+            isWeb: isWebCitation(resolvedReference),
             activityId: activityId !== undefined ? String(activityId) : undefined,
             stepNumber: backendDetail?.stepNumber ?? stepMeta?.stepNumber,
             stepLabel: backendDetail?.stepLabel ?? stepMeta?.stepLabel,

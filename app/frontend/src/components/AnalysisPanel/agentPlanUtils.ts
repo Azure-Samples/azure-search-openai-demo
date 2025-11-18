@@ -12,6 +12,9 @@ export type QueryPlanStep = {
     web_arguments?: {
         search?: string;
     };
+    remote_share_point_arguments?: {
+        search?: string;
+    };
     query_time?: string;
     count?: number;
     input_tokens?: number;

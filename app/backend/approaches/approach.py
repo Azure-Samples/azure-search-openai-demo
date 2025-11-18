@@ -516,15 +516,6 @@ class Approach(ABC):
             ))
             
             agentic_retrieval_input["intents"] = [KnowledgeRetrievalSemanticIntent(search=rewrite_result.query)]
-            thoughts.append(ThoughtStep(
-                "Send intents to agentic retrieval",
-                rewrite_result.query,
-                {
-                    "reranker_threshold": minimum_reranker_score,
-                    "results_merge_strategy": results_merge_strategy,
-                    "filter": filter_add_on,
-                },
-            ))
         else:
             agentic_retrieval_input["messages"] = [
                 KnowledgeBaseMessage(
@@ -533,15 +524,6 @@ class Approach(ABC):
                 for msg in messages
                 if msg["role"] != "system"
             ]
-            thoughts.append(ThoughtStep(
-                "Send messages to agentic retrieval",
-                messages,
-                {
-                    "reranker_threshold": minimum_reranker_score,
-                    "results_merge_strategy": results_merge_strategy,
-                    "filter": filter_add_on,
-                },
-            ))
         # When we're not using a web source, set output mode to extractiveData to avoid synthesized answer
         if not use_web_source:
             agentic_retrieval_input["output_mode"] = "extractiveData"
@@ -710,6 +692,8 @@ class Approach(ABC):
                 ),
                 "model": self.knowledgebase_model,
                 "deployment": self.knowledgebase_deployment,
+                "reranker_threshold": minimum_reranker_score,
+                "filter": filter_add_on,
             },
         ))
     

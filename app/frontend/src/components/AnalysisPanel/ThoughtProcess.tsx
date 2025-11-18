@@ -57,6 +57,7 @@ export const ThoughtProcess = ({ thoughts, citationDetails, webDataPoints, onCit
                                 web_data_points={webDataPoints}
                                 onEffortExtracted={setEffort}
                                 onCitationClicked={onCitationClicked}
+                                results={Array.isArray(t.description) ? t.description : []}
                             />
                         )}
                         {Array.isArray(t.description) || (t.description !== null && typeof t.description === "object") ? (

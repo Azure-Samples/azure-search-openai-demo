@@ -29,7 +29,9 @@ const renderDetail = (step: QueryPlanStep) => {
                     <div>
                         <strong>Source:</strong> {step.knowledge_source_name ?? "search index"}
                     </div>
-                    <div className={styles.tQuery}>{search}</div>
+                    <div>
+                        <strong>Search:</strong> {search}
+                    </div>
                 </>
             );
         }
@@ -40,7 +42,24 @@ const renderDetail = (step: QueryPlanStep) => {
                     <div>
                         <strong>Source:</strong> {step.knowledge_source_name ?? "web"}
                     </div>
-                    <div className={styles.tQuery}>{webSearch}</div>
+                    <div>
+                        <strong>Search:</strong>
+                        {webSearch}
+                    </div>
+                </>
+            );
+        }
+        case "remoteSharePoint": {
+            const sharepointSearch = step.remote_share_point_arguments?.search ?? "—";
+            return (
+                <>
+                    <div>
+                        <strong>Source:</strong> {step.knowledge_source_name ?? "SharePoint"}
+                    </div>
+                    <div>
+                        <strong>Search: </strong>
+                        {sharepointSearch}
+                    </div>
                 </>
             );
         }
@@ -86,9 +105,10 @@ interface Props {
     web_data_points?: ExternalResultMetadata[];
     onEffortExtracted?: (effort: string | undefined) => void;
     onCitationClicked?: (citationFilePath: string) => void;
+    results?: any[];
 }
 
-export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_data_points, onEffortExtracted, onCitationClicked }) => {
+export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_data_points, onEffortExtracted, onCitationClicked, results }) => {
     const getCitationFontSize = React.useCallback((text: string) => {
         const length = text.length;
         if (length <= 45) {
@@ -102,6 +122,36 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
         }
         return "0.6em";
     }, []);
+
+    // Helper to get search query for a step
+    const getStepQuery = (step: QueryPlanStep): string | undefined => {
+        if (step.search_index_arguments?.search) return step.search_index_arguments.search;
+        if (step.web_arguments?.search) return step.web_arguments.search;
+        if (step.remote_share_point_arguments?.search) return step.remote_share_point_arguments.search;
+        return undefined;
+    };
+
+    // Helper to get results for a specific step
+    const getResultsForStep = (step: QueryPlanStep): any[] => {
+        if (!results || results.length === 0) return [];
+        const stepQuery = getStepQuery(step);
+        if (!stepQuery) return [];
+
+        // Filter by both query and step type
+        return results.filter(result => {
+            if (result.knowledgebase_query !== stepQuery) return false;
+
+            // Match result type to step type
+            if (step.type === "searchIndex") {
+                return result.sourcepage && !result.type; // Documents from search index
+            } else if (step.type === "remoteSharePoint") {
+                return result.type === "sharepoint"; // SharePoint results
+            } else if (step.type === "web") {
+                return result.url && !result.type; // Web results (have url but no type field)
+            }
+            return false;
+        });
+    };
 
     const stepNumberLookup = React.useMemo(() => {
         const lookup: Record<string, number> = {};
@@ -186,6 +236,7 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
                                         : [];
                                     const sortedCitations = relatedCitations.length ? [...relatedCitations].sort((a, b) => a.index - b.index) : [];
                                     const stepNumber = stepId !== undefined ? stepNumberLookup[String(stepId)] : undefined;
+                                    const stepResults = getResultsForStep(step);
 
                                     return (
                                         <tr key={step.id}>
@@ -197,63 +248,53 @@ export const AgentPlan: React.FC<Props> = ({ query_plan, citation_details, web_d
                                             </td>
                                             <td>
                                                 {renderDetail(step)}
-                                                {sortedCitations.length > 0 && (
-                                                    <div className={styles.stepCitations}>
-                                                        {sortedCitations.map(detail => {
-                                                            if (detail.isWeb) {
-                                                                const matchingWebEntry = web_data_points?.find(entry => entry.url === detail.reference);
-                                                                const webDisplayLabel = matchingWebEntry?.title?.trim()
-                                                                    ? matchingWebEntry.title
-                                                                    : detail.reference;
-                                                                const citationText = `${detail.index}. ${webDisplayLabel}`;
-                                                                return (
-                                                                    <span
-                                                                        key={`${step.id}-${detail.index}`}
-                                                                        className={`${answerStyles.citationEntry} ${styles.stepCitationEntry}`}
-                                                                    >
-                                                                        <a
-                                                                            className={answerStyles.citation}
-                                                                            title={
-                                                                                matchingWebEntry?.title?.trim()
-                                                                                    ? `${matchingWebEntry.title} (${detail.reference})`
-                                                                                    : detail.reference
-                                                                            }
-                                                                            href={detail.reference}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            style={{ fontSize: getCitationFontSize(citationText) }}
-                                                                        >
-                                                                            {citationText}
-                                                                        </a>
-                                                                    </span>
-                                                                );
-                                                            }
-
-                                                            const path = getCitationFilePath(detail.reference);
-                                                            const citationText = `${detail.index}. ${detail.reference}`;
-                                                            return (
-                                                                <span
-                                                                    key={`${step.id}-${detail.index}`}
-                                                                    className={`${answerStyles.citationEntry} ${styles.stepCitationEntry}`}
-                                                                >
-                                                                    <a
-                                                                        className={answerStyles.citation}
-                                                                        title={detail.reference}
-                                                                        onClick={e => {
-                                                                            e.preventDefault();
-                                                                            if (onCitationClicked) {
-                                                                                onCitationClicked(path);
-                                                                            }
-                                                                        }}
-                                                                        style={{ fontSize: getCitationFontSize(citationText), cursor: "pointer" }}
-                                                                    >
-                                                                        {citationText}
-                                                                    </a>
-                                                                </span>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                )}
+                                                {(step.type === "searchIndex" || step.type === "remoteSharePoint" || step.type === "web") &&
+                                                    (stepResults.length > 0 ? (
+                                                        <div className={styles.stepResults}>
+                                                            {stepResults.map((result, idx) => {
+                                                                // Handle different result types
+                                                                if (result.type === "sharepoint" && result.web_url) {
+                                                                    return (
+                                                                        <div key={idx} className={styles.stepResult}>
+                                                                            <a href={result.web_url} target="_blank" rel="noopener noreferrer">
+                                                                                {result.title || result.web_url}
+                                                                            </a>
+                                                                        </div>
+                                                                    );
+                                                                } else if (result.url) {
+                                                                    // Web result
+                                                                    return (
+                                                                        <div key={idx} className={styles.stepResult}>
+                                                                            <a href={result.url} target="_blank" rel="noopener noreferrer">
+                                                                                {result.title || result.url}
+                                                                            </a>
+                                                                        </div>
+                                                                    );
+                                                                } else if (result.sourcepage) {
+                                                                    // Document result - make it clickable to open citation tab
+                                                                    const path = getCitationFilePath(result.sourcepage);
+                                                                    return (
+                                                                        <div key={idx} className={styles.stepResult}>
+                                                                            <a
+                                                                                onClick={e => {
+                                                                                    e.preventDefault();
+                                                                                    if (onCitationClicked) {
+                                                                                        onCitationClicked(path);
+                                                                                    }
+                                                                                }}
+                                                                                style={{ cursor: "pointer" }}
+                                                                            >
+                                                                                {result.sourcepage}
+                                                                            </a>
+                                                                        </div>
+                                                                    );
+                                                                }
+                                                                return null;
+                                                            })}
+                                                        </div>
+                                                    ) : (
+                                                        <div className={styles.noResults}>No results found</div>
+                                                    ))}
                                             </td>
                                             <td title={step.query_time ?? undefined}>{step.elapsed_ms ?? "—"}</td>
                                         </tr>

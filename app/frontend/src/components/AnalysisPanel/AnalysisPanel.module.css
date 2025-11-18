@@ -47,13 +47,6 @@
     margin-bottom: 0.5em;
 }
 
-.tQuery {
-    color: #010207;
-    position: relative;
-    font-size: 0.875em;
-    margin-bottom: 0.5em;
-}
-
 .tCodeBlock {
     max-height: 18.75em;
     overflow: auto;
@@ -225,6 +218,45 @@
     display: flex;
     flex-direction: column;
     gap: 0.375em;
+}
+
+.stepResults {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
+.noResults {
+    margin-top: 0.5em;
+    font-size: 0.85em;
+    color: #666;
+    font-style: italic;
+}
+
+.stepResult {
+    display: inline-block;
+    font-size: 0.85em;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.stepResult a {
+    font-weight: 500;
+    line-height: 1.5em;
+    text-align: center;
+    border-radius: 0.25em;
+    padding: 0em 0.5em;
+    background: #d1dbfa;
+    color: #123bb6;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.stepResult a:hover {
+    text-decoration: underline;
 }
 
 .stepCitationEntry {
