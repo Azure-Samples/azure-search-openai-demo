@@ -31,7 +31,6 @@
                         "type": "web"
                     },
                     "id": 1,
-                    "snippet": "",
                     "title": "Contoso site",
                     "url": "https://contoso.example"
                 }
@@ -76,7 +75,6 @@
                         },
                         "id": 1,
                         "ref_id": "1",
-                        "snippet": null,
                         "title": "Contoso site",
                         "type": "web",
                         "url": "https://contoso.example"

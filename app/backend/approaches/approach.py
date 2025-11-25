@@ -109,7 +109,6 @@ class WebResult:
     id: Optional[str] = None
     title: Optional[str] = None
     url: Optional[str] = None
-    snippet: Optional[str] = None
     activity: Optional[ActivityDetail] = None
 
     def serialize_for_results(self) -> dict[str, Any]:
@@ -119,7 +118,6 @@ class WebResult:
             "ref_id": str(self.id),
             "title": self.title,
             "url": self.url,
-            "snippet": self.snippet,
             "activity": asdict(self.activity) if self.activity else None,
         }
 
@@ -797,7 +795,6 @@ class Approach(ABC):
                         "id": web.id,
                         "title": web.title,
                         "url": web.url,
-                        "snippet": clean_source(web.snippet or ""),
                         "activity": asdict(web.activity) if web.activity else None,
                     }
                 )
