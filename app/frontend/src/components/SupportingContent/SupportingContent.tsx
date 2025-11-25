@@ -42,7 +42,6 @@ export const SupportingContent = ({ supportingContent }: Props) => {
                     ) : (
                         <h4 className={styles.supportingContentItemHeader}>{item.title ?? "Web result"}</h4>
                     )}
-                    {item.snippet && <p className={styles.supportingContentItemText} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.snippet) }} />}
                 </li>
             ))}
         </ul>
