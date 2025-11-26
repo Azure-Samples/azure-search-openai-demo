@@ -21,3 +21,4 @@ jobs:
           globs: |
             **/*.md
             !data/**
+            !.github/**
