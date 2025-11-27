@@ -400,7 +400,7 @@ tqdm==4.66.5
     # via openai
 types-beautifulsoup4==4.12.0.20240511
     # via -r requirements.in
-types-html5lib==1.1.11.20241018
+types-html5lib==1.1.11.20251014
     # via types-beautifulsoup4
 types-pillow==10.2.0.20240822
     # via -r requirements.in
