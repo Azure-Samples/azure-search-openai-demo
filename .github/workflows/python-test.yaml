@@ -28,7 +28,7 @@ jobs:
         python_version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         node_version: ["20.14", "22"]
     steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
           with:
             # Fetch full history so diff-cover can compute a merge base with origin/main
             fetch-depth: 0
