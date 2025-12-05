@@ -100,8 +100,6 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
                 "recordId": "record-1",
                 "data": {
                     "metadata_storage_path": "https://account.blob.core.windows.net/container/sample.pdf",
-                    "metadata_storage_name": "sample.pdf",
-                    "metadata_storage_content_type": "application/pdf",
                 },
             }
         ]
@@ -161,8 +159,6 @@ async def test_document_extractor_handles_processing_exception(monkeypatch: pyte
                 "recordId": "rec-error",
                 "data": {
                     "metadata_storage_path": "https://account.blob.core.windows.net/container/sample.pdf",
-                    "metadata_storage_name": "sample.pdf",
-                    "metadata_storage_content_type": "application/pdf",
                 },
             }
         ]
@@ -486,8 +482,6 @@ async def test_document_extractor_without_settings(monkeypatch: pytest.MonkeyPat
                 "recordId": "record-1",
                 "data": {
                     "metadata_storage_path": "https://account.blob.core.windows.net/container/sample.pdf",
-                    "metadata_storage_name": "sample.pdf",
-                    "metadata_storage_content_type": "application/pdf",
                 },
             }
         ]

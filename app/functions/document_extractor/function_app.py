@@ -93,9 +93,7 @@ async def extract_document(req: func.HttpRequest) -> func.HttpResponse:
             {
                 "recordId": "1",
                 "data": {
-                    "metadata_storage_path": "https://<account>.blob.core.windows.net/<container>/<blob_path>",
-                    "metadata_storage_name": "document.pdf",
-                    "metadata_storage_content_type": "application/pdf"
+                    "metadata_storage_path": "https://<account>.blob.core.windows.net/<container>/<blob_path>"
                 }
             }
         ]
