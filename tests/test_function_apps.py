@@ -83,9 +83,14 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
         ".pdf": FileProcessor(StubParser([page]), None),
     }
 
+    class MockBlobManager:
+        async def download_blob(self, blob_path: str):
+            return (b"pdf-bytes", {})
+
     mock_settings = document_extractor.GlobalSettings(
         file_processors=mock_file_processors,
         azure_credential=object(),
+        blob_manager=MockBlobManager(),
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -94,9 +99,9 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
             {
                 "recordId": "record-1",
                 "data": {
-                    "file_data": {"$type": "file", "data": base64.b64encode(b"pdf-bytes").decode("utf-8")},
-                    "file_name": "sample.pdf",
-                    "contentType": "application/pdf",
+                    "metadata_storage_path": "https://account.blob.core.windows.net/container/sample.pdf",
+                    "metadata_storage_name": "sample.pdf",
+                    "metadata_storage_content_type": "application/pdf",
                 },
             }
         ]
@@ -128,6 +133,7 @@ async def test_document_extractor_requires_single_record(monkeypatch: pytest.Mon
     mock_settings = document_extractor.GlobalSettings(
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
+        blob_manager=object(),
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
     response = await document_extractor.extract_document(build_request({"values": []}))
@@ -144,6 +150,7 @@ async def test_document_extractor_handles_processing_exception(monkeypatch: pyte
     mock_settings = document_extractor.GlobalSettings(
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
+        blob_manager=object(),
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
     monkeypatch.setattr(document_extractor, "process_document", failing_process)
@@ -153,9 +160,9 @@ async def test_document_extractor_handles_processing_exception(monkeypatch: pyte
             {
                 "recordId": "rec-error",
                 "data": {
-                    "file_data": {"$type": "file", "data": base64.b64encode(b"pdf-bytes").decode("utf-8")},
-                    "file_name": "sample.pdf",
-                    "contentType": "application/pdf",
+                    "metadata_storage_path": "https://account.blob.core.windows.net/container/sample.pdf",
+                    "metadata_storage_name": "sample.pdf",
+                    "metadata_storage_content_type": "application/pdf",
                 },
             }
         ]
@@ -186,16 +193,19 @@ async def test_document_extractor_process_document_http_error(monkeypatch: pytes
         ".pdf": FileProcessor(FailingParser(), None),
     }
 
+    class MockBlobManager:
+        async def download_blob(self, blob_path: str):
+            return (b"content", {})
+
     mock_settings = document_extractor.GlobalSettings(
         file_processors=mock_file_processors,
         azure_credential=object(),
+        blob_manager=MockBlobManager(),
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
     data = {
-        "file_data": {"data": base64.b64encode(b"content").decode("utf-8")},
-        "file_name": "doc.pdf",
-        "contentType": "application/pdf",
+        "metadata_storage_path": "https://account.blob.core.windows.net/container/doc.pdf",
     }
 
     with pytest.raises(ValueError) as exc_info:
@@ -204,12 +214,16 @@ async def test_document_extractor_process_document_http_error(monkeypatch: pytes
     assert "Parser failed" in str(exc_info.value)
 
 
-def test_document_extractor_missing_file_data() -> None:
-    with pytest.raises(ValueError):
-        document_extractor.get_document_stream_filedata({"file_data": {}})
-
-
 def test_document_extractor_managed_identity_reload(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Set required environment variables
+    monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "teststorage")
+    monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "testcontainer")
+    monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "testrg")
+    monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-sub-id")
+
+    # Mock setup_blob_manager to avoid actual Azure calls
+    monkeypatch.setattr(document_extractor, "setup_blob_manager", lambda **kwargs: object())
+
     monkeypatch.setenv("AZURE_CLIENT_ID", "client-123")
     document_extractor.configure_global_settings()
     assert isinstance(document_extractor.settings.azure_credential, document_extractor.ManagedIdentityCredential)
@@ -471,9 +485,9 @@ async def test_document_extractor_without_settings(monkeypatch: pytest.MonkeyPat
             {
                 "recordId": "record-1",
                 "data": {
-                    "file_data": {"$type": "file", "data": base64.b64encode(b"pdf-bytes").decode("utf-8")},
-                    "file_name": "sample.pdf",
-                    "contentType": "application/pdf",
+                    "metadata_storage_path": "https://account.blob.core.windows.net/container/sample.pdf",
+                    "metadata_storage_name": "sample.pdf",
+                    "metadata_storage_content_type": "application/pdf",
                 },
             }
         ]
