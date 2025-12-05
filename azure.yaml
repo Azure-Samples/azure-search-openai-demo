@@ -40,6 +40,7 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: false
           continueOnError: false
+  # Un-comment this section if using USE_CLOUD_INGESTION option
   # document-extractor:
   #   project: ./app/functions/document_extractor
   #   language: py
