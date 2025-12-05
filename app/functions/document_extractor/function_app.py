@@ -3,23 +3,25 @@ Azure Function: Document Extractor
 Custom skill for Azure AI Search that extracts and processes document content.
 """
 
-import base64
 import io
 import json
 import logging
 import os
 from dataclasses import dataclass
 from typing import Any
+from urllib.parse import unquote, urlparse
 
 import azure.functions as func
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import ManagedIdentityCredential
 
+from prepdocslib.blobmanager import BlobManager
 from prepdocslib.fileprocessor import FileProcessor
 from prepdocslib.page import Page
 from prepdocslib.servicesetup import (
     build_file_processors,
     select_processor_for_filename,
+    setup_blob_manager,
 )
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
@@ -31,6 +33,7 @@ logger = logging.getLogger(__name__)
 class GlobalSettings:
     file_processors: dict[str, FileProcessor]
     azure_credential: ManagedIdentityCredential
+    blob_manager: BlobManager
 
 
 settings: GlobalSettings | None = None
@@ -63,9 +66,18 @@ def configure_global_settings():
         process_figures=use_multimodal,
     )
 
+    blob_manager = setup_blob_manager(
+        azure_credential=azure_credential,
+        storage_account=os.environ["AZURE_STORAGE_ACCOUNT"],
+        storage_container=os.environ["AZURE_STORAGE_CONTAINER"],
+        storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
+    )
+
     settings = GlobalSettings(
         file_processors=file_processors,
         azure_credential=azure_credential,
+        blob_manager=blob_manager,
     )
 
 
@@ -75,20 +87,15 @@ async def extract_document(req: func.HttpRequest) -> func.HttpResponse:
     """
     Azure Search Custom Skill: Extract document content
 
-    Input format (single record; file data only):
-    # https://learn.microsoft.com/azure/search/cognitive-search-skill-document-intelligence-layout#skill-inputs
+    Input format (single record):
     {
         "values": [
             {
                 "recordId": "1",
                 "data": {
-                    // Base64 encoded file (skillset must enable file data)
-                    "file_data": {
-                        "$type": "file",
-                        "data": "base64..."
-                    },
-                    // Optional
-                    "file_name": "doc.pdf"
+                    "metadata_storage_path": "https://<account>.blob.core.windows.net/<container>/<blob_path>",
+                    "metadata_storage_name": "document.pdf",
+                    "metadata_storage_content_type": "application/pdf"
                 }
             }
         ]
@@ -176,16 +183,37 @@ async def process_document(data: dict[str, Any]) -> dict[str, Any]:
     Process a single document: download, parse, extract figures, upload images
 
     Args:
-        data: Input data with blobUrl, fileName, contentType
+        data: Input data with metadata_storage_path
 
     Returns:
         Dictionary with 'text' (markdown) and 'images' (list of {url, description})
     """
-    document_stream, file_name, content_type = get_document_stream_filedata(data)
-    logger.info("Processing document: %s", file_name)
+    if settings is None:
+        raise RuntimeError("Global settings not initialized")
+
+    # Get blob path from metadata_storage_path URL
+    # URL format: https://<account>.blob.core.windows.net/<container>/<blob_path>
+    storage_path = data["metadata_storage_path"]
+    parsed_url = urlparse(storage_path)
+    # Path is /<container>/<blob_path>, so split and take everything after container
+    path_parts = unquote(parsed_url.path).lstrip("/").split("/", 1)
+    if len(path_parts) < 2:
+        raise ValueError(f"Invalid storage path format: {storage_path}")
+    blob_path_within_container = path_parts[1]  # Everything after the container name
+
+    logger.info("Downloading blob: %s", blob_path_within_container)
+    result = await settings.blob_manager.download_blob(blob_path_within_container)
+    if result is None:
+        raise ValueError(f"Blob not found: {blob_path_within_container}")
+
+    document_bytes, properties = result
+    document_stream = io.BytesIO(document_bytes)
+    document_stream.name = blob_path_within_container
+
+    logger.info("Processing document: %s", blob_path_within_container)
 
     # Get parser from file_processors dict based on file extension
-    file_processor = select_processor_for_filename(file_name, settings.file_processors)
+    file_processor = select_processor_for_filename(blob_path_within_container, settings.file_processors)
     parser = file_processor.parser
 
     pages: list[Page] = []
@@ -193,26 +221,12 @@ async def process_document(data: dict[str, Any]) -> dict[str, Any]:
         document_stream.seek(0)
         pages = [page async for page in parser.parse(content=document_stream)]
     except HttpResponseError as exc:
-        raise ValueError(f"Parser failed for {file_name}: {exc.message}") from exc
+        raise ValueError(f"Parser failed for {blob_path_within_container}: {exc.message}") from exc
     finally:
         document_stream.close()
 
-    components = build_document_components(file_name, pages)
+    components = build_document_components(blob_path_within_container, pages)
     return components
-
-
-def get_document_stream_filedata(data: dict[str, Any]) -> tuple[io.BytesIO, str, str]:
-    """Return a BytesIO stream for file_data input only (skillset must send file bytes)."""
-    file_payload = data.get("file_data", {})
-    encoded = file_payload.get("data")
-    if not encoded:
-        raise ValueError("file_data payload missing base64 data")
-    document_bytes = base64.b64decode(encoded)
-    file_name = data.get("file_name") or data.get("fileName") or file_payload.get("name") or "document"
-    content_type = data.get("contentType") or file_payload.get("contentType") or "application/octet-stream"
-    stream = io.BytesIO(document_bytes)
-    stream.name = file_name
-    return stream, file_name, content_type
 
 
 def build_document_components(file_name: str, pages: list[Page]) -> dict[str, Any]:

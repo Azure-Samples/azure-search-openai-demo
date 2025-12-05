@@ -40,37 +40,36 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: false
           continueOnError: false
-  # Un-comment this section if using USE_CLOUD_INGESTION option
-  # document-extractor:
-  #   project: ./app/functions/document_extractor
-  #   language: py
-  #   host: function
-  #   hooks:
-  #     prepackage:
-  #       shell: pwsh
-  #       run: python ../../../scripts/copy_prepdocslib.py
-  #       interactive: false
-  #       continueOnError: false
-  # figure-processor:
-  #   project: ./app/functions/figure_processor
-  #   language: py
-  #   host: function
-  #   hooks:
-  #     prepackage:
-  #       shell: pwsh
-  #       run: python ../../../scripts/copy_prepdocslib.py
-  #       interactive: false
-  #       continueOnError: false
-  # text-processor:
-  #   project: ./app/functions/text_processor
-  #   language: py
-  #   host: function
-  #   hooks:
-  #     prepackage:
-  #       shell: pwsh
-  #       run: python ../../../scripts/copy_prepdocslib.py
-  #       interactive: false
-  #       continueOnError: false
+  document-extractor:
+    project: ./app/functions/document_extractor
+    language: py
+    host: function
+    hooks:
+      prepackage:
+        shell: pwsh
+        run: python ../../../scripts/copy_prepdocslib.py
+        interactive: false
+        continueOnError: false
+  figure-processor:
+    project: ./app/functions/figure_processor
+    language: py
+    host: function
+    hooks:
+      prepackage:
+        shell: pwsh
+        run: python ../../../scripts/copy_prepdocslib.py
+        interactive: false
+        continueOnError: false
+  text-processor:
+    project: ./app/functions/text_processor
+    language: py
+    host: function
+    hooks:
+      prepackage:
+        shell: pwsh
+        run: python ../../../scripts/copy_prepdocslib.py
+        interactive: false
+        continueOnError: false
 hooks:
     preprovision:
       windows:
