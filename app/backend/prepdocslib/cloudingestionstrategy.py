@@ -163,7 +163,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
             inputs=[
                 # Always provide the blob URL so the function can download large files (> 16MB)
                 InputFieldMappingEntry(name="metadata_storage_path", source="/document/metadata_storage_path"),
-                # We are not using the SaS token since the functions have RBAC access via managed identity
+                # We are not using the SAS token since the functions have RBAC access via managed identity
             ],
             outputs=[
                 OutputFieldMappingEntry(name="pages", target_name="pages"),
