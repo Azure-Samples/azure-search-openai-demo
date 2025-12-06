@@ -2,7 +2,6 @@
     "pageTitle": "Azure OpenAI + AI Arama",
     "headerTitle": "Azure OpenAI + AI Arama",
     "chat": "Sohbet",
-    "qa": "Bir soru sor",
     "login": "Giriş yap",
     "logout": "Çıkış yap",
     "clearChat": "Sohbeti temizle",
