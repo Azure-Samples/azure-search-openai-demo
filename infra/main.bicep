@@ -469,6 +469,8 @@ module appServicePlan 'core/host/appserviceplan.bicep' = if (deploymentTarget ==
 var appEnvVariables = {
   AZURE_STORAGE_ACCOUNT: storage.outputs.name
   AZURE_STORAGE_CONTAINER: storageContainerName
+  AZURE_STORAGE_RESOURCE_GROUP: storageResourceGroup.name
+  AZURE_SUBSCRIPTION_ID: subscription().subscriptionId
   AZURE_SEARCH_INDEX: searchIndexName
   AZURE_SEARCH_KNOWLEDGEBASE_NAME: knowledgeBaseName
   AZURE_SEARCH_SERVICE: searchService.outputs.name
