@@ -1,6 +1,6 @@
-# RAG Chat: Application Architecture
+# RAG Chat: Application architecture
 
-This document provides a detailed architectural overview of this application, a Retrieval Augmented Generation (RAG) application that creates a ChatGPT-like experience over your own documents. It combines Azure OpenAI Service for AI capabilities with Azure AI Search for document indexing and retrieval.
+This document provides a detailed architectural overview of this application, a Retrieval Augmented Generation (RAG) application that creates a ChatGPT-like experience over your own documents. It combines Azure OpenAI Service for LLM calls with Azure AI Search for document indexing and retrieval.
 
 For getting started with the application, see the main [README](../README.md).
 
@@ -21,20 +21,16 @@ graph TB
         end
 
         subgraph "Backend"
-            API[🐍 Python API<br/>Flask/Quart<br/>Chat Endpoints<br/>Document Upload<br/>Authentication]
-
-            subgraph "Approaches"
-                CRR[ChatReadRetrieveRead<br/>Approach]
-            end
+            API[🐍 Python API<br/>Quart<br/>Chat Endpoints<br/>Document Upload<br/>Authentication<br/>RAG Approach]
         end
     end
 
     subgraph "Azure Services"
         subgraph "AI Services"
-            OpenAI[🤖 Azure OpenAI<br/>GPT-4 Mini<br/>Text Embeddings<br/>GPT-4 Vision]
+            OpenAI[🤖 Azure OpenAI<br/>GPT-4.1 Mini<br/>Text Embeddings]
             Search[🔍 Azure AI Search<br/>Vector Search<br/>Semantic Ranking<br/>Full-text Search]
             DocIntel[📄 Azure Document<br/>Intelligence<br/>Text Extraction<br/>Layout Analysis]
-            Vision2[👁️ Azure AI Vision<br/>optional]
+            Vision[👁️ Azure AI Vision<br/>optional]
             Speech[🎤 Azure Speech<br/>Services optional]
         end
 
@@ -46,7 +42,6 @@ graph TB
         subgraph "Platform Services"
             ContainerApps[📦 Azure Container Apps<br/>or App Service<br/>Application Hosting]
             AppInsights[📊 Application Insights<br/>Monitoring<br/>Telemetry]
-            KeyVault[🔐 Azure Key Vault<br/>Secrets Management]
         end
     end
 
@@ -58,9 +53,6 @@ graph TB
     User -.-> Browser
     Browser <--> React
     React <--> API
-
-    %% Backend Processing
-    API --> CRR
 
     %% Azure Service Connections
     API <--> OpenAI
@@ -78,7 +70,6 @@ graph TB
     %% Platform Integration
     ContainerApps --> API
     API --> AppInsights
-    API --> KeyVault
 
     %% Styling
     classDef userLayer fill:#e1f5fe
@@ -89,10 +80,10 @@ graph TB
     classDef processing fill:#f1f8e9
 
     class User,Browser userLayer
-    class React,API,CRR appLayer
-    class OpenAI,Search,DocIntel,Vision2,Speech azureAI
+    class React,API appLayer
+    class OpenAI,Search,DocIntel,Vision,Speech azureAI
     class Blob,Cosmos azureStorage
-    class ContainerApps,AppInsights,KeyVault azurePlatform
+    class ContainerApps,AppInsights azurePlatform
     class PrepDocs processing
 ```
 
@@ -148,16 +139,15 @@ sequenceDiagram
 
 ### Frontend (React/TypeScript)
 
-- **Chat Interface**: Main conversational UI
-- **Settings Panel**: Configuration options for AI behavior
-- **Citation Display**: Shows sources and references
+- **Chat interface**: Main conversational UI
+- **Settings panel**: Configuration options for AI behavior
+- **Citation display**: Shows sources and references
 - **Authentication**: Optional user login integration
 
 ### Backend (Python)
 
 - **API Layer**: RESTful endpoints for chat, search, and configuration. See [HTTP Protocol](http_protocol.md) for detailed API documentation.
-- **Approach Patterns**: Different strategies for processing queries
-  - `ChatReadRetrieveRead`: Multi-turn conversation with retrieval
+- **RAG approach**: Multi-turn conversation with retrieval
 - **Authentication**: Optional integration with Azure Active Directory
 
 ### Azure Services Integration
@@ -171,11 +161,14 @@ sequenceDiagram
 
 The architecture supports several optional features that can be enabled. For detailed configuration instructions, see the [optional features guide](deploy_features.md):
 
-- **GPT-4 with Vision**: Process image-heavy documents
-- **Speech Services**: Voice input/output capabilities
-- **Chat History**: Persistent conversation storage in Cosmos DB
-- **Authentication**: User login and access control
-- **Private Endpoints**: Network isolation for enhanced security
+- **Multimodal embeddings and answering**: Use image embeddings for searching and images when answering
+- **Reasoning models**: Use reasoning models like o3/o4-mini for more thoughtful responses
+- **Agentic retrieval**: Use agentic retrieval in place of the Search API
+- **Speech input/output**: Voice input via browser API, voice output via Azure Speech Services
+- **Chat history**: Browser-based (IndexedDB) or persistent storage in Cosmos DB
+- **Authentication**: User login and document-level access control
+- **User document upload**: Allow users to upload and chat with their own documents
+- **Private endpoints**: Network isolation for enhanced security
 
 ## Deployment Options
 
