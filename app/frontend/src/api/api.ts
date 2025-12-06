@@ -22,25 +22,6 @@ export async function configApi(): Promise<Config> {
     return (await response.json()) as Config;
 }
 
-export async function askApi(request: ChatAppRequest, idToken: string | undefined): Promise<ChatAppResponse> {
-    const headers = await getHeaders(idToken);
-    const response = await fetch(`${BACKEND_URI}/ask`, {
-        method: "POST",
-        headers: { ...headers, "Content-Type": "application/json" },
-        body: JSON.stringify(request)
-    });
-
-    if (response.status > 299 || !response.ok) {
-        throw Error(`Request failed with status ${response.status}`);
-    }
-    const parsedResponse: ChatAppResponseOrError = await response.json();
-    if (parsedResponse.error) {
-        throw Error(parsedResponse.error);
-    }
-
-    return parsedResponse as ChatAppResponse;
-}
-
 export async function chatApi(request: ChatAppRequest, shouldStream: boolean, idToken: string | undefined): Promise<Response> {
     let url = `${BACKEND_URI}/chat`;
     if (shouldStream) {
