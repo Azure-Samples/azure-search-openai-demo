@@ -1,8 +1,8 @@
 {
     "testdata_path": "ground_truth.jsonl",
-    "results_dir": "results/baseline-ask",
+    "results_dir": "results/baseline-chat",
     "requested_metrics": ["gpt_groundedness", "gpt_relevance", "answer_length", "latency", "citations_matched", "any_citation"],
-    "target_url": "http://localhost:50505/ask",
+    "target_url": "http://localhost:50505/chat",
     "target_parameters": {
         "overrides": {
             "top": 3,
