@@ -57,7 +57,7 @@ The repo includes sample data so it's ready to try end to end. In this sample ap
 
 ## Features
 
-- Chat (multi-turn) and Q&A (single turn) interfaces
+- Chat (multi-turn) interface
 - Renders citations and thought process for each answer
 - Includes settings directly in the UI to tweak the behavior and experiment with options
 - Integrates Azure AI Search for indexing and retrieval of documents, with support for [many document formats](/docs/data_ingestion.md#supported-document-formats) as well as [cloud data ingestion](/docs/data_ingestion.md#cloud-data-ingestion)
@@ -228,7 +228,7 @@ See more tips in [the local development guide](docs/localdev.md).
 
 Once in the web app:
 
-- Try different topics in chat or Q&A context. For chat, try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
+- Try different topics in chat. Try follow up questions, clarifications, ask to simplify or elaborate on answer, etc.
 - Explore citations and sources
 - Click on "settings" to try different options, tweak prompts, etc.
 
