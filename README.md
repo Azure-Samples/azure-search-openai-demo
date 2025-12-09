@@ -1,3 +1,8 @@
+<img width="1024" height="1024" alt="carpuncle-terminalpng" src="https://github.com/user-attachments/assets/ea33aa59-da8c-4c1c-9f2f-56f6c06b3a93" />
+<img width="1024" height="1024" alt="carpuncle" src="https://github.com/user-attachments/assets/51d274f4-e512-494c-9e6c-0335b165ae74" />
+![4126172777-whdj-2025](https://github.com/user-attachments/assets/3e72fd8a-6375-49ab-ac40-27d085f64c77)
+<img width="128" height="128" alt="5ghz - Kopie" src="https://github.com/user-attachments/assets/8fb85db2-573d-4d63-94ad-d87441925675" />
+<img width="96" height="96" alt="__siteIcon__" src="https://github.com/user-attachments/assets/4acc7d27-5aac-4294-bb6b-a28e1e9d1cb0" />
 <!--
 ---
 name: RAG chat app with your data (Python)
