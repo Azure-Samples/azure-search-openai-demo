@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ChatAppResponse, getHeaders } from "../../api";
 import { getToken, useLogin } from "../../authConfig";
 import { MarkdownViewer } from "../MarkdownViewer";
+import { EmailViewer } from "../EmailViewer";
 import { SupportingContent } from "../SupportingContent";
 import styles from "./AnalysisPanel.module.css";
 import { AnalysisPanelTabs } from "./AnalysisPanelTabs";
@@ -44,7 +45,8 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
         if (activeCitation) {
             // Get hash from the URL as it may contain #page=N
             // which helps browser PDF renderer jump to correct page N
-            const originalHash = activeCitation.indexOf("#") ? activeCitation.split("#")[1] : "";
+            const hashIndex = activeCitation.indexOf("#");
+            const originalHash = hashIndex >= 0 ? activeCitation.split("#")[1] : "";
             const response = await fetch(activeCitation, {
                 method: "GET",
                 headers: await getHeaders(token)
@@ -73,6 +75,9 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 return <img src={citation} className={styles.citationImg} alt="Citation Image" />;
             case "md":
                 return <MarkdownViewer src={activeCitation} />;
+            case "eml":
+            case "msg":
+                return <EmailViewer src={activeCitation} height={citationHeight} />;
             default:
                 return <iframe title="Citation" src={citation} width="100%" height={citationHeight} />;
         }
@@ -103,7 +108,9 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText={t("headerTexts.citation")}
                 headerButtonProps={isDisabledCitationTab ? pivotItemDisabledStyle : undefined}
             >
-                {renderFileViewer()}
+                <div className={styles.citationContainer}>
+                    {renderFileViewer()}
+                </div>
             </PivotItem>
         </Pivot>
     );

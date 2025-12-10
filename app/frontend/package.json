@@ -17,6 +17,7 @@
     "@fluentui/react": "^8.112.5",
     "@fluentui/react-components": "^9.56.2",
     "@fluentui/react-icons": "^2.0.265",
+    "@kenjiuno/msgreader": "^1.27.0-alpha.3",
     "@react-spring/web": "^9.7.5",
     "dompurify": "^3.2.4",
     "i18next": "^24.2.0",
@@ -24,6 +25,7 @@
     "i18next-http-backend": "^3.0.1",
     "idb": "^8.0.0",
     "ndjson-readablestream": "^1.2.0",
+    "postal-mime": "^2.6.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
@@ -33,7 +35,8 @@
     "react-syntax-highlighter": "^16.1.0",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
-    "scheduler": "^0.20.2"
+    "scheduler": "^0.20.2",
+    "buffer": "^6.0.3"
   },
   "devDependencies": {
     "@types/dom-speech-recognition": "^0.0.7",

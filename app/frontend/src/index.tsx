@@ -6,6 +6,13 @@ import { HelmetProvider } from "react-helmet-async";
 import { initializeIcons } from "@fluentui/react";
 import { MsalProvider } from "@azure/msal-react";
 import { AuthenticationResult, EventType, PublicClientApplication } from "@azure/msal-browser";
+import { Buffer } from "buffer";
+
+// Polyfill Buffer for browser environment
+if (typeof window !== "undefined" && !window.Buffer) {
+    window.Buffer = Buffer;
+    (globalThis as any).Buffer = Buffer;
+}
 
 import "./index.css";
 

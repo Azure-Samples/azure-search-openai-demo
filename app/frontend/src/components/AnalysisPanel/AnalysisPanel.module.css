@@ -82,6 +82,13 @@
     object-fit: contain;
 }
 
+.citationContainer {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
 .header {
     color: #123bb6;
     position: relative;
