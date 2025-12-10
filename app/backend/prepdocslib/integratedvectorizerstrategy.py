@@ -170,6 +170,28 @@ class IntegratedVectorizerStrategy(Strategy):  # pragma: no cover
             files = self.list_file_strategy.list()
             async for file in files:
                 try:
+                     # Check if filename contains # and rename on disk if it does
+                    if hasattr(file.content, "name") and "#" in file.filename():
+                        original_path = file.content.name
+                        if os.path.exists(original_path) and os.path.isfile(original_path):
+                            # Get directory and filename
+                            directory = os.path.dirname(original_path)
+                            original_filename = os.path.basename(original_path)
+                            new_filename = original_filename.replace("#", "_")
+                            new_path = os.path.join(directory, new_filename)
+                            
+                            # Only rename if the new filename is different
+                            if new_path != original_path:
+                                # Close the current file handle
+                                file.content.close()
+                                
+                                # Rename the file on disk
+                                os.rename(original_path, new_path)
+                                logger.info("Renamed file from '%s' to '%s' (replaced # with _)", original_filename, new_filename)
+                                
+                                # Reopen the file with the new name
+                                file.content = open(new_path, mode="rb")
+                    
                     await self.blob_manager.upload_blob(file)
                 finally:
                     if file:

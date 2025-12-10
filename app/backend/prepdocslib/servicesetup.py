@@ -23,6 +23,8 @@ from .pdfparser import DocumentAnalysisParser, LocalPdfParser
 from .strategy import SearchInfo
 from .textparser import TextParser
 from .textsplitter import SentenceTextSplitter, SimpleTextSplitter
+from .emailparser import EmailParser
+from .emailparser import MsgParser
 
 logger = logging.getLogger("scripts")
 
@@ -290,6 +292,8 @@ def build_file_processors(
         ".md": FileProcessor(TextParser(), sentence_text_splitter),
         ".txt": FileProcessor(TextParser(), sentence_text_splitter),
         ".csv": FileProcessor(CsvParser(), sentence_text_splitter),
+        ".eml": FileProcessor(EmailParser(), sentence_text_splitter),
+        ".msg": FileProcessor(MsgParser(), sentence_text_splitter),
     }
     # These require either a Python package or Document Intelligence
     if pdf_parser is not None:

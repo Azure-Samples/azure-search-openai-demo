@@ -454,3 +454,5 @@ yarl==1.17.2
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata
+extract-msg==0.42.1
+    # via -r requirements.in
