@@ -1,5 +1,4 @@
-$USE_CLOUD_INGESTION = (azd env get-value USE_CLOUD_INGESTION)
-if ($USE_CLOUD_INGESTION -eq "true") {
+if ((azd env get-values) -match "USE_CLOUD_INGESTION=""true""") {
   Write-Host "Cloud ingestion is enabled, so we are not running the manual ingestion process."
   Exit 0
 }
