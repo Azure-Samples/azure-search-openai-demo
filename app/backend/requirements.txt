@@ -141,7 +141,7 @@ idna==3.10
     #   yarl
 importlib-metadata==8.0.0
     # via opentelemetry-api
-isodate==0.6.1
+isodate==0.7.2
     # via
     #   azure-ai-documentintelligence
     #   azure-search-documents
