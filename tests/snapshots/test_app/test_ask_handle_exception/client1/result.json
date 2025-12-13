@@ -1,3 +1,0 @@
-{
-    "error": "The app encountered an error processing your request.\nIf you are an administrator of the app, check the application logs for a full traceback.\nError type: <class 'ZeroDivisionError'>\n"
-}
