@@ -3,7 +3,7 @@ if ((azd env get-values) -match "USE_CLOUD_INGESTION=""true""") {
   Exit 0
 }
 
-./scripts/load_python_env.ps1
+. ./scripts/load_python_env.ps1
 
 $venvPythonPath = "./.venv/scripts/python.exe"
 if (Test-Path -Path "/usr") {
@@ -25,4 +25,8 @@ $argumentList = "./app/backend/prepdocs.py $dataArg --verbose $additionalArgs"
 
 $argumentList
 
-Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow
+$process = Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow -PassThru
+if ($process.ExitCode -ne 0) {
+    Write-Error "prepdocs.py failed with exit code $($process.ExitCode)"
+    exit $process.ExitCode
+}

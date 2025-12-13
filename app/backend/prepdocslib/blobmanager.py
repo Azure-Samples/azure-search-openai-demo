@@ -40,7 +40,8 @@ class BaseBlobManager:
 
     @classmethod
     def blob_name_from_file_name(cls, filename) -> str:
-        return os.path.basename(filename)
+        blob_name = os.path.basename(filename)
+        return blob_name.replace("#", "_")
 
     @classmethod
     def add_image_citation(
@@ -184,8 +185,11 @@ class AdlsBlobManager(BaseBlobManager):
         # Ensure user directory exists but don't create a subdirectory
         user_directory_client = await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
 
+        # Sanitize filename by replacing # with _ before uploading
+        sanitized_filename = self.blob_name_from_file_name(filename)
+
         # Create file directly in user directory
-        file_client = user_directory_client.get_file_client(filename)
+        file_client = user_directory_client.get_file_client(sanitized_filename)
 
         # Handle both File and IO objects
         if isinstance(file, File):
@@ -216,9 +220,11 @@ class AdlsBlobManager(BaseBlobManager):
         Returns:
             str: Full path to the image directory
         """
+        # Sanitize document filename by replacing # with _
+        sanitized_doc_filename = self.blob_name_from_file_name(document_filename)
         if page_num is not None:
-            return f"{user_oid}/images/{document_filename}/page_{page_num}"
-        return f"{user_oid}/images/{document_filename}"
+            return f"{user_oid}/images/{sanitized_doc_filename}/page_{page_num}"
+        return f"{user_oid}/images/{sanitized_doc_filename}"
 
     async def upload_document_image(
         self,
@@ -248,7 +254,8 @@ class AdlsBlobManager(BaseBlobManager):
         await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
         image_directory_path = self._get_image_directory_path(document_filename, user_oid, image_page_num)
         image_directory_client = await self._ensure_directory(directory_path=image_directory_path, user_oid=user_oid)
-        file_client = image_directory_client.get_file_client(image_filename)
+        sanitized_image_filename = self.blob_name_from_file_name(image_filename)
+        file_client = image_directory_client.get_file_client(sanitized_image_filename)
         image_bytes = BaseBlobManager.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
         logger.info("Uploading document image '%s' to '%s'", image_filename, image_directory_path)
         await file_client.upload_data(image_bytes, overwrite=True, metadata={"UploadedBy": user_oid})
@@ -292,7 +299,9 @@ class AdlsBlobManager(BaseBlobManager):
 
         try:
             user_directory_client = await self._ensure_directory(directory_path=directory_path, user_oid=user_oid)
-            file_client = user_directory_client.get_file_client(filename)
+            # Sanitize filename by replacing # with _ to match uploaded filename
+            sanitized_filename = self.blob_name_from_file_name(filename)
+            file_client = user_directory_client.get_file_client(sanitized_filename)
             download_response = await file_client.download_file()
             content = await download_response.readall()
 
@@ -456,7 +465,10 @@ class BlobManager(BaseBlobManager):
         if not await container_client.exists():
             await container_client.create_container()
         image_bytes = self.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)
-        blob_name = f"{self.blob_name_from_file_name(document_filename)}/page{image_page_num}/{image_filename}"
+        # Sanitize both document and image filenames by replacing # with _
+        sanitized_doc_filename = self.blob_name_from_file_name(document_filename)
+        sanitized_image_filename = self.blob_name_from_file_name(image_filename)
+        blob_name = f"{sanitized_doc_filename}/page{image_page_num}/{sanitized_image_filename}"
         logger.info("Uploading blob for document image '%s'", blob_name)
         blob_client = await container_client.upload_blob(blob_name, image_bytes, overwrite=True)
         return blob_client.url
