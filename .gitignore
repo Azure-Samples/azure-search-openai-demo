@@ -1,3 +1,6 @@
+# External dependencies
+external/taskade-docs/
+external/taskade-mcp/
 # Azure az webapp deployment details
 .azure
 *_env

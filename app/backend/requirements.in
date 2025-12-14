@@ -28,6 +28,7 @@ PyMuPDF
 beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk
+playwright>=1.40.0
 python-dotenv
 prompty
 rich

@@ -21,6 +21,14 @@ If you need to rerun the automation manually, execute `.devcontainer/post-create
 
 * app: Contains the main application code, including frontend and backend.
   * app/backend: Contains the Python backend code, written with Quart framework.
+    * app/backend/automation: Contains the automation system for freelance platform registration
+      * app/backend/automation/__init__.py: Automation module initialization
+      * app/backend/automation/browser_agent.py: Browser automation using Playwright with Edge support
+      * app/backend/automation/freelance_registrar.py: Platform-specific registration handlers (Upwork, Fiverr, etc.)
+      * app/backend/automation/mcp_integration.py: Task management using Model Context Protocol
+      * app/backend/automation/rag_agent.py: RAG-powered intelligent automation agent
+      * app/backend/automation/taskade_client.py: Taskade Enterprise API client for project/task management
+    * app/backend/automation_api.py: REST API blueprint for automation endpoints
     * app/backend/approaches: Contains the different approaches
       * app/backend/approaches/approach.py: Base class for all approaches
       * app/backend/approaches/retrievethenread.py: Ask approach, just searches and answers

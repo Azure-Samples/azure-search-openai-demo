@@ -1,0 +1,19 @@
+{
+  "servers": {
+    "microsoftdocs/mcp": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "gallery": "https://api.mcp.github.com",
+      "version": "1.0.0"
+    },
+    "M365AgentsToolkit MCP Server": {
+      "command": "npx",
+      "args": [
+        "@microsoft/m365agentstoolkit-mcp@latest",
+        "server",
+        "start"
+      ]
+    }
+  },
+  "inputs": []
+}

@@ -731,6 +731,10 @@ def create_app():
     app.register_blueprint(bp)
     app.register_blueprint(chat_history_cosmosdb_bp)
 
+    # Register automation API blueprint
+    from automation_api import automation_bp
+    app.register_blueprint(automation_bp)
+
     if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         app.logger.info("APPLICATIONINSIGHTS_CONNECTION_STRING is set, enabling Azure Monitor")
         configure_azure_monitor(
