@@ -5,6 +5,18 @@ This file contains instructions for developers working on the Azure Search and O
 Always keep this file up to date with any changes to the codebase or development process.
 If necessary, edit this file to ensure it accurately reflects the current state of the project.
 
+## Autonomous Codespace setup
+
+The devcontainer now provisions and runs the app automatically so Codespaces stay "hands free":
+
+* `.devcontainer/post-create.sh` installs tmux, bootstraps the repo-wide `.venv`, installs backend requirements, and runs `npm ci` for the frontend. This script is wired through `postCreateCommand`, so dependencies are always ready after a rebuild.
+* `.devcontainer/post-start.sh` loads environment variables (preferring `.env` created from `.env.template` or falling back to `scripts/load_azd_env.py`), then uses tmux to launch:
+  * Backend Quart dev server on port **50505**, bound to `0.0.0.0` so VS Code port forwarding works.
+  * Frontend Vite dev server on port **5173**, also bound to `0.0.0.0`.
+* Both commands run in the shared tmux session `aso-services` (`backend` and `frontend` windows). Reattach with `tmux attach -t aso-services`, kill with `tmux kill-session -t aso-services`, and the automation will recreate it on the next container start.
+
+If you need to rerun the automation manually, execute `.devcontainer/post-create.sh` (dependency install) or `.devcontainer/post-start.sh` (restart tmux services) from the repo root. A `.env.template` file with safe placeholder values is included; the `post-create` script will copy it to `.env` if a local `.env` is not present. Do NOT commit your real `.env` to the repo — `.env` is listed in `.gitignore`.
+
 ## Overall code layout
 
 * app: Contains the main application code, including frontend and backend.
