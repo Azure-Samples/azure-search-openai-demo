@@ -1,5 +1,7 @@
 # Additional documentation
 
+> 📖 **[Wersja polska (Polish version)](README.pl.md)**
+
 Consult the main [README](../README.md) for general information about the project.
 These are advanced topics that are not necessary for a basic deployment.
 
