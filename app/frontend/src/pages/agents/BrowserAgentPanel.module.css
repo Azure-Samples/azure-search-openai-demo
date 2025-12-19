@@ -1,0 +1,20 @@
+.createForm {
+    background: #f3f2f1;
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid #edebe9;
+}
+
+.agentsList {
+    margin-top: 10px;
+}
+
+.statusActive {
+    color: #107c10;
+    font-weight: 500;
+}
+
+.statusStopped {
+    color: #d13438;
+    font-weight: 500;
+}

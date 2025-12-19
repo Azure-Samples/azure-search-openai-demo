@@ -1,0 +1,20 @@
+.statusCompleted {
+    color: #107c10;
+    font-weight: 600;
+}
+
+.statusRunning {
+    color: #0078d4;
+    font-weight: 600;
+}
+
+.statusFailed {
+    color: #d13438;
+    font-weight: 600;
+}
+
+.statusPending {
+    color: #faa21b;
+    font-weight: 600;
+}
+

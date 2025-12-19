@@ -1,0 +1,67 @@
+.container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.title {
+    font-weight: 600;
+    color: #323130;
+}
+
+.subtitle {
+    color: #605e5c;
+    margin-top: 4px;
+}
+
+.statusIndicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #107c10;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.tabBar {
+    border-bottom: 1px solid #edebe9;
+    padding-bottom: 10px;
+}
+
+.tab {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    background-color: #f3f2f1;
+}
+
+.activeTab {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #0078d4;
+    border-radius: 0;
+    padding: 8px 16px;
+    font-weight: 600;
+    color: #0078d4;
+}
+
+.content {
+    min-height: 500px;
+    padding: 20px 0;
+}

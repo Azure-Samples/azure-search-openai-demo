@@ -30,6 +30,10 @@ const router = createHashRouter([
                 lazy: () => import("./pages/ask/Ask")
             },
             {
+                path: "agents",
+                lazy: () => import("./pages/agents/AgentDashboard").then(m => ({ Component: m.AgentDashboard }))
+            },
+            {
                 path: "*",
                 lazy: () => import("./pages/NoPage")
             }

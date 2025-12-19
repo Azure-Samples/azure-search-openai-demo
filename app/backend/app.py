@@ -735,6 +735,10 @@ def create_app():
     from automation_api import automation_bp
     app.register_blueprint(automation_bp)
 
+    # Register agent management API blueprint
+    from agent_api import bp as agent_bp
+    app.register_blueprint(agent_bp)
+
     if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
         app.logger.info("APPLICATIONINSIGHTS_CONNECTION_STRING is set, enabling Azure Monitor")
         configure_azure_monitor(

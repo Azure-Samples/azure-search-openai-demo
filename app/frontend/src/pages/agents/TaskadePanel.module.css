@@ -1,0 +1,16 @@
+.tasksSection {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f3f2f1;
+    border-radius: 4px;
+}
+
+.statusCompleted {
+    color: #107c10;
+    font-weight: 500;
+}
+
+.statusPending {
+    color: #faa21b;
+    font-weight: 500;
+}
