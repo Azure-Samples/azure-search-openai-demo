@@ -37,6 +37,19 @@ except ImportError:
     logger.warning("Database module not available. Running in memory-only mode.")
     DB_AVAILABLE = False
 
+# Middleware imports (with graceful fallback)
+try:
+    from middleware import rate_limit
+    RATE_LIMIT_AVAILABLE = True
+except ImportError:
+    logger.warning("Middleware module not available. Rate limiting disabled.")
+    RATE_LIMIT_AVAILABLE = False
+    # No-op decorator if rate limiting unavailable
+    def rate_limit(*args, **kwargs):
+        def decorator(f):
+            return f
+        return decorator
+
 logger = logging.getLogger(__name__)
 
 # Create blueprint
@@ -196,8 +209,12 @@ async def list_agents():
 
 
 @bp.route("/browser", methods=["POST"])
+@rate_limit(max_requests=10, window_seconds=60)  # 10 agents per minute
 async def create_agent():
-    """Create new browser agent with database persistence."""
+    """Create new browser agent with database persistence.
+    
+    Rate Limit: 10 requests per minute per user/IP
+    """
     try:
         data = await request.get_json() or {}
         agent_id = data.get("agent_id", f"agent_{datetime.now(timezone.utc).timestamp()}")
@@ -269,8 +286,12 @@ async def get_agent(agent_id: str):
 
 
 @bp.route("/browser/<agent_id>", methods=["DELETE"])
+@rate_limit(max_requests=20, window_seconds=60)  # 20 deletes per minute
 async def delete_agent(agent_id: str):
-    """Stop and delete agent with database persistence."""
+    """Stop and delete agent with database persistence.
+    
+    Rate Limit: 20 requests per minute per user/IP
+    """
     try:
         agent = _browser_agents.get(agent_id)
         if not agent:
@@ -414,8 +435,12 @@ async def list_mcp_tasks():
 
 
 @bp.route("/mcp/tasks", methods=["POST"])
+@rate_limit(max_requests=100, window_seconds=60)  # 100 tasks per minute
 async def create_mcp_task():
-    """Create MCP task."""
+    """Create MCP task.
+    
+    Rate Limit: 100 requests per minute per user/IP
+    """
     try:
         data = await request.get_json() or {}
 
