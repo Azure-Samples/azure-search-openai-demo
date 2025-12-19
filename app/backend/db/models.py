@@ -112,7 +112,7 @@ class ProjectModel(Base):
     
     # Metadata
     description = Column(Text, nullable=True)
-    metadata = Column(JSON, nullable=True)
+    project_metadata = Column(JSON, nullable=True)  # Renamed from 'metadata' (reserved in SQLAlchemy 2.0)
     
     # Audit fields
     created_by = Column(String(255), nullable=True)
