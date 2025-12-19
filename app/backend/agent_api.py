@@ -516,6 +516,21 @@ async def readiness_check():
         }
         is_ready = False
     
+    # Check Redis cache
+    try:
+        from cache import get_redis_manager
+        redis_manager = get_redis_manager()
+        if not redis_manager._is_initialized:
+            await redis_manager.initialize()
+        redis_health = await redis_manager.health_check()
+        checks["components"]["redis"] = redis_health
+        # Redis degradation is OK (fallback mode)
+    except Exception as e:
+        checks["components"]["redis"] = {
+            "status": "not_available",
+            "error": str(e)
+        }
+    
     # Check in-memory state
     checks["components"]["memory_state"] = {
         "status": "healthy",
