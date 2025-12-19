@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react";
 import {
-    Stack,
-    Text,
-    PrimaryButton,
     DefaultButton,
-    Spinner,
-    TextField,
     DetailsList,
     DetailsListLayoutMode,
-    SelectionMode,
+    Dialog,
+    DialogFooter,
+    DialogType,
     IColumn,
     MessageBar,
     MessageBarType,
-    Dialog,
-    DialogFooter,
-    DialogType
+    PrimaryButton,
+    SelectionMode,
+    Spinner,
+    Stack,
+    Text,
+    TextField
 } from "@fluentui/react";
+import { useEffect, useState } from "react";
 import styles from "./TaskadePanel.module.css";
 
 interface TaskadeProject {

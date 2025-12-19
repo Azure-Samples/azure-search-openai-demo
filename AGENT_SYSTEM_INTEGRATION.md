@@ -37,7 +37,7 @@ taskade-mcp-server/
 - `taskade_list_agents` / `taskade_create_agent`
 - `taskade_create_workflow` / `taskade_execute_workflow`
 
-### 3. ✅ **Backend API** 
+### 3. ✅ **Backend API**
 Location: [app/backend/agent_api.py](app/backend/agent_api.py)
 
 **Endpoints:**
@@ -116,7 +116,7 @@ Location: `app/frontend/src/pages/agents/`
 
 ### 1. **Rebuild DevContainer** (for Edge installation)
 ```bash
-# In VS Code: 
+# In VS Code:
 # Command Palette -> "Dev Containers: Rebuild Container"
 ```
 
@@ -249,14 +249,14 @@ Add to `.vscode/settings.json`:
 
 ## ✨ Features Summary
 
-✅ Microsoft Edge in DevContainer  
-✅ Taskade MCP Server (full CRUD)  
-✅ Backend REST API (complete)  
-✅ Frontend Agent Dashboard (interactive)  
-✅ Browser Agent Management (Edge/Chrome)  
-✅ Taskade Integration (projects/tasks)  
-✅ MCP Task Queue (priority scheduling)  
-✅ Real-time status monitoring  
-✅ Health check endpoints  
+✅ Microsoft Edge in DevContainer
+✅ Taskade MCP Server (full CRUD)
+✅ Backend REST API (complete)
+✅ Frontend Agent Dashboard (interactive)
+✅ Browser Agent Management (Edge/Chrome)
+✅ Taskade Integration (projects/tasks)
+✅ MCP Task Queue (priority scheduling)
+✅ Real-time status monitoring
+✅ Health check endpoints
 
 **All systems operational! 🚀**

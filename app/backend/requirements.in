@@ -33,3 +33,12 @@ python-dotenv
 prompty
 rich
 typing-extensions
+
+# Database (PostgreSQL with async support)
+sqlalchemy[asyncio]>=2.0.0
+asyncpg>=0.29.0
+alembic>=1.13.0
+
+# Redis for caching and rate limiting (Tier 2)
+redis[hiredis]>=5.0.0
+aioredis>=2.0.0

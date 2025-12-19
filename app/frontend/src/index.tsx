@@ -1,18 +1,18 @@
+import { AuthenticationResult, EventType, PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
+import { initializeIcons } from "@fluentui/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createHashRouter, RouterProvider } from "react-router-dom";
-import { I18nextProvider } from "react-i18next";
 import { HelmetProvider } from "react-helmet-async";
-import { initializeIcons } from "@fluentui/react";
-import { MsalProvider } from "@azure/msal-react";
-import { AuthenticationResult, EventType, PublicClientApplication } from "@azure/msal-browser";
+import { I18nextProvider } from "react-i18next";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
 
-import Chat from "./pages/chat/Chat";
-import LayoutWrapper from "./layoutWrapper";
-import i18next from "./i18n/config";
 import { msalConfig, useLogin } from "./authConfig";
+import i18next from "./i18n/config";
+import LayoutWrapper from "./layoutWrapper";
+import Chat from "./pages/chat/Chat";
 
 initializeIcons();
 

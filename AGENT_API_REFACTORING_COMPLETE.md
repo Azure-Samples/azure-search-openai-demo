@@ -106,7 +106,7 @@ GET    /health               # Service status
 ```python
 class TaskadeDirectAPI:
     """Direct Taskade REST API client (no MCP server overhead)."""
-    
+
     @staticmethod
     async def get_workspaces() → dict
     @staticmethod

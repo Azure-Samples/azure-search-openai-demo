@@ -1,23 +1,23 @@
-import { useState, useEffect } from "react";
 import {
-    Stack,
-    Text,
-    PrimaryButton,
     DefaultButton,
-    Spinner,
-    TextField,
-    Dropdown,
-    IDropdownOption,
     DetailsList,
     DetailsListLayoutMode,
-    SelectionMode,
-    IColumn,
-    MessageBar,
-    MessageBarType,
     Dialog,
     DialogFooter,
-    DialogType
+    DialogType,
+    Dropdown,
+    IColumn,
+    IDropdownOption,
+    MessageBar,
+    MessageBarType,
+    PrimaryButton,
+    SelectionMode,
+    Spinner,
+    Stack,
+    Text,
+    TextField
 } from "@fluentui/react";
+import { useEffect, useState } from "react";
 import styles from "./MCPPanel.module.css";
 
 interface MCPTask {
@@ -54,7 +54,7 @@ export function MCPPanel() {
         try {
             const response = await fetch("/api/agents/mcp/tasks");
             const data = await response.json();
-            
+
             if (data.success) {
                 setTasks(data.tasks || []);
             } else {
@@ -173,11 +173,7 @@ export function MCPPanel() {
             minWidth: 100,
             maxWidth: 120,
             isResizable: true,
-            onRender: (item: MCPTask) => (
-                <span className={getStatusColor(item.status)}>
-                    {item.status.toUpperCase()}
-                </span>
-            )
+            onRender: (item: MCPTask) => <span className={getStatusColor(item.status)}>{item.status.toUpperCase()}</span>
         },
         {
             key: "priority",
@@ -220,13 +216,7 @@ export function MCPPanel() {
                 ) : tasks.length === 0 ? (
                     <MessageBar>No MCP tasks in queue. Create one to get started.</MessageBar>
                 ) : (
-                    <DetailsList
-                        items={tasks}
-                        columns={columns}
-                        setKey="set"
-                        layoutMode={DetailsListLayoutMode.justified}
-                        selectionMode={SelectionMode.none}
-                    />
+                    <DetailsList items={tasks} columns={columns} setKey="set" layoutMode={DetailsListLayoutMode.justified} selectionMode={SelectionMode.none} />
                 )}
             </Stack>
 
@@ -240,19 +230,8 @@ export function MCPPanel() {
                 }}
             >
                 <Stack tokens={{ childrenGap: 15 }}>
-                    <TextField
-                        label="Task Title"
-                        value={newTaskTitle}
-                        onChange={(_, value) => setNewTaskTitle(value || "")}
-                        required
-                    />
-                    <TextField
-                        label="Description"
-                        value={newTaskDesc}
-                        onChange={(_, value) => setNewTaskDesc(value || "")}
-                        multiline
-                        rows={3}
-                    />
+                    <TextField label="Task Title" value={newTaskTitle} onChange={(_, value) => setNewTaskTitle(value || "")} required />
+                    <TextField label="Description" value={newTaskDesc} onChange={(_, value) => setNewTaskDesc(value || "")} multiline rows={3} />
                     <Dropdown
                         label="Task Type"
                         selectedKey={newTaskType}

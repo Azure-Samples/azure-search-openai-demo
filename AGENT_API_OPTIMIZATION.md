@@ -51,7 +51,7 @@ TASKADE_API_KEY=tskdp_WE8Y2qtsVeQgjVNzxQBBNC4ssbeEs8h8xM
   - Saves ~50MB disk space
   - Eliminates separate server process
   - Reduces memory overhead
-  
+
 ### 6. **Kept Components**
 - ✅ `external/taskade-mcp-official/` - Reference to official Taskade MCP repo
 - ✅ `app/backend/automation/` - Browser automation (Playwright + Edge)
