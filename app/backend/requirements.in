@@ -39,6 +39,12 @@ sqlalchemy[asyncio]>=2.0.0
 asyncpg>=0.29.0
 alembic>=1.13.0
 
+# Cache (Redis with async support)
+redis[hiredis]>=5.0.0
+aioredis>=2.0.0
+
+# Azure Application Insights (already present above via azure-monitor-opentelemetry)
+
 # Redis for caching and rate limiting (Tier 2)
 redis[hiredis]>=5.0.0
 aioredis>=2.0.0

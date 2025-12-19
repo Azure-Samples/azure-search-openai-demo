@@ -50,6 +50,18 @@ except ImportError:
             return f
         return decorator
 
+# Monitoring imports (with graceful fallback)
+try:
+    from monitoring import track_event, track_metric, track_exception
+    MONITORING_AVAILABLE = True
+except ImportError:
+    logger.warning("Monitoring module not available. Telemetry disabled.")
+    MONITORING_AVAILABLE = False
+    # No-op functions if monitoring unavailable
+    def track_event(name: str, properties=None): pass
+    def track_metric(name: str, value: float, properties=None): pass
+    def track_exception(exception: Exception, properties=None, measurements=None): pass
+
 logger = logging.getLogger(__name__)
 
 # Create blueprint
@@ -243,6 +255,15 @@ async def create_agent():
                         success=True
                     )
 
+        # Track telemetry
+        track_event("agent.created", {
+            "agent_id": agent_id,
+            "channel": channel,
+            "headless": str(headless),
+            "persisted": str(DB_AVAILABLE)
+        })
+        track_metric("active_agents", len(_browser_agents))
+
         logger.info(f"Created agent: {agent_id}")
         return jsonify({
             "success": True,
@@ -267,6 +288,9 @@ async def create_agent():
                         success=False,
                         error_message=str(e)
                     )
+        
+        # Track exception
+        track_exception(e, {"operation": "agent.create", "agent_id": agent_id})
         
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -561,6 +585,26 @@ async def readiness_check():
         "status": "healthy",
         "active_agents": len(_browser_agents)
     }
+    
+    # Check Application Insights
+    if MONITORING_AVAILABLE:
+        from monitoring import get_insights_manager
+        insights = get_insights_manager()
+        if insights.enabled:
+            checks["components"]["application_insights"] = {
+                "status": "healthy",
+                "enabled": True
+            }
+        else:
+            checks["components"]["application_insights"] = {
+                "status": "not_configured",
+                "enabled": False
+            }
+    else:
+        checks["components"]["application_insights"] = {
+            "status": "not_available",
+            "enabled": False
+        }
     
     # Overall status
     checks["status"] = "ready" if is_ready else "not_ready"
