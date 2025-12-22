@@ -1,0 +1,221 @@
+"""
+Integrated vectorization strategy using Azure AI Search built-in capabilities.
+
+This strategy uses Azure AI Search's integrated vectorization feature to
+automatically chunk and embed documents using a skillset and indexer.
+"""
+
+import logging
+from typing import Optional
+
+from azure.search.documents.indexes._generated.models import (
+    NativeBlobSoftDeleteDeletionDetectionPolicy,
+)
+from azure.search.documents.indexes.models import (
+    AzureOpenAIEmbeddingSkill,
+    IndexProjectionMode,
+    InputFieldMappingEntry,
+    OutputFieldMappingEntry,
+    SearchIndexer,
+    SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection,
+    SearchIndexerDataSourceType,
+    SearchIndexerIndexProjection,
+    SearchIndexerIndexProjectionSelector,
+    SearchIndexerIndexProjectionsParameters,
+    SearchIndexerSkillset,
+    SplitSkill,
+)
+
+from ..storage.blob import BlobManager
+from ..storage.file_lister import ListFileStrategy
+from ..embeddings.text import OpenAIEmbeddings
+from ..search.client import SearchInfo
+from ..search.index_manager import SearchManager
+from .base import DocumentAction, Strategy
+
+logger = logging.getLogger("ingestion")
+
+
+class IntegratedVectorizerStrategy(Strategy):
+    """
+    Strategy for ingesting and vectorizing documents into a search service
+    using Azure AI Search's integrated vectorization capabilities.
+
+    This strategy creates a skillset with split and embedding skills,
+    then uses an indexer to process documents from blob storage.
+
+    Attributes:
+        list_file_strategy: Strategy for listing files to ingest
+        blob_manager: Manager for blob storage operations
+        embeddings: Text embeddings service (must be Azure OpenAI)
+        search_field_name_embedding: Name of the embedding field
+        subscription_id: Azure subscription ID
+        document_action: Action to perform (Add, Remove, RemoveAll)
+    """
+
+    def __init__(
+        self,
+        list_file_strategy: ListFileStrategy,
+        blob_manager: BlobManager,
+        search_info: SearchInfo,
+        embeddings: OpenAIEmbeddings,
+        search_field_name_embedding: str,
+        subscription_id: str,
+        document_action: DocumentAction = DocumentAction.Add,
+        search_analyzer_name: Optional[str] = None,
+        use_acls: bool = False,
+        category: Optional[str] = None,
+        enforce_access_control: bool = False,
+        use_web_source: bool = False,
+    ):
+        self.list_file_strategy = list_file_strategy
+        self.blob_manager = blob_manager
+        self.document_action = document_action
+        self.embeddings = embeddings
+        self.search_field_name_embedding = search_field_name_embedding
+        self.subscription_id = subscription_id
+        self.search_analyzer_name = search_analyzer_name
+        self.use_acls = use_acls
+        self.category = category
+        self.search_info = search_info
+        prefix = f"{self.search_info.index_name}-{self.search_field_name_embedding}"
+        self.skillset_name = f"{prefix}-skillset"
+        self.indexer_name = f"{prefix}-indexer"
+        self.data_source_name = f"{prefix}-blob"
+        self.enforce_access_control = enforce_access_control
+        self.use_web_source = use_web_source
+
+    async def create_embedding_skill(self, index_name: str) -> SearchIndexerSkillset:
+        """Create a skillset for the indexer to chunk documents and generate embeddings."""
+        split_skill = SplitSkill(
+            name="split-skill",
+            description="Split skill to chunk documents",
+            text_split_mode="pages",
+            context="/document",
+            maximum_page_length=2048,
+            page_overlap_length=20,
+            inputs=[
+                InputFieldMappingEntry(name="text", source="/document/content"),
+            ],
+            outputs=[OutputFieldMappingEntry(name="textItems", target_name="pages")],
+        )
+
+        if not self.embeddings.azure_endpoint or not self.embeddings.azure_deployment_name:
+            raise ValueError("Integrated vectorization requires Azure OpenAI endpoint and deployment")
+
+        embedding_skill = AzureOpenAIEmbeddingSkill(
+            name="embedding-skill",
+            description="Skill to generate embeddings via Azure OpenAI",
+            context="/document/pages/*",
+            resource_url=self.embeddings.azure_endpoint,
+            deployment_name=self.embeddings.azure_deployment_name,
+            model_name=self.embeddings.open_ai_model_name,
+            dimensions=self.embeddings.open_ai_dimensions,
+            inputs=[
+                InputFieldMappingEntry(name="text", source="/document/pages/*"),
+            ],
+            outputs=[OutputFieldMappingEntry(name="embedding", target_name="vector")],
+        )
+
+        index_projection = SearchIndexerIndexProjection(
+            selectors=[
+                SearchIndexerIndexProjectionSelector(
+                    target_index_name=index_name,
+                    parent_key_field_name="parent_id",
+                    source_context="/document/pages/*",
+                    mappings=[
+                        InputFieldMappingEntry(name="content", source="/document/pages/*"),
+                        InputFieldMappingEntry(name="sourcepage", source="/document/metadata_storage_name"),
+                        InputFieldMappingEntry(name="sourcefile", source="/document/metadata_storage_name"),
+                        InputFieldMappingEntry(name="storageUrl", source="/document/metadata_storage_path"),
+                        InputFieldMappingEntry(
+                            name=self.search_field_name_embedding, source="/document/pages/*/vector"
+                        ),
+                    ],
+                ),
+            ],
+            parameters=SearchIndexerIndexProjectionsParameters(
+                projection_mode=IndexProjectionMode.SKIP_INDEXING_PARENT_DOCUMENTS
+            ),
+        )
+
+        skillset = SearchIndexerSkillset(
+            name=self.skillset_name,
+            description="Skillset to chunk documents and generate embeddings",
+            skills=[split_skill, embedding_skill],
+            index_projection=index_projection,
+        )
+
+        return skillset
+
+    async def setup(self):
+        """Set up the search index, data source, and skillset."""
+        logger.info("Setting up search index using integrated vectorization...")
+        search_manager = SearchManager(
+            search_info=self.search_info,
+            search_analyzer_name=self.search_analyzer_name,
+            use_acls=self.use_acls,
+            use_parent_index_projection=True,
+            embeddings=self.embeddings,
+            field_name_embedding=self.search_field_name_embedding,
+            search_images=False,
+            enforce_access_control=self.enforce_access_control,
+            use_web_source=self.use_web_source,
+        )
+
+        await search_manager.create_index()
+
+        ds_client = self.search_info.create_search_indexer_client()
+        ds_container = SearchIndexerDataContainer(name=self.blob_manager.container)
+        data_source_connection = SearchIndexerDataSourceConnection(
+            name=self.data_source_name,
+            type=SearchIndexerDataSourceType.AZURE_BLOB,
+            connection_string=self.blob_manager.get_managedidentity_connectionstring(),
+            container=ds_container,
+            data_deletion_detection_policy=NativeBlobSoftDeleteDeletionDetectionPolicy(),
+        )
+
+        await ds_client.create_or_update_data_source_connection(data_source_connection)
+
+        embedding_skillset = await self.create_embedding_skill(self.search_info.index_name)
+        await ds_client.create_or_update_skillset(embedding_skillset)
+        await ds_client.close()
+
+    async def run(self):
+        """Execute the integrated vectorization strategy."""
+        if self.document_action == DocumentAction.Add:
+            files = self.list_file_strategy.list()
+            async for file in files:
+                try:
+                    await self.blob_manager.upload_blob(file)
+                finally:
+                    if file:
+                        file.close()
+        elif self.document_action == DocumentAction.Remove:
+            paths = self.list_file_strategy.list_paths()
+            async for path in paths:
+                await self.blob_manager.remove_blob(path)
+        elif self.document_action == DocumentAction.RemoveAll:
+            await self.blob_manager.remove_blob()
+
+        # Create and run the indexer
+        indexer = SearchIndexer(
+            name=self.indexer_name,
+            description="Indexer to index documents and generate embeddings",
+            skillset_name=self.skillset_name,
+            target_index_name=self.search_info.index_name,
+            data_source_name=self.data_source_name,
+        )
+
+        indexer_client = self.search_info.create_search_indexer_client()
+        indexer_result = await indexer_client.create_or_update_indexer(indexer)
+
+        await indexer_client.run_indexer(self.indexer_name)
+        await indexer_client.close()
+
+        logger.info(
+            "Successfully created index, indexer: %s, and skillset. "
+            "Please navigate to search service in Azure Portal to view the status of the indexer.",
+            indexer_result.name,
+        )

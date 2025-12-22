@@ -1,0 +1,11 @@
+# Azure Functions requirements
+azure-functions>=1.17.0
+
+# Include the ingestion module dependencies
+azure-identity>=1.15.0
+azure-storage-blob>=12.19.0
+azure-search-documents>=11.4.0
+openai>=1.0.0
+httpx>=0.25.0
+tenacity>=8.2.0
+pillow>=10.0.0

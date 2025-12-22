@@ -1,0 +1,1 @@
+# Document Extractor Azure Function

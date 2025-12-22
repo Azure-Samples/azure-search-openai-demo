@@ -1,0 +1,1 @@
+# Text Processor Azure Function

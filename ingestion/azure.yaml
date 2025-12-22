@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: document-ingestion
+metadata:
+  template: document-ingestion@1.0.0
+requiredVersions:
+  azd: ">= 1.17.0"
+
+services:
+  # Document Extractor Function - parses documents and extracts text/figures
+  document-extractor:
+    project: ./functions/document_extractor
+    language: py
+    host: function
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: python ../../scripts/copy_ingestion_module.py document_extractor
+          interactive: false
+          continueOnError: false
+        posix:
+          shell: sh
+          run: python3 ../../scripts/copy_ingestion_module.py document_extractor
+          interactive: false
+          continueOnError: false
+
+  # Figure Processor Function - enriches figures with descriptions and embeddings
+  figure-processor:
+    project: ./functions/figure_processor
+    language: py
+    host: function
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: python ../../scripts/copy_ingestion_module.py figure_processor
+          interactive: false
+          continueOnError: false
+        posix:
+          shell: sh
+          run: python3 ../../scripts/copy_ingestion_module.py figure_processor
+          interactive: false
+          continueOnError: false
+
+  # Text Processor Function - chunks text and generates embeddings
+  text-processor:
+    project: ./functions/text_processor
+    language: py
+    host: function
+    hooks:
+      prepackage:
+        windows:
+          shell: pwsh
+          run: python ../../scripts/copy_ingestion_module.py text_processor
+          interactive: false
+          continueOnError: false
+        posix:
+          shell: sh
+          run: python3 ../../scripts/copy_ingestion_module.py text_processor
+          interactive: false
+          continueOnError: false
+
+hooks:
+  postprovision:
+    windows:
+      shell: pwsh
+      run: ./scripts/setup_cloud_ingestion.ps1
+      interactive: true
+      continueOnError: false
+    posix:
+      shell: sh
+      run: ./scripts/setup_cloud_ingestion.sh
+      interactive: true
+      continueOnError: false

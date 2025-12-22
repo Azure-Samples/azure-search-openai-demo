@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environmentName": {
+      "value": "${AZURE_ENV_NAME}"
+    },
+    "location": {
+      "value": "${AZURE_LOCATION}"
+    },
+    "searchServiceSkuName": {
+      "value": "${AZURE_SEARCH_SERVICE_SKU=basic}"
+    },
+    "searchIndexName": {
+      "value": "${AZURE_SEARCH_INDEX=documents}"
+    },
+    "storageSkuName": {
+      "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
+    },
+    "openAiLocation": {
+      "value": "${AZURE_OPENAI_LOCATION=${AZURE_LOCATION}}"
+    },
+    "openAiEmbeddingDeploymentName": {
+      "value": "${AZURE_OPENAI_EMB_DEPLOYMENT=text-embedding}"
+    },
+    "openAiEmbeddingModelName": {
+      "value": "${AZURE_OPENAI_EMB_MODEL_NAME=text-embedding-ada-002}"
+    },
+    "openAiChatDeploymentName": {
+      "value": "${AZURE_OPENAI_CHATGPT_DEPLOYMENT=}"
+    },
+    "openAiChatModelName": {
+      "value": "${AZURE_OPENAI_CHATGPT_MODEL=gpt-4o}"
+    },
+    "documentIntelligenceLocation": {
+      "value": "${AZURE_DOCUMENTINTELLIGENCE_LOCATION=}"
+    },
+    "useCloudIngestion": {
+      "value": "${USE_CLOUD_INGESTION=true}"
+    },
+    "useMultimodal": {
+      "value": "${USE_MULTIMODAL=false}"
+    },
+    "useVectors": {
+      "value": "${USE_VECTORS=true}"
+    }
+  }
+}

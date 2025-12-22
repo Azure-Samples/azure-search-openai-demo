@@ -1,0 +1,64 @@
+"""
+Azure AI Search client configuration and factories.
+"""
+
+from typing import Optional
+
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.search.documents.aio import SearchClient
+from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
+
+USER_AGENT = "azure-search-chat-demo/1.0.0"
+
+
+class SearchInfo:
+    """
+    Class representing a connection to a search service.
+    To learn more, please visit https://learn.microsoft.com/azure/search/search-what-is-azure-search
+
+    Attributes:
+        endpoint: The search service endpoint URL
+        credential: Authentication credential (token or key)
+        index_name: Name of the search index
+        knowledgebase_name: Optional name for agentic knowledgebase
+        use_agentic_knowledgebase: Whether to use agentic retrieval
+        azure_openai_endpoint: Azure OpenAI endpoint for knowledgebase
+        azure_openai_knowledgebase_model: Model name for knowledgebase
+        azure_openai_knowledgebase_deployment: Deployment name for knowledgebase
+        azure_vision_endpoint: Azure AI Vision endpoint for image embeddings
+    """
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: AsyncTokenCredential | AzureKeyCredential,
+        index_name: str,
+        use_agentic_knowledgebase: Optional[bool] = False,
+        knowledgebase_name: Optional[str] = None,
+        azure_openai_knowledgebase_model: Optional[str] = None,
+        azure_openai_knowledgebase_deployment: Optional[str] = None,
+        azure_openai_endpoint: Optional[str] = None,
+        azure_vision_endpoint: Optional[str] = None,
+    ):
+        self.endpoint = endpoint
+        self.credential = credential
+        self.index_name = index_name
+        self.knowledgebase_name = knowledgebase_name
+        self.use_agentic_knowledgebase = use_agentic_knowledgebase
+        self.azure_openai_knowledgebase_model = azure_openai_knowledgebase_model
+        self.azure_openai_knowledgebase_deployment = azure_openai_knowledgebase_deployment
+        self.azure_openai_endpoint = azure_openai_endpoint
+        self.azure_vision_endpoint = azure_vision_endpoint
+
+    def create_search_client(self) -> SearchClient:
+        """Create a SearchClient for querying documents."""
+        return SearchClient(endpoint=self.endpoint, index_name=self.index_name, credential=self.credential)
+
+    def create_search_index_client(self) -> SearchIndexClient:
+        """Create a SearchIndexClient for managing indexes."""
+        return SearchIndexClient(endpoint=self.endpoint, credential=self.credential)
+
+    def create_search_indexer_client(self) -> SearchIndexerClient:
+        """Create a SearchIndexerClient for managing indexers."""
+        return SearchIndexerClient(endpoint=self.endpoint, credential=self.credential)
