@@ -1,53 +1,50 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Backend (Python)",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "quart",
-            "cwd": "${workspaceFolder}/app/backend",
-            "python": "${workspaceFolder}/.venv/bin/python",
-            "env": {
-                "QUART_APP": "main:app",
-                "QUART_ENV": "development",
-                "QUART_DEBUG": "0",
-                // Set this to "no-override" if you want env vars here to override AZD env vars
-                "LOADING_MODE_FOR_AZD_ENV_VARS": "override"
-            },
-            "args": [
-                "run",
-                "--no-reload",
-                "-p 50505"
-            ],
-            "console": "integratedTerminal",
-            "justMyCode": false
-        },
-        {
-            "name": "Frontend",
-            "type": "node-terminal",
-            "request": "launch",
-            "command": "npm run dev",
-            "cwd": "${workspaceFolder}/app/frontend",
-        },
-        {
-            "name": "Tests (Python)",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "purpose": ["debug-test"],
-            "console": "integratedTerminal",
-            "justMyCode": false
-          }
-    ],
-    "compounds": [
-        {
-          "name": "Frontend & Backend",
-          "configurations": ["Backend (Python)", "Frontend"],
-          "stopAll": true
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend (Python)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "quart",
+      "cwd": "${workspaceFolder}/app/backend",
+      //MAC uses /bin folder while Windows uses /Scripts, instead use whichever is set as the interpreter
+      "python": "${command:python.interpreterPath}",
+      "env": {
+        "QUART_APP": "main:app",
+        "QUART_ENV": "development",
+        "QUART_DEBUG": "0",
+        // Set this to "no-override" if you want env vars here to override AZD env vars
+        "LOADING_MODE_FOR_AZD_ENV_VARS": "override"
+      },
+      "args": ["run", "--no-reload", "-p 50505"],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Frontend",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/app/frontend"
+    },
+    {
+      "name": "Tests (Python)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "purpose": ["debug-test"],
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Frontend & Backend",
+      "configurations": ["Backend (Python)", "Frontend"],
+      "stopAll": true
+    }
+  ]
 }
