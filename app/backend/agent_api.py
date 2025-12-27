@@ -116,6 +116,23 @@ class TaskadeDirectAPI:
             return {"error": str(e)}
 
     @staticmethod
+    async def search_projects(query: str) -> dict:
+        """Search projects locally by title/description."""
+        result = await TaskadeDirectAPI.list_projects()
+        if "error" in result:
+            return result
+
+        items = result.get("items", result if isinstance(result, list) else [])
+        q = query.lower()
+        filtered = [
+            item
+            for item in items
+            if q in (item.get("title", "") or "").lower()
+            or q in (item.get("description", "") or "").lower()
+        ]
+        return {"items": filtered}
+
+    @staticmethod
     async def create_project(title: str, description: str | None = None) -> dict:
         """Create project."""
         try:
@@ -155,6 +172,23 @@ class TaskadeDirectAPI:
         except Exception as e:
             logger.error(f"List tasks error: {e}")
             return {"error": str(e)}
+
+    @staticmethod
+    async def search_tasks(project_id: str, query: str) -> dict:
+        """Search tasks inside a project."""
+        result = await TaskadeDirectAPI.list_tasks(project_id)
+        if "error" in result:
+            return result
+
+        items = result.get("items", result if isinstance(result, list) else [])
+        q = query.lower()
+        filtered = [
+            item
+            for item in items
+            if q in (item.get("title", "") or "").lower()
+            or q in (item.get("description", "") or "").lower()
+        ]
+        return {"items": filtered}
 
     @staticmethod
     async def create_task(
@@ -443,6 +477,44 @@ async def create_taskade_task(project_id: str):
 
     except Exception as e:
         logger.error(f"Failed to create task: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/taskade/search", methods=["GET"])
+async def search_taskade():
+    """Search Taskade projects or tasks."""
+    query = (request.args.get("q") or "").strip()
+    scope = (request.args.get("scope") or "projects").lower()
+
+    if not query:
+        return jsonify({"success": False, "error": "query parameter 'q' is required"}), 400
+
+    try:
+        if scope == "tasks":
+            project_id = request.args.get("project_id")
+            if not project_id:
+                return jsonify({"success": False, "error": "project_id is required for task search"}), 400
+            result = await TaskadeDirectAPI.search_tasks(project_id, query)
+            key = "tasks"
+        else:
+            result = await TaskadeDirectAPI.search_projects(query)
+            key = "projects"
+
+        success = "error" not in result
+        response = {
+            "success": success,
+            "scope": scope,
+            "query": query,
+            "count": len(result.get("items", [])) if success else 0,
+            key: result.get("items", []) if success else [],
+            "error": result.get("error") if not success else None
+        }
+
+        status = 200 if success else 502
+        return jsonify(response), status
+
+    except Exception as e:
+        logger.error(f"Taskade search failed: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 

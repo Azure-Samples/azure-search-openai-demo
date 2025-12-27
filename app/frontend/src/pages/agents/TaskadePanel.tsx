@@ -39,6 +39,9 @@ export function TaskadePanel() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<TaskadeProject[]>([]);
+    const [searching, setSearching] = useState(false);
 
     // Dialog states
     const [showProjectDialog, setShowProjectDialog] = useState(false);
@@ -57,6 +60,20 @@ export function TaskadePanel() {
             loadTasks(selectedProject);
         }
     }, [selectedProject]);
+
+    useEffect(() => {
+        const trimmed = searchQuery.trim();
+        if (!trimmed || trimmed.length < 2) {
+            setSearchResults([]);
+            return;
+        }
+
+        const handle = setTimeout(() => {
+            searchProjects(trimmed);
+        }, 400);
+
+        return () => clearTimeout(handle);
+    }, [searchQuery]);
 
     const loadProjects = async () => {
         setLoading(true);
@@ -91,6 +108,26 @@ export function TaskadePanel() {
             setError("Failed to load tasks: " + e);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const searchProjects = async (query: string) => {
+        setSearching(true);
+        try {
+            const response = await fetch(`/api/agents/taskade/search?q=${encodeURIComponent(query)}&scope=projects`);
+            const data = await response.json();
+
+            if (data.success) {
+                setSearchResults(data.projects || []);
+            } else {
+                setError(data.error || "Failed to search projects");
+                setSearchResults([]);
+            }
+        } catch (e) {
+            setError("Failed to search projects: " + e);
+            setSearchResults([]);
+        } finally {
+            setSearching(false);
         }
     };
 
@@ -213,6 +250,32 @@ export function TaskadePanel() {
 
             {/* Projects Section */}
             <Stack>
+                <Stack tokens={{ childrenGap: 10 }}>
+                    <TextField
+                        label="Search Taskade"
+                        placeholder="Type at least 2 characters to search across projects"
+                        value={searchQuery}
+                        onChange={(_, value) => setSearchQuery(value || "")}
+                    />
+                    {searchQuery.trim().length >= 2 && (
+                        <Stack>
+                            {searching ? (
+                                <Spinner label="Searching Taskade..." />
+                            ) : searchResults.length === 0 ? (
+                                <MessageBar>No matches for your query.</MessageBar>
+                            ) : (
+                                <DetailsList
+                                    items={searchResults}
+                                    columns={projectColumns}
+                                    setKey="search"
+                                    layoutMode={DetailsListLayoutMode.justified}
+                                    selectionMode={SelectionMode.none}
+                                />
+                            )}
+                        </Stack>
+                    )}
+                </Stack>
+
                 <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
                     <Text variant="large">Projects ({projects.length})</Text>
                     <Stack horizontal tokens={{ childrenGap: 10 }}>

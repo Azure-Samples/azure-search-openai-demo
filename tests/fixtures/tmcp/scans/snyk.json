@@ -1,0 +1,18 @@
+{
+  "tool": "Snyk",
+  "results": [
+    {
+      "id": "pkg:pypi/requests@2.31.0",
+      "severity": "medium",
+      "title": "Denial of service in requests",
+      "location": "requirements.txt",
+      "blocker": false
+    },
+    {
+      "id": "pkg:npm/lodash@4.17.21",
+      "severity": "low",
+      "title": "Prototype pollution",
+      "location": "package-lock.json"
+    }
+  ]
+}

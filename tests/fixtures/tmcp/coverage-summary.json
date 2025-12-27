@@ -1,0 +1,18 @@
+{
+  "total": {
+    "lines": {
+      "pct": 85
+    },
+    "statements": {
+      "pct": 86
+    },
+    "branches": {
+      "pct": 70
+    }
+  },
+  "tests": {
+    "passed": 120,
+    "failed": 0,
+    "total": 120
+  }
+}

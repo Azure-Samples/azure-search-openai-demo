@@ -1,0 +1,104 @@
+name: TMCP Workflow v2.4
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: read
+
+jobs:
+  tmcp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt openpyxl pillow bandit detect-secrets pip-audit
+
+      - name: Run TMCP unit tests with coverage
+        run: |
+          pytest tests/test_tmcp.py --cov=tmcp --cov-report json:coverage/coverage-summary.json
+
+      - name: Run security scans
+        run: |
+          mkdir -p tmcp_scans
+          bandit -r app -f json -o tmcp_scans/bandit.json || true
+          pip-audit -r requirements-dev.txt -f json -o tmcp_scans/pip_audit.json || true
+          detect-secrets scan --all-files --json > tmcp_scans/detect_secrets.json || true
+
+      - name: Aggregate TMCP summary
+        run: |
+          python tmcp_aggregate.py --sources tmcp_scans --output tmcp_summary.json --weights-output weights_used.json
+
+      - name: Compute TMCP P/A values
+        run: |
+          python tmcp_compute_pa.py --event "$GITHUB_EVENT_PATH" --summary tmcp_summary.json --coverage coverage/coverage-summary.json --output pa.json
+
+      - name: Build TMCP emoji comment
+        run: |
+          python scripts/tmcp_pr_summary.py --pa pa.json --summary tmcp_summary.json --out tmcp_comment.md
+          echo "TMCP_COMMENT<<'EOF'" >> "$GITHUB_ENV"
+          cat tmcp_comment.md >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+
+      - name: Upload TMCP artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tmcp-v2.4
+          path: |
+            tmcp_summary.json
+            weights_used.json
+            pa.json
+            tmcp_comment.md
+            coverage/coverage-summary.json
+
+      - name: Publish TMCP summary comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          TMCP_COMMENT: ${{ env.TMCP_COMMENT }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = process.env.TMCP_COMMENT;
+            if (!body) {
+              core.warning('No TMCP summary body found.');
+              return;
+            }
+            const {owner, repo} = context.repo;
+            const issue_number = context.issue.number;
+            const marker = '<!-- tmcp-v2.4 -->';
+            const {data: comments} = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+            });
+            const existing = comments.find(comment => comment.body && comment.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              });
+            }

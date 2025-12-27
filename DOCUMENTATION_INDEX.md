@@ -60,6 +60,8 @@
 | File | Purpose |
 |------|---------|
 | **[data/Freelance_Platform_Registration_Guide.md](data/Freelance_Platform_Registration_Guide.md)** | RAG knowledge base for platforms |
+| **[data/System_State_Checklist.md](data/System_State_Checklist.md)** | Post-rebuild system status and Taskade integration checklist |
+| **[data/taskade_openapi.json](data/taskade_openapi.json)** | Offline snapshot of Taskade REST OpenAPI schema |
 
 ## 🌐 External Resources
 
@@ -74,6 +76,8 @@
 |------|-------------|
 | **[external/taskade-docs/api/](external/taskade-docs/api/)** | Complete Taskade API reference |
 | **[external/taskade-docs/api/comprehensive-api-guide.md](external/taskade-docs/api/comprehensive-api-guide.md)** | Comprehensive API guide |
+| [Taskade Swagger UI](https://www.taskade.com/api/documentation/#/) | Live OpenAPI explorer + schema download |
+| [Taskade API JSON](https://www.taskade.com/api/documentation/json) | Official JSON spec (mirrored as `data/taskade_openapi.json`) |
 
 ## 🔐 Configuration
 

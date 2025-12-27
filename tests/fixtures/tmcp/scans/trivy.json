@@ -1,0 +1,15 @@
+[
+  {
+    "tool": "Trivy",
+    "severity": "CRITICAL",
+    "title": "openssl CVE-2023-0286",
+    "location": "docker/app/Dockerfile",
+    "blocker": true
+  },
+  {
+    "tool": "Trivy",
+    "severity": "high",
+    "title": "glibc CVE-2023-25139",
+    "location": "docker/base/Dockerfile"
+  }
+]

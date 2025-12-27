@@ -31,5 +31,9 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "python.analysis.typeCheckingMode": "strict"
+    "python.analysis.typeCheckingMode": "strict",
+    "azureFunctions.projectSubpath": "app/functions/document_extractor",
+    "azureFunctions.deploySubpath": "app/functions/document_extractor",
+    "azureFunctions.projectLanguage": "Custom",
+    "azureFunctions.projectRuntime": "~4"
 }
