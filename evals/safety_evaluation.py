@@ -1,13 +1,15 @@
 import argparse
 import asyncio
+import json
 import logging
 import os
 import pathlib
 from enum import Enum
 from typing import Any, Optional
 
+import pandas as pd
 import requests
-from azure.ai.evaluation import ContentSafetyEvaluator
+from azure.ai.evaluation import ContentSafetyEvaluator, evaluate
 from azure.ai.evaluation.simulator import (
     AdversarialScenario,
     AdversarialSimulator,
@@ -15,6 +17,7 @@ from azure.ai.evaluation.simulator import (
 )
 from azure.identity import AzureDeveloperCliCredential
 from dotenv_azd import load_azd_env
+from pprint import pprint
 from rich.logging import RichHandler
 from rich.progress import track
 
@@ -78,17 +81,42 @@ async def callback(
         },
     }
     url = target_url
-    r = requests.post(url, headers=headers, json=body)
-    response = r.json()
-    if "error" in response:
-        message = {"content": response["error"], "role": "assistant"}
-    else:
-        message = response["message"]
-    response["messages"] = messages_list + [message]
-    return response
+    try:
+        r = requests.post(url, headers=headers, json=body, timeout=30)
+        r.raise_for_status()
+        response = r.json()
+        
+        if "error" in response:
+            message = {"content": response["error"], "role": "assistant"}
+        else:
+            message = response.get("message", {"content": "No response", "role": "assistant"})
+        
+        response["messages"] = messages_list + [message]
+        return response
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP Error {r.status_code}: {e}")
+        logger.error(f"Request URL: {url}")
+        logger.error(f"Response text: {r.text[:500]}")
+        if r.status_code == 400:
+            logger.error(f"Request body was: {json.dumps(body, indent=2)}")
+        return {
+            "messages": messages_list + [{"content": f"Error: HTTP {r.status_code} - {r.text[:100]}", "role": "assistant"}]
+        }
+    except requests.exceptions.JSONDecodeError as e:
+        logger.error(f"Failed to parse JSON response: {e}")
+        logger.error(f"Response status: {r.status_code}, Response text: {r.text[:200]}")
+        return {
+            "messages": messages_list + [{"content": f"Error: Invalid JSON response from backend", "role": "assistant"}]
+        }
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Request failed: {e}")
+        return {
+            "messages": messages_list + [{"content": f"Error: Request failed - {str(e)}", "role": "assistant"}]
+        }
 
 
 async def run_simulator(target_url: str, max_simulations: int):
+    """Run adversarial simulator and save outputs to JSONL for evaluation."""
     credential = get_azure_credential()
     azure_ai_project = {
         "subscription_id": os.getenv("AZURE_SUBSCRIPTION_ID"),
@@ -100,6 +128,7 @@ async def run_simulator(target_url: str, max_simulations: int):
     scenario = AdversarialScenario.ADVERSARIAL_QA
     adversarial_simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=credential)
 
+    logger.info(f"Running adversarial simulation with {max_simulations} max simulations...")
     outputs = await adversarial_simulator(
         scenario=scenario,
         target=lambda messages, stream=False, session_state=None, context=None: callback(
@@ -110,38 +139,100 @@ async def run_simulator(target_url: str, max_simulations: int):
         randomization_seed=1,  # For more consistent results, use a fixed seed
     )
 
-    # Run safety evaluation on the outputs and save the scores
-    # Do not save the outputs, as they may contain disturbing content
-    evaluators = ["hate_unfairness", "sexual", "violence", "self_harm"]
-    summary_scores = {evaluator: {"low_count": 0, "score_total": 0} for evaluator in evaluators}
-    for output in track(outputs, description="Evaluating simulated responses..."):
-        query = output["messages"][0]["content"]
-        answer = output["messages"][1]["content"]
-        safety_eval = ContentSafetyEvaluator(credential=credential, azure_ai_project=azure_ai_project)
-        eval_score = safety_eval(query=query, response=answer)
-        for evaluator in evaluators:
-            severity_level = HarmSeverityLevel(eval_score[evaluator])
-            if severity_level == HarmSeverityLevel.VeryLow or severity_level == HarmSeverityLevel.Low.name:
-                summary_scores[evaluator]["low_count"] += 1
-            else:
-                logger.info(f"Failing score from:\nQ: {query}\nA: {answer}\n{evaluator} score: {eval_score}")
-            summary_scores[evaluator]["score_total"] += eval_score[f"{evaluator}_score"]
+    # Save simulation outputs as JSONL for evaluation
+    # Note: We save query and response separately for safety evaluation
+    simulation_data_path = root_dir / "redteam_results" / "simulation_data.jsonl"
+    simulation_data_path.parent.mkdir(exist_ok=True)
+    
+    logger.info(f"Saving {len(outputs)} simulation outputs to {simulation_data_path}")
+    valid_outputs = 0
+    with open(simulation_data_path, "w") as f:
+        for output in outputs:
+            # Skip outputs that don't have both query and response
+            if "messages" not in output or len(output["messages"]) < 2:
+                logger.warning(f"Skipping incomplete simulation output: {output}")
+                continue
+            
+            query = output["messages"][0]["content"]
+            response = output["messages"][1]["content"]
+            
+            # Skip if response is empty or None
+            if not response:
+                logger.warning(f"Skipping simulation with empty response for query: {query}")
+                continue
+                
+            f.write(json.dumps({"query": query, "response": response}) + "\n")
+            valid_outputs += 1
+    
+    logger.info(f"Saved {valid_outputs} valid outputs out of {len(outputs)} total simulations")
+    return azure_ai_project, str(simulation_data_path), valid_outputs
 
-    # Compute the overall statistics
-    for evaluator in evaluators:
-        if len(outputs) > 0:
-            summary_scores[evaluator]["mean_score"] = (
-                summary_scores[evaluator]["score_total"] / summary_scores[evaluator]["low_count"]
-            )
-            summary_scores[evaluator]["low_rate"] = summary_scores[evaluator]["low_count"] / len(outputs)
-        else:
-            summary_scores[evaluator]["mean_score"] = 0
-            summary_scores[evaluator]["low_rate"] = 0
-    # Save summary scores
+
+def run_safety_evaluation(azure_ai_project: dict, data_path: str, num_simulations: int):
+    """Run safety evaluation using evaluate() function to upload results to Azure Portal."""
+    
+    # Check if we have valid data to evaluate
+    if num_simulations == 0:
+        logger.error("No valid simulation outputs to evaluate. All simulations failed to generate responses.")
+        logger.error("This usually happens when:")
+        logger.error("  1. The target URL is not accessible")
+        logger.error("  2. The backend is not responding correctly")
+        logger.error("  3. The backend is rejecting the adversarial queries")
+        logger.error("\nCheck the warnings above for more details about why simulations failed.")
+        return
+    
+    credential = get_azure_credential()
+    
+    # Initialize ContentSafetyEvaluator
+    safety_evaluator = ContentSafetyEvaluator(
+        credential=credential,
+        azure_ai_project=azure_ai_project
+    )
+    
+    logger.info(f"\n🔍 Starting safety evaluation...")
+    logger.info(f"   Data file: {data_path}")
+    logger.info(f"   Number of simulations: {num_simulations}")
+    logger.info(f"   Evaluator: ContentSafetyEvaluator (hate_unfairness, sexual, violence, self_harm)")
+    
+    # Run evaluation with ContentSafetyEvaluator
+    # The target is identity function since we already have query and response in data
+    result = evaluate(
+        data=data_path,
+        evaluators={"safety": safety_evaluator},
+        evaluator_config={
+            "safety": {
+                "column_mapping": {
+                    "query": "${data.query}",
+                    "response": "${data.response}"
+                }
+            }
+        },
+        azure_ai_project=azure_ai_project,
+        evaluation_name="safety_evaluation_adversarial",
+        output_path=str(root_dir / "safety_results.jsonl")
+    )
+    
+    # Display results
+    tabular_result = pd.DataFrame(result.get("rows"))
+    
+    print("\n" + "="*50)
+    print("-----Summarized Metrics-----")
+    pprint(result["metrics"])
+    print("\n-----Tabular Result Preview (first 5 rows)-----")
+    print(tabular_result.head())
+    print("\n-----Evaluation Complete-----")
+    print(f"Results saved to: {root_dir / 'safety_results.jsonl'}")
+    
+    if "studio_url" in result:
+        print(f"\n🔗 View evaluation results in AI Studio:")
+        print(f"   {result['studio_url']}")
+    
+    print("="*50)
+    
+    # Also save summary metrics to JSON for backwards compatibility
     with open(root_dir / "safety_results.json", "w") as f:
-        import json
-
-        json.dump(summary_scores, f, indent=2)
+        json.dump(result["metrics"], f, indent=2)
+    logger.info(f"Summary metrics also saved to: {root_dir / 'safety_results.json'}")
 
 
 if __name__ == "__main__":
@@ -160,4 +251,10 @@ if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     load_azd_env()
 
-    asyncio.run(run_simulator(args.target_url, args.max_simulations))
+    # Step 1: Run adversarial simulation to generate test data
+    azure_ai_project, data_path, num_simulations = asyncio.run(
+        run_simulator(args.target_url, args.max_simulations)
+    )
+    
+    # Step 2: Run safety evaluation using evaluate() function (uploads to Azure Portal)
+    run_safety_evaluation(azure_ai_project, data_path, num_simulations)
