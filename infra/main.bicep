@@ -1156,7 +1156,7 @@ module openAiRoleBackend 'core/security/role.bicep' = if (isAzureOpenAiHost && d
   }
 }
 
-module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi) {
+module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi && !empty(searchService.outputs.systemAssignedPrincipalId)) {
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
@@ -1166,7 +1166,7 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   }
 }
 
-module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal) {
+module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal && !empty(searchService.outputs.systemAssignedPrincipalId)) {
   scope: visionResourceGroup
   name: 'vision-role-searchservice'
   params: {
@@ -1201,7 +1201,7 @@ module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
 }
 
 // Search service needs blob read access for both integrated vectorization and cloud ingestion indexer data source
-module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVectorization || useCloudIngestion) {
+module storageRoleSearchService 'core/security/role.bicep' = if ((useIntegratedVectorization || useCloudIngestion) && !empty(searchService.outputs.systemAssignedPrincipalId)) {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
@@ -1211,7 +1211,7 @@ module storageRoleSearchService 'core/security/role.bicep' = if (useIntegratedVe
   }
 }
 
-module storageRoleContributorSearchService 'core/security/role.bicep' = if (useIntegratedVectorization && useMultimodal) {
+module storageRoleContributorSearchService 'core/security/role.bicep' = if ((useIntegratedVectorization && useMultimodal) && !empty(searchService.outputs.systemAssignedPrincipalId)) {
   scope: storageResourceGroup
   name: 'storage-role-contributor-searchservice'
   params: {
