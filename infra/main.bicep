@@ -1156,7 +1156,7 @@ module openAiRoleBackend 'core/security/role.bicep' = if (isAzureOpenAiHost && d
   }
 }
 
-module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi && !empty(searchService.outputs.systemAssignedPrincipalId)) {
+module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHost && deployAzureOpenAi && searchServiceSkuName != 'free') {
   scope: openAiResourceGroup
   name: 'openai-role-searchservice'
   params: {
@@ -1166,7 +1166,7 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   }
 }
 
-module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal && !empty(searchService.outputs.systemAssignedPrincipalId)) {
+module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal && searchServiceSkuName != 'free') {
   scope: visionResourceGroup
   name: 'vision-role-searchservice'
   params: {
@@ -1201,7 +1201,7 @@ module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
 }
 
 // Search service needs blob read access for both integrated vectorization and cloud ingestion indexer data source
-module storageRoleSearchService 'core/security/role.bicep' = if ((useIntegratedVectorization || useCloudIngestion) && !empty(searchService.outputs.systemAssignedPrincipalId)) {
+module storageRoleSearchService 'core/security/role.bicep' = if ((useIntegratedVectorization || useCloudIngestion) && searchServiceSkuName != 'free') {
   scope: storageResourceGroup
   name: 'storage-role-searchservice'
   params: {
@@ -1211,7 +1211,7 @@ module storageRoleSearchService 'core/security/role.bicep' = if ((useIntegratedV
   }
 }
 
-module storageRoleContributorSearchService 'core/security/role.bicep' = if ((useIntegratedVectorization && useMultimodal) && !empty(searchService.outputs.systemAssignedPrincipalId)) {
+module storageRoleContributorSearchService 'core/security/role.bicep' = if ((useIntegratedVectorization && useMultimodal) && searchServiceSkuName != 'free') {
   scope: storageResourceGroup
   name: 'storage-role-contributor-searchservice'
   params: {
