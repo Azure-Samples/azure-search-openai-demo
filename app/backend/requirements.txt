@@ -432,7 +432,7 @@ typing-extensions==4.15.0
     #   uvicorn
 typing-inspection==0.4.2
     # via pydantic
-urllib3==2.5.0
+urllib3==2.6.3
     # via requests
 uvicorn==0.30.6
     # via -r requirements.in
