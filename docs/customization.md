@@ -62,7 +62,7 @@ The ask tab uses the approach programmed in [retrievethenread.py](https://github
 1. **Search**: It queries Azure AI Search for search results for the user question (optionally using the vector embeddings for that question).
 2. **Answering**: It then combines the search results and user question, and calls the OpenAI ChatCompletion API to answer the question based on the sources, using the prompt from [ask_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question.prompty).
 
-The prompt for step 2 is currently tailored to the sample data since it starts with "You are an intelligent assistant helping Contoso Inc employees with their healthcare plan questions and employee handbook questions." Modify [ask_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question.prompty) to match your data.
+The prompt for step 2 is currently tailored to the sample data since it starts with "Assistant helps the company employees with their questions about internal documents." Modify [ask_answer_question.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/ask_answer_question.prompty) to match your data.
 
 #### Ask with multimodal feature
 

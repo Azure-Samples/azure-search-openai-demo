@@ -10,7 +10,8 @@
             "request": "launch",
             "module": "quart",
             "cwd": "${workspaceFolder}/app/backend",
-            "python": "${workspaceFolder}/.venv/bin/python",
+            // Use the currently selected interpreter in VS Code. MAC/Linux use /bin, Windows uses /Scripts
+            "python": "${command:python.interpreterPath}",
             "env": {
                 "QUART_APP": "main:app",
                 "QUART_ENV": "development",

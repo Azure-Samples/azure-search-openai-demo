@@ -32,16 +32,18 @@ const Chat = () => {
     const [promptTemplate, setPromptTemplate] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
     const [seed, setSeed] = useState<number | null>(null);
-    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
+    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(1.9);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
-    const [resultsMergeStrategy, setResultsMergeStrategy] = useState<string>("interleaved");
+    const [agenticReasoningEffort, setRetrievalReasoningEffort] = useState<string>("minimal");
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
     const [reasoningEffort, setReasoningEffort] = useState<string>("");
     const [streamingEnabled, setStreamingEnabled] = useState<boolean>(true);
     const [shouldStream, setShouldStream] = useState<boolean>(true);
+    const previousShouldStreamRef = useRef<boolean>(true);
+    const forcedStreamingRef = useRef<boolean>(false);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [includeCategory, setIncludeCategory] = useState<string>("");
     const [excludeCategory, setExcludeCategory] = useState<string>("");
@@ -79,7 +81,13 @@ const Chat = () => {
     const [showChatHistoryBrowser, setShowChatHistoryBrowser] = useState<boolean>(false);
     const [showChatHistoryCosmos, setShowChatHistoryCosmos] = useState<boolean>(false);
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
-    const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
+    const [webSourceSupported, setWebSourceSupported] = useState<boolean>(false);
+    const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
+    const [sharePointSourceSupported, setSharePointSourceSupported] = useState<boolean>(false);
+    const [sharePointSourceEnabled, setSharePointSourceEnabled] = useState<boolean>(false);
+    const [useAgenticKnowledgeBase, setUseAgenticRetrieval] = useState<boolean>(false);
+    const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
+    const streamingDisabledByOverrides = useAgenticKnowledgeBase && webSourceEnabled;
 
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
@@ -108,9 +116,6 @@ const Chat = () => {
             setShowQueryRewritingOption(config.showQueryRewritingOption);
             setShowReasoningEffortOption(config.showReasoningEffortOption);
             setStreamingEnabled(config.streamingEnabled);
-            if (!config.streamingEnabled) {
-                setShouldStream(false);
-            }
             if (config.showReasoningEffortOption) {
                 setReasoningEffort(config.defaultReasoningEffort);
             }
@@ -127,9 +132,16 @@ const Chat = () => {
             setShowChatHistoryCosmos(config.showChatHistoryCosmos);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            setWebSourceSupported(config.webSourceEnabled);
+            setWebSourceEnabled(config.webSourceEnabled);
+            setSharePointSourceSupported(config.sharepointSourceEnabled);
+            setSharePointSourceEnabled(config.sharepointSourceEnabled);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
+            const defaultRetrievalEffort = config.defaultRetrievalReasoningEffort ?? "minimal";
+            setHideMinimalRetrievalReasoningOption(config.webSourceEnabled);
+            setRetrievalReasoningEffort(defaultRetrievalEffort);
         });
     };
 
@@ -186,6 +198,36 @@ const Chat = () => {
     })();
     const historyManager = useHistoryManager(historyProvider);
 
+    const updateStreamingPreference = (isStreamingEnabledOverride: boolean, disablesStreamingOverride: boolean) => {
+        if (!isStreamingEnabledOverride) {
+            setShouldStream(current => {
+                if (!forcedStreamingRef.current) {
+                    previousShouldStreamRef.current = current;
+                }
+                forcedStreamingRef.current = true;
+                return current ? false : current;
+            });
+            return;
+        }
+
+        if (disablesStreamingOverride) {
+            setShouldStream(current => {
+                if (!forcedStreamingRef.current) {
+                    previousShouldStreamRef.current = current;
+                }
+                forcedStreamingRef.current = true;
+                return current ? false : current;
+            });
+            return;
+        }
+
+        forcedStreamingRef.current = false;
+        setShouldStream(current => {
+            const desiredShouldStream = previousShouldStreamRef.current;
+            return current === desiredShouldStream ? current : desiredShouldStream;
+        });
+    };
+
     const makeApiRequest = async (question: string) => {
         lastQuestionRef.current = question;
 
@@ -210,7 +252,7 @@ const Chat = () => {
                         include_category: includeCategory.length === 0 ? undefined : includeCategory,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
-                        results_merge_strategy: resultsMergeStrategy,
+                        ...(useAgenticKnowledgeBase ? { retrieval_reasoning_effort: agenticReasoningEffort } : {}),
                         temperature: temperature,
                         minimum_reranker_score: minimumRerankerScore,
                         minimum_search_score: minimumSearchScore,
@@ -225,7 +267,9 @@ const Chat = () => {
                         send_text_sources: sendTextSources,
                         send_image_sources: sendImageSources,
                         language: i18n.language,
-                        use_agentic_retrieval: useAgenticRetrieval,
+                        use_agentic_knowledgebase: useAgenticKnowledgeBase,
+                        use_web_source: webSourceSupported ? webSourceEnabled : false,
+                        use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -284,6 +328,11 @@ const Chat = () => {
         getConfig();
     }, []);
 
+    // Preserve streaming preference when agentic retrieval forces streaming off.
+    useEffect(() => {
+        updateStreamingPreference(streamingEnabled, streamingDisabledByOverrides);
+    }, [streamingDisabledByOverrides, streamingEnabled]);
+
     const handleSettingsChange = (field: string, value: any) => {
         switch (field) {
             case "promptTemplate":
@@ -304,9 +353,17 @@ const Chat = () => {
             case "retrieveCount":
                 setRetrieveCount(value);
                 break;
-            case "resultsMergeStrategy":
-                setResultsMergeStrategy(value);
+            case "agenticReasoningEffort": {
+                setRetrievalReasoningEffort(value);
+                // If selecting minimal while web source is enabled, disable web source
+                if (value === "minimal" && webSourceEnabled) {
+                    setWebSourceEnabled(false);
+                    setHideMinimalRetrievalReasoningOption(false);
+                    // Web source was disabled, so restore streaming
+                    updateStreamingPreference(streamingEnabled, false);
+                }
                 break;
+            }
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
                 break;
@@ -326,7 +383,12 @@ const Chat = () => {
                 setIncludeCategory(value);
                 break;
             case "shouldStream":
-                setShouldStream(value);
+                {
+                    const normalizedShouldStream = !!value;
+                    forcedStreamingRef.current = false;
+                    previousShouldStreamRef.current = normalizedShouldStream;
+                    setShouldStream(normalizedShouldStream);
+                }
                 break;
             case "useSuggestFollowupQuestions":
                 setUseSuggestFollowupQuestions(value);
@@ -348,8 +410,40 @@ const Chat = () => {
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
-            case "useAgenticRetrieval":
+            case "useAgenticKnowledgeBase": {
                 setUseAgenticRetrieval(value);
+                let effectiveWebSource = webSourceEnabled;
+                if (!value && webSourceEnabled) {
+                    effectiveWebSource = false;
+                    setWebSourceEnabled(false);
+                    setHideMinimalRetrievalReasoningOption(false);
+                }
+                // Only web source disables streaming
+                const shouldDisableStreaming = !!value && effectiveWebSource;
+                updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
+                break;
+            }
+            case "useWebSource":
+                if (!webSourceSupported) {
+                    setWebSourceEnabled(false);
+                    return;
+                }
+                const normalizedWebSource = !!value;
+                setWebSourceEnabled(normalizedWebSource);
+                setHideMinimalRetrievalReasoningOption(normalizedWebSource);
+                // When enabling web source, disable follow-up questions and streaming
+                if (normalizedWebSource) {
+                    setUseSuggestFollowupQuestions(false);
+                }
+                const shouldDisableStreaming = useAgenticKnowledgeBase && normalizedWebSource;
+                updateStreamingPreference(streamingEnabled, shouldDisableStreaming);
+                break;
+            case "useSharePointSource":
+                if (!sharePointSourceSupported) {
+                    setSharePointSourceEnabled(false);
+                    return;
+                }
+                setSharePointSourceEnabled(!!value);
                 break;
         }
     };
@@ -498,6 +592,7 @@ const Chat = () => {
                         citationHeight="810px"
                         answer={answers[selectedAnswer][1]}
                         activeTab={activeAnalysisPanelTab}
+                        onCitationClicked={c => onShowCitation(c, selectedAnswer)}
                     />
                 )}
 
@@ -528,7 +623,7 @@ const Chat = () => {
                         promptTemplate={promptTemplate}
                         temperature={temperature}
                         retrieveCount={retrieveCount}
-                        resultsMergeStrategy={resultsMergeStrategy}
+                        agenticReasoningEffort={agenticReasoningEffort}
                         seed={seed}
                         minimumSearchScore={minimumSearchScore}
                         minimumRerankerScore={minimumRerankerScore}
@@ -554,9 +649,13 @@ const Chat = () => {
                         shouldStream={shouldStream}
                         streamingEnabled={streamingEnabled}
                         useSuggestFollowupQuestions={useSuggestFollowupQuestions}
-                        showSuggestFollowupQuestions={true}
                         showAgenticRetrievalOption={showAgenticRetrievalOption}
-                        useAgenticRetrieval={useAgenticRetrieval}
+                        useAgenticKnowledgeBase={useAgenticKnowledgeBase}
+                        useWebSource={webSourceEnabled}
+                        showWebSourceOption={webSourceSupported}
+                        useSharePointSource={sharePointSourceEnabled}
+                        showSharePointSourceOption={sharePointSourceSupported}
+                        hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                         onChange={handleSettingsChange}
                     />
                     {useLogin && <TokenClaimsDisplay />}

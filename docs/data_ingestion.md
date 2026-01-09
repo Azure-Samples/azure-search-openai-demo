@@ -14,7 +14,8 @@ The chat app provides two ways to ingest data: manual ingestion and cloud ingest
   - [Indexing additional documents](#indexing-additional-documents)
   - [Removing documents](#removing-documents)
 - [Cloud ingestion](#cloud-ingestion)
-  - [Custom skills pipeline](#custom-skills-pipeline)
+  - [Enabling cloud ingestion](#enabling-cloud-ingestion)
+  - [Indexer architecture](#indexer-architecture)
   - [Indexing of additional documents](#indexing-of-additional-documents)
   - [Removal of documents](#removal-of-documents)
   - [Scheduled indexing](#scheduled-indexing)
@@ -88,7 +89,7 @@ Here's an example of what a final indexed chunk document looks like:
 ```json
 {
     "id": "file-Northwind_Health_Plus_Benefits_Details_pdf-4E6F72746877696E645F4865616C74685F506C75735F42656E65666974735F44657461696C732E706466-page-0",
-    "content": "# Contoso Electronics\n\nNorthwind Health Plus Plan\n...",
+    "content": "# Zava\n\nNorthwind Health Plus Plan\n...",
     "category": null,
     "sourcepage": "Northwind_Health_Plus_Benefits_Details.pdf#page=1",
     "sourcefile": "Northwind_Health_Plus_Benefits_Details.pdf",
@@ -136,11 +137,39 @@ You can also remove individual documents by using the `--remove` flag. Open eith
 
 This project includes an optional feature to perform data ingestion in the cloud using Azure Functions as custom skills for Azure AI Search indexers. This approach offloads the ingestion workload from your local machine to the cloud, allowing for more scalable and efficient processing of large datasets.
 
-You must first explicitly [enable cloud ingestion](./deploy_features.md#enabling-cloud-ingestion) in the `azd` environment to use this feature.
+### Enabling cloud ingestion
 
-This feature cannot be used on existing index. You need to create a new index or drop and recreate an existing index. In the newly created index schema, a new field 'parent_id' is added. This is used internally by the indexer to manage life cycle of chunks.
+1. If you've previously deployed, delete the existing search index or create a new index. This feature cannot be used on existing index. In the newly created index schema, a new field 'parent_id' is added. This is used internally by the indexer to manage life cycle of chunks. Run this command to set a new index name:
 
-### Custom skills pipeline
+    ```shell
+    azd env set AZURE_SEARCH_INDEX cloudindex
+    ```
+
+2. Run this command:
+
+    ```shell
+    azd env set USE_CLOUD_INGESTION true
+    ```
+
+3. Open `azure.yaml` and un-comment the document-extractor, figure-processor, and text-processor sections. Those are the Azure Functions apps that will be deployed and serve as Azure AI Search skills.
+
+4. (Recommended) Increase the capacity for the embedding model to the maximum quota allowed for your region/subscription, so that the Azure Functions can generate embeddings without hitting rate limits:
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY 400
+    ```
+
+5. Provision the new Azure Functions resources, deploy the function apps, and update the search indexer with:
+
+    ```shell
+    azd up
+    ```
+
+6. That will upload the documents in the `data/` folder to the Blob storage container, create the indexer and skillset, and run the indexer to ingest the data. You can monitor the indexer status from the portal.
+
+7. When you have new documents to ingest, you can upload documents to the Blob storage container and run the indexer from the Azure Portal to ingest new documents.
+
+### Indexer architecture
 
 The cloud ingestion pipeline uses four Azure Functions as custom skills within an Azure AI Search indexer. Each function corresponds to a stage in the ingestion process. Here's how it works:
 

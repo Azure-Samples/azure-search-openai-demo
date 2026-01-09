@@ -28,7 +28,7 @@ jobs:
         python_version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         node_version: ["20.14", "22"]
     steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
           with:
             # Fetch full history so diff-cover can compute a merge base with origin/main
             fetch-depth: 0
@@ -50,7 +50,7 @@ jobs:
             npm install
             npm run build
         - name: Check i18n translations
-          run: npx -y @lingual/i18n-check --locales app/frontend/src/locales -s en -f i18next -r summary
+          run: npx -y @lingual/i18n-check@0.8.12 --locales app/frontend/src/locales -s en -f i18next -r summary
         - name: Install dependencies
           run: |
             uv pip install -r requirements-dev.txt
@@ -82,7 +82,7 @@ jobs:
             pytest tests/e2e.py --tracing=retain-on-failure
         - name: Upload test artifacts
           if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
-          uses: actions/upload-artifact@v5
+          uses: actions/upload-artifact@v6
           with:
             name: playwright-traces${{ matrix.python_version }}
             path: test-results

@@ -1,9 +1,19 @@
 {
     "context": {
         "data_points": {
+            "citation_activity_details": {
+                "Benefit_Options-2.pdf": {
+                    "id": 1,
+                    "number": 2,
+                    "query": "whistleblower query",
+                    "source": "index",
+                    "type": "searchIndex"
+                }
+            },
             "citations": [
                 "Benefit_Options-2.pdf"
             ],
+            "external_results_metadata": [],
             "images": [],
             "text": [
                 "Benefit_Options-2.pdf: There is a whistleblower policy."
@@ -14,20 +24,13 @@
             {
                 "description": [
                     {
-                        "content": "What is the capital of France?",
-                        "role": "user"
-                    }
-                ],
-                "props": {
-                    "filter": null,
-                    "reranker_threshold": 0,
-                    "results_merge_strategy": "interleaved"
-                },
-                "title": "Use agentic retrieval"
-            },
-            {
-                "description": [
-                    {
+                        "activity": {
+                            "id": 1,
+                            "number": 2,
+                            "query": "whistleblower query",
+                            "source": "index",
+                            "type": "searchIndex"
+                        },
                         "captions": [],
                         "category": null,
                         "content": "There is a whistleblower policy.",
@@ -37,13 +40,14 @@
                         "oids": null,
                         "reranker_score": 3.4577205181121826,
                         "score": null,
-                        "search_agent_query": "whistleblower query",
                         "sourcefile": "Benefit_Options.pdf",
-                        "sourcepage": "Benefit_Options-2.pdf"
+                        "sourcepage": "Benefit_Options-2.pdf",
+                        "type": "searchIndex"
                     }
                 ],
                 "props": {
                     "deployment": "gpt-4.1-mini",
+                    "filter": "category ne 'excluded'",
                     "model": "gpt-4.1-mini",
                     "query_plan": [
                         {
@@ -63,9 +67,10 @@
                             },
                             "type": "searchIndex"
                         }
-                    ]
+                    ],
+                    "reranker_threshold": 0
                 },
-                "title": "Agentic retrieval results (top 3)"
+                "title": "Agentic retrieval response"
             },
             {
                 "description": [

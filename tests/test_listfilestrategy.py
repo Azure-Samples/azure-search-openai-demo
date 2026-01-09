@@ -85,6 +85,8 @@ async def test_locallistfilestrategy():
         assert files[0].filename() == "a.pdf"
         assert files[1].filename() == "b.pdf"
         assert files[2].filename() == "c.pdf"
+        for file in files:
+            file.close()
 
 
 @pytest.mark.asyncio
@@ -113,6 +115,8 @@ async def test_locallistfilestrategy_nesteddir():
         assert files[0].filename() == "a.pdf"
         assert files[1].filename() == "b.pdf"
         assert files[2].filename() == "c.pdf"
+        for file in files:
+            file.close()
 
 
 def test_locallistfilestrategy_checkmd5():
@@ -144,6 +148,7 @@ async def test_locallistfilestrategy_global():
         assert len(files) == 3
         for file in files:
             assert file.acls == {"oids": ["all"], "groups": ["all"]}
+            file.close()
 
 
 @pytest.mark.asyncio

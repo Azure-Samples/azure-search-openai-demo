@@ -1,11 +1,13 @@
 import json
 import os
+from typing import Any
 from unittest import mock
 
 import pytest
 import quart.testing.app
 from httpx import Request, Response
 from openai import BadRequestError
+from quart import Response as QuartResponse
 
 import app
 
@@ -47,6 +49,18 @@ def messages_contains_text(messages, text):
     return False
 
 
+def pop_citation_activity_details(result: dict[str, Any] | None):  # type: ignore[name-defined]
+    if result is None:
+        return None
+    context = result.get("context") if isinstance(result, dict) else None
+    if not isinstance(context, dict):
+        return None
+    data_points = context.get("data_points")
+    if not isinstance(data_points, dict):
+        return None
+    return data_points.pop("citation_activity_details", None)
+
+
 @pytest.mark.asyncio
 async def test_missing_env_vars():
     with mock.patch.dict(os.environ, clear=True):
@@ -82,6 +96,20 @@ async def test_favicon(client):
 async def test_cors_notallowed(client) -> None:
     response = await client.get("/", headers={"Origin": "https://quart.com"})
     assert "Access-Control-Allow-Origin" not in response.headers
+
+
+@pytest.mark.asyncio
+async def test_assets_route_delegates_to_send_from_directory(client, monkeypatch):
+    async def fake_send_from_directory(directory, requested_path):
+        assert "assets" in str(directory)
+        assert requested_path == "bundle.js"
+        return QuartResponse("console.log('hi')", mimetype="application/javascript")
+
+    monkeypatch.setattr(app, "send_from_directory", fake_send_from_directory)
+
+    response = await client.get("/assets/bundle.js")
+    assert response.status_code == 200
+    assert await response.get_data() == b"console.log('hi')"
 
 
 @pytest.mark.asyncio
@@ -166,17 +194,19 @@ async def test_ask_rtr_text(client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
+    citation_details = pop_citation_activity_details(result)
+    assert citation_details is None
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 
 @pytest.mark.asyncio
-async def test_ask_rtr_text_agent(agent_client, snapshot):
-    response = await agent_client.post(
+async def test_ask_rtr_text_agent(knowledgebase_client, snapshot):
+    response = await knowledgebase_client.post(
         "/ask",
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"retrieval_mode": "text", "use_agentic_retrieval": True},
+                "overrides": {"retrieval_mode": "text", "use_agentic_knowledgebase": True, "use_web_source": False},
             },
         },
     )
@@ -208,8 +238,8 @@ async def test_ask_rtr_text_filter(auth_client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
-    response = await agent_auth_client.post(
+async def test_ask_rtr_text_agent_filter(knowledgebase_auth_client, snapshot):
+    response = await knowledgebase_auth_client.post(
         "/ask",
         headers={"Authorization": "Bearer MockToken"},
         json={
@@ -218,14 +248,14 @@ async def test_ask_rtr_text_agent_filter(agent_auth_client, snapshot):
                 "overrides": {
                     "retrieval_mode": "text",
                     "exclude_category": "excluded",
-                    "use_agentic_retrieval": True,
+                    "use_agentic_knowledgebase": True,
                 },
             },
         },
     )
     assert response.status_code == 200
-    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter == "category ne 'excluded'"
-    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].access_token == "MockToken"
+    assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].filter == "category ne 'excluded'"
+    assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].access_token == "MockToken"
 
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
@@ -348,11 +378,42 @@ async def test_chat_request_must_be_json(client):
 
 
 @pytest.mark.asyncio
+async def test_content_file_missing_content_settings(auth_client, monkeypatch):
+    blob_manager = auth_client.config[app.CONFIG_GLOBAL_BLOB_MANAGER]
+
+    async def fake_download_blob(_path):
+        return b"data", {}
+
+    monkeypatch.setattr(blob_manager, "download_blob", fake_download_blob)
+
+    response = await auth_client.get("/content/file.pdf", headers={"Authorization": "Bearer token"})
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_chat_stream_request_must_be_json(client):
     response = await client.post("/chat/stream")
     assert response.status_code == 415
     result = await response.get_json()
     assert result["error"] == "request must be json"
+
+
+def test_json_encoder_drops_optional_fields():
+    data_points = app.DataPoints(
+        text=["One"], citations=["a"], external_results_metadata=None, citation_activity_details=None
+    )
+    encoded = app.JSONEncoder().encode(data_points)
+    assert "citation_activity_details" not in encoded
+    assert '"text": ["One"]' in encoded
+
+
+@pytest.mark.asyncio
+async def test_auth_setup_returns_payload(client):
+    response = await client.get("/auth_setup")
+    assert response.status_code == 200
+    payload = await response.get_json()
+    assert isinstance(payload, dict)
+    assert payload  # should contain configuration values
 
 
 @pytest.mark.asyncio
@@ -535,13 +596,13 @@ async def test_chat_text(client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_text_agent(agent_client, snapshot):
-    response = await agent_client.post(
+async def test_chat_text_agent(knowledgebase_client, snapshot):
+    response = await knowledgebase_client.post(
         "/chat",
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
-                "overrides": {"use_agentic_retrieval": True},
+                "overrides": {"use_agentic_knowledgebase": True},
             },
         },
     )
@@ -574,23 +635,23 @@ async def test_chat_text_filter(auth_client, snapshot):
 
 
 @pytest.mark.asyncio
-async def test_chat_text_filter_agent(agent_auth_client, snapshot):
-    response = await agent_auth_client.post(
+async def test_chat_text_filter_agent(knowledgebase_auth_client, snapshot):
+    response = await knowledgebase_auth_client.post(
         "/chat",
         headers={"Authorization": "Bearer MockToken"},
         json={
             "messages": [{"content": "What is the capital of France?", "role": "user"}],
             "context": {
                 "overrides": {
-                    "use_agentic_retrieval": True,
+                    "use_agentic_knowledgebase": True,
                     "exclude_category": "excluded",
                 },
             },
         },
     )
     assert response.status_code == 200
-    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].filter == "category ne 'excluded'"
-    assert agent_auth_client.config[app.CONFIG_AGENT_CLIENT].access_token == "MockToken"
+    assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].filter == "category ne 'excluded'"
+    assert knowledgebase_auth_client.config[app.CONFIG_KNOWLEDGEBASE_CLIENT].access_token == "MockToken"
     result = await response.get_json()
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 

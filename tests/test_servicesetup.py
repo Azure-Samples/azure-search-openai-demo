@@ -234,13 +234,13 @@ def test_setup_openai_client_azure_custom_requires_url() -> None:
 
 def test_setup_search_info_agentic_retrieval_without_model():
     """Test that setup_search_info raises ValueError when using agentic retrieval without search agent model."""
-    with pytest.raises(ValueError, match="SearchAgent model must be specified"):
+    with pytest.raises(ValueError, match="Azure OpenAI deployment for Knowledge Base must be specified"):
         setup_search_info(
             azure_credential=MockAzureCredential(),
             search_service="mysearch",
             index_name="myindex",
-            use_agentic_retrieval=True,
-            azure_openai_searchagent_model=None,
+            use_agentic_knowledgebase=True,
+            azure_openai_knowledgebase_deployment=None,
         )
 
 

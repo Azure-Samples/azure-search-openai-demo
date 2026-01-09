@@ -1,16 +1,15 @@
-import { Stack, Pivot, PivotItem } from "@fluentui/react";
+import { useMsal } from "@azure/msal-react";
+import { Pivot, PivotItem } from "@fluentui/react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import styles from "./AnalysisPanel.module.css";
 
+import { ChatAppResponse, getHeaders } from "../../api";
+import { getToken, useLogin } from "../../authConfig";
+import { MarkdownViewer } from "../MarkdownViewer";
 import { SupportingContent } from "../SupportingContent";
-import { ChatAppResponse } from "../../api";
+import styles from "./AnalysisPanel.module.css";
 import { AnalysisPanelTabs } from "./AnalysisPanelTabs";
 import { ThoughtProcess } from "./ThoughtProcess";
-import { MarkdownViewer } from "../MarkdownViewer";
-import { useMsal } from "@azure/msal-react";
-import { getHeaders } from "../../api";
-import { useLogin, getToken } from "../../authConfig";
-import { useState, useEffect } from "react";
 
 interface Props {
     className: string;
@@ -19,13 +18,21 @@ interface Props {
     activeCitation: string | undefined;
     citationHeight: string;
     answer: ChatAppResponse;
+    onCitationClicked?: (citationFilePath: string) => void;
 }
 
 const pivotItemDisabledStyle = { disabled: true, style: { color: "grey" } };
 
-export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged }: Props) => {
+export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeight, className, onActiveTabChanged, onCitationClicked }: Props) => {
     const isDisabledThoughtProcessTab: boolean = !answer.context.thoughts;
-    const isDisabledSupportingContentTab: boolean = !answer.context.data_points;
+    const dataPoints = answer.context.data_points;
+    const hasSupportingContent = Boolean(
+        dataPoints &&
+            ((dataPoints.text && dataPoints.text.length > 0) ||
+                (dataPoints.images && dataPoints.images.length > 0) ||
+                (dataPoints.external_results_metadata && dataPoints.external_results_metadata.length > 0))
+    );
+    const isDisabledSupportingContentTab: boolean = !hasSupportingContent;
     const isDisabledCitationTab: boolean = !activeCitation;
     const [citation, setCitation] = useState("");
 
@@ -82,7 +89,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 headerText={t("headerTexts.thoughtProcess")}
                 headerButtonProps={isDisabledThoughtProcessTab ? pivotItemDisabledStyle : undefined}
             >
-                <ThoughtProcess thoughts={answer.context.thoughts || []} />
+                <ThoughtProcess thoughts={answer.context.thoughts || []} onCitationClicked={onCitationClicked} />
             </PivotItem>
             <PivotItem
                 itemKey={AnalysisPanelTabs.SupportingContentTab}
