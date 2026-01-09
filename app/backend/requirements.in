@@ -31,3 +31,4 @@ python-dotenv
 prompty
 rich
 typing-extensions
+extract-msg

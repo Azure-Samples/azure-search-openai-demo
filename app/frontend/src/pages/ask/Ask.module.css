@@ -63,6 +63,7 @@
     padding-left: 9rem;
     padding-right: 1rem;
     align-self: flex-end;
+    min-height: 60px;
 }
 
 .commandButton {
@@ -72,12 +73,13 @@
 @media (min-width: 992px) {
     .askTitle {
         font-size: 4rem;
-        margin-top: 8.125rem;
+        margin-top: 0;
     }
 
     .commandsContainer {
         padding-left: 0;
         padding-right: 0;
+        min-height: 60px;
     }
 
     .commandButton {

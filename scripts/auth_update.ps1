@@ -11,4 +11,8 @@ if (Test-Path -Path "/usr") {
   $venvPythonPath = "./.venv/bin/python"
 }
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/auth_update.py" -Wait -NoNewWindow
+$process = Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/auth_update.py" -Wait -NoNewWindow -PassThru
+if ($process.ExitCode -ne 0) {
+    Write-Error "auth_update.py failed with exit code $($process.ExitCode)"
+    exit $process.ExitCode
+}

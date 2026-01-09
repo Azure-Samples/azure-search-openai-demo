@@ -5,7 +5,21 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
     plugins: [react()],
     resolve: {
-        preserveSymlinks: true
+        preserveSymlinks: true,
+        alias: {
+            buffer: "buffer",
+        },
+    },
+    define: {
+        global: "globalThis",
+        "process.env": {},
+    },
+    optimizeDeps: {
+        esbuildOptions: {
+            define: {
+                global: "globalThis",
+            },
+        },
     },
     build: {
         outDir: "../backend/static",
@@ -24,7 +38,10 @@ export default defineConfig({
                 }
             }
         },
-        target: "esnext"
+        target: "esnext",
+        commonjsOptions: {
+            transformMixedEsModules: true,
+        },
     },
     server: {
         proxy: {
