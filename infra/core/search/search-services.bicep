@@ -13,10 +13,10 @@ param encryptionWithCmk object = {
   enforcement: 'Unspecified'
 }
 @allowed([
-  'default'
-  'highDensity'
+  'Default'
+  'HighDensity'
 ])
-param hostingMode string = 'default'
+param hostingMode string = 'Default'
 @allowed([
   'enabled'
   'disabled'

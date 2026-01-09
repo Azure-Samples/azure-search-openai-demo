@@ -1,7 +1,6 @@
 metadata description = 'Creates an Application Insights instance and a Log Analytics workspace.'
 param logAnalyticsName string
 param applicationInsightsName string
-param applicationInsightsDashboardName string = ''
 param location string = resourceGroup().location
 param tags object = {}
 @allowed([ 'Enabled', 'Disabled' ])
@@ -30,15 +29,6 @@ module applicationInsights 'br/public:avm/res/insights/component:0.4.1' = {
     workspaceResourceId: logAnalytics.outputs.resourceId
     publicNetworkAccessForIngestion: publicNetworkAccess
     publicNetworkAccessForQuery: publicNetworkAccess
-  }
-}
-
-module applicationInsightsDashboard 'applicationinsights-dashboard.bicep' = if (!empty(applicationInsightsDashboardName)) {
-  name: 'application-insights-dashboard'
-  params: {
-    name: applicationInsightsDashboardName
-    location: location
-    applicationInsightsName: applicationInsights.name
   }
 }
 

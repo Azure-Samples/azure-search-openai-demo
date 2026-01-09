@@ -161,10 +161,9 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
                 resource_id=self.search_user_assigned_identity_resource_id
             ),
             inputs=[
-                # Provide the binary payload expected by the document extractor custom skill.
-                InputFieldMappingEntry(name="file_data", source="/document/file_data"),
-                InputFieldMappingEntry(name="file_name", source="/document/metadata_storage_name"),
-                InputFieldMappingEntry(name="content_type", source="/document/metadata_storage_content_type"),
+                # Always provide the blob URL so the function can download large files (> 16MB)
+                InputFieldMappingEntry(name="metadata_storage_path", source="/document/metadata_storage_path"),
+                # We are not using the SAS token since the functions have RBAC access via managed identity
             ],
             outputs=[
                 OutputFieldMappingEntry(name="pages", target_name="pages"),
@@ -310,7 +309,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
                     configuration=IndexingParametersConfiguration(
                         query_timeout=None,  # type: ignore
                         data_to_extract="storageMetadata",
-                        allow_skillset_to_read_file_data=True,
+                        allow_skillset_to_read_file_data=False,
                     )
                 ),
             )
