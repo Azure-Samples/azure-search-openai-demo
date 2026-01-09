@@ -54,6 +54,7 @@ However, if your goal is to minimize costs while prototyping your application, f
     reuse your [existing search service](../README.md#existing-azure-ai-search-resource).
     2. The free tier does not support semantic ranker, so the app UI will no longer display
     the option to use the semantic ranker. Note that will generally result in [decreased search relevance](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/azure-ai-search-outperforming-vector-search-with-hybrid-retrieval-and-ranking-ca/3929167).
+    3. The free tier does not support managed identities. As a result, cloud ingestion and multimodal/vector features that require role assignments to the search service principal will have those role assignments skipped during provisioning. If you need those permissions, use a non-free tier (for example, `Basic`/`B1` or `Standard`).
 
 1. Use the free tier of Azure Document Intelligence (used in analyzing files):
 
