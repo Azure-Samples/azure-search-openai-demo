@@ -68,18 +68,6 @@ The easiest way to setup the two apps is to use the `azd` CLI. We've written scr
     azd env set AZURE_USE_AUTHENTICATION true
     ```
 
-1. **Enable access control on your search index**
-
-    - **If the index does not exist yet:**
-      Run the `prepdocs` script.
-
-    - **If the index already exists:**
-      Execute this command to enable ACLs:
-
-      ```shell
-      python ./scripts/manageacl.py --acl-action enable_acls
-      ```
-
 1. (Optional) **Enforce access control**
   To ensure that the app restricts search results to only documents that the user has access to, run the following command:
 
@@ -116,6 +104,16 @@ The easiest way to setup the two apps is to use the `azd` CLI. We've written scr
     ```shell
     azd auth login --tenant-id <YOUR-TENANT-ID>
     ```
+
+1. **Enable access control on your search index (if it already exists)**
+
+    If your search index already exists, you need to enable access control on it:
+
+    ```shell
+    python ./scripts/manageacl.py --acl-action enable_acls
+    ```
+
+    If your index does not exist yet, access control will be automatically enabled when the index is created during deployment.
 
 1. **Deploy the app**
   Finally, run the following command to provision and deploy the app:

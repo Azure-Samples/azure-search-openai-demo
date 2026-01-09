@@ -513,8 +513,8 @@ class SearchManager:
                 if self.use_web_source:
                     logger.info("Adding web knowledge source to the knowledge base")
                     web_knowledge_source = WebKnowledgeSource(
-                        name="web",
-                        description="Default web knowledge source",
+                        name="web"
+                        # We do not specify a description here, since the default description is quite detailed already
                     )
                     await search_index_client.create_or_update_knowledge_source(knowledge_source=web_knowledge_source)
                     knowledge_source_refs["web"] = KnowledgeSourceReference(name=web_knowledge_source.name)

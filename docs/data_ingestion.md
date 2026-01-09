@@ -153,15 +153,21 @@ This project includes an optional feature to perform data ingestion in the cloud
 
 3. Open `azure.yaml` and un-comment the document-extractor, figure-processor, and text-processor sections. Those are the Azure Functions apps that will be deployed and serve as Azure AI Search skills.
 
-4. Provision the new Azure Functions resources, deploy the function apps, and update the search indexer with:
+4. (Recommended) Increase the capacity for the embedding model to the maximum quota allowed for your region/subscription, so that the Azure Functions can generate embeddings without hitting rate limits:
+
+    ```shell
+    azd env set AZURE_OPENAI_EMB_DEPLOYMENT_CAPACITY 400
+    ```
+
+5. Provision the new Azure Functions resources, deploy the function apps, and update the search indexer with:
 
     ```shell
     azd up
     ```
 
-5. That will upload the documents in the `data/` folder to the Blob storage container, create the indexer and skillset, and run the indexer to ingest the data. You can monitor the indexer status from the portal.
+6. That will upload the documents in the `data/` folder to the Blob storage container, create the indexer and skillset, and run the indexer to ingest the data. You can monitor the indexer status from the portal.
 
-6. When you have new documents to ingest, you can upload documents to the Blob storage container and run the indexer from the Azure Portal to ingest new documents.
+7. When you have new documents to ingest, you can upload documents to the Blob storage container and run the indexer from the Azure Portal to ingest new documents.
 
 ### Indexer architecture
 

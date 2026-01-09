@@ -4,7 +4,6 @@ param applicationInsightsName string
 param location string = resourceGroup().location
 param tags object = {}
 
-// 2020-09-01-preview because that is the latest valid version
 resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-preview' = {
   name: name
   location: location
@@ -21,7 +20,9 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
               colSpan: 2
               rowSpan: 1
             }
-            metadata: {
+            // The Bicep schema only defines MarkdownPart, so we use any() to bypass
+            // type checking for other valid extension types (AppInsightsExtension, MonitorChartPart)
+            metadata: any({
               inputs: [
                 {
                   name: 'id'
@@ -32,14 +33,13 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                   value: '1.0'
                 }
               ]
-              #disable-next-line BCP036
               type: 'Extension/AppInsightsExtension/PartType/AspNetOverviewPinnedPart'
               asset: {
                 idInputName: 'id'
                 type: 'ApplicationInsights'
               }
               defaultMenuItemId: 'overview'
-            }
+            })
           }
           {
             position: {
@@ -48,7 +48,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
               colSpan: 1
               rowSpan: 1
             }
-            metadata: {
+            metadata: any({
               inputs: [
                 {
                   name: 'ComponentId'
@@ -63,14 +63,13 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                   value: '1.0'
                 }
               ]
-              #disable-next-line BCP036
               type: 'Extension/AppInsightsExtension/PartType/ProactiveDetectionAsyncPart'
               asset: {
                 idInputName: 'ComponentId'
                 type: 'ApplicationInsights'
               }
               defaultMenuItemId: 'ProactiveDetection'
-            }
+            })
           }
           {
             position: {
@@ -79,7 +78,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
               colSpan: 1
               rowSpan: 1
             }
-            metadata: {
+            metadata: any({
               inputs: [
                 {
                   name: 'ComponentId'
@@ -105,13 +104,12 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                   value: '78ce933e-e864-4b05-a27b-71fd55a6afad'
                 }
               ]
-              #disable-next-line BCP036
               type: 'Extension/AppInsightsExtension/PartType/AppMapButtonPart'
               asset: {
                 idInputName: 'ComponentId'
                 type: 'ApplicationInsights'
               }
-            }
+            })
           }
           {
             position: {
@@ -141,7 +139,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
               colSpan: 1
               rowSpan: 1
             }
-            metadata: {
+            metadata: any({
               inputs: [
                 {
                   name: 'ResourceId'
@@ -167,7 +165,6 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                   isOptional: true
                 }
               ]
-              #disable-next-line BCP036
               type: 'Extension/AppInsightsExtension/PartType/CuratedBladeFailuresPinnedPart'
               isAdapter: true
               asset: {
@@ -175,7 +172,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                 type: 'ApplicationInsights'
               }
               defaultMenuItemId: 'failures'
-            }
+            })
           }
           {
             position: {
@@ -205,7 +202,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
               colSpan: 1
               rowSpan: 1
             }
-            metadata: {
+            metadata: any({
               inputs: [
                 {
                   name: 'ResourceId'
@@ -231,7 +228,6 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                   isOptional: true
                 }
               ]
-              #disable-next-line BCP036
               type: 'Extension/AppInsightsExtension/PartType/CuratedBladePerformancePinnedPart'
               isAdapter: true
               asset: {
@@ -239,7 +235,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                 type: 'ApplicationInsights'
               }
               defaultMenuItemId: 'performance'
-            }
+            })
           }
           {
             position: {
@@ -248,7 +244,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
               colSpan: 4
               rowSpan: 3
             }
-            metadata: {
+            metadata: any({
               inputs: [
                 {
                   name: 'options'
@@ -306,10 +302,9 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                   isOptional: true
                 }
               ]
-              #disable-next-line BCP036
               type: 'Extension/HubsExtension/PartType/MonitorChartPart'
               settings: {}
-            }
+            })
           }
           {
             position: {
@@ -318,7 +313,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
               colSpan: 4
               rowSpan: 3
             }
-            metadata: {
+            metadata: any({
               inputs: [
                 {
                   name: 'options'
@@ -376,10 +371,9 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
                   isOptional: true
                 }
               ]
-              #disable-next-line BCP036
               type: 'Extension/HubsExtension/PartType/MonitorChartPart'
               settings: {}
-            }
+            })
           }
         ]
       }

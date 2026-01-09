@@ -491,13 +491,7 @@ def mock_retrieval_response_with_web():
                     "sourcefile": "Benefit_Options.pdf",
                 },
             ),
-            KnowledgeBaseWebReference(
-                id=1,
-                activity_source=2,
-                url="https://contoso.example",
-                title="Contoso site",
-                snippet="Contoso policy overview",
-            ),
+            KnowledgeBaseWebReference(id=1, activity_source=2, url="https://contoso.example", title="Contoso site"),
         ],
     )
 

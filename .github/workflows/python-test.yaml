@@ -28,7 +28,7 @@ jobs:
         python_version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         node_version: ["20.14", "22"]
     steps:
-        - uses: actions/checkout@v5
+        - uses: actions/checkout@v6
           with:
             # Fetch full history so diff-cover can compute a merge base with origin/main
             fetch-depth: 0
@@ -82,7 +82,7 @@ jobs:
             pytest tests/e2e.py --tracing=retain-on-failure
         - name: Upload test artifacts
           if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
-          uses: actions/upload-artifact@v5
+          uses: actions/upload-artifact@v6
           with:
             name: playwright-traces${{ matrix.python_version }}
             path: test-results

@@ -28,11 +28,11 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2025-02-02-
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
-        customerId: logAnalyticsWorkspace.properties.customerId
-        sharedKey: logAnalyticsWorkspace.listKeys().primarySharedKey
+        customerId: logAnalyticsWorkspace!.properties.customerId
+        sharedKey: logAnalyticsWorkspace!.listKeys().primarySharedKey
       }
     }
-    daprAIInstrumentationKey: daprEnabled && !empty(applicationInsightsName) ? applicationInsights.properties.InstrumentationKey : ''
+    daprAIInstrumentationKey: daprEnabled && !empty(applicationInsightsName) ? applicationInsights!.properties.InstrumentationKey : ''
     publicNetworkAccess: usePrivateIngress ? 'Disabled' : 'Enabled'
     vnetConfiguration: usePrivateIngress ? {
       infrastructureSubnetId: subnetResourceId
