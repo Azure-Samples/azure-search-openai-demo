@@ -349,7 +349,7 @@ pyjwt==2.10.1
     #   msal
 pymupdf==1.26.0
     # via -r requirements.in
-pypdf==6.1.3
+pypdf==6.6.0
     # via -r requirements.in
 python-dotenv==1.1.1
     # via
@@ -432,7 +432,7 @@ typing-extensions==4.15.0
     #   uvicorn
 typing-inspection==0.4.2
     # via pydantic
-urllib3==2.5.0
+urllib3==2.6.3
     # via requests
 uvicorn==0.30.6
     # via -r requirements.in
