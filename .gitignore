@@ -149,6 +149,7 @@ node_modules
 static/
 
 app/functions/*/prepdocslib/
+app/functions/*/requirements.txt
 
 data/**/*.md5
 

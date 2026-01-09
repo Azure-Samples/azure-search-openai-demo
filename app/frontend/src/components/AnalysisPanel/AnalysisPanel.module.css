@@ -47,13 +47,6 @@
     margin-bottom: 0.5em;
 }
 
-.tQuery {
-    color: #010207;
-    position: relative;
-    font-size: 0.875em;
-    margin-bottom: 0.5em;
-}
-
 .tCodeBlock {
     max-height: 18.75em;
     overflow: auto;
@@ -102,43 +95,48 @@
 }
 
 .tokenUsageGraph {
-    margin: 16px 0;
+    padding: 6px 6px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tokenBar {
-    height: 20px;
-    margin-bottom: 4px;
-    padding-left: 4px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.tokenBar {
-    height: 20px;
-    margin-bottom: 4px;
-    padding-left: 4px;
-    font-size: 12px;
+    min-height: 28px;
+    height: auto;
+    margin-bottom: 8px;
+    padding: 6px 12px;
+    font-size: inherit;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     background-color: #d7d7d7;
-    white-space: nowrap;
-    overflow: visible;
-    min-width: max-content;
+    white-space: normal;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 /* Adjust tokenLabel to allow bar-specific text color overrides */
 .tokenLabel {
+    font-size: inherit;
     padding-right: 4px;
+    flex: 1 1 auto;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .primaryBarContainer {
-    width: fit-content;
+    width: 100%;
     display: flex;
-    gap: 4px;
+    gap: 8px;
+    padding: 4px 0;
+    flex-wrap: nowrap;
+}
+
+.primaryBarContainer .tokenBar {
+    margin-bottom: 0;
 }
 
 .promptBar {
@@ -154,6 +152,7 @@
 .outputBar {
     background-color: #12579b;
     color: #ffffff;
+    min-width: 120px;
 }
 
 .totalBar {
@@ -161,9 +160,120 @@
     color: #ffffff;
 }
 
+.secondaryTotalBar {
+    background-color: #6d6d6d;
+    color: #ffffff;
+}
+
+.segmentWrapper {
+    margin-top: 16px;
+    padding-top: 4px;
+}
+
+.segmentWrapperFirst {
+    margin-top: 0;
+}
+
+.standaloneTotalBar {
+    margin-top: 10px;
+}
+
+.groupedTotalBar {
+    margin-top: 2px;
+}
+
 .subqueriesTable,
 .subqueriesTable th,
 .subqueriesTable td,
 .subqueriesTable tr {
     background: #fff;
+}
+
+.iterationSection {
+    margin-top: 1.5em;
+}
+
+.iterationSection:first-of-type {
+    margin-top: 0;
+}
+
+.stepHeaderCell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25em;
+}
+
+.stepNumberText {
+    font-weight: 600;
+    color: #123bb6;
+}
+
+.stepLabel {
+    font-weight: 600;
+}
+
+.stepCitations {
+    margin-top: 0.75em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375em;
+}
+
+.stepResults {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
+.noResults {
+    margin-top: 0.5em;
+    font-size: 0.85em;
+    color: #666;
+    font-style: italic;
+}
+
+.stepResult {
+    display: inline-block;
+    font-size: 0.85em;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.stepResult a {
+    font-weight: 500;
+    line-height: 1.5em;
+    text-align: center;
+    border-radius: 0.25em;
+    padding: 0em 0.5em;
+    background: #d1dbfa;
+    color: #123bb6;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.stepResult a:hover {
+    text-decoration: underline;
+}
+
+.stepCitationEntry {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25em;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}
+
+.stepCitationEntry a {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-align: left;
+    max-width: 100%;
 }

@@ -26,11 +26,11 @@ export function Component(): JSX.Element {
     const [promptTemplateSuffix, setPromptTemplateSuffix] = useState<string>("");
     const [temperature, setTemperature] = useState<number>(0.3);
     const [seed, setSeed] = useState<number | null>(null);
-    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(0);
+    const [minimumRerankerScore, setMinimumRerankerScore] = useState<number>(1.9);
     const [minimumSearchScore, setMinimumSearchScore] = useState<number>(0);
     const [retrievalMode, setRetrievalMode] = useState<RetrievalMode>(RetrievalMode.Hybrid);
     const [retrieveCount, setRetrieveCount] = useState<number>(3);
-    const [resultsMergeStrategy, setResultsMergeStrategy] = useState<string>("interleaved");
+    const [agenticReasoningEffort, setRetrievalReasoningEffort] = useState<string>("minimal");
     const [useSemanticRanker, setUseSemanticRanker] = useState<boolean>(true);
     const [useSemanticCaptions, setUseSemanticCaptions] = useState<boolean>(false);
     const [useQueryRewriting, setUseQueryRewriting] = useState<boolean>(false);
@@ -56,7 +56,12 @@ export function Component(): JSX.Element {
     const audio = useRef(new Audio()).current;
     const [isPlaying, setIsPlaying] = useState(false);
     const [showAgenticRetrievalOption, setShowAgenticRetrievalOption] = useState<boolean>(false);
-    const [useAgenticRetrieval, setUseAgenticRetrieval] = useState<boolean>(false);
+    const [webSourceSupported, setWebSourceSupported] = useState<boolean>(false);
+    const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
+    const [sharePointSourceSupported, setSharePointSourceSupported] = useState<boolean>(false);
+    const [sharePointSourceEnabled, setSharePointSourceEnabled] = useState<boolean>(false);
+    const [useAgenticKnowledgeBase, setUseAgenticRetrieval] = useState<boolean>(false);
+    const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
 
     const lastQuestionRef = useRef<string>("");
 
@@ -109,9 +114,16 @@ export function Component(): JSX.Element {
             setShowSpeechOutputAzure(config.showSpeechOutputAzure);
             setShowAgenticRetrievalOption(config.showAgenticRetrievalOption);
             setUseAgenticRetrieval(config.showAgenticRetrievalOption);
+            setWebSourceSupported(config.webSourceEnabled);
+            setWebSourceEnabled(config.webSourceEnabled);
+            setSharePointSourceSupported(config.sharepointSourceEnabled);
+            setSharePointSourceEnabled(config.sharepointSourceEnabled);
             if (config.showAgenticRetrievalOption) {
                 setRetrieveCount(10);
             }
+            const defaultRetrievalEffort = config.defaultRetrievalReasoningEffort ?? "minimal";
+            setHideMinimalRetrievalReasoningOption(config.webSourceEnabled);
+            setRetrievalReasoningEffort(defaultRetrievalEffort);
         });
     };
 
@@ -145,7 +157,7 @@ export function Component(): JSX.Element {
                         include_category: includeCategory.length === 0 ? undefined : includeCategory,
                         exclude_category: excludeCategory.length === 0 ? undefined : excludeCategory,
                         top: retrieveCount,
-                        results_merge_strategy: resultsMergeStrategy,
+                        ...(useAgenticKnowledgeBase ? { retrieval_reasoning_effort: agenticReasoningEffort } : {}),
                         temperature: temperature,
                         minimum_reranker_score: minimumRerankerScore,
                         minimum_search_score: minimumSearchScore,
@@ -159,7 +171,9 @@ export function Component(): JSX.Element {
                         send_text_sources: sendTextSources,
                         send_image_sources: sendImageSources,
                         language: i18n.language,
-                        use_agentic_retrieval: useAgenticRetrieval,
+                        use_agentic_knowledgebase: useAgenticKnowledgeBase,
+                        use_web_source: webSourceSupported ? webSourceEnabled : false,
+                        use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false,
                         ...(seed !== null ? { seed: seed } : {})
                     }
                 },
@@ -202,8 +216,12 @@ export function Component(): JSX.Element {
             case "retrieveCount":
                 setRetrieveCount(value);
                 break;
-            case "resultsMergeStrategy":
-                setResultsMergeStrategy(value);
+            case "agenticReasoningEffort":
+                setRetrievalReasoningEffort(value);
+                if (value === "minimal" && webSourceEnabled) {
+                    setWebSourceEnabled(false);
+                    setHideMinimalRetrievalReasoningOption(false);
+                }
                 break;
             case "useSemanticRanker":
                 setUseSemanticRanker(value);
@@ -240,8 +258,24 @@ export function Component(): JSX.Element {
             case "retrievalMode":
                 setRetrievalMode(value);
                 break;
-            case "useAgenticRetrieval":
+            case "useAgenticKnowledgeBase":
                 setUseAgenticRetrieval(value);
+                break;
+            case "useWebSource":
+                if (!webSourceSupported) {
+                    setWebSourceEnabled(false);
+                    return;
+                }
+                setWebSourceEnabled(value);
+                setHideMinimalRetrievalReasoningOption(value);
+                break;
+            case "useSharePointSource":
+                if (!sharePointSourceSupported) {
+                    setSharePointSourceEnabled(false);
+                    return;
+                }
+                setSharePointSourceEnabled(value);
+                break;
         }
     };
 
@@ -327,6 +361,7 @@ export function Component(): JSX.Element {
                         citationHeight="600px"
                         answer={answer}
                         activeTab={activeAnalysisPanelTab}
+                        onCitationClicked={onShowCitation}
                     />
                 )}
             </div>
@@ -346,7 +381,7 @@ export function Component(): JSX.Element {
                     promptTemplateSuffix={promptTemplateSuffix}
                     temperature={temperature}
                     retrieveCount={retrieveCount}
-                    resultsMergeStrategy={resultsMergeStrategy}
+                    agenticReasoningEffort={agenticReasoningEffort}
                     seed={seed}
                     minimumSearchScore={minimumSearchScore}
                     minimumRerankerScore={minimumRerankerScore}
@@ -370,7 +405,12 @@ export function Component(): JSX.Element {
                     loggedIn={loggedIn}
                     requireAccessControl={requireAccessControl}
                     showAgenticRetrievalOption={showAgenticRetrievalOption}
-                    useAgenticRetrieval={useAgenticRetrieval}
+                    useAgenticKnowledgeBase={useAgenticKnowledgeBase}
+                    useWebSource={webSourceEnabled}
+                    showWebSourceOption={webSourceSupported}
+                    useSharePointSource={sharePointSourceEnabled}
+                    showSharePointSourceOption={sharePointSourceSupported}
+                    hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                     onChange={handleSettingsChange}
                 />
                 {useLogin && <TokenClaimsDisplay />}

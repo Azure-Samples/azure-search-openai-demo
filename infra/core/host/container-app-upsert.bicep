@@ -116,7 +116,7 @@ module app 'container-app.bicep' = {
     allowedOrigins: allowedOrigins
     external: external
     env: concat(envAsArray, envSecrets)
-    imageName: !empty(imageName) ? imageName : exists ? existingApp.properties.template.containers[0].image : ''
+    imageName: !empty(imageName) ? imageName : exists ? existingApp!.properties.template.containers[0].image : ''
     targetPort: targetPort
     serviceBinds: serviceBinds
   }

@@ -71,6 +71,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         use_acls: bool = False,
         use_multimodal: bool = False,
         enforce_access_control: bool = False,
+        use_web_source: bool = False,
         search_user_assigned_identity_resource_id: str,
     ) -> None:
         self.list_file_strategy = list_file_strategy
@@ -83,6 +84,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         self.use_acls = use_acls
         self.use_multimodal = use_multimodal
         self.enforce_access_control = enforce_access_control
+        self.use_web_source = use_web_source
         self.subscription_id = subscription_id
 
         prefix = f"{self.search_info.index_name}-cloud"
@@ -159,10 +161,9 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
                 resource_id=self.search_user_assigned_identity_resource_id
             ),
             inputs=[
-                # Provide the binary payload expected by the document extractor custom skill.
-                InputFieldMappingEntry(name="file_data", source="/document/file_data"),
-                InputFieldMappingEntry(name="file_name", source="/document/metadata_storage_name"),
-                InputFieldMappingEntry(name="content_type", source="/document/metadata_storage_content_type"),
+                # Always provide the blob URL so the function can download large files (> 16MB)
+                InputFieldMappingEntry(name="metadata_storage_path", source="/document/metadata_storage_path"),
+                # We are not using the SAS token since the functions have RBAC access via managed identity
             ],
             outputs=[
                 OutputFieldMappingEntry(name="pages", target_name="pages"),
@@ -280,6 +281,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
             field_name_embedding=self.search_field_name_embedding,
             search_images=self.use_multimodal,
             enforce_access_control=self.enforce_access_control,
+            use_web_source=self.use_web_source,
         )
 
         await self._search_manager.create_index()
@@ -307,7 +309,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
                     configuration=IndexingParametersConfiguration(
                         query_timeout=None,  # type: ignore
                         data_to_extract="storageMetadata",
-                        allow_skillset_to_read_file_data=True,
+                        allow_skillset_to_read_file_data=False,
                     )
                 ),
             )
