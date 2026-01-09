@@ -13,10 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v5
-      - name: Run markdownlint
-        uses: articulate/actions-markdownlint@v1
+        uses: actions/checkout@v6
+      - name: Run markdownlint-cli2
+        uses: DavidAnson/markdownlint-cli2-action@v21
         with:
-          config: .github/workflows/markdownlint-config.json
-          files: '**/*.md'
-          ignore: data/
+          config: .markdownlint-cli2.jsonc
+          globs: |
+            **/*.md
+            !data/**
+            !.github/**
