@@ -192,19 +192,19 @@ jobs:
 
       - name: Upload eval results as build artifact
         if: ${{ success() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
             name: eval_result
             path: ./evals/results/pr${{ github.event.issue.number }}
 
       - name: Upload server logs as build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: server_logs
           path: ./app/backend/serverlogs.out
 
       - name: Upload server error logs as build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: server_error_logs
           path: ./app/backend/serverlogs.err
