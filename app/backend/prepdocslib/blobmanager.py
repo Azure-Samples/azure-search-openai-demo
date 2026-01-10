@@ -424,13 +424,16 @@ class BlobManager(BaseBlobManager):
             await container_client.create_container()
 
         # Re-open and upload the original file
-        if file.url is None:
+        # URL may be a path to a local file or already set to a blob URL
+        if file.url is None or os.path.exists(file.url):
             with open(file.content.name, "rb") as reopened_file:
                 blob_name = self.blob_name_from_file_name(file.content.name)
                 logger.info("Uploading blob for document '%s'", blob_name)
                 blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
                 file.url = blob_client.url
 
+        if file.url is None:
+            raise ValueError("file.url must be set after upload")
         return unquote(file.url)
 
     async def upload_document_image(
@@ -449,7 +452,7 @@ class BlobManager(BaseBlobManager):
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
             )
-        container_client = self.blob_service_client.get_container_client(self.container)
+        container_client = self.blob_service_client.get_container_client(self.image_container)
         if not await container_client.exists():
             await container_client.create_container()
         image_bytes = self.add_image_citation(image_bytes, document_filename, image_filename, image_page_num)

@@ -8,11 +8,11 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Using different embedding models](#using-different-embedding-models)
 * [Enabling multimodal embeddings and answering](#enabling-multimodal-embeddings-and-answering)
 * [Enabling media description with Azure Content Understanding](#enabling-media-description-with-azure-content-understanding)
+* [Enabling cloud data ingestion](#enabling-cloud-data-ingestion)
 * [Enabling client-side chat history](#enabling-client-side-chat-history)
 * [Enabling persistent chat history with Azure Cosmos DB](#enabling-persistent-chat-history-with-azure-cosmos-db)
 * [Enabling language picker](#enabling-language-picker)
 * [Enabling speech input/output](#enabling-speech-inputoutput)
-* [Enabling Integrated Vectorization](#enabling-integrated-vectorization)
 * [Enabling authentication](#enabling-authentication)
 * [Enabling login and document level access control](#enabling-login-and-document-level-access-control)
 * [Enabling user document upload](#enabling-user-document-upload)
@@ -236,8 +236,7 @@ Learn more in the [multimodal guide](./multimodal.md).
 
 ## Enabling media description with Azure Content Understanding
 
-⚠️ This feature is not currently compatible with [integrated vectorization](#enabling-integrated-vectorization).
-It is compatible with the [multimodal feature](./multimodal.md), but this feature enables only a subset of multimodal capabilities,
+⚠️ This feature is compatible with the [multimodal feature](./multimodal.md), but this feature enables only a subset of multimodal capabilities,
 so you may want to enable the multimodal feature instead or as well.
 
 By default, if your documents contain image-like figures, the data ingestion process will ignore those figures,
@@ -257,6 +256,12 @@ first [remove the existing documents](./data_ingestion.md#removing-documents) an
 
 ⚠️ This feature does not yet support DOCX, PPTX, or XLSX formats. If you have figures in those formats, they will be ignored.
 Convert them first to PDF or image formats to enable media description.
+
+## Enabling cloud data ingestion
+
+By default, this project runs a local script in order to ingest data. Once you move beyond the sample documents, you may want to enable [cloud ingestion](./data_ingestion.md#cloud-ingestion), which uses Azure AI Search indexers and custom Azure AI Search skills based off the same code used by the local ingestion. That approach scales better to larger amounts of data.
+
+Learn more in the [cloud ingestion guide](./data_ingestion.md#cloud-ingestion).
 
 ## Enabling client-side chat history
 
@@ -323,31 +328,6 @@ Alternatively you can use the browser's built-in [Speech Synthesis API](https://
 ```shell
 azd env set USE_SPEECH_OUTPUT_BROWSER true
 ```
-
-## Enabling Integrated Vectorization
-
-Azure AI search recently introduced an [integrated vectorization feature in preview mode](https://techcommunity.microsoft.com/blog/azure-ai-services-blog/announcing-the-public-preview-of-integrated-vectorization-in-azure-ai-search/3960809). This feature is a cloud-based approach to data ingestion, which takes care of document format cracking, data extraction, chunking, vectorization, and indexing, all with Azure technologies.
-
-To enable integrated vectorization with this sample:
-
-1. If you've previously deployed, delete the existing search index. 🗑️
-2. To enable the use of integrated vectorization, run:
-
-    ```shell
-    azd env set USE_FEATURE_INT_VECTORIZATION true
-    ```
-
-3. If you've already deployed your app, then you can run just the `provision` step:
-
-    ```shell
-    azd provision
-    ```
-
-    That will set up necessary RBAC roles and configure the integrated vectorization feature on your search service.
-
-    If you haven't deployed your app yet, then you should run the full `azd up` after configuring all optional features.
-
-4. You can view the resources such as the indexer and skillset in Azure Portal and monitor the status of the vectorization process.
 
 ## Enabling authentication
 

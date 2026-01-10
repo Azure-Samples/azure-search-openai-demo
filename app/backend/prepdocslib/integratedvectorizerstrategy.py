@@ -21,7 +21,7 @@ from azure.search.documents.indexes.models import (
 )
 
 from .blobmanager import BlobManager
-from .embeddings import AzureOpenAIEmbeddingService
+from .embeddings import OpenAIEmbeddings
 from .listfilestrategy import ListFileStrategy
 from .searchmanager import SearchManager
 from .strategy import DocumentAction, SearchInfo, Strategy
@@ -29,7 +29,7 @@ from .strategy import DocumentAction, SearchInfo, Strategy
 logger = logging.getLogger("scripts")
 
 
-class IntegratedVectorizerStrategy(Strategy):
+class IntegratedVectorizerStrategy(Strategy):  # pragma: no cover
     """
     Strategy for ingesting and vectorizing documents into a search service from files stored storage account
     """
@@ -39,7 +39,7 @@ class IntegratedVectorizerStrategy(Strategy):
         list_file_strategy: ListFileStrategy,
         blob_manager: BlobManager,
         search_info: SearchInfo,
-        embeddings: AzureOpenAIEmbeddingService,
+        embeddings: OpenAIEmbeddings,
         search_field_name_embedding: str,
         subscription_id: str,
         document_action: DocumentAction = DocumentAction.Add,
@@ -47,6 +47,7 @@ class IntegratedVectorizerStrategy(Strategy):
         use_acls: bool = False,
         category: Optional[str] = None,
         enforce_access_control: bool = False,
+        use_web_source: bool = False,
     ):
 
         self.list_file_strategy = list_file_strategy
@@ -64,6 +65,7 @@ class IntegratedVectorizerStrategy(Strategy):
         self.indexer_name = f"{prefix}-indexer"
         self.data_source_name = f"{prefix}-blob"
         self.enforce_access_control = enforce_access_control
+        self.use_web_source = use_web_source
 
     async def create_embedding_skill(self, index_name: str) -> SearchIndexerSkillset:
         """
@@ -83,12 +85,15 @@ class IntegratedVectorizerStrategy(Strategy):
             outputs=[OutputFieldMappingEntry(name="textItems", target_name="pages")],
         )
 
+        if not self.embeddings.azure_endpoint or not self.embeddings.azure_deployment_name:
+            raise ValueError("Integrated vectorization requires Azure OpenAI endpoint and deployment")
+
         embedding_skill = AzureOpenAIEmbeddingSkill(
             name="embedding-skill",
             description="Skill to generate embeddings via Azure OpenAI",
             context="/document/pages/*",
-            resource_url=f"https://{self.embeddings.open_ai_service}.openai.azure.com",
-            deployment_name=self.embeddings.open_ai_deployment,
+            resource_url=self.embeddings.azure_endpoint,
+            deployment_name=self.embeddings.azure_deployment_name,
             model_name=self.embeddings.open_ai_model_name,
             dimensions=self.embeddings.open_ai_dimensions,
             inputs=[
@@ -134,11 +139,12 @@ class IntegratedVectorizerStrategy(Strategy):
             search_info=self.search_info,
             search_analyzer_name=self.search_analyzer_name,
             use_acls=self.use_acls,
-            use_int_vectorization=True,
+            use_parent_index_projection=True,
             embeddings=self.embeddings,
             field_name_embedding=self.search_field_name_embedding,
             search_images=False,
             enforce_access_control=self.enforce_access_control,
+            use_web_source=self.use_web_source,
         )
 
         await search_manager.create_index()

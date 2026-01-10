@@ -7,6 +7,7 @@
                 "westbrae_jun28.pdf#page=1(figure1_2.png)",
                 "westbrae_jun28.pdf#page=2"
             ],
+            "external_results_metadata": [],
             "images": [
                 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==",
                 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=="
@@ -76,6 +77,7 @@
             {
                 "description": [
                     {
+                        "activity": null,
                         "captions": [],
                         "category": null,
                         "content": "<figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter \"M\" with four colors: red, blue, green, and yellow. To the right of the \"M\" is the word \"Gmail\" written in gray text. The design is modern and clean. The colors used are characteristic of Google's branding.</figcaption></figure>\n\n\nPamela Fox <pamela.fox@gmail.com>\n\nReceipt / Tax invoice (#2-108442)\n\nWestbrae Nursery <no-reply@email.lightspeedhq.com>\nReply-To: jeff@westbrae-nursery.com\nTo: pamela.fox@gmail.com\n\nSat, Jun 28, 2025 at 1:21 PM\n\n\n<figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text \"Westbrae\" is positioned to the right of the flowers. Below \"Westbrae\" is the word \"Nursery.\" The design is simple and rendered in black and white.</figcaption></figure>\n\n\nAn Employee-Owned Co-op\n1272 Gilman St, Berkeley, CA 94706\n510-526-5517\n\nMain Outlet\n\nReceipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm\n\n\n<figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.",
@@ -108,11 +110,12 @@
                         ],
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
                         "sourcefile": "westbrae_jun28.pdf",
-                        "sourcepage": "westbrae_jun28.pdf#page=1"
+                        "sourcepage": "westbrae_jun28.pdf#page=1",
+                        "type": "searchIndex"
                     },
                     {
+                        "activity": null,
                         "captions": [],
                         "category": null,
                         "content": "</figcaption></figure>\n\n\nAn Employee-Owned Co-op\n1272 Gilman St, Berkeley, CA 94706\n510-526-5517\n\nMain Outlet\n\nReceipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm\n\n\n<figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.99</td><td>$7.99</td></tr><tr><td>1 qt</td><td></td><td></td></tr><tr><td rowSpan=2>1 Gopher Baskets 1 gal</td><td>@ $14.99</td><td>$14.99</td></tr><tr><td></td><td></td></tr><tr><td>1 Edible 4.99</td><td>@ $4.99</td><td>$4.99</td></tr><tr><td>4 Color 11.99</td><td>@ $11.99</td><td>$47.96</td></tr><tr><td>1 Edible $6.99</td><td>@ $6.99</td><td>$6.99</td></tr><tr><td>Subtotal</td><td></td><td>$82.",
@@ -145,11 +148,12 @@
                         ],
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
                         "sourcefile": "westbrae_jun28.pdf",
-                        "sourcepage": "westbrae_jun28.pdf#page=1"
+                        "sourcepage": "westbrae_jun28.pdf#page=1",
+                        "type": "searchIndex"
                     },
                     {
+                        "activity": null,
                         "captions": [],
                         "category": null,
                         "content": "\n\nIf you have any questions about how to take care of the plants you purchase\nor if they start to show symptoms of ill health, please, give us a call (510-526-\n5517)\n\nreceipt.pdf\n50K",
@@ -161,9 +165,9 @@
                         ],
                         "reranker_score": null,
                         "score": null,
-                        "search_agent_query": null,
                         "sourcefile": "westbrae_jun28.pdf",
-                        "sourcepage": "westbrae_jun28.pdf#page=2"
+                        "sourcepage": "westbrae_jun28.pdf#page=2",
+                        "type": "searchIndex"
                     }
                 ],
                 "props": null,

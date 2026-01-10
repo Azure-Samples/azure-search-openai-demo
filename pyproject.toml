@@ -2,7 +2,7 @@
 target-version = "py310"
 lint.select = ["E", "F", "I", "UP"]
 lint.ignore = ["E501", "E701", "UP045"] # line too long, multiple statements on one line, keep Optional[X]
-src = ["app/backend", "scripts"]
+src = ["app/backend", "scripts", "app/functions"]
 
 [tool.ruff.lint.isort]
 known-local-folder = ["scripts"]
@@ -12,7 +12,7 @@ line-length = 120
 
 [tool.pytest.ini_options]
 addopts = "-ra"
-pythonpath = ["app/backend", "scripts"]
+pythonpath = ["app/backend", "scripts", "app/functions"]
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.paths]

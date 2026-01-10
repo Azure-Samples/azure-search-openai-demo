@@ -84,10 +84,11 @@
         "minimumRerankerScore": "Minimalny wynik sortowania semantycznego",
         "retrieveCount": "Pobierz tyle wyników wyszukiwania:",
         "maxSubqueryCount": "Maksymalna liczba zapytań podrzędnych",
-        "resultsMergeStrategy": "Strategia łączenia wyników",
-        "resultsMergeStrategyOptions": {
-            "interleaved": "Przeplatane",
-            "descending": "Malejąco"
+        "agenticReasoningEffort": "Poziom rozumowania przy pobieraniu",
+        "agenticReasoningEffortOptions": {
+            "minimal": "Minimalny",
+            "low": "Niski",
+            "medium": "Średni"
         },
         "includeCategory": "Uwzględnij kategorię",
         "includeCategoryOptions": {
@@ -105,7 +106,9 @@
             "high": "Wysoki"
         },
         "useSuggestFollowupQuestions": "Sugeruj pytania uzupełniające",
-        "useAgenticRetrieval": "Użyj agentowego pobierania",
+        "useAgenticKnowledgeBase": "Użyj agentowego pobierania",
+        "useWebSource": "Uwzględnij wyszukiwanie w sieci",
+        "useSharePointSource": "Uwzględnij źródło SharePoint",
         "llmInputs": "Źródła danych wejściowych LLM",
         "llmInputsOptions": {
                 "texts": "Tekst",
@@ -145,8 +148,8 @@
              "Ustawia minimalny wynik dla wyników wyszukiwania z sortowania semantycznego. Wynik zawsze mieści się w zakresie od 0 do 4. Im wyższy, tym bardziej semantycznie dopasowany wynik do pytania.",
         "retrieveNumber":
              "Ustawia liczbę wyników wyszukiwania do pobrania z Azure AI Search. Więcej wyników może zwiększyć szansę znalezienia poprawnej odpowiedzi, ale może sprawić, że model się „zgubi w środku”.",
-        "resultsMergeStrategy":
-            "Ustawia strategię łączenia wyników z wielu zapytań podrzędnych. „Przeplatane” wybiera najlepsze wyniki z każdego zapytania w kolejności okrężnej, a „Malejąco” sortuje wszystkie wyniki według wyniku sortowania semantycznego.",
+        "agenticReasoningEffort":
+            "Kontroluje, ile rozumowania agent stosuje podczas budowania planów wielozapytaniowych. Większy wysiłek może poprawić trafność, ale zwiększa liczbę tokenów i opóźnienie.",
         "includeCategory":
             "Określa kategorię do uwzględnienia w wynikach wyszukiwania. W domyślnym zestawie danych nie są używane kategorie.",
          "excludeCategory":
@@ -169,7 +172,9 @@
         "streamChat": "Ciągle przesyła odpowiedź do interfejsu czatu w miarę jej generowania.",
         "useOidSecurityFilter": "Filtruj wyniki wyszukiwania na podstawie OID uwierzytelnionego użytkownika.",
         "useGroupsSecurityFilter": "Filtruj wyniki wyszukiwania na podstawie grup uwierzytelnionego użytkownika.",
-        "useAgenticRetrieval": "Użyj agentowego pobierania z Azure AI Search do planowania wielozapytaniowego. Zawsze używa semantycznego rankera."
+        "useAgenticKnowledgeBase": "Użyj agentowego pobierania z Azure AI Search do planowania wielozapytaniowego. Zawsze używa semantycznego rankera.",
+        "useWebSource": "Rozszerz pobieranie o wyniki wyszukiwania w sieci wraz z indeksowanym zestawem danych.",
+        "useSharePointSource": "Rozszerz pobieranie o zawartość SharePoint wraz z indeksowanym zestawem danych."
     },
 
     "overallSettings": "Overall settings",

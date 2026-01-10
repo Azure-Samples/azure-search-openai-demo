@@ -139,6 +139,7 @@ class MultimodalModelDescriber(MediaDescriber):
                 response = await self.openai_client.chat.completions.create(
                     model=self.model if self.deployment is None else self.deployment,
                     max_tokens=500,
+                    seed=42,  # Keep responses more consistent across runs
                     messages=[
                         {
                             "role": "system",

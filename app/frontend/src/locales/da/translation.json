@@ -79,10 +79,11 @@
         "minimumSearchScore": "Minimum søgescore",
         "minimumRerankerScore": "Minimum reranker score",
         "retrieveCount": "Hent dette antal søgeresultater:",
-        "resultsMergeStrategy": "Strategi for sammenfletning af resultater",
-        "resultsMergeStrategyOptions": {
-            "interleaved": "Interleaved",
-            "descending": "Faldende"
+        "agenticReasoningEffort": "Retrieval reasoning effort",
+        "agenticReasoningEffortOptions": {
+            "minimal": "Minimal",
+            "low": "Lav",
+            "medium": "Medium"
         },
         "includeCategory": "Inkludér kategori",
         "includeCategoryOptions": {
@@ -100,7 +101,9 @@
             "high": "Høj"
         },
         "useSuggestFollowupQuestions": "Foreslå opfølgende spørgsmål",
-        "useAgenticRetrieval": "Brug agentisk hentning",
+        "useAgenticKnowledgeBase": "Brug agentisk hentning",
+        "useWebSource": "Inkludér websøgning",
+        "useSharePointSource": "Inkludér SharePoint-kilde",
         "llmInputs": "Input til LLM",
         "llmInputsOptions": {
             "texts": "Tekster",
@@ -133,7 +136,7 @@
         "searchScore": "Indstiller en minimumscore for søgeresultater fra Azure AI Search. Scoreområdet afhænger af, om du bruger hybrid (standard), kun vektorer eller kun tekst.",
         "rerankerScore": "Indstiller en minimumscore for søgeresultater fra den semantiske omrangør. Scoren ligger altid mellem 0-4. Jo højere score, jo mere semantisk relevant er resultatet for spørgsmålet.",
         "retrieveNumber": "Indstiller antallet af søgeresultater, der skal hentes fra Azure AI Search. Flere resultater kan øge sandsynligheden for at finde det korrekte svar, men kan få modellen til at 'fare vild i midten' (eng: lost in the middle).",
-    "resultsMergeStrategy": "Indstiller strategien for at sammenflette resultater fra flere underforespørgsler. 'Interleaved' vælger topresultater fra hver underforespørgsel på skift, mens 'Faldende' sorterer alle resultater efter reranker-score.",
+        "agenticReasoningEffort": "Controls how much reasoning the agent applies while building multi-query plans. Higher effort may improve recall but can increase tokens and latency.",
         "includeCategory": "Angiver en kategori, der skal inkluderes i søgeresultaterne. Der er ingen kategorier i det standard datasæt.",
         "excludeCategory": "Angiver en kategori, der skal ekskluderes fra søgeresultaterne. Der er ingen kategorier i det standard datasæt.",
         "useSemanticReranker": "Aktiverer Azure AI Search semantisk omrangør, en model der rangerer søgeresultater baseret på semantisk lighed til brugerens forespørgsel.",
@@ -150,7 +153,9 @@
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",
         "useOidSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers OID.",
         "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
-        "useAgenticRetrieval": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker."
+        "useAgenticKnowledgeBase": "Brug agentisk hentning fra Azure AI Search til planlægning af flere forespørgsler. Bruger altid semantisk rangering.",
+        "useWebSource": "Udvid hentning med websøgeresultater sammen med dit indekserede datasæt.",
+        "useSharePointSource": "Udvid hentning med SharePoint-indhold sammen med dit indekserede datasæt."
     },
     "overallSettings": "Overordnede indstillinger",
     "searchSettings": "Søgeindstillinger",

@@ -17,15 +17,9 @@ from azure.ai.documentintelligence.models import (
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
-from openai import AsyncOpenAI
 from PIL import Image
 from pypdf import PdfReader
 
-from .mediadescriber import (
-    ContentUnderstandingDescriber,
-    MediaDescriber,
-    MultimodalModelDescriber,
-)
 from .page import ImageOnPage, Page
 from .parser import Parser
 
@@ -50,12 +44,6 @@ class LocalPdfParser(Parser):
             offset += len(page_text)
 
 
-class MediaDescriptionStrategy(Enum):
-    NONE = "none"
-    OPENAI = "openai"
-    CONTENTUNDERSTANDING = "content_understanding"
-
-
 class DocumentAnalysisParser(Parser):
     """
     Concrete parser backed by Azure AI Document Intelligence that can parse many document formats into pages
@@ -66,29 +54,13 @@ class DocumentAnalysisParser(Parser):
         self,
         endpoint: str,
         credential: AsyncTokenCredential | AzureKeyCredential,
-        model_id="prebuilt-layout",
-        media_description_strategy: Enum = MediaDescriptionStrategy.NONE,
-        # If using OpenAI, this is the client to use
-        openai_client: Optional[AsyncOpenAI] = None,
-        openai_model: Optional[str] = None,
-        openai_deployment: Optional[str] = None,
-        # If using Content Understanding, this is the endpoint for the service
-        content_understanding_endpoint: Optional[str] = None,
-        # should this take the blob storage info too?
-    ):
+        model_id: str = "prebuilt-layout",
+        process_figures: bool = False,
+    ) -> None:
         self.model_id = model_id
         self.endpoint = endpoint
         self.credential = credential
-        self.media_description_strategy = media_description_strategy
-        if media_description_strategy == MediaDescriptionStrategy.OPENAI:
-            logger.info("Including media description with OpenAI")
-            self.use_content_understanding = False
-            self.openai_client = openai_client
-            self.openai_model = openai_model
-            self.openai_deployment = openai_deployment
-        if media_description_strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING:
-            logger.info("Including media description with Azure Content Understanding")
-            self.content_understanding_endpoint = content_understanding_endpoint
+        self.process_figures = process_figures
 
     async def parse(self, content: IO) -> AsyncGenerator[Page, None]:
         logger.info("Extracting text from '%s' using Azure Document Intelligence", content.name)
@@ -96,41 +68,27 @@ class DocumentAnalysisParser(Parser):
         async with DocumentIntelligenceClient(
             endpoint=self.endpoint, credential=self.credential
         ) as document_intelligence_client:
-            file_analyzed = False
+            # Always convert to bytes up front to avoid passing a FileStorage/stream object
+            try:
+                content.seek(0)
+            except Exception:
+                pass
+            content_bytes = content.read()
 
-            media_describer: Optional[ContentUnderstandingDescriber | MultimodalModelDescriber] = None
-            if self.media_description_strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING:
-                if self.content_understanding_endpoint is None:
-                    raise ValueError(
-                        "Content Understanding endpoint must be provided when using Content Understanding strategy"
-                    )
-                if isinstance(self.credential, AzureKeyCredential):
-                    raise ValueError(
-                        "AzureKeyCredential is not supported for Content Understanding, use keyless auth instead"
-                    )
-                media_describer = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.credential)
+            poller = None
+            doc_for_pymupdf = None
 
-            if self.media_description_strategy == MediaDescriptionStrategy.OPENAI:
-                if self.openai_client is None or self.openai_model is None:
-                    raise ValueError("OpenAI client must be provided when using OpenAI media description strategy")
-                media_describer = MultimodalModelDescriber(
-                    self.openai_client, self.openai_model, self.openai_deployment
-                )
-
-            if media_describer is not None:
-                content_bytes = content.read()
+            if self.process_figures:
                 try:
                     poller = await document_intelligence_client.begin_analyze_document(
                         model_id="prebuilt-layout",
-                        analyze_request=AnalyzeDocumentRequest(bytes_source=content_bytes),
+                        body=AnalyzeDocumentRequest(bytes_source=content_bytes),
                         output=["figures"],
                         features=["ocrHighResolution"],
                         output_content_format="markdown",
                     )
                     doc_for_pymupdf = pymupdf.open(stream=io.BytesIO(content_bytes))
-                    file_analyzed = True
                 except HttpResponseError as e:
-                    content.seek(0)
                     if e.error and e.error.code == "InvalidArgument":
                         logger.error(
                             "This document type does not support media description. Proceeding with standard analysis."
@@ -140,10 +98,12 @@ class DocumentAnalysisParser(Parser):
                             "Unexpected error analyzing document for media description: %s. Proceeding with standard analysis.",
                             e,
                         )
+                    poller = None
 
-            if file_analyzed is False:
+            if poller is None:
                 poller = await document_intelligence_client.begin_analyze_document(
-                    model_id=self.model_id, analyze_request=content, content_type="application/octet-stream"
+                    model_id=self.model_id,
+                    body=AnalyzeDocumentRequest(bytes_source=content_bytes),
                 )
             analyze_result: AnalyzeResult = await poller.result()
 
@@ -156,13 +116,14 @@ class DocumentAnalysisParser(Parser):
                     if table.bounding_regions and table.bounding_regions[0].page_number == page.page_number
                 ]
                 figures_on_page = []
-                if self.media_description_strategy != MediaDescriptionStrategy.NONE:
+                if self.process_figures:
                     figures_on_page = [
                         figure
                         for figure in (analyze_result.figures or [])
                         if figure.bounding_regions and figure.bounding_regions[0].page_number == page.page_number
                     ]
                 page_images: list[ImageOnPage] = []
+                page_tables: list[str] = []
 
                 class ObjectType(Enum):
                     NONE = -1
@@ -202,46 +163,52 @@ class DocumentAnalysisParser(Parser):
                         if object_idx is None:
                             raise ValueError("Expected object_idx to be set")
                         if mask_char not in added_objects:
-                            page_text += DocumentAnalysisParser.table_to_html(tables_on_page[object_idx])
+                            table_html = DocumentAnalysisParser.table_to_html(tables_on_page[object_idx])
+                            page_tables.append(table_html)
+                            page_text += table_html
                             added_objects.add(mask_char)
                     elif object_type == ObjectType.FIGURE:
-                        if media_describer is None:
-                            raise ValueError("media_describer should not be None, unable to describe figure")
                         if object_idx is None:
                             raise ValueError("Expected object_idx to be set")
                         if mask_char not in added_objects:
-                            image_on_page = await DocumentAnalysisParser.process_figure(
-                                doc_for_pymupdf, figures_on_page[object_idx], media_describer
+                            image_on_page = await DocumentAnalysisParser.figure_to_image(
+                                doc_for_pymupdf, figures_on_page[object_idx]
                             )
                             page_images.append(image_on_page)
-                            page_text += image_on_page.description
+                            page_text += image_on_page.placeholder
                             added_objects.add(mask_char)
+
                 # We remove these comments since they are not needed and skew the page numbers
                 page_text = page_text.replace("<!-- PageBreak -->", "")
                 # We remove excess newlines at the beginning and end of the page
                 page_text = page_text.strip()
-                yield Page(page_num=page.page_number - 1, offset=offset, text=page_text, images=page_images)
+                yield Page(
+                    page_num=page.page_number - 1,
+                    offset=offset,
+                    text=page_text,
+                    images=page_images,
+                    tables=page_tables,
+                )
                 offset += len(page_text)
 
     @staticmethod
-    async def process_figure(
-        doc: pymupdf.Document, figure: DocumentFigure, media_describer: MediaDescriber
-    ) -> ImageOnPage:
+    async def figure_to_image(doc: pymupdf.Document, figure: DocumentFigure) -> ImageOnPage:
         figure_title = (figure.caption and figure.caption.content) or ""
         # Generate a random UUID if figure.id is None
         figure_id = figure.id or f"fig_{uuid.uuid4().hex[:8]}"
         figure_filename = f"figure{figure_id.replace('.', '_')}.png"
-        logger.info(
-            "Describing figure %s with title '%s' using %s", figure_id, figure_title, type(media_describer).__name__
-        )
+        logger.info("Cropping figure %s with title '%s'", figure_id, figure_title)
+        placeholder = f'<figure id="{figure_id}"></figure>'
         if not figure.bounding_regions:
             return ImageOnPage(
                 bytes=b"",
-                page_num=0,  # O-indexed
+                page_num=0,  # 0-indexed
                 figure_id=figure_id,
                 bbox=(0, 0, 0, 0),
                 filename=figure_filename,
-                description=f"<figure><figcaption>{figure_id} {figure_title}</figcaption></figure>",
+                title=figure_title,
+                placeholder=placeholder,
+                mime_type="image/png",
             )
         if len(figure.bounding_regions) > 1:
             logger.warning("Figure %s has more than one bounding region, using the first one", figure_id)
@@ -255,14 +222,15 @@ class DocumentAnalysisParser(Parser):
         )
         page_number = first_region["pageNumber"]  # 1-indexed
         cropped_img, bbox_pixels = DocumentAnalysisParser.crop_image_from_pdf_page(doc, page_number - 1, bounding_box)
-        figure_description = await media_describer.describe_image(cropped_img)
         return ImageOnPage(
             bytes=cropped_img,
             page_num=page_number - 1,  # Convert to 0-indexed
             figure_id=figure_id,
             bbox=bbox_pixels,
             filename=figure_filename,
-            description=f"<figure><figcaption>{figure_id} {figure_title}<br>{figure_description}</figcaption></figure>",
+            title=figure_title,
+            placeholder=placeholder,
+            mime_type="image/png",
         )
 
     @staticmethod

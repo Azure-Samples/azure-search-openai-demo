@@ -104,7 +104,7 @@ module containerRegistryAccess '../security/registry-access.bicep' = if (usePriv
   name: '${deployment().name}-registry-access'
   params: {
     containerRegistryName: containerRegistryName
-    principalId: usePrivateRegistry ? userIdentity.properties.principalId : ''
+    principalId: usePrivateRegistry ? userIdentity!.properties.principalId : ''
   }
 }
 
@@ -174,7 +174,7 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2023-05-01'
 }
 
 output defaultDomain string = containerAppsEnvironment.properties.defaultDomain
-output identityPrincipalId string = normalizedIdentityType == 'None' ? '' : (empty(identityName) ? app.identity.principalId : userIdentity.properties.principalId)
+output identityPrincipalId string = normalizedIdentityType == 'None' ? '' : (empty(identityName) ? app.identity.principalId : userIdentity!.properties.principalId)
 output identityResourceId string = normalizedIdentityType == 'UserAssigned' ? resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', userIdentity.name) : ''
 output imageName string = imageName
 output name string = app.name

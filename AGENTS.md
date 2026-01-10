@@ -17,7 +17,30 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/backend/approaches/prompts/chat_query_rewrite.prompty: Prompt used to rewrite the query based off search history into a better search query
       * app/backend/approaches/prompts/chat_query_rewrite_tools.json: Tools used by the query rewriting prompt
       * app/backend/approaches/prompts/chat_answer_question.prompty: Prompt used by the Chat approach to actually answer the question based off sources
+    * app/backend/prepdocslib: Contains the document ingestion library used by both local and cloud ingestion
+      * app/backend/prepdocslib/blobmanager.py: Manages uploads to Azure Blob Storage
+      * app/backend/prepdocslib/cloudingestionstrategy.py: Builds the Azure AI Search indexer and skillset for the cloud ingestion pipeline
+      * app/backend/prepdocslib/csvparser.py: Parses CSV files
+      * app/backend/prepdocslib/embeddings.py: Generates embeddings for text and images using Azure OpenAI
+      * app/backend/prepdocslib/figureprocessor.py: Generates figure descriptions for both local ingestion and the cloud figure-processor skill
+      * app/backend/prepdocslib/fileprocessor.py: Orchestrates parsing and chunking of individual files
+      * app/backend/prepdocslib/filestrategy.py: Strategy for uploading and indexing files (local ingestion)
+      * app/backend/prepdocslib/htmlparser.py: Parses HTML files
+      * app/backend/prepdocslib/integratedvectorizerstrategy.py: Strategy using Azure AI Search integrated vectorization
+      * app/backend/prepdocslib/jsonparser.py: Parses JSON files
+      * app/backend/prepdocslib/listfilestrategy.py: Lists files from local filesystem or Azure Data Lake
+      * app/backend/prepdocslib/mediadescriber.py: Interfaces for describing images (Azure OpenAI GPT-4o, Content Understanding)
+      * app/backend/prepdocslib/page.py: Data classes for pages, images, and chunks
+      * app/backend/prepdocslib/parser.py: Base parser interface
+      * app/backend/prepdocslib/pdfparser.py: Parses PDFs using Azure Document Intelligence or local parser
+      * app/backend/prepdocslib/searchmanager.py: Manages Azure AI Search index creation and updates
+      * app/backend/prepdocslib/servicesetup.py: Shared service setup helpers for OpenAI, embeddings, blob storage, etc.
+      * app/backend/prepdocslib/strategy.py: Base strategy interface for document ingestion
+      * app/backend/prepdocslib/textparser.py: Parses plain text and markdown files
+      * app/backend/prepdocslib/textprocessor.py: Processes text chunks for cloud ingestion (merges figures, generates embeddings)
+      * app/backend/prepdocslib/textsplitter.py: Splits text into chunks using different strategies
     * app/backend/app.py: The main entry point for the backend application.
+  * app/functions: Azure Functions used for cloud ingestion custom skills (document extraction, figure processing, text processing). Each function bundles a synchronized copy of `prepdocslib`; run `python scripts/copy_prepdocslib.py` to refresh the local copies if you modify the library.
   * app/frontend: Contains the React frontend code, built with TypeScript, built with vite.
     * app/frontend/src/api: Contains the API client code for communicating with the backend.
     * app/frontend/src/components: Contains the React components for the frontend.
@@ -49,6 +72,11 @@ When adding new azd environment variables, update:
 1. .azdo/pipelines/azure-dev.yml: Add the new environment variable under `env` section
 1. .github/workflows/azure-dev.yml: Add the new environment variable under `env` section
 
+You may also need to update:
+
+1. app/backend/prepdocs.py: If the variable is used in the ingestion script, retrieve it from environment variables here. Not always needed.
+1. app/backend/app.py: If the variable is used in the backend application, retrieve it from environment variables in setup_clients() function. Not always needed.
+
 ## Adding a new setting to "Developer Settings" in RAG app
 
 When adding a new developer setting, update:
@@ -65,7 +93,7 @@ When adding a new developer setting, update:
   * app/backend/approaches/retrievethenread.py : Retrieve from overrides parameter
   * app/backend/app.py: Some settings may need to be sent down in the /config route.
 
-## When adding tests for a new feature:
+## When adding tests for a new feature
 
 All tests are in the `tests` folder and use the pytest framework.
 There are three styles of tests:
@@ -124,3 +152,37 @@ cd scripts && mypy . --config-file=../pyproject.toml
 
 Note that we do not currently enforce type hints in the tests folder, as it would require adding a lot of `# type: ignore` comments to the existing tests.
 We only enforce type hints in the main application code and scripts.
+
+## Python code style
+
+Do not use single underscores in front of "private" methods or variables in Python code. We do not follow that convention in this codebase, since this is an application and not a library.
+
+## Deploying the application
+
+To deploy the application, use the `azd` CLI tool. Make sure you have the latest version of the `azd` CLI installed. Then, run the following command from the root of the repository:
+
+```shell
+azd up
+```
+
+That command will BOTH provision the Azure resources AND deploy the application code.
+
+If you only changed the Bicep templates and want to re-provision the Azure resources, run:
+
+```shell
+azd provision
+```
+
+If you only changed the application code and want to re-deploy the code, run:
+
+```shell
+azd deploy
+```
+
+If you are using cloud ingestion and only want to deploy individual functions, run the necessary deploy commands, for example:
+
+```shell
+azd deploy document-extractor
+azd deploy figure-processor
+azd deploy text-processor
+```

@@ -29,7 +29,6 @@ jobs:
       # project specific
       AZURE_OPENAI_SERVICE: ${{ vars.AZURE_OPENAI_SERVICE }}
       AZURE_OPENAI_LOCATION: ${{ vars.AZURE_OPENAI_LOCATION }}
-      AZURE_OPENAI_API_VERSION: ${{ vars.AZURE_OPENAI_API_VERSION }}
       AZURE_OPENAI_RESOURCE_GROUP: ${{ vars.AZURE_OPENAI_RESOURCE_GROUP }}
       AZURE_DOCUMENTINTELLIGENCE_SERVICE: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_SERVICE }}
       AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP: ${{ vars.AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP }}
@@ -120,7 +119,7 @@ jobs:
             })
 
       - name: Checkout pull request
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
@@ -138,7 +137,7 @@ jobs:
           node-version: 20
 
       - name: Install azd
-        uses: Azure/setup-azd@v2.2.0
+        uses: Azure/setup-azd@v2.2.1
 
       - name: Login to Azure with az CLI
         uses: azure/login@v2
@@ -193,19 +192,19 @@ jobs:
 
       - name: Upload eval results as build artifact
         if: ${{ success() }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
             name: eval_result
             path: ./evals/results/pr${{ github.event.issue.number }}
 
       - name: Upload server logs as build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: server_logs
           path: ./app/backend/serverlogs.out
 
       - name: Upload server error logs as build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: server_error_logs
           path: ./app/backend/serverlogs.err

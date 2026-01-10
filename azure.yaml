@@ -40,6 +40,37 @@ services:
           run:  cd ../frontend;npm install;npm run build
           interactive: false
           continueOnError: false
+  # Un-comment this section if using USE_CLOUD_INGESTION option
+  # document-extractor:
+  #   project: ./app/functions/document_extractor
+  #   language: py
+  #   host: function
+  #   hooks:
+  #     prepackage:
+  #       shell: pwsh
+  #       run: python ../../../scripts/copy_prepdocslib.py
+  #       interactive: false
+  #       continueOnError: false
+  # figure-processor:
+  #   project: ./app/functions/figure_processor
+  #   language: py
+  #   host: function
+  #   hooks:
+  #     prepackage:
+  #       shell: pwsh
+  #       run: python ../../../scripts/copy_prepdocslib.py
+  #       interactive: false
+  #       continueOnError: false
+  # text-processor:
+  #   project: ./app/functions/text_processor
+  #   language: py
+  #   host: function
+  #   hooks:
+  #     prepackage:
+  #       shell: pwsh
+  #       run: python ../../../scripts/copy_prepdocslib.py
+  #       interactive: false
+  #       continueOnError: false
 hooks:
     preprovision:
       windows:
@@ -61,5 +92,16 @@ hooks:
       posix:
         shell: sh
         run: ./scripts/auth_update.sh;./scripts/prepdocs.sh
+        interactive: true
+        continueOnError: false
+    postdeploy:
+      windows:
+        shell: pwsh
+        run: ./scripts/setup_cloud_ingestion.ps1
+        interactive: true
+        continueOnError: false
+      posix:
+        shell: sh
+        run: ./scripts/setup_cloud_ingestion.sh
         interactive: true
         continueOnError: false
