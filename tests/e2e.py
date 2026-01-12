@@ -161,6 +161,40 @@ def test_chat(sized_page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
 
 
+def test_chat_stop_streaming(page: Page, live_server_url: str):
+    """Test that the stop button appears during loading/streaming."""
+
+    # Set up a mock route to the /chat endpoint with streaming results
+    def handle(route: Route):
+        # Read the JSONL from our snapshot results and return as the response
+        f = open("tests/snapshots/test_app/test_chat_stream_text/client0/result.jsonlines")
+        jsonl = f.read()
+        f.close()
+        route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
+
+    page.route("*/**/chat/stream", handle)
+
+    # Check initial page state
+    page.goto(live_server_url)
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+
+    # Verify the submit button is visible initially (not the stop button)
+    expect(page.get_by_label("Submit question")).to_be_visible()
+    expect(page.get_by_label("Stop streaming")).not_to_be_visible()
+
+    # Ask a question
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_label("Submit question").click()
+
+    # Wait for the response to complete and verify the submit button is back
+    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+    expect(page.get_by_label("Submit question")).to_be_visible()
+    expect(page.get_by_label("Stop streaming")).not_to_be_visible()
+
+
 def test_chat_customization(page: Page, live_server_url: str):
     # Set up a mock route to the /chat endpoint
     def handle(route: Route):
