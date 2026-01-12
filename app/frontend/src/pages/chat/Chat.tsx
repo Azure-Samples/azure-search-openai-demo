@@ -552,33 +552,6 @@ const Chat = () => {
                                         </div>
                                     </div>
                                 ))}
-                            {partialResponse && !isStreaming && (
-                                <div>
-                                    <UserChatMessage message={lastQuestionRef.current} />
-                                    <div className={styles.chatMessageGpt}>
-                                        <Answer
-                                            isStreaming={false}
-                                            answer={{
-                                                message: { content: partialResponse, role: "assistant" },
-                                                delta: { content: partialResponse, role: "assistant" },
-                                                context: {
-                                                    data_points: [],
-                                                    followup_questions: null,
-                                                    thoughts: []
-                                                },
-                                                session_state: undefined
-                                            }}
-                                            isSelected={false}
-                                            onCitationClicked={() => {}}
-                                            onThoughtProcessClicked={() => {}}
-                                            onSupportingContentClicked={() => {}}
-                                            onFollowupQuestionClicked={() => {}}
-                                            showFollowupQuestions={false}
-                                            speechUrl={null}
-                                        />
-                                    </div>
-                                </div>
-                            )}
                             {!isStreaming &&
                                 answers.map((answer, index) => (
                                     <div key={index}>
