@@ -19,14 +19,6 @@
     justify-content: flex-end;
 }
 
-.stopButton {
-    color: #d13438;
-}
-
-.stopButton:hover {
-    color: #a4262c;
-}
-
 @media (min-width: 992px) {
     .questionInputContainer {
         height: 5.625rem;

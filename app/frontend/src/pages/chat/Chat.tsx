@@ -60,6 +60,7 @@ const Chat = () => {
     const [isStreaming, setIsStreaming] = useState<boolean>(false);
     const [partialResponse, setPartialResponse] = useState<string>("");
     const [abortController, setAbortController] = useState<AbortController | null>(null);
+    const [restoredQuestion, setRestoredQuestion] = useState<string>("");
     const [error, setError] = useState<unknown>();
 
     const [activeCitation, setActiveCitation] = useState<string>();
@@ -149,7 +150,12 @@ const Chat = () => {
 
     const handleAsyncRequest = async (question: string, answers: [string, ChatAppResponse][], responseBody: ReadableStream<any>, signal: AbortSignal) => {
         let answer: string = "";
-        let askResponse: ChatAppResponse = {} as ChatAppResponse;
+        let askResponse: ChatAppResponse = {
+            message: { content: "", role: "assistant" },
+            delta: { content: "", role: "assistant" },
+            context: { data_points: { text: [], images: [], citations: [] }, thoughts: [], followup_questions: null },
+            session_state: null
+        };
 
         const updateState = (newContent: string) => {
             return new Promise(resolve => {
@@ -243,6 +249,7 @@ const Chat = () => {
         lastQuestionRef.current = question;
 
         error && setError(undefined);
+        setRestoredQuestion("");
         setIsLoading(true);
         setActiveCitation(undefined);
         setActiveAnalysisPanelTab(undefined);
@@ -297,10 +304,17 @@ const Chat = () => {
             }
             if (shouldStream) {
                 const parsedResponse: ChatAppResponse = await handleAsyncRequest(question, answers, response.body, controller.signal);
-                setAnswers([...answers, [question, parsedResponse]]);
-                if (typeof parsedResponse.session_state === "string" && parsedResponse.session_state !== "") {
-                    const token = client ? await getToken(client) : undefined;
-                    historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse]], token);
+                // Only add to answers if we got content, otherwise restore question to input
+                if (parsedResponse.message.content) {
+                    setAnswers([...answers, [question, parsedResponse]]);
+                    if (typeof parsedResponse.session_state === "string" && parsedResponse.session_state !== "") {
+                        const token = client ? await getToken(client) : undefined;
+                        historyManager.addItem(parsedResponse.session_state, [...answers, [question, parsedResponse]], token);
+                    }
+                } else {
+                    // Stopped before any content arrived - restore question to input
+                    lastQuestionRef.current = answers.length > 0 ? answers[answers.length - 1][0] : "";
+                    setRestoredQuestion(question);
                 }
             } else {
                 const parsedResponse: ChatAppResponseOrError = await response.json();
@@ -315,7 +329,13 @@ const Chat = () => {
             }
             setSpeechUrls([...speechUrls, null]);
         } catch (e) {
-            setError(e);
+            if (e instanceof DOMException && e.name === "AbortError") {
+                // Stopped during loading - restore question to input
+                lastQuestionRef.current = answers.length > 0 ? answers[answers.length - 1][0] : "";
+                setRestoredQuestion(question);
+            } else {
+                setError(e);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -332,6 +352,7 @@ const Chat = () => {
         setIsLoading(false);
         setIsStreaming(false);
         setPartialResponse("");
+        setRestoredQuestion("");
     };
 
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
@@ -605,6 +626,7 @@ const Chat = () => {
                             isStreaming={isStreaming}
                             isLoading={isLoading}
                             onStop={onStopClick}
+                            initQuestion={restoredQuestion}
                         />
                     </div>
                 </div>
