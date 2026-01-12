@@ -53,8 +53,7 @@
     "followupQuestions": "Takip soruları:",
 
     "tooltips": {
-        "submitQuestion": "Soruyu gönder",
-        "askWithVoice": "Sesle soru sor",
+        "submitQuestion": "Soruyu gönder",        "stopStreaming": "Akışı durdur",        "askWithVoice": "Sesle soru sor",
         "stopRecording": "Kaydı durdur",
         "showThoughtProcess": "Düşünce sürecini göster",
         "showSupportingContent": "Destekleyici içeriği göster",

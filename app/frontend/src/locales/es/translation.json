@@ -53,8 +53,7 @@
     "followupQuestions": "Preguntas de seguimiento:",
 
     "tooltips": {
-        "submitQuestion": "Enviar pregunta",
-        "askWithVoice": "Realizar pregunta con voz",
+        "submitQuestion": "Enviar pregunta",        "stopStreaming": "Detener transmisión",        "askWithVoice": "Realizar pregunta con voz",
         "stopRecording": "Detener la grabación de la pregunta",
         "showThoughtProcess": "Mostrar proceso de pensamiento",
         "showSupportingContent": "Mostrar contenido de soporte",

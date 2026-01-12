@@ -52,6 +52,7 @@
     "followupQuestions": "Opfølgende spørgsmål:",
     "tooltips": {
         "submitQuestion": "Send spørgsmål",
+        "stopStreaming": "Stop streaming",
         "askWithVoice": "Indtal spørgsmål",
         "stopRecording": "Stop optagelse af spørgsmål",
         "showThoughtProcess": "Vis tankeproces",
