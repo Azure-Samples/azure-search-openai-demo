@@ -82,7 +82,7 @@ cffi==1.17.0
     # via cryptography
 charset-normalizer==3.3.2
     # via requests
-click==8.3.0
+click==8.3.1
     # via
     #   flask
     #   prompty
