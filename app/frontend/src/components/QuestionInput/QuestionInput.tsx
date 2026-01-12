@@ -11,8 +11,8 @@ import { requireLogin } from "../../authConfig";
 
 const StopCircleIcon = () => (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="14" cy="14" r="12.5" stroke="currentColor" strokeWidth="2" fill="none" />
-        <rect x="9" y="9" width="10" height="10" rx="1" fill="currentColor" />
+        <circle cx="14" cy="14" r="12.5" stroke="#d13438" strokeWidth="2" fill="none" />
+        <rect x="9" y="9" width="10" height="10" rx="1" fill="#d13438" />
     </svg>
 );
 
