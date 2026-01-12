@@ -603,6 +603,7 @@ const Chat = () => {
                             onSend={question => makeApiRequest(question)}
                             showSpeechInput={showSpeechInput}
                             isStreaming={isStreaming}
+                            isLoading={isLoading}
                             onStop={onStopClick}
                         />
                     </div>

@@ -18,9 +18,10 @@ interface Props {
     showSpeechInput?: boolean;
     onStop?: () => void;
     isStreaming: boolean;
+    isLoading: boolean;
 }
 
-export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput, isStreaming }: Props) => {
+export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSend, initQuestion, showSpeechInput, isStreaming, isLoading }: Props) => {
     const [question, setQuestion] = useState<string>("");
     const { loggedIn } = useContext(LoginContext);
     const { t } = useTranslation();
@@ -89,7 +90,7 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
                 onCompositionEnd={handleCompositionEnd}
             />
             <div className={styles.questionInputButtonsContainer}>
-                {isStreaming ? (
+                {isStreaming || isLoading ? (
                     <Tooltip content={t("tooltips.stopStreaming")} relationship="label">
                         <Button size="large" icon={<Stop24Filled primaryFill="rgba(255, 0, 0, 1)" />} onClick={onStop} />
                     </Tooltip>
