@@ -2,7 +2,6 @@
     "pageTitle": "Azure OpenAI + AI Search",
     "headerTitle": "Azure OpenAI + AI Search",
     "chat": "Chat",
-    "qa": "Haz una pregunta",
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
     "clearChat": "Borrar chat",

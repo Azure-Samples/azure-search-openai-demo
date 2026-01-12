@@ -11,9 +11,7 @@ If necessary, edit this file to ensure it accurately reflects the current state 
   * app/backend: Contains the Python backend code, written with Quart framework.
     * app/backend/approaches: Contains the different approaches
       * app/backend/approaches/approach.py: Base class for all approaches
-      * app/backend/approaches/retrievethenread.py: Ask approach, just searches and answers
       * app/backend/approaches/chatreadretrieveread.py: Chat approach, includes query rewriting step first
-      * app/backend/approaches/prompts/ask_answer_question.prompty: Prompt used by the Ask approach to answer the question based off sources
       * app/backend/approaches/prompts/chat_query_rewrite.prompty: Prompt used to rewrite the query based off search history into a better search query
       * app/backend/approaches/prompts/chat_query_rewrite_tools.json: Tools used by the query rewriting prompt
       * app/backend/approaches/prompts/chat_answer_question.prompty: Prompt used by the Chat approach to actually answer the question based off sources
@@ -86,11 +84,9 @@ When adding a new developer setting, update:
   * app/frontend/src/components/Settings.tsx : Add a UI element for the setting
   * app/frontend/src/locales/*/translations.json: Add a translation for the setting label/tooltip for all languages
   * app/frontend/src/pages/chat/Chat.tsx: Add the setting to the component, pass it to Settings
-  * app/frontend/src/pages/ask/Ask.tsx: Add the setting to the component, pass it to Settings
 
 * backend:
   * app/backend/approaches/chatreadretrieveread.py :  Retrieve from overrides parameter
-  * app/backend/approaches/retrievethenread.py : Retrieve from overrides parameter
   * app/backend/app.py: Some settings may need to be sent down in the /config route.
 
 ## When adding tests for a new feature
