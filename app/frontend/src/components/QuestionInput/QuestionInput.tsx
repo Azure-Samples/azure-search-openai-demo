@@ -1,13 +1,20 @@
 import { useState, useEffect, useContext } from "react";
 import { Stack, TextField } from "@fluentui/react";
 import { Button, Tooltip } from "@fluentui/react-components";
-import { Send28Filled, Stop24Filled } from "@fluentui/react-icons";
+import { Send28Filled } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
 
 import styles from "./QuestionInput.module.css";
 import { SpeechInput } from "./SpeechInput";
 import { LoginContext } from "../../loginContext";
 import { requireLogin } from "../../authConfig";
+
+const StopCircleIcon = () => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="14" r="12.5" stroke="currentColor" strokeWidth="2" fill="none" />
+        <rect x="9" y="9" width="10" height="10" rx="1" fill="currentColor" />
+    </svg>
+);
 
 interface Props {
     onSend: (question: string) => void;
@@ -92,7 +99,7 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
             <div className={styles.questionInputButtonsContainer}>
                 {isStreaming || isLoading ? (
                     <Tooltip content={t("tooltips.stopStreaming")} relationship="label">
-                        <Button size="large" icon={<Stop24Filled primaryFill="rgba(255, 0, 0, 1)" />} onClick={onStop} />
+                        <Button size="large" icon={<StopCircleIcon />} onClick={onStop} className={styles.stopButton} />
                     </Tooltip>
                 ) : (
                     <Tooltip content={t("tooltips.submitQuestion")} relationship="label">
