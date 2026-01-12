@@ -1,6 +1,5 @@
 ---
 description: 'Fix and verify issues in app'
-model: GPT-5
 tools: ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'agent', 'azure-mcp/search', 'github/create_pull_request', 'github/list_issues', 'github/search_issues', 'playwright/*', 'microsoftdocs/mcp/*', 'pylance-mcp-server/*']
 ---
 
