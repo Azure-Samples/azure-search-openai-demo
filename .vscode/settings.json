@@ -1,5 +1,5 @@
 {
-    "python.languageServer": "None", // Disabling due to ty using its own language server
+    "python.languageServer": "None", // Disabling due to ty using its own full-featured language server
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
