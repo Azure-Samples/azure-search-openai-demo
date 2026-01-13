@@ -69,7 +69,7 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
     const onQuestionChange = (_ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
         if (!newValue) {
             setQuestion("");
-        } else if (newValue.length <= 1000) {
+        } else {
             setQuestion(newValue);
         }
     };
@@ -89,6 +89,7 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
                 placeholder={placeholder}
                 multiline
                 resizable={false}
+                autoAdjustHeight
                 borderless
                 value={question}
                 onChange={onQuestionChange}
