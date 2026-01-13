@@ -1,6 +1,6 @@
 ---
 description: 'Fix and verify issues in app'
-tools: ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'agent', 'azure-mcp/search', 'github/create_pull_request', 'github/issue_read', 'github/list_issues', 'github/search_issues', 'playwright/*', 'microsoftdocs/mcp/*', 'pylance-mcp-server/*']
+tools: ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'agent', 'azure-mcp/search', 'github/create_pull_request', 'github/issue_read', 'github/list_issues', 'github/search_issues', 'playwright/*', 'microsoftdocs/mcp/*']
 ---
 
 # Fixer Mode Instructions
