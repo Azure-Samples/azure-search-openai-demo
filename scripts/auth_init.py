@@ -289,6 +289,8 @@ async def main():
             "Error: No tenant ID set for authentication. Run `azd env set AZURE_AUTH_TENANT_ID tenant-id` to set the tenant ID."
         )
         exit(1)
+    # TODO: Remove assert once ty supports type narrowing from NoReturn calls (astral-sh/ty#690)
+    assert auth_tenant is not None
     print("Setting up authentication for tenant", auth_tenant)
     credential = AzureDeveloperCliCredential(tenant_id=auth_tenant)
 

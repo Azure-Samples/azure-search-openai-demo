@@ -429,7 +429,7 @@ class BlobManager(BaseBlobManager):
             with open(file.content.name, "rb") as reopened_file:
                 blob_name = self.blob_name_from_file_name(file.content.name)
                 logger.info("Uploading blob for document '%s'", blob_name)
-                blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)
+                blob_client = await container_client.upload_blob(blob_name, reopened_file, overwrite=True)  # type: ignore[arg-type]
                 file.url = blob_client.url
 
         if file.url is None:

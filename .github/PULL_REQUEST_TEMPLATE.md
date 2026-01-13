@@ -42,5 +42,5 @@ See [CONTRIBUTING.md](https://github.com/Azure-Samples/azure-search-openai-demo/
 - [ ] The current tests all pass (`python -m pytest`).
 - [ ] I added tests that prove my fix is effective or that my feature works
 - [ ] I ran `python -m pytest --cov` to verify 100% coverage of added lines
-- [ ] I ran `python -m mypy` to check for type errors
+- [ ] I ran `ty check` to check for type errors
 - [ ] I either used the pre-commit hooks or ran `ruff` and `black` manually on my code.

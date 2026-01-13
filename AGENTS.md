@@ -139,11 +139,7 @@ cd app/backend && uv pip compile requirements.in -o requirements.txt --python-ve
 To check Python type hints, use the following command:
 
 ```shell
-cd app/backend && mypy . --config-file=../../pyproject.toml
-```
-
-```shell
-cd scripts && mypy . --config-file=../pyproject.toml
+ty check
 ```
 
 Note that we do not currently enforce type hints in the tests folder, as it would require adding a lot of `# type: ignore` comments to the existing tests.
