@@ -11,6 +11,6 @@ pytest-playwright
 pytest-snapshot
 pre-commit
 pip-tools
-ty==0.0.1a12
+ty==0.0.11
 diff_cover
 axe-playwright-python
