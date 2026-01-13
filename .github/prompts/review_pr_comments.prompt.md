@@ -1,7 +1,7 @@
 ---
 agent: agent
 ---
-We have received comments on the current active pull request. Together, we will go through each comment one by one and discuss whether to accept to change, iterate on it, or reject the change.
+We have received comments on the current active pull request. Together, we will go through each comment one by one and discuss whether to accept the change, iterate on it, or reject the change.
 
 ## Steps to follow:
 
