@@ -170,7 +170,7 @@ class DocumentAnalysisParser(Parser):
                     elif object_type == ObjectType.FIGURE:
                         if object_idx is None:
                             raise ValueError("Expected object_idx to be set")
-                        if doc_for_pymupdf is None:
+                        if doc_for_pymupdf is None:  # pragma: no cover
                             raise ValueError("Expected doc_for_pymupdf to be set for figure processing")
                         if mask_char not in added_objects:
                             image_on_page = await DocumentAnalysisParser.figure_to_image(

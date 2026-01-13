@@ -276,7 +276,7 @@ async def grant_application_admin_consent(graph_client: GraphServiceClient, clie
                 raise
 
 
-async def main():
+async def main():  # pragma: no cover
     load_azd_env()
 
     if not test_authentication_enabled():
