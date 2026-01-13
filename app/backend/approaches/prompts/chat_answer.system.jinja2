@@ -1,10 +1,3 @@
----
-name: Chat
-description: Answer a question (with chat history) using solely text sources.
-model:
-    api: chat
----
-system:
 {% if override_prompt %}
 {{ override_prompt }}
 {% else %}
@@ -33,21 +26,4 @@ Enclose the follow-up questions in double angle brackets. Example:
 <<What is the limit for over-the-counter medication?>>
 Do not repeat questions that have already been asked.
 Make sure the last question ends with ">>".
-{% endif %}
-
-{% for message in past_messages %}
-{{ message["role"] }}:
-{{ message["content"] }}
-{% endfor %}
-
-user:
-{{ user_query }}
-{% if image_sources %}{% for image_source in image_sources %}
-![Image]({{image_source}})
-{% endfor %}{% endif %}
-{% if text_sources is defined %}
-Sources:
-{% for text_source in text_sources %}
-{{ text_source }}
-{% endfor %}
 {% endif %}

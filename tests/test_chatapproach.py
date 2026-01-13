@@ -16,7 +16,7 @@ from approaches.approach import (
     WebResult,
 )
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.promptmanager import PromptyManager
+from approaches.promptmanager import Jinja2PromptManager
 from prepdocslib.embeddings import ImageEmbeddings
 
 from .mocks import (
@@ -298,7 +298,7 @@ async def test_compute_multimodal_embedding_no_client():
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
-        prompt_manager=PromptyManager(),
+        prompt_manager=Jinja2PromptManager(),
         # Explicitly set image_embeddings_client to None
         image_embeddings_client=None,
     )

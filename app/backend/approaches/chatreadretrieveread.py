@@ -86,9 +86,13 @@ class ChatReadRetrieveReadApproach(Approach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.prompt_manager = prompt_manager
-        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
+        self.query_rewrite_prompt = self.prompt_manager.load_prompt(
+            "query_rewrite.system.jinja2",
+            "query_rewrite.user.jinja2",
+            include_past_messages_as_entries=False,  # past_messages are rendered in the user template
+        )
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
-        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer_question.prompty")
+        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer.system.jinja2", "chat_answer.user.jinja2")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled

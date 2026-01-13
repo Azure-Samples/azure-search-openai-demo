@@ -1,0 +1,10 @@
+{{ user_query }}
+{% if image_sources %}{% for image_source in image_sources %}
+![Image]({{image_source}})
+{% endfor %}{% endif %}
+{% if text_sources is defined and text_sources %}
+Sources:
+{% for text_source in text_sources %}
+{{ text_source }}
+{% endfor %}
+{% endif %}

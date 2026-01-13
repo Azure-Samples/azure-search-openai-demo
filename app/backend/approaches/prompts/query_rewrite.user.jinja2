@@ -1,0 +1,8 @@
+{% if past_messages %}
+{% for message in past_messages %}
+{{ message["role"] }}:
+{{ message["content"] }}
+
+{% endfor %}
+{% endif %}
+Generate search query for: {{ user_query }}
