@@ -1118,7 +1118,7 @@ module searchSvcContribRoleUser 'core/security/role.bicep' = {
 
 // Custom role for elevated read access to investigate ACL-filtered query results
 // https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement#elevated-permissions-for-investigating-incorrect-results
-module searchElevatedReadRoleDefinition 'core/security/search-elevated-read-role.bicep' = {
+module searchElevatedReadRoleDefinition 'core/security/search-elevated-read-role.bicep' = if (useCloudIngestion && useAuthentication) {
   scope: searchServiceResourceGroup
   name: 'search-elevated-read-role-definition'
   params: {
@@ -1126,7 +1126,7 @@ module searchElevatedReadRoleDefinition 'core/security/search-elevated-read-role
   }
 }
 
-module searchElevatedReadRoleUser 'core/security/role.bicep' = {
+module searchElevatedReadRoleUser 'core/security/role.bicep' = if (useCloudIngestion && useAuthentication) {
   scope: searchServiceResourceGroup
   name: 'search-elevated-read-role-user'
   params: {
