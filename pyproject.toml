@@ -23,9 +23,11 @@ show_missing = true
 
 [tool.ty.environment]
 python-version = "3.10"
+# Root directories for module resolution (so imports like "from prepdocslib import ..." work)
 root = ["app/backend", "scripts", "app/functions"]
 
 [tool.ty.src]
+# Directories to actually type-check (excludes tests folder which has many mock-related type errors)
 include = ["app/backend", "scripts", "app/functions"]
 
 [tool.ty.rules]
