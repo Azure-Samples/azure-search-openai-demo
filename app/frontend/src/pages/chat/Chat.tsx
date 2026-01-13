@@ -58,7 +58,6 @@ const Chat = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isStreaming, setIsStreaming] = useState<boolean>(false);
-    const [partialResponse, setPartialResponse] = useState<string>("");
     const [abortController, setAbortController] = useState<AbortController | null>(null);
     const [restoredQuestion, setRestoredQuestion] = useState<string>("");
     const [error, setError] = useState<unknown>();
@@ -161,7 +160,6 @@ const Chat = () => {
             return new Promise(resolve => {
                 setTimeout(() => {
                     answer += newContent;
-                    setPartialResponse(answer);
                     const latestResponse: ChatAppResponse = {
                         ...askResponse,
                         message: { content: answer, role: askResponse.message.role }
@@ -191,10 +189,14 @@ const Chat = () => {
                 }
             }
         } catch (e) {
-            console.error("error in handleAsyncRequest: ", e);
+            if (e instanceof DOMException && e.name === "AbortError") {
+                // User clicked stop - don't treat as error
+                console.log("Stream aborted by user");
+            } else {
+                throw e; // Re-throw other errors to be caught by makeApiRequest
+            }
         } finally {
             setIsStreaming(false);
-            setPartialResponse("");
         }
         const fullResponse: ChatAppResponse = {
             ...askResponse,
@@ -338,6 +340,7 @@ const Chat = () => {
             }
         } finally {
             setIsLoading(false);
+            setAbortController(null);
         }
     };
 
@@ -351,7 +354,6 @@ const Chat = () => {
         setStreamedAnswers([]);
         setIsLoading(false);
         setIsStreaming(false);
-        setPartialResponse("");
         setRestoredQuestion("");
     };
 

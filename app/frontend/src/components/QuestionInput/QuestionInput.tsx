@@ -23,7 +23,7 @@ interface Props {
     placeholder?: string;
     clearOnSend?: boolean;
     showSpeechInput?: boolean;
-    onStop?: () => void;
+    onStop: () => void;
     isStreaming: boolean;
     isLoading: boolean;
 }
