@@ -195,7 +195,7 @@ class DocumentAnalysisParser(Parser):
 
     @staticmethod
     async def figure_to_image(doc: pymupdf.Document, figure: DocumentFigure) -> ImageOnPage:
-        figure_title = str(figure.caption.content) if figure.caption and figure.caption.content else ""
+        figure_title = figure.caption.content if figure.caption and figure.caption.content else ""
         # Generate a random UUID if figure.id is None
         figure_id = figure.id or f"fig_{uuid.uuid4().hex[:8]}"
         figure_filename = f"figure{figure_id.replace('.', '_')}.png"
