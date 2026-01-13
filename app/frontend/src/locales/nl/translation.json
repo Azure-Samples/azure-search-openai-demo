@@ -54,6 +54,7 @@
 
     "tooltips": {
         "submitQuestion": "Vraag indienen",
+        "stopStreaming": "Stop streaming",
         "askWithVoice": "Vraag stellen met stem",
         "stopRecording": "Opname stoppen",
         "showThoughtProcess": "Denkproces tonen",
