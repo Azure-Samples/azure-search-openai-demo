@@ -17,6 +17,7 @@
                 "ms-azuretools.azure-dev",
                 "ms-azuretools.vscode-bicep",
                 "ms-python.python",
+                "astral-sh.ty",
                 "esbenp.prettier-vscode",
                 "DavidAnson.vscode-markdownlint"
             ]

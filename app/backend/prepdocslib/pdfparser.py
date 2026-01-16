@@ -170,6 +170,8 @@ class DocumentAnalysisParser(Parser):
                     elif object_type == ObjectType.FIGURE:
                         if object_idx is None:
                             raise ValueError("Expected object_idx to be set")
+                        if doc_for_pymupdf is None:  # pragma: no cover
+                            raise ValueError("Expected doc_for_pymupdf to be set for figure processing")
                         if mask_char not in added_objects:
                             image_on_page = await DocumentAnalysisParser.figure_to_image(
                                 doc_for_pymupdf, figures_on_page[object_idx]
@@ -193,7 +195,7 @@ class DocumentAnalysisParser(Parser):
 
     @staticmethod
     async def figure_to_image(doc: pymupdf.Document, figure: DocumentFigure) -> ImageOnPage:
-        figure_title = (figure.caption and figure.caption.content) or ""
+        figure_title = figure.caption.content if figure.caption and figure.caption.content else ""
         # Generate a random UUID if figure.id is None
         figure_id = figure.id or f"fig_{uuid.uuid4().hex[:8]}"
         figure_filename = f"figure{figure_id.replace('.', '_')}.png"
