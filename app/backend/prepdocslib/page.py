@@ -57,7 +57,7 @@ class ImageOnPage:
         # bbox may arrive as list; coerce into tuple
         bbox_val = data.get("bbox")
         if isinstance(bbox_val, list) and len(bbox_val) == 4:
-            bbox = tuple(bbox_val)  # type: ignore[assignment]
+            bbox = tuple(bbox_val)
         else:
             bbox = (0, 0, 0, 0)
 
