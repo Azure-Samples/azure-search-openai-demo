@@ -188,6 +188,9 @@ async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
     storage_url = consolidated_doc.get("storageUrl") or consolidated_doc.get("metadata_storage_path") or file_name
     pages_input = consolidated_doc.get("pages", [])  # [{page_num, text, figure_ids}]
     figures_input = consolidated_doc.get("figures", [])  # serialized skill payload
+    # ACL fields from indexer's built-in ADLS Gen2 ACL extraction (passed through shaper skill)
+    oids = consolidated_doc.get("oids", [])
+    groups = consolidated_doc.get("groups", [])
 
     figures_by_id = {figure["figure_id"]: figure for figure in figures_input}
 
@@ -268,6 +271,10 @@ async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
             "sourcefile": file_name,
             "parent_id": storage_url,
             **({"images": image_refs} if image_refs else {}),
+            # Include ACLs for document-level access control
+            # TODO: This should depend on whether the index supports ACLs - an env var
+            **({"oids": oids} if oids else {}),
+            **({"groups": groups} if groups else {}),
         }
 
         if embedding_vec is not None:

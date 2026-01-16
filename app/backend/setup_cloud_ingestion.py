@@ -36,12 +36,17 @@ async def setup_cloud_ingestion_strategy(
     search_service = os.environ["AZURE_SEARCH_SERVICE"]
     index_name = os.environ["AZURE_SEARCH_INDEX"]
     search_user_assigned_identity_resource_id = os.environ["AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID"]
-    storage_account = os.environ["AZURE_STORAGE_ACCOUNT"]
     storage_container = os.environ["AZURE_STORAGE_CONTAINER"]
-    storage_resource_group = os.environ["AZURE_STORAGE_RESOURCE_GROUP"]
     subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
     image_storage_container = os.environ.get("AZURE_IMAGESTORAGE_CONTAINER")
     search_embedding_field = os.environ["AZURE_SEARCH_FIELD_NAME_EMBEDDING"]
+
+    # Use ADLS storage account and resource group for cloud ingestion when ACLs are enabled
+    # This ensures the indexer can use the built-in ADLS Gen2 ACL extraction
+    storage_account = os.getenv("AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT") or os.environ["AZURE_STORAGE_ACCOUNT"]
+    storage_resource_group = (
+        os.getenv("AZURE_CLOUD_INGESTION_STORAGE_RESOURCE_GROUP") or os.environ["AZURE_STORAGE_RESOURCE_GROUP"]
+    )
 
     # Cloud ingestion specific endpoints
     document_extractor_uri = os.environ["DOCUMENT_EXTRACTOR_SKILL_ENDPOINT"]

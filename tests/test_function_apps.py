@@ -91,6 +91,10 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
         file_processors=mock_file_processors,
         azure_credential=object(),
         blob_manager=MockBlobManager(),
+        is_adls=False,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -124,6 +128,9 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
     assert figure_entry["document_file_name"] == "sample.pdf"
     assert figure_entry["bbox"] == [10.0, 20.0, 30.0, 40.0]
     assert figure_entry["bytes_base64"] == base64.b64encode(TEST_PNG_BYTES).decode("utf-8")
+    # Verify ACL fields are present (empty when not using ADLS)
+    assert data["oids"] == []
+    assert data["groups"] == []
 
 
 @pytest.mark.asyncio
@@ -132,6 +139,10 @@ async def test_document_extractor_requires_single_record(monkeypatch: pytest.Mon
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
         blob_manager=object(),
+        is_adls=False,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
     response = await document_extractor.extract_document(build_request({"values": []}))
@@ -149,6 +160,10 @@ async def test_document_extractor_handles_processing_exception(monkeypatch: pyte
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
         blob_manager=object(),
+        is_adls=False,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
     monkeypatch.setattr(document_extractor, "process_document", failing_process)
@@ -197,6 +212,10 @@ async def test_document_extractor_process_document_http_error(monkeypatch: pytes
         file_processors=mock_file_processors,
         azure_credential=object(),
         blob_manager=MockBlobManager(),
+        is_adls=False,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -520,6 +539,195 @@ def test_document_extractor_module_init_key_error(
 
     importlib.reload(reloaded)
     reloaded.settings = None
+
+
+# ACL extraction tests
+
+
+def setup_acl_mocks(monkeypatch: pytest.MonkeyPatch, acl_string: str, enable_global_document_access: bool = False):
+    """Helper to set up mocks for get_file_acls tests."""
+
+    class MockFileClient:
+        async def get_access_control(self, upn=False):
+            return {"acl": acl_string}
+
+    class MockFileSystemClient:
+        def get_file_client(self, path):
+            return MockFileClient()
+
+    class MockServiceClient:
+        def get_file_system_client(self, container):
+            return MockFileSystemClient()
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+    monkeypatch.setattr(
+        document_extractor,
+        "DataLakeServiceClient",
+        lambda account_url, credential: MockServiceClient(),
+    )
+
+    mock_settings = document_extractor.GlobalSettings(
+        file_processors={},
+        azure_credential=object(),
+        blob_manager=object(),
+        is_adls=True,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=enable_global_document_access,
+    )
+    monkeypatch.setattr(document_extractor, "settings", mock_settings)
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_extracts_user_oids(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls extracts user OIDs with read permission."""
+    setup_acl_mocks(monkeypatch, "user::rwx,user:user-oid-1:r--,user:user-oid-2:rwx,group::r-x,other::---")
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["user-oid-1", "user-oid-2"]
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_extracts_group_ids(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls extracts group IDs with read permission."""
+    setup_acl_mocks(monkeypatch, "user::rwx,group::r-x,group:group-id-1:r--,group:group-id-2:r-x,other::---")
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == []
+    assert groups == ["group-id-1", "group-id-2"]
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_ignores_entries_without_read_permission(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls ignores ACL entries without read permission."""
+    # user-oid-1 has read, user-oid-2 only has write/execute
+    setup_acl_mocks(monkeypatch, "user::rwx,user:user-oid-1:r--,user:user-oid-2:-wx,group:group-id-1:--x,other::---")
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["user-oid-1"]
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_other_read_with_global_access_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls returns ['all'] when 'other' has read and global access is enabled."""
+    setup_acl_mocks(
+        monkeypatch, "user::rwx,user:user-oid-1:r--,group::r-x,other::r--", enable_global_document_access=True
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["all"]
+    assert groups == ["all"]
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_other_read_with_global_access_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls does NOT return ['all'] when 'other' has read but global access is disabled."""
+    setup_acl_mocks(
+        monkeypatch, "user::rwx,user:user-oid-1:r--,group::r-x,other::r--", enable_global_document_access=False
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    # Should return specific user OID, not global access
+    assert oids == ["user-oid-1"]
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_other_read_execute_with_global_access_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls returns ['all'] when 'other' has r-x (read+execute) and global access is enabled."""
+    setup_acl_mocks(monkeypatch, "user::rwx,group::r-x,other::r-x", enable_global_document_access=True)
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["all"]
+    assert groups == ["all"]
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_other_no_read_does_not_grant_global(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls does not grant global access when 'other' has no read permission."""
+    # other has only execute, no read - global access enabled but shouldn't trigger
+    setup_acl_mocks(
+        monkeypatch, "user::rwx,user:user-oid-1:r--,group::r-x,other::--x", enable_global_document_access=True
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    # Should return specific OIDs, not global access
+    assert oids == ["user-oid-1"]
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_handles_exception(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls returns empty lists on exception."""
+
+    class MockServiceClient:
+        def get_file_system_client(self, container):
+            raise Exception("Connection failed")
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+    monkeypatch.setattr(
+        document_extractor,
+        "DataLakeServiceClient",
+        lambda account_url, credential: MockServiceClient(),
+    )
+
+    mock_settings = document_extractor.GlobalSettings(
+        file_processors={},
+        azure_credential=object(),
+        blob_manager=object(),
+        is_adls=True,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
+    )
+    monkeypatch.setattr(document_extractor, "settings", mock_settings)
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == []
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_raises_without_settings(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls raises RuntimeError when settings not initialized."""
+    monkeypatch.setattr(document_extractor, "settings", None)
+
+    with pytest.raises(RuntimeError, match="Global settings not initialized"):
+        await document_extractor.get_file_acls("test.pdf")
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_mixed_users_and_groups(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls correctly extracts both users and groups."""
+    setup_acl_mocks(
+        monkeypatch,
+        "user::rwx,user:user-1:r--,user:user-2:rwx,group::r-x,group:group-1:r--,group:group-2:r-x,other::---",
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["user-1", "user-2"]
+    assert groups == ["group-1", "group-2"]
 
 
 @pytest.mark.asyncio
