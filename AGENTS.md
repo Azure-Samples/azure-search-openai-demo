@@ -94,7 +94,7 @@ When adding a new developer setting, update:
 All tests are in the `tests` folder and use the pytest framework.
 There are three styles of tests:
 
-* e2e tests: These use playwright to run the app in a browser and test the UI end-to-end. They are in e2e.py and they mock the backend using the snapshots from the app tests.
+* e2e tests: These use playwright to run the app in a browser and test the UI end-to-end. They are in e2e.py and they mock the backend using the snapshots from the app tests. (Before running e2e tests, make sure to run `npm run build` in app/frontend first to build the frontend code.)
 * app integration tests: Mostly in test_app.py, these test the app's API endpoints and use mocks for services like Azure OpenAI and Azure Search.
 * unit tests: The rest of the tests are unit tests that test individual functions and methods. They are in test_*.py files.
 

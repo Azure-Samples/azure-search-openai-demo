@@ -54,6 +54,7 @@
 
     "tooltips": {
         "submitQuestion": "Soruyu gönder",
+        "stopStreaming": "Akışı durdur",
         "askWithVoice": "Sesle soru sor",
         "stopRecording": "Kaydı durdur",
         "showThoughtProcess": "Düşünce sürecini göster",
