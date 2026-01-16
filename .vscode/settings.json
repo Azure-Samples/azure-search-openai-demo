@@ -1,4 +1,5 @@
 {
+    "python.languageServer": "None", // Disabling due to ty using its own full-featured language server
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
@@ -20,7 +21,8 @@
         "**/.coverage": true,
         "**/.pytest_cache": true,
         "**/.ruff_cache": true,
-        "**/.mypy_cache": true
+        "**/.mypy_cache": true,
+        "**/.ty_cache": true
     },
     "search.exclude": {
         "**/node_modules": true,
