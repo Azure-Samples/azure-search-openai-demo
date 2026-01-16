@@ -54,6 +54,7 @@
 
     "tooltips": {
         "submitQuestion": "Enviar pergunta",
+        "stopStreaming": "Parar transmissão",
         "askWithVoice": "Faça uma pergunta com voz",
         "stopRecording": "Parar de gravar a pergunta",
         "showThoughtProcess": "Mostrar o processo de pensamento",
