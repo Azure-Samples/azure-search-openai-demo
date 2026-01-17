@@ -35,7 +35,7 @@ class GlobalSettings:
     file_processors: dict[str, FileProcessor]
     azure_credential: ManagedIdentityCredential
     blob_manager: BlobManager
-    is_adls: bool
+    storage_is_adls: bool
     storage_account: str
     storage_container: str
     enable_global_document_access: bool
@@ -52,10 +52,11 @@ def configure_global_settings():
     use_local_html_parser = os.getenv("USE_LOCAL_HTML_PARSER", "false").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
     document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
-    is_adls = os.getenv("AZURE_CLOUD_INGESTION_IS_ADLS", "false").lower() == "true"
+    storage_is_adls = os.getenv("AZURE_CLOUD_INGESTION_IS_ADLS", "false").lower() == "true"
     enable_global_document_access = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "false").lower() == "true"
 
-    # Use ADLS storage account if configured, otherwise fall back to standard storage
+    # Cloud ingestion storage account (ADLS Gen2 when ACLs enabled, standard blob otherwise)
+    # Fallback to AZURE_STORAGE_ACCOUNT is for legacy deployments only - may be removed in future
     storage_account = os.getenv("AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT") or os.environ["AZURE_STORAGE_ACCOUNT"]
     storage_container = os.environ["AZURE_STORAGE_CONTAINER"]
 
@@ -89,7 +90,7 @@ def configure_global_settings():
         file_processors=file_processors,
         azure_credential=azure_credential,
         blob_manager=blob_manager,
-        is_adls=is_adls,
+        storage_is_adls=storage_is_adls,
         storage_account=storage_account,
         storage_container=storage_container,
         enable_global_document_access=enable_global_document_access,
@@ -241,7 +242,7 @@ async def process_document(data: dict[str, Any]) -> dict[str, Any]:
     # Extract ACLs if using ADLS Gen2 storage
     oids: list[str] = []
     groups: list[str] = []
-    if settings.is_adls:
+    if settings.storage_is_adls:
         oids, groups = await get_file_acls(blob_path_within_container)
 
     components = build_document_components(blob_path_within_container, pages, oids, groups)

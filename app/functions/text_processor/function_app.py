@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 class GlobalSettings:
     use_vectors: bool
     use_multimodal: bool
+    use_acls: bool
     embedding_dimensions: int
     file_processors: dict[str, FileProcessor]
     embedding_service: OpenAIEmbeddings | None
@@ -50,6 +51,7 @@ def configure_global_settings():
     # Environment configuration
     use_vectors = os.getenv("USE_VECTORS", "true").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
+    use_acls = os.getenv("USE_CLOUD_INGESTION_ACLS", "false").lower() == "true"
     embedding_dimensions = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", "3072"))
 
     # Conditionally required (based on feature flags)
@@ -105,6 +107,7 @@ def configure_global_settings():
     settings = GlobalSettings(
         use_vectors=use_vectors,
         use_multimodal=use_multimodal,
+        use_acls=use_acls,
         embedding_dimensions=embedding_dimensions,
         file_processors=file_processors,
         embedding_service=embedding_service,
@@ -271,10 +274,9 @@ async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
             "sourcefile": file_name,
             "parent_id": storage_url,
             **({"images": image_refs} if image_refs else {}),
-            # Include ACLs for document-level access control
-            # TODO: This should depend on whether the index supports ACLs - an env var
-            **({"oids": oids} if oids else {}),
-            **({"groups": groups} if groups else {}),
+            # Include ACLs for document-level access control (only when ACLs are enabled)
+            **({"oids": oids} if settings.use_acls and oids else {}),
+            **({"groups": groups} if settings.use_acls and groups else {}),
         }
 
         if embedding_vec is not None:

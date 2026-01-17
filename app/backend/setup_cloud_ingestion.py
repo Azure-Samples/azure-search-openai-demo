@@ -41,8 +41,8 @@ async def setup_cloud_ingestion_strategy(
     image_storage_container = os.environ.get("AZURE_IMAGESTORAGE_CONTAINER")
     search_embedding_field = os.environ["AZURE_SEARCH_FIELD_NAME_EMBEDDING"]
 
-    # Use ADLS storage account and resource group for cloud ingestion when ACLs are enabled
-    # This ensures the indexer can use the built-in ADLS Gen2 ACL extraction
+    # Cloud ingestion storage account (ADLS Gen2 when ACLs enabled, standard blob otherwise)
+    # Fallback to AZURE_STORAGE_ACCOUNT is for legacy deployments only - may be removed in future
     storage_account = os.getenv("AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT") or os.environ["AZURE_STORAGE_ACCOUNT"]
     storage_resource_group = (
         os.getenv("AZURE_CLOUD_INGESTION_STORAGE_RESOURCE_GROUP") or os.environ["AZURE_STORAGE_RESOURCE_GROUP"]

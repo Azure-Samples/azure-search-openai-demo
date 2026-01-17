@@ -91,7 +91,7 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
         file_processors=mock_file_processors,
         azure_credential=object(),
         blob_manager=MockBlobManager(),
-        is_adls=False,
+        storage_is_adls=False,
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
@@ -134,12 +134,89 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
 
 
 @pytest.mark.asyncio
+async def test_document_extractor_with_adls_acls(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Document extractor extracts ACLs when storage_is_adls=True."""
+
+    class StubParser:
+        async def parse(self, content: Any):
+            yield document_extractor.Page(page_num=0, offset=0, text="Test content", images=[])
+
+    # Mock file processors and blob manager
+    mock_file_processors = {
+        ".pdf": FileProcessor(StubParser(), None),
+    }
+
+    class MockBlobManager:
+        async def download_blob(self, blob_path: str):
+            return (b"pdf-bytes", {})
+
+    # Mock DataLakeServiceClient for ACL retrieval
+    class MockFileClient:
+        async def get_access_control(self, upn: bool = False):
+            return {"acl": "user::rwx,user:user-oid-1:r--,group:group-id-1:r-x,other::---"}
+
+    class MockFileSystemClient:
+        def get_file_client(self, path):
+            return MockFileClient()
+
+    class MockServiceClient:
+        def get_file_system_client(self, container):
+            return MockFileSystemClient()
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+    monkeypatch.setattr(
+        document_extractor,
+        "DataLakeServiceClient",
+        lambda account_url, credential: MockServiceClient(),
+    )
+
+    mock_settings = document_extractor.GlobalSettings(
+        file_processors=mock_file_processors,
+        azure_credential=object(),
+        blob_manager=MockBlobManager(),
+        storage_is_adls=True,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
+    )
+    monkeypatch.setattr(document_extractor, "settings", mock_settings)
+
+    request_payload = {
+        "values": [
+            {
+                "recordId": "record-1",
+                "data": {
+                    "metadata_storage_path": "https://account.blob.core.windows.net/container/sample.pdf",
+                },
+            }
+        ]
+    }
+    response = await document_extractor.extract_document(build_request(request_payload))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body().decode("utf-8"))
+    values = body["values"]
+    assert len(values) == 1
+    result = values[0]
+
+    data = result["data"]
+    # Verify ACL fields are populated from ADLS
+    assert data["oids"] == ["user-oid-1"]
+    assert data["groups"] == ["group-id-1"]
+
+
+@pytest.mark.asyncio
 async def test_document_extractor_requires_single_record(monkeypatch: pytest.MonkeyPatch) -> None:
     mock_settings = document_extractor.GlobalSettings(
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
         blob_manager=object(),
-        is_adls=False,
+        storage_is_adls=False,
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
@@ -160,7 +237,7 @@ async def test_document_extractor_handles_processing_exception(monkeypatch: pyte
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
         blob_manager=object(),
-        is_adls=False,
+        storage_is_adls=False,
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
@@ -212,7 +289,7 @@ async def test_document_extractor_process_document_http_error(monkeypatch: pytes
         file_processors=mock_file_processors,
         azure_credential=object(),
         blob_manager=MockBlobManager(),
-        is_adls=False,
+        storage_is_adls=False,
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
@@ -421,6 +498,7 @@ async def test_text_processor_builds_chunk_with_caption(monkeypatch: pytest.Monk
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=3,
         file_processors=mock_file_processors,
         embedding_service=StubEmbeddingService(),
@@ -575,7 +653,7 @@ def setup_acl_mocks(monkeypatch: pytest.MonkeyPatch, acl_string: str, enable_glo
         file_processors={},
         azure_credential=object(),
         blob_manager=object(),
-        is_adls=True,
+        storage_is_adls=True,
         storage_account="account",
         storage_container="container",
         enable_global_document_access=enable_global_document_access,
@@ -671,6 +749,23 @@ async def test_get_file_acls_other_no_read_does_not_grant_global(monkeypatch: py
 
 
 @pytest.mark.asyncio
+async def test_get_file_acls_malformed_acl_entry(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls handles malformed ACL entries gracefully."""
+    # Include a malformed entry (missing a colon) mixed with valid entries
+    setup_acl_mocks(
+        monkeypatch,
+        "user::rwx,malformed_entry,user:user-oid-1:r--,invalid:entry,group:group-id-1:r-x",
+        enable_global_document_access=False,
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    # Should only include valid entries
+    assert oids == ["user-oid-1"]
+    assert groups == ["group-id-1"]
+
+
+@pytest.mark.asyncio
 async def test_get_file_acls_handles_exception(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test that get_file_acls returns empty lists on exception."""
 
@@ -694,7 +789,7 @@ async def test_get_file_acls_handles_exception(monkeypatch: pytest.MonkeyPatch) 
         file_processors={},
         azure_credential=object(),
         blob_manager=object(),
-        is_adls=True,
+        storage_is_adls=True,
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
@@ -791,6 +886,7 @@ async def test_text_processor_invalid_json(monkeypatch: pytest.MonkeyPatch) -> N
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,
         file_processors={},
@@ -885,6 +981,7 @@ async def test_text_processor_no_sections(monkeypatch: pytest.MonkeyPatch) -> No
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,
         file_processors=mock_file_processors,
@@ -932,6 +1029,7 @@ async def test_text_processor_embeddings_not_initialized(monkeypatch: pytest.Mon
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,  # Request embeddings
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,  # But no service
         file_processors=mock_file_processors,
@@ -976,6 +1074,7 @@ async def test_text_processor_empty_chunk_skipped(monkeypatch: pytest.MonkeyPatc
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,
         file_processors=mock_file_processors,
@@ -1026,6 +1125,7 @@ async def test_text_processor_with_multimodal_embeddings(monkeypatch: pytest.Mon
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=True,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,
         file_processors=mock_file_processors,
@@ -1095,6 +1195,7 @@ async def test_text_processor_embedding_dimension_mismatch(monkeypatch: pytest.M
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,  # Expecting 1536 dimensions
         embedding_service=mock_embedding_service,
         file_processors=mock_file_processors,
@@ -1147,6 +1248,7 @@ async def test_text_processor_embeddings_missing_warning(monkeypatch: pytest.Mon
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=mock_embedding_service,
         file_processors=mock_file_processors,
@@ -1199,6 +1301,7 @@ async def test_text_processor_process_document_handles_missing_figures(
     text_processor.settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         file_processors={".pdf": stub_processor},
         embedding_service=None,
@@ -1238,6 +1341,7 @@ async def test_text_processor_process_document_returns_empty_when_no_pages(monke
     text_processor.settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         file_processors={},
         embedding_service=None,

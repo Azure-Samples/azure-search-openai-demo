@@ -16,7 +16,6 @@ from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
 from prepdocslib.listfilestrategy import (
-    ListFileStrategy,
     LocalListFileStrategy,
 )
 from prepdocslib.servicesetup import (
@@ -50,17 +49,13 @@ async def check_search_service_connectivity(search_service: str) -> bool:
 
 def setup_list_file_strategy(
     azure_credential: AsyncTokenCredential,
-    local_files: Optional[str],
+    local_files: str,
     enable_global_documents: bool = False,
 ):
-    list_file_strategy: ListFileStrategy
-    if local_files:
-        logger.info("Using local files: %s", local_files)
-        list_file_strategy = LocalListFileStrategy(
-            path_pattern=local_files, enable_global_documents=enable_global_documents
-        )
-    else:
-        raise ValueError("local_files must be provided.")
+    logger.info("Using local files: %s", local_files)
+    list_file_strategy = LocalListFileStrategy(
+        path_pattern=local_files, enable_global_documents=enable_global_documents
+    )
     return list_file_strategy
 
 
