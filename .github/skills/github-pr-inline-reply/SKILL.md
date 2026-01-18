@@ -124,3 +124,8 @@ To resolve (mark as resolved) PR review threads, use the GraphQL API:
    ```
 
 The thread ID starts with `PRRT_` and can be found in the GraphQL query response.
+
+Note: This skill can be removed once the GitHub MCP server has added built-in support for replying to PR review comments and resolving threads.
+See:
+https://github.com/github/github-mcp-server/issues/1323
+https://github.com/github/github-mcp-server/issues/1768
