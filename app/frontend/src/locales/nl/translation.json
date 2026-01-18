@@ -2,7 +2,6 @@
     "pageTitle": "Azure OpenAI + AI Search",
     "headerTitle": "Azure OpenAI + AI Search",
     "chat": "Chat",
-    "qa": "Stel een vraag",
     "login": "Inloggen",
     "logout": "Uitloggen",
     "clearChat": "Chat wissen",
@@ -55,6 +54,7 @@
 
     "tooltips": {
         "submitQuestion": "Vraag indienen",
+        "stopStreaming": "Stop streaming",
         "askWithVoice": "Vraag stellen met stem",
         "stopRecording": "Opname stoppen",
         "showThoughtProcess": "Denkproces tonen",

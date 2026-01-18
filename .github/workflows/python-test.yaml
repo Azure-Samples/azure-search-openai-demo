@@ -56,12 +56,8 @@ jobs:
             uv pip install -r requirements-dev.txt
         - name: Lint with ruff
           run: ruff check .
-        - name: Check types with mypy
-          run: |
-            cd scripts/
-            mypy . --config-file=../pyproject.toml
-            cd ../app/backend/
-            mypy . --config-file=../../pyproject.toml
+        - name: Check types with ty
+          run: ty check
         - name: Check formatting with black
           run: black . --check --verbose
         - name: Run Python tests
@@ -82,7 +78,7 @@ jobs:
             pytest tests/e2e.py --tracing=retain-on-failure
         - name: Upload test artifacts
           if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
-          uses: actions/upload-artifact@v5
+          uses: actions/upload-artifact@v6
           with:
             name: playwright-traces${{ matrix.python_version }}
             path: test-results

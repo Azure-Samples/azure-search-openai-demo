@@ -2,7 +2,6 @@
     "pageTitle": "Azure OpenAI + AI Search",
     "headerTitle": "Azure OpenAI + AI Search",
     "chat": "Chat",
-    "qa": "Haz una pregunta",
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
     "clearChat": "Borrar chat",
@@ -55,6 +54,7 @@
 
     "tooltips": {
         "submitQuestion": "Enviar pregunta",
+        "stopStreaming": "Detener transmisión",
         "askWithVoice": "Realizar pregunta con voz",
         "stopRecording": "Detener la grabación de la pregunta",
         "showThoughtProcess": "Mostrar proceso de pensamiento",

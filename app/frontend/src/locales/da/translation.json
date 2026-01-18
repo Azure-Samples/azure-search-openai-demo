@@ -2,7 +2,6 @@
     "pageTitle": "Azure OpenAI + AI Search",
     "headerTitle": "Azure OpenAI + AI Search",
     "chat": "Chat",
-    "qa": "Stil et spørgsmål",
     "login": "Log ind",
     "logout": "Log ud",
     "clearChat": "Ryd chat",
@@ -53,6 +52,7 @@
     "followupQuestions": "Opfølgende spørgsmål:",
     "tooltips": {
         "submitQuestion": "Send spørgsmål",
+        "stopStreaming": "Stop streaming",
         "askWithVoice": "Indtal spørgsmål",
         "stopRecording": "Stop optagelse af spørgsmål",
         "showThoughtProcess": "Vis tankeproces",

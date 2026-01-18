@@ -2,7 +2,6 @@
     "pageTitle": "Azure OpenAI + AI Search",
     "headerTitle": "Azure OpenAI + AI Search",
     "chat": "チャット",
-    "qa": "一問一答",
     "login": "ログイン",
     "logout": "ログアウト",
     "clearChat": "チャットをクリア",
@@ -55,6 +54,7 @@
 
     "tooltips":{
         "submitQuestion": "質問を送信",
+        "stopStreaming": "ストリーミングを停止",
         "askWithVoice": "音声で質問",
         "stopRecording": "質問の記録を停止",
         "showThoughtProcess": "思考プロセスの表示",

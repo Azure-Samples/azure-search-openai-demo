@@ -107,7 +107,7 @@ async def get_chat_history_sessions(auth_claims: dict[str, Any]):
         sessions = []
         try:
             page = await pager.__anext__()
-            continuation_token = pager.continuation_token  # type: ignore
+            continuation_token = pager.continuation_token
 
             async for item in page:
                 sessions.append(
