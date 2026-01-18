@@ -368,7 +368,6 @@ If you already have an Azure Data Lake Storage Gen2 account with documents and A
 
    The search indexer will be configured to use your existing ADLS account as the data source.
 
-
 ### Using the Add Documents API
 
 Manually enable document level access control on a search index and manually set access control values using the [manageacl.py](/scripts/manageacl.py) script.
