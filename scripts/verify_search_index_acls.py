@@ -23,7 +23,7 @@ async def main():
     search_endpoint = f"https://{search_service}.search.windows.net"
 
     # Get credential
-    print("Setting up Azure credential using AzureDeveloperCliCredential with tenant_id %s", tenant_id)
+    print(f"Setting up Azure credential using AzureDeveloperCliCredential with tenant_id {tenant_id}")
     credential = AzureDeveloperCliCredential(tenant_id=tenant_id)
 
     # Get user token for ACL filtering (no "Bearer " prefix needed)
@@ -53,7 +53,7 @@ async def main():
         for doc in docs_no_acl:
             print(f"  - {doc.get('sourcefile')}")
 
-        # Search WITH user token-
+        # Search WITH user token:
         # This enables automatic ACL filtering based on the user's identity
         print("\n=== Search with ACL header and token (x-ms-query-source-authorization) ===")
         results = await search_client.search(

@@ -274,9 +274,11 @@ async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
             "sourcefile": file_name,
             "parent_id": storage_url,
             **({"images": image_refs} if image_refs else {}),
-            # Include ACLs for document-level access control (only when ACLs are enabled)
-            **({"oids": oids} if settings.use_acls and oids else {}),
-            **({"groups": groups} if settings.use_acls and groups else {}),
+            # Include ACLs for document-level access control (only when ACLs are enabled).
+            # When ACLs are enabled but there are no specific OIDs/groups, include empty arrays
+            # so downstream consumers can distinguish "no ACLs" from "ACLs not extracted/disabled".
+            **({"oids": oids or []} if settings.use_acls else {}),
+            **({"groups": groups or []} if settings.use_acls else {}),
         }
 
         if embedding_vec is not None:

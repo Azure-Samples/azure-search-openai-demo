@@ -1354,6 +1354,199 @@ async def test_text_processor_process_document_returns_empty_when_no_pages(monke
     text_processor.settings = None
 
 
+@pytest.mark.asyncio
+async def test_text_processor_includes_acls_when_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Text processor includes oids and groups in chunks when use_acls is enabled."""
+
+    class StubSplitter:
+        def split_pages(self, pages: list[Any]):
+            for page in pages:
+                yield ChunkStub(page_num=page.page_num, text=page.text)
+
+    # Set up mock file processors with stub splitter
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), StubSplitter()),
+    }
+
+    # Set up mock settings with use_acls=True
+    mock_settings = text_processor.GlobalSettings(
+        use_vectors=False,
+        use_multimodal=False,
+        use_acls=True,
+        embedding_dimensions=3,
+        file_processors=mock_file_processors,
+        embedding_service=None,
+    )
+    monkeypatch.setattr(text_processor, "settings", mock_settings)
+
+    request_payload = {
+        "values": [
+            {
+                "recordId": "doc-with-acls",
+                "data": {
+                    "consolidated_document": {
+                        "file_name": "secure.pdf",
+                        "storageUrl": "https://storage.example.com/content/secure.pdf",
+                        "pages": [
+                            {"page_num": 0, "text": "Confidential content."},
+                        ],
+                        "figures": [],
+                        # ACL fields are part of consolidated_document (from shaper skill)
+                        "oids": ["user-oid-123", "user-oid-456"],
+                        "groups": ["group-id-abc"],
+                    },
+                    "enriched_descriptions": [],
+                    "enriched_urls": [],
+                    "enriched_embeddings": [],
+                },
+            }
+        ]
+    }
+
+    response = await text_processor.process_text_entry(build_request(request_payload))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body().decode("utf-8"))
+    values = body["values"]
+    assert len(values) == 1
+    result = values[0]
+    assert result["recordId"] == "doc-with-acls"
+
+    data = result["data"]
+    chunks = data["chunks"]
+    assert len(chunks) == 1
+    chunk = chunks[0]
+    # Verify ACLs are included in the chunk
+    assert chunk["oids"] == ["user-oid-123", "user-oid-456"]
+    assert chunk["groups"] == ["group-id-abc"]
+
+
+@pytest.mark.asyncio
+async def test_text_processor_includes_empty_acls_when_enabled_but_none_found(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Text processor includes empty oids/groups arrays when use_acls is enabled but no ACLs found."""
+
+    class StubSplitter:
+        def split_pages(self, pages: list[Any]):
+            for page in pages:
+                yield ChunkStub(page_num=page.page_num, text=page.text)
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), StubSplitter()),
+    }
+
+    mock_settings = text_processor.GlobalSettings(
+        use_vectors=False,
+        use_multimodal=False,
+        use_acls=True,
+        embedding_dimensions=3,
+        file_processors=mock_file_processors,
+        embedding_service=None,
+    )
+    monkeypatch.setattr(text_processor, "settings", mock_settings)
+
+    request_payload = {
+        "values": [
+            {
+                "recordId": "doc-no-acls",
+                "data": {
+                    "consolidated_document": {
+                        "file_name": "public.pdf",
+                        "storageUrl": "https://storage.example.com/content/public.pdf",
+                        "pages": [
+                            {"page_num": 0, "text": "Public content."},
+                        ],
+                        "figures": [],
+                    },
+                    "enriched_descriptions": [],
+                    "enriched_urls": [],
+                    "enriched_embeddings": [],
+                    # No ACL fields provided (or empty)
+                },
+            }
+        ]
+    }
+
+    response = await text_processor.process_text_entry(build_request(request_payload))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body().decode("utf-8"))
+    values = body["values"]
+    assert len(values) == 1
+    result = values[0]
+
+    data = result["data"]
+    chunks = data["chunks"]
+    assert len(chunks) == 1
+    chunk = chunks[0]
+    # Verify empty ACL arrays are included to distinguish "no ACLs" from "ACLs not extracted"
+    assert chunk["oids"] == []
+    assert chunk["groups"] == []
+
+
+@pytest.mark.asyncio
+async def test_text_processor_excludes_acls_when_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Text processor does not include oids/groups in chunks when use_acls is disabled."""
+
+    class StubSplitter:
+        def split_pages(self, pages: list[Any]):
+            for page in pages:
+                yield ChunkStub(page_num=page.page_num, text=page.text)
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), StubSplitter()),
+    }
+
+    mock_settings = text_processor.GlobalSettings(
+        use_vectors=False,
+        use_multimodal=False,
+        use_acls=False,  # ACLs disabled
+        embedding_dimensions=3,
+        file_processors=mock_file_processors,
+        embedding_service=None,
+    )
+    monkeypatch.setattr(text_processor, "settings", mock_settings)
+
+    request_payload = {
+        "values": [
+            {
+                "recordId": "doc-acls-disabled",
+                "data": {
+                    "consolidated_document": {
+                        "file_name": "noauth.pdf",
+                        "storageUrl": "https://storage.example.com/content/noauth.pdf",
+                        "pages": [
+                            {"page_num": 0, "text": "Content without auth."},
+                        ],
+                        "figures": [],
+                    },
+                    "enriched_descriptions": [],
+                    "enriched_urls": [],
+                    "enriched_embeddings": [],
+                    # ACL fields present in input but should be ignored
+                    "oids": ["user-oid-123"],
+                    "groups": ["group-id-abc"],
+                },
+            }
+        ]
+    }
+
+    response = await text_processor.process_text_entry(build_request(request_payload))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body().decode("utf-8"))
+    values = body["values"]
+    assert len(values) == 1
+    result = values[0]
+
+    data = result["data"]
+    chunks = data["chunks"]
+    assert len(chunks) == 1
+    chunk = chunks[0]
+    # Verify ACL fields are NOT included when use_acls is disabled
+    assert "oids" not in chunk
+    assert "groups" not in chunk
+
+
 def test_text_processor_module_init_logs_warning(
     monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
 ) -> None:
