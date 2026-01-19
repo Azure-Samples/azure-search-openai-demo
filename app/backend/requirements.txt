@@ -129,7 +129,7 @@ httpx==0.28.1
     #   microsoft-kiota-http
     #   msgraph-core
     #   openai
-hypercorn==0.17.3
+hypercorn==0.18.0
     # via quart
 hyperframe==6.1.0
     # via h2
