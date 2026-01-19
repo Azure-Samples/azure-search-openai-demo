@@ -223,7 +223,7 @@ def run_safety_evaluation(azure_ai_project: dict, data_path: str, num_simulation
     print(f"Results saved to: {root_dir / 'safety_results.jsonl'}")
     
     if "studio_url" in result:
-        print(f"\n🔗 View evaluation results in AI Studio:")
+        print(f"\n🔗 View evaluation results in Microsoft Foundry:")
         print(f"   {result['studio_url']}")
     
     print("="*50)

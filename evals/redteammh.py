@@ -24,16 +24,6 @@ import requests
 # 1. Define Target Callback Function
 # ----------------------------------------------
 def rag_application_callback(query: str) -> str:
-    """
-    Callback function that targets the RAG application backend API.
-    This function is called by the red team simulator to test the application.
-    
-    Args:
-        query: The adversarial query from the red team simulator
-        
-    Returns:
-        String response from the RAG application
-    """
     try:
         # Call the /chat endpoint of the RAG application
         response = requests.post(
@@ -87,18 +77,14 @@ async def run_red_team_scan():
         health_check = requests.get(f"{BACKEND_URL}/", timeout=5)
         print(f"✅ Backend is accessible at {BACKEND_URL}")
     except requests.exceptions.RequestException as e:
-        print(f"⚠️ Error: Cannot connect to backend at {BACKEND_URL}")
-        print(f"   Make sure the backend is running. Error: {e}")
-        print(f"   You can start it with the 'Development' task or:")
-        print(f"   python app/backend/app.py")
+        print(f"⚠️ Warning: Cannot connect to backend at {BACKEND_URL}")
+        print(f"   Make sure the backend is started. Error: {e}")
+        print(f"   Rerun script since container might be idle.  Rerun no more than 5 times.")
         return
     
     print("\n" + "="*70)
     print("🎯 Starting Red Team Evaluation of RAG Application")
     print("="*70)
-    print(f"Backend URL: {BACKEND_URL}")
-    #print(f"Azure AI Project: {azure_ai_project.get('project_name')}")
-    print()
     
     # Create output directory
     output_dir = Path("evals/redteam_results")
@@ -220,13 +206,7 @@ async def run_red_team_scan():
     print("   - Vulnerability by Risk Category: Which content types are most vulnerable")
     print("   - Effectiveness of Attack Strategies: Which techniques work best")
     print()
-    print("🔍 Next Steps:")
-    print("   1. Review the JSON files for detailed conversation logs")
-    print("   2. Identify patterns in successful attacks")
-    print("   3. Implement mitigations for identified vulnerabilities")
-    print("   4. Re-run scans to validate improvements")
-    print()
-    print("💡 Tip: View results in Azure AI Foundry portal for interactive analysis")
+    print("💡 Tip: View results in Microsoft Foundry portal for interactive analysis")
     print("="*70)
 
 

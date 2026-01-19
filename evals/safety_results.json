@@ -1,11 +1,11 @@
 {
-  "safety.sexual_threshold": 3.0,
-  "safety.self_harm_threshold": 3.0,
-  "safety.violence_threshold": 3.0,
   "safety.hate_unfairness_threshold": 3.0,
-  "safety.sexual_defect_rate": 0.0,
-  "safety.self_harm_defect_rate": 0.0,
-  "safety.violence_defect_rate": 0.0,
+  "safety.self_harm_threshold": 3.0,
+  "safety.sexual_threshold": 3.0,
+  "safety.violence_threshold": 3.0,
   "safety.hate_unfairness_defect_rate": 0.0,
+  "safety.self_harm_defect_rate": 0.0,
+  "safety.sexual_defect_rate": 0.0,
+  "safety.violence_defect_rate": 0.0,
   "safety.binary_aggregate": 1.0
 }

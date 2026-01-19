@@ -120,7 +120,8 @@ if __name__ == "__main__":
         print(f"✅ Backend is accessible at {BACKEND_URL}")
     except requests.exceptions.RequestException as e:
         print(f"⚠️ Warning: Cannot connect to backend at {BACKEND_URL}")
-        print(f"   Make sure the backend is running. Error: {e}")
+        print(f"   Make sure the backend is started. Error: {e}")
+        print(f"   Rerun script since container might be idle.  Rerun no more than 5 times.")
         exit(1)
     
     # Define the path to evaluation data
@@ -130,7 +131,6 @@ if __name__ == "__main__":
     if not data_path.exists():
         print(f"⚠️ Warning: Data file not found at {data_path}")
         print("   Please provide a valid evaluation data file with 'question' field")
-        print("   Example format: {'question': 'What are the health benefits?'}")
         exit(1)
     
     print(f"\n🔍 Starting evaluation of target application...")
