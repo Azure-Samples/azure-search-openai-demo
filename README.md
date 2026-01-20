@@ -14,6 +14,7 @@ products:
 - azure
 page_type: sample
 urlFragment: azure-search-openai-demo
+test
 ---
 -->
 
