@@ -235,6 +235,28 @@ print(token.token)
 
 ### Troubleshooting
 
+#### Verifying ACL filtering on the search index
+
+To verify that ACL filtering is working correctly on your search index, use the [verify_search_index_acls.py](/scripts/verify_search_index_acls.py) script. This script tests three different search scenarios:
+
+1. **Search without ACL headers/tokens**: Returns only documents accessible without user credentials (documents without ACL restrictions or with global access `["all"]`)
+2. **Search with user token**: Uses `x-ms-query-source-authorization` header to filter results based on the current user's permissions
+3. **Search with elevated read**: Uses `x-ms-enable-elevated-read` header to bypass ACL filtering and show all documents with their `oids` and `groups` fields (useful for debugging)
+
+Run the script after deploying and ingesting documents:
+
+```shell
+python scripts/verify_search_index_acls.py
+```
+
+Compare the results between the three scenarios to verify that:
+
+- Documents with ACLs are being filtered correctly based on user permissions
+- The `oids` and `groups` fields are populated correctly for each document
+- Global access documents (with `["all"]` values) are accessible to all authenticated users
+
+#### Common issues
+
 - If your primary tenant restricts the ability to create Entra applications, you'll need to use a separate tenant to create the Entra applications. You can create a new tenant by following [these instructions](https://learn.microsoft.com/entra/identity-platform/quickstart-create-new-tenant). Then run `azd env set AZURE_AUTH_TENANT_ID <YOUR-AUTH-TENANT-ID>` before running `azd up`.
 - If any Entra apps need to be recreated, you can avoid redeploying the app by [changing the app settings in the portal](https://learn.microsoft.com/azure/app-service/configure-common?tabs=portal#configure-app-settings). Any of the [required environment variables](#environment-variables-reference) can be changed. Once the environment variables have been changed, restart the web app.
 - It's possible a consent dialog will not appear when you log into the app for the first time. If this consent dialog doesn't appear, you will be unable to use the security filters because the API server app does not have permission to read your authorization information. A consent dialog can be forced to appear by adding `"prompt": "consent"` to the `loginRequest` property in [`authentication.py`](/app/backend/core/authentication.py)
