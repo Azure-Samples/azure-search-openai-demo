@@ -78,7 +78,7 @@ certifi==2024.7.4
     #   httpx
     #   msrest
     #   requests
-cffi==1.17.0
+cffi==2.0.0
     # via cryptography
 charset-normalizer==3.3.2
     # via requests
@@ -129,7 +129,7 @@ httpx==0.28.1
     #   microsoft-kiota-http
     #   msgraph-core
     #   openai
-hypercorn==0.17.3
+hypercorn==0.18.0
     # via quart
 hyperframe==6.1.0
     # via h2
@@ -398,7 +398,7 @@ tomli==2.3.0
     # via hypercorn
 tqdm==4.66.5
     # via openai
-types-beautifulsoup4==4.12.0.20240511
+types-beautifulsoup4==4.12.0.20250516
     # via -r requirements.in
 types-html5lib==1.1.11.20251014
     # via types-beautifulsoup4
