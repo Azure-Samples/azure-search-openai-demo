@@ -1,6 +1,9 @@
 {
     "name": "Azure Search OpenAI Demo",
-    "image": "mcr.microsoft.com/devcontainers/python:3.13-bookworm",
+    // Workaround for https://github.com/devcontainers/images/issues/1752
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
     "features": {
         "ghcr.io/devcontainers/features/node:1": {
             // This should match the version of Node.js in Github Actions workflows
