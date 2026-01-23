@@ -75,8 +75,9 @@ You can also customize the search service (new or existing) for non-English sear
 
 > [!WARNING]
 > If using a different resource group, the following RBAC roles may not be assigned correctly and may need to be manually assigned:
-> - Backend identity: `Search Index Data Reader`, `Search Index Data Contributor`
-> - Signed-in user (`principalId`): `Search Index Data Reader`, `Search Index Data Contributor`, `Search Service Contributor`
+>
+> * Backend identity: `Search Index Data Reader`, `Search Index Data Contributor`
+> * Signed-in user (`principalId`): `Search Index Data Reader`, `Search Index Data Contributor`, `Search Service Contributor`
 
 ## Azure App Service Plan and App Service resources
 
