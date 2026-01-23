@@ -1051,7 +1051,7 @@ module speechRoleUser 'core/security/role.bicep' = {
   name: 'speech-role-user'
   params: {
     principalId: principalId
-    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
+    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447' // Cognitive Services Speech User
     principalType: principalType
   }
 }
@@ -1251,7 +1251,7 @@ module speechRoleBackend 'core/security/role.bicep' = {
     principalId: (deploymentTarget == 'appservice')
       ? backend!.outputs.identityPrincipalId
       : acaBackend!.outputs.identityPrincipalId
-    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447'
+    roleDefinitionId: 'f2dc8367-1007-4938-bd23-fe263f013447' // Cognitive Services Speech User
     principalType: 'ServicePrincipal'
   }
 }

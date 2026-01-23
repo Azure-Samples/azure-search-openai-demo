@@ -64,7 +64,7 @@ When you run `azd up` after and are prompted to select a value for `openAiResour
 1. Run `azd env set AZURE_SEARCH_SERVICE_RESOURCE_GROUP {Name of existing resource group with ACS service}`
 1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
   then run `azd env set AZURE_SEARCH_SERVICE_LOCATION {Location of existing service}`
-1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. If you specify the free tier, then your app will no longer be able to use semantic ranker. Be advised that [search SKUs cannot be changed](https://learn.microsoft.com/azure/search/search-sku-tier#tier-upgrade-or-downgrade). ([See other possible SKU values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
+1. If the search service's SKU is not standard, then run `azd env set AZURE_SEARCH_SERVICE_SKU {Name of SKU}`. If you specify the free tier, then your app will no longer be able to use semantic ranker. You can [switch between Basic, S1, S2, and S3 tiers](https://learn.microsoft.com/azure/search/search-capacity-planning#change-your-pricing-tier), but you can't switch to or from Free, S3HD, L1, or L2. ([See other possible SKU values](https://learn.microsoft.com/azure/templates/microsoft.search/searchservices?pivots=deployment-language-bicep#sku))
 1. If you have an existing index that is set up with all the expected fields, then run `azd env set AZURE_SEARCH_INDEX {Name of existing index}`. Otherwise, the `azd up` command will create a new index.
 
 You can also customize the search service (new or existing) for non-English searches:
@@ -74,7 +74,9 @@ You can also customize the search service (new or existing) for non-English sear
 1. To configure the name of the analyzer to use for a searchable text field to a value other than "en.microsoft", run `azd env set AZURE_SEARCH_ANALYZER_NAME {Name of analyzer name}`. ([See other possible values](https://learn.microsoft.com/dotnet/api/microsoft.azure.search.models.field.analyzer?view=azure-dotnet-legacy&viewFallbackFrom=azure-dotnet))
 
 > [!WARNING]
-> If using a different resource group, the following RBAC roles may not be assigned correctly: `Search Index Data Reader`, `Search Index Data Contributor`, and `Search Service Contributor` for the backend and user. You may need to manually assign these roles.
+> If using a different resource group, the following RBAC roles may not be assigned correctly and may need to be manually assigned:
+> - Backend identity: `Search Index Data Reader`, `Search Index Data Contributor`
+> - Signed-in user (`principalId`): `Search Index Data Reader`, `Search Index Data Contributor`, `Search Service Contributor`
 
 ## Azure App Service Plan and App Service resources
 
@@ -114,7 +116,7 @@ If your existing resource is in one of those regions, then you can re-use it by 
 1. If the speech service's SKU is not "S0", then run `azd env set AZURE_SPEECH_SERVICE_SKU {Name of SKU}`.
 
 > [!WARNING]
-> If using a different resource group, the following RBAC roles may not be assigned correctly: `Cognitive Services User` for the backend and user. You may need to manually assign these roles.
+> If using a different resource group, the following RBAC roles may not be assigned correctly: `Cognitive Services Speech User` for the backend and user. You may need to manually assign these roles.
 
 ## Azure Storage Account
 
