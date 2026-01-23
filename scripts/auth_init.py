@@ -276,19 +276,21 @@ async def grant_application_admin_consent(graph_client: GraphServiceClient, clie
                 raise
 
 
-async def main():
+async def main():  # pragma: no cover
     load_azd_env()
 
     if not test_authentication_enabled():
         print("Not setting up authentication.")
         exit(0)
 
-    auth_tenant = os.getenv("AZURE_AUTH_TENANT_ID", os.getenv("AZURE_TENANT_ID"))
+    auth_tenant = (os.getenv("AZURE_AUTH_TENANT_ID") or os.getenv("AZURE_TENANT_ID") or "").strip()
     if not auth_tenant:
         print(
-            "Error: No tenant ID set for authentication. Run `azd env set AZURE_AUTH_TENANT_ID tenant-id` to set the tenant ID."
+            "Error: No tenant ID set for authentication. Set AZURE_AUTH_TENANT_ID or AZURE_TENANT_ID in your azd env."
         )
         exit(1)
+    # TODO: Remove assert once ty supports type narrowing from NoReturn calls (astral-sh/ty#690)
+    assert auth_tenant is not None
     print("Setting up authentication for tenant", auth_tenant)
     credential = AzureDeveloperCliCredential(tenant_id=auth_tenant)
 

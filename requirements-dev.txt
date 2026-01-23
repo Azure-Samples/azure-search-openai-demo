@@ -1,6 +1,6 @@
 -r app/backend/requirements.txt
 ruff>=0.14.2
-black
+black>=26.1.0
 pytest
 pytest-asyncio
 pytest-snapshot
@@ -11,6 +11,6 @@ pytest-playwright
 pytest-snapshot
 pre-commit
 pip-tools
-mypy==1.14.1
+ty>=0.0.11
 diff_cover
 axe-playwright-python

@@ -145,7 +145,12 @@ class ManageAcl:
 
     async def get_documents(self, search_client: SearchClient):
         filter = f"storageUrl eq '{self.url}'"
-        documents = await search_client.search("", filter=filter, select=["id", self.acl_type])
+        documents = await search_client.search(
+            "",
+            filter=filter,
+            select=["id", self.acl_type],
+            x_ms_enable_elevated_read=True,
+        )
         found_documents = []
         async for document in documents:
             found_documents.append(document)
@@ -192,7 +197,12 @@ class ManageAcl:
 
     async def update_storage_urls(self, search_client: SearchClient):
         filter = "storageUrl eq ''"
-        documents = await search_client.search("", filter=filter, select=["id", "storageUrl", "oids", "sourcefile"])
+        documents = await search_client.search(
+            "",
+            filter=filter,
+            select=["id", "storageUrl", "oids", "sourcefile"],
+            x_ms_enable_elevated_read=True,
+        )
         found_documents = []
         documents_to_merge = []
         async for document in documents:
@@ -226,7 +236,12 @@ class ManageAcl:
         while get_next_results:
             total_results_size = 0
             results = await search_client.search(
-                search_text="*", top=100000, filter=filter, session_id=session_id, select=["id"]
+                search_text="*",
+                top=100000,
+                filter=filter,
+                session_id=session_id,
+                select=["id"],
+                x_ms_enable_elevated_read=True,
             )
             results_by_page = results.by_page()
             async for page in results_by_page:

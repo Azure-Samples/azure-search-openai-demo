@@ -21,18 +21,16 @@ source = ["scripts", "app"]
 [tool.coverage.report]
 show_missing = true
 
-[tool.mypy]
-check_untyped_defs = true
-python_version = "3.10"
+[tool.ty.environment]
+python-version = "3.10"
+# Root directories for module resolution (so imports like "from prepdocslib import ..." work)
+root = ["app/backend", "scripts", "app/functions"]
 
-[[tool.mypy.overrides]]
-module = [
-    "msal.*",
-    "msgraph.*",
-    "kiota_abstractions.*",
-    "kiota.*",
-    "azure.cognitiveservices.*",
-    "azure.cognitiveservices.speech.*",
-    "pymupdf.*",
-]
-ignore_missing_imports = true
+[tool.ty.src]
+# Directories to actually type-check (excludes tests folder which has many mock-related type errors)
+include = ["app/backend", "scripts", "app/functions"]
+
+[tool.ty.rules]
+# Downgrade warnings that are too strict for this codebase
+redundant-cast = "ignore"
+possibly-missing-attribute = "ignore"

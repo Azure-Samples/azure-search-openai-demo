@@ -117,7 +117,7 @@ def setup_openai_client(
             )
         openai_client = AsyncOpenAI(
             base_url=base_url,
-            api_key=api_key_or_token,  # type: ignore[arg-type]
+            api_key=api_key_or_token,
         )
     elif openai_host == OpenAIHost.LOCAL:
         logger.info("OPENAI_HOST is local, setting up local OpenAI client for OPENAI_BASE_URL with no key")
