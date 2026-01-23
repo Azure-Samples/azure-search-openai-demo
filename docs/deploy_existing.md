@@ -11,7 +11,12 @@ You should set these values before running `azd up`. Once you've set them, retur
 * [Azure AI Vision resources](#azure-ai-vision-resources)
 * [Azure Document Intelligence resource](#azure-document-intelligence-resource)
 * [Azure Speech resource](#azure-speech-resource)
-* [Other Azure resources](#other-azure-resources)
+* [Azure Storage Account](#azure-storage-account)
+
+> [!NOTE]
+> When you specify an existing resource, the Bicep templates will still attempt to re-provision or update the service. This means some service parameters may be overridden with the default values from the templates. If you need to preserve specific configurations, review the Bicep files in `infra/` and adjust the parameters accordingly.
+>
+> **RBAC considerations**: This project uses managed identity and RBAC role assignments for authentication between services. If your existing resources are in a different resource group than the main deployment, the RBAC role assignments may not be created correctly, and you may need to manually assign the required roles. For the simplest setup, we recommend keeping all resources in the same resource group.
 
 ## Resource group
 
@@ -96,6 +101,10 @@ If your existing resource is in one of those regions, then you can re-use it by 
   then run `azd env set AZURE_SPEECH_SERVICE_LOCATION {Location of existing service}`
 1. If the speech service's SKU is not "S0", then run `azd env set AZURE_SPEECH_SERVICE_SKU {Name of SKU}`.
 
-## Other Azure resources
+## Azure Storage Account
 
-You can also use existing Azure AI Storage Accounts. See `./infra/main.parameters.json` for list of environment variables to pass to `azd env set` to configure those existing resources.
+1. Run `azd env set AZURE_STORAGE_ACCOUNT {Name of existing Azure Storage Account}`
+1. Run `azd env set AZURE_STORAGE_RESOURCE_GROUP {Name of existing resource group with storage account}`
+1. If that resource group is in a different location than the one you'll pick for the `azd up` step,
+  then run `azd env set AZURE_STORAGE_ACCOUNT_LOCATION {Location of existing storage account}`
+1. To change the storage SKU from the default `Standard_LRS`, run `azd env set AZURE_STORAGE_SKU {Name of SKU}`. For production, we recommend `Standard_ZRS` for improved resiliency.
