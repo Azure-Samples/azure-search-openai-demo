@@ -7,16 +7,14 @@ from prepdocslib.textparser import TextParser
 
 @pytest.mark.asyncio
 async def test_textparser_remove_new_lines():
-    file = io.BytesIO(
-        b"""
+    file = io.BytesIO(b"""
         # Text Example with multiple empty lines
         this is paragraph 1
 
 
 
         and this is paragraph 2
-        """
-    )
+        """)
     parser = TextParser()
     pages = [page async for page in parser.parse(file)]
     assert len(pages) == 1
@@ -35,8 +33,7 @@ async def test_textparser_remove_white_spaces():
 
 @pytest.mark.asyncio
 async def test_textparser_full():
-    file = io.BytesIO(
-        b"""
+    file = io.BytesIO(b"""
         # Text  Example
         Some short text here, with bullets:
         * write code
@@ -46,8 +43,7 @@ async def test_textparser_full():
 
         ## Subheading
         Some more text here with a link to Azure.  Here's a the link to [Azure](https://azure.microsoft.com/).
-        """
-    )
+        """)
     file.name = "test.md"
     parser = TextParser()
     pages = [page async for page in parser.parse(file)]
