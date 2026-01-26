@@ -66,7 +66,7 @@ azure-storage-blob==12.22.0
     #   azure-storage-file-datalake
 azure-storage-file-datalake==12.16.0
     # via -r requirements.in
-beautifulsoup4==4.12.3
+beautifulsoup4==4.14.3
     # via -r requirements.in
 blinker==1.9.0
     # via
