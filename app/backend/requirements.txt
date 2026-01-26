@@ -448,7 +448,7 @@ wrapt==1.16.0
     #   opentelemetry-instrumentation-dbapi
     #   opentelemetry-instrumentation-httpx
     #   opentelemetry-instrumentation-urllib3
-wsproto==1.2.0
+wsproto==1.3.2
     # via hypercorn
 yarl==1.17.2
     # via aiohttp
