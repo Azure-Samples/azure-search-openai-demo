@@ -58,9 +58,18 @@ async def setup_cloud_ingestion_strategy(
 
     # Feature flags
     use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
-    use_acls = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    use_acls = os.getenv("USE_CLOUD_INGESTION_ACLS", "").lower() == "true"
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+
+    # Warn if access control is enforced but ACL extraction is not enabled
+    if enforce_access_control and not use_acls:
+        logger.warning(
+            "AZURE_ENFORCE_ACCESS_CONTROL is enabled but USE_CLOUD_INGESTION_ACLS is not. "
+            "Documents will be indexed without ACLs, so access control filtering will not work. "
+            "Either set USE_CLOUD_INGESTION_ACLS=true to extract ACLs from ADLS Gen2, "
+            "or manually set ACLs using scripts/manageacl.py after ingestion."
+        )
 
     # Setup search info
     search_info = setup_search_info(

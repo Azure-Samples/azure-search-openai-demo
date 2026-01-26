@@ -39,6 +39,7 @@ class GlobalSettings:
     storage_account: str
     storage_container: str
     enable_global_document_access: bool
+    data_lake_service_client: DataLakeServiceClient | None
 
 
 settings: GlobalSettings | None = None
@@ -86,6 +87,14 @@ def configure_global_settings():
         subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
     )
 
+    # Initialize ADLS client only if using ADLS Gen2 storage for ACL extraction
+    data_lake_service_client = None
+    if storage_is_adls:
+        data_lake_service_client = DataLakeServiceClient(
+            account_url=f"https://{storage_account}.dfs.core.windows.net",
+            credential=azure_credential,
+        )
+
     settings = GlobalSettings(
         file_processors=file_processors,
         azure_credential=azure_credential,
@@ -94,6 +103,7 @@ def configure_global_settings():
         storage_account=storage_account,
         storage_container=storage_container,
         enable_global_document_access=enable_global_document_access,
+        data_lake_service_client=data_lake_service_client,
     )
 
 
@@ -263,49 +273,46 @@ async def get_file_acls(file_path: str) -> tuple[list[str], list[str]]:
     """
     if settings is None:
         raise RuntimeError("Global settings not initialized")
+    if settings.data_lake_service_client is None:
+        raise RuntimeError("ADLS client not initialized - storage_is_adls may be false")
 
     oids: list[str] = []
     groups: list[str] = []
     other_has_read = False
 
     try:
-        service_client = DataLakeServiceClient(
-            account_url=f"https://{settings.storage_account}.dfs.core.windows.net",
-            credential=settings.azure_credential,
-        )
-        async with service_client:
-            file_system_client = service_client.get_file_system_client(settings.storage_container)
-            file_client = file_system_client.get_file_client(file_path)
+        file_system_client = settings.data_lake_service_client.get_file_system_client(settings.storage_container)
+        file_client = file_system_client.get_file_client(file_path)
 
-            acl_props = await file_client.get_access_control(upn=False)
-            acl_string = acl_props.get("acl", "")
+        acl_props = await file_client.get_access_control(upn=False)
+        acl_string = acl_props.get("acl", "")
 
-            logger.info("Retrieved ACL for %s: %s", file_path, acl_string)
+        logger.info("Retrieved ACL for %s: %s", file_path, acl_string)
 
-            # Parse ACL string format: "user::rwx,user:oid:rwx,group::r-x,group:gid:r-x,other::---"
-            # https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control
-            for entry in acl_string.split(","):
-                parts = entry.split(":")
-                if len(parts) != 3:
-                    continue
-                scope_type = parts[0]
-                identity = parts[1]
-                permissions = parts[2]
+        # Parse ACL string format: "user::rwx,user:oid:rwx,group::r-x,group:gid:r-x,other::---"
+        # https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control
+        for entry in acl_string.split(","):
+            parts = entry.split(":")
+            if len(parts) != 3:
+                continue
+            scope_type = parts[0]
+            identity = parts[1]
+            permissions = parts[2]
 
-                # Check if "other" has read permission - this means global access
-                # The "other" entry has an empty identity: "other::r--" or "other::r-x"
-                # https://github.com/hurtn/datalake-on-ADLS/blob/master/Understanding%20access%20control%20and%20data%20lake%20configurations%20in%20ADLS%20Gen2.md#option-2-the-other-acl-entry
-                if scope_type == "other" and len(identity) == 0 and "r" in permissions:
-                    other_has_read = True
-                    continue
+            # Check if "other" has read permission - this means global access
+            # The "other" entry has an empty identity: "other::r--" or "other::r-x"
+            # https://github.com/hurtn/datalake-on-ADLS/blob/master/Understanding%20access%20control%20and%20data%20lake%20configurations%20in%20ADLS%20Gen2.md#option-2-the-other-acl-entry
+            if scope_type == "other" and len(identity) == 0 and "r" in permissions:
+                other_has_read = True
+                continue
 
-                # Only include if read permission is granted and identity is specified
-                if len(identity) == 0:
-                    continue
-                if scope_type == "user" and "r" in permissions:
-                    oids.append(identity)
-                elif scope_type == "group" and "r" in permissions:
-                    groups.append(identity)
+            # Only include if read permission is granted and identity is specified
+            if len(identity) == 0:
+                continue
+            if scope_type == "user" and "r" in permissions:
+                oids.append(identity)
+            elif scope_type == "group" and "r" in permissions:
+                groups.append(identity)
 
         # If "other" has read permission AND global access is enabled, document is globally accessible
         if other_has_read and settings.enable_global_document_access:
