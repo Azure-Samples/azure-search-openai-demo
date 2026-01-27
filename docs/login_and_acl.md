@@ -32,15 +32,15 @@ The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azur
     - [Server App](#server-app)
     - [Client App](#client-app)
     - [Configure Server App Known Client Applications](#configure-server-app-known-client-applications)
-    - [Testing](#testing)
-    - [Programmatic Access With Authentication](#programmatic-access-with-authentication)
-  - [Troubleshooting](#troubleshooting)
+  - [Troubleshooting Entra setup](#troubleshooting-entra-setup)
 - [Adding data with document level access control](#adding-data-with-document-level-access-control)
   - [Cloud ingestion with Azure Data Lake Storage Gen2](#cloud-ingestion-with-azure-data-lake-storage-gen2) (Recommended)
     - [Using your own ADLS Gen2 storage account](#using-your-own-adls-gen2-storage-account)
+    - [Verifying ACL filtering](#verifying-acl-filtering)
   - [Using the Add Documents API](#using-the-add-documents-api)
     - [Enabling global access on documents without access control](#enabling-global-access-on-documents-without-access-control)
 - [Migrate to built-in document access control](#migrate-to-built-in-document-access-control)
+- [Programmatic access with authentication](#programmatic-access-with-authentication)
 - [Environment variables reference](#environment-variables-reference)
   - [Authentication behavior by environment](#authentication-behavior-by-environment)
 
@@ -212,52 +212,7 @@ Consent from the user must be obtained for use of the client and server app. The
 - Replace `"knownClientApplications": []` with `"knownClientApplications": ["<client application id>"]`
 - Select **Save**
 
-#### Testing
-
-If you are running setup for the first time, ensure you have run `azd env set AZURE_ADLS_GEN2_STORAGE_ACCOUNT <YOUR-STORAGE_ACCOUNT>` before running `azd up`. If you do not set this environment variable, your index will not be initialized with access control support when `prepdocs` is run for the first time.
-
-Ensure you run `azd env set AZURE_USE_AUTHENTICATION` to enable the login UI once you have setup the two Microsoft Entra apps before you deploy or run the application. The login UI will not appear unless all [required environment variables](#environment-variables-reference) have been setup.
-
-#### Programmatic Access with Authentication
-
-If you want to use the chat endpoint without the UI and still use authentication, you must disable [App Service built-in authentication](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization) and use only the app's MSAL-based authentication flow. Ensure the `AZURE_DISABLE_APP_SERVICES_AUTHENTICATION` environment variable is set before deploying.
-
-Get an access token that can be used for calling the chat API using the following code:
-
-```python
-from azure.identity import DefaultAzureCredential
-import os
-
-token = DefaultAzureCredential().get_token(f"api://{os.environ['AZURE_SERVER_APP_ID']}/access_as_user", tenant_id=os.getenv('AZURE_AUTH_TENANT_ID', os.getenv('AZURE_TENANT_ID')))
-
-print(token.token)
-```
-
-### Troubleshooting
-
-#### Verifying ACL filtering on the search index
-
-To verify that ACL filtering is working correctly on your search index, use the [verify_search_index_acls.py](/scripts/verify_search_index_acls.py) script.
-
-This script tests three different search scenarios:
-
-1. **Search without ACL headers/tokens**: Returns only documents accessible without user credentials (documents without ACL restrictions or with global access `["all"]`)
-2. **Search with user token**: Uses `x-ms-query-source-authorization` header to filter results based on the current user's permissions
-3. **Search with elevated read**: Uses `x-ms-enable-elevated-read` header to bypass ACL filtering and show all documents with their `oids` and `groups` fields (useful for debugging). This step requires the "Search Index Data Contributor" role, which is now automatically assigned to the developer that runs `azd up`.
-
-Run the script after deploying and ingesting documents:
-
-```shell
-python scripts/verify_search_index_acls.py
-```
-
-Compare the results between the three scenarios to verify that:
-
-- Documents with ACLs are being filtered correctly based on user permissions
-- The `oids` and `groups` fields are populated correctly for each document
-- Global access documents (with `["all"]` values) are accessible to all authenticated users
-
-#### Common issues
+### Troubleshooting Entra setup
 
 - If your primary tenant restricts the ability to create Entra applications, you'll need to use a separate tenant to create the Entra applications. You can create a new tenant by following [these instructions](https://learn.microsoft.com/entra/identity-platform/quickstart-create-new-tenant). Then run `azd env set AZURE_AUTH_TENANT_ID <YOUR-AUTH-TENANT-ID>` before running `azd up`.
 - If any Entra apps need to be recreated, you can avoid redeploying the app by [changing the app settings in the portal](https://learn.microsoft.com/azure/app-service/configure-common?tabs=portal#configure-app-settings). Any of the [required environment variables](#environment-variables-reference) can be changed. Once the environment variables have been changed, restart the web app.
@@ -392,6 +347,28 @@ If you already have an Azure Data Lake Storage Gen2 account with documents and A
 
    The search indexer will be configured to use your existing ADLS account as the data source.
 
+#### Verifying ACL filtering
+
+To verify that ACL filtering is working correctly on your search index, use the [verify_search_index_acls.py](/scripts/verify_search_index_acls.py) script.
+
+This script tests three different search scenarios:
+
+1. **Search without ACL headers/tokens**: Returns only documents accessible without user credentials (documents without ACL restrictions or with global access `["all"]`)
+2. **Search with user token**: Uses `x-ms-query-source-authorization` header to filter results based on the current user's permissions
+3. **Search with elevated read**: Uses `x-ms-enable-elevated-read` header to bypass ACL filtering and show all documents with their `oids` and `groups` fields (useful for debugging). This step requires the "Search Index Data Contributor" role, which is now automatically assigned to the developer that runs `azd up`.
+
+Run the script after deploying and ingesting documents:
+
+```shell
+python scripts/verify_search_index_acls.py
+```
+
+Compare the results between the three scenarios to verify that:
+
+- Documents with ACLs are being filtered correctly based on user permissions
+- The `oids` and `groups` fields are populated correctly for each document
+- Global access documents (with `["all"]` values) are accessible to all authenticated users
+
 ### Using the Add Documents API
 
 Manually enable document level access control on a search index and manually set access control values using the [manageacl.py](/scripts/manageacl.py) script.
@@ -457,6 +434,21 @@ To support [built-in access control](https://learn.microsoft.com/azure/search/se
 3. Sets the [x-ms-query-source-authorization](https://learn.microsoft.com/azure/search/search-query-access-control-rbac-enforcement#how-query-time-enforcement-works) header on every query when `AZURE_ENFORCE_ACCESS_CONTROL` is enabled.
 
 When `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` was enabled, previous versions of the sample interpreted no access control on a document as meaning that the document was globally available. Built-in document access control requires [`["all"]`](https://learn.microsoft.com/azure/search/search-index-access-control-lists-and-rbac-push-api#special-acl-values-all-and-none) to be set for each globally available document. You can run a [one-time migration](#enabling-global-access-on-documents-without-access-control) on your existing index to enable global access for these documents.
+
+## Programmatic access with authentication
+
+If you want to use the chat endpoint without the UI and still use authentication, you must disable [App Service built-in authentication](https://learn.microsoft.com/azure/app-service/overview-authentication-authorization) and use only the app's MSAL-based authentication flow. Ensure the `AZURE_DISABLE_APP_SERVICES_AUTHENTICATION` environment variable is set before deploying.
+
+Get an access token that can be used for calling the chat API using the following code:
+
+```python
+from azure.identity import DefaultAzureCredential
+import os
+
+token = DefaultAzureCredential().get_token(f"api://{os.environ['AZURE_SERVER_APP_ID']}/access_as_user", tenant_id=os.getenv('AZURE_AUTH_TENANT_ID', os.getenv('AZURE_TENANT_ID')))
+
+print(token.token)
+```
 
 ## Environment variables reference
 
