@@ -132,6 +132,12 @@ param speechServiceVoice string = ''
 param useMultimodal bool = false
 param useEval bool = false
 param useCloudIngestion bool = false
+param useCloudIngestionAcls bool = false
+@description('Use an existing ADLS Gen2 storage account instead of provisioning a new one')
+param useExistingAdlsStorage bool = false
+// Must be specified when useExistingAdlsStorage is true. Bicep assert is experimental so we can't validate at compile-time yet.
+param adlsStorageAccountName string = ''
+param adlsStorageResourceGroupName string = ''
 
 @allowed(['free', 'provisioned', 'serverless'])
 param cosmosDbSkuName string // Set in main.parameters.json
@@ -421,6 +427,11 @@ resource cosmosDbResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' e
   name: !empty(cosmodDbResourceGroupName) ? cosmodDbResourceGroupName : resourceGroup.name
 }
 
+// ADLS resource group - defaults to main resource group if not specified
+resource adlsStorageResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = {
+  name: !empty(adlsStorageResourceGroupName) ? adlsStorageResourceGroupName : resourceGroup.name
+}
+
 // Monitor application with Azure Monitor
 module monitoring 'core/monitor/monitoring.bicep' = if (useApplicationInsights) {
   name: 'monitoring'
@@ -466,10 +477,19 @@ module appServicePlan 'core/host/appserviceplan.bicep' = if (deploymentTarget ==
   }
 }
 
+// Determine which ADLS storage account name to use (existing or provisioned)
+var adlsStorageAccountNameResolved = useExistingAdlsStorage ? existingAdlsStorage.name : (useCloudIngestionAcls ? adlsStorage!.outputs.name : '')
+
+// For cloud ingestion with ACLs, use the ADLS Gen2 storage account; otherwise use the standard storage account
+var cloudIngestionStorageAccount = useCloudIngestionAcls ? adlsStorageAccountNameResolved : storage.outputs.name
+
 var appEnvVariables = {
   AZURE_STORAGE_ACCOUNT: storage.outputs.name
   AZURE_STORAGE_CONTAINER: storageContainerName
   AZURE_STORAGE_RESOURCE_GROUP: storageResourceGroup.name
+  // Cloud ingestion uses ADLS Gen2 storage when ACLs are enabled for manual ACL extraction
+  AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT: cloudIngestionStorageAccount
+  USE_CLOUD_INGESTION_ACLS: string(useCloudIngestionAcls)
   AZURE_SUBSCRIPTION_ID: subscription().subscriptionId
   AZURE_SEARCH_INDEX: searchIndexName
   AZURE_SEARCH_KNOWLEDGEBASE_NAME: knowledgeBaseName
@@ -944,6 +964,42 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
   }
 }
 
+// Reference existing ADLS Gen2 storage account when bringing your own
+resource existingAdlsStorage 'Microsoft.Storage/storageAccounts@2023-05-01' existing = if (useExistingAdlsStorage && !empty(adlsStorageAccountName)) {
+  name: adlsStorageAccountName
+  scope: adlsStorageResourceGroup
+}
+
+// ADLS Gen2 storage account for cloud ingestion with ACL support
+// Only provision if using cloud ingestion ACLs AND not using an existing ADLS account
+module adlsStorage 'core/storage/storage-account.bicep' = if (useCloudIngestionAcls && !useExistingAdlsStorage) {
+  name: 'adls-storage'
+  scope: storageResourceGroup
+  params: {
+    name: 'adls${abbrs.storageStorageAccounts}${resourceToken}'
+    location: storageResourceGroupLocation
+    tags: tags
+    publicNetworkAccess: publicNetworkAccess
+    bypass: bypass
+    allowBlobPublicAccess: false
+    allowSharedKeyAccess: false
+    isHnsEnabled: true
+    sku: {
+      name: storageSkuName
+    }
+    deleteRetentionPolicy: {
+      enabled: true
+      days: 2
+    }
+    containers: [
+      {
+        name: storageContainerName
+        publicAccess: 'None'
+      }
+    ]
+  }
+}
+
 module cosmosDb 'br/public:avm/res/document-db/database-account:0.6.1' = if (useAuthentication && useChatHistoryCosmos) {
   name: 'cosmosdb'
   scope: cosmosDbResourceGroup
@@ -1091,7 +1147,7 @@ module searchRoleUser 'core/security/role.bicep' = {
   name: 'search-role-user'
   params: {
     principalId: principalId
-    roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
+    roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f' // Search Index Data Reader
     principalType: principalType
   }
 }
@@ -1101,7 +1157,7 @@ module searchContribRoleUser 'core/security/role.bicep' = {
   name: 'search-contrib-role-user'
   params: {
     principalId: principalId
-    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
+    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7' // Search Index Data Contributor
     principalType: principalType
   }
 }
@@ -1111,7 +1167,7 @@ module searchSvcContribRoleUser 'core/security/role.bicep' = {
   name: 'search-svccontrib-role-user'
   params: {
     principalId: principalId
-    roleDefinitionId: '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
+    roleDefinitionId: '7ca78c08-252a-4471-8644-bb5ff32d4ba0' // Search Service Contributor
     principalType: principalType
   }
 }
@@ -1215,6 +1271,47 @@ module storageRoleContributorSearchService 'core/security/role.bicep' = if ((use
   params: {
     principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// ADLS Gen2 storage role assignments for cloud ingestion with ACLs
+// These are scoped to the ADLS storage account itself, so they work for both
+// provisioned and bring-your-own (BYO) ADLS storage accounts
+module adlsStorageRoleSearchService 'core/security/storage-role.bicep' = if (useCloudIngestionAcls && searchServiceSkuName != 'free') {
+  scope: adlsStorageResourceGroup
+  name: 'adls-storage-role-searchservice'
+  params: {
+    storageAccountName: adlsStorageAccountNameResolved
+    principalId: searchService.outputs.systemAssignedPrincipalId
+    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Storage Blob Data Owner on ADLS storage for user to manage ACLs
+module adlsStorageOwnerRoleUser 'core/security/storage-role.bicep' = if (useCloudIngestionAcls) {
+  scope: adlsStorageResourceGroup
+  name: 'adls-storage-owner-role-user'
+  params: {
+    storageAccountName: adlsStorageAccountNameResolved
+    principalId: principalId
+    roleDefinitionId: 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b' // Storage Blob Data Owner
+    principalType: principalType
+  }
+}
+
+// Storage Blob Data Reader on ADLS storage for Azure Functions to read during cloud ingestion
+// Note: This module requires useCloudIngestion=true because it references functions!.outputs.principalId.
+// If useCloudIngestionAcls=true but useCloudIngestion=false, deployment will fail.
+// Documentation states USE_CLOUD_INGESTION_ACLS requires USE_CLOUD_INGESTION to be true.
+module adlsStorageRoleFunctions 'core/security/storage-role.bicep' = if (useCloudIngestionAcls && useCloudIngestion) {
+  scope: adlsStorageResourceGroup
+  name: 'adls-storage-role-functions'
+  params: {
+    storageAccountName: adlsStorageAccountNameResolved
+    principalId: functions!.outputs.principalId
+    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
     principalType: 'ServicePrincipal'
   }
 }
@@ -1478,6 +1575,11 @@ output AZURE_CHAT_HISTORY_VERSION string = chatHistoryVersion
 output AZURE_STORAGE_ACCOUNT string = storage.outputs.name
 output AZURE_STORAGE_CONTAINER string = storageContainerName
 output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroup.name
+
+output AZURE_ADLS_STORAGE_ACCOUNT string = useCloudIngestionAcls ? adlsStorageAccountNameResolved : ''
+output AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT string = useCloudIngestionAcls ? adlsStorageAccountNameResolved : storage.outputs.name
+output AZURE_CLOUD_INGESTION_STORAGE_RESOURCE_GROUP string = useCloudIngestionAcls ? adlsStorageResourceGroup.name : storageResourceGroup.name
+output USE_CLOUD_INGESTION_ACLS bool = useCloudIngestionAcls
 
 output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage!.outputs.name : ''
 output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName

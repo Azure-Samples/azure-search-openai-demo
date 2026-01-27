@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 class GlobalSettings:
     use_vectors: bool
     use_multimodal: bool
+    use_acls: bool
     embedding_dimensions: int
     file_processors: dict[str, FileProcessor]
     embedding_service: OpenAIEmbeddings | None
@@ -50,6 +51,7 @@ def configure_global_settings():
     # Environment configuration
     use_vectors = os.getenv("USE_VECTORS", "true").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
+    use_acls = os.getenv("USE_CLOUD_INGESTION_ACLS", "false").lower() == "true"
     embedding_dimensions = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS", "3072"))
 
     # Conditionally required (based on feature flags)
@@ -105,6 +107,7 @@ def configure_global_settings():
     settings = GlobalSettings(
         use_vectors=use_vectors,
         use_multimodal=use_multimodal,
+        use_acls=use_acls,
         embedding_dimensions=embedding_dimensions,
         file_processors=file_processors,
         embedding_service=embedding_service,
@@ -188,6 +191,9 @@ async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
     storage_url = consolidated_doc.get("storageUrl") or consolidated_doc.get("metadata_storage_path") or file_name
     pages_input = consolidated_doc.get("pages", [])  # [{page_num, text, figure_ids}]
     figures_input = consolidated_doc.get("figures", [])  # serialized skill payload
+    # ACL fields from indexer's built-in ADLS Gen2 ACL extraction (passed through shaper skill)
+    oids = consolidated_doc.get("oids", [])
+    groups = consolidated_doc.get("groups", [])
 
     figures_by_id = {figure["figure_id"]: figure for figure in figures_input}
 
@@ -268,6 +274,11 @@ async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
             "sourcefile": file_name,
             "parent_id": storage_url,
             **({"images": image_refs} if image_refs else {}),
+            # Include ACLs for document-level access control (only when ACLs are enabled).
+            # When ACLs are enabled but there are no specific OIDs/groups, include empty arrays
+            # so downstream consumers can distinguish "no ACLs" from "ACLs not extracted/disabled".
+            **({"oids": oids or []} if settings.use_acls else {}),
+            **({"groups": groups or []} if settings.use_acls else {}),
         }
 
         if embedding_vec is not None:

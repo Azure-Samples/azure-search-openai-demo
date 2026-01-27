@@ -131,6 +131,9 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         ]
         if self.use_multimodal:
             mappings.append(InputFieldMappingEntry(name="images", source="/document/chunks/*/images"))
+        if self.use_acls:
+            mappings.append(InputFieldMappingEntry(name="oids", source="/document/chunks/*/oids"))
+            mappings.append(InputFieldMappingEntry(name="groups", source="/document/chunks/*/groups"))
 
         index_projection = SearchIndexerIndexProjection(
             selectors=[
@@ -168,7 +171,16 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
             outputs=[
                 OutputFieldMappingEntry(name="pages", target_name="pages"),
                 OutputFieldMappingEntry(name="figures", target_name="figures"),
-            ],
+            ]
+            + (
+                [
+                    # ACL outputs for document-level access control (populated by manual ADLS Gen2 extraction)
+                    OutputFieldMappingEntry(name="oids", target_name="oids"),
+                    OutputFieldMappingEntry(name="groups", target_name="groups"),
+                ]
+                if self.use_acls
+                else []
+            ),
         )
 
         figure_processor_skill = WebApiSkill(
@@ -232,7 +244,16 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
                 ),
                 InputFieldMappingEntry(name="file_name", source="/document/metadata_storage_name"),
                 InputFieldMappingEntry(name="storageUrl", source="/document/metadata_storage_path"),
-            ],
+            ]
+            + (
+                [
+                    # ACL fields from document_extractor's manual ADLS Gen2 ACL extraction
+                    InputFieldMappingEntry(name="oids", source="/document/oids"),
+                    InputFieldMappingEntry(name="groups", source="/document/groups"),
+                ]
+                if self.use_acls
+                else []
+            ),
             outputs=[OutputFieldMappingEntry(name="output", target_name="consolidated_document")],
         )
 
@@ -272,6 +293,23 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         if not isinstance(self.embeddings, OpenAIEmbeddings):
             raise TypeError("Cloud ingestion requires Azure OpenAI embeddings to configure the search index.")
 
+        # Warn if access control is enforced but ACL extraction is not enabled
+        if self.enforce_access_control and not self.use_acls:
+            logger.warning(
+                "AZURE_ENFORCE_ACCESS_CONTROL is enabled but USE_CLOUD_INGESTION_ACLS is not. "
+                "Documents will not have ACLs extracted automatically from ADLS Gen2. "
+                "If you intend to use document-level access control, either set USE_CLOUD_INGESTION_ACLS=true "
+                "or manually set ACLs using scripts/manageacl.py after ingestion."
+            )
+
+        # Verify the storage container exists before attempting to create the data source
+        container_client = self.blob_manager.blob_service_client.get_container_client(self.blob_manager.container)
+        if not await container_client.exists():
+            raise ValueError(
+                f"Storage container '{self.blob_manager.container}' does not exist in storage account '{self.blob_manager.account}'. "
+                f"Please create the container first, or set AZURE_STORAGE_CONTAINER to an existing container name."
+            )
+
         self._search_manager = SearchManager(
             search_info=self.search_info,
             search_analyzer_name=self.search_analyzer_name,
@@ -287,9 +325,15 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
         await self._search_manager.create_index()
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
+            # Use ADLS_GEN2 when ACLs are enabled (requires hierarchical namespace storage)
+            # Note: We do NOT use indexer_permission_options because that's incompatible with
+            # Custom WebAPI skills. Instead, ACLs are extracted manually in document_extractor.
+            data_source_type = (
+                SearchIndexerDataSourceType.ADLS_GEN2 if self.use_acls else SearchIndexerDataSourceType.AZURE_BLOB
+            )
             data_source_connection = SearchIndexerDataSourceConnection(
                 name=self.data_source_name,
-                type=SearchIndexerDataSourceType.AZURE_BLOB,
+                type=data_source_type,
                 connection_string=self.blob_manager.get_managedidentity_connectionstring(),
                 container=SearchIndexerDataContainer(name=self.blob_manager.container),
                 data_deletion_detection_policy=NativeBlobSoftDeleteDeletionDetectionPolicy(),
