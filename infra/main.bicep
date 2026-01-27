@@ -488,7 +488,7 @@ var appEnvVariables = {
   AZURE_STORAGE_RESOURCE_GROUP: storageResourceGroup.name
   // Cloud ingestion uses ADLS Gen2 storage when ACLs are enabled for manual ACL extraction
   AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT: cloudIngestionStorageAccount
-  AZURE_CLOUD_INGESTION_IS_ADLS: string(useCloudIngestionAcls)
+  USE_CLOUD_INGESTION_ACLS: string(useCloudIngestionAcls)
   AZURE_SUBSCRIPTION_ID: subscription().subscriptionId
   AZURE_SEARCH_INDEX: searchIndexName
   AZURE_SEARCH_KNOWLEDGEBASE_NAME: knowledgeBaseName

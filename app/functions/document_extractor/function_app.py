@@ -53,7 +53,7 @@ def configure_global_settings():
     use_local_html_parser = os.getenv("USE_LOCAL_HTML_PARSER", "false").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
     document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
-    storage_is_adls = os.getenv("AZURE_CLOUD_INGESTION_IS_ADLS", "false").lower() == "true"
+    storage_is_adls = os.getenv("USE_CLOUD_INGESTION_ACLS", "false").lower() == "true"
     enable_global_document_access = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "false").lower() == "true"
 
     # Cloud ingestion storage account (ADLS Gen2 when ACLs enabled, standard blob otherwise)
