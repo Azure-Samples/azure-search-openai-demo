@@ -95,6 +95,7 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
+        data_lake_service_client=None,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -169,11 +170,7 @@ async def test_document_extractor_with_adls_acls(monkeypatch: pytest.MonkeyPatch
         async def __aexit__(self, *args):
             pass
 
-    monkeypatch.setattr(
-        document_extractor,
-        "DataLakeServiceClient",
-        lambda account_url, credential: MockServiceClient(),
-    )
+    mock_service_client = MockServiceClient()
 
     mock_settings = document_extractor.GlobalSettings(
         file_processors=mock_file_processors,
@@ -183,6 +180,7 @@ async def test_document_extractor_with_adls_acls(monkeypatch: pytest.MonkeyPatch
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
+        data_lake_service_client=mock_service_client,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -220,6 +218,7 @@ async def test_document_extractor_requires_single_record(monkeypatch: pytest.Mon
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
+        data_lake_service_client=None,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
     response = await document_extractor.extract_document(build_request({"values": []}))
@@ -241,6 +240,7 @@ async def test_document_extractor_handles_processing_exception(monkeypatch: pyte
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
+        data_lake_service_client=None,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
     monkeypatch.setattr(document_extractor, "process_document", failing_process)
@@ -293,6 +293,7 @@ async def test_document_extractor_process_document_http_error(monkeypatch: pytes
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
+        data_lake_service_client=None,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -643,11 +644,7 @@ def setup_acl_mocks(monkeypatch: pytest.MonkeyPatch, acl_string: str, enable_glo
         async def __aexit__(self, *args):
             pass
 
-    monkeypatch.setattr(
-        document_extractor,
-        "DataLakeServiceClient",
-        lambda account_url, credential: MockServiceClient(),
-    )
+    mock_service_client = MockServiceClient()
 
     mock_settings = document_extractor.GlobalSettings(
         file_processors={},
@@ -657,6 +654,7 @@ def setup_acl_mocks(monkeypatch: pytest.MonkeyPatch, acl_string: str, enable_glo
         storage_account="account",
         storage_container="container",
         enable_global_document_access=enable_global_document_access,
+        data_lake_service_client=mock_service_client,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -779,11 +777,7 @@ async def test_get_file_acls_handles_exception(monkeypatch: pytest.MonkeyPatch) 
         async def __aexit__(self, *args):
             pass
 
-    monkeypatch.setattr(
-        document_extractor,
-        "DataLakeServiceClient",
-        lambda account_url, credential: MockServiceClient(),
-    )
+    mock_service_client = MockServiceClient()
 
     mock_settings = document_extractor.GlobalSettings(
         file_processors={},
@@ -793,6 +787,7 @@ async def test_get_file_acls_handles_exception(monkeypatch: pytest.MonkeyPatch) 
         storage_account="account",
         storage_container="container",
         enable_global_document_access=False,
+        data_lake_service_client=mock_service_client,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
