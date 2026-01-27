@@ -30,7 +30,7 @@ azure-cognitiveservices-speech==1.40.0
     # via -r requirements.in
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.35.0
+azure-core==1.38.0
     # via
     #   azure-ai-documentintelligence
     #   azure-core-tracing-opentelemetry
@@ -66,7 +66,7 @@ azure-storage-blob==12.22.0
     #   azure-storage-file-datalake
 azure-storage-file-datalake==12.16.0
     # via -r requirements.in
-beautifulsoup4==4.12.3
+beautifulsoup4==4.14.3
     # via -r requirements.in
 blinker==1.9.0
     # via
@@ -349,7 +349,7 @@ pyjwt==2.10.1
     #   msal
 pymupdf==1.26.0
     # via -r requirements.in
-pypdf==6.6.0
+pypdf==6.6.2
     # via -r requirements.in
 python-dotenv==1.1.1
     # via
@@ -376,10 +376,6 @@ requests-oauthlib==2.0.0
     # via msrest
 rich==14.1.0
     # via -r requirements.in
-six==1.16.0
-    # via
-    #   azure-core
-    #   isodate
 sniffio==1.3.1
     # via
     #   anyio
@@ -417,6 +413,7 @@ typing-extensions==4.15.0
     #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
+    #   beautifulsoup4
     #   exceptiongroup
     #   hypercorn
     #   multidict
@@ -448,7 +445,7 @@ wrapt==1.16.0
     #   opentelemetry-instrumentation-dbapi
     #   opentelemetry-instrumentation-httpx
     #   opentelemetry-instrumentation-urllib3
-wsproto==1.2.0
+wsproto==1.3.2
     # via hypercorn
 yarl==1.17.2
     # via aiohttp
