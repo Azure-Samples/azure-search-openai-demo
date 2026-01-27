@@ -349,7 +349,7 @@ pyjwt==2.10.1
     #   msal
 pymupdf==1.26.0
     # via -r requirements.in
-pypdf==6.6.0
+pypdf==6.6.2
     # via -r requirements.in
 python-dotenv==1.1.1
     # via
@@ -413,6 +413,7 @@ typing-extensions==4.15.0
     #   azure-search-documents
     #   azure-storage-blob
     #   azure-storage-file-datalake
+    #   beautifulsoup4
     #   exceptiongroup
     #   hypercorn
     #   multidict
