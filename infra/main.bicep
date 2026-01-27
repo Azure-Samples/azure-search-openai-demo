@@ -135,6 +135,7 @@ param useCloudIngestion bool = false
 param useCloudIngestionAcls bool = false
 @description('Use an existing ADLS Gen2 storage account instead of provisioning a new one')
 param useExistingAdlsStorage bool = false
+// Must be specified when useExistingAdlsStorage is true. Bicep assert is experimental so we can't validate at compile-time yet.
 param adlsStorageAccountName string = ''
 param adlsStorageResourceGroupName string = ''
 
@@ -1301,6 +1302,9 @@ module adlsStorageOwnerRoleUser 'core/security/storage-role.bicep' = if (useClou
 }
 
 // Storage Blob Data Reader on ADLS storage for Azure Functions to read during cloud ingestion
+// Note: This module requires useCloudIngestion=true because it references functions!.outputs.principalId.
+// If useCloudIngestionAcls=true but useCloudIngestion=false, deployment will fail.
+// Documentation states USE_CLOUD_INGESTION_ACLS requires USE_CLOUD_INGESTION to be true.
 module adlsStorageRoleFunctions 'core/security/storage-role.bicep' = if (useCloudIngestionAcls && useCloudIngestion) {
   scope: adlsStorageResourceGroup
   name: 'adls-storage-role-functions'

@@ -1,5 +1,9 @@
 metadata description = 'Assigns a role to a principal on a specific storage account.'
+
+@description('Name of the storage account to assign the role on')
 param storageAccountName string
+
+@description('Principal ID of the user, group, or service principal to assign the role to')
 param principalId string
 
 @allowed([
@@ -10,6 +14,8 @@ param principalId string
   'User'
 ])
 param principalType string = 'ServicePrincipal'
+
+@description('Azure RBAC role definition ID (GUID) to assign')
 param roleDefinitionId string
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {
