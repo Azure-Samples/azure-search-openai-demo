@@ -319,7 +319,9 @@ The script performs the following steps:
 - Creates example [groups](https://learn.microsoft.com/entra/fundamentals/how-to-manage-groups) listed in the [sampleacls.json](/scripts/sampleacls.json) file.
 - Creates a filesystem / container `gptkbcontainer` in the storage account.
 - Creates the directories listed in the [sampleacls.json](/scripts/sampleacls.json) file.
-- Uploads the sample PDFs referenced in the [sampleacls.json](/scripts/sampleacls.json) file into the appropriate directories.
+- Scans the directories for files recursively if you add the option '--scandirs' (default false) cto the argument list (default off) and you don't have '"scandir": false' (default true)  below the directory element in the sampleacls.json file.
+- Caluclates md5 checksum of each file refrenced and compares with existing 'filename.ext.md5' file. Skip upload if same else upload and store new md5 value in 'filename.ext.md5'
+- Uploads the sample PDFs referenced in the [sampleacls.json](/scripts/sampleacls.json) file or files found in the folders with scandir option set to true into the appropriate directories.
 - [Recursively sets Access Control Lists (ACLs)](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-acl-cli) using the information from the [sampleacls.json](/scripts/sampleacls.json) file.
 
 In order to use the sample access control, you need to join these groups in your Microsoft Entra tenant.

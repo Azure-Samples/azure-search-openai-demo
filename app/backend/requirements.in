@@ -29,6 +29,7 @@ beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk
 python-dotenv
+datetime
 prompty
 rich
 typing-extensions

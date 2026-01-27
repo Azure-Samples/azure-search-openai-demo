@@ -451,3 +451,6 @@ yarl==1.17.2
     # via aiohttp
 zipp==3.23.0
     # via importlib-metadata
+# used for adlsgen2setup.py
+datetime==4.3.0
+    # via -r requirements.in
