@@ -116,9 +116,6 @@ if __name__ == "__main__":  # pragma: no cover
         "--category", help="Value for the category field in the search index for all sections indexed in this run"
     )
     parser.add_argument(
-        "--skipblobs", action="store_true", help="Skip uploading individual pages to Azure Blob Storage"
-    )
-    parser.add_argument(
         "--disablebatchvectors", action="store_true", help="Don't compute embeddings in batch for the sections"
     )
     parser.add_argument(
