@@ -237,11 +237,13 @@ print(token.token)
 
 #### Verifying ACL filtering on the search index
 
-To verify that ACL filtering is working correctly on your search index, use the [verify_search_index_acls.py](/scripts/verify_search_index_acls.py) script. This script tests three different search scenarios:
+To verify that ACL filtering is working correctly on your search index, use the [verify_search_index_acls.py](/scripts/verify_search_index_acls.py) script.
+
+This script tests three different search scenarios:
 
 1. **Search without ACL headers/tokens**: Returns only documents accessible without user credentials (documents without ACL restrictions or with global access `["all"]`)
 2. **Search with user token**: Uses `x-ms-query-source-authorization` header to filter results based on the current user's permissions
-3. **Search with elevated read**: Uses `x-ms-enable-elevated-read` header to bypass ACL filtering and show all documents with their `oids` and `groups` fields (useful for debugging)
+3. **Search with elevated read**: Uses `x-ms-enable-elevated-read` header to bypass ACL filtering and show all documents with their `oids` and `groups` fields (useful for debugging). This step requires the "Search Index Data Contributor" role, which is now automatically assigned to the developer that runs `azd up`.
 
 Run the script after deploying and ingesting documents:
 
@@ -469,6 +471,7 @@ The following environment variables are used to setup the optional login and doc
 - `AZURE_SERVER_APP_SECRET`: [Client secret](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-client-creds-grant-flow) used by the API server to authenticate using the Microsoft Entra server app.
 - `AZURE_CLIENT_APP_ID`: Application ID of the Microsoft Entra app for the client UI.
 - `AZURE_AUTH_TENANT_ID`: [Tenant ID](https://learn.microsoft.com/entra/fundamentals/how-to-find-tenant) associated with the Microsoft Entra tenant used for login and document level access control. Defaults to `AZURE_TENANT_ID` if not defined.
+- `USE_CLOUD_INGESTION_ACLS`: (Optional) Set to `true` to enable automatic ACL extraction from ADLS Gen2 files during cloud ingestion. Requires `USE_CLOUD_INGESTION` to also be set to `true`. Used with [cloud ingestion](#cloud-ingestion-with-azure-data-lake-storage-gen2).
 - `USE_EXISTING_ADLS_STORAGE`: (Optional) Set to `true` to use an existing ADLS Gen2 storage account instead of provisioning a new one. Used with [cloud ingestion](#using-your-own-adls-gen2-storage-account).
 - `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Required when `USE_EXISTING_ADLS_STORAGE` is `true`. Used with [cloud ingestion](#cloud-ingestion-with-azure-data-lake-storage-gen2).
 - `AZURE_ADLS_GEN2_STORAGE_RESOURCE_GROUP`: (Optional) Resource group containing the existing ADLS Gen2 storage account. Defaults to the main resource group if not specified. Used with [cloud ingestion](#using-your-own-adls-gen2-storage-account).
