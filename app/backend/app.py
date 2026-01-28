@@ -45,7 +45,6 @@ from quart import (
 from quart_cors import cors
 
 from approaches.approach import Approach, DataPoints
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
@@ -702,8 +701,8 @@ async def setup_clients():
 
     prompt_manager = PromptyManager()
 
-    # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
-    current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
+    # Approach is used by /chat for multi-turn conversation
+    current_app.config[CONFIG_CHAT_APPROACH] = Approach(
         search_client=search_client,
         search_index_name=AZURE_SEARCH_INDEX,
         knowledgebase_model=AZURE_OPENAI_KNOWLEDGEBASE_MODEL,

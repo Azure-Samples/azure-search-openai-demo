@@ -205,7 +205,7 @@ async def test_auth_setup_returns_payload(client):
 @pytest.mark.asyncio
 async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
-        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
+        "approaches.approach.Approach.run",
         mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
     )
 
@@ -222,7 +222,7 @@ async def test_chat_handle_exception(client, monkeypatch, snapshot, caplog):
 @pytest.mark.asyncio
 async def test_chat_stream_handle_exception(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
-        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run_stream",
+        "approaches.approach.Approach.run_stream",
         mock.Mock(side_effect=ZeroDivisionError("something bad happened")),
     )
 
@@ -239,7 +239,7 @@ async def test_chat_stream_handle_exception(client, monkeypatch, snapshot, caplo
 @pytest.mark.asyncio
 async def test_chat_handle_exception_contentsafety(client, monkeypatch, snapshot, caplog):
     monkeypatch.setattr(
-        "approaches.chatreadretrieveread.ChatReadRetrieveReadApproach.run",
+        "approaches.approach.Approach.run",
         mock.Mock(side_effect=filtered_response),
     )
 
