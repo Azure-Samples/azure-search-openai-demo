@@ -106,7 +106,7 @@ fixedint==0.1.6
     # via azure-monitor-opentelemetry-exporter
 flask==3.1.2
     # via quart
-frozenlist==1.4.1
+frozenlist==1.8.0
     # via
     #   aiohttp
     #   aiosignal
