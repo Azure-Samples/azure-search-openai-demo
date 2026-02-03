@@ -362,8 +362,8 @@ class ChatReadRetrieveReadApproach(Approach):
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
 
         rewrite_result = await self.rewrite_query(
-            system_template_path="query_rewrite.system.jinja2",
-            system_template_variables={
+            prompt_template="query_rewrite.system.jinja2",
+            prompt_variables={
                 "user_query": original_user_query,
                 "past_messages": messages[:-1],
             },
