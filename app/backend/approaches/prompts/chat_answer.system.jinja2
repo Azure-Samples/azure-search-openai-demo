@@ -14,6 +14,7 @@ Each text source starts in a new line and has the file name followed by colon an
 Always include the source document filename for each fact you use in the response in the format: [document_name.ext#page=N].
 If you are referencing an image, add the image filename in the format: [document_name.ext#page=N(image_name.png)].
 {% endif %}
+
 Possible citations for current question: {% for citation in citations %} [{{ citation }}] {% endfor %}
 {{ injected_prompt }}
 {% endif %}
