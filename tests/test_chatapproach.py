@@ -16,7 +16,7 @@ from approaches.approach import (
     WebResult,
 )
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.promptmanager import Jinja2PromptManager
+from approaches.promptmanager import PromptManager
 from prepdocslib.embeddings import ImageEmbeddings
 
 from .mocks import (
@@ -298,7 +298,7 @@ async def test_compute_multimodal_embedding_no_client():
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
-        prompt_manager=Jinja2PromptManager(),
+        prompt_manager=PromptManager(),
         # Explicitly set image_embeddings_client to None
         image_embeddings_client=None,
     )
@@ -335,16 +335,20 @@ async def test_chat_prompt_render_with_image_directive(chat_approach):
 
     data_points = await build_sources()
 
-    messages = chat_approach.prompt_manager.render_prompt(
-        chat_approach.answer_prompt,
-        {
+    messages = chat_approach.prompt_manager.build_conversation(
+        system_template_path="chat_answer.system.jinja2",
+        system_template_variables={
             "include_follow_up_questions": False,
-            "past_messages": [],
-            "user_query": "What is Fabric Activator?",
-            "text_sources": data_points.text,
             "image_sources": data_points.images,
             "citations": data_points.citations,
         },
+        user_template_path="chat_answer.user.jinja2",
+        user_template_variables={
+            "user_query": "What is Fabric Activator?",
+            "text_sources": data_points.text,
+        },
+        user_image_sources=data_points.images,
+        past_messages=[],
     )
     assert messages
     # Find the user message containing Sources and verify placeholder

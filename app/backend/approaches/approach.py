@@ -273,7 +273,6 @@ class Approach(ABC):
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.prompt_manager = prompt_manager
-        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
@@ -394,8 +393,8 @@ class Approach(ABC):
     async def rewrite_query(
         self,
         *,
-        prompt_template: Any,
-        prompt_variables: dict[str, Any],
+        system_template_path: str,
+        template_variables: dict[str, Any],
         overrides: dict[str, Any],
         chatgpt_model: str,
         chatgpt_deployment: Optional[str],
@@ -405,7 +404,7 @@ class Approach(ABC):
         temperature: float = 0.0,
         no_response_token: Optional[str] = None,
     ) -> RewriteQueryResult:
-        query_messages = self.prompt_manager.render_prompt(prompt_template, prompt_variables)
+        query_messages = [self.prompt_manager.build_system_prompt(system_template_path, template_variables)]
         rewrite_reasoning_effort = self.get_lowest_reasoning_effort(self.chatgpt_model)
 
         chat_completion = cast(
@@ -849,11 +848,13 @@ class Approach(ABC):
         """
 
         # Handle full URLs for both Blob Storage and Data Lake Storage
+        container = None
         if blob_url.startswith("http"):
             url_parts = blob_url.split("/")
             # Skip the domain parts and container/filesystem name to get the blob path
             # For blob: https://{account}.blob.core.windows.net/{container}/{blob_path}
             # For dfs: https://{account}.dfs.core.windows.net/{filesystem}/{path}
+            container = url_parts[3]  # Extract container name from URL
             blob_path = "/".join(url_parts[4:])
             # If %20 in URL, replace it with a space
             blob_path = blob_path.replace("%20", " ")
@@ -866,7 +867,7 @@ class Approach(ABC):
         if ".dfs.core.windows.net" in blob_url and self.user_blob_manager:
             result = await self.user_blob_manager.download_blob(blob_path, user_oid=user_oid)
         elif self.global_blob_manager:
-            result = await self.global_blob_manager.download_blob(blob_path)
+            result = await self.global_blob_manager.download_blob(blob_path, container=container)
 
         if result:
             content, _ = result  # Unpack the tuple, ignoring properties

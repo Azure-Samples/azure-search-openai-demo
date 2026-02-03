@@ -32,7 +32,7 @@ from openai.types.create_embedding_response import Usage
 import app
 import core
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.promptmanager import Jinja2PromptManager
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 
@@ -1142,7 +1142,7 @@ def chat_approach():
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
-        prompt_manager=Jinja2PromptManager(),
+        prompt_manager=PromptManager(),
         user_blob_manager=AdlsBlobManager(
             endpoint="https://test-userstorage-account.dfs.core.windows.net",
             container="test-userstorage-container",

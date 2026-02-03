@@ -1,6 +1,7 @@
 import re
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import asdict
+from datetime import datetime
 from typing import Any, Optional, cast
 
 from azure.search.documents.aio import SearchClient
@@ -86,13 +87,7 @@ class ChatReadRetrieveReadApproach(Approach):
         self.query_language = query_language
         self.query_speller = query_speller
         self.prompt_manager = prompt_manager
-        self.query_rewrite_prompt = self.prompt_manager.load_prompt(
-            "query_rewrite.system.jinja2",
-            "query_rewrite.user.jinja2",
-            include_past_messages_as_entries=False,  # past_messages are rendered in the user template
-        )
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
-        self.answer_prompt = self.prompt_manager.load_prompt("chat_answer.system.jinja2", "chat_answer.user.jinja2")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
         self.multimodal_enabled = multimodal_enabled
@@ -301,17 +296,21 @@ class ChatReadRetrieveReadApproach(Approach):
 
             return (extra_info, return_answer())
 
-        messages = self.prompt_manager.render_prompt(
-            self.answer_prompt,
-            self.get_system_prompt_variables(overrides.get("prompt_template"))
+        messages = self.prompt_manager.build_conversation(
+            system_template_path="chat_answer.system.jinja2",
+            system_template_variables=self.get_system_prompt_variables(overrides.get("prompt_template"))
             | {
                 "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
-                "past_messages": messages[:-1],
-                "user_query": original_user_query,
-                "text_sources": extra_info.data_points.text,
                 "image_sources": extra_info.data_points.images,
                 "citations": extra_info.data_points.citations,
             },
+            user_template_path="chat_answer.user.jinja2",
+            user_template_variables={
+                "user_query": original_user_query,
+                "text_sources": extra_info.data_points.text,
+            },
+            user_image_sources=extra_info.data_points.images,
+            past_messages=messages[:-1],
         )
 
         chat_coroutine = cast(
@@ -364,8 +363,12 @@ class ChatReadRetrieveReadApproach(Approach):
         # STEP 1: Generate an optimized keyword search query based on the chat history and the last question
 
         rewrite_result = await self.rewrite_query(
-            prompt_template=self.query_rewrite_prompt,
-            prompt_variables={"user_query": original_user_query, "past_messages": messages[:-1]},
+            system_template_path="query_rewrite.system.jinja2",
+            template_variables={
+                "user_query": original_user_query,
+                "past_messages": messages[:-1],
+                "current_date": datetime.now().strftime("%B %d, %Y"),
+            },
             overrides=overrides,
             chatgpt_model=self.chatgpt_model,
             chatgpt_deployment=self.chatgpt_deployment,

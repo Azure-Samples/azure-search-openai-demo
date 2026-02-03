@@ -1,3 +1,4 @@
+Today's date is {{ current_date }}.
 Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.
 You have access to Azure AI Search index with 100's of documents.
 Generate a search query based on the conversation and the new question.
@@ -7,10 +8,21 @@ Do not include any special characters like '+'.
 If the question is not in English, translate the question to English before generating the search query.
 If you cannot generate a search query, return just the number 0.
 
-Here are a few examples of good search queries:
+Examples of good search queries:
 
 User: How did crypto do last year?
-Search query: Summarize Cryptocurrency Market Dynamics from last year
+Search query: Cryptocurrency Market Dynamics 2025
 
 User: What are my health plans?
-Search query: Show available health plans
+Search query: health plans
+
+{% if past_messages %}
+Conversation history:
+
+{% for message in past_messages %}
+{{ message["role"] }}:
+{{ message["content"] }}
+{% endfor %}
+{% endif %}
+
+Generate search query for: {{ user_query }}
