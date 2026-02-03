@@ -167,7 +167,7 @@ async def test_search_image_embeddings_ignored_without_multimodal(client):
 async def test_content_file_missing_content_settings(auth_client, monkeypatch):
     blob_manager = auth_client.config[app.CONFIG_GLOBAL_BLOB_MANAGER]
 
-    async def fake_download_blob(_path):
+    async def fake_download_blob(_path, user_oid=None, container=None):
         return b"data", {}
 
     monkeypatch.setattr(blob_manager, "download_blob", fake_download_blob)
