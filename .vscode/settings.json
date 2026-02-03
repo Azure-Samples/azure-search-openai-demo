@@ -22,8 +22,7 @@
         "**/.pytest_cache": true,
         "**/.ruff_cache": true,
         "**/.mypy_cache": true,
-        "**/.ty_cache": true,
-        "**/.py,cover": true
+        "**/.ty_cache": true
     },
     "search.exclude": {
         "**/node_modules": true,

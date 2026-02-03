@@ -1,7 +1,6 @@
 import re
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import asdict
-from datetime import datetime
 from typing import Any, Optional, cast
 
 from azure.search.documents.aio import SearchClient
@@ -364,10 +363,9 @@ class ChatReadRetrieveReadApproach(Approach):
 
         rewrite_result = await self.rewrite_query(
             system_template_path="query_rewrite.system.jinja2",
-            template_variables={
+            system_template_variables={
                 "user_query": original_user_query,
                 "past_messages": messages[:-1],
-                "current_date": datetime.now().strftime("%B %d, %Y"),
             },
             overrides=overrides,
             chatgpt_model=self.chatgpt_model,
