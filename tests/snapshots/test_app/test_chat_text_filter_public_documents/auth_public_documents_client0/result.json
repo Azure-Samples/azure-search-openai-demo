@@ -32,7 +32,7 @@
                 "title": "Prompt to generate search query"
             },
             {
-                "description": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+                "description": "capital of France",
                 "props": {
                     "filter": "category ne 'excluded'",
                     "search_image_embeddings": false,

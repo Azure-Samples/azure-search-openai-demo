@@ -39,7 +39,7 @@
                 "title": "Prompt to generate search query"
             },
             {
-                "description": "The capital of France is Paris. [Benefit_Options-2.pdf].",
+                "description": "interest rates",
                 "props": {
                     "filter": null,
                     "search_image_embeddings": true,
