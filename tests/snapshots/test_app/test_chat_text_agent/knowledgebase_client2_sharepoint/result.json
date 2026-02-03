@@ -128,7 +128,7 @@
                         "role": "system"
                     },
                     {
-                        "content": "What is the capital of France?\nSources:\nBenefit_Options-2.pdf: There is a whistleblower policy.\ndocument: SharePoint content",
+                        "content": "What is the capital of France?\n\n\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.\ndocument: SharePoint content",
                         "role": "user"
                     }
                 ],

@@ -87,7 +87,7 @@
                         "role": "assistant"
                     },
                     {
-                        "content": "Is dental covered?\nSources:\nBenefit_Options-2.pdf: There is a whistleblower policy.",
+                        "content": "Is dental covered?\n\n\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.",
                         "role": "user"
                     }
                 ],
