@@ -101,7 +101,7 @@ class BaseBlobManager:
         raise NotImplementedError("Subclasses must implement this method")
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None
+        self, blob_path: str, user_oid: Optional[str] = None, container: Optional[str] = None
     ) -> Optional[tuple[bytes, BlobProperties]]:
         """
         Downloads a blob from Azure Storage.
@@ -110,6 +110,7 @@ class BaseBlobManager:
         Args:
             blob_path: The path to the blob in the storage
             user_oid: The user's object ID (optional)
+            container: Optional container name override (defaults to the manager's configured container)
 
         Returns:
             Optional[tuple[bytes, BlobProperties]]:
@@ -255,7 +256,7 @@ class AdlsBlobManager(BaseBlobManager):
         return unquote(file_client.url)
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None
+        self, blob_path: str, user_oid: Optional[str] = None, container: Optional[str] = None
     ) -> Optional[tuple[bytes, BlobProperties]]:
         """
         Downloads a blob from Azure Data Lake Storage.
@@ -263,6 +264,7 @@ class AdlsBlobManager(BaseBlobManager):
         Args:
             blob_path: The path to the blob in the format {user_oid}/{document_name}/images/{image_name}
             user_oid: The user's object ID
+            container: Optional filesystem name override (ignored; this manager uses its configured filesystem)
 
         Returns:
             Optional[tuple[bytes, BlobProperties]]:
@@ -463,7 +465,7 @@ class BlobManager(BaseBlobManager):
         return blob_client.url
 
     async def download_blob(
-        self, blob_path: str, user_oid: Optional[str] = None
+        self, blob_path: str, user_oid: Optional[str] = None, container: Optional[str] = None
     ) -> Optional[tuple[bytes, BlobProperties]]:
         """
         Downloads a blob from Azure Blob Storage.
@@ -471,6 +473,7 @@ class BlobManager(BaseBlobManager):
         Args:
             blob_path: The path to the blob in the storage
             user_oid: Not used in BlobManager, but included for API compatibility
+            container: Optional container name override (defaults to self.container)
 
         Returns:
             Optional[tuple[bytes, BlobProperties]]:
@@ -484,7 +487,7 @@ class BlobManager(BaseBlobManager):
             raise ValueError(
                 "user_oid is not supported for BlobManager. Use AdlsBlobManager for user-specific operations."
             )
-        container_client = self.blob_service_client.get_container_client(self.container)
+        container_client = self.blob_service_client.get_container_client(container or self.container)
         if not await container_client.exists():
             return None
         if len(blob_path) == 0:

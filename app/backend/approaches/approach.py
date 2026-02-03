@@ -849,11 +849,14 @@ class Approach(ABC):
         """
 
         # Handle full URLs for both Blob Storage and Data Lake Storage
+        container: Optional[str] = None
         if blob_url.startswith("http"):
             url_parts = blob_url.split("/")
-            # Skip the domain parts and container/filesystem name to get the blob path
+            # Extract container name from URL
             # For blob: https://{account}.blob.core.windows.net/{container}/{blob_path}
             # For dfs: https://{account}.dfs.core.windows.net/{filesystem}/{path}
+            container = url_parts[3]
+            # Extract the blob path portion (everything after the container/filesystem segment)
             blob_path = "/".join(url_parts[4:])
             # If %20 in URL, replace it with a space
             blob_path = blob_path.replace("%20", " ")
@@ -864,9 +867,9 @@ class Approach(ABC):
         # Download the blob using the appropriate client
         result = None
         if ".dfs.core.windows.net" in blob_url and self.user_blob_manager:
-            result = await self.user_blob_manager.download_blob(blob_path, user_oid=user_oid)
+            result = await self.user_blob_manager.download_blob(blob_path, container=container, user_oid=user_oid)
         elif self.global_blob_manager:
-            result = await self.global_blob_manager.download_blob(blob_path)
+            result = await self.global_blob_manager.download_blob(blob_path, container=container)
 
         if result:
             content, _ = result  # Unpack the tuple, ignoring properties

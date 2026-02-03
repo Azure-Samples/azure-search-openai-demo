@@ -1,3 +1,4 @@
+import base64
 import json
 
 import pytest
@@ -355,6 +356,42 @@ async def test_chat_prompt_render_with_image_directive(chat_approach):
     assert "Diagram that shows the architecture of Fabric Activator." in combined
     # Original unescaped sequence should be gone
     assert ":::image" not in combined
+
+
+@pytest.mark.asyncio
+async def test_get_sources_content_downloads_images_from_images_container(chat_approach, monkeypatch):
+    """Regression test: ensure image URLs in a non-default container download from that container."""
+
+    called: dict[str, str] = {}
+
+    async def fake_download_blob(blob_path: str, user_oid=None, container=None):
+        called["blob_path"] = blob_path
+        called["container"] = container
+        assert user_oid is None
+        return b"abc", {"content_settings": {"content_type": "image/png"}}
+
+    monkeypatch.setattr(chat_approach.global_blob_manager, "download_blob", fake_download_blob)
+
+    image_url = "https://examplestorage.blob.core.windows.net/images/doc1/page0/figure1.png"
+    doc = Document(
+        id="doc1",
+        content="",
+        sourcepage="doc1.pdf#page=1",
+        sourcefile="doc1.pdf",
+        images=[{"url": image_url}],
+    )
+
+    data_points = await chat_approach.get_sources_content(
+        [doc],
+        use_semantic_captions=False,
+        include_text_sources=False,
+        download_image_sources=True,
+        user_oid=None,
+    )
+
+    assert called["container"] == "images"
+    assert called["blob_path"] == "doc1/page0/figure1.png"
+    assert data_points.images == [f"data:image/png;base64,{base64.b64encode(b'abc').decode('utf-8')}"]
 
 
 def test_replace_all_ref_ids_unknown_fallback(chat_approach):
