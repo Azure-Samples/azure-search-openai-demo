@@ -92,7 +92,7 @@ class PromptManager:
 
         # Past messages (conversation history)
         for msg in past_messages or []:
-            messages.append(cast(ChatCompletionMessageParam, {"role": msg["role"], "content": msg["content"]}))
+            messages.append(cast(ChatCompletionMessageParam, msg))
 
         # User message (with optional images)
         messages.append(self.build_user_prompt(user_template_path, user_template_variables, user_image_sources))
