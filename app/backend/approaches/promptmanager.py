@@ -6,6 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 from openai.types.chat import (
     ChatCompletionMessageParam,
     ChatCompletionSystemMessageParam,
+    ChatCompletionToolParam,
     ChatCompletionUserMessageParam,
 )
 
@@ -69,7 +70,7 @@ class PromptManager:
         user_template_path: str,
         user_template_variables: dict[str, Any],
         user_image_sources: list[str] | None = None,
-        past_messages: list[dict[str, Any]] | None = None,
+        past_messages: list[ChatCompletionMessageParam] | None = None,
     ) -> list[ChatCompletionMessageParam]:
         """Build a full conversation with system, history, and user message.
 
@@ -98,7 +99,7 @@ class PromptManager:
 
         return messages
 
-    def load_tools(self, path: str) -> list[dict[str, Any]]:
+    def load_tools(self, path: str) -> list[ChatCompletionToolParam]:
         """Load tools from a JSON file."""
         with open(self.PROMPTS_DIRECTORY / path) as f:
-            return json.load(f)
+            return cast(list[ChatCompletionToolParam], json.load(f))
