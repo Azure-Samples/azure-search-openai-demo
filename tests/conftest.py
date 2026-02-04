@@ -31,7 +31,7 @@ from openai.types.create_embedding_response import Usage
 
 import app
 import core
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
+from approaches.approach import Approach
 from approaches.promptmanager import PromptyManager
 from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
@@ -1125,7 +1125,7 @@ def mock_user_directory_client(monkeypatch):
 
 @pytest.fixture
 def chat_approach():
-    return ChatReadRetrieveReadApproach(
+    return Approach(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
         search_index_name=None,
         knowledgebase_model=None,

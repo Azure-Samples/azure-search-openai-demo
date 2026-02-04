@@ -32,7 +32,7 @@ The backend is built using [Quart](https://quart.palletsprojects.com/), a Python
 
 Typically, the primary backend code you'll want to customize is the `app/backend/approaches` folder, which contains the code and prompts powering the RAG flow.
 
-The RAG flow is implemented in [chatreadretrieveread.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/chatreadretrieveread.py).
+The RAG flow is implemented in [approach.py](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/approach.py).
 
 1. **Query rewriting**: It calls the OpenAI ChatCompletion API to turn the user question into a good search query, using the prompt and tools from [chat_query_rewrite.prompty](https://github.com/Azure-Samples/azure-search-openai-demo/blob/main/app/backend/approaches/prompts/chat_query_rewrite.prompty).
 2. **Search**: It queries Azure AI Search for search results for that query (optionally using the vector embeddings for that query).

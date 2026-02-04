@@ -9,6 +9,7 @@ from openai.types.chat import ChatCompletion
 
 from approaches.approach import (
     ActivityDetail,
+    Approach,
     DataPoints,
     Document,
     ExtraInfo,
@@ -16,7 +17,6 @@ from approaches.approach import (
     ThoughtStep,
     WebResult,
 )
-from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
 from approaches.promptmanager import PromptyManager
 from prepdocslib.embeddings import ImageEmbeddings
 
@@ -150,7 +150,9 @@ def test_extract_rewritten_query_invalid_json(chat_approach):
     }
     completion = ChatCompletion.model_validate(payload, strict=False)
 
-    result = chat_approach.extract_rewritten_query(completion, "original", no_response_token=chat_approach.NO_RESPONSE)
+    result = chat_approach.extract_rewritten_query(
+        completion, "original", no_response_token=chat_approach.QUERY_REWRITE_NO_RESPONSE
+    )
 
     assert result == "fallback query"
 
@@ -282,7 +284,7 @@ async def test_compute_multimodal_embedding(monkeypatch, chat_approach):
 async def test_compute_multimodal_embedding_no_client():
     """Test that compute_multimodal_embedding raises ValueError when image_embeddings_client is not set."""
     # Create a chat approach without an image_embeddings_client
-    chat_approach = ChatReadRetrieveReadApproach(
+    chat_approach = Approach(
         search_client=SearchClient(endpoint="", index_name="", credential=AzureKeyCredential("")),
         search_index_name=None,
         knowledgebase_model=None,
