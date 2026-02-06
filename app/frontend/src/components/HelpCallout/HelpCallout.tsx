@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import { ITextFieldProps, DefaultButton, IconButton, IButtonStyles, Callout, IStackTokens, Stack, IStackStyles, initializeIcons } from "@fluentui/react";
 import { useBoolean, useId } from "@fluentui/react-hooks";
 import { useTranslation } from "react-i18next";
