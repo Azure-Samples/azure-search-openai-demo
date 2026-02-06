@@ -130,11 +130,65 @@ When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md for
 
 ## Upgrading dependencies
 
+### Python backend dependencies
+
 To upgrade a particular package in the backend, use the following command, replacing `<package-name>` with the name of the package you want to upgrade:
 
 ```shell
-cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.10 --upgrade-package package-name
+cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.10 --upgrade-package <package-name>
 ```
+
+After upgrading, run tests to verify compatibility:
+
+```shell
+source .venv/bin/activate
+pytest tests/
+```
+
+### npm frontend dependencies
+
+To upgrade a particular package in the frontend:
+
+1. **Navigate to the frontend directory**:
+
+   ```shell
+   cd app/frontend
+   ```
+
+2. **Upgrade the package** (replace `<package-name>` with the package you want to upgrade):
+
+   ```shell
+   npm install <package-name>@latest
+   ```
+
+3. **Build the frontend** to verify the upgrade works:
+
+   ```shell
+   npm run build
+   ```
+
+4. **Run all tests** to ensure nothing broke:
+
+   ```shell
+   # Run e2e tests from the root directory
+   cd ../..
+   source .venv/bin/activate
+   pytest tests/e2e.py
+   ```
+
+5. **Commit changes** if the upgrade is successful:
+
+   ```shell
+   git add package.json package-lock.json
+   git commit -m "chore: upgrade <package-name> to <version>"
+   ```
+
+**Important notes for frontend upgrades**:
+
+* When upgrading React or related core packages, you may need to upgrade multiple packages together (e.g., `react`, `react-dom`, `@types/react`, `@types/react-dom`)
+* Some upgrades may require code changes for API compatibility - check the package's changelog
+* For major version upgrades of UI libraries like Fluent UI or MSAL, review breaking changes carefully. Manual tests are required for any MSAL changes since the E2E tests do not cover authentication flows.
+* If npm reports peer dependency conflicts, the `.npmrc` file has `legacy-peer-deps=true` which allows the install to proceed. This is currently needed because `@fluentui/react` v8 declares peer dependencies on React 17/18, but works fine with React 19.
 
 ## Checking Python type hints
 
