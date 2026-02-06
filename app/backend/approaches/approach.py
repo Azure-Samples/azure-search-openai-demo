@@ -967,10 +967,12 @@ class Approach(ABC):
             params["stream"] = True
             params["stream_options"] = {"include_usage": True}
 
-        params["tools"] = tools
+        if tools is not None:
+            params["tools"] = tools
 
         # Azure OpenAI takes the deployment name as the model name
-        return self.openai_client.chat.completions.create(
+        # ty has trouble with **params spread so we ignore the overload matching error
+        return self.openai_client.chat.completions.create(  # type: ignore[no-matching-overload]
             model=chatgpt_deployment if chatgpt_deployment else chatgpt_model,
             messages=messages,
             seed=overrides.get("seed", None),
