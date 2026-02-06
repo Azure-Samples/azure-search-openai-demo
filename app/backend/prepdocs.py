@@ -16,8 +16,6 @@ from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
 )
 from prepdocslib.listfilestrategy import (
-    ADLSGen2ListFileStrategy,
-    ListFileStrategy,
     LocalListFileStrategy,
 )
 from prepdocslib.servicesetup import (
@@ -51,33 +49,13 @@ async def check_search_service_connectivity(search_service: str) -> bool:
 
 def setup_list_file_strategy(
     azure_credential: AsyncTokenCredential,
-    local_files: Optional[str],
-    datalake_storage_account: Optional[str],
-    datalake_filesystem: Optional[str],
-    datalake_path: Optional[str],
-    datalake_key: Optional[str],
+    local_files: str,
     enable_global_documents: bool = False,
 ):
-    list_file_strategy: ListFileStrategy
-    if datalake_storage_account:
-        if datalake_filesystem is None or datalake_path is None:
-            raise ValueError("DataLake file system and path are required when using Azure Data Lake Gen2")
-        adls_gen2_creds: AsyncTokenCredential | str = azure_credential if datalake_key is None else datalake_key
-        logger.info("Using Data Lake Gen2 Storage Account: %s", datalake_storage_account)
-        list_file_strategy = ADLSGen2ListFileStrategy(
-            data_lake_storage_account=datalake_storage_account,
-            data_lake_filesystem=datalake_filesystem,
-            data_lake_path=datalake_path,
-            credential=adls_gen2_creds,
-            enable_global_documents=enable_global_documents,
-        )
-    elif local_files:
-        logger.info("Using local files: %s", local_files)
-        list_file_strategy = LocalListFileStrategy(
-            path_pattern=local_files, enable_global_documents=enable_global_documents
-        )
-    else:
-        raise ValueError("Either local_files or datalake_storage_account must be provided.")
+    logger.info("Using local files: %s", local_files)
+    list_file_strategy = LocalListFileStrategy(
+        path_pattern=local_files, enable_global_documents=enable_global_documents
+    )
     return list_file_strategy
 
 
@@ -164,9 +142,6 @@ if __name__ == "__main__":  # pragma: no cover
         "--storagekey",
         required=False,
         help="Optional. Use this Azure Blob Storage account key instead of the current user identity to login (use az login to set current user for Azure)",
-    )
-    parser.add_argument(
-        "--datalakekey", required=False, help="Optional. Use this key when authenticating to Azure Data Lake Gen2"
     )
     parser.add_argument(
         "--documentintelligencekey",
@@ -274,10 +249,6 @@ if __name__ == "__main__":  # pragma: no cover
     list_file_strategy = setup_list_file_strategy(
         azure_credential=azd_credential,
         local_files=args.files,
-        datalake_storage_account=os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT"),
-        datalake_filesystem=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM"),
-        datalake_path=os.getenv("AZURE_ADLS_GEN2_FILESYSTEM_PATH"),
-        datalake_key=clean_key_if_exists(args.datalakekey),
         enable_global_documents=enable_global_documents,
     )
 

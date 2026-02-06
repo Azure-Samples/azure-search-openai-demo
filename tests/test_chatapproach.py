@@ -1,3 +1,4 @@
+import base64
 import json
 
 import pytest
@@ -16,7 +17,7 @@ from approaches.approach import (
     WebResult,
 )
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.promptmanager import PromptyManager
+from approaches.promptmanager import PromptManager
 from prepdocslib.embeddings import ImageEmbeddings
 
 from .mocks import (
@@ -298,7 +299,7 @@ async def test_compute_multimodal_embedding_no_client():
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
-        prompt_manager=PromptyManager(),
+        prompt_manager=PromptManager(),
         # Explicitly set image_embeddings_client to None
         image_embeddings_client=None,
     )
@@ -335,16 +336,20 @@ async def test_chat_prompt_render_with_image_directive(chat_approach):
 
     data_points = await build_sources()
 
-    messages = chat_approach.prompt_manager.render_prompt(
-        chat_approach.answer_prompt,
-        {
+    messages = chat_approach.prompt_manager.build_conversation(
+        system_template_path="chat_answer.system.jinja2",
+        system_template_variables={
             "include_follow_up_questions": False,
-            "past_messages": [],
-            "user_query": "What is Fabric Activator?",
-            "text_sources": data_points.text,
             "image_sources": data_points.images,
             "citations": data_points.citations,
         },
+        user_template_path="chat_answer.user.jinja2",
+        user_template_variables={
+            "user_query": "What is Fabric Activator?",
+            "text_sources": data_points.text,
+        },
+        user_image_sources=data_points.images,
+        past_messages=[],
     )
     assert messages
     # Find the user message containing Sources and verify placeholder
@@ -355,6 +360,42 @@ async def test_chat_prompt_render_with_image_directive(chat_approach):
     assert "Diagram that shows the architecture of Fabric Activator." in combined
     # Original unescaped sequence should be gone
     assert ":::image" not in combined
+
+
+@pytest.mark.asyncio
+async def test_get_sources_content_downloads_images_from_images_container(chat_approach, monkeypatch):
+    """Regression test: ensure image URLs in a non-default container download from that container."""
+
+    called: dict[str, str] = {}
+
+    async def fake_download_blob(blob_path: str, user_oid=None, container=None):
+        called["blob_path"] = blob_path
+        called["container"] = container
+        assert user_oid is None
+        return b"abc", {"content_settings": {"content_type": "image/png"}}
+
+    monkeypatch.setattr(chat_approach.global_blob_manager, "download_blob", fake_download_blob)
+
+    image_url = "https://examplestorage.blob.core.windows.net/images/doc1/page0/figure1.png"
+    doc = Document(
+        id="doc1",
+        content="",
+        sourcepage="doc1.pdf#page=1",
+        sourcefile="doc1.pdf",
+        images=[{"url": image_url}],
+    )
+
+    data_points = await chat_approach.get_sources_content(
+        [doc],
+        use_semantic_captions=False,
+        include_text_sources=False,
+        download_image_sources=True,
+        user_oid=None,
+    )
+
+    assert called["container"] == "images"
+    assert called["blob_path"] == "doc1/page0/figure1.png"
+    assert data_points.images == [f"data:image/png;base64,{base64.b64encode(b'abc').decode('utf-8')}"]
 
 
 def test_replace_all_ref_ids_unknown_fallback(chat_approach):

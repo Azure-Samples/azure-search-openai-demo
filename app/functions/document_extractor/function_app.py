@@ -14,6 +14,7 @@ from urllib.parse import unquote, urlparse
 import azure.functions as func
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import ManagedIdentityCredential
+from azure.storage.filedatalake.aio import DataLakeServiceClient
 
 from prepdocslib.blobmanager import BlobManager
 from prepdocslib.fileprocessor import FileProcessor
@@ -34,6 +35,11 @@ class GlobalSettings:
     file_processors: dict[str, FileProcessor]
     azure_credential: ManagedIdentityCredential
     blob_manager: BlobManager
+    storage_is_adls: bool
+    storage_account: str
+    storage_container: str
+    enable_global_document_access: bool
+    data_lake_service_client: DataLakeServiceClient | None
 
 
 settings: GlobalSettings | None = None
@@ -47,6 +53,13 @@ def configure_global_settings():
     use_local_html_parser = os.getenv("USE_LOCAL_HTML_PARSER", "false").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
     document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
+    storage_is_adls = os.getenv("USE_CLOUD_INGESTION_ACLS", "false").lower() == "true"
+    enable_global_document_access = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "false").lower() == "true"
+
+    # Cloud ingestion storage account (ADLS Gen2 when ACLs enabled, standard blob otherwise)
+    # Fallback to AZURE_STORAGE_ACCOUNT is for legacy deployments only - may be removed in future
+    storage_account = os.getenv("AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT") or os.environ["AZURE_STORAGE_ACCOUNT"]
+    storage_container = os.environ["AZURE_STORAGE_CONTAINER"]
 
     # Single shared managed identity credential
     if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
@@ -68,16 +81,29 @@ def configure_global_settings():
 
     blob_manager = setup_blob_manager(
         azure_credential=azure_credential,
-        storage_account=os.environ["AZURE_STORAGE_ACCOUNT"],
-        storage_container=os.environ["AZURE_STORAGE_CONTAINER"],
+        storage_account=storage_account,
+        storage_container=storage_container,
         storage_resource_group=os.environ["AZURE_STORAGE_RESOURCE_GROUP"],
         subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
     )
+
+    # Initialize ADLS client only if using ADLS Gen2 storage for ACL extraction
+    data_lake_service_client = None
+    if storage_is_adls:
+        data_lake_service_client = DataLakeServiceClient(
+            account_url=f"https://{storage_account}.dfs.core.windows.net",
+            credential=azure_credential,
+        )
 
     settings = GlobalSettings(
         file_processors=file_processors,
         azure_credential=azure_credential,
         blob_manager=blob_manager,
+        storage_is_adls=storage_is_adls,
+        storage_account=storage_account,
+        storage_container=storage_container,
+        enable_global_document_access=enable_global_document_access,
+        data_lake_service_client=data_lake_service_client,
     )
 
 
@@ -223,11 +249,95 @@ async def process_document(data: dict[str, Any]) -> dict[str, Any]:
     finally:
         document_stream.close()
 
-    components = build_document_components(blob_path_within_container, pages)
+    # Extract ACLs if using ADLS Gen2 storage
+    oids: list[str] = []
+    groups: list[str] = []
+    if settings.storage_is_adls:
+        oids, groups = await get_file_acls(blob_path_within_container)
+
+    components = build_document_components(blob_path_within_container, pages, oids, groups)
     return components
 
 
-def build_document_components(file_name: str, pages: list[Page]) -> dict[str, Any]:
+async def get_file_acls(file_path: str) -> tuple[list[str], list[str]]:
+    """
+    Extract user and group IDs from ADLS Gen2 ACLs for a file.
+
+    Args:
+        file_path: Path to the file within the container
+
+    Returns:
+        Tuple of (user_oids, group_ids) extracted from the file's ACLs.
+        If the "other" ACL entry has read permission, returns (["all"], ["all"])
+        to indicate global access for any authenticated user.
+    """
+    if settings is None:
+        raise RuntimeError("Global settings not initialized")
+    if settings.data_lake_service_client is None:
+        raise RuntimeError("ADLS client not initialized - storage_is_adls may be false")
+
+    oids: list[str] = []
+    groups: list[str] = []
+    other_has_read = False
+
+    try:
+        file_system_client = settings.data_lake_service_client.get_file_system_client(settings.storage_container)
+        file_client = file_system_client.get_file_client(file_path)
+
+        acl_props = await file_client.get_access_control(upn=False)
+        acl_string = acl_props.get("acl", "")
+
+        logger.info("Retrieved ACL for %s: %s", file_path, acl_string)
+
+        # Parse ACL string format: "user::rwx,user:oid:rwx,group::r-x,group:gid:r-x,other::---"
+        # https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control
+        for entry in acl_string.split(","):
+            parts = entry.split(":")
+            if len(parts) != 3:
+                continue
+            scope_type = parts[0]
+            identity = parts[1]
+            permissions = parts[2]
+
+            # Check if "other" has read permission - this means global access
+            # The "other" entry has an empty identity: "other::r--" or "other::r-x"
+            # https://github.com/hurtn/datalake-on-ADLS/blob/master/Understanding%20access%20control%20and%20data%20lake%20configurations%20in%20ADLS%20Gen2.md#option-2-the-other-acl-entry
+            if scope_type == "other" and len(identity) == 0 and "r" in permissions:
+                other_has_read = True
+                continue
+
+            # Only include if read permission is granted and identity is specified
+            if len(identity) == 0:
+                continue
+            if scope_type == "user" and "r" in permissions:
+                oids.append(identity)
+            elif scope_type == "group" and "r" in permissions:
+                groups.append(identity)
+
+        # If "other" has read permission AND global access is enabled, document is globally accessible
+        if other_has_read and settings.enable_global_document_access:
+            logger.info(
+                "File %s has 'other' read permission and global access enabled - setting global access", file_path
+            )
+            return ["all"], ["all"]
+        elif other_has_read:
+            logger.info(
+                "File %s has 'other' read permission but AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS is not enabled",
+                file_path,
+            )
+
+        logger.info("Extracted ACLs - oids: %s, groups: %s", oids, groups)
+
+    except Exception as e:
+        logger.warning("Failed to retrieve ACLs for %s: %s", file_path, str(e))
+        # Return empty lists on failure - document will still be indexed but without ACLs
+
+    return oids, groups
+
+
+def build_document_components(
+    file_name: str, pages: list[Page], oids: list[str] | None = None, groups: list[str] | None = None
+) -> dict[str, Any]:
     page_entries: list[dict[str, Any]] = []
     figure_entries: list[dict[str, Any]] = []
 
@@ -251,6 +361,8 @@ def build_document_components(file_name: str, pages: list[Page]) -> dict[str, An
         "file_name": file_name,
         "pages": page_entries,
         "figures": figure_entries,
+        "oids": oids or [],
+        "groups": groups or [],
     }
 
 

@@ -36,12 +36,17 @@ async def setup_cloud_ingestion_strategy(
     search_service = os.environ["AZURE_SEARCH_SERVICE"]
     index_name = os.environ["AZURE_SEARCH_INDEX"]
     search_user_assigned_identity_resource_id = os.environ["AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID"]
-    storage_account = os.environ["AZURE_STORAGE_ACCOUNT"]
     storage_container = os.environ["AZURE_STORAGE_CONTAINER"]
-    storage_resource_group = os.environ["AZURE_STORAGE_RESOURCE_GROUP"]
     subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
     image_storage_container = os.environ.get("AZURE_IMAGESTORAGE_CONTAINER")
     search_embedding_field = os.environ["AZURE_SEARCH_FIELD_NAME_EMBEDDING"]
+
+    # Cloud ingestion storage account (ADLS Gen2 when ACLs enabled, standard blob otherwise)
+    # Fallback to AZURE_STORAGE_ACCOUNT is for legacy deployments only - may be removed in future
+    storage_account = os.getenv("AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT") or os.environ["AZURE_STORAGE_ACCOUNT"]
+    storage_resource_group = (
+        os.getenv("AZURE_CLOUD_INGESTION_STORAGE_RESOURCE_GROUP") or os.environ["AZURE_STORAGE_RESOURCE_GROUP"]
+    )
 
     # Cloud ingestion specific endpoints
     document_extractor_uri = os.environ["DOCUMENT_EXTRACTOR_SKILL_ENDPOINT"]
@@ -53,9 +58,18 @@ async def setup_cloud_ingestion_strategy(
 
     # Feature flags
     use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
-    use_acls = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
+    use_acls = os.getenv("USE_CLOUD_INGESTION_ACLS", "").lower() == "true"
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+
+    # Warn if access control is enforced but ACL extraction is not enabled
+    if enforce_access_control and not use_acls:
+        logger.warning(
+            "AZURE_ENFORCE_ACCESS_CONTROL is enabled but USE_CLOUD_INGESTION_ACLS is not. "
+            "Documents will be indexed without ACLs, so access control filtering will not work. "
+            "Either set USE_CLOUD_INGESTION_ACLS=true to extract ACLs from ADLS Gen2, "
+            "or manually set ACLs using scripts/manageacl.py after ingestion."
+        )
 
     # Setup search info
     search_info = setup_search_info(

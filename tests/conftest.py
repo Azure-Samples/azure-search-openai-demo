@@ -32,7 +32,7 @@ from openai.types.create_embedding_response import Usage
 import app
 import core
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.promptmanager import PromptyManager
+from approaches.promptmanager import PromptManager
 from core.authentication import AuthenticationHelper
 from prepdocslib.blobmanager import AdlsBlobManager, BlobManager
 
@@ -238,14 +238,19 @@ def mock_openai_chatcompletion(monkeypatch):
                 "rejected_prediction_tokens": 0,
             },
         }
-        last_question = messages[-1]["content"]
-        if last_question == "Generate search query for: What is the capital of France?":
+        last_message_content = messages[-1]["content"]
+        # Handle both old format (user message) and new format (system message with query at end)
+        if isinstance(last_message_content, str):
+            last_question = last_message_content
+        else:
+            last_question = ""
+        if last_question.endswith("Generate search query for: What is the capital of France?"):
             answer = "capital of France"
-        elif last_question == "Generate search query for: Are interest rates high?":
+        elif last_question.endswith("Generate search query for: Are interest rates high?"):
             answer = "interest rates"
-        elif last_question == "Generate search query for: Flowers in westbrae nursery logo?":
+        elif last_question.endswith("Generate search query for: Flowers in westbrae nursery logo?"):
             answer = "westbrae nursery logo"
-        elif isinstance(last_question, list) and any([part.get("image_url") for part in last_question]):
+        elif isinstance(last_message_content, list) and any([part.get("image_url") for part in last_message_content]):
             answer = "From the provided sources, the impact of interest rates and GDP growth on financial markets can be observed through the line graph. [Financial Market Analysis Report 2023-7.png]"
         else:
             answer = "The capital of France is Paris. [Benefit_Options-2.pdf]."
@@ -1142,7 +1147,7 @@ def chat_approach():
         content_field="",
         query_language="en-us",
         query_speller="lexicon",
-        prompt_manager=PromptyManager(),
+        prompt_manager=PromptManager(),
         user_blob_manager=AdlsBlobManager(
             endpoint="https://test-userstorage-account.dfs.core.windows.net",
             container="test-userstorage-container",

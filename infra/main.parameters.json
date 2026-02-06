@@ -212,6 +212,18 @@
     "useCloudIngestion": {
       "value": "${USE_CLOUD_INGESTION=false}"
     },
+    "useCloudIngestionAcls": {
+      "value": "${USE_CLOUD_INGESTION_ACLS=false}"
+    },
+    "useExistingAdlsStorage": {
+      "value": "${USE_EXISTING_ADLS_STORAGE=false}"
+    },
+    "adlsStorageAccountName": {
+      "value": "${AZURE_ADLS_GEN2_STORAGE_ACCOUNT}"
+    },
+    "adlsStorageResourceGroupName": {
+      "value": "${AZURE_ADLS_GEN2_STORAGE_RESOURCE_GROUP}"
+    },
     "enableLanguagePicker": {
       "value": "${ENABLE_LANGUAGE_PICKER=false}"
     },

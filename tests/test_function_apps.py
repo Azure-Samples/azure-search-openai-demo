@@ -91,6 +91,11 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
         file_processors=mock_file_processors,
         azure_credential=object(),
         blob_manager=MockBlobManager(),
+        storage_is_adls=False,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
+        data_lake_service_client=None,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -124,6 +129,83 @@ async def test_document_extractor_emits_pages_and_figures(monkeypatch: pytest.Mo
     assert figure_entry["document_file_name"] == "sample.pdf"
     assert figure_entry["bbox"] == [10.0, 20.0, 30.0, 40.0]
     assert figure_entry["bytes_base64"] == base64.b64encode(TEST_PNG_BYTES).decode("utf-8")
+    # Verify ACL fields are present (empty when not using ADLS)
+    assert data["oids"] == []
+    assert data["groups"] == []
+
+
+@pytest.mark.asyncio
+async def test_document_extractor_with_adls_acls(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Document extractor extracts ACLs when storage_is_adls=True."""
+
+    class StubParser:
+        async def parse(self, content: Any):
+            yield document_extractor.Page(page_num=0, offset=0, text="Test content", images=[])
+
+    # Mock file processors and blob manager
+    mock_file_processors = {
+        ".pdf": FileProcessor(StubParser(), None),
+    }
+
+    class MockBlobManager:
+        async def download_blob(self, blob_path: str):
+            return (b"pdf-bytes", {})
+
+    # Mock DataLakeServiceClient for ACL retrieval
+    class MockFileClient:
+        async def get_access_control(self, upn: bool = False):
+            return {"acl": "user::rwx,user:user-oid-1:r--,group:group-id-1:r-x,other::---"}
+
+    class MockFileSystemClient:
+        def get_file_client(self, path):
+            return MockFileClient()
+
+    class MockServiceClient:
+        def get_file_system_client(self, container):
+            return MockFileSystemClient()
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+    mock_service_client = MockServiceClient()
+
+    mock_settings = document_extractor.GlobalSettings(
+        file_processors=mock_file_processors,
+        azure_credential=object(),
+        blob_manager=MockBlobManager(),
+        storage_is_adls=True,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
+        data_lake_service_client=mock_service_client,
+    )
+    monkeypatch.setattr(document_extractor, "settings", mock_settings)
+
+    request_payload = {
+        "values": [
+            {
+                "recordId": "record-1",
+                "data": {
+                    "metadata_storage_path": "https://account.blob.core.windows.net/container/sample.pdf",
+                },
+            }
+        ]
+    }
+    response = await document_extractor.extract_document(build_request(request_payload))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body().decode("utf-8"))
+    values = body["values"]
+    assert len(values) == 1
+    result = values[0]
+
+    data = result["data"]
+    # Verify ACL fields are populated from ADLS
+    assert data["oids"] == ["user-oid-1"]
+    assert data["groups"] == ["group-id-1"]
 
 
 @pytest.mark.asyncio
@@ -132,6 +214,11 @@ async def test_document_extractor_requires_single_record(monkeypatch: pytest.Mon
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
         blob_manager=object(),
+        storage_is_adls=False,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
+        data_lake_service_client=None,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
     response = await document_extractor.extract_document(build_request({"values": []}))
@@ -149,6 +236,11 @@ async def test_document_extractor_handles_processing_exception(monkeypatch: pyte
         file_processors={".pdf": FileProcessor(None, None)},
         azure_credential=object(),
         blob_manager=object(),
+        storage_is_adls=False,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
+        data_lake_service_client=None,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
     monkeypatch.setattr(document_extractor, "process_document", failing_process)
@@ -197,6 +289,11 @@ async def test_document_extractor_process_document_http_error(monkeypatch: pytes
         file_processors=mock_file_processors,
         azure_credential=object(),
         blob_manager=MockBlobManager(),
+        storage_is_adls=False,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
+        data_lake_service_client=None,
     )
     monkeypatch.setattr(document_extractor, "settings", mock_settings)
 
@@ -402,6 +499,7 @@ async def test_text_processor_builds_chunk_with_caption(monkeypatch: pytest.Monk
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=3,
         file_processors=mock_file_processors,
         embedding_service=StubEmbeddingService(),
@@ -522,6 +620,206 @@ def test_document_extractor_module_init_key_error(
     reloaded.settings = None
 
 
+# ACL extraction tests
+
+
+def setup_acl_mocks(monkeypatch: pytest.MonkeyPatch, acl_string: str, enable_global_document_access: bool = False):
+    """Helper to set up mocks for get_file_acls tests."""
+
+    class MockFileClient:
+        async def get_access_control(self, upn=False):
+            return {"acl": acl_string}
+
+    class MockFileSystemClient:
+        def get_file_client(self, path):
+            return MockFileClient()
+
+    class MockServiceClient:
+        def get_file_system_client(self, container):
+            return MockFileSystemClient()
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+    mock_service_client = MockServiceClient()
+
+    mock_settings = document_extractor.GlobalSettings(
+        file_processors={},
+        azure_credential=object(),
+        blob_manager=object(),
+        storage_is_adls=True,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=enable_global_document_access,
+        data_lake_service_client=mock_service_client,
+    )
+    monkeypatch.setattr(document_extractor, "settings", mock_settings)
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_extracts_user_oids(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls extracts user OIDs with read permission."""
+    setup_acl_mocks(monkeypatch, "user::rwx,user:user-oid-1:r--,user:user-oid-2:rwx,group::r-x,other::---")
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["user-oid-1", "user-oid-2"]
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_extracts_group_ids(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls extracts group IDs with read permission."""
+    setup_acl_mocks(monkeypatch, "user::rwx,group::r-x,group:group-id-1:r--,group:group-id-2:r-x,other::---")
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == []
+    assert groups == ["group-id-1", "group-id-2"]
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_ignores_entries_without_read_permission(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls ignores ACL entries without read permission."""
+    # user-oid-1 has read, user-oid-2 only has write/execute
+    setup_acl_mocks(monkeypatch, "user::rwx,user:user-oid-1:r--,user:user-oid-2:-wx,group:group-id-1:--x,other::---")
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["user-oid-1"]
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_other_read_with_global_access_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls returns ['all'] when 'other' has read and global access is enabled."""
+    setup_acl_mocks(
+        monkeypatch, "user::rwx,user:user-oid-1:r--,group::r-x,other::r--", enable_global_document_access=True
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["all"]
+    assert groups == ["all"]
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_other_read_with_global_access_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls does NOT return ['all'] when 'other' has read but global access is disabled."""
+    setup_acl_mocks(
+        monkeypatch, "user::rwx,user:user-oid-1:r--,group::r-x,other::r--", enable_global_document_access=False
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    # Should return specific user OID, not global access
+    assert oids == ["user-oid-1"]
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_other_read_execute_with_global_access_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls returns ['all'] when 'other' has r-x (read+execute) and global access is enabled."""
+    setup_acl_mocks(monkeypatch, "user::rwx,group::r-x,other::r-x", enable_global_document_access=True)
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["all"]
+    assert groups == ["all"]
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_other_no_read_does_not_grant_global(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls does not grant global access when 'other' has no read permission."""
+    # other has only execute, no read - global access enabled but shouldn't trigger
+    setup_acl_mocks(
+        monkeypatch, "user::rwx,user:user-oid-1:r--,group::r-x,other::--x", enable_global_document_access=True
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    # Should return specific OIDs, not global access
+    assert oids == ["user-oid-1"]
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_malformed_acl_entry(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls handles malformed ACL entries gracefully."""
+    # Include a malformed entry (missing a colon) mixed with valid entries
+    setup_acl_mocks(
+        monkeypatch,
+        "user::rwx,malformed_entry,user:user-oid-1:r--,invalid:entry,group:group-id-1:r-x",
+        enable_global_document_access=False,
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    # Should only include valid entries
+    assert oids == ["user-oid-1"]
+    assert groups == ["group-id-1"]
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_handles_exception(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls returns empty lists on exception."""
+
+    class MockServiceClient:
+        def get_file_system_client(self, container):
+            raise Exception("Connection failed")
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+    mock_service_client = MockServiceClient()
+
+    mock_settings = document_extractor.GlobalSettings(
+        file_processors={},
+        azure_credential=object(),
+        blob_manager=object(),
+        storage_is_adls=True,
+        storage_account="account",
+        storage_container="container",
+        enable_global_document_access=False,
+        data_lake_service_client=mock_service_client,
+    )
+    monkeypatch.setattr(document_extractor, "settings", mock_settings)
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == []
+    assert groups == []
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_raises_without_settings(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls raises RuntimeError when settings not initialized."""
+    monkeypatch.setattr(document_extractor, "settings", None)
+
+    with pytest.raises(RuntimeError, match="Global settings not initialized"):
+        await document_extractor.get_file_acls("test.pdf")
+
+
+@pytest.mark.asyncio
+async def test_get_file_acls_mixed_users_and_groups(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that get_file_acls correctly extracts both users and groups."""
+    setup_acl_mocks(
+        monkeypatch,
+        "user::rwx,user:user-1:r--,user:user-2:rwx,group::r-x,group:group-1:r--,group:group-2:r-x,other::---",
+    )
+
+    oids, groups = await document_extractor.get_file_acls("test.pdf")
+
+    assert oids == ["user-1", "user-2"]
+    assert groups == ["group-1", "group-2"]
+
+
 @pytest.mark.asyncio
 async def test_figure_processor_without_settings(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test figure processor returns error when settings not initialized."""
@@ -583,6 +881,7 @@ async def test_text_processor_invalid_json(monkeypatch: pytest.MonkeyPatch) -> N
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,
         file_processors={},
@@ -677,6 +976,7 @@ async def test_text_processor_no_sections(monkeypatch: pytest.MonkeyPatch) -> No
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,
         file_processors=mock_file_processors,
@@ -724,6 +1024,7 @@ async def test_text_processor_embeddings_not_initialized(monkeypatch: pytest.Mon
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,  # Request embeddings
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,  # But no service
         file_processors=mock_file_processors,
@@ -768,6 +1069,7 @@ async def test_text_processor_empty_chunk_skipped(monkeypatch: pytest.MonkeyPatc
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,
         file_processors=mock_file_processors,
@@ -818,6 +1120,7 @@ async def test_text_processor_with_multimodal_embeddings(monkeypatch: pytest.Mon
     mock_settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=True,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=None,
         file_processors=mock_file_processors,
@@ -887,6 +1190,7 @@ async def test_text_processor_embedding_dimension_mismatch(monkeypatch: pytest.M
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,  # Expecting 1536 dimensions
         embedding_service=mock_embedding_service,
         file_processors=mock_file_processors,
@@ -939,6 +1243,7 @@ async def test_text_processor_embeddings_missing_warning(monkeypatch: pytest.Mon
     mock_settings = text_processor.GlobalSettings(
         use_vectors=True,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         embedding_service=mock_embedding_service,
         file_processors=mock_file_processors,
@@ -991,6 +1296,7 @@ async def test_text_processor_process_document_handles_missing_figures(
     text_processor.settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         file_processors={".pdf": stub_processor},
         embedding_service=None,
@@ -1030,6 +1336,7 @@ async def test_text_processor_process_document_returns_empty_when_no_pages(monke
     text_processor.settings = text_processor.GlobalSettings(
         use_vectors=False,
         use_multimodal=False,
+        use_acls=False,
         embedding_dimensions=1536,
         file_processors={},
         embedding_service=None,
@@ -1040,6 +1347,199 @@ async def test_text_processor_process_document_returns_empty_when_no_pages(monke
     assert result == []
 
     text_processor.settings = None
+
+
+@pytest.mark.asyncio
+async def test_text_processor_includes_acls_when_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Text processor includes oids and groups in chunks when use_acls is enabled."""
+
+    class StubSplitter:
+        def split_pages(self, pages: list[Any]):
+            for page in pages:
+                yield ChunkStub(page_num=page.page_num, text=page.text)
+
+    # Set up mock file processors with stub splitter
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), StubSplitter()),
+    }
+
+    # Set up mock settings with use_acls=True
+    mock_settings = text_processor.GlobalSettings(
+        use_vectors=False,
+        use_multimodal=False,
+        use_acls=True,
+        embedding_dimensions=3,
+        file_processors=mock_file_processors,
+        embedding_service=None,
+    )
+    monkeypatch.setattr(text_processor, "settings", mock_settings)
+
+    request_payload = {
+        "values": [
+            {
+                "recordId": "doc-with-acls",
+                "data": {
+                    "consolidated_document": {
+                        "file_name": "secure.pdf",
+                        "storageUrl": "https://storage.example.com/content/secure.pdf",
+                        "pages": [
+                            {"page_num": 0, "text": "Confidential content."},
+                        ],
+                        "figures": [],
+                        # ACL fields are part of consolidated_document (from shaper skill)
+                        "oids": ["user-oid-123", "user-oid-456"],
+                        "groups": ["group-id-abc"],
+                    },
+                    "enriched_descriptions": [],
+                    "enriched_urls": [],
+                    "enriched_embeddings": [],
+                },
+            }
+        ]
+    }
+
+    response = await text_processor.process_text_entry(build_request(request_payload))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body().decode("utf-8"))
+    values = body["values"]
+    assert len(values) == 1
+    result = values[0]
+    assert result["recordId"] == "doc-with-acls"
+
+    data = result["data"]
+    chunks = data["chunks"]
+    assert len(chunks) == 1
+    chunk = chunks[0]
+    # Verify ACLs are included in the chunk
+    assert chunk["oids"] == ["user-oid-123", "user-oid-456"]
+    assert chunk["groups"] == ["group-id-abc"]
+
+
+@pytest.mark.asyncio
+async def test_text_processor_includes_empty_acls_when_enabled_but_none_found(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Text processor includes empty oids/groups arrays when use_acls is enabled but no ACLs found."""
+
+    class StubSplitter:
+        def split_pages(self, pages: list[Any]):
+            for page in pages:
+                yield ChunkStub(page_num=page.page_num, text=page.text)
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), StubSplitter()),
+    }
+
+    mock_settings = text_processor.GlobalSettings(
+        use_vectors=False,
+        use_multimodal=False,
+        use_acls=True,
+        embedding_dimensions=3,
+        file_processors=mock_file_processors,
+        embedding_service=None,
+    )
+    monkeypatch.setattr(text_processor, "settings", mock_settings)
+
+    request_payload = {
+        "values": [
+            {
+                "recordId": "doc-no-acls",
+                "data": {
+                    "consolidated_document": {
+                        "file_name": "public.pdf",
+                        "storageUrl": "https://storage.example.com/content/public.pdf",
+                        "pages": [
+                            {"page_num": 0, "text": "Public content."},
+                        ],
+                        "figures": [],
+                    },
+                    "enriched_descriptions": [],
+                    "enriched_urls": [],
+                    "enriched_embeddings": [],
+                    # No ACL fields provided (or empty)
+                },
+            }
+        ]
+    }
+
+    response = await text_processor.process_text_entry(build_request(request_payload))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body().decode("utf-8"))
+    values = body["values"]
+    assert len(values) == 1
+    result = values[0]
+
+    data = result["data"]
+    chunks = data["chunks"]
+    assert len(chunks) == 1
+    chunk = chunks[0]
+    # Verify empty ACL arrays are included to distinguish "no ACLs" from "ACLs not extracted"
+    assert chunk["oids"] == []
+    assert chunk["groups"] == []
+
+
+@pytest.mark.asyncio
+async def test_text_processor_excludes_acls_when_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Text processor does not include oids/groups in chunks when use_acls is disabled."""
+
+    class StubSplitter:
+        def split_pages(self, pages: list[Any]):
+            for page in pages:
+                yield ChunkStub(page_num=page.page_num, text=page.text)
+
+    mock_file_processors = {
+        ".pdf": FileProcessor(TextParser(), StubSplitter()),
+    }
+
+    mock_settings = text_processor.GlobalSettings(
+        use_vectors=False,
+        use_multimodal=False,
+        use_acls=False,  # ACLs disabled
+        embedding_dimensions=3,
+        file_processors=mock_file_processors,
+        embedding_service=None,
+    )
+    monkeypatch.setattr(text_processor, "settings", mock_settings)
+
+    request_payload = {
+        "values": [
+            {
+                "recordId": "doc-acls-disabled",
+                "data": {
+                    "consolidated_document": {
+                        "file_name": "noauth.pdf",
+                        "storageUrl": "https://storage.example.com/content/noauth.pdf",
+                        "pages": [
+                            {"page_num": 0, "text": "Content without auth."},
+                        ],
+                        "figures": [],
+                    },
+                    "enriched_descriptions": [],
+                    "enriched_urls": [],
+                    "enriched_embeddings": [],
+                    # ACL fields present in input but should be ignored
+                    "oids": ["user-oid-123"],
+                    "groups": ["group-id-abc"],
+                },
+            }
+        ]
+    }
+
+    response = await text_processor.process_text_entry(build_request(request_payload))
+
+    assert response.status_code == 200
+    body = json.loads(response.get_body().decode("utf-8"))
+    values = body["values"]
+    assert len(values) == 1
+    result = values[0]
+
+    data = result["data"]
+    chunks = data["chunks"]
+    assert len(chunks) == 1
+    chunk = chunks[0]
+    # Verify ACL fields are NOT included when use_acls is disabled
+    assert "oids" not in chunk
+    assert "groups" not in chunk
 
 
 def test_text_processor_module_init_logs_warning(

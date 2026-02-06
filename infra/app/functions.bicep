@@ -364,3 +364,5 @@ output textProcessorUrl string = textProcessor.outputs.defaultHostname
 output documentExtractorAuthIdentifierUri string = documentExtractorAppReg.outputs.identifierUri
 output figureProcessorAuthIdentifierUri string = figureProcessorAppReg.outputs.identifierUri
 output textProcessorAuthIdentifierUri string = textProcessorAppReg.outputs.identifierUri
+// Principal ID of the shared user-assigned identity (for additional role assignments in main.bicep)
+output principalId string = functionsUserIdentity.outputs.principalId
