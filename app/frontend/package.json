@@ -33,7 +33,7 @@
     "react-syntax-highlighter": "^16.1.0",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
-    "scheduler": "^0.20.2"
+    "scheduler": "^0.27.0"
   },
   "devDependencies": {
     "@types/dom-speech-recognition": "^0.0.7",
