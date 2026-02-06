@@ -968,7 +968,8 @@ class Approach(ABC):
             params["stream"] = True
             params["stream_options"] = {"include_usage": True}
 
-        params["tools"] = tools
+        if tools is not None:
+            params["tools"] = tools
 
         # Azure OpenAI takes the deployment name as the model name
         return self.openai_client.chat.completions.create(
