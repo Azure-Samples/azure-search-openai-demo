@@ -1,0 +1,6 @@
+Collecting ty
+  Downloading ty-0.0.15-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.3 kB)
+Downloading ty-0.0.15-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.5/10.5 MB 115.0 MB/s eta 0:00:00
+Installing collected packages: ty
+Successfully installed ty-0.0.15

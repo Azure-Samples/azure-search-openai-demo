@@ -972,10 +972,11 @@ class Approach(ABC):
             params["tools"] = tools
 
         # Azure OpenAI takes the deployment name as the model name
+        seed_value: Optional[int] = overrides.get("seed", None)
         return self.openai_client.chat.completions.create(
             model=chatgpt_deployment if chatgpt_deployment else chatgpt_model,
             messages=messages,
-            seed=overrides.get("seed", None),
+            seed=seed_value,
             n=n or 1,
             **params,
         )
