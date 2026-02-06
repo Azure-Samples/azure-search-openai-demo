@@ -1,0 +1,11 @@
+{{ user_query }}
+
+{% if text_sources is defined and text_sources %}
+
+Sources:
+
+{% for text_source in text_sources %}
+{{ text_source }}
+
+{% endfor %}
+{% endif %}

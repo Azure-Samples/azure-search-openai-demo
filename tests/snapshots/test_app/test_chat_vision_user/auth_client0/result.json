@@ -23,28 +23,8 @@
             {
                 "description": [
                     {
-                        "content": "Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.\nYou have access to Azure AI Search index with 100's of documents.\nGenerate a search query based on the conversation and the new question.\nDo not include cited source filenames and document names e.g. info.txt or doc.pdf in the search query terms.\nDo not include any text inside [] or <<>> in the search query terms.\nDo not include any special characters like '+'.\nIf the question is not in English, translate the question to English before generating the search query.\nIf you cannot generate a search query, return just the number 0.",
+                        "content": "Below is a history of the conversation so far, and a new question asked by the user that needs to be answered by searching in a knowledge base.\nYou have access to Azure AI Search index with 100's of documents.\nGenerate a search query based on the conversation and the new question.\nDo not include cited source filenames and document names e.g. info.txt or doc.pdf in the search query terms.\nDo not include any text inside [] or <<>> in the search query terms.\nDo not include any special characters like '+'.\nIf the question is not in English, translate the question to English before generating the search query.\nIf you cannot generate a search query, return just the number 0.\n\nGenerate search query for: How did crypto do last year?\n\nSearch query: Summarize Cryptocurrency Market Dynamics from last year\n\nGenerate search query for: What are my health plans?\n\nSearch query: Show available health plans\n\n\nGenerate search query for: Flowers in westbrae nursery logo?",
                         "role": "system"
-                    },
-                    {
-                        "content": "How did crypto do last year?",
-                        "role": "user"
-                    },
-                    {
-                        "content": "Summarize Cryptocurrency Market Dynamics from last year",
-                        "role": "assistant"
-                    },
-                    {
-                        "content": "What are my health plans?",
-                        "role": "user"
-                    },
-                    {
-                        "content": "Show available health plans",
-                        "role": "assistant"
-                    },
-                    {
-                        "content": "Generate search query for: Flowers in westbrae nursery logo?",
-                        "role": "user"
                     }
                 ],
                 "props": {
@@ -176,30 +156,28 @@
             {
                 "description": [
                     {
-                        "content": "Assistant helps the company employees with their questions about internal documents. Be brief in your answers.\nAnswer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below.\nIf asking a clarifying question to the user would help, ask the question.\nIf the question is not in English, answer in the language used in the question.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].\n\nEach image source has the document file name in the top left corner of the image with coordinates (10,10) pixels with format <filename.ext#page=N>,\nand the image figure name is right-aligned in the top right corner of the image.\nThe filename of the actual image is in the top right corner of the image and is in the format <figureN_N.png>.\nEach text source starts in a new line and has the file name followed by colon and the actual information\nAlways include the source document filename for each fact you use in the response in the format: [document_name.ext#page=N].\nIf you are referencing an image, add the image filename in the format: [document_name.ext#page=N(image_name.png)].\n\nPossible citations for current question:  [westbrae_jun28.pdf#page=1]  [westbrae_jun28.pdf#page=1(figure1_1.png)]  [westbrae_jun28.pdf#page=1(figure1_2.png)]  [westbrae_jun28.pdf#page=2]",
+                        "content": "Assistant helps the company employees with their questions about internal documents. Be brief in your answers.\nAnswer ONLY with the facts listed in the list of sources below. If there isn't enough information below, say you don't know. Do not generate answers that don't use the sources below.\nIf asking a clarifying question to the user would help, ask the question.\nIf the question is not in English, answer in the language used in the question.\nEach source has a name followed by colon and the actual information, always include the source name for each fact you use in the response. Use square brackets to reference the source, for example [info1.txt]. Don't combine sources, list each source separately, for example [info1.txt][info2.pdf].\nEach image source has the document file name in the top left corner of the image with coordinates (10,10) pixels with format <filename.ext#page=N>,\nand the image figure name is right-aligned in the top right corner of the image.\nThe filename of the actual image is in the top right corner of the image and is in the format <figureN_N.png>.\nEach text source starts in a new line and has the file name followed by colon and the actual information\nAlways include the source document filename for each fact you use in the response in the format: [document_name.ext#page=N].\nIf you are referencing an image, add the image filename in the format: [document_name.ext#page=N(image_name.png)].\n\nPossible citations for current question:  [westbrae_jun28.pdf#page=1]  [westbrae_jun28.pdf#page=1(figure1_1.png)]  [westbrae_jun28.pdf#page=1(figure1_2.png)]  [westbrae_jun28.pdf#page=2]",
                         "role": "system"
                     },
                     {
                         "content": [
                             {
-                                "text": "Flowers in westbrae nursery logo?",
+                                "text": "Flowers in westbrae nursery logo?\n\n\nSources:\n\nwestbrae_jun28.pdf#page=1: <figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter \"M\" with four colors: red, blue, green, and yellow. To the right of the \"M\" is the word \"Gmail\" written in gray text. The design is modern and clean. The colors used are characteristic of Google's branding.</figcaption></figure>   Pamela Fox <pamela.fox@gmail.com>  Receipt / Tax invoice (#2-108442)  Westbrae Nursery <no-reply@email.lightspeedhq.com> Reply-To: jeff@westbrae-nursery.com To: pamela.fox@gmail.com  Sat, Jun 28, 2025 at 1:21 PM   <figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text \"Westbrae\" is positioned to the right of the flowers. Below \"Westbrae\" is the word \"Nursery.\" The design is simple and rendered in black and white.</figcaption></figure>   An Employee-Owned Co-op 1272 Gilman St, Berkeley, CA 94706 510-526-5517  Main Outlet  Receipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm   <figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.\n\nwestbrae_jun28.pdf#page=1: </figcaption></figure>   An Employee-Owned Co-op 1272 Gilman St, Berkeley, CA 94706 510-526-5517  Main Outlet  Receipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm   <figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.99</td><td>$7.99</td></tr><tr><td>1 qt</td><td></td><td></td></tr><tr><td rowSpan=2>1 Gopher Baskets 1 gal</td><td>@ $14.99</td><td>$14.99</td></tr><tr><td></td><td></td></tr><tr><td>1 Edible 4.99</td><td>@ $4.99</td><td>$4.99</td></tr><tr><td>4 Color 11.99</td><td>@ $11.99</td><td>$47.96</td></tr><tr><td>1 Edible $6.99</td><td>@ $6.99</td><td>$6.99</td></tr><tr><td>Subtotal</td><td></td><td>$82.\n\nwestbrae_jun28.pdf#page=2:   If you have any questions about how to take care of the plants you purchase or if they start to show symptoms of ill health, please, give us a call (510-526- 5517)  receipt.pdf 50K",
                                 "type": "text"
                             },
                             {
                                 "image_url": {
+                                    "detail": "auto",
                                     "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=="
                                 },
                                 "type": "image_url"
                             },
                             {
                                 "image_url": {
+                                    "detail": "auto",
                                     "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg=="
                                 },
                                 "type": "image_url"
-                            },
-                            {
-                                "text": "Sources:\n\nwestbrae_jun28.pdf#page=1: <figure><figcaption>1.1 <br>The image displays the Gmail logo. It consists of a stylized letter \"M\" with four colors: red, blue, green, and yellow. To the right of the \"M\" is the word \"Gmail\" written in gray text. The design is modern and clean. The colors used are characteristic of Google's branding.</figcaption></figure>   Pamela Fox <pamela.fox@gmail.com>  Receipt / Tax invoice (#2-108442)  Westbrae Nursery <no-reply@email.lightspeedhq.com> Reply-To: jeff@westbrae-nursery.com To: pamela.fox@gmail.com  Sat, Jun 28, 2025 at 1:21 PM   <figure><figcaption>1.2 <br>The image shows the logo of Westbrae Nursery. The logo features three daffodil flowers on the left side. The text \"Westbrae\" is positioned to the right of the flowers. Below \"Westbrae\" is the word \"Nursery.\" The design is simple and rendered in black and white.</figcaption></figure>   An Employee-Owned Co-op 1272 Gilman St, Berkeley, CA 94706 510-526-5517  Main Outlet  Receipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm   <figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.\n\nwestbrae_jun28.pdf#page=1: </figcaption></figure>   An Employee-Owned Co-op 1272 Gilman St, Berkeley, CA 94706 510-526-5517  Main Outlet  Receipt / Tax Invoice #2-108442 28 Jun 2025 1:21pm   <figure><table><tr><td>1 Gopher Baskets</td><td>@ $7.99</td><td>$7.99</td></tr><tr><td>1 qt</td><td></td><td></td></tr><tr><td rowSpan=2>1 Gopher Baskets 1 gal</td><td>@ $14.99</td><td>$14.99</td></tr><tr><td></td><td></td></tr><tr><td>1 Edible 4.99</td><td>@ $4.99</td><td>$4.99</td></tr><tr><td>4 Color 11.99</td><td>@ $11.99</td><td>$47.96</td></tr><tr><td>1 Edible $6.99</td><td>@ $6.99</td><td>$6.99</td></tr><tr><td>Subtotal</td><td></td><td>$82.\n\nwestbrae_jun28.pdf#page=2:   If you have any questions about how to take care of the plants you purchase or if they start to show symptoms of ill health, please, give us a call (510-526- 5517)  receipt.pdf 50K",
-                                "type": "text"
                             }
                         ],
                         "role": "user"

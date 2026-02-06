@@ -273,7 +273,6 @@ class Approach(ABC):
         self.chatgpt_model = chatgpt_model
         self.chatgpt_deployment = chatgpt_deployment
         self.prompt_manager = prompt_manager
-        self.query_rewrite_prompt = self.prompt_manager.load_prompt("chat_query_rewrite.prompty")
         self.query_rewrite_tools = self.prompt_manager.load_tools("chat_query_rewrite_tools.json")
         self.reasoning_effort = reasoning_effort
         self.include_token_usage = True
@@ -394,7 +393,7 @@ class Approach(ABC):
     async def rewrite_query(
         self,
         *,
-        prompt_template: Any,
+        prompt_template: str,
         prompt_variables: dict[str, Any],
         overrides: dict[str, Any],
         chatgpt_model: str,
@@ -405,7 +404,7 @@ class Approach(ABC):
         temperature: float = 0.0,
         no_response_token: Optional[str] = None,
     ) -> RewriteQueryResult:
-        query_messages = self.prompt_manager.render_prompt(prompt_template, prompt_variables)
+        query_messages = [self.prompt_manager.build_system_prompt(prompt_template, prompt_variables)]
         rewrite_reasoning_effort = self.get_lowest_reasoning_effort(self.chatgpt_model)
 
         chat_completion = cast(
@@ -494,7 +493,7 @@ class Approach(ABC):
                 raise ValueError("The most recent message content must be a string.")
 
             rewrite_result = await self.rewrite_query(
-                prompt_template=self.query_rewrite_prompt,
+                prompt_template="query_rewrite.system.jinja2",
                 prompt_variables={"user_query": original_user_query, "past_messages": messages[:-1]},
                 overrides={},
                 chatgpt_model=self.chatgpt_model,
