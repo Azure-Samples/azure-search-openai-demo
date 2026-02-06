@@ -29,6 +29,6 @@ beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk
 python-dotenv
-prompty
+jinja2
 rich
 typing-extensions

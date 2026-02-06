@@ -46,7 +46,7 @@ from quart_cors import cors
 
 from approaches.approach import Approach, DataPoints
 from approaches.chatreadretrieveread import ChatReadRetrieveReadApproach
-from approaches.promptmanager import PromptyManager
+from approaches.promptmanager import PromptManager
 from chat_history.cosmosdb import chat_history_cosmosdb_bp
 from config import (
     CONFIG_AGENTIC_KNOWLEDGEBASE_ENABLED,
@@ -700,7 +700,7 @@ async def setup_clients():
         raise ValueError("Web source cannot be used with minimal retrieval reasoning effort")
     current_app.config[CONFIG_SHAREPOINT_SOURCE_ENABLED] = USE_SHAREPOINT_SOURCE
 
-    prompt_manager = PromptyManager()
+    prompt_manager = PromptManager()
 
     # ChatReadRetrieveReadApproach is used by /chat for multi-turn conversation
     current_app.config[CONFIG_CHAT_APPROACH] = ChatReadRetrieveReadApproach(
