@@ -18,7 +18,7 @@ interface IHelpCalloutProps {
     helpText: string;
 }
 
-export const HelpCallout = (props: IHelpCalloutProps): JSX.Element => {
+export const HelpCallout = (props: IHelpCalloutProps) => {
     const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
     const descriptionId: string = useId("description");
     const iconButtonId: string = useId("iconButton");
