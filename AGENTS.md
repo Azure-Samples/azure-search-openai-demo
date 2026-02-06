@@ -135,7 +135,7 @@ When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md for
 To upgrade a particular package in the backend, use the following command, replacing `<package-name>` with the name of the package you want to upgrade:
 
 ```shell
-cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.10 --upgrade-package package-name
+cd app/backend && uv pip compile requirements.in -o requirements.txt --python-version 3.10 --upgrade-package <package-name>
 ```
 
 After upgrading, run tests to verify compatibility:
