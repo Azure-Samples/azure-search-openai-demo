@@ -24,7 +24,7 @@
     "i18next-http-backend": "^3.0.1",
     "idb": "^8.0.0",
     "ndjson-readablestream": "^1.4.0",
-    "react": "^18.3.1",
+    "react": "^19.2.4",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
     "react-i18next": "^15.4.1",
@@ -38,7 +38,7 @@
   "devDependencies": {
     "@types/dom-speech-recognition": "^0.0.7",
     "@types/dompurify": "^3.0.5",
-    "@types/react": "^18.3.12",
+    "@types/react": "^19.2.13",
     "@types/react-dom": "^18.3.1",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^4.3.3",
