@@ -1,0 +1,92 @@
+.container {
+    width: 100%;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    background: #f2f2f2;
+}
+
+.card {
+    width: min(900px, 100%);
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    padding: 1.5rem;
+    color: #1f1f1f;
+    line-height: 1.55;
+}
+
+.title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+    line-height: 1.25;
+}
+
+.sectionTitle {
+    margin-top: 1.3rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.1rem;
+}
+
+.list {
+    margin-top: 0.3rem;
+    margin-bottom: 0.9rem;
+    padding-left: 1.2rem;
+}
+
+.actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-direction: column;
+}
+
+.primaryButton,
+.secondaryButton {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.8rem 1rem;
+    text-align: left;
+}
+
+.primaryButton {
+    background: #006535;
+    border-color: #006535;
+    color: #ffffff;
+}
+
+.primaryButton:hover {
+    background: #00592f;
+}
+
+.secondaryButton {
+    background: #ffffff;
+    border-color: #8a8a8a;
+    color: #1f1f1f;
+}
+
+.secondaryButton:hover {
+    background: #f4f4f4;
+}
+
+.secondaryButton:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 2.5rem;
+    }
+
+    .card {
+        padding: 2rem;
+    }
+}

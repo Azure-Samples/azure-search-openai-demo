@@ -44,6 +44,7 @@ If necessary, edit this file to ensure it accurately reflects the current state 
   * app/frontend: Contains the React frontend code, built with TypeScript, built with vite.
     * app/frontend/src/api: Contains the API client code for communicating with the backend.
     * app/frontend/src/components: Contains the React components for the frontend.
+    * app/frontend/src/pages/consent: Contains the consent landing page and consent guard used before entering chatbot routes.
     * app/frontend/src/locales: Contains the translation files for internationalization.
       * app/frontend/src/locales/da/translation.json: Danish translations
       * app/frontend/src/locales/en/translation.json: English translations

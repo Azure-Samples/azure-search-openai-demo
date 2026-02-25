@@ -10,6 +10,8 @@ import { AuthenticationResult, EventType, PublicClientApplication } from "@azure
 import "./index.css";
 
 import Chat from "./pages/chat/Chat";
+import Consent from "./pages/consent/Consent";
+import ConsentGuard from "./pages/consent/ConsentGuard";
 import LayoutWrapper from "./layoutWrapper";
 import i18next from "./i18n/config";
 import { msalConfig, useLogin } from "./authConfig";
@@ -23,11 +25,20 @@ const router = createHashRouter([
         children: [
             {
                 index: true,
-                element: <Chat />
+                element: <Consent />
             },
             {
-                path: "qa",
-                lazy: () => import("./pages/ask/Ask")
+                element: <ConsentGuard />,
+                children: [
+                    {
+                        path: "chat",
+                        element: <Chat />
+                    },
+                    {
+                        path: "qa",
+                        lazy: () => import("./pages/ask/Ask")
+                    }
+                ]
             },
             {
                 path: "*",
