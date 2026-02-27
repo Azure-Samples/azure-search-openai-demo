@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import { OverlayDrawer, DrawerHeader, DrawerHeaderTitle, DrawerBody, Button } from "@fluentui/react-components";
+import { OverlayDrawer, DrawerHeader, DrawerHeaderTitle, DrawerBody, Button, type DialogOpenChangeEvent, type DialogOpenChangeData } from "@fluentui/react-components";
 import { Dismiss24Regular } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
@@ -665,7 +665,7 @@ const Chat = () => {
                     open={isConfigPanelOpen}
                     modalType="non-modal"
                     style={{ width: "400px" }}
-                    onOpenChange={(_ev: any, { open }: { open: boolean }) => {
+                    onOpenChange={(_ev: DialogOpenChangeEvent, { open }: DialogOpenChangeData) => {
                         if (!open) setIsConfigPanelOpen(false);
                     }}
                 >
