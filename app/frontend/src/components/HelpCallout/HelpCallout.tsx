@@ -21,11 +21,7 @@ export const HelpCallout = (props: IHelpCalloutProps): JSX.Element => {
                 <label id={props.labelId} htmlFor={props.fieldId}>
                     {props.label}
                 </label>
-                <Popover
-                    open={isCalloutVisible}
-                    onOpenChange={(_e, data) => setIsCalloutVisible(data.open)}
-                    trapFocus
-                >
+                <Popover open={isCalloutVisible} onOpenChange={(_e, data) => setIsCalloutVisible(data.open)} trapFocus>
                     <PopoverTrigger disableButtonEnhancement>
                         <Button
                             appearance="transparent"

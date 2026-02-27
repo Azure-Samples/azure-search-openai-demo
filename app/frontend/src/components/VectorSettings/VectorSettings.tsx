@@ -68,7 +68,12 @@ export const VectorSettings = ({
     return (
         <div className={styles.container} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <div className={styles.settingsField}>
-                <HelpCallout labelId={retrievalModeId} fieldId={retrievalModeFieldId} helpText={t("helpTexts.retrievalMode")} label={t("labels.retrievalMode.label")} />
+                <HelpCallout
+                    labelId={retrievalModeId}
+                    fieldId={retrievalModeFieldId}
+                    helpText={t("helpTexts.retrievalMode")}
+                    label={t("labels.retrievalMode.label")}
+                />
                 <Dropdown
                     id={retrievalModeFieldId}
                     selectedOptions={[retrievalMode.toString()]}

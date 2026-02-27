@@ -10,6 +10,8 @@
     padding: 1.25em;
     background: #e8ebfa;
     border-radius: 0.75em;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.08);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        0 0 1px rgba(0, 0, 0, 0.08);
     outline: transparent solid 0.0625em;
 }

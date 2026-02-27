@@ -13,7 +13,7 @@ import LayoutWrapper from "./layoutWrapper";
 import i18next from "./i18n/config";
 import { msalConfig, useLogin } from "./authConfig";
 
-const router= createHashRouter([
+const router = createHashRouter([
     {
         path: "/",
         element: <LayoutWrapper />,
