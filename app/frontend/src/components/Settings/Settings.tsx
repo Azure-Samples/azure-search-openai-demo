@@ -121,7 +121,9 @@ export const Settings = ({
     const excludeCategoryFieldId = useId();
     const semanticRankerId = useId();
     const semanticRankerFieldId = useId();
+    const queryRewritingId = useId();
     const queryRewritingFieldId = useId();
+    const reasoningEffortId = useId();
     const reasoningEffortFieldId = useId();
     const semanticCaptionsId = useId();
     const semanticCaptionsFieldId = useId();
@@ -411,10 +413,10 @@ export const Settings = ({
                             checked={useQueryRewriting}
                             disabled={!useSemanticRanker}
                             onChange={(_ev, data) => onChange("useQueryRewriting", !!data.checked)}
-                            aria-labelledby={queryRewritingFieldId}
+                            aria-labelledby={queryRewritingId}
                         />
                         <HelpCallout
-                            labelId={queryRewritingFieldId}
+                            labelId={queryRewritingId}
                             fieldId={queryRewritingFieldId}
                             helpText={t("helpTexts.useQueryRewriting")}
                             label={t("labels.useQueryRewriting")}
@@ -426,7 +428,7 @@ export const Settings = ({
                 <>
                     <div className={styles.settingsField}>
                         <HelpCallout
-                            labelId={queryRewritingFieldId}
+                            labelId={reasoningEffortId}
                             fieldId={reasoningEffortFieldId}
                             helpText={t("helpTexts.reasoningEffort")}
                             label={t("labels.reasoningEffort")}
@@ -444,7 +446,7 @@ export const Settings = ({
                                         : t("labels.reasoningEffortOptions.high")
                             }
                             onOptionSelect={(_ev: SelectionEvents, data: OptionOnSelectData) => onChange("reasoningEffort", data.optionValue || "")}
-                            aria-labelledby={reasoningEffortFieldId}
+                            aria-labelledby={reasoningEffortId}
                         >
                             <Option value="minimal">{t("labels.reasoningEffortOptions.minimal")}</Option>
                             <Option value="low">{t("labels.reasoningEffortOptions.low")}</Option>
