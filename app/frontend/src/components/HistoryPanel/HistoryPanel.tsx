@@ -85,7 +85,7 @@ export const HistoryPanel = ({
             }}
         >
             <DrawerHeader>
-                <DrawerHeaderTitle action={<Button appearance="subtle" aria-label="Close" icon={<Dismiss24Regular />} onClick={() => onClose()} />}>
+                <DrawerHeaderTitle action={<Button appearance="subtle" aria-label={t("labels.closeButton")} icon={<Dismiss24Regular />} onClick={() => onClose()} />}>
                     {t("history.chatHistory")}
                 </DrawerHeaderTitle>
             </DrawerHeader>
