@@ -69,6 +69,13 @@ export const HistoryPanel = ({
 
     const { t } = useTranslation();
 
+    const handleClose = () => {
+        setHistory([]);
+        setHasMoreHistory(true);
+        historyManager.resetContinuationToken();
+        onClose();
+    };
+
     return (
         <OverlayDrawer
             position="start"
@@ -77,15 +84,12 @@ export const HistoryPanel = ({
             open={isOpen}
             onOpenChange={(_ev: any, { open }: { open: boolean }) => {
                 if (!open) {
-                    onClose();
-                    setHistory([]);
-                    setHasMoreHistory(true);
-                    historyManager.resetContinuationToken();
+                    handleClose();
                 }
             }}
         >
             <DrawerHeader>
-                <DrawerHeaderTitle action={<Button appearance="subtle" aria-label={t("labels.closeButton")} icon={<Dismiss24Regular />} onClick={() => onClose()} />}>
+                <DrawerHeaderTitle action={<Button appearance="subtle" aria-label={t("labels.closeButton")} icon={<Dismiss24Regular />} onClick={handleClose} />}>
                     {t("history.chatHistory")}
                 </DrawerHeaderTitle>
             </DrawerHeader>
