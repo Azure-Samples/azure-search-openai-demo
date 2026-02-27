@@ -125,7 +125,9 @@ def test_chat(sized_page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
 
     # Check accessibility of page in initial state
-    results = Axe().run(page)
+    # Exclude Tabster dummy elements which are internal to Fluent UI v9 focus management
+    # and cause a known false positive for aria-hidden-focus (see microsoft/tabster#288)
+    results = Axe().run(page, context={"exclude": ["[data-tabster-dummy]"]})
     assert results.violations_count == 0, results.generate_report()
 
     # Ask a question and wait for the message to appear
