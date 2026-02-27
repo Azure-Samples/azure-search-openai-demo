@@ -1,6 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import { Callout, Label, Text } from "@fluentui/react";
-import { Button } from "@fluentui/react-components";
+import { Button, Popover, PopoverTrigger, PopoverSurface, Label, Text } from "@fluentui/react-components";
 import { Add24Regular, Delete24Regular } from "@fluentui/react-icons";
 import { useMsal } from "@azure/msal-react";
 import { useTranslation } from "react-i18next";
@@ -104,19 +103,19 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
 
     return (
         <div className={`${styles.container} ${className ?? ""}`}>
-            <div>
-                <Button id="calloutButton" icon={<Add24Regular />} disabled={disabled} onClick={handleButtonClick}>
-                    {t("upload.manageFileUploads")}
-                </Button>
-
-                {isCalloutVisible && (
-                    <Callout
+            <Popover
+                open={isCalloutVisible}
+                onOpenChange={(_e, data) => { if (!data.open) setIsCalloutVisible(false); }}
+                trapFocus
+            >
+                <PopoverTrigger disableButtonEnhancement>
+                    <Button icon={<Add24Regular />} disabled={disabled} onClick={handleButtonClick}>
+                        {t("upload.manageFileUploads")}
+                    </Button>
+                </PopoverTrigger>
+                <PopoverSurface
                         role="dialog"
-                        gapSpace={0}
                         className={styles.callout}
-                        target="#calloutButton"
-                        onDismiss={() => setIsCalloutVisible(false)}
-                        setInitialFocus
                     >
                         <form encType="multipart/form-data">
                             <div>
@@ -158,9 +157,8 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
                                 </div>
                             );
                         })}
-                    </Callout>
-                )}
-            </div>
+                </PopoverSurface>
+            </Popover>
         </div>
     );
 };

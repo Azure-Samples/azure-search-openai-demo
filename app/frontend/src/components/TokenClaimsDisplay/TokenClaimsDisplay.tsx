@@ -1,4 +1,4 @@
-import { Label } from "@fluentui/react";
+import { Label } from "@fluentui/react-components";
 import { useMsal } from "@azure/msal-react";
 import {
     DataGridBody,
