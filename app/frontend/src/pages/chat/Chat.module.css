@@ -23,22 +23,23 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     max-height: 64rem;
-    padding-top: 1rem;
+    padding-top: 4rem;
 }
 
 .chatEmptyStateTitle {
-    font-size: 2.75rem;
+    font-size: 2rem;
     font-weight: 600;
     margin-top: 0;
-    margin-bottom: 1.875rem;
+    margin-bottom: 0.5rem;
 }
 
 .chatEmptyStateSubtitle {
-    font-weight: 600;
-    margin-bottom: 0.625rem;
+    font-weight: 400;
+    color: #616161;
+    margin-bottom: 1.5rem;
 }
 
 .chatMessageStream {
@@ -49,8 +50,6 @@
     padding: 0 2rem;
     display: flex;
     flex-direction: column;
-    resize: horizontal;
-    min-width: 50vw;
 }
 
 .chatMessageGpt {
@@ -102,6 +101,7 @@
     padding-left: 1rem;
     padding-right: 1rem;
     align-self: flex-end;
+    gap: 0.25rem;
 }
 
 .commandButton {
@@ -118,7 +118,7 @@
     }
 
     .chatEmptyStateTitle {
-        font-size: 4rem;
+        font-size: 2.75rem;
     }
 
     .chatInput {
@@ -135,7 +135,6 @@
     }
 
     .commandButton {
-        margin-right: 1.25rem;
         margin-bottom: 1.25rem;
     }
 

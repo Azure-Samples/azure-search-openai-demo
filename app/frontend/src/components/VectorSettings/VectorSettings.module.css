@@ -12,3 +12,10 @@
     margin-bottom: 5px;
     padding: 0;
 }
+
+.settingsField {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+}

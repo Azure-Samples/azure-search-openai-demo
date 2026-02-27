@@ -3,6 +3,7 @@
 }
 
 html {
+    height: 100%;
     background: #f2f2f2;
     font-size: 12px; /* Root font size for 320px width screens */
     font-family:

@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import { I18nextProvider } from "react-i18next";
 import { HelmetProvider } from "react-helmet-async";
-import { initializeIcons } from "@fluentui/react";
 import { MsalProvider } from "@azure/msal-react";
 import { AuthenticationResult, EventType, PublicClientApplication } from "@azure/msal-browser";
 
@@ -14,9 +13,7 @@ import LayoutWrapper from "./layoutWrapper";
 import i18next from "./i18n/config";
 import { msalConfig, useLogin } from "./authConfig";
 
-initializeIcons();
-
-const router = createHashRouter([
+const router= createHashRouter([
     {
         path: "/",
         element: <LayoutWrapper />,
