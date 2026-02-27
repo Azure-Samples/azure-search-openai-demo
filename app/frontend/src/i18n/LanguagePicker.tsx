@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { LocalLanguage24Regular } from "@fluentui/react-icons";
-import { Dropdown, Option } from "@fluentui/react-components";
+import { Dropdown, Option, OptionOnSelectData, SelectionEvents } from "@fluentui/react-components";
 import { useId } from "react";
 
 import { supportedLngs } from "./config";
@@ -13,7 +13,7 @@ interface Props {
 export const LanguagePicker = ({ onLanguageChange }: Props) => {
     const { i18n } = useTranslation();
 
-    const handleLanguageChange = (_ev: any, data: { optionValue?: string }) => {
+    const handleLanguageChange = (_ev: SelectionEvents, data: OptionOnSelectData) => {
         onLanguageChange(data.optionValue || i18n.language);
     };
     const languagePickerId = useId();

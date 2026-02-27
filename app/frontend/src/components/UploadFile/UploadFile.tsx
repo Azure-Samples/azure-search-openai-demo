@@ -106,7 +106,7 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
             <Popover
                 open={isCalloutVisible}
                 onOpenChange={(_e, data) => {
-                    if (!data.open) setIsCalloutVisible(false);
+                    setIsCalloutVisible(data.open);
                 }}
                 trapFocus
             >
