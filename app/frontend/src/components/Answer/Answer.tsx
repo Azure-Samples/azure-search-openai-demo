@@ -67,7 +67,7 @@ export const Answer = ({
 
     return (
         <div
-            className={`${styles.answerContainer} ${isSelected && styles.selected}`}
+            className={`${styles.answerContainer} ${isSelected ? styles.selected : ""}`}
             style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}
         >
             <div>
