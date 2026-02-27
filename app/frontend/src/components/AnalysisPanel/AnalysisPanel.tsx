@@ -78,26 +78,14 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
 
     return (
         <div className={className}>
-            <TabList
-                selectedValue={activeTab}
-                onTabSelect={(_ev: SelectTabEvent, data: SelectTabData) => onActiveTabChanged(data.value as AnalysisPanelTabs)}
-            >
-                <Tab
-                    value={AnalysisPanelTabs.ThoughtProcessTab}
-                    disabled={isDisabledThoughtProcessTab}
-                >
+            <TabList selectedValue={activeTab} onTabSelect={(_ev: SelectTabEvent, data: SelectTabData) => onActiveTabChanged(data.value as AnalysisPanelTabs)}>
+                <Tab value={AnalysisPanelTabs.ThoughtProcessTab} disabled={isDisabledThoughtProcessTab}>
                     {t("headerTexts.thoughtProcess")}
                 </Tab>
-                <Tab
-                    value={AnalysisPanelTabs.SupportingContentTab}
-                    disabled={isDisabledSupportingContentTab}
-                >
+                <Tab value={AnalysisPanelTabs.SupportingContentTab} disabled={isDisabledSupportingContentTab}>
                     {t("headerTexts.supportingContent")}
                 </Tab>
-                <Tab
-                    value={AnalysisPanelTabs.CitationTab}
-                    disabled={isDisabledCitationTab}
-                >
+                <Tab value={AnalysisPanelTabs.CitationTab} disabled={isDisabledCitationTab}>
                     {t("headerTexts.citation")}
                 </Tab>
             </TabList>
@@ -105,9 +93,7 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
                 {activeTab === AnalysisPanelTabs.ThoughtProcessTab && (
                     <ThoughtProcess thoughts={answer.context.thoughts || []} onCitationClicked={onCitationClicked} />
                 )}
-                {activeTab === AnalysisPanelTabs.SupportingContentTab && (
-                    <SupportingContent supportingContent={answer.context.data_points} />
-                )}
+                {activeTab === AnalysisPanelTabs.SupportingContentTab && <SupportingContent supportingContent={answer.context.data_points} />}
                 {activeTab === AnalysisPanelTabs.CitationTab && renderFileViewer()}
             </div>
         </div>

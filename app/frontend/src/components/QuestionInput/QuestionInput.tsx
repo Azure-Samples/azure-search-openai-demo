@@ -101,7 +101,6 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
                 disabled={disableRequiredAccessControl}
                 placeholder={placeholder}
                 resize="none"
-
                 value={question}
                 onChange={onQuestionChange}
                 onKeyDown={onEnterPress}

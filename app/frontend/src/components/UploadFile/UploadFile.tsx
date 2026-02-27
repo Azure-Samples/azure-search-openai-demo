@@ -105,7 +105,9 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
         <div className={`${styles.container} ${className ?? ""}`}>
             <Popover
                 open={isCalloutVisible}
-                onOpenChange={(_e, data) => { if (!data.open) setIsCalloutVisible(false); }}
+                onOpenChange={(_e, data) => {
+                    if (!data.open) setIsCalloutVisible(false);
+                }}
                 trapFocus
             >
                 <PopoverTrigger disableButtonEnhancement>
@@ -113,50 +115,47 @@ export const UploadFile: React.FC<Props> = ({ className, disabled }: Props) => {
                         {t("upload.manageFileUploads")}
                     </Button>
                 </PopoverTrigger>
-                <PopoverSurface
-                        role="dialog"
-                        className={styles.callout}
-                    >
-                        <form encType="multipart/form-data">
-                            <div>
-                                <Label>{t("upload.fileLabel")}</Label>
-                                <input
-                                    accept=".txt, .md, .json, .png, .jpg, .jpeg, .bmp, .heic, .tiff, .pdf, .docx, .xlsx, .pptx, .html"
-                                    className={styles.chooseFiles}
-                                    type="file"
-                                    onChange={handleUploadFile}
-                                />
+                <PopoverSurface role="dialog" className={styles.callout}>
+                    <form encType="multipart/form-data">
+                        <div>
+                            <Label>{t("upload.fileLabel")}</Label>
+                            <input
+                                accept=".txt, .md, .json, .png, .jpg, .jpeg, .bmp, .heic, .tiff, .pdf, .docx, .xlsx, .pptx, .html"
+                                className={styles.chooseFiles}
+                                type="file"
+                                onChange={handleUploadFile}
+                            />
+                        </div>
+                    </form>
+
+                    {/* Show a loading message while files are being uploaded */}
+                    {isUploading && <Text>{t("upload.uploadingFiles")}</Text>}
+                    {!isUploading && uploadedFileError && <Text>{uploadedFileError}</Text>}
+                    {!isUploading && uploadedFile && <Text>{uploadedFile.message}</Text>}
+
+                    {/* Display the list of already uploaded */}
+                    <h3>{t("upload.uploadedFilesLabel")}</h3>
+
+                    {isLoading && <Text>{t("upload.loading")}</Text>}
+                    {!isLoading && uploadedFiles.length === 0 && <Text>{t("upload.noFilesUploaded")}</Text>}
+                    {uploadedFiles.map((filename, index) => {
+                        return (
+                            <div key={index} className={styles.list}>
+                                <div className={styles.item}>{filename}</div>
+                                {/* Button to remove a file from the list */}
+                                <Button
+                                    icon={<Delete24Regular />}
+                                    onClick={() => handleRemoveFile(filename)}
+                                    disabled={deletionStatus[filename] === "pending" || deletionStatus[filename] === "success"}
+                                >
+                                    {!deletionStatus[filename] && t("upload.deleteFile")}
+                                    {deletionStatus[filename] == "pending" && t("upload.deletingFile")}
+                                    {deletionStatus[filename] == "error" && t("upload.errorDeleting")}
+                                    {deletionStatus[filename] == "success" && t("upload.fileDeleted")}
+                                </Button>
                             </div>
-                        </form>
-
-                        {/* Show a loading message while files are being uploaded */}
-                        {isUploading && <Text>{t("upload.uploadingFiles")}</Text>}
-                        {!isUploading && uploadedFileError && <Text>{uploadedFileError}</Text>}
-                        {!isUploading && uploadedFile && <Text>{uploadedFile.message}</Text>}
-
-                        {/* Display the list of already uploaded */}
-                        <h3>{t("upload.uploadedFilesLabel")}</h3>
-
-                        {isLoading && <Text>{t("upload.loading")}</Text>}
-                        {!isLoading && uploadedFiles.length === 0 && <Text>{t("upload.noFilesUploaded")}</Text>}
-                        {uploadedFiles.map((filename, index) => {
-                            return (
-                                <div key={index} className={styles.list}>
-                                    <div className={styles.item}>{filename}</div>
-                                    {/* Button to remove a file from the list */}
-                                    <Button
-                                        icon={<Delete24Regular />}
-                                        onClick={() => handleRemoveFile(filename)}
-                                        disabled={deletionStatus[filename] === "pending" || deletionStatus[filename] === "success"}
-                                    >
-                                        {!deletionStatus[filename] && t("upload.deleteFile")}
-                                        {deletionStatus[filename] == "pending" && t("upload.deletingFile")}
-                                        {deletionStatus[filename] == "error" && t("upload.errorDeleting")}
-                                        {deletionStatus[filename] == "success" && t("upload.fileDeleted")}
-                                    </Button>
-                                </div>
-                            );
-                        })}
+                        );
+                    })}
                 </PopoverSurface>
             </Popover>
         </div>

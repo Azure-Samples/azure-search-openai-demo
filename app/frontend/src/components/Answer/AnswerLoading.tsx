@@ -1,4 +1,4 @@
-import { animated, useSpring } from "@react-spring/web";
+import { animated, useSpring } from "@react-spring/web";
 import { useTranslation } from "react-i18next";
 
 import styles from "./Answer.module.css";

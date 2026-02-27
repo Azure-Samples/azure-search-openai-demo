@@ -65,7 +65,14 @@ export const SpeechOutputAzure = ({ answer, speechConfig, index, isStreaming }: 
 
     // We always preload the Sync icon in hidden mode so that there's no visual glitch when icon changes
     return isLoading ? (
-        <Button appearance="transparent" style={{ color: color }} icon={<ArrowSync24Regular />} title="Loading speech" aria-label="Loading speech" disabled={true} />
+        <Button
+            appearance="transparent"
+            style={{ color: color }}
+            icon={<ArrowSync24Regular />}
+            title="Loading speech"
+            aria-label="Loading speech"
+            disabled={true}
+        />
     ) : (
         <>
             <Button appearance="transparent" icon={<ArrowSync24Regular />} aria-hidden={true} disabled={true} style={{ display: "none" }} />

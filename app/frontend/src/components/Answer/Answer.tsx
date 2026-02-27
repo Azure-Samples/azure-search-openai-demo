@@ -66,7 +66,10 @@ export const Answer = ({
     };
 
     return (
-        <div className={`${styles.answerContainer} ${isSelected && styles.selected}`} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+        <div
+            className={`${styles.answerContainer} ${isSelected && styles.selected}`}
+            style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+        >
             <div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <AnswerIcon />
@@ -154,7 +157,10 @@ export const Answer = ({
 
             {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
                 <div>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }} className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`}>
+                    <div
+                        style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}
+                        className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`}
+                    >
                         <span className={styles.followupQuestionLearnMore}>{t("followupQuestions")}</span>
                         {followupQuestions.map((x, i) => {
                             return (
