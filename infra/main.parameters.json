@@ -21,7 +21,7 @@
       "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
     },
     "openAiLocation": {
-      "value": "${AZURE_OPENAI_LOCATION}"
+      "value": "${AZURE_OPENAI_LOCATION=${AZURE_LOCATION}}"
     },
     "openAiSkuName": {
       "value": "S0"
@@ -210,7 +210,7 @@
       "value": "${USE_EVAL=false}"
     },
     "useCloudIngestion": {
-      "value": "${USE_CLOUD_INGESTION=false}"
+      "value": false
     },
     "useCloudIngestionAcls": {
       "value": "${USE_CLOUD_INGESTION_ACLS=false}"
@@ -324,7 +324,7 @@
       "value": "${USE_USER_UPLOAD}"
     },
     "useLocalPdfParser": {
-      "value": "${USE_LOCAL_PDF_PARSER}"
+      "value": true
     },
     "useLocalHtmlParser": {
       "value": "${USE_LOCAL_HTML_PARSER}"
@@ -345,10 +345,10 @@
       "value": "${AZURE_CONTAINER_APPS_WORKLOAD_PROFILE=Consumption}"
     },
     "useMediaDescriberAzureCU": {
-      "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
+      "value": false
     },
     "useAiProject": {
-      "value": "${USE_AI_PROJECT=false}"
+      "value": false
     },
     "useAgenticKnowledgeBase": {
       "value": "${USE_AGENTIC_KNOWLEDGEBASE=false}"

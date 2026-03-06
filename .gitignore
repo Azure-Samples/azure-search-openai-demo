@@ -157,3 +157,13 @@ app/functions/*/requirements.txt
 data/**/*.md5
 
 .DS_Store
+/.idea/azure-search-openai-demo.iml
+/.idea/copilot.data.migration.agent.xml
+/.idea/copilot.data.migration.ask.xml
+/.idea/copilot.data.migration.ask2agent.xml
+/.idea/copilot.data.migration.edit.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/prettier.xml
+/.idea/vcs.xml
+/.idea/.gitignore

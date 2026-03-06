@@ -189,21 +189,21 @@ param openAiSkuName string = 'S0'
 param openAiApiKey string = ''
 param openAiApiOrganization string = ''
 
-param documentIntelligenceServiceName string = '' // Set in main.parameters.json
-param documentIntelligenceResourceGroupName string = '' // Set in main.parameters.json
+// param documentIntelligenceServiceName string = '' // Set in main.parameters.json
+// param documentIntelligenceResourceGroupName string = '' // Set in main.parameters.json
 
-// Limited regions for new version:
-// https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout
-@description('Location for the Document Intelligence resource group')
-@allowed(['eastus', 'westus2', 'westeurope', 'australiaeast'])
-@metadata({
-  azd: {
-    type: 'location'
-  }
-})
-param documentIntelligenceResourceGroupLocation string
+// // Limited regions for new version:
+// // https://learn.microsoft.com/azure/ai-services/document-intelligence/concept-layout
+// @description('Location for the Document Intelligence resource group')
+// @allowed(['eastus', 'westus2', 'westeurope', 'australiaeast'])
+// @metadata({
+//   azd: {
+//     type: 'location'
+//   }
+// })
+// param documentIntelligenceResourceGroupLocation string
 
-param documentIntelligenceSkuName string // Set in main.parameters.json
+// param documentIntelligenceSkuName string // Set in main.parameters.json
 
 param visionServiceName string = '' // Set in main.parameters.json
 param visionResourceGroupName string = '' // Set in main.parameters.json
@@ -399,9 +399,9 @@ resource openAiResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' exi
   name: !empty(openAiResourceGroupName) ? openAiResourceGroupName : resourceGroup.name
 }
 
-resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(documentIntelligenceResourceGroupName)) {
-  name: !empty(documentIntelligenceResourceGroupName) ? documentIntelligenceResourceGroupName : resourceGroup.name
-}
+// resource documentIntelligenceResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(documentIntelligenceResourceGroupName)) {
+//   name: !empty(documentIntelligenceResourceGroupName) ? documentIntelligenceResourceGroupName : resourceGroup.name
+// }
 
 resource visionResourceGroup 'Microsoft.Resources/resourceGroups@2024-11-01' existing = if (!empty(visionResourceGroupName)) {
   name: !empty(visionResourceGroupName) ? visionResourceGroupName : resourceGroup.name
@@ -554,7 +554,7 @@ var appEnvVariables = {
   AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage!.outputs.name : ''
   AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
   AZURE_IMAGESTORAGE_CONTAINER: useMultimodal ? imageStorageContainerName : ''
-  AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
+  // AZURE_DOCUMENTINTELLIGENCE_SERVICE: documentIntelligence.outputs.name
   USE_LOCAL_PDF_PARSER: useLocalPdfParser
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
   USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
@@ -684,29 +684,29 @@ module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == '
 }
 
 // Optional Azure Functions for document ingestion and processing
-module functions 'app/functions.bicep' = if (useCloudIngestion) {
-  name: 'functions'
-  scope: resourceGroup
-  params: {
-    location: location
-    tags: tags
-    applicationInsightsName: useApplicationInsights ? monitoring!.outputs.applicationInsightsName : ''
-    storageResourceGroupName: storageResourceGroup.name
-    searchServiceResourceGroupName: searchServiceResourceGroup.name
-    openAiResourceGroupName: openAiResourceGroup.name
-    documentIntelligenceResourceGroupName: documentIntelligenceResourceGroup.name
-    visionServiceName: useMultimodal ? vision!.outputs.name : ''
-    visionResourceGroupName: useMultimodal ? visionResourceGroup.name : resourceGroup.name
-    contentUnderstandingServiceName: useMediaDescriberAzureCU ? contentUnderstanding!.outputs.name : ''
-    contentUnderstandingResourceGroupName: useMediaDescriberAzureCU ? contentUnderstandingResourceGroup.name : resourceGroup.name
-    documentExtractorName: '${abbrs.webSitesFunctions}doc-extractor-${resourceToken}'
-    figureProcessorName: '${abbrs.webSitesFunctions}figure-processor-${resourceToken}'
-    textProcessorName: '${abbrs.webSitesFunctions}text-processor-${resourceToken}'
-    openIdIssuer: authenticationIssuerUri
-    appEnvVariables: appEnvVariables
-    searchUserAssignedIdentityClientId: searchService.outputs.userAssignedIdentityClientId
-  }
-}
+// module functions 'app/functions.bicep' = if (useCloudIngestion) {
+//   name: 'functions'
+//   scope: resourceGroup
+//   params: {
+//     location: location
+//     tags: tags
+//     applicationInsightsName: useApplicationInsights ? monitoring!.outputs.applicationInsightsName : ''
+//     storageResourceGroupName: storageResourceGroup.name
+//     searchServiceResourceGroupName: searchServiceResourceGroup.name
+//     openAiResourceGroupName: openAiResourceGroup.name
+//     documentIntelligenceResourceGroupName: documentIntelligenceResourceGroup.name
+//     visionServiceName: useMultimodal ? vision!.outputs.name : ''
+//     visionResourceGroupName: useMultimodal ? visionResourceGroup.name : resourceGroup.name
+//     contentUnderstandingServiceName: useMediaDescriberAzureCU ? contentUnderstanding!.outputs.name : ''
+//     contentUnderstandingResourceGroupName: useMediaDescriberAzureCU ? contentUnderstandingResourceGroup.name : resourceGroup.name
+//     documentExtractorName: '${abbrs.webSitesFunctions}doc-extractor-${resourceToken}'
+//     figureProcessorName: '${abbrs.webSitesFunctions}figure-processor-${resourceToken}'
+//     textProcessorName: '${abbrs.webSitesFunctions}text-processor-${resourceToken}'
+//     openIdIssuer: authenticationIssuerUri
+//     appEnvVariables: appEnvVariables
+//     searchUserAssignedIdentityClientId: searchService.outputs.userAssignedIdentityClientId
+//   }
+// }
 
 var defaultOpenAiDeployments = [
   {
@@ -792,29 +792,29 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.7.2' = if (isAzure
   }
 }
 
-// Formerly known as Form Recognizer
-// Does not support bypass
-module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2' = {
-  name: 'documentintelligence'
-  scope: documentIntelligenceResourceGroup
-  params: {
-    name: !empty(documentIntelligenceServiceName)
-      ? documentIntelligenceServiceName
-      : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
-    kind: 'FormRecognizer'
-    customSubDomainName: !empty(documentIntelligenceServiceName)
-      ? documentIntelligenceServiceName
-      : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
-    publicNetworkAccess: publicNetworkAccess
-    networkAcls: {
-      defaultAction: 'Allow'
-    }
-    location: documentIntelligenceResourceGroupLocation
-    disableLocalAuth: true
-    tags: tags
-    sku: documentIntelligenceSkuName
-  }
-}
+// // Formerly known as Form Recognizer
+// // Does not support bypass
+// module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2' = {
+//   name: 'documentintelligence'
+//   scope: documentIntelligenceResourceGroup
+//   params: {
+//     name: !empty(documentIntelligenceServiceName)
+//       ? documentIntelligenceServiceName
+//       : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
+//     kind: 'FormRecognizer'
+//     customSubDomainName: !empty(documentIntelligenceServiceName)
+//       ? documentIntelligenceServiceName
+//       : '${abbrs.cognitiveServicesDocumentIntelligence}${resourceToken}'
+//     publicNetworkAccess: publicNetworkAccess
+//     networkAcls: {
+//       defaultAction: 'Allow'
+//     }
+//     location: documentIntelligenceResourceGroupLocation
+//     disableLocalAuth: true
+//     tags: tags
+//     sku: documentIntelligenceSkuName
+//   }
+// }
 
 module vision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMultimodal) {
   name: 'vision'
@@ -1305,16 +1305,16 @@ module adlsStorageOwnerRoleUser 'core/security/storage-role.bicep' = if (useClou
 // Note: This module requires useCloudIngestion=true because it references functions!.outputs.principalId.
 // If useCloudIngestionAcls=true but useCloudIngestion=false, deployment will fail.
 // Documentation states USE_CLOUD_INGESTION_ACLS requires USE_CLOUD_INGESTION to be true.
-module adlsStorageRoleFunctions 'core/security/storage-role.bicep' = if (useCloudIngestionAcls && useCloudIngestion) {
-  scope: adlsStorageResourceGroup
-  name: 'adls-storage-role-functions'
-  params: {
-    storageAccountName: adlsStorageAccountNameResolved
-    principalId: functions!.outputs.principalId
-    roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
-    principalType: 'ServicePrincipal'
-  }
-}
+// module adlsStorageRoleFunctions 'core/security/storage-role.bicep' = if (useCloudIngestionAcls && useCloudIngestion) {
+//   scope: adlsStorageResourceGroup
+//   name: 'adls-storage-role-functions'
+//   params: {
+//     storageAccountName: adlsStorageAccountNameResolved
+//     principalId: functions!.outputs.principalId
+//     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
+//     principalType: 'ServicePrincipal'
+//   }
+// }
 
 // Necessary for the Container Apps backend to store authentication tokens in the blob storage container
 module storageRoleContributorBackend 'core/security/role.bicep' = if (deploymentTarget == 'containerapps' && !empty(clientAppId)) {
@@ -1404,7 +1404,7 @@ var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLoc
         // Only include generic Cognitive Services-based resources (Form Recognizer / Vision / Content Understanding)
         // Azure OpenAI uses its own privatelink.openai.azure.com zone and already has a separate private endpoint above.
         resourceIds: concat(
-          !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : [],
+          // !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : [],
           useMultimodal ? [vision!.outputs.resourceId] : [],
           useMediaDescriberAzureCU ? [contentUnderstanding!.outputs.resourceId] : []
         )
@@ -1417,7 +1417,7 @@ var containerAppsPrivateEndpointConnection = (usePrivateEndpoint && deploymentTa
       {
         groupId: 'managedEnvironments'
         dnsZoneName: 'privatelink.${location}.azurecontainerapps.io'
-        resourceIds: [containerApps!.outputs.environmentId]
+        // resourceIds: [containerApps!.outputs.environmentId]
       }
     ]
   : []
@@ -1509,17 +1509,17 @@ module visionRoleBackend 'core/security/role.bicep' = if (useMultimodal) {
 }
 
 // For document intelligence access by the backend
-module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
-  scope: documentIntelligenceResourceGroup
-  name: 'documentintelligence-role-backend'
-  params: {
-    principalId: (deploymentTarget == 'appservice')
-      ? backend!.outputs.identityPrincipalId
-      : acaBackend!.outputs.identityPrincipalId
-    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    principalType: 'ServicePrincipal'
-  }
-}
+// module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
+//   scope: documentIntelligenceResourceGroup
+//   name: 'documentintelligence-role-backend'
+//   params: {
+//     principalId: (deploymentTarget == 'appservice')
+//       ? backend!.outputs.identityPrincipalId
+//       : acaBackend!.outputs.identityPrincipalId
+//     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
+//     principalType: 'ServicePrincipal'
+//   }
+// }
 
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenantId
@@ -1556,8 +1556,8 @@ output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech!.out
 output AZURE_VISION_ENDPOINT string = useMultimodal ? vision!.outputs.endpoint : ''
 output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding!.outputs.endpoint : ''
 
-output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
-output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name
+// output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
+// output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroup.name
 
 output AZURE_SEARCH_INDEX string = searchIndexName
 output AZURE_SEARCH_KNOWLEDGEBASE_NAME string = knowledgeBaseName
@@ -1588,13 +1588,13 @@ output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroup.name
 output AZURE_IMAGESTORAGE_CONTAINER string = useMultimodal ? imageStorageContainerName : ''
 
 // Cloud ingestion function skill endpoints & resource IDs
-output DOCUMENT_EXTRACTOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.documentExtractorUrl}/api/extract' : ''
-output FIGURE_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
-output TEXT_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
-// Identifier URI used as authResourceId for all custom skill endpoints
-output DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.documentExtractorAuthIdentifierUri : ''
-output FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.figureProcessorAuthIdentifierUri : ''
-output TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.textProcessorAuthIdentifierUri : ''
+// output DOCUMENT_EXTRACTOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.documentExtractorUrl}/api/extract' : ''
+// output FIGURE_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
+// output TEXT_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
+// // Identifier URI used as authResourceId for all custom skill endpoints
+// output DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.documentExtractorAuthIdentifierUri : ''
+// output FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.figureProcessorAuthIdentifierUri : ''
+// output TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.textProcessorAuthIdentifierUri : ''
 
 output AZURE_AI_PROJECT string = useAiProject ? ai!.outputs.projectName : ''
 
