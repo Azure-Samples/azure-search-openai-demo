@@ -9,7 +9,7 @@
       "value": "${AZURE_RESOURCE_GROUP}"
     },
     "location": {
-      "value": "${AZURE_LOCATION}"
+      "value": "canadaeast"
     },
     "principalId": {
       "value": "${AZURE_PRINCIPAL_ID}"
@@ -21,7 +21,7 @@
       "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
     },
     "openAiLocation": {
-      "value": "${AZURE_OPENAI_LOCATION=${AZURE_LOCATION}}"
+      "value": "canadaeast"
     },
     "openAiSkuName": {
       "value": "S0"
@@ -204,7 +204,7 @@
       "value": "${USE_VECTORS=true}"
     },
     "useMultimodal": {
-      "value": "${USE_MULTIMODAL=false}"
+      "value": false
     },
     "useEval": {
       "value": "${USE_EVAL=false}"
