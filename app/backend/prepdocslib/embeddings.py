@@ -85,6 +85,15 @@ class OpenAIEmbeddings(ABC):
         batch_token_length = 0
         for text in texts:
             text_token_length = self.calculate_token_length(text)
+            # Skip texts that exceed the model's token limit
+            if text_token_length > batch_token_limit:
+                logger.warning(
+                    "Skipping text section with %d tokens (exceeds model limit of %d tokens). "
+                    "This section will not be included in the search index.",
+                    text_token_length,
+                    batch_token_limit
+                )
+                continue
             if batch_token_length + text_token_length >= batch_token_limit and len(batch) > 0:
                 batches.append(EmbeddingBatch(batch, batch_token_length))
                 batch = []
