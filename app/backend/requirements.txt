@@ -92,7 +92,7 @@ cryptography==46.0.5
     #   pyjwt
 distro==1.9.0
     # via openai
-flask==3.1.2
+flask==3.1.3
     # via quart
 frozenlist==1.8.0
     # via
