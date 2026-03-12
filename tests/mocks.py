@@ -82,6 +82,29 @@ class MockBlob:
         buffer.write(b"test")
 
 
+class MockStreamReader:
+    """Mock aiohttp StreamReader that returns body bytes on read()."""
+
+    def __init__(self, body_bytes):
+        self._body = body_bytes
+        self._read = False
+        self._exception = None
+
+    async def read(self, n=-1):
+        if self._read:
+            return b""
+        self._read = True
+        if n == -1:
+            return self._body
+        return self._body[:n]
+
+    def exception(self):
+        return self._exception
+
+    def set_exception(self, exc):
+        self._exception = exc
+
+
 class MockAiohttpClientResponse404(aiohttp.ClientResponse):
     def __init__(self, url, body_bytes, headers=None):
         self._body = body_bytes
@@ -90,6 +113,8 @@ class MockAiohttpClientResponse404(aiohttp.ClientResponse):
         self.status = 404
         self.reason = "Not Found"
         self._url = url
+        self._loop = None
+        self.content = MockStreamReader(body_bytes)
 
 
 class MockAiohttpClientResponse(aiohttp.ClientResponse):
@@ -100,6 +125,8 @@ class MockAiohttpClientResponse(aiohttp.ClientResponse):
         self.status = 200
         self.reason = "OK"
         self._url = url
+        self._loop = None
+        self.content = MockStreamReader(body_bytes)
 
 
 class MockTransport(AsyncHttpTransport):
