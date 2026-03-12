@@ -19,7 +19,7 @@
     "@fluentui/react-icons": "^2.0.319",
     "@fluentui/react-table": "^9.19.9",
     "@react-spring/web": "^10.0.3",
-    "dompurify": "^3.2.4",
+    "dompurify": "^3.3.2",
     "i18next": "^24.2.0",
     "i18next-browser-languagedetector": "^8.0.2",
     "i18next-http-backend": "^3.0.1",
