@@ -1,4 +1,4 @@
-{
+{devcontainer.json
     "name": "Azure Developer CLI",
     "build": {
         "dockerfile": "Dockerfile",
