@@ -1,4 +1,4 @@
-import { DefaultButton } from "@fluentui/react";
+import { Button } from "@fluentui/react-components";
 import { useMsal } from "@azure/msal-react";
 import { useTranslation } from "react-i18next";
 
@@ -56,10 +56,8 @@ export const LoginButton = () => {
         }
     };
     return (
-        <DefaultButton
-            text={loggedIn ? `${t("logout")}\n${username}` : `${t("login")}`}
-            className={styles.loginButton}
-            onClick={loggedIn ? handleLogoutPopup : handleLoginPopup}
-        ></DefaultButton>
+        <Button className={styles.loginButton} onClick={loggedIn ? handleLogoutPopup : handleLoginPopup}>
+            {loggedIn ? `${t("logout")}\n${username}` : `${t("login")}`}
+        </Button>
     );
 };

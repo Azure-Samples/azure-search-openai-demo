@@ -3,7 +3,7 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import IO, Any, Optional, TypedDict
+from typing import IO, Any, Optional, TypedDict, cast
 from urllib.parse import unquote
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -518,7 +518,7 @@ class BlobManager(BaseBlobManager):
                 }
             }
 
-            return content, properties
+            return cast(bytes, content), properties
         except ResourceNotFoundError:
             logger.warning("Blob not found: %s", blob_path)
             return None

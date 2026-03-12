@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { LocalLanguage24Regular } from "@fluentui/react-icons";
-import { IDropdownOption, Dropdown } from "@fluentui/react";
-import { useId } from "@fluentui/react-hooks";
+import { Dropdown, Option, OptionOnSelectData, SelectionEvents } from "@fluentui/react-components";
+import { useId } from "react";
 
 import { supportedLngs } from "./config";
 import styles from "./LanguagePicker.module.css";
@@ -13,10 +13,10 @@ interface Props {
 export const LanguagePicker = ({ onLanguageChange }: Props) => {
     const { i18n } = useTranslation();
 
-    const handleLanguageChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<string> | undefined) => {
-        onLanguageChange(option?.data || i18n.language);
+    const handleLanguageChange = (_ev: SelectionEvents, data: OptionOnSelectData) => {
+        onLanguageChange(data.optionValue || i18n.language);
     };
-    const languagePickerId = useId("languagePicker");
+    const languagePickerId = useId();
     const { t } = useTranslation();
 
     return (
@@ -24,16 +24,18 @@ export const LanguagePicker = ({ onLanguageChange }: Props) => {
             <LocalLanguage24Regular className={styles.languagePickerIcon} />
             <Dropdown
                 id={languagePickerId}
-                selectedKey={i18n.language}
-                options={Object.entries(supportedLngs).map(([code, details]) => ({
-                    key: code,
-                    text: details.name,
-                    selected: code === i18n.language,
-                    data: code
-                }))}
-                onChange={handleLanguageChange}
-                ariaLabel={t("labels.languagePicker")}
-            />
+                selectedOptions={[i18n.language]}
+                value={supportedLngs[i18n.language]?.name || i18n.language}
+                onOptionSelect={handleLanguageChange}
+                aria-label={t("labels.languagePicker")}
+                appearance="underline"
+            >
+                {Object.entries(supportedLngs).map(([code, details]) => (
+                    <Option key={code} value={code}>
+                        {details.name}
+                    </Option>
+                ))}
+            </Dropdown>
         </div>
     );
 };

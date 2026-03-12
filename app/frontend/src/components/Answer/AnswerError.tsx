@@ -1,4 +1,4 @@
-import { Stack, PrimaryButton } from "@fluentui/react";
+import { Button } from "@fluentui/react-components";
 import { ErrorCircle24Regular } from "@fluentui/react-icons";
 
 import styles from "./Answer.module.css";
@@ -10,14 +10,16 @@ interface Props {
 
 export const AnswerError = ({ error, onRetry }: Props) => {
     return (
-        <Stack className={styles.answerContainer} verticalAlign="space-between">
+        <div className={styles.answerContainer} style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <ErrorCircle24Regular aria-hidden="true" aria-label="Error icon" primaryFill="red" />
 
-            <Stack.Item grow>
+            <div style={{ flexGrow: 1 }}>
                 <p className={styles.answerText}>{error}</p>
-            </Stack.Item>
+            </div>
 
-            <PrimaryButton className={styles.retryButton} onClick={onRetry} text="Retry" />
-        </Stack>
+            <Button appearance="primary" className={styles.retryButton} onClick={onRetry}>
+                Retry
+            </Button>
+        </div>
     );
 };

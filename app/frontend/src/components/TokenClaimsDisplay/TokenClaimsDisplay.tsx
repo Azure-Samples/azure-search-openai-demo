@@ -1,4 +1,4 @@
-import { Label } from "@fluentui/react";
+import { Label } from "@fluentui/react-components";
 import { useMsal } from "@azure/msal-react";
 import {
     DataGridBody,
@@ -85,7 +85,7 @@ export const TokenClaimsDisplay = () => {
     return (
         <div style={{ marginTop: "20px" }}>
             <Label>ID Token Claims</Label>
-            <DataGrid items={items} columns={columns} sortable getRowId={item => item.name}>
+            <DataGrid items={items} columns={columns} sortable getRowId={(item: Claim) => item.name}>
                 <DataGridHeader>
                     <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
                 </DataGridHeader>

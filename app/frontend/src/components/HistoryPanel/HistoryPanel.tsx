@@ -1,6 +1,7 @@
 import { useMsal } from "@azure/msal-react";
 import { getToken, useLogin } from "../../authConfig";
-import { Panel, PanelType, Spinner } from "@fluentui/react";
+import { OverlayDrawer, DrawerHeader, DrawerHeaderTitle, DrawerBody, Spinner, Button } from "@fluentui/react-components";
+import { Dismiss24Regular } from "@fluentui/react-icons";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HistoryData, HistoryItem } from "../HistoryItem";
 import { Answers, HistoryProviderOptions } from "../HistoryProviders/IProvider";
@@ -68,22 +69,33 @@ export const HistoryPanel = ({
 
     const { t } = useTranslation();
 
+    const handleClose = () => {
+        setHistory([]);
+        setHasMoreHistory(true);
+        historyManager.resetContinuationToken();
+        onClose();
+    };
+
     return (
-        <Panel
-            type={PanelType.customNear}
-            style={{ padding: "0px" }}
-            headerText={t("history.chatHistory")}
-            customWidth="300px"
-            isBlocking={false}
-            isOpen={isOpen}
-            onDismiss={() => onClose()}
-            onDismissed={() => {
-                setHistory([]);
-                setHasMoreHistory(true);
-                historyManager.resetContinuationToken();
+        <OverlayDrawer
+            position="start"
+            style={{ width: "300px" }}
+            modalType="non-modal"
+            open={isOpen}
+            onOpenChange={(_ev: any, { open }: { open: boolean }) => {
+                if (!open) {
+                    handleClose();
+                }
             }}
         >
-            <div>
+            <DrawerHeader>
+                <DrawerHeaderTitle
+                    action={<Button appearance="subtle" aria-label={t("labels.closeButton")} icon={<Dismiss24Regular />} onClick={handleClose} />}
+                >
+                    {t("history.chatHistory")}
+                </DrawerHeaderTitle>
+            </DrawerHeader>
+            <DrawerBody style={{ padding: "0px" }}>
                 {Object.entries(groupedHistory).map(([group, items]) => (
                     <div key={group} className={styles.group}>
                         <p className={styles.groupLabel}>{t(group)}</p>
@@ -95,8 +107,8 @@ export const HistoryPanel = ({
                 {isLoading && <Spinner style={{ marginTop: "10px" }} />}
                 {history.length === 0 && !isLoading && <p>{t("history.noHistory")}</p>}
                 {hasMoreHistory && !isLoading && <InfiniteLoadingButton func={loadMoreHistory} />}
-            </div>
-        </Panel>
+            </DrawerBody>
+        </OverlayDrawer>
     );
 };
 

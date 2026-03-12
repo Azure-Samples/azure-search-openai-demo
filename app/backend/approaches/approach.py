@@ -39,6 +39,7 @@ from openai.types import CompletionUsage
 from openai.types.chat import (
     ChatCompletion,
     ChatCompletionChunk,
+    ChatCompletionMessageFunctionToolCall,
     ChatCompletionMessageParam,
     ChatCompletionReasoningEffort,
     ChatCompletionToolParam,
@@ -374,7 +375,7 @@ class Approach(ABC):
             for tool_call in response_message.tool_calls:
                 if tool_call.type != "function":
                     continue
-                arguments_payload = tool_call.function.arguments or "{}"
+                arguments_payload = cast(ChatCompletionMessageFunctionToolCall, tool_call).function.arguments or "{}"
                 try:
                     parsed_arguments = json.loads(arguments_payload)
                 except json.JSONDecodeError:
@@ -598,7 +599,7 @@ class Approach(ABC):
                 # Note that ref.doc_key is the same as source_data["id"]
                 document_results.append(
                     Document(
-                        id=ref.doc_key,
+                        id=cast(str, ref.doc_key),
                         ref_id=ref.id,
                         content=ref.source_data.get("content"),
                         category=ref.source_data.get("category"),

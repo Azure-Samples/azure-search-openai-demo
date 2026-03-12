@@ -1,8 +1,9 @@
 .questionInputContainer {
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     box-shadow:
-        0px 0.5rem 1rem rgba(0, 0, 0, 0.14),
-        0px 0px 0.125rem rgba(0, 0, 0, 0.12);
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        0 0 1px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
     width: 100%;
     padding: 0.8rem;
     background: white;
@@ -10,9 +11,25 @@
 
 .questionInputTextArea {
     width: 100%;
-    line-height: 2.5rem;
-    max-height: 18rem;
-    overflow-y: auto;
+    max-height: 12rem;
+}
+
+/* Remove v9 Textarea border/background for borderless appearance */
+.questionInputTextArea {
+    border: none !important;
+    overflow: hidden;
+}
+
+.questionInputTextArea textarea {
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    overflow-y: hidden;
+    line-height: 1.5;
+}
+
+.questionInputTextArea::after {
+    border: none !important;
 }
 
 .questionInputButtonsContainer {
