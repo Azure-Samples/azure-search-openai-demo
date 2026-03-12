@@ -78,7 +78,7 @@ jobs:
             pytest tests/e2e.py --tracing=retain-on-failure
         - name: Upload test artifacts
           if: ${{ failure() && steps.e2e.conclusion == 'failure' }}
-          uses: actions/upload-artifact@v6
+          uses: actions/upload-artifact@v7
           with:
             name: playwright-traces${{ matrix.python_version }}
             path: test-results
