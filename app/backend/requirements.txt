@@ -335,7 +335,7 @@ pyjwt[crypto]==2.11.0
     #   msal
 pymupdf==1.26.0
     # via -r requirements.in
-pypdf==6.6.2
+pypdf==6.8.0
     # via -r requirements.in
 python-dotenv==1.1.1
     # via -r requirements.in
