@@ -366,7 +366,7 @@ soupsieve==2.7
     # via beautifulsoup4
 std-uritemplate==2.0.8
     # via microsoft-kiota-abstractions
-tenacity==9.1.2
+tenacity==9.1.4
     # via -r requirements.in
 tiktoken==0.12.0
     # via -r requirements.in
