@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IconButton } from "@fluentui/react";
+import { Button } from "@fluentui/react-components";
+import { ArrowSync24Regular, Speaker224Regular } from "@fluentui/react-icons";
 import { getSpeechApi, SpeechConfig } from "../../api";
 
 interface Props {
@@ -64,15 +65,23 @@ export const SpeechOutputAzure = ({ answer, speechConfig, index, isStreaming }: 
 
     // We always preload the Sync icon in hidden mode so that there's no visual glitch when icon changes
     return isLoading ? (
-        <IconButton style={{ color: color }} iconProps={{ iconName: "Sync" }} title="Loading speech" ariaLabel="Loading speech" disabled={true} />
+        <Button
+            appearance="transparent"
+            style={{ color: color }}
+            icon={<ArrowSync24Regular />}
+            title="Loading speech"
+            aria-label="Loading speech"
+            disabled={true}
+        />
     ) : (
         <>
-            <IconButton iconProps={{ iconName: "Sync" }} ariaHidden={true} disabled={true} style={{ display: "none" }} />
-            <IconButton
+            <Button appearance="transparent" icon={<ArrowSync24Regular />} aria-hidden={true} disabled={true} style={{ display: "none" }} />
+            <Button
+                appearance="transparent"
                 style={{ color: color }}
-                iconProps={{ iconName: "Volume3" }}
+                icon={<Speaker224Regular />}
                 title={t("tooltips.speakAnswer")}
-                ariaLabel={t("tooltips.speakAnswer")}
+                aria-label={t("tooltips.speakAnswer")}
                 onClick={() => startOrStopSpeech(answer)}
                 disabled={isStreaming}
             />

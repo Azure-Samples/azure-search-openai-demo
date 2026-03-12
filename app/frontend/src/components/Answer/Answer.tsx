@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Stack, IconButton } from "@fluentui/react";
+import { Button } from "@fluentui/react-components";
+import { Copy24Regular, Checkmark24Regular, LightbulbFilament24Regular, ClipboardTextLtr24Regular } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
 import DOMPurify from "dompurify";
 import ReactMarkdown from "react-markdown";
@@ -65,31 +66,37 @@ export const Answer = ({
     };
 
     return (
-        <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
-            <Stack.Item>
-                <Stack horizontal horizontalAlign="space-between">
+        <div
+            className={`${styles.answerContainer} ${isSelected ? styles.selected : ""}`}
+            style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+        >
+            <div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <AnswerIcon />
                     <div>
-                        <IconButton
+                        <Button
+                            appearance="transparent"
                             style={{ color: "black" }}
-                            iconProps={{ iconName: copied ? "CheckMark" : "Copy" }}
+                            icon={copied ? <Checkmark24Regular /> : <Copy24Regular />}
                             title={copied ? t("tooltips.copied") : t("tooltips.copy")}
-                            ariaLabel={copied ? t("tooltips.copied") : t("tooltips.copy")}
+                            aria-label={copied ? t("tooltips.copied") : t("tooltips.copy")}
                             onClick={handleCopy}
                         />
-                        <IconButton
+                        <Button
+                            appearance="transparent"
                             style={{ color: "black" }}
-                            iconProps={{ iconName: "Lightbulb" }}
+                            icon={<LightbulbFilament24Regular />}
                             title={t("tooltips.showThoughtProcess")}
-                            ariaLabel={t("tooltips.showThoughtProcess")}
+                            aria-label={t("tooltips.showThoughtProcess")}
                             onClick={() => onThoughtProcessClicked()}
                             disabled={!answer.context.thoughts?.length || isStreaming}
                         />
-                        <IconButton
+                        <Button
+                            appearance="transparent"
                             style={{ color: "black" }}
-                            iconProps={{ iconName: "ClipboardList" }}
+                            icon={<ClipboardTextLtr24Regular />}
                             title={t("tooltips.showSupportingContent")}
-                            ariaLabel={t("tooltips.showSupportingContent")}
+                            aria-label={t("tooltips.showSupportingContent")}
                             onClick={() => onSupportingContentClicked()}
                             disabled={!answer.context.data_points || isStreaming}
                         />
@@ -98,18 +105,18 @@ export const Answer = ({
                         )}
                         {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
                     </div>
-                </Stack>
-            </Stack.Item>
+                </div>
+            </div>
 
-            <Stack.Item grow>
+            <div style={{ flexGrow: 1 }}>
                 <div className={styles.answerText}>
                     <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
                 </div>
-            </Stack.Item>
+            </div>
 
             {!!parsedAnswer.citations.length && (
-                <Stack.Item>
-                    <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
+                <div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
                         <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
                         {parsedAnswer.citations.map(citation => {
                             const isWeb = citation.isWeb;
@@ -144,13 +151,16 @@ export const Answer = ({
                                 );
                             }
                         })}
-                    </Stack>
-                </Stack.Item>
+                    </div>
+                </div>
             )}
 
             {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
-                <Stack.Item>
-                    <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
+                <div>
+                    <div
+                        style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}
+                        className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`}
+                    >
                         <span className={styles.followupQuestionLearnMore}>{t("followupQuestions")}</span>
                         {followupQuestions.map((x, i) => {
                             return (
@@ -159,9 +169,9 @@ export const Answer = ({
                                 </a>
                             );
                         })}
-                    </Stack>
-                </Stack.Item>
+                    </div>
+                </div>
             )}
-        </Stack>
+        </div>
     );
 };
