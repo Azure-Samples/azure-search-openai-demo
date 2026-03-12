@@ -1,6 +1,5 @@
-import { useState, useEffect, useContext } from "react";
-import { Stack, TextField } from "@fluentui/react";
-import { Button, Tooltip } from "@fluentui/react-components";
+import { useState, useEffect, useContext, useCallback, useRef } from "react";
+import { Button, Textarea, Tooltip } from "@fluentui/react-components";
 import { Send28Filled } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +32,23 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
     const { loggedIn } = useContext(LoginContext);
     const { t } = useTranslation();
     const [isComposing, setIsComposing] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    const autoResize = useCallback(() => {
+        const el = textareaRef.current;
+        if (!el) return;
+        const wrapper = el.parentElement;
+        el.style.height = "auto";
+        const maxH = wrapper ? parseFloat(getComputedStyle(wrapper).maxHeight) : Infinity;
+        const atMax = el.scrollHeight > maxH;
+        el.style.height = (atMax ? maxH : el.scrollHeight) + "px";
+        el.style.overflowY = atMax ? "auto" : "hidden";
+        if (wrapper) wrapper.style.overflow = atMax ? "visible" : "hidden";
+    }, []);
+
+    useEffect(() => {
+        autoResize();
+    }, [question, autoResize]);
 
     useEffect(() => {
         initQuestion && setQuestion(initQuestion);
@@ -66,12 +82,8 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
         setIsComposing(false);
     };
 
-    const onQuestionChange = (_ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-        if (!newValue) {
-            setQuestion("");
-        } else {
-            setQuestion(newValue);
-        }
+    const onQuestionChange = (_ev: React.ChangeEvent<HTMLTextAreaElement>, data: { value: string }) => {
+        setQuestion(data.value);
     };
 
     const disableRequiredAccessControl = requireLogin && !loggedIn;
@@ -82,15 +94,13 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
     }
 
     return (
-        <Stack horizontal className={styles.questionInputContainer}>
-            <TextField
+        <div className={styles.questionInputContainer} style={{ display: "flex", gap: "0.25rem" }}>
+            <Textarea
+                textarea={{ ref: textareaRef }}
                 className={styles.questionInputTextArea}
                 disabled={disableRequiredAccessControl}
                 placeholder={placeholder}
-                multiline
-                resizable={false}
-                autoAdjustHeight
-                borderless
+                resize="none"
                 value={question}
                 onChange={onQuestionChange}
                 onKeyDown={onEnterPress}
@@ -114,6 +124,6 @@ export const QuestionInput = ({ onSend, onStop, disabled, placeholder, clearOnSe
                 )}
             </div>
             {showSpeechInput && <SpeechInput updateQuestion={setQuestion} />}
-        </Stack>
+        </div>
     );
 };

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { IconButton } from "@fluentui/react";
+import { Button } from "@fluentui/react-components";
+import { Speaker224Regular } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
 import { supportedLngs } from "../../i18n/config";
 
@@ -73,11 +74,12 @@ export const SpeechOutputBrowser = ({ answer }: Props) => {
     const color = isPlaying ? "red" : "black";
 
     return (
-        <IconButton
+        <Button
+            appearance="transparent"
             style={{ color: color }}
-            iconProps={{ iconName: "Volume3" }}
+            icon={<Speaker224Regular />}
             title={t("tooltips.speakAnswer")}
-            ariaLabel={t("tooltips.speakAnswer")}
+            aria-label={t("tooltips.speakAnswer")}
             onClick={() => startOrStopSpeech(answer)}
             disabled={!synth}
         />

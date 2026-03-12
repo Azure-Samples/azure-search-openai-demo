@@ -227,6 +227,8 @@ async def process_document(data: dict[str, Any]) -> list[dict[str, Any]]:
         logger.info("No textual content found for %s", file_name)
         return []
 
+    assert settings is not None, "Global settings must be configured before processing documents"
+
     # Create a lightweight File wrapper required by process_text
     dummy_stream = io.BytesIO(b"")
     dummy_stream.name = file_name

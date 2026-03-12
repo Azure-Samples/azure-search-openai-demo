@@ -1,4 +1,3 @@
-import { Stack } from "@fluentui/react";
 import React from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
@@ -35,7 +34,7 @@ export const ThoughtProcess = ({ thoughts, onCitationClicked }: Props) => {
                 return (
                     <li className={styles.tListItem} key={ind}>
                         <div className={styles.tStep}>{t.title}</div>
-                        <Stack horizontal tokens={{ childrenGap: 5 }} className={styles.tPropRow}>
+                        <div style={{ display: "flex", gap: "5px" }} className={styles.tPropRow}>
                             {t.props &&
                                 (Object.keys(t.props).filter(k => k !== "token_usage" && k !== "query_plan") || []).map((k: any) => (
                                     <span className={styles.tProp} key={k}>
@@ -43,7 +42,7 @@ export const ThoughtProcess = ({ thoughts, onCitationClicked }: Props) => {
                                     </span>
                                 ))}
                             {hasAgenticPlan && effort && <span className={styles.tProp}>effort: {effort}</span>}
-                        </Stack>
+                        </div>
                         {t.props?.token_usage && !hasAgenticPlan && (
                             <TokenUsageGraph tokenUsage={t.props.token_usage} reasoningEffort={t.props.reasoning_effort} />
                         )}

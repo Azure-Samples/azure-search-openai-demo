@@ -4,7 +4,7 @@ import logging
 import uuid
 from collections.abc import AsyncGenerator
 from enum import Enum
-from typing import IO, Optional
+from typing import IO, Optional, cast
 
 import pymupdf
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
@@ -134,7 +134,7 @@ class DocumentAnalysisParser(Parser):
 
                 page_offset = page.spans[0].offset
                 page_length = page.spans[0].length
-                mask_chars: list[MaskEntry] = [(ObjectType.NONE, None)] * page_length
+                mask_chars: list[MaskEntry] = cast(list[MaskEntry], [(ObjectType.NONE, None)] * page_length)
                 # mark all positions of the table spans in the page
                 for table_idx, table in enumerate(tables_on_page):
                     for span in table.spans:

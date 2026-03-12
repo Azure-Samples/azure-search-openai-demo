@@ -1,7 +1,16 @@
 import { useRef, useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import { Panel, DefaultButton } from "@fluentui/react";
+import {
+    OverlayDrawer,
+    DrawerHeader,
+    DrawerHeaderTitle,
+    DrawerBody,
+    Button,
+    type DialogOpenChangeEvent,
+    type DialogOpenChangeData
+} from "@fluentui/react-components";
+import { Dismiss24Regular } from "@fluentui/react-icons";
 import readNDJSONStream from "ndjson-readablestream";
 
 import appLogo from "../../assets/applogo.svg";
@@ -659,56 +668,75 @@ const Chat = () => {
                     />
                 )}
 
-                <Panel
-                    headerText={t("labels.headerText")}
-                    isOpen={isConfigPanelOpen}
-                    isBlocking={false}
-                    onDismiss={() => setIsConfigPanelOpen(false)}
-                    closeButtonAriaLabel={t("labels.closeButton")}
-                    onRenderFooterContent={() => <DefaultButton onClick={() => setIsConfigPanelOpen(false)}>{t("labels.closeButton")}</DefaultButton>}
-                    isFooterAtBottom={true}
+                <OverlayDrawer
+                    position="end"
+                    open={isConfigPanelOpen}
+                    modalType="non-modal"
+                    style={{ width: "400px" }}
+                    onOpenChange={(_ev: DialogOpenChangeEvent, { open }: DialogOpenChangeData) => {
+                        if (!open) setIsConfigPanelOpen(false);
+                    }}
                 >
-                    <Settings
-                        promptTemplate={promptTemplate}
-                        temperature={temperature}
-                        retrieveCount={retrieveCount}
-                        agenticReasoningEffort={agenticReasoningEffort}
-                        seed={seed}
-                        minimumSearchScore={minimumSearchScore}
-                        minimumRerankerScore={minimumRerankerScore}
-                        useSemanticRanker={useSemanticRanker}
-                        useSemanticCaptions={useSemanticCaptions}
-                        useQueryRewriting={useQueryRewriting}
-                        reasoningEffort={reasoningEffort}
-                        excludeCategory={excludeCategory}
-                        includeCategory={includeCategory}
-                        retrievalMode={retrievalMode}
-                        showMultimodalOptions={showMultimodalOptions}
-                        sendTextSources={sendTextSources}
-                        sendImageSources={sendImageSources}
-                        searchTextEmbeddings={searchTextEmbeddings}
-                        searchImageEmbeddings={searchImageEmbeddings}
-                        showSemanticRankerOption={showSemanticRankerOption}
-                        showQueryRewritingOption={showQueryRewritingOption}
-                        showReasoningEffortOption={showReasoningEffortOption}
-                        showVectorOption={showVectorOption}
-                        useLogin={!!useLogin}
-                        loggedIn={loggedIn}
-                        requireAccessControl={requireAccessControl}
-                        shouldStream={shouldStream}
-                        streamingEnabled={streamingEnabled}
-                        useSuggestFollowupQuestions={useSuggestFollowupQuestions}
-                        showAgenticRetrievalOption={showAgenticRetrievalOption}
-                        useAgenticKnowledgeBase={useAgenticKnowledgeBase}
-                        useWebSource={webSourceEnabled}
-                        showWebSourceOption={webSourceSupported}
-                        useSharePointSource={sharePointSourceEnabled}
-                        showSharePointSourceOption={sharePointSourceSupported}
-                        hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
-                        onChange={handleSettingsChange}
-                    />
-                    {useLogin && <TokenClaimsDisplay />}
-                </Panel>
+                    <DrawerHeader>
+                        <DrawerHeaderTitle
+                            action={
+                                <Button
+                                    appearance="subtle"
+                                    aria-label={t("labels.closeButton")}
+                                    icon={<Dismiss24Regular />}
+                                    onClick={() => setIsConfigPanelOpen(false)}
+                                />
+                            }
+                        >
+                            {t("labels.headerText")}
+                        </DrawerHeaderTitle>
+                    </DrawerHeader>
+                    <DrawerBody>
+                        <Settings
+                            promptTemplate={promptTemplate}
+                            temperature={temperature}
+                            retrieveCount={retrieveCount}
+                            agenticReasoningEffort={agenticReasoningEffort}
+                            seed={seed}
+                            minimumSearchScore={minimumSearchScore}
+                            minimumRerankerScore={minimumRerankerScore}
+                            useSemanticRanker={useSemanticRanker}
+                            useSemanticCaptions={useSemanticCaptions}
+                            useQueryRewriting={useQueryRewriting}
+                            reasoningEffort={reasoningEffort}
+                            excludeCategory={excludeCategory}
+                            includeCategory={includeCategory}
+                            retrievalMode={retrievalMode}
+                            showMultimodalOptions={showMultimodalOptions}
+                            sendTextSources={sendTextSources}
+                            sendImageSources={sendImageSources}
+                            searchTextEmbeddings={searchTextEmbeddings}
+                            searchImageEmbeddings={searchImageEmbeddings}
+                            showSemanticRankerOption={showSemanticRankerOption}
+                            showQueryRewritingOption={showQueryRewritingOption}
+                            showReasoningEffortOption={showReasoningEffortOption}
+                            showVectorOption={showVectorOption}
+                            useLogin={!!useLogin}
+                            loggedIn={loggedIn}
+                            requireAccessControl={requireAccessControl}
+                            shouldStream={shouldStream}
+                            streamingEnabled={streamingEnabled}
+                            useSuggestFollowupQuestions={useSuggestFollowupQuestions}
+                            showAgenticRetrievalOption={showAgenticRetrievalOption}
+                            useAgenticKnowledgeBase={useAgenticKnowledgeBase}
+                            useWebSource={webSourceEnabled}
+                            showWebSourceOption={webSourceSupported}
+                            useSharePointSource={sharePointSourceEnabled}
+                            showSharePointSourceOption={sharePointSourceSupported}
+                            hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
+                            onChange={handleSettingsChange}
+                        />
+                        {useLogin && <TokenClaimsDisplay />}
+                        <div style={{ marginTop: "auto", padding: "16px 0" }}>
+                            <Button onClick={() => setIsConfigPanelOpen(false)}>{t("labels.closeButton")}</Button>
+                        </div>
+                    </DrawerBody>
+                </OverlayDrawer>
             </div>
         </div>
     );

@@ -2,6 +2,20 @@
     margin-top: 0.75rem;
 }
 
+.settingsField {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+}
+
+.settingsCheckbox {
+    display: flex;
+    align-items: center;
+    margin-top: 0.75rem;
+    margin-left: -0.25rem;
+}
+
 .option-slider {
     width: 100%;
     max-width: 400px;
