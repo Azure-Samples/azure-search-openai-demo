@@ -285,6 +285,8 @@ azd env set USE_CHAT_HISTORY_COSMOS true
 
 When both the browser-stored and Cosmos DB options are enabled, Cosmos DB will take precedence over browser-stored chat history.
 
+> **⚠️ Re-deploying over older versions:** If you previously deployed this template before the chat history container was migrated to MultiHash partition keys (`/entra_oid` + `/session_id`), re-deploying may fail with a `PropertyChangeNotAllowed` error. Cosmos DB partition keys are immutable. To resolve this, delete the `chat-history-v2` container in Azure Portal or via CLI, then re-deploy. Existing chat history in that container will be lost. See [Troubleshooting deployment](deploy_troubleshooting.md) for more details.
+
 ## Enabling language picker
 
 You can optionally enable the language picker to allow users to switch between different languages. Currently, it supports English, Spanish, French, Japanese, Danish, Dutch, Brasilian Portugese, Turkish, Italian and Polish.

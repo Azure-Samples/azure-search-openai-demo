@@ -24,7 +24,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' existing 
 
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: storageAccount
-  name: guid(subscription().id, storageAccount.id, principalId, roleDefinitionId)
+  name: guid(subscription().id, storageAccount.id, principalId, roleDefinitionId, principalType)
   properties: {
     principalId: principalId
     principalType: principalType
