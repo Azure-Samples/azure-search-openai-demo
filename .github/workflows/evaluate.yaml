@@ -139,7 +139,7 @@ jobs:
         uses: Azure/setup-azd@v2.2.1
 
       - name: Login to Azure with az CLI
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ env.AZURE_CLIENT_ID }}
           tenant-id: ${{ env.AZURE_TENANT_ID }}
