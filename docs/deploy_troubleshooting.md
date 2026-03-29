@@ -16,4 +16,17 @@ If you are experiencing an error when deploying the RAG chat solution using the 
 
 1. You see a `PropertyChangeNotAllowed` error referencing Cosmos DB partition keys when re-deploying over an older version of this template. Cosmos DB partition keys are immutable and cannot be changed after container creation. To resolve this, delete the `chat-history-v2` container in Azure Portal or via CLI (`az cosmosdb sql container delete`), then re-deploy. The container will be recreated with the correct MultiHash partition key scheme. Note: existing chat history in that container will be lost.
 
-1. You see a `Conflict` error (HTTP 409) about Cognitive Services resources when re-deploying after a previous `azd down`. Azure soft-deletes Cognitive Services resources for 48 days, blocking re-creation with the same name. The template now includes `restore: true` on all Cognitive Services modules, which automatically restores the soft-deleted resource instead of failing. If you still encounter this issue on an older version of the template, you can manually purge the soft-deleted resource via [the Azure CLI](https://learn.microsoft.com/azure/ai-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource).
+1. You see a `Conflict` error (HTTP 409) about Cognitive Services resources when re-deploying after a previous `azd down`. Azure soft-deletes Cognitive Services resources for 48 days, blocking re-creation with the same name. To resolve this, set the `RESTORE_COGNITIVE_SERVICES` environment variable to `true` before re-deploying:
+
+   ```shell
+   azd env set RESTORE_COGNITIVE_SERVICES true
+   azd up
+   ```
+
+   After the resources are restored, set it back to `false` to avoid issues on subsequent deployments:
+
+   ```shell
+   azd env set RESTORE_COGNITIVE_SERVICES false
+   ```
+
+   Alternatively, you can manually purge the soft-deleted resources via [the Azure CLI](https://learn.microsoft.com/azure/ai-services/manage-resources?tabs=azure-portal#purge-a-deleted-resource) and re-deploy without the flag.

@@ -209,6 +209,9 @@
     "useEval": {
       "value": "${USE_EVAL=false}"
     },
+    "restoreCognitiveServices": {
+      "value": "${RESTORE_COGNITIVE_SERVICES=false}"
+    },
     "useCloudIngestion": {
       "value": "${USE_CLOUD_INGESTION=false}"
     },

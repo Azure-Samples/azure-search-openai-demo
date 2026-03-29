@@ -132,6 +132,9 @@ param speechServiceVoice string = ''
 param useMultimodal bool = false
 param useEval bool = false
 param useCloudIngestion bool = false
+
+@description('Restore soft-deleted Cognitive Services accounts instead of creating new ones. Set to true after running azd down.')
+param restoreCognitiveServices bool = false
 param useCloudIngestionAcls bool = false
 @description('Use an existing ADLS Gen2 storage account instead of provisioning a new one')
 param useExistingAdlsStorage bool = false
@@ -789,7 +792,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.7.2' = if (isAzure
     sku: openAiSkuName
     deployments: openAiDeployments
     disableLocalAuth: azureOpenAiDisableKeys
-    restore: true
+    restore: restoreCognitiveServices
   }
 }
 
@@ -814,7 +817,7 @@ module documentIntelligence 'br/public:avm/res/cognitive-services/account:0.7.2'
     disableLocalAuth: true
     tags: tags
     sku: documentIntelligenceSkuName
-    restore: true
+    restore: restoreCognitiveServices
   }
 }
 
@@ -835,7 +838,7 @@ module vision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMult
     location: visionResourceGroupLocation
     tags: tags
     sku: 'S0'
-    restore: true
+    restore: restoreCognitiveServices
   }
 }
 
@@ -858,7 +861,7 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
     location: 'westus'
     tags: tags
     sku: 'S0'
-    restore: true
+    restore: restoreCognitiveServices
   }
 }
 
@@ -877,7 +880,7 @@ module speech 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useSpee
     location: !empty(speechServiceLocation) ? speechServiceLocation : location
     tags: tags
     sku: speechServiceSkuName
-    restore: true
+    restore: restoreCognitiveServices
   }
 }
 module searchService 'core/search/search-services.bicep' = {
