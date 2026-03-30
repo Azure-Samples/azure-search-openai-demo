@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build Bicep for linting
-        uses: azure/CLI@v2
+        uses: azure/CLI@v3
         with:
           inlineScript: |
             export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
