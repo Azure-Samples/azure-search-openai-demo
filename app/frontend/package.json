@@ -27,7 +27,7 @@
     "ndjson-readablestream": "^1.4.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-helmet-async": "^2.0.5",
+    "react-helmet-async": "^3.0.0",
     "react-i18next": "^15.4.1",
     "react-markdown": "^9.0.1",
     "react-router-dom": "^7.13.1",
