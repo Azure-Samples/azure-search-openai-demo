@@ -107,7 +107,7 @@ jobs:
     steps:
 
       - name: Comment on pull request
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             github.rest.issues.createComment({
@@ -219,7 +219,7 @@ jobs:
           cat run-diff.md >> $GITHUB_STEP_SUMMARY
 
       - name: Comment on pull request
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
