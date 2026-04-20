@@ -26,7 +26,7 @@ azure-cognitiveservices-speech==1.40.0
     # via -r requirements.in
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.38.0
+azure-core==1.39.0
     # via
     #   azure-ai-documentintelligence
     #   azure-core-tracing-opentelemetry
