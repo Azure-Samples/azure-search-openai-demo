@@ -337,7 +337,7 @@ pymupdf==1.26.0
     # via -r requirements.in
 pypdf==6.10.2
     # via -r requirements.in
-python-dotenv==1.1.1
+python-dotenv==1.2.2
     # via -r requirements.in
 quart==0.20.0
     # via
