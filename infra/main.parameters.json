@@ -373,6 +373,9 @@
     },
     "useSharePointSource": {
       "value": "${USE_SHAREPOINT_SOURCE=false}"
+    },
+    "useHealthModel": {
+      "value": "${AZURE_USE_HEALTH_MODEL=true}"
     }
   }
 }

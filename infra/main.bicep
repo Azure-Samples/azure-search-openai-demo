@@ -340,6 +340,9 @@ param useLocalHtmlParser bool = false
 @description('Use AI project')
 param useAiProject bool = false
 
+@description('Deploy an Azure Monitor Health Model for application health monitoring')
+param useHealthModel bool = true
+
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
@@ -1534,6 +1537,31 @@ module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserU
       : acaBackend!.outputs.identityPrincipalId
     roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
     principalType: 'ServicePrincipal'
+  }
+}
+
+// Health Model for application health monitoring
+module healthModel 'core/monitor/health-model.bicep' = if (useHealthModel) {
+  scope: resourceGroup
+  params: {
+    name: 'hm-${environmentName}-v2'
+    location: location
+    tags: tags
+    deploymentTarget: deploymentTarget
+    deployAzureOpenAi: isAzureOpenAiHost && deployAzureOpenAi
+    useApplicationInsights: useApplicationInsights
+    useSpeechOutputAzure: useSpeechOutputAzure
+    useAuthenticationWithCosmos: useAuthentication && useChatHistoryCosmos
+    containerAppResourceId: deploymentTarget == 'containerapps' ? acaBackend!.outputs.id : ''
+    appServiceResourceId: deploymentTarget == 'appservice' ? backend!.outputs.id : ''
+    managedEnvironmentResourceId: deploymentTarget == 'containerapps' ? containerApps!.outputs.environmentId : ''
+    cognitiveServicesResourceId: isAzureOpenAiHost && deployAzureOpenAi ? openAi!.outputs.resourceId : ''
+    searchServiceResourceId: searchService.outputs.id
+    storageAccountResourceId: storage.outputs.id
+    applicationInsightsResourceId: useApplicationInsights ? monitoring!.outputs.applicationInsightsId : ''
+    speechServiceResourceId: useSpeechOutputAzure ? speech!.outputs.resourceId : ''
+    cosmosDbResourceId: (useAuthentication && useChatHistoryCosmos) ? cosmosDb!.outputs.resourceId : ''
+    documentIntelligenceResourceId: documentIntelligence.outputs.resourceId
   }
 }
 
