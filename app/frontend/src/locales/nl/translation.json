@@ -148,7 +148,6 @@
         "imageEmbeddings": "Wanneer geselecteerd, zal de zoekopdracht embeddings gebruiken van het multimodale embeddings model voor geëxtraheerde afbeeldingen.",
         "llmTextInputs": "Wanneer geselecteerd, wordt tekstuele inhoud uit de zoekresultaten als context naar het taalmodel gestuurd.",
         "llmImageInputs": "Wanneer geselecteerd, worden afbeeldingen uit de zoekresultaten als context naar het taalmodel gestuurd.",
-        "llmInputs": "Stelt in wat er naar het visiemodel wordt verzonden. 'Afbeeldingen en tekst' verzendt beide, 'Afbeeldingen' alleen afbeeldingen, en 'Tekst' alleen tekst.",
         "retrievalMode": "Stelt de zoekmodus in voor de Azure AI zoekopdracht. `Vectoren + Tekst (Hybride)` gebruikt vector en volledige tekst, `Vectoren` alleen de vector, en `Tekst` alleen de volledige tekst. Hybride is meestal optimaal.",
         "streamChat": "Geeft het antwoord in real-time weer in de chat terwijl het wordt gegenereerd.",
         "useOidSecurityFilter": "Filtert zoekresultaten op basis van de OID van de geauthenticeerde gebruiker.",
