@@ -77,7 +77,7 @@ param canvasGroupRow int = 200
 param canvasLeafRow int = 400
 
 // Child counts per group (0 when the group is conditionally disabled)
-var ragChatChildCount = 2 + (deployAzureOpenAi ? 1 : 0) + (useApplicationInsights ? 1 : 0)  // KnowledgeSearch + BackendCompute + AIInference? + AppPerf?
+var ragChatChildCount = 2 + (deployAzureOpenAi ? 1 : 0) + (useApplicationInsights ? 1 : 0)  // KnowledgeSearch + BackendApp + AIInference? + AppPerf?
 var docIngestionChildCount = 2                                                                 // DocStorage + DocIntelligence
 var speechChildCount = useSpeechOutputAzure ? 1 : 0                                            // SpeechService
 var authHistoryChildCount = useAuthenticationWithCosmos ? 1 : 0                                 // CosmosDB
@@ -445,7 +445,7 @@ resource sdBackendRequests 'Microsoft.CloudHealth/healthModels/signaldefinitions
   }
 }
 
-resource sdAcaQuota 'Microsoft.CloudHealth/healthModels/signaldefinitions@2026-01-01-preview' = if (isContainerApps) {
+resource sdAcaIngressCpu 'Microsoft.CloudHealth/healthModels/signaldefinitions@2026-01-01-preview' = if (isContainerApps) {
   parent: healthModel
   name: 'sd-aca-ingress-cpu'
   properties: {
@@ -773,12 +773,12 @@ resource entityRagChat 'Microsoft.CloudHealth/healthModels/entities@2026-01-01-p
   }
 }
 
-// Backend Compute — Container Apps variant
+// Backend App — Container Apps variant
 resource entityBackendComputeAca 'Microsoft.CloudHealth/healthModels/entities@2026-01-01-preview' = if (isContainerApps) {
   parent: healthModel
   name: 'e-backend-compute'
   properties: {
-    displayName: 'Backend Compute'
+    displayName: 'Backend App'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
     canvasPosition: {
@@ -800,12 +800,12 @@ resource entityBackendComputeAca 'Microsoft.CloudHealth/healthModels/entities@20
   }
 }
 
-// Backend Compute — App Service variant
+// Backend App — App Service variant
 resource entityBackendComputeAppSvc 'Microsoft.CloudHealth/healthModels/entities@2026-01-01-preview' = if (isAppService) {
   parent: healthModel
   name: 'e-backend-compute'
   properties: {
-    displayName: 'Backend Compute'
+    displayName: 'Backend App'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
     signalGroups: {
@@ -1078,7 +1078,7 @@ resource entityContainerPlatform 'Microsoft.CloudHealth/healthModels/entities@20
         authenticationSetting: authReader.name
         azureResourceId: managedEnvironmentResourceId
         signals: [
-          { name: 'sa-aca-ingress-cpu', signalDefinitionName: sdAcaQuota.name, signalKind: 'AzureResourceMetric', refreshInterval: 'PT5M' }
+          { name: 'sa-aca-ingress-cpu', signalDefinitionName: sdAcaIngressCpu.name, signalKind: 'AzureResourceMetric', refreshInterval: 'PT5M' }
         ]
       }
     }
