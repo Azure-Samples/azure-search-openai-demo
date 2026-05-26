@@ -148,7 +148,6 @@
         "imageEmbeddings": "Quando selecionado, a pesquisa usará incorporações do modelo de incorporações multimodal para as imagens extraídas.",
         "llmTextInputs": "Quando selecionado, o conteúdo de texto dos resultados de pesquisa é enviado ao LLM como contexto.",
         "llmImageInputs": "Quando selecionado, as imagens dos resultados de pesquisa são enviadas ao LLM como contexto.",
-        "llmInputs": "Define o que será enviado ao modelo de visão. 'Imagens e texto' envia ambos, 'Imagens' envia apenas imagens e 'Texto' envia apenas texto.",
         "retrievalMode": "Define o modo de recuperação para a consulta do Azure AI Search. 'Vetores + Texto (Híbrido)' usa uma combinação de busca vetorial e de texto completo, 'Vetores' usa apenas a busca vetorial, e 'Texto' usa apenas a busca de texto completo. O híbrido geralmente é o ideal.",
         "streamChat": "Transmite continuamente a resposta para a interface do chat conforme é gerada.",
         "useOidSecurityFilter": "Filtra os resultados da pesquisa com base no OID do usuário autenticado.",
