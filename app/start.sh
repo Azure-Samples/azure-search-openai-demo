@@ -1,8 +1,25 @@
 #!/bin/sh
 
-# cd into the parent directory of the script, 
+# cd into the parent directory of the script,
 # so that the script generates virtual environments always in the same path.
 cd "${0%/*}" || exit 1
+
+echo ""
+echo "Loading azd .env file from current environment"
+echo ""
+
+while IFS='=' read -r key value; do
+    value=$(echo "$value" | sed 's/^"//' | sed 's/"$//')
+    # Only export variables that start with "VITE_"
+    case "$key" in
+        VITE_*)
+            export "$key=$value"
+            echo "Exported $key"
+            ;;
+    esac
+done <<EOF
+$(azd env get-values)
+EOF
 
 cd ../
 echo 'Creating python virtual environment ".venv"'
