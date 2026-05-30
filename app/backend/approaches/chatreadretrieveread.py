@@ -272,6 +272,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
                 "image_sources": extra_info.data_points.images,
                 "citations": extra_info.data_points.citations,
+                "current_date": self.get_current_date(),
             },
             user_template_path="chat_answer.user.jinja2",
             user_template_variables={
@@ -336,6 +337,7 @@ class ChatReadRetrieveReadApproach(Approach):
             prompt_variables={
                 "user_query": original_user_query,
                 "past_messages": messages[:-1],
+                "current_date": self.get_current_date(),
             },
             overrides=overrides,
             chatgpt_model=self.chatgpt_model,

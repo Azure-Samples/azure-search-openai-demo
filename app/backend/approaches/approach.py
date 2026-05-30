@@ -4,6 +4,7 @@ import re
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import asdict, dataclass, field
+from datetime import datetime
 from typing import Any, Optional, TypedDict, cast
 
 from azure.search.documents.aio import SearchClient
@@ -486,7 +487,11 @@ class Approach(ABC):
 
             rewrite_result = await self.rewrite_query(
                 prompt_template="query_rewrite.system.jinja2",
-                prompt_variables={"user_query": original_user_query, "past_messages": messages[:-1]},
+                prompt_variables={
+                    "user_query": original_user_query,
+                    "past_messages": messages[:-1],
+                    "current_date": self.get_current_date(),
+                },
                 overrides={},
                 chatgpt_model=self.chatgpt_model,
                 chatgpt_deployment=self.chatgpt_deployment,
@@ -906,6 +911,11 @@ class Approach(ABC):
             return {"injected_prompt": override_prompt[3:]}
         else:
             return {"override_prompt": override_prompt}
+
+    @staticmethod
+    def get_current_date() -> str:
+        """Return today's date formatted for inclusion in prompts, for example "February 3, 2026"."""
+        return datetime.now().strftime("%B %d, %Y")
 
     @staticmethod
     def is_reasoning_model(model: str) -> bool:
