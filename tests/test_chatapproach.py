@@ -425,7 +425,6 @@ def test_get_current_date_matches_expected_format(chat_approach):
     assert datetime.strptime(current_date, "%B %d, %Y").date() == datetime.now().date()
 
 
-
 @pytest.mark.asyncio
 async def test_get_sources_content_downloads_images_from_images_container(chat_approach, monkeypatch):
     """Regression test: ensure image URLs in a non-default container download from that container."""
