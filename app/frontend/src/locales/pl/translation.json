@@ -78,7 +78,6 @@
         "minimumSearchScore": "Minimalny wynik wyszukiwania",
         "minimumRerankerScore": "Minimalny wynik sortowania semantycznego",
         "retrieveCount": "Pobierz tyle wyników wyszukiwania:",
-        "maxSubqueryCount": "Maksymalna liczba zapytań podrzędnych",
         "agenticReasoningEffort": "Poziom rozumowania przy pobieraniu",
         "agenticReasoningEffortOptions": {
             "minimal": "Minimalny",
@@ -124,8 +123,7 @@
             "label": "Pola wektorowe (wyszukiwanie wielozapytaniowe)",
             "options": {
                 "embedding": "Osadzenia tekstu",
-                "imageEmbedding": "Osadzenia obrazu",
-                "both": "Osadzenia tekstu i obrazu"
+                "imageEmbedding": "Osadzenia obrazu"
             }
         },
         "useOidSecurityFilter": "Użyj filtra bezpieczeństwa OID",
