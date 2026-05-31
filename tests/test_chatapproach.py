@@ -1,4 +1,5 @@
 import base64
+from types import SimpleNamespace
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
@@ -20,6 +21,7 @@ from approaches.approach import (
     DataPoints,
     Document,
     ExtraInfo,
+    RewriteQueryResult,
     SharePointResult,
     ThoughtStep,
     WebResult,
@@ -621,3 +623,47 @@ async def test_run_until_final_call_rejects_web_streaming(chat_approach):
             auth_claims={},
             should_stream=True,
         )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "auth_claims,expected",
+    [
+        ({"access_token": "fake-token"}, True),
+        ({}, False),
+    ],
+)
+async def test_run_search_approach_surfaces_query_source_authorization(
+    chat_approach, monkeypatch, auth_claims, expected
+):
+    """The "Search using generated search query" thought should report whether the ACL
+    authorization header was forwarded, independent of the OData filter (#2872)."""
+
+    async def fake_rewrite_query(*args, **kwargs):
+        return RewriteQueryResult(
+            query="generated query",
+            messages=[],
+            completion=SimpleNamespace(usage=None),
+            reasoning_effort=None,
+        )
+
+    async def fake_search(*args, **kwargs):
+        return []
+
+    async def fake_get_sources_content(*args, **kwargs):
+        return DataPoints(text=[], images=[], citations=[])
+
+    monkeypatch.setattr(chat_approach, "rewrite_query", fake_rewrite_query)
+    monkeypatch.setattr(chat_approach, "search", fake_search)
+    monkeypatch.setattr(chat_approach, "get_sources_content", fake_get_sources_content)
+
+    extra_info = await chat_approach.run_search_approach(
+        messages=[{"role": "user", "content": "Hello"}],
+        overrides={"retrieval_mode": "text"},
+        auth_claims=auth_claims,
+    )
+
+    search_thought = next(
+        thought for thought in extra_info.thoughts if thought.title == "Search using generated search query"
+    )
+    assert search_thought.props["use_query_source_authorization"] is expected
