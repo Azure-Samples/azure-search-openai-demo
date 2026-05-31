@@ -140,6 +140,18 @@ A related option is VS Code Dev Containers, which will open the project in your 
     - [Powershell 7+ (pwsh)](https://github.com/powershell/powershell) - For Windows users only.
       - **Important**: Ensure you can run `pwsh.exe` from a PowerShell terminal. If this fails, you likely need to upgrade PowerShell.
 
+    Before continuing, confirm the required tools are available from your terminal:
+
+    ```shell
+    azd version
+    python --version
+    pip --version
+    node --version
+    git --version
+    pwsh -Version
+    ```
+
+    On Windows, restart your terminal after installing or updating any of these tools so that PATH changes are picked up.
 2. Create a new folder and switch to it in the terminal.
 3. Run this command to download the project code:
 
