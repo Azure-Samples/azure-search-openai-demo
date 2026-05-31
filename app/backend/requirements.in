@@ -9,7 +9,7 @@ azure-ai-documentintelligence==1.0.2
 azure-cognitiveservices-speech
 azure-cosmos
 azure-search-documents==11.7.0b2
-azure-storage-blob
+azure-storage-blob==12.27.0
 azure-storage-file-datalake
 uvicorn
 aiohttp
