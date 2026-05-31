@@ -206,6 +206,9 @@
     "useMultimodal": {
       "value": "${USE_MULTIMODAL=false}"
     },
+    "csvMaxPageChars": {
+      "value": "${CSV_MAX_PAGE_CHARS=0}"
+    },
     "useEval": {
       "value": "${USE_EVAL=false}"
     },

@@ -55,6 +55,9 @@ def configure_global_settings():
     document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
     storage_is_adls = os.getenv("USE_CLOUD_INGESTION_ACLS", "false").lower() == "true"
     enable_global_document_access = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "false").lower() == "true"
+    # When set to a positive value, CSV rows are grouped into pages of up to this many
+    # characters instead of one page per row (avoids out-of-memory on large CSV files).
+    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS", "0")) or None
 
     # Cloud ingestion storage account (ADLS Gen2 when ACLs enabled, standard blob otherwise)
     # Fallback to AZURE_STORAGE_ACCOUNT is for legacy deployments only - may be removed in future
@@ -77,6 +80,7 @@ def configure_global_settings():
         use_local_pdf_parser=use_local_pdf_parser,
         use_local_html_parser=use_local_html_parser,
         process_figures=use_multimodal,
+        csv_max_chars_per_page=csv_max_chars_per_page,
     )
 
     blob_manager = setup_blob_manager(

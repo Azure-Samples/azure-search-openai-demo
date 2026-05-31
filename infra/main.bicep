@@ -133,6 +133,10 @@ param useMultimodal bool = false
 param useEval bool = false
 param useCloudIngestion bool = false
 
+// When greater than 0, CSV rows are grouped into pages of up to this many characters
+// during ingestion instead of one page per row (avoids out-of-memory on large CSV files).
+param csvMaxPageChars int = 0
+
 @description('Restore soft-deleted Cognitive Services accounts instead of creating new ones. Set to true after running azd down.')
 param restoreCognitiveServices bool = false
 param useCloudIngestionAcls bool = false
@@ -553,6 +557,7 @@ var appEnvVariables = {
   ALLOWED_ORIGIN: join(allowedOrigins, ';')
   USE_VECTORS: useVectors
   USE_MULTIMODAL: useMultimodal
+  CSV_MAX_PAGE_CHARS: string(csvMaxPageChars)
   USE_USER_UPLOAD: useUserUpload
   AZURE_USERSTORAGE_ACCOUNT: useUserUpload ? userStorage!.outputs.name : ''
   AZURE_USERSTORAGE_CONTAINER: useUserUpload ? userStorageContainerName : ''
