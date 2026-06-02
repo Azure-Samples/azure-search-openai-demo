@@ -148,7 +148,6 @@
         "imageEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra den multimodale indlejringsmodel af udtrukne billeder.",
         "llmTextInputs": "Når valgt, sendes tekstindhold fra søgeresultaterne til LLM'en som kontekst.",
         "llmImageInputs": "Når valgt, sendes billeder fra søgeresultaterne til LLM'en som kontekst.",
-        "llmInputs": "Indstiller hvad der sendes til visionsmodellen. 'Billeder og tekst' sender både billeder og tekst til modellen, 'Billeder' sender kun billeder og 'Tekst' sender kun tekst.",
         "retrievalMode": "Indstiller søgemodus for forespørgslen i Azure AI Search. `Vektorer + Tekst (Hybrid)` bruger en kombination af vektorsøgning og fuldtekstsøgning, `Vektorer` bruger kun vektorsøgning, og `Tekst` bruger kun fuldtekstsøgning. Hybrid er generelt optimalt.",
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",
         "useOidSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers OID.",
