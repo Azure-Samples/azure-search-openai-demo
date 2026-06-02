@@ -37,7 +37,6 @@ updates:
       pydantic:
         patterns:
           - "pydantic"
-          - "pydantic-*"
           - "typing-extensions"
       pallets:
         patterns:
