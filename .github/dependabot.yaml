@@ -27,6 +27,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "pydantic-core"
     groups:
       telemetry:
         patterns:
