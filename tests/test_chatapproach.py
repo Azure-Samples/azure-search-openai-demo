@@ -642,7 +642,17 @@ async def test_run_search_approach_surfaces_query_source_authorization(
         return RewriteQueryResult(
             query="generated query",
             messages=[],
-            completion=SimpleNamespace(usage=None),
+            completion=Response(
+                 id="resp-rewrite",
+                 object="response",
+                 parallel_tool_calls=True,
+                 tool_choice="auto",
+                 tools=[],
+                 created_at=0,
+                 model="gpt-4.1-mini",
+                 output=[],
+                 status="completed",
+             ),
             reasoning_effort=None,
         )
 
