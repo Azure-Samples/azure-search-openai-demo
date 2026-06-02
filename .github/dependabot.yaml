@@ -34,10 +34,6 @@ updates:
         patterns:
           - "opentelemetry-*"
           - "azure-monitor-opentelemetry*"
-      pydantic:
-        patterns:
-          - "pydantic"
-          - "typing-extensions"
       pallets:
         patterns:
           - "flask"
