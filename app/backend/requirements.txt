@@ -4,7 +4,7 @@ aiofiles==24.1.0
     # via quart
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.13.4
+aiohttp==3.14.0
     # via
     #   -r requirements.in
     #   microsoft-kiota-authentication-azure
