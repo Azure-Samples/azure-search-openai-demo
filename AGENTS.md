@@ -126,9 +126,7 @@ If a line starts with a ! (exclamation mark), it means that the line is not cove
 
 ## Sending pull requests
 
-When sending pull requests, make sure to follow the [PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md) format.
-
-Always populate all sections of the template even if the answer is "No" or "Not applicable".
+When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md format.
 
 ## Upgrading dependencies
 
