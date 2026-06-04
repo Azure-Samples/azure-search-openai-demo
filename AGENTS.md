@@ -126,7 +126,15 @@ If a line starts with a ! (exclamation mark), it means that the line is not cove
 
 ## Sending pull requests
 
-When sending pull requests, make sure to follow the PULL_REQUEST_TEMPLATE.md format.
+When sending pull requests, make sure to follow the [PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md) format. This includes:
+
+* **Purpose**: Clearly describe the intention of the changes and what problem it solves or functionality it adds
+* **Breaking changes**: Indicate whether this introduces any breaking changes
+* **Documentation**: Indicate whether any learn.microsoft.com docs need updating
+* **Type of change**: Specify whether this is a bugfix, feature, code style update, refactoring, documentation, or other
+* **Code quality checklist**: Verify that tests pass, coverage is at 100% for new lines, type hints are correct, and code style checks pass
+
+Always populate all sections of the template even if the answer is "No" or "Not applicable".
 
 ## Upgrading dependencies
 
