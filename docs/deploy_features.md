@@ -21,6 +21,7 @@ You should typically enable these features before running `azd up`. Once you've 
 * [Adding an OpenAI load balancer](#adding-an-openai-load-balancer)
 * [Deploying with private endpoints](#deploying-with-private-endpoints)
 * [Using local parsers](#using-local-parsers)
+* [Using Azure Health Models (Preview)](#using-azure-health-models-preview)
 
 ## Using different chat models
 
@@ -410,3 +411,22 @@ If you want to decrease the charges by using local parsers instead of Azure Docu
 1. Run `azd env set USE_LOCAL_HTML_PARSER true` to use the local HTML parser.
 
 The local parsers will be used the next time you run the data ingestion script. To use these parsers for the user document upload system, you'll need to run `azd provision` to update the web app to use the local parsers.
+
+## Using Azure Health Models (Preview)
+
+You can enable [Azure Health Models](https://learn.microsoft.com/en-us/azure/azure-monitor/health-models/overview) to get a graph based view to understand the health of the application deployment.
+
+You can see a screenshot of how it looks like in the [origin PR](https://github.com/Azure-Samples/azure-search-openai-demo/pull/3064). 
+
+> Azure Health Models in currently in preview and being actively developed. It will deploy into `uksouth` region at the moment. You can check the available regions with 
+```shell
+ sub=$(az account show --query id -o tsv)
+ az rest \
+   --method get \
+   --url "https://management.azure.com/subscriptions/$sub/providers/Microsoft.CloudHealth/resourceTypes?api-version=2021-04-01" \
+   --query "value[?resourceType=='healthmodels'].locations[]" \
+   -o tsv
+```
+
+1. Run `azd env set AZURE_USE_HEALTH_MODEL true` to enable the health model deployment.
+1. Optionally, run `azd env set AZURE_HEALTH_MODEL_LOCATION <location>` to deviate from the default location of `uksouth`.
