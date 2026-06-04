@@ -340,8 +340,11 @@ param useLocalHtmlParser bool = false
 @description('Use AI project')
 param useAiProject bool = false
 
-@description('Deploy an Azure Monitor Health Model for application health monitoring')
-param useHealthModel bool = true
+@description('Deploy an Azure Monitor Health Model for application health monitoring (preview feature)')
+param useHealthModel bool = false
+
+@description('Location for Azure Health Model deployment (limited regional support)')
+param healthModelLocation string = 'uksouth'
 
 var abbrs = loadJsonContent('abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
@@ -1540,12 +1543,12 @@ module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserU
   }
 }
 
-// Health Model for application health monitoring
+// Health Model for application health monitoring (preview feature)
 module healthModel 'core/monitor/health-model.bicep' = if (useHealthModel) {
   scope: resourceGroup
   params: {
     name: 'hm-${environmentName}-v2'
-    location: location
+    location: healthModelLocation
     tags: tags
     deploymentTarget: deploymentTarget
     deployAzureOpenAi: isAzureOpenAiHost && deployAzureOpenAi

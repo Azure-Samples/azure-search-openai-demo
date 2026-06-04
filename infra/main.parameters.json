@@ -375,7 +375,10 @@
       "value": "${USE_SHAREPOINT_SOURCE=false}"
     },
     "useHealthModel": {
-      "value": "${AZURE_USE_HEALTH_MODEL=true}"
+      "value": "${AZURE_USE_HEALTH_MODEL=false}"
+    },
+    "healthModelLocation": {
+      "value": "${AZURE_HEALTH_MODEL_LOCATION=uksouth}"
     }
   }
 }
