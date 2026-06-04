@@ -148,7 +148,6 @@
         "imageEmbeddings": "Seçildiğinde, arama çıkarılan görsellerin çoklu ortam gömme modelinden gömmeleri kullanacaktır.",
         "llmTextInputs": "Seçildiğinde, arama sonuçlarındaki metin içeriği bağlam olarak LLM'e gönderilir.",
         "llmImageInputs": "Seçildiğinde, arama sonuçlarındaki görseller bağlam olarak LLM'e gönderilir.",
-        "llmInputs": "Vizyon modeline ne gönderileceğini ayarlar. 'Görseller ve metin' her ikisini de gönderir, 'Görseller' yalnızca görselleri, 'Metin' yalnızca metni gönderir.",
         "retrievalMode": "Azure AI arama sorgusu için getirme modunu ayarlar. `Vektörler + Metin (Hibrit)` vektör araması ve tam metin aramasını kullanır, `Vektörler` yalnızca vektör aramasını, `Metin` yalnızca tam metin aramasını kullanır. Hibrit genellikle en iyisidir.",
         "streamChat": "Yanıt oluşturulurken sohbet arayüzüne gerçek zamanlı olarak yanıtı sürekli olarak gönderir.",
         "useOidSecurityFilter": "Kimliği doğrulanmış kullanıcının OID'sine göre arama sonuçlarını filtreler.",
