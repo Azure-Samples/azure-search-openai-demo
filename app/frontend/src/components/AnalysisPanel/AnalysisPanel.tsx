@@ -26,9 +26,9 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
     const dataPoints = answer.context.data_points;
     const hasSupportingContent = Boolean(
         dataPoints &&
-            ((dataPoints.text && dataPoints.text.length > 0) ||
-                (dataPoints.images && dataPoints.images.length > 0) ||
-                (dataPoints.external_results_metadata && dataPoints.external_results_metadata.length > 0))
+        ((dataPoints.text && dataPoints.text.length > 0) ||
+            (dataPoints.images && dataPoints.images.length > 0) ||
+            (dataPoints.external_results_metadata && dataPoints.external_results_metadata.length > 0))
     );
     const isDisabledSupportingContentTab: boolean = !hasSupportingContent;
     const isDisabledCitationTab: boolean = !activeCitation;
