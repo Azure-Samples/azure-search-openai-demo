@@ -13,7 +13,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@azure/msal-browser": "^4.16.0",
+    "@azure/msal-browser": "^5.11.0",
     "@azure/msal-react": "^3.0.16",
     "@fluentui/react-components": "^9.73.3",
     "@fluentui/react-icons": "^2.0.319",
