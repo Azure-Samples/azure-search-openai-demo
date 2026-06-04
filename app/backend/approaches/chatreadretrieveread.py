@@ -404,6 +404,9 @@ class ChatReadRetrieveReadApproach(Approach):
                         "use_query_rewriting": use_query_rewriting,
                         "top": top,
                         "filter": search_index_filter,
+                        # ACLs/oids are forwarded via the x-ms-query-source-authorization header,
+                        # not the OData filter, so surface that separately to avoid confusion (#2872).
+                        "use_query_source_authorization": access_token is not None,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
                         "search_text_embeddings": search_text_embeddings,

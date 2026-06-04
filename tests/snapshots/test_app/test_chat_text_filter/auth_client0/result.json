@@ -39,6 +39,7 @@
                     "search_text_embeddings": true,
                     "top": 3,
                     "use_query_rewriting": false,
+                    "use_query_source_authorization": true,
                     "use_semantic_captions": false,
                     "use_semantic_ranker": false,
                     "use_text_search": true,
