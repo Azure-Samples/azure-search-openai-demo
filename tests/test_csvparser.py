@@ -94,7 +94,7 @@ async def test_csvparser_splits_when_budget_exceeded():
 async def test_csvparser_oversized_single_row_becomes_own_page():
     # A single row larger than the budget must still be emitted (not dropped or looped)
     long_value = "x" * 50
-    file = io.BytesIO(f"col1\nshort\n{long_value}\nshort2".encode("utf-8"))
+    file = io.BytesIO(f"col1\nshort\n{long_value}\nshort2".encode())
     file.name = "test.csv"
     csvparser = CsvParser(max_chars_per_page=10)
 
@@ -107,7 +107,7 @@ async def test_csvparser_oversized_single_row_becomes_own_page():
 async def test_csvparser_large_file_does_not_explode_into_per_row_pages():
     # Regression for OOM: many rows must collapse into far fewer grouped pages
     rows = "\n".join(f"row{i},value{i}" for i in range(1000))
-    file = io.BytesIO(f"col1,col2\n{rows}".encode("utf-8"))
+    file = io.BytesIO(f"col1,col2\n{rows}".encode())
     file.name = "test.csv"
     csvparser = CsvParser(max_chars_per_page=2000)
 
