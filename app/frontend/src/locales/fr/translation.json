@@ -148,7 +148,6 @@
         "imageEmbeddings": "Lorsque sélectionné, la recherche utilisera les incorporations du modèle d'incorporations multimodal pour les images extraites.",
         "llmTextInputs": "Lorsque sélectionné, le contenu textuel des résultats de recherche est envoyé au LLM comme contexte.",
         "llmImageInputs": "Lorsque sélectionné, les images des résultats de recherche sont envoyées au LLM comme contexte.",
-        "llmInputs": "Définit ce qui sera envoyé au modèle de vision. 'Images et texte' envoie à la fois des images et du texte au modèle, 'Images' envoie seulement des images, et 'Texte' envoie seulement du texte.",
         "retrievalMode": "Définit le mode de récupération pour la requête Azure AI Search. Vecteurs + Texte (Hybride) utilise une combinaison de recherche vectorielle et de recherche en texte intégral, Vecteurs utilise uniquement la recherche vectorielle, et Texte utilise uniquement la recherche en texte intégral. Hybride est généralement optimal.",
         "streamChat": "Diffuse en continu la réponse à l'interface utilisateur du chat au fur et à mesure de sa génération.",
         "useOidSecurityFilter": "Filtrez les résultats de recherche en fonction de l'OID de l'utilisateur authentifié.",

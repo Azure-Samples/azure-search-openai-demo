@@ -4,7 +4,7 @@ aiofiles==24.1.0
     # via quart
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.13.4
+aiohttp==3.14.0
     # via
     #   -r requirements.in
     #   microsoft-kiota-authentication-azure
@@ -26,7 +26,7 @@ azure-cognitiveservices-speech==1.40.0
     # via -r requirements.in
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.38.0
+azure-core==1.39.0
     # via
     #   azure-ai-documentintelligence
     #   azure-core-tracing-opentelemetry
@@ -78,7 +78,7 @@ cffi==2.0.0
     # via cryptography
 charset-normalizer==3.3.2
     # via requests
-click==8.3.2
+click==8.4.1
     # via
     #   flask
     #   quart
@@ -121,7 +121,7 @@ hypercorn==0.18.0
     # via quart
 hyperframe==6.1.0
     # via h2
-idna==3.10
+idna==3.15
     # via
     #   anyio
     #   httpx
@@ -157,7 +157,7 @@ markupsafe==3.0.3
     #   werkzeug
 mdurl==0.1.2
     # via markdown-it-py
-microsoft-kiota-abstractions==1.9.3
+microsoft-kiota-abstractions==1.9.10
     # via
     #   microsoft-kiota-authentication-azure
     #   microsoft-kiota-http
@@ -168,7 +168,7 @@ microsoft-kiota-abstractions==1.9.3
     #   msgraph-core
 microsoft-kiota-authentication-azure==1.9.3
     # via msgraph-core
-microsoft-kiota-http==1.9.3
+microsoft-kiota-http==1.9.9
     # via msgraph-core
 microsoft-kiota-serialization-form==1.9.3
     # via msgraph-sdk
@@ -323,9 +323,9 @@ psutil==7.1.2
     # via azure-monitor-opentelemetry-exporter
 pycparser==2.22
     # via cffi
-pydantic==2.13.0
+pydantic==2.13.4
     # via openai
-pydantic-core==2.46.0
+pydantic-core==2.46.4
     # via pydantic
 pygments==2.20.0
     # via rich
@@ -333,7 +333,7 @@ pyjwt[crypto]==2.12.0
     # via
     #   -r requirements.in
     #   msal
-pymupdf==1.26.0
+pymupdf==1.27.2.3
     # via -r requirements.in
 pypdf==6.10.2
     # via -r requirements.in
@@ -398,7 +398,7 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-urllib3==2.6.3
+urllib3==2.7.0
     # via requests
 uvicorn==0.30.6
     # via -r requirements.in

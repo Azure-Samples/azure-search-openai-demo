@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# cd into the parent directory of the script, 
+# cd into the parent directory of the script,
 # so that the script generates virtual environments always in the same path.
 cd "${0%/*}" || exit 1
 
