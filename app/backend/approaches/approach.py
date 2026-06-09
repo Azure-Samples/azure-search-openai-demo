@@ -665,6 +665,9 @@ class Approach(ABC):
                     "deployment": self.knowledgebase_deployment,
                     "reranker_threshold": minimum_reranker_score,
                     "filter": filter_add_on,
+                    # ACLs/oids are forwarded via the x-ms-query-source-authorization header,
+                    # not the OData filter, so surface that separately to avoid confusion (#2872).
+                    "use_query_source_authorization": access_token is not None,
                 },
             )
         )

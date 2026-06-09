@@ -27,16 +27,13 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "pydantic-core"
     groups:
       telemetry:
         patterns:
           - "opentelemetry-*"
           - "azure-monitor-opentelemetry*"
-      pydantic:
-        patterns:
-          - "pydantic"
-          - "pydantic-*"
-          - "typing-extensions"
       pallets:
         patterns:
           - "flask"
