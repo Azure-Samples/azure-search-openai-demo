@@ -32,5 +32,15 @@
         "tests"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "azureFunctions.projectSubpath": "app/functions/document_extractor",
+    "azureFunctions.deploySubpath": "app/functions/document_extractor",
+    "azureFunctions.scmDoBuildDuringDeployment": true,
+    "azureFunctions.pythonVenv": ".venv",
+    "azureFunctions.projectLanguage": "Python",
+    "azureFunctions.projectRuntime": "~4",
+    "debug.internalConsoleOptions": "neverOpen",
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ]
 }
