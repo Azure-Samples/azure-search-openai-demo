@@ -113,7 +113,8 @@
                             }
                         }
                     ],
-                    "reranker_threshold": 0
+                    "reranker_threshold": 0,
+                    "use_query_source_authorization": false
                 },
                 "title": "Agentic retrieval response"
             }
