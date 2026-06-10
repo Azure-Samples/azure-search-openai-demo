@@ -24,7 +24,7 @@ You should typically enable these features before running `azd up`. Once you've 
 
 ## Using different chat models
 
-As of April 2026, the default chat model is `gpt-5.4`. If you deployed this sample before that date, the default model may be `gpt-4.1-mini`, `gpt-3.5-turbo`, or `gpt-4o-mini`. You can change the chat model to any Azure OpenAI model that's available in your Azure OpenAI resource region by following these steps:
+As of June 2026, the default chat model is `gpt-5.4-mini`. If you deployed this sample before that date, the default model may be `gpt-4.1-mini`, `gpt-3.5-turbo`, or `gpt-4o-mini`. You can change the chat model to any Azure OpenAI model that's available in your Azure OpenAI resource region by following these steps:
 
 1. To set the name of the deployment, run this command with a unique name in your Azure OpenAI account. You can use any deployment name, as long as it's unique in your Azure OpenAI account. For convenience, many developers use the same deployment name as the model name, but this is not required.
 
@@ -40,10 +40,10 @@ As of April 2026, the default chat model is `gpt-5.4`. If you deployed this samp
 
 1. To set the GPT model to a different [available model](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate model name. A few examples are below.
 
-   For gpt-5.4 (default):
+   For gpt-5.4-mini(default):
 
    ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5.4
+   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5.4-mini
    ```
 
    For gpt-5.2:
@@ -54,10 +54,10 @@ As of April 2026, the default chat model is `gpt-5.4`. If you deployed this samp
 
 1. To set the Azure OpenAI model version from the [available versions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models), run this command with the appropriate version string.
 
-   For gpt-5.4 (default)
+   For gpt-5.4-mini (default)
 
    ```shell
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2026-03-05
+   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2026-03-17
    ```
 
    For gpt-5.2:
@@ -99,7 +99,7 @@ This process does *not* delete your previous model deployment. If you want to de
 
 ## Using reasoning models
 
-The default model (gpt-5.4) is a reasoning model. These models spend more time processing and understanding the user's request, leading to higher quality responses.
+The default model (gpt-5.4-mini) is a reasoning model. These models spend more time processing and understanding the user's request, leading to higher quality responses.
 To learn more about supported reasoning models and configuring reasoning effort, see [the reasoning models guide](./reasoning.md).
 
 ## Using agentic retrieval

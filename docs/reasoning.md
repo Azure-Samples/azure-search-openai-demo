@@ -1,6 +1,6 @@
 # RAG chat: Using reasoning models
 
-The default model for this repository is gpt-5.4, a reasoning model. Reasoning models spend more time processing and understanding the user's request, leading to higher quality responses. To use this feature, ensure you are deploying a reasoning model, like the gpt-5 series, which is the current default. To switch to a different GPT-5 reasoning model, follow the steps in [Using different chat models](./deploy_features.md#using-different-chat-models).
+The default model for this repository is gpt-5.4-mini, a reasoning model. Reasoning models spend more time processing and understanding the user's request, leading to higher quality responses. To use this feature, ensure you are deploying a reasoning model, like the gpt-5 series, which is the current default. To switch to a different GPT-5 reasoning model, follow the steps in [Using different chat models](./deploy_features.md#using-different-chat-models).
 
 ## Supported models
 
@@ -10,7 +10,7 @@ We support the GPT-5 model family, but not the earlier o-series models, due to A
 
 1. **(Optional) Set default reasoning effort**
 
-   You can configure how much effort the reasoning model spends on processing and understanding the user's request. Valid options are `minimal` (for base gpt-5 models), `none`, `low`, `medium`, and `high` (for gpt-5.1+), and `xhigh` (for gpt-5.4+). Reasoning effort defaults to `medium` if not set.
+   You can configure how much effort the reasoning model spends on processing and understanding the user's request. Valid options are `minimal` (for base gpt-5 models), `none`, `low`, `medium`, and `high` (for gpt-5.1+), and `xhigh` (for gpt-5.4+). Reasoning effort defaults to `low` if not set.
 
    Set the environment variable for reasoning effort:
 

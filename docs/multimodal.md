@@ -17,7 +17,7 @@ With this feature enabled, the following changes are made:
 
 ## Prerequisites
 
-* The use of a model that supports multimodal inputs. The default model for the repository is currently `gpt-5.4`, which does support multimodal inputs. If you change the model, make sure the new model also supports multimodal inputs (e.g. `gpt-5.2`, `gpt-5-mini`, `gpt-4.1-mini`).
+* The use of a model that supports multimodal inputs. The default model for the repository is currently `gpt-5.4-mini`, which does support multimodal inputs. If you change the model, make sure the new model also supports multimodal inputs (e.g. `gpt-5.2`, `gpt-5-mini`, `gpt-4.1-mini`).
 
 ## Deployment
 
