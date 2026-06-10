@@ -1,11 +1,11 @@
 {
-    "testdata_path": "ground_truth.jsonl",
-    "results_dir": "results/experiment<TIMESTAMP>",
-    "requested_metrics": ["gpt_groundedness", "gpt_relevance", "answer_length", "latency", "citations_matched", "any_citation"],
+    "evaluation_gpt_model": "gpt-4.1",
+    "evaluation_timestamp": 1780962525,
+    "testdata_path": "/Users/pamelafox/azure-search-openai-demo/evals/ground_truth.jsonl",
     "target_url": "http://localhost:50505/chat",
     "target_parameters": {
         "overrides": {
-            "top": 5,
+            "top": 3,
             "results_merge_strategy": "interleaved",
             "temperature": 0.3,
             "minimum_reranker_score": 0,
@@ -27,6 +27,5 @@
             "seed": 1
         }
     },
-    "target_response_answer_jmespath": "output_text",
-    "target_response_context_jmespath": "context.data_points.text"
+    "num_questions": null
 }
