@@ -15,7 +15,7 @@ We support the GPT-5 model family, but not the earlier o-series models, due to A
    Set the environment variable for reasoning effort:
 
    ```shell
-   azd env set AZURE_OPENAI_REASONING_EFFORT minimal
+   azd env set AZURE_OPENAI_REASONING_EFFORT medium
    ```
 
 2. **Update the infrastructure and application:**
@@ -28,7 +28,7 @@ We support the GPT-5 model family, but not the earlier o-series models, due to A
 
 4. **Experiment with reasoning effort:**
 
-   Select the developer options in the web app and change "Reasoning Effort". The available options depend on the deployed model. This will override the default reasoning effort of "medium".
+   Select the developer options in the web app and change "Reasoning Effort". The available options depend on the deployed model. This will override the default reasoning effort of "low".
 
    ![Reasoning configuration screenshot](./images/reasoning.png)
 
