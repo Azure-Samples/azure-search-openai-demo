@@ -4,7 +4,7 @@ import re
 from abc import ABC
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import asdict, dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional, TypedDict, cast
 
 from azure.search.documents.aio import SearchClient
@@ -917,8 +917,8 @@ class Approach(ABC):
 
     @staticmethod
     def get_current_date() -> str:
-        """Return today's date formatted for inclusion in prompts, for example "February 3, 2026"."""
-        return datetime.now().strftime("%B %d, %Y")
+        """Return today's UTC date formatted for inclusion in prompts, for example "February 3, 2026"."""
+        return datetime.now(timezone.utc).strftime("%B %d, %Y")
 
     @staticmethod
     def is_reasoning_model(model: str) -> bool:

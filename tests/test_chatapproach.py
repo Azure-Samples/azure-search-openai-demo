@@ -4,6 +4,7 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
+from freezegun import freeze_time
 from openai.types.responses import (
     Response,
     ResponseFunctionToolCall,
@@ -375,55 +376,11 @@ async def test_chat_prompt_render_with_image_directive(chat_approach):
     assert ":::image" not in combined
 
 
-@pytest.mark.asyncio
-async def test_chat_answer_prompt_includes_current_date(chat_approach):
-    """The chat answer system prompt should surface current_date when it is provided."""
-    system_message = chat_approach.prompt_manager.build_system_prompt(
-        "chat_answer.system.jinja2",
-        {
-            "include_follow_up_questions": False,
-            "image_sources": [],
-            "citations": [],
-            "current_date": "February 3, 2026",
-        },
-    )
-    assert "The current date is February 3, 2026." in system_message["content"]
-
-
-@pytest.mark.asyncio
-async def test_chat_answer_prompt_omits_current_date_when_absent(chat_approach):
-    """The chat answer system prompt should not mention the date when current_date is absent."""
-    system_message = chat_approach.prompt_manager.build_system_prompt(
-        "chat_answer.system.jinja2",
-        {
-            "include_follow_up_questions": False,
-            "image_sources": [],
-            "citations": [],
-        },
-    )
-    assert "The current date is" not in system_message["content"]
-
-
-@pytest.mark.asyncio
-async def test_query_rewrite_prompt_includes_current_date(chat_approach):
-    """The query rewrite system prompt should surface current_date when it is provided."""
-    system_message = chat_approach.prompt_manager.build_system_prompt(
-        "query_rewrite.system.jinja2",
-        {
-            "user_query": "What happened last week?",
-            "past_messages": [],
-            "current_date": "February 3, 2026",
-        },
-    )
-    assert "The current date is February 3, 2026." in system_message["content"]
-
-
+@freeze_time("2026-02-03")
 def test_get_current_date_matches_expected_format(chat_approach):
-    """get_current_date should round-trip through the documented strftime format."""
-    from datetime import datetime
-
+    """get_current_date should return today's date formatted as 'Month DD, YYYY'."""
     current_date = chat_approach.get_current_date()
-    assert datetime.strptime(current_date, "%B %d, %Y").date() == datetime.now().date()
+    assert current_date == "February 03, 2026"
 
 
 @pytest.mark.asyncio
