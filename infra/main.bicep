@@ -222,9 +222,9 @@ param chatGptDeploymentSkuName string = ''
 param chatGptDeploymentCapacity int = 0
 
 var chatGpt = {
-  modelName: !empty(chatGptModelName) ? chatGptModelName : 'gpt-4.1-mini'
-  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'gpt-4.1-mini'
-  deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '2025-04-14'
+  modelName: !empty(chatGptModelName) ? chatGptModelName : 'gpt-5.4-mini'
+  deploymentName: !empty(chatGptDeploymentName) ? chatGptDeploymentName : 'gpt-5.4-mini'
+  deploymentVersion: !empty(chatGptDeploymentVersion) ? chatGptDeploymentVersion : '2026-03-17'
   deploymentSkuName: !empty(chatGptDeploymentSkuName) ? chatGptDeploymentSkuName : 'GlobalStandard'
   deploymentCapacity: chatGptDeploymentCapacity != 0 ? chatGptDeploymentCapacity : 30
 }
