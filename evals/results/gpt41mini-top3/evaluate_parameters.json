@@ -1,6 +1,6 @@
 {
     "evaluation_gpt_model": "gpt-4.1",
-    "evaluation_timestamp": 1780084373,
+    "evaluation_timestamp": 1780962525,
     "testdata_path": "/Users/pamelafox/azure-search-openai-demo/evals/ground_truth.jsonl",
     "target_url": "http://localhost:50505/chat",
     "target_parameters": {
@@ -14,7 +14,7 @@
             "semantic_ranker": true,
             "semantic_captions": false,
             "query_rewriting": false,
-            "reasoning_effort": "minimal",
+            "reasoning_effort": "low",
             "suggest_followup_questions": false,
             "use_oid_security_filter": false,
             "use_groups_security_filter": false,
