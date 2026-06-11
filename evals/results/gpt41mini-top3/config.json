@@ -14,7 +14,7 @@
             "semantic_ranker": true,
             "semantic_captions": false,
             "query_rewriting": false,
-            "reasoning_effort": "low",
+            "reasoning_effort": "minimal",
             "suggest_followup_questions": false,
             "use_oid_security_filter": false,
             "use_groups_security_filter": false,
