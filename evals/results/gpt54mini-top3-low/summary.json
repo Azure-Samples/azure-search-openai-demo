@@ -2,26 +2,26 @@
     "gpt_groundedness": {
         "pass_count": 50,
         "pass_rate": 1.0,
-        "mean_rating": 4.92
+        "mean_rating": 4.94
     },
     "gpt_relevance": {
-        "pass_count": 47,
-        "pass_rate": 0.94,
-        "mean_rating": 4.22
+        "pass_count": 46,
+        "pass_rate": 0.92,
+        "mean_rating": 4.24
     },
     "answer_length": {
-        "mean": 670.82,
-        "max": 1366,
-        "min": 179
+        "mean": 584.68,
+        "max": 1074,
+        "min": 165
     },
     "latency": {
-        "mean": 3.96,
-        "max": 5.554565,
-        "min": 2.990101
+        "mean": 3.95,
+        "max": 5.598693,
+        "min": 3.143439
     },
     "citations_matched": {
-        "total": 27,
-        "rate": 0.54
+        "total": 24,
+        "rate": 0.48
     },
     "any_citation": {
         "total": 50,

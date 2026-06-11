@@ -5,7 +5,7 @@
     "target_url": "http://localhost:50505/chat",
     "target_parameters": {
         "overrides": {
-            "top": 3,
+            "top": 5,
             "results_merge_strategy": "interleaved",
             "temperature": 0.3,
             "minimum_reranker_score": 0,

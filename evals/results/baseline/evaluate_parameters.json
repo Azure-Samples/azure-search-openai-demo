@@ -1,11 +1,11 @@
 {
     "evaluation_gpt_model": "gpt-4.1",
-    "evaluation_timestamp": 1780962525,
+    "evaluation_timestamp": 1780938356,
     "testdata_path": "/Users/pamelafox/azure-search-openai-demo/evals/ground_truth.jsonl",
     "target_url": "http://localhost:50505/chat",
     "target_parameters": {
         "overrides": {
-            "top": 3,
+            "top": 5,
             "results_merge_strategy": "interleaved",
             "temperature": 0.3,
             "minimum_reranker_score": 0,
