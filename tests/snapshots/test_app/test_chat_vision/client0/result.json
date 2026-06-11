@@ -44,7 +44,7 @@
                     "filter": null,
                     "search_image_embeddings": true,
                     "search_text_embeddings": true,
-                    "top": 3,
+                    "top": 5,
                     "use_query_rewriting": false,
                     "use_query_source_authorization": false,
                     "use_semantic_captions": false,
