@@ -230,6 +230,9 @@ class ChatReadRetrieveReadApproach(Approach):
     ) -> tuple[ExtraInfo, Awaitable[Response] | Awaitable[AsyncStream[ResponseStreamEvent]]]:
         use_agentic_knowledgebase = True if overrides.get("use_agentic_knowledgebase") else False
         original_user_query = messages[-1]["content"]
+        if not isinstance(original_user_query, str):
+            raise ValueError("The most recent message content must be a string.")
+        user_asked_utc = self.get_current_date()
 
         if use_agentic_knowledgebase:
             if should_stream and overrides.get("use_web_source"):
@@ -272,11 +275,11 @@ class ChatReadRetrieveReadApproach(Approach):
                 "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
                 "image_sources": extra_info.data_points.images,
                 "citations": extra_info.data_points.citations,
-                "current_date": self.get_current_date(),
             },
             user_template_path="chat_answer.user.jinja2",
             user_template_variables={
                 "user_query": original_user_query,
+                "user_asked_utc": user_asked_utc,
                 "text_sources": extra_info.data_points.text,
             },
             user_image_sources=extra_info.data_points.images,
@@ -336,8 +339,8 @@ class ChatReadRetrieveReadApproach(Approach):
             prompt_template="query_rewrite.system.jinja2",
             prompt_variables={
                 "user_query": original_user_query,
+                "user_asked_utc": self.get_current_date(),
                 "past_messages": messages[:-1],
-                "current_date": self.get_current_date(),
             },
             overrides=overrides,
             chatgpt_model=self.chatgpt_model,

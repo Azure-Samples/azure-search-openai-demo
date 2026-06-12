@@ -489,8 +489,8 @@ class Approach(ABC):
                 prompt_template="query_rewrite.system.jinja2",
                 prompt_variables={
                     "user_query": original_user_query,
+                    "user_asked_utc": self.get_current_date(),
                     "past_messages": messages[:-1],
-                    "current_date": self.get_current_date(),
                 },
                 overrides={},
                 chatgpt_model=self.chatgpt_model,
