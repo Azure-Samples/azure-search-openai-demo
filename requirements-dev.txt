@@ -9,6 +9,7 @@ playwright
 pytest-cov
 pytest-playwright
 pytest-snapshot
+freezegun
 pre-commit
 pip-tools
 ty==0.0.21
