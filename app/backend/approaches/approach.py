@@ -917,8 +917,8 @@ class Approach(ABC):
 
     @staticmethod
     def get_current_date() -> str:
-        """Return today's UTC date formatted for inclusion in prompts, for example "February 3, 2026"."""
-        return datetime.now(timezone.utc).strftime("%B %d, %Y")
+        """Return current UTC datetime in ISO 8601 format for prompts, for example "2026-02-03T00:00:00Z"."""
+        return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
     @staticmethod
     def is_reasoning_model(model: str) -> bool:

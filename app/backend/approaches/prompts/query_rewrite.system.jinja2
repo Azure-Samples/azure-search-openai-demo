@@ -7,7 +7,7 @@ Do not include any special characters like '+'.
 If the question is not in English, translate the question to English before generating the search query.
 If you cannot generate a search query, return just the number 0.
 {% if current_date %}
-The current date is {{ current_date }} (UTC). The user may be in a different timezone.
+The current datetime is {{ current_date }} (UTC, ISO 8601). The user may be in a different timezone.
 Use it to resolve relative time references such as "last year" or "this month" into concrete terms when helpful.
 {% endif %}
 

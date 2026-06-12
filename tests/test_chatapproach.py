@@ -378,9 +378,9 @@ async def test_chat_prompt_render_with_image_directive(chat_approach):
 
 @freeze_time("2026-02-03")
 def test_get_current_date_matches_expected_format(chat_approach):
-    """get_current_date should return today's date formatted as 'Month DD, YYYY'."""
+    """get_current_date should return current UTC datetime in ISO 8601 format."""
     current_date = chat_approach.get_current_date()
-    assert current_date == "February 03, 2026"
+    assert current_date == "2026-02-03T00:00:00Z"
 
 
 @pytest.mark.asyncio
