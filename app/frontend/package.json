@@ -42,10 +42,10 @@
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^6.0.2",
     "prettier": "^3.8.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "typescript": "^6.0.3",
-    "vite": "^6.4.3"
+    "vite": "^8.0.16"
   }
 }
