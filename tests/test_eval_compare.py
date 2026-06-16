@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from scripts.eval_compare import build_group_summary, build_json_payload, compare_groups
+from evals.eval_compare import build_group_summary, build_json_payload, compare_groups
 
 
 def write_run(tmp_path: Path, name: str, rows: list[dict], config: dict) -> Path:
