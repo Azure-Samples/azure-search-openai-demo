@@ -11,19 +11,17 @@ DEFAULT_BOOTSTRAP_ITERATIONS = 5000
 DEFAULT_PERMUTATION_ITERATIONS = 10000
 DEFAULT_RANDOM_SEED = 0
 DEFAULT_ALPHA = 0.05
-SUMMARY_PASSING_SCORE = 3.0
+PASSING_SCORE = 4
 
 
 def groundedness_pass_value(row: dict[str, Any]) -> float:
     score = row.get("gpt_groundedness", row.get("groundedness"))
-    threshold = float(row.get("groundedness_threshold", SUMMARY_PASSING_SCORE))
-    return 1.0 if score is not None and float(score) > threshold else 0.0
+    return 1.0 if score is not None and float(score) >= PASSING_SCORE else 0.0
 
 
 def relevance_pass_value(row: dict[str, Any]) -> float:
     score = row.get("gpt_relevance", row.get("relevance"))
-    threshold = float(row.get("relevance_threshold", SUMMARY_PASSING_SCORE))
-    return 1.0 if score is not None and float(score) > threshold else 0.0
+    return 1.0 if score is not None and float(score) >= PASSING_SCORE else 0.0
 
 
 METRIC_EXTRACTORS: dict[str, Any] = {
