@@ -414,7 +414,7 @@ The local parsers will be used the next time you run the data ingestion script. 
 
 ## Using Azure Health Models (Preview)
 
-You can enable [Azure Health Models](https://learn.microsoft.com/en-us/azure/azure-monitor/health-models/overview) to get a graph based view to understand the health of the application deployment.
+You can enable [Azure Health Models](https://learn.microsoft.com/azure/azure-monitor/health-models/overview) to get a graph based view to understand the health of the application deployment.
 
 You can see a screenshot of how it looks like in the [origin PR](https://github.com/Azure-Samples/azure-search-openai-demo/pull/3064). 
 
