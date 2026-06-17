@@ -17,11 +17,7 @@ def make_row(question: str, *, groundedness: float, relevance: float, latency: f
     return {
         "question": question,
         "gpt_groundedness": groundedness,
-        "groundedness_result": "pass" if groundedness >= 3 else "fail",
-        "groundedness_threshold": 3,
         "gpt_relevance": relevance,
-        "relevance_result": "pass" if relevance >= 3 else "fail",
-        "relevance_threshold": 3,
         "answer_length": 100 + int(groundedness * 10),
         "latency": latency,
         "citations_matched": citations,
