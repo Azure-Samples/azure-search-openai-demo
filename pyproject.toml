@@ -28,7 +28,7 @@ root = ["app/backend", "scripts", "app/functions", "evals"]
 
 [tool.ty.src]
 # Directories to actually type-check (excludes tests folder which has many mock-related type errors)
-include = ["app/backend", "scripts", "app/functions", "evals"]
+include = ["app/backend", "scripts", "app/functions", "evals/eval_compare.py"]
 
 [tool.ty.rules]
 # Downgrade warnings that are too strict for this codebase
