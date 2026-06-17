@@ -370,15 +370,17 @@ You can enable [Azure Health Models](https://learn.microsoft.com/azure/azure-mon
 
 You can see a screenshot of how it looks like in the [origin PR](https://github.com/Azure-Samples/azure-search-openai-demo/pull/3064). 
 
-> Azure Health Models in currently in preview and being actively developed. It will deploy into `uksouth` region at the moment. You can check the available regions with 
-```shell
- sub=$(az account show --query id -o tsv)
- az rest \
-   --method get \
-   --url "https://management.azure.com/subscriptions/$sub/providers/Microsoft.CloudHealth/resourceTypes?api-version=2021-04-01" \
-   --query "value[?resourceType=='healthmodels'].locations[]" \
-   -o tsv
-```
+> [!NOTE]
+> Azure Health Models is currently in preview and being actively developed. It deploys into the `uksouth` region by default. You can list the available regions with:
+>
+> ```shell
+> sub=$(az account show --query id -o tsv)
+> az rest \
+>   --method get \
+>   --url "https://management.azure.com/subscriptions/$sub/providers/Microsoft.CloudHealth/resourceTypes?api-version=2021-04-01" \
+>   --query "value[?resourceType=='healthmodels'].locations[]" \
+>   -o tsv
+> ```
 
 1. Run `azd env set AZURE_USE_HEALTH_MODEL true` to enable the health model deployment.
 1. Optionally, run `azd env set AZURE_HEALTH_MODEL_LOCATION <location>` to deviate from the default location of `uksouth`.
