@@ -313,7 +313,7 @@ class ChatReadRetrieveReadApproach(Approach):
         use_semantic_ranker = True if overrides.get("semantic_ranker") else False
         use_semantic_captions = True if overrides.get("semantic_captions") else False
         use_query_rewriting = True if overrides.get("query_rewriting") else False
-        top = overrides.get("top", 3)
+        top = overrides.get("top", 5)
         minimum_search_score = overrides.get("minimum_search_score", 0.0)
         minimum_reranker_score = overrides.get("minimum_reranker_score", 0.0)
         search_index_filter = self.build_filter(overrides)
@@ -404,6 +404,9 @@ class ChatReadRetrieveReadApproach(Approach):
                         "use_query_rewriting": use_query_rewriting,
                         "top": top,
                         "filter": search_index_filter,
+                        # ACLs/oids are forwarded via the x-ms-query-source-authorization header,
+                        # not the OData filter, so surface that separately to avoid confusion (#2872).
+                        "use_query_source_authorization": access_token is not None,
                         "use_vector_search": use_vector_search,
                         "use_text_search": use_text_search,
                         "search_text_embeddings": search_text_embeddings,
