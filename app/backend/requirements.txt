@@ -176,7 +176,7 @@ microsoft-kiota-serialization-json==1.9.3
     # via msgraph-sdk
 microsoft-kiota-serialization-multipart==1.9.3
     # via msgraph-sdk
-microsoft-kiota-serialization-text==1.9.3
+microsoft-kiota-serialization-text==1.10.3
     # via msgraph-sdk
 msal==1.33.0
     # via
