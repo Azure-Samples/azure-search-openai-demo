@@ -124,7 +124,7 @@ jobs:
       USE_SHAREPOINT_SOURCE: ${{ vars.USE_SHAREPOINT_SOURCE }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install azd
         uses: Azure/setup-azd@v2.3.0
