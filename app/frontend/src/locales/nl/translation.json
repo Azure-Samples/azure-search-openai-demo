@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Gebruik agentische retrieval",
         "useWebSource": "Websearch opnemen",
         "useSharePointSource": "SharePoint-bron opnemen",
+        "useCodeInterpreter": "Use code interpreter",
         "llmInputs": "Invoer voor LLM",
         "llmInputsOptions": {
             "texts": "Teksten",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtert zoekresultaten op basis van de groepen van de geauthenticeerde gebruiker.",
         "useAgenticKnowledgeBase": "Gebruik agentische retrieval van Azure AI Search voor meervoudige query-planning. Gebruikt altijd semantische rangschikking.",
         "useWebSource": "Breid retrieval uit met websearch resultaten naast je geïndexeerde dataset.",
-        "useSharePointSource": "Breid retrieval uit met SharePoint-inhoud naast je geïndexeerde dataset."
+        "useSharePointSource": "Breid retrieval uit met SharePoint-inhoud naast je geïndexeerde dataset.",
+        "useCodeInterpreter": "Allow the model to run Python code for computational questions (math, data analysis). Off by default."
     },
     "overallSettings": "Algemene instellingen",
     "searchSettings": "Zoekinstellingen",

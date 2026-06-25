@@ -282,6 +282,10 @@ class ChatReadRetrieveReadApproach(Approach):
             past_messages=messages[:-1],
         )
 
+        tools = []
+        if overrides.get("use_code_interpreter"):
+            tools.append({"type": "code_interpreter", "container": {"type": "auto"}})
+
         response_coroutine = cast(
             Awaitable[Response] | Awaitable[AsyncStream[ResponseStreamEvent]],
             self.create_response(
@@ -291,6 +295,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 overrides,
                 self.get_response_token_limit(self.chatgpt_model, self.RESPONSE_DEFAULT_TOKEN_LIMIT),
                 should_stream,
+                tools=tools if tools else None,
             ),
         )
         extra_info.thoughts.append(

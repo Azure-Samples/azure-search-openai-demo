@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Brug agentisk hentning",
         "useWebSource": "Inkludér websøgning",
         "useSharePointSource": "Inkludér SharePoint-kilde",
+        "useCodeInterpreter": "Use code interpreter",
         "llmInputs": "Input til LLM",
         "llmInputsOptions": {
             "texts": "Tekster",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
         "useAgenticKnowledgeBase": "Brug agentisk hentning fra Azure AI Search til planlægning af flere forespørgsler. Bruger altid semantisk rangering.",
         "useWebSource": "Udvid hentning med websøgeresultater sammen med dit indekserede datasæt.",
-        "useSharePointSource": "Udvid hentning med SharePoint-indhold sammen med dit indekserede datasæt."
+        "useSharePointSource": "Udvid hentning med SharePoint-indhold sammen med dit indekserede datasæt.",
+        "useCodeInterpreter": "Allow the model to run Python code for computational questions (math, data analysis). Off by default."
     },
     "overallSettings": "Overordnede indstillinger",
     "searchSettings": "Søgeindstillinger",

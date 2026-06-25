@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Use agentic retrieval",
         "useWebSource": "Include web source",
         "useSharePointSource": "Include Sharepoint source",
+        "useCodeInterpreter": "Use code interpreter",
         "llmInputs": "LLM input sources",
         "llmInputsOptions": {
             "texts": "Text sources",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
         "useAgenticKnowledgeBase": "Use agentic retrieval from Azure AI Search for multi-query planning. Always uses semantic ranker.",
         "useWebSource": "Augment retrieval with web search results alongside your indexed data set.",
-        "useSharePointSource": "Augment retrieval with SharePoint content alongside your indexed data set."
+        "useSharePointSource": "Augment retrieval with SharePoint content alongside your indexed data set.",
+        "useCodeInterpreter": "Allow the model to run Python code for computational questions (math, data analysis). Off by default."
     },
     "overallSettings": "Overall settings",
     "searchSettings": "Search settings",

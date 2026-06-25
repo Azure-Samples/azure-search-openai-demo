@@ -95,6 +95,7 @@
         "useAgenticKnowledgeBase": "Utilisez la récupération agentique",
         "useWebSource": "Inclure la recherche web",
         "useSharePointSource": "Inclure la source SharePoint",
+        "useCodeInterpreter": "Use code interpreter",
         "useQueryRewriting": "Utilisez la réécriture des requêtes pour la récupération",
         "reasoningEffort": "Effort de raisonnement",
         "reasoningEffortOptions": {
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié.",
         "useAgenticKnowledgeBase": "Utilisez la récupération agentique d'Azure AI Search pour la planification multi-requêtes. Utilise toujours le classement sémantique.",
         "useWebSource": "Augmentez la récupération avec des résultats de recherche web parallèlement à votre ensemble de données indexé.",
-        "useSharePointSource": "Augmentez la récupération avec du contenu SharePoint parallèlement à votre ensemble de données indexé."
+        "useSharePointSource": "Augmentez la récupération avec du contenu SharePoint parallèlement à votre ensemble de données indexé.",
+        "useCodeInterpreter": "Allow the model to run Python code for computational questions (math, data analysis). Off by default."
     },
     "overallSettings": "Paramètres généraux",
     "searchSettings": "Paramètres de recherche",

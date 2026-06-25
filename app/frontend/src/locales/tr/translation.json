@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Ajan temelli getirim kullan",
         "useWebSource": "Web aramasını dahil et",
         "useSharePointSource": "SharePoint kaynağını dahil et",
+        "useCodeInterpreter": "Use code interpreter",
         "llmInputs": "LLM için Girdiler",
         "llmInputsOptions": {
             "texts": "Metinler",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Kimliği doğrulanmış kullanıcının gruplarına göre arama sonuçlarını filtreler.",
         "useAgenticKnowledgeBase": "Çoklu sorgu planlaması için Azure AI Search'ten agent temelli getirimi kullanın. Her zaman semantik sıralayıcı kullanır.",
         "useWebSource": "İndekslenmiş veri setinizin yanı sıra web arama sonuçlarıyla getirimi genişletin.",
-        "useSharePointSource": "İndekslenmiş veri setinizin yanı sıra SharePoint içeriğiyle getirimi genişletin."
+        "useSharePointSource": "İndekslenmiş veri setinizin yanı sıra SharePoint içeriğiyle getirimi genişletin.",
+        "useCodeInterpreter": "Allow the model to run Python code for computational questions (math, data analysis). Off by default."
     },
     "overallSettings": "Genel ayarlar",
     "searchSettings": "Arama ayarları",
