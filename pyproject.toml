@@ -16,7 +16,7 @@ pythonpath = ["app/backend", "scripts", "app/functions", "evals"]
 asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.paths]
-source = ["scripts", "app", "evals"]
+source = ["scripts", "app"]
 
 [tool.coverage.report]
 show_missing = true

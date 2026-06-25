@@ -8,7 +8,6 @@ from statistics import fmean
 from typing import Any
 
 DEFAULT_BOOTSTRAP_ITERATIONS = 5000
-DEFAULT_PERMUTATION_ITERATIONS = 10000
 DEFAULT_RANDOM_SEED = 0
 DEFAULT_ALPHA = 0.05
 PASSING_SCORE = 4
@@ -350,7 +349,6 @@ def main() -> None:
     parser.add_argument("--format", choices=["markdown", "json"], default="markdown")
     parser.add_argument("--output", type=Path, help="Optional path to write the report")
     parser.add_argument("--bootstrap-iterations", type=int, default=DEFAULT_BOOTSTRAP_ITERATIONS)
-    parser.add_argument("--permutation-iterations", type=int, default=DEFAULT_PERMUTATION_ITERATIONS)
     parser.add_argument("--seed", type=int, default=DEFAULT_RANDOM_SEED)
     parser.add_argument("--alpha", type=float, default=DEFAULT_ALPHA)
     args = parser.parse_args()
