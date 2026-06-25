@@ -56,6 +56,11 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/frontend/src/locales/tr/translation.json: Turkish translations
     * app/frontend/src/pages: Contains the main pages of the application
 * infra: Contains the Bicep templates for provisioning Azure resources.
+* evals: Contains evaluation configs, datasets, and results.
+  * evals/results: Contains raw per-run eval output folders. Use descriptive setup-based names for repeated runs, such as `gpt54-low-top5-run1`.
+  * evals/results_summaries: Contains derived grouped summaries such as `baseline.json` and `baseline.md`.
+  * evals/results_comparisons: Reserved for derived candidate-vs-baseline comparison artifacts.
+  * evals/eval_compare.py: Compares eval result folders and reports averages, confidence intervals, and paired significance tests.
 * tests: Contains the test code, including e2e tests, app integration tests, and unit tests.
 
 ## Adding new data
