@@ -25,9 +25,9 @@ def relevance_pass_value(row: dict[str, Any]) -> float:
 
 METRIC_EXTRACTORS: dict[str, Any] = {
     "gpt_groundedness.pass_rate": groundedness_pass_value,
-    "gpt_groundedness.mean_rating": lambda row: float(row["gpt_groundedness"]),
+    "gpt_groundedness.mean_rating": lambda row: float(row.get("gpt_groundedness", row.get("groundedness"))),
     "gpt_relevance.pass_rate": relevance_pass_value,
-    "gpt_relevance.mean_rating": lambda row: float(row["gpt_relevance"]),
+    "gpt_relevance.mean_rating": lambda row: float(row.get("gpt_relevance", row.get("relevance"))),
     "answer_length.mean": lambda row: float(row["answer_length"]),
     "latency.mean": lambda row: float(row["latency"]),
     "citations_matched.rate": lambda row: float(row["citations_matched"]),
@@ -79,6 +79,7 @@ class MetricComparison:
 
 
 def canonicalize_config(config: dict[str, Any]) -> str:
+    """Produce a comparable string from a run config, ignoring results_dir which varies per run."""
     normalized = json.loads(json.dumps(config))
     normalized.pop("results_dir", None)
     return json.dumps(normalized, sort_keys=True)
@@ -121,11 +122,19 @@ def percentile_bounds(sorted_values: list[float], confidence_level: float = 0.95
 
 
 def paired_permutation_p_value(deltas: list[float], iterations: int, seed: int) -> float:
+    """Compute a p-value to answer: "Is the difference between two groups real, or just random noise?"
+
+    Works by randomly flipping the sign (+/-) of each paired difference many times,
+    then checking how often the random shuffles produce a mean as extreme as the real one.
+    A low p-value (e.g. < 0.05) suggests the difference is unlikely due to chance.
+    """
     if not deltas:
         raise ValueError("Cannot compute significance for an empty sample")
     observed = abs(fmean(deltas))
     sample_size = len(deltas)
 
+    # For small samples (<=16 questions), check every possible sign-flip combination exactly.
+    # This is feasible since 2^16 = 65536 combinations.
     if sample_size <= 16:
         extreme = 0
         total = 1 << sample_size
@@ -135,6 +144,7 @@ def paired_permutation_p_value(deltas: list[float], iterations: int, seed: int) 
                 extreme += 1
         return extreme / total
 
+    # For larger samples, approximate by randomly flipping signs many times
     rng = random.Random(seed)
     extreme = 0
     for _ in range(iterations):
