@@ -50,6 +50,10 @@ cd ../backend
 
 port=${PORT:-50505}
 host=localhost
+if lsof -i :"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "Port $port is already in use. Set PORT=<number> to use a different port."
+    exit 1
+fi
 ../../.venv/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
 out=$?
 if [ $out -ne 0 ]; then
