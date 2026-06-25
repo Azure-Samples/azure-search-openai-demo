@@ -18,6 +18,9 @@ asyncio_default_fixture_loop_scope = "function"
 [tool.coverage.paths]
 source = ["scripts", "app"]
 
+[tool.coverage.run]
+omit = ["evals/*"]
+
 [tool.coverage.report]
 show_missing = true
 
