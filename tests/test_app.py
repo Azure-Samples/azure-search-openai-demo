@@ -11,6 +11,8 @@ from quart import Response as QuartResponse
 
 import app
 
+from .mocks import MockAzureCredential
+
 
 def fake_response(http_code):
     return Response(http_code, request=Request(method="get", url="https://foo.bar/"))
@@ -67,6 +69,46 @@ async def test_missing_env_vars():
         with pytest.raises(quart.testing.app.LifespanError, match="Error during startup 'AZURE_STORAGE_ACCOUNT'"):
             async with quart_app.test_app() as test_app:
                 test_app.test_client()
+
+
+@pytest.mark.asyncio
+async def test_sharepoint_without_enforce_access_control_warning(
+    monkeypatch,
+    mock_acs_search,
+    mock_search_knowledgebase,
+    mock_blob_container_client,
+    mock_azurehttp_calls,
+    mock_openai_embedding,
+    mock_openai_chatcompletion,
+    caplog,
+):
+    with mock.patch.dict(os.environ, clear=True):
+        monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "test-storage-account")
+        monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "test-storage-container")
+        monkeypatch.setenv("AZURE_SEARCH_INDEX", "test-search-index")
+        monkeypatch.setenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME", "test-search-knowledgebase")
+        monkeypatch.setenv("AZURE_SEARCH_SERVICE", "test-search-service")
+        monkeypatch.setenv("OPENAI_HOST", "azure")
+        monkeypatch.setenv("AZURE_OPENAI_SERVICE", "test-openai-service")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_MODEL", "gpt-4.1-mini")
+        monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "gpt-4.1-mini")
+        monkeypatch.setenv("AZURE_OPENAI_EMB_DEPLOYMENT", "test-ada")
+        monkeypatch.setenv("AZURE_OPENAI_KNOWLEDGEBASE_MODEL", "gpt-4.1-mini")
+        monkeypatch.setenv("AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT", "gpt-4.1-mini")
+        monkeypatch.setenv("USE_AGENTIC_KNOWLEDGEBASE", "true")
+        monkeypatch.setenv("USE_SHAREPOINT_SOURCE", "true")
+        # Intentionally NOT setting AZURE_ENFORCE_ACCESS_CONTROL
+
+        with mock.patch("app.AzureDeveloperCliCredential") as mock_default_azure_credential:
+            mock_default_azure_credential.return_value = MockAzureCredential()
+
+            quart_app = app.create_app()
+            async with quart_app.test_app() as test_app:
+                mock_openai_chatcompletion(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+                mock_openai_embedding(test_app.app.config[app.CONFIG_OPENAI_CLIENT])
+                test_app.test_client()
+
+        assert "USE_SHAREPOINT_SOURCE is true, but AZURE_ENFORCE_ACCESS_CONTROL is not true" in caplog.text
 
 
 @pytest.mark.asyncio

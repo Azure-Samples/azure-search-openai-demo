@@ -527,6 +527,12 @@ async def setup_clients():
                 credential=azure_credential,
             )
         if USE_SHAREPOINT_SOURCE:
+            if not AZURE_ENFORCE_ACCESS_CONTROL:
+                current_app.logger.warning(
+                    "USE_SHAREPOINT_SOURCE is true, but AZURE_ENFORCE_ACCESS_CONTROL is not true. "
+                    "SharePoint requires access control to be enforced to prevent unauthorized access to SharePoint documents. "
+                    "Please set AZURE_ENFORCE_ACCESS_CONTROL to true."
+                )
             knowledgebase_client_with_sharepoint = KnowledgeBaseRetrievalClient(
                 endpoint=AZURE_SEARCH_ENDPOINT,
                 knowledge_base_name=f"{AZURE_SEARCH_KNOWLEDGEBASE_NAME}-with-sp",
