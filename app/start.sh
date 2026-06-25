@@ -48,7 +48,7 @@ echo ""
 
 cd ../backend
 
-port=50505
+port=${PORT:-50505}
 host=localhost
 ../../.venv/bin/python -m quart --app main:app run --port "$port" --host "$host" --reload
 out=$?
