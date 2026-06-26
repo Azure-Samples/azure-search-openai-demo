@@ -126,6 +126,7 @@ class ChatReadRetrieveReadApproach(Approach):
         content = response.output_text
 
         # Surface code_interpreter tool calls in thought process
+        code_interpreter_images = []
         for item in response.output:
             if isinstance(item, ResponseCodeInterpreterToolCall):
                 outputs = []
@@ -135,6 +136,7 @@ class ChatReadRetrieveReadApproach(Approach):
                         outputs.append(output.logs)
                     elif output.type == "image":
                         images.append(output.url)
+                        code_interpreter_images.append(output.url)
                 props: dict[str, Any] = {"status": item.status}
                 if outputs:
                     props["outputs"] = outputs
@@ -147,6 +149,12 @@ class ChatReadRetrieveReadApproach(Approach):
                         props,
                     )
                 )
+
+        # Append code_interpreter images to the response text as markdown
+        if code_interpreter_images:
+            content = (
+                (content or "") + "\n\n" + "\n\n".join(f"![Generated chart]({url})" for url in code_interpreter_images)
+            )
 
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
@@ -218,6 +226,7 @@ class ChatReadRetrieveReadApproach(Approach):
                     yield {"type": "response.output_text.delta", "delta": delta_content}
             elif isinstance(event, ResponseCompletedEvent):
                 # Surface code_interpreter tool calls in thought process
+                code_interpreter_images_stream = []
                 for item in event.response.output:
                     if isinstance(item, ResponseCodeInterpreterToolCall):
                         outputs = []
@@ -227,6 +236,7 @@ class ChatReadRetrieveReadApproach(Approach):
                                 outputs.append(output.logs)
                             elif output.type == "image":
                                 images.append(output.url)
+                                code_interpreter_images_stream.append(output.url)
                         props_stream: dict[str, Any] = {"status": item.status}
                         if outputs:
                             props_stream["outputs"] = outputs
@@ -239,6 +249,12 @@ class ChatReadRetrieveReadApproach(Approach):
                                 props_stream,
                             )
                         )
+                # Emit code_interpreter images as markdown in the stream
+                if code_interpreter_images_stream:
+                    image_markdown = "\n\n" + "\n\n".join(
+                        f"![Generated chart]({url})" for url in code_interpreter_images_stream
+                    )
+                    yield {"type": "response.output_text.delta", "delta": image_markdown}
                 if event.response.usage and extra_info.thoughts and self.include_token_usage:
                     extra_info.thoughts[-1].update_token_usage(event.response.usage)
                     yield {"type": "response.context", "context": extra_info, "session_state": session_state}
