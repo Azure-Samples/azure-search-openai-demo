@@ -215,6 +215,13 @@ To avoid port conflicts (e.g. if another instance is already running), pick a ra
 PORT=50506 ./app/start.sh
 ```
 
+On Windows (PowerShell):
+
+```powershell
+$env:PORT = 50506
+./app/start.ps1
+```
+
 If you also need the frontend dev server with hot reloading (for UI changes), run it separately with the matching `BACKEND_PORT`:
 
 ```shell
