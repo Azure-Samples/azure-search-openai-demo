@@ -70,9 +70,13 @@ Set-Location ../backend
 
 $port = if ($env:PORT) { $env:PORT } else { 50505 }
 $hostname = "localhost"
-if (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) {
-    Write-Host "Port $port is already in use. Set env:PORT to use a different port."
-    exit 1
+try {
+    if (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) {
+        Write-Host "Port $port is already in use. Set env:PORT to use a different port."
+        exit 1
+    }
+} catch {
+    # Non-numeric or out-of-range port; let Quart handle validation
 }
 Start-Process -FilePath $venvPythonPath -ArgumentList "-m quart --app main:app run --port $port --host $hostname --reload" -Wait -NoNewWindow
 
