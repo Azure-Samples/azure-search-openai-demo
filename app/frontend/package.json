@@ -39,6 +39,7 @@
   "devDependencies": {
     "@types/dom-speech-recognition": "^0.0.7",
     "@types/dompurify": "^3.2.0",
+    "@types/node": "^26.0.1",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "@types/react-syntax-highlighter": "^15.5.13",
