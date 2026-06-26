@@ -10,6 +10,7 @@ from openai import AsyncOpenAI, AsyncStream
 from openai.types.responses import (
     EasyInputMessageParam,
     Response,
+    ResponseCodeInterpreterToolCall,
     ResponseCompletedEvent,
     ResponseOutputMessage,
     ResponseStreamEvent,
@@ -123,6 +124,22 @@ class ChatReadRetrieveReadApproach(Approach):
         )
         response: Response = await cast(Awaitable[Response], response_coroutine)
         content = response.output_text
+
+        # Surface code_interpreter tool calls in thought process
+        for item in response.output:
+            if isinstance(item, ResponseCodeInterpreterToolCall):
+                outputs = []
+                for output in item.outputs or []:
+                    if output.type == "logs":
+                        outputs.append(output.logs)
+                extra_info.thoughts.append(
+                    ThoughtStep(
+                        "Code interpreter",
+                        item.code,
+                        {"status": item.status, "outputs": outputs} if outputs else {"status": item.status},
+                    )
+                )
+
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
@@ -192,6 +209,20 @@ class ChatReadRetrieveReadApproach(Approach):
                 else:
                     yield {"type": "response.output_text.delta", "delta": delta_content}
             elif isinstance(event, ResponseCompletedEvent):
+                # Surface code_interpreter tool calls in thought process
+                for item in event.response.output:
+                    if isinstance(item, ResponseCodeInterpreterToolCall):
+                        outputs = []
+                        for output in item.outputs or []:
+                            if output.type == "logs":
+                                outputs.append(output.logs)
+                        extra_info.thoughts.append(
+                            ThoughtStep(
+                                "Code interpreter",
+                                item.code,
+                                {"status": item.status, "outputs": outputs} if outputs else {"status": item.status},
+                            )
+                        )
                 if event.response.usage and extra_info.thoughts and self.include_token_usage:
                     extra_info.thoughts[-1].update_token_usage(event.response.usage)
                     yield {"type": "response.context", "context": extra_info, "session_state": session_state}
