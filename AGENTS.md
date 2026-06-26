@@ -205,6 +205,28 @@ We only enforce type hints in the main application code and scripts.
 
 Do not use single underscores in front of "private" methods or variables in Python code. We do not follow that convention in this codebase, since this is an application and not a library.
 
+## Starting the app locally
+
+The simplest way to start the app is with `./app/start.sh` (or `./app/start.ps1` on Windows). This builds the frontend and starts the backend — no separate frontend process needed unless you want hot reloading.
+
+To avoid port conflicts (e.g. if another instance is already running), pick a random port:
+
+```shell
+PORT=50506 ./app/start.sh
+```
+
+If you also need the frontend dev server with hot reloading (for UI changes), run it separately with the matching `BACKEND_PORT`:
+
+```shell
+# Terminal 1: backend
+PORT=50506 ./app/start.sh
+
+# Terminal 2: frontend with HMR
+cd app/frontend && BACKEND_PORT=50506 npm run dev
+```
+
+**Tips for coding agents**: Always specify your own random port via `PORT` to avoid colliding with a developer's running instance or other parallel agents. The start scripts will detect if the port is already in use and tell you to pick a different one.
+
 ## Deploying the application
 
 To deploy the application, use the `azd` CLI tool. Make sure you have the latest version of the `azd` CLI installed. Then, run the following command from the root of the repository:
