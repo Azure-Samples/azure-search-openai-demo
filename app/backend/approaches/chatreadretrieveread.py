@@ -129,14 +129,22 @@ class ChatReadRetrieveReadApproach(Approach):
         for item in response.output:
             if isinstance(item, ResponseCodeInterpreterToolCall):
                 outputs = []
+                images = []
                 for output in item.outputs or []:
                     if output.type == "logs":
                         outputs.append(output.logs)
+                    elif output.type == "image":
+                        images.append(output.url)
+                props: dict[str, Any] = {"status": item.status}
+                if outputs:
+                    props["outputs"] = outputs
+                if images:
+                    props["images"] = images
                 extra_info.thoughts.append(
                     ThoughtStep(
                         "Code interpreter",
                         item.code,
-                        {"status": item.status, "outputs": outputs} if outputs else {"status": item.status},
+                        props,
                     )
                 )
 
@@ -213,14 +221,22 @@ class ChatReadRetrieveReadApproach(Approach):
                 for item in event.response.output:
                     if isinstance(item, ResponseCodeInterpreterToolCall):
                         outputs = []
+                        images = []
                         for output in item.outputs or []:
                             if output.type == "logs":
                                 outputs.append(output.logs)
+                            elif output.type == "image":
+                                images.append(output.url)
+                        props_stream: dict[str, Any] = {"status": item.status}
+                        if outputs:
+                            props_stream["outputs"] = outputs
+                        if images:
+                            props_stream["images"] = images
                         extra_info.thoughts.append(
                             ThoughtStep(
                                 "Code interpreter",
                                 item.code,
-                                {"status": item.status, "outputs": outputs} if outputs else {"status": item.status},
+                                props_stream,
                             )
                         )
                 if event.response.usage and extra_info.thoughts and self.include_token_usage:
