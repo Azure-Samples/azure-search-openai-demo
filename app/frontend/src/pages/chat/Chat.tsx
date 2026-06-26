@@ -98,6 +98,7 @@ const Chat = () => {
     const [sharePointSourceEnabled, setSharePointSourceEnabled] = useState<boolean>(false);
     const [useAgenticKnowledgeBase, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
+    const [useCodeInterpreter, setUseCodeInterpreter] = useState<boolean>(false);
     const streamingDisabledByOverrides = useAgenticKnowledgeBase && webSourceEnabled;
 
     const audio = useRef(new Audio()).current;
@@ -297,7 +298,8 @@ const Chat = () => {
                         language: i18n.language,
                         use_agentic_knowledgebase: useAgenticKnowledgeBase,
                         use_web_source: webSourceSupported ? webSourceEnabled : false,
-                        use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false
+                        use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false,
+                        use_code_interpreter: useCodeInterpreter ? true : undefined
                     }
                 },
                 // AI Chat Protocol: Client must pass on any session state received from the server
@@ -484,6 +486,9 @@ const Chat = () => {
                     return;
                 }
                 setSharePointSourceEnabled(!!value);
+                break;
+            case "useCodeInterpreter":
+                setUseCodeInterpreter(!!value);
                 break;
         }
     };
@@ -725,6 +730,7 @@ const Chat = () => {
                             useSharePointSource={sharePointSourceEnabled}
                             showSharePointSourceOption={sharePointSourceSupported}
                             hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
+                            useCodeInterpreter={useCodeInterpreter}
                             onChange={handleSettingsChange}
                         />
                         {useLogin && <TokenClaimsDisplay />}

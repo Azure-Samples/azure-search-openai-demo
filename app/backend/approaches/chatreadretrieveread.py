@@ -1,3 +1,4 @@
+import logging
 import re
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import asdict
@@ -10,6 +11,7 @@ from openai import AsyncOpenAI, AsyncStream
 from openai.types.responses import (
     EasyInputMessageParam,
     Response,
+    ResponseCodeInterpreterToolCall,
     ResponseCompletedEvent,
     ResponseOutputMessage,
     ResponseStreamEvent,
@@ -123,6 +125,41 @@ class ChatReadRetrieveReadApproach(Approach):
         )
         response: Response = await cast(Awaitable[Response], response_coroutine)
         content = response.output_text
+
+        # Log response output types for debugging
+        logging.info("Response output items: %s", [type(item).__name__ for item in response.output])
+
+        # Surface code_interpreter tool calls in thought process
+        code_interpreter_images = []
+        for item in response.output:
+            if isinstance(item, ResponseCodeInterpreterToolCall):
+                outputs = []
+                images = []
+                for output in item.outputs or []:
+                    if output.type == "logs":
+                        outputs.append(output.logs)
+                    elif output.type == "image":
+                        images.append(output.url)
+                        code_interpreter_images.append(output.url)
+                props: dict[str, Any] = {"status": item.status}
+                if outputs:
+                    props["outputs"] = outputs
+                if images:
+                    props["images"] = images
+                extra_info.thoughts.append(
+                    ThoughtStep(
+                        "Code interpreter",
+                        item.code,
+                        props,
+                    )
+                )
+
+        # Append code_interpreter images to the response text as markdown
+        if code_interpreter_images:
+            content = (
+                (content or "") + "\n\n" + "\n\n".join(f"![Generated chart]({url})" for url in code_interpreter_images)
+            )
+
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
@@ -192,6 +229,36 @@ class ChatReadRetrieveReadApproach(Approach):
                 else:
                     yield {"type": "response.output_text.delta", "delta": delta_content}
             elif isinstance(event, ResponseCompletedEvent):
+                # Surface code_interpreter tool calls in thought process
+                code_interpreter_images_stream = []
+                for item in event.response.output:
+                    if isinstance(item, ResponseCodeInterpreterToolCall):
+                        outputs = []
+                        images = []
+                        for output in item.outputs or []:
+                            if output.type == "logs":
+                                outputs.append(output.logs)
+                            elif output.type == "image":
+                                images.append(output.url)
+                                code_interpreter_images_stream.append(output.url)
+                        props_stream: dict[str, Any] = {"status": item.status}
+                        if outputs:
+                            props_stream["outputs"] = outputs
+                        if images:
+                            props_stream["images"] = images
+                        extra_info.thoughts.append(
+                            ThoughtStep(
+                                "Code interpreter",
+                                item.code,
+                                props_stream,
+                            )
+                        )
+                # Emit code_interpreter images as markdown in the stream
+                if code_interpreter_images_stream:
+                    image_markdown = "\n\n" + "\n\n".join(
+                        f"![Generated chart]({url})" for url in code_interpreter_images_stream
+                    )
+                    yield {"type": "response.output_text.delta", "delta": image_markdown}
                 if event.response.usage and extra_info.thoughts and self.include_token_usage:
                     extra_info.thoughts[-1].update_token_usage(event.response.usage)
                     yield {"type": "response.context", "context": extra_info, "session_state": session_state}
@@ -265,6 +332,8 @@ class ChatReadRetrieveReadApproach(Approach):
 
             return (extra_info, return_answer())
 
+        use_code_interpreter = bool(overrides.get("use_code_interpreter"))
+
         messages = self.prompt_manager.build_conversation(
             system_template_path="chat_answer.system.jinja2",
             system_template_variables=self.get_system_prompt_variables(overrides.get("prompt_template"))
@@ -272,6 +341,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
                 "image_sources": extra_info.data_points.images,
                 "citations": extra_info.data_points.citations,
+                "use_code_interpreter": use_code_interpreter,
             },
             user_template_path="chat_answer.user.jinja2",
             user_template_variables={
@@ -282,6 +352,11 @@ class ChatReadRetrieveReadApproach(Approach):
             past_messages=messages[:-1],
         )
 
+        tools = []
+        if use_code_interpreter:
+            tools.append({"type": "code_interpreter", "container": {"type": "auto"}})
+            logging.info("code_interpreter tool enabled, passing to create_response")
+
         response_coroutine = cast(
             Awaitable[Response] | Awaitable[AsyncStream[ResponseStreamEvent]],
             self.create_response(
@@ -291,6 +366,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 overrides,
                 self.get_response_token_limit(self.chatgpt_model, self.RESPONSE_DEFAULT_TOKEN_LIMIT),
                 should_stream,
+                tools=tools if tools else None,
             ),
         )
         extra_info.thoughts.append(

@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "エージェント型リトリーバルを使用",
         "useWebSource": "Web検索を含める",
         "useSharePointSource": "SharePointソースを含める",
+        "useCodeInterpreter": "Use code interpreter",
         "llmInputs": "LLMの入力",
         "llmInputsOptions": {
             "texts": "テキスト",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "認証ユーザーのグループに基づいて検索結果をフィルタリングします。",
         "useAgenticKnowledgeBase": "Azure AI Search のエージェント型リトリーバルを使用してマルチクエリの計画を行います。常にセマンティック ランカーを使用します。",
         "useWebSource": "インデックス化されたデータセットと並行してWeb検索結果で検索を拡張します。",
-        "useSharePointSource": "インデックス化されたデータセットと並行してSharePointコンテンツで検索を拡張します。"
+        "useSharePointSource": "インデックス化されたデータセットと並行してSharePointコンテンツで検索を拡張します。",
+        "useCodeInterpreter": "Allow the model to run Python code for computational questions (math, data analysis). Off by default."
     },
     "overallSettings": "全体設定",
     "searchSettings": "検索設定",

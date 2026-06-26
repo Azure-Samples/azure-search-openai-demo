@@ -871,3 +871,63 @@ async def test_format_as_ndjson():
 
     result = [line async for line in app.format_as_ndjson(gen())]
     assert result == ['{"a": "I ❤️ 🐍"}\n', '{"b": "Newlines inside \\n strings are fine"}\n']
+
+
+@pytest.mark.asyncio
+async def test_chat_code_interpreter(client, monkeypatch):
+    """When use_code_interpreter is True, the code_interpreter tool should be passed to the LLM."""
+    all_calls = []
+
+    original_create = client.app.config[app.CONFIG_OPENAI_CLIENT].responses.create
+
+    async def capture_create(*args, **kwargs):
+        all_calls.append(kwargs.copy())
+        return await original_create(*args, **kwargs)
+
+    monkeypatch.setattr(client.app.config[app.CONFIG_OPENAI_CLIENT].responses, "create", capture_create)
+
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text", "use_code_interpreter": True},
+            },
+        },
+    )
+    assert response.status_code == 200
+    result = await response.get_json()
+    assert result["output_text"] is not None
+    # The last call is the final answer call; verify code_interpreter tool was passed
+    final_call = all_calls[-1]
+    assert "tools" in final_call
+    tools = final_call["tools"]
+    assert any(t["type"] == "code_interpreter" for t in tools)
+
+
+@pytest.mark.asyncio
+async def test_chat_without_code_interpreter(client, monkeypatch):
+    """When use_code_interpreter is not set, no tools should be passed to the final answer call."""
+    all_calls = []
+
+    original_create = client.app.config[app.CONFIG_OPENAI_CLIENT].responses.create
+
+    async def capture_create(*args, **kwargs):
+        all_calls.append(kwargs.copy())
+        return await original_create(*args, **kwargs)
+
+    monkeypatch.setattr(client.app.config[app.CONFIG_OPENAI_CLIENT].responses, "create", capture_create)
+
+    response = await client.post(
+        "/chat",
+        json={
+            "messages": [{"content": "What is the capital of France?", "role": "user"}],
+            "context": {
+                "overrides": {"retrieval_mode": "text"},
+            },
+        },
+    )
+    assert response.status_code == 200
+    # The last call is the final answer call; verify no tools were passed
+    final_call = all_calls[-1]
+    assert "tools" not in final_call

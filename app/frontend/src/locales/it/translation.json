@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Usa il recupero agentico",
         "useWebSource": "Includi ricerca web",
         "useSharePointSource": "Includi la sorgente SharePoint",
+        "useCodeInterpreter": "Use code interpreter",
         "llmInputs": "Input per LLM",
         "llmInputsOptions": {
             "texts": "Testi",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato.",
         "useAgenticKnowledgeBase": "Usa l'agentic retrieval da Azure AI Search per la pianificazione multi-query. Usa sempre il ranking semantico.",
         "useWebSource": "Arricchisci i risultati con la ricerca web in aggiunta al tuo set di dati indicizzati.",
-        "useSharePointSource": "Arricchisci il recupero con contenuto SharePoint insieme al tuo set di dati indicizzati."
+        "useSharePointSource": "Arricchisci il recupero con contenuto SharePoint insieme al tuo set di dati indicizzati.",
+        "useCodeInterpreter": "Allow the model to run Python code for computational questions (math, data analysis). Off by default."
     },
     "overallSettings": "Impostazioni generali",
     "searchSettings": "Impostazioni di ricerca",

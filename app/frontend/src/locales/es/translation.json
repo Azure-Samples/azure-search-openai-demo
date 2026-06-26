@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Usar la recuperación agéntica",
         "useWebSource": "Incluir búsqueda web",
         "useSharePointSource": "Incluir fuente de SharePoint",
+        "useCodeInterpreter": "Use code interpreter",
         "llmInputs": "Entradas para LLM",
         "llmInputsOptions": {
             "texts": "Textos",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado.",
         "useAgenticKnowledgeBase": "Usa la recuperación agéntica de Azure AI Search para la planificación de consultas múltiples. Siempre utiliza el clasificador semántico.",
         "useWebSource": "Potencia la recuperación con resultados de búsqueda web junto con tu conjunto de datos indexado.",
-        "useSharePointSource": "Potencia la recuperación incorporando contenido de SharePoint junto con tu conjunto de datos indexado."
+        "useSharePointSource": "Potencia la recuperación incorporando contenido de SharePoint junto con tu conjunto de datos indexado.",
+        "useCodeInterpreter": "Allow the model to run Python code for computational questions (math, data analysis). Off by default."
     },
     "overallSettings": "Configuración general",
     "searchSettings": "Configuración de búsqueda",

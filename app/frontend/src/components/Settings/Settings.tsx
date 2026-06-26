@@ -48,6 +48,7 @@ export interface SettingsProps {
     showWebSourceOption?: boolean;
     useSharePointSource?: boolean;
     showSharePointSourceOption?: boolean;
+    useCodeInterpreter?: boolean;
 }
 
 export const Settings = ({
@@ -90,7 +91,8 @@ export const Settings = ({
     useWebSource = false,
     showWebSourceOption = false,
     useSharePointSource = false,
-    showSharePointSourceOption = false
+    showSharePointSourceOption = false,
+    useCodeInterpreter = false
 }: SettingsProps) => {
     const { t } = useTranslation();
 
@@ -105,6 +107,8 @@ export const Settings = ({
     const webSourceFieldId = useId();
     const sharePointSourceId = useId();
     const sharePointSourceFieldId = useId();
+    const codeInterpreterId = useId();
+    const codeInterpreterFieldId = useId();
     const searchScoreId = useId();
     const searchScoreFieldId = useId();
     const rerankerScoreId = useId();
@@ -535,6 +539,21 @@ export const Settings = ({
                             </div>
                         </fieldset>
                     )}
+
+                    <div className={styles.settingsCheckbox}>
+                        <Checkbox
+                            id={codeInterpreterFieldId}
+                            checked={useCodeInterpreter}
+                            onChange={(_ev, data) => onChange("useCodeInterpreter", !!data.checked)}
+                            aria-labelledby={codeInterpreterId}
+                        />
+                        <HelpCallout
+                            labelId={codeInterpreterId}
+                            fieldId={codeInterpreterFieldId}
+                            helpText={t("helpTexts.useCodeInterpreter")}
+                            label={t("labels.useCodeInterpreter")}
+                        />
+                    </div>
                 </>
             )}
         </div>

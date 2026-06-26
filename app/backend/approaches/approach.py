@@ -2,7 +2,7 @@ import base64
 import json
 import re
 from abc import ABC
-from collections.abc import AsyncGenerator, Awaitable
+from collections.abc import AsyncGenerator, Awaitable, Sequence
 from dataclasses import asdict, dataclass, field
 from typing import Any, Optional, TypedDict, cast
 
@@ -38,11 +38,11 @@ from openai import AsyncOpenAI, AsyncStream
 from openai.types import CompletionUsage
 from openai.types.responses import (
     EasyInputMessageParam,
-    FunctionToolParam,
     Response,
     ResponseFunctionToolCall,
     ResponseStreamEvent,
     ResponseUsage,
+    ToolParam,
 )
 
 from approaches.promptmanager import PromptManager
@@ -392,7 +392,7 @@ class Approach(ABC):
         chatgpt_deployment: Optional[str],
         user_query: str,
         response_token_limit: int,
-        tools: Optional[list[FunctionToolParam]] = None,
+        tools: Optional[Sequence[ToolParam]] = None,
         temperature: float = 0.0,
         no_response_token: Optional[str] = None,
     ) -> RewriteQueryResult:
@@ -954,7 +954,7 @@ class Approach(ABC):
         overrides: dict[str, Any],
         response_token_limit: int,
         should_stream: bool = False,
-        tools: Optional[list[FunctionToolParam]] = None,
+        tools: Optional[Sequence[ToolParam]] = None,
         temperature: Optional[float] = None,
         reasoning_effort: ReasoningEffort = None,
     ) -> Awaitable[Response] | Awaitable[AsyncStream[ResponseStreamEvent]]:

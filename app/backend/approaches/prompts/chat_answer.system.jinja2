@@ -17,6 +17,9 @@ If you are referencing an image, add the image filename in the format: [document
 
 Possible citations for current question: {% for citation in citations %} [{{ citation }}] {% endfor %}
 {{ injected_prompt }}
+{% if use_code_interpreter %}
+You have access to a code_interpreter tool that can run Python code. Use it when the user's question requires calculations, data analysis, aggregations, or any computation based on the source information.
+{% endif %}
 {% endif %}
 
 {% if include_follow_up_questions %}
