@@ -1,3 +1,4 @@
+import logging
 import re
 from collections.abc import AsyncGenerator, Awaitable
 from dataclasses import asdict
@@ -124,6 +125,9 @@ class ChatReadRetrieveReadApproach(Approach):
         )
         response: Response = await cast(Awaitable[Response], response_coroutine)
         content = response.output_text
+
+        # Log response output types for debugging
+        logging.info("Response output items: %s", [type(item).__name__ for item in response.output])
 
         # Surface code_interpreter tool calls in thought process
         code_interpreter_images = []
@@ -351,6 +355,7 @@ class ChatReadRetrieveReadApproach(Approach):
         tools = []
         if use_code_interpreter:
             tools.append({"type": "code_interpreter", "container": {"type": "auto"}})
+            logging.info("code_interpreter tool enabled, passing to create_response")
 
         response_coroutine = cast(
             Awaitable[Response] | Awaitable[AsyncStream[ResponseStreamEvent]],
