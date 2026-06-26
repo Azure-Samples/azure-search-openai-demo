@@ -50,7 +50,7 @@ cd ../backend
 
 port=${PORT:-50505}
 host=localhost
-if lsof -i :"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+if command -v lsof >/dev/null 2>&1 && lsof -i :"$port" -sTCP:LISTEN >/dev/null 2>&1; then
     echo "Port $port is already in use. Set PORT=<number> to use a different port."
     exit 1
 fi
