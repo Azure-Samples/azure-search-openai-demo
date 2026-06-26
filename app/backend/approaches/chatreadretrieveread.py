@@ -265,6 +265,8 @@ class ChatReadRetrieveReadApproach(Approach):
 
             return (extra_info, return_answer())
 
+        use_code_interpreter = bool(overrides.get("use_code_interpreter"))
+
         messages = self.prompt_manager.build_conversation(
             system_template_path="chat_answer.system.jinja2",
             system_template_variables=self.get_system_prompt_variables(overrides.get("prompt_template"))
@@ -272,6 +274,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
                 "image_sources": extra_info.data_points.images,
                 "citations": extra_info.data_points.citations,
+                "use_code_interpreter": use_code_interpreter,
             },
             user_template_path="chat_answer.user.jinja2",
             user_template_variables={
@@ -283,7 +286,7 @@ class ChatReadRetrieveReadApproach(Approach):
         )
 
         tools = []
-        if overrides.get("use_code_interpreter"):
+        if use_code_interpreter:
             tools.append({"type": "code_interpreter", "container": {"type": "auto"}})
 
         response_coroutine = cast(
