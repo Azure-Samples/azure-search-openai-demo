@@ -71,6 +71,7 @@ def setup_file_processors(
     openai_model: Optional[str] = None,
     openai_deployment: Optional[str] = None,
     content_understanding_endpoint: Optional[str] = None,
+    csv_max_chars_per_page: Optional[int] = None,
 ):
     """Setup file processors and figure processor for document ingestion.
 
@@ -84,6 +85,7 @@ def setup_file_processors(
         use_local_pdf_parser=local_pdf_parser,
         use_local_html_parser=local_html_parser,
         process_figures=use_multimodal,
+        csv_max_chars_per_page=csv_max_chars_per_page,
     )
 
     figure_processor = setup_figure_processor(
@@ -180,6 +182,9 @@ if __name__ == "__main__":  # pragma: no cover
     use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true"
     use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
     use_sharepoint_source = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
+    # When set to a positive value, CSV rows are grouped into pages of up to this many
+    # characters instead of one page per row (avoids out-of-memory on large CSV files).
+    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS", "0")) or None
 
     # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
     if tenant_id := os.getenv("AZURE_TENANT_ID"):
@@ -306,6 +311,7 @@ if __name__ == "__main__":  # pragma: no cover
             openai_client=openai_client,
             openai_model=os.getenv("AZURE_OPENAI_CHATGPT_MODEL"),
             openai_deployment=os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == OpenAIHost.AZURE else None,
+            csv_max_chars_per_page=csv_max_chars_per_page,
         )
 
         image_embeddings_service = setup_image_embeddings_service(
