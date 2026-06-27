@@ -129,7 +129,7 @@
                         "role": "system"
                     },
                     {
-                        "content": "What is the capital of France?\n\n\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.\n\ndocument: SharePoint content",
+                        "content": "What is the capital of France?\nUser asked question at UTC time: February 3, 2026\n\n\nSources:\n\nBenefit_Options-2.pdf: There is a whistleblower policy.\n\ndocument: SharePoint content",
                         "role": "user"
                     }
                 ],

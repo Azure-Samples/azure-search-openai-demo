@@ -4,6 +4,7 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import VectorizedQuery
+from freezegun import freeze_time
 from openai.types.responses import (
     Response,
     ResponseFunctionToolCall,
@@ -373,6 +374,13 @@ async def test_chat_prompt_render_with_image_directive(chat_approach):
     assert "Diagram that shows the architecture of Fabric Activator." in combined
     # Original unescaped sequence should be gone
     assert ":::image" not in combined
+
+
+@freeze_time("2026-02-03")
+def test_get_current_date_matches_expected_format(chat_approach):
+    """get_current_date should return current UTC datetime in ISO 8601 format."""
+    current_date = chat_approach.get_current_date()
+    assert current_date == "2026-02-03T00:00:00Z"
 
 
 @pytest.mark.asyncio
