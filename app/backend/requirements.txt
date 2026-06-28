@@ -83,7 +83,7 @@ click==8.4.1
     #   flask
     #   quart
     #   uvicorn
-cryptography==46.0.7
+cryptography==48.0.1
     # via
     #   -r requirements.in
     #   azure-identity
