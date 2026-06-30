@@ -5,6 +5,11 @@
     "login": "ログイン",
     "logout": "ログアウト",
     "clearChat": "チャットをクリア",
+    "exportChat": "チャットをエクスポート",
+    "export": {
+        "markdown": "Markdown (.md)",
+        "json": "JSON (.json)"
+    },
     "history": {
         "chatHistory": "チャット履歴",
         "openChatHistory": "チャット履歴を開く",

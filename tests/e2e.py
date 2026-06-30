@@ -163,6 +163,59 @@ def test_chat(sized_page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
 
 
+def test_chat_export(page: Page, live_server_url: str):
+    # Set up a mock route for the chat stream endpoint
+    def handle(route: Route):
+        f = open("tests/snapshots/test_app/test_chat_stream_text/client0/result.jsonlines")
+        jsonl = f.read()
+        f.close()
+        route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
+
+    page.route("*/**/chat/stream", handle)
+
+    page.goto(live_server_url)
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+
+    # Export button is disabled before any conversation exists
+    expect(page.get_by_role("button", name="Export chat")).to_be_disabled()
+
+    # Ask a question and wait for the answer
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_role("button", name="Submit question").click()
+    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+    # Export button is now enabled
+    expect(page.get_by_role("button", name="Export chat")).to_be_enabled()
+
+    # Export as Markdown and verify a download is triggered
+    page.get_by_role("button", name="Export chat").click()
+    with page.expect_download() as download_info:
+        page.get_by_role("menuitem", name="Markdown (.md)").click()
+    md_download = download_info.value
+    assert md_download.suggested_filename.endswith(".md")
+    with open(md_download.path(), encoding="utf-8") as md_file:
+        md_content = md_file.read()
+    assert "## You" in md_content
+    assert "Whats the dental plan?" in md_content
+    assert "## Assistant" in md_content
+    assert "Benefit_Options-2.pdf" in md_content
+
+    # Export as JSON and verify a download is triggered
+    page.get_by_role("button", name="Export chat").click()
+    with page.expect_download() as download_info:
+        page.get_by_role("menuitem", name="JSON (.json)").click()
+    json_download = download_info.value
+    assert json_download.suggested_filename.endswith(".json")
+    with open(json_download.path(), encoding="utf-8") as json_file:
+        json_content = json.load(json_file)
+    assert len(json_content) == 1
+    assert json_content[0]["user"] == "Whats the dental plan?"
+    assert "assistant" in json_content[0]
+
+
 def test_chat_stop_button_visibility(page: Page, live_server_url: str):
     """Test that the stop button feature works without breaking the chat flow.
 

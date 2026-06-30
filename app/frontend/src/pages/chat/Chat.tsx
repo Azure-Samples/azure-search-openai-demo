@@ -27,6 +27,8 @@ import { HistoryProviderOptions, useHistoryManager } from "../../components/Hist
 import { HistoryButton } from "../../components/HistoryButton";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { ExportButton } from "../../components/ExportButton";
+import { exportConversationAsJSON, exportConversationAsMarkdown } from "../../utils/exportConversation";
 import { UploadFile } from "../../components/UploadFile";
 import { useLogin, getToken, requireAccessControl } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
@@ -539,6 +541,12 @@ const Chat = () => {
                 </div>
                 <div className={styles.commandsContainer}>
                     <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                    <ExportButton
+                        className={styles.commandButton}
+                        onExportMarkdown={() => exportConversationAsMarkdown(answers)}
+                        onExportJSON={() => exportConversationAsJSON(answers)}
+                        disabled={answers.length === 0 || isLoading}
+                    />
                     {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
                     <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 </div>

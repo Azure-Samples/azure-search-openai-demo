@@ -5,6 +5,11 @@
     "login": "Zaloguj się",
     "logout": "Wyloguj się",
     "clearChat": "Wyczyść czat",
+    "exportChat": "Eksportuj czat",
+    "export": {
+        "markdown": "Markdown (.md)",
+        "json": "JSON (.json)"
+    },
     "history": {
         "chatHistory": "Historia czatu",
         "openChatHistory": "Otwórz historię czatu",
