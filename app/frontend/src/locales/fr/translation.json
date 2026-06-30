@@ -95,6 +95,7 @@
         "useAgenticKnowledgeBase": "Utilisez la récupération agentique",
         "useWebSource": "Inclure la recherche web",
         "useSharePointSource": "Inclure la source SharePoint",
+        "useWebSearch": "Activer le secours par recherche web",
         "useQueryRewriting": "Utilisez la réécriture des requêtes pour la récupération",
         "reasoningEffort": "Effort de raisonnement",
         "reasoningEffortOptions": {
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtrez les résultats de recherche en fonction des groupes de l'utilisateur authentifié.",
         "useAgenticKnowledgeBase": "Utilisez la récupération agentique d'Azure AI Search pour la planification multi-requêtes. Utilise toujours le classement sémantique.",
         "useWebSource": "Augmentez la récupération avec des résultats de recherche web parallèlement à votre ensemble de données indexé.",
-        "useSharePointSource": "Augmentez la récupération avec du contenu SharePoint parallèlement à votre ensemble de données indexé."
+        "useSharePointSource": "Augmentez la récupération avec du contenu SharePoint parallèlement à votre ensemble de données indexé.",
+        "useWebSearch": "Autorise le modèle de réponse à utiliser l'outil web_search de l'API Responses lorsque les sources indexées sont insuffisantes. Désactivé par défaut."
     },
     "overallSettings": "Paramètres généraux",
     "searchSettings": "Paramètres de recherche",

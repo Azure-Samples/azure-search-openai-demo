@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Usa il recupero agentico",
         "useWebSource": "Includi ricerca web",
         "useSharePointSource": "Includi la sorgente SharePoint",
+        "useWebSearch": "Abilita fallback ricerca web",
         "llmInputs": "Input per LLM",
         "llmInputsOptions": {
             "texts": "Testi",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato.",
         "useAgenticKnowledgeBase": "Usa l'agentic retrieval da Azure AI Search per la pianificazione multi-query. Usa sempre il ranking semantico.",
         "useWebSource": "Arricchisci i risultati con la ricerca web in aggiunta al tuo set di dati indicizzati.",
-        "useSharePointSource": "Arricchisci il recupero con contenuto SharePoint insieme al tuo set di dati indicizzati."
+        "useSharePointSource": "Arricchisci il recupero con contenuto SharePoint insieme al tuo set di dati indicizzati.",
+        "useWebSearch": "Consente al modello di risposta di usare lo strumento web_search della Responses API quando le fonti indicizzate non bastano. Disattivato per impostazione predefinita."
     },
     "overallSettings": "Impostazioni generali",
     "searchSettings": "Impostazioni di ricerca",

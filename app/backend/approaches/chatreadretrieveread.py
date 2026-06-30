@@ -11,6 +11,7 @@ from openai.types.responses import (
     EasyInputMessageParam,
     Response,
     ResponseCompletedEvent,
+    ResponseFunctionWebSearch,
     ResponseOutputMessage,
     ResponseStreamEvent,
     ResponseTextDeltaEvent,
@@ -111,6 +112,26 @@ class ChatReadRetrieveReadApproach(Approach):
         except Exception:
             return default_query
 
+    def append_web_search_thoughts(self, extra_info: ExtraInfo, response: Response) -> None:
+        for item in response.output:
+            if not isinstance(item, ResponseFunctionWebSearch):
+                continue
+
+            description: Optional[str] = None
+            props: dict[str, Any] = {"status": item.status, "action_type": item.action.type}
+
+            if item.action.type == "search":
+                description = item.action.query
+                if item.action.sources:
+                    props["sources"] = [source.url for source in item.action.sources]
+            elif item.action.type == "open_page":
+                description = item.action.url
+            elif item.action.type == "find":
+                description = item.action.pattern
+                props["url"] = item.action.url
+
+            extra_info.thoughts.append(ThoughtStep("Web search", description, props))
+
     async def run_without_streaming(
         self,
         messages: list[EasyInputMessageParam],
@@ -128,6 +149,7 @@ class ChatReadRetrieveReadApproach(Approach):
             extra_info.followup_questions = followup_questions
         if self.include_token_usage and extra_info.thoughts and response.usage:
             extra_info.thoughts[-1].update_token_usage(response.usage)
+        self.append_web_search_thoughts(extra_info, response)
         chat_app_response = {
             "output_text": content,
             "context": {
@@ -169,6 +191,8 @@ class ChatReadRetrieveReadApproach(Approach):
             if self.include_token_usage and extra_info.thoughts and result.usage:
                 extra_info.thoughts[-1].update_token_usage(result.usage)
 
+            self.append_web_search_thoughts(extra_info, result)
+
             if content:
                 yield {"type": "response.output_text.delta", "delta": content}
 
@@ -194,7 +218,8 @@ class ChatReadRetrieveReadApproach(Approach):
             elif isinstance(event, ResponseCompletedEvent):
                 if event.response.usage and extra_info.thoughts and self.include_token_usage:
                     extra_info.thoughts[-1].update_token_usage(event.response.usage)
-                    yield {"type": "response.context", "context": extra_info, "session_state": session_state}
+                self.append_web_search_thoughts(extra_info, event.response)
+                yield {"type": "response.context", "context": extra_info, "session_state": session_state}
 
         if followup_content:
             _, followup_questions = self.extract_followup_questions(followup_content)
@@ -272,6 +297,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
                 "image_sources": extra_info.data_points.images,
                 "citations": extra_info.data_points.citations,
+                "use_web_search": bool(overrides.get("use_web_search")),
             },
             user_template_path="chat_answer.user.jinja2",
             user_template_variables={
@@ -282,6 +308,8 @@ class ChatReadRetrieveReadApproach(Approach):
             past_messages=messages[:-1],
         )
 
+        tools = [{"type": "web_search"}] if overrides.get("use_web_search") else None
+
         response_coroutine = cast(
             Awaitable[Response] | Awaitable[AsyncStream[ResponseStreamEvent]],
             self.create_response(
@@ -291,6 +319,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 overrides,
                 self.get_response_token_limit(self.chatgpt_model, self.RESPONSE_DEFAULT_TOKEN_LIMIT),
                 should_stream,
+                tools=tools,
             ),
         )
         extra_info.thoughts.append(

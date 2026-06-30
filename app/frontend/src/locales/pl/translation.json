@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Użyj agentowego pobierania",
         "useWebSource": "Uwzględnij wyszukiwanie w sieci",
         "useSharePointSource": "Uwzględnij źródło SharePoint",
+        "useWebSearch": "Włącz awaryjne wyszukiwanie w sieci",
         "llmInputs": "Źródła danych wejściowych LLM",
         "llmInputsOptions": {
             "texts": "Tekst",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtruj wyniki wyszukiwania na podstawie grup uwierzytelnionego użytkownika.",
         "useAgenticKnowledgeBase": "Użyj agentowego pobierania z Azure AI Search do planowania wielozapytaniowego. Zawsze używa semantycznego rankera.",
         "useWebSource": "Rozszerz pobieranie o wyniki wyszukiwania w sieci wraz z indeksowanym zestawem danych.",
-        "useSharePointSource": "Rozszerz pobieranie o zawartość SharePoint wraz z indeksowanym zestawem danych."
+        "useSharePointSource": "Rozszerz pobieranie o zawartość SharePoint wraz z indeksowanym zestawem danych.",
+        "useWebSearch": "Pozwala modelowi odpowiedzi używać narzędzia web_search z Responses API, gdy indeksowane źródła są niewystarczające. Domyślnie wyłączone."
     },
     "overallSettings": "Overall settings",
     "searchSettings": "Search settings",

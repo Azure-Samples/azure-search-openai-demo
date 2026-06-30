@@ -7,6 +7,7 @@ from azure.search.documents.models import VectorizedQuery
 from openai.types.responses import (
     Response,
     ResponseFunctionToolCall,
+    ResponseFunctionWebSearch,
     ResponseOutputMessage,
     ResponseUsage,
 )
@@ -676,3 +677,110 @@ async def test_run_search_approach_surfaces_query_source_authorization(
         thought for thought in extra_info.thoughts if thought.title == "Search using generated search query"
     )
     assert search_thought.props["use_query_source_authorization"] is expected
+
+
+@pytest.mark.asyncio
+async def test_run_until_final_call_enables_web_search_tool(chat_approach, monkeypatch):
+    captured: dict[str, object] = {}
+
+    async def fake_run_search_approach(*_args, **_kwargs):
+        return ExtraInfo(data_points=DataPoints(text=[], images=[], citations=[]), thoughts=[])
+
+    async def fake_response():
+        return Response(
+            id="resp-web-search",
+            object="response",
+            parallel_tool_calls=True,
+            tool_choice="auto",
+            tools=[],
+            created_at=0,
+            model="gpt-4.1-mini",
+            output=[],
+            status="completed",
+        )
+
+    def fake_create_response(*args, **kwargs):
+        captured["messages"] = args[2]
+        captured["tools"] = kwargs.get("tools")
+        return fake_response()
+
+    monkeypatch.setattr(chat_approach, "run_search_approach", fake_run_search_approach)
+    monkeypatch.setattr(chat_approach, "create_response", fake_create_response)
+
+    _, response_coroutine = await chat_approach.run_until_final_call(
+        messages=[{"role": "user", "content": "What is the current population of Tokyo?"}],
+        overrides={"use_web_search": True},
+        auth_claims={},
+        should_stream=False,
+    )
+    await response_coroutine
+
+    assert captured["tools"] == [{"type": "web_search"}]
+    system_message = captured["messages"][0]
+    assert system_message["role"] == "system"
+    assert "use web_search to find up-to-date public information" in system_message["content"]
+    assert "Answer ONLY with the facts listed" not in system_message["content"]
+
+
+@pytest.mark.asyncio
+async def test_run_without_streaming_surfaces_web_search_thought(chat_approach, monkeypatch):
+    extra_info = ExtraInfo(
+        data_points=DataPoints(text=[], images=[], citations=[]),
+        thoughts=[ThoughtStep("Prompt to generate answer", None, props={})],
+    )
+
+    async def fake_completion():
+        return Response(
+            id="resp-web-search",
+            object="response",
+            parallel_tool_calls=True,
+            tool_choice="auto",
+            tools=[],
+            created_at=0,
+            model="gpt-4.1-mini",
+            output=[
+                ResponseFunctionWebSearch(
+                    id="ws-1",
+                    type="web_search_call",
+                    status="completed",
+                    action={
+                        "type": "search",
+                        "query": "population of Tokyo 2026",
+                        "sources": [{"type": "url", "url": "https://example.com/tokyo"}],
+                    },
+                ),
+                ResponseOutputMessage(
+                    id="msg-1",
+                    type="message",
+                    role="assistant",
+                    status="completed",
+                    content=[
+                        {"type": "output_text", "text": "Tokyo has over 14 million residents.", "annotations": []}
+                    ],
+                ),
+            ],
+            status="completed",
+            usage=ResponseUsage(
+                input_tokens=1,
+                output_tokens=1,
+                total_tokens=2,
+                input_tokens_details=InputTokensDetails(cached_tokens=0),
+                output_tokens_details=OutputTokensDetails(reasoning_tokens=0),
+            ),
+        )
+
+    async def fake_run_until_final_call(messages, overrides, auth_claims, should_stream):
+        assert should_stream is False
+        return extra_info, fake_completion()
+
+    monkeypatch.setattr(chat_approach, "run_until_final_call", fake_run_until_final_call)
+
+    result = await chat_approach.run_without_streaming(
+        messages=[{"role": "user", "content": "What is the current population of Tokyo?"}],
+        overrides={"use_web_search": True},
+        auth_claims={},
+    )
+
+    web_search_thought = next(thought for thought in result["context"]["thoughts"] if thought.title == "Web search")
+    assert web_search_thought.description == "population of Tokyo 2026"
+    assert web_search_thought.props["sources"] == ["https://example.com/tokyo"]
