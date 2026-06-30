@@ -13,7 +13,6 @@ import { AnswerIcon } from "./AnswerIcon";
 import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
 import { SpeechOutputAzure } from "./SpeechOutputAzure";
 
-
 const CopyIcon = () => (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.copyIcon}>
         <path d="M8 8.5h8.2A1.8 1.8 0 0 1 18 10.3v8A1.8 1.8 0 0 1 16.2 20h-8A1.8 1.8 0 0 1 6.4 18.2v-8A1.8 1.8 0 0 1 8 8.5Z" />
@@ -34,6 +33,52 @@ const removeCitationMarkup = (html: string) => {
     return tempElement.innerHTML;
 };
 
+const getCleanCopyText = (answer: ChatAppResponse) => {
+    return (answer.message?.content || "")
+        // Remove source/file references such as [file.pdf#page=31]
+        .replace(/\s*\[[^\]]*(?:\.pdf|\.docx|\.txt|\.md|#page=|https?:\/\/)[^\]]*\]/gi, "")
+        // Remove numeric citation markers such as [1], [2], [3]
+        .replace(/\s*\[\d+\]/g, "")
+        // Remove generated Citation section if it exists
+        .replace(/\n?\s*Citation:\s*[\s\S]*$/i, "")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim();
+};
+
+const copyTextToClipboard = async (text: string) => {
+    try {
+        if (navigator.clipboard?.writeText && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return true;
+        }
+    } catch {
+        // Use fallback copy below
+    }
+
+    try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.setAttribute("readonly", "");
+        textArea.style.position = "fixed";
+        textArea.style.top = "0";
+        textArea.style.left = "-9999px";
+        textArea.style.opacity = "0";
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, textArea.value.length);
+
+        const successful = document.execCommand("copy");
+        document.body.removeChild(textArea);
+
+        return successful;
+    } catch (err) {
+        console.error("Fallback copy failed:", err);
+        return false;
+    }
+};
+
 interface Props {
     answer: ChatAppResponse;
     index: number;
@@ -41,8 +86,8 @@ interface Props {
     isSelected?: boolean;
     isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
-    onThoughtProcessClicked: () => void; // хадгалж үлдээж болно (ашиглахгүй)
-    onSupportingContentClicked: () => void; // хадгалж үлдээж болно (ашиглахгүй)
+    onThoughtProcessClicked: () => void;
+    onSupportingContentClicked: () => void;
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
     showSpeechOutputBrowser?: boolean;
@@ -73,41 +118,19 @@ export const Answer = ({
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
-        const tempElement = document.createElement("div");
-        tempElement.innerHTML = displayAnswerHtml;
-        tempElement.querySelectorAll("sup, .citationStepBadge, .citationBadgeContainer, .supContainer").forEach(node => node.remove());
-        tempElement.style.position = "fixed";
-        tempElement.style.left = "-9999px";
-        tempElement.style.top = "0";
-        document.body.appendChild(tempElement);
-        const textToCopy = (tempElement.innerText || tempElement.textContent || "").trim();
-        document.body.removeChild(tempElement);
+        const textToCopy = getCleanCopyText(answer);
 
         if (!textToCopy) {
             return;
         }
 
-        try {
-            if (navigator.clipboard?.writeText && window.isSecureContext) {
-                await navigator.clipboard.writeText(textToCopy);
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = textToCopy;
-                textArea.setAttribute("readonly", "");
-                textArea.style.position = "fixed";
-                textArea.style.left = "-9999px";
-                textArea.style.top = "0";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textArea);
-            }
+        const copiedSuccessfully = await copyTextToClipboard(textToCopy);
 
+        if (copiedSuccessfully) {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-            console.error("Failed to copy text: ", err);
+        } else {
+            console.error("Failed to copy text");
         }
     };
 
@@ -156,7 +179,6 @@ export const Answer = ({
                 </div>
             </Stack.Item>
 
-
             {!!followupQuestions?.length &&
                 showFollowupQuestions &&
                 onFollowupQuestionClicked && (
@@ -164,11 +186,7 @@ export const Answer = ({
                         <Stack
                             horizontal
                             wrap
-                            className={`${
-                                false
-                                    ? styles.followupQuestionsList
-                                    : ""
-                            }`}
+                            className={`${false ? styles.followupQuestionsList : ""}`}
                             tokens={{ childrenGap: 6 }}
                         >
                             <span className={styles.followupQuestionLearnMore}>
