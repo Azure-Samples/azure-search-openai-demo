@@ -2,12 +2,13 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-top: 1rem;
+    width: 100%;
 }
 
 .chatRoot {
     flex: 1;
     display: flex;
+    min-width: 0;
 }
 
 .chatContainer {
@@ -16,70 +17,142 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-height: calc(100vh - 10rem);
+    min-height: 0;
+}
+
+.commandsSplitContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 118rem;
+    margin: 0 auto;
+    padding: 1rem 1.25rem 0;
+}
+
+.commandsContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.commandButton {
+    margin: 0;
 }
 
 .chatEmptyState {
-    flex-grow: 1;
+    flex: 1;
+    width: min(100%, 78rem);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    max-height: 64rem;
-    padding-top: 1rem;
+    justify-content: center;
+    padding: clamp(2rem, 6vh, 5rem) 1.25rem 2.5rem;
+    text-align: center;
+}
+
+.heroBadge,
+.heroHint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    border: 1px solid rgba(255, 0, 20, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.68);
+    color: #a7263d;
+    font-size: 0.82rem;
+    font-weight: 720;
+    letter-spacing: 0.01em;
+    padding: 0.42rem 0.78rem;
+    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.05);
+}
+
+.heroLogo {
+    margin-top: 0;
+    width: 148px;
+    height: 148px;
+    border-radius: 999px;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 34px rgba(255, 0, 20, 0.18));
 }
 
 .chatEmptyStateTitle {
-    font-size: 2.75rem;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 1.875rem;
+    margin: 0.9rem 0 0;
+    color: #101828;
+    font-size: clamp(3rem, 7vw, 5.4rem);
+    font-weight: 850;
+    letter-spacing: -0.07em;
+    line-height: 0.95;
 }
 
 .chatEmptyStateSubtitle {
-    font-weight: 600;
-    margin-bottom: 0.625rem;
+    max-width: 42rem;
+    margin: 1rem auto 0;
+    color: #475467;
+    font-size: clamp(1rem, 1.45vw, 1.2rem);
+    font-weight: 560;
+    line-height: 1.55;
+}
+
+.heroInput {
+    width: min(100%, 64rem);
+    margin-top: 2.1rem;
+}
+
+.heroMetaRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.15rem;
+    margin-bottom: 1.1rem;
+}
+
+.heroHint {
+    border-color: rgba(31, 58, 75, 0.13);
+    color: #1f3a4b;
+    background: rgba(255, 255, 255, 0.56);
+    font-weight: 650;
 }
 
 .chatMessageStream {
-    flex-grow: 1;
-    max-height: 64rem;
-    width: 100%;
+    flex: 1;
+    width: min(100%, 82rem);
     overflow-y: auto;
-    padding: 0 2rem;
+    padding: 1.75rem 1.25rem 0;
     display: flex;
     flex-direction: column;
-    resize: horizontal;
-    min-width: 50vw;
+    min-width: 0;
+    scroll-behavior: smooth;
 }
 
 .chatMessageGpt {
     margin-bottom: 1.25rem;
-    max-width: 100%;
+    max-width: 82%;
     display: flex;
 }
 
 .chatMessageGptMinWidth {
-    max-width: 31.25rem;
+    max-width: 42rem;
     margin-bottom: 1.25rem;
 }
 
 .chatInput {
     position: sticky;
     bottom: 0;
-    flex: 0 0 6.25rem;
-    padding: 1rem;
-    width: 100%;
-    max-width: 64.25rem;
-    background: #f2f2f2;
+    width: min(100%, 66rem);
+    padding: 1rem 1.25rem 1.4rem;
+    background: linear-gradient(180deg, rgba(247, 250, 252, 0), rgba(247, 250, 252, 0.96) 34%, rgba(247, 250, 252, 1));
 }
 
 .chatAnalysisPanel {
     flex: 1;
     overflow-y: auto;
     max-height: 85vh;
-    margin-left: 1.25rem;
-    margin-right: 1.25rem;
+    margin: 1.5rem 1.25rem 0;
+    border-radius: 1rem;
 }
 
 .chatSettingsSeparator {
@@ -92,55 +165,45 @@
     font-size: 1.75rem;
 }
 
-.commandsSplitContainer {
-    display: flex;
-    justify-content: space-between;
-}
+@media (max-width: 767px) {
+    .commandsSplitContainer {
+        padding: 0.75rem 0.75rem 0;
+    }
 
-.commandsContainer {
-    display: flex;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    align-self: flex-end;
-}
-
-.commandButton {
-    margin-bottom: 1.25rem;
-}
-
-@media (min-width: 992px) {
-    .container {
-        margin-top: 1.25rem;
+    .heroBadge,
+    .heroHint {
+        display: none;
     }
 
     .chatEmptyState {
-        padding-top: 3.75rem;
+        justify-content: flex-start;
+        padding-top: 2rem;
     }
 
-    .chatEmptyStateTitle {
-        font-size: 4rem;
+    .heroLogo {
+        width: 98px;
+        height: 98px;
+        margin-top: 0.5rem;
     }
 
-    .chatInput {
-        padding: 0.75rem 1.5rem 1.5rem;
+    .chatMessageGpt,
+    .chatMessageGptMinWidth {
+        max-width: 100%;
     }
+}
 
-    .commandsSplitContainer {
-        padding-left: 1rem;
-    }
 
-    .commandsContainer {
-        padding-left: 0rem;
-        padding-right: 0rem;
-    }
+.chatEmptyStateTitle {
+    font-family: Nunito, Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
 
-    .commandButton {
-        margin-right: 1.25rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .chatMessageGpt {
-        max-width: 80%;
-        min-width: 31.25rem;
-    }
+.heroBadge::before,
+.heroHint::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-right: 0.42rem;
+    border-radius: 999px;
+    background: #ff0014;
+    box-shadow: 0 0 0 0.22rem rgba(255, 0, 20, 0.08);
 }

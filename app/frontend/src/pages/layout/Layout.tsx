@@ -6,7 +6,6 @@ import styles from "./Layout.module.css";
 import { useLogin } from "../../authConfig";
 
 import { LoginButton } from "../../components/LoginButton";
-import { IconButton } from "@fluentui/react";
 
 const Layout = () => {
     const { t } = useTranslation();
@@ -65,12 +64,17 @@ const Layout = () => {
                     </nav>
                     <div className={styles.loginMenuContainer}>
                         {useLogin && <LoginButton />}
-                        <IconButton
-                            iconProps={{ iconName: "GlobalNavButton" }}
+                        <button
+                            type="button"
                             className={styles.menuToggle}
                             onClick={toggleMenu}
-                            ariaLabel={t("labels.toggleMenu")}
-                        />
+                            aria-label={t("labels.toggleMenu")}
+                            aria-expanded={menuOpen}
+                        >
+                            <span />
+                            <span />
+                            <span />
+                        </button>
                     </div>
                 </div>
             </header>

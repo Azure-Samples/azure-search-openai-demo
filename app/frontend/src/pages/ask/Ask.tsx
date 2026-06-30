@@ -18,7 +18,7 @@ import { useMsal } from "@azure/msal-react";
 import { TokenClaimsDisplay } from "../../components/TokenClaimsDisplay";
 import { LoginContext } from "../../loginContext";
 import { LanguagePicker } from "../../i18n/LanguagePicker";
-//import appLogo from "../../assets/applogo.png";
+import appLogo from "../../assets/applogo.png";
 
 export function Component(): JSX.Element {
     const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
@@ -310,33 +310,31 @@ export function Component(): JSX.Element {
             <Helmet>
                 <title>{t("pageTitle")}</title>
             </Helmet>
-            <div className={styles.askTopSection}>
+            <section className={styles.askTopSection} aria-labelledby="mobi-ai-ask-heading">
                 <div className={styles.commandsContainer}>
                     {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
                     {/*<SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />*/}
                 </div>
-                <h1 className={styles.askTitle}>{t("askTitle")}</h1>
-
-                {/*<div className={styles.askHeader}>
-                    <img src={appLogo} alt="App Logo" width={120} height={120} className={styles.appLogo} />
-                    <h1 className={styles.askTitle}>{t("askTitle")}</h1>
-                </div>*/}
-
+                <img src={appLogo} alt="MobiAI logo" width={112} height={112} className={styles.appLogo} />
+                <h1 id="mobi-ai-ask-heading" className={styles.askTitle}>{t("askTitle")}</h1>
+                <p className={styles.askSubtitle}>{t("askSubtitle")}</p>
                 <div className={styles.askQuestionInput}>
                     <QuestionInput
-                        placeholder={t("multimodalExamples.placeholder")}
+                        placeholder={t("defaultExamples.placeholder")}
                         disabled={isLoading}
                         initQuestion={question}
                         onSend={question => makeApiRequest(question)}
                         showSpeechInput={showSpeechInput}
                     />
                 </div>
-            </div>
+            </section>
             <div className={styles.askBottomSection}>
                 {isLoading && <Spinner label={t("generatingAnswer")} />}
                 {!lastQuestionRef.current && (
                     <div className={styles.askTopSection}>
-                        {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
+                        <div className={styles.askMetaRow}>
+                            {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
+                        </div>
                         <ExampleList onExampleClicked={onExampleClicked} useMultimodalAnswering={showMultimodalOptions} />
                     </div>
                 )}

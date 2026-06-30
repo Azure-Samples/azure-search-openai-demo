@@ -1,25 +1,128 @@
 .languagePicker {
-    word-break: break-word;
-    background: #dbdbdb;
-    border-radius: 0.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-left: 0.3125rem;
-    padding-right: 0.3125rem;
-    margin-bottom: 0.3125rem;
-    cursor: pointer;
+    position: relative;
+    display: inline-flex;
     width: fit-content;
+    z-index: 20;
 }
 
-.languagePicker:hover {
-    box-shadow:
-        0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
-        0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
-    outline: 0.125rem solid rgba(115, 118, 225, 1);
+.languagePickerButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 9.8rem;
+    min-height: 2.4rem;
+    padding: 0 0.85rem;
+    border: 1px solid rgba(31, 58, 75, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+    color: #1f3a4b;
+    cursor: pointer;
+    transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
-.languagePickerIcon {
-    margin-bottom: 0.15625rem;
-    margin-left: 0.125rem;
+.languagePickerButton:hover,
+.languagePickerButton:focus-visible {
+    border-color: rgba(255, 0, 20, 0.28);
+    background: #ffffff;
+    box-shadow: 0 10px 28px rgba(255, 0, 20, 0.08);
+    outline: none;
+}
+
+.languagePickerSvg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: 0 0 auto;
+}
+
+.languagePickerLabel {
+    flex: 1;
+    color: #101828;
+    font: 800 0.92rem Inter, Nunito, ui-sans-serif, system-ui, sans-serif;
+    line-height: 1;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.languagePickerCaret {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-right: 1.7px solid #1f3a4b;
+    border-bottom: 1.7px solid #1f3a4b;
+    transform: rotate(45deg) translateY(-0.1rem);
+    opacity: 0.72;
+    flex: 0 0 auto;
+}
+
+.languagePickerMenu {
+    position: absolute;
+    top: calc(100% + 0.55rem);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(16.5rem, calc(100vw - 2rem));
+    max-height: 18rem;
+    overflow-y: auto;
+    padding: 0.45rem;
+    border: 1px solid rgba(31, 58, 75, 0.12);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 18px 48px rgba(17, 24, 39, 0.14);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.languagePickerOption {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 2.35rem;
+    padding: 0.55rem 0.72rem;
+    border: 0;
+    border-radius: 0.72rem;
+    background: transparent;
+    color: #1f2933;
+    font: 700 0.92rem Inter, Nunito, ui-sans-serif, system-ui, sans-serif;
+    text-align: left;
+    cursor: pointer;
+}
+
+.languagePickerOption:hover,
+.languagePickerOption:focus-visible {
+    background: #fff1f2;
+    color: #a7263d;
+    outline: none;
+}
+
+.languagePickerOptionSelected {
+    background: linear-gradient(135deg, rgba(255, 0, 20, 0.10), rgba(167, 38, 61, 0.10));
+    color: #a7263d;
+}
+
+.languagePickerCheck {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: #ff0014;
+    stroke-width: 2.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: 0 0 auto;
+}
+
+@media (max-width: 520px) {
+    .languagePickerButton {
+        min-width: 9.1rem;
+    }
+
+    .languagePickerMenu {
+        left: 0;
+        transform: none;
+    }
 }

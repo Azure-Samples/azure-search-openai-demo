@@ -1,7 +1,36 @@
-.container {
-    display: flex;
+.button {
+    display: inline-flex;
     align-items: center;
-    gap: 0.375em;
+    gap: 0.45rem;
+    padding: 0.55rem 0.7rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #101828;
+    font: 800 0.95rem Nunito, Inter, ui-sans-serif, system-ui, sans-serif;
     cursor: pointer;
-    padding: 0.5rem;
+    transition: color 160ms ease, background 160ms ease;
+}
+
+.button:hover:not(:disabled),
+.button:focus-visible {
+    color: #ff0014;
+    background: rgba(255, 255, 255, 0.7);
+    outline: none;
+}
+
+.button:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.buttonIcon {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: 0 0 auto;
 }

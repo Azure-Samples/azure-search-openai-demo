@@ -1,6 +1,6 @@
 import { useMsal } from "@azure/msal-react";
 import { getToken, useLogin } from "../../authConfig";
-import { Panel, PanelType, Spinner } from "@fluentui/react";
+import { Spinner } from "@fluentui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { HistoryData, HistoryItem } from "../HistoryItem";
 import { Answers, HistoryProviderOptions } from "../HistoryProviders/IProvider";
@@ -68,22 +68,27 @@ export const HistoryPanel = ({
 
     const { t } = useTranslation();
 
+    if (!isOpen) return null;
+
+    const handleDismiss = () => {
+        onClose();
+        setHistory([]);
+        setHasMoreHistory(true);
+        historyManager.resetContinuationToken();
+    };
+
     return (
-        <Panel
-            type={PanelType.customNear}
-            style={{ padding: "0px" }}
-            headerText={t("history.chatHistory")}
-            customWidth="300px"
-            isBlocking={false}
-            isOpen={isOpen}
-            onDismiss={() => onClose()}
-            onDismissed={() => {
-                setHistory([]);
-                setHasMoreHistory(true);
-                historyManager.resetContinuationToken();
-            }}
-        >
-            <div>
+        <aside className={styles.panel} aria-label={t("history.chatHistory")}>
+            <div className={styles.panelHeader}>
+                <h2 className={styles.panelTitle}>{t("history.chatHistory")}</h2>
+                <button type="button" className={styles.closeButton} onClick={handleDismiss} aria-label="Close chat history">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.closeIcon}>
+                        <path d="M6 6l12 12" />
+                        <path d="M18 6L6 18" />
+                    </svg>
+                </button>
+            </div>
+            <div className={styles.panelBody}>
                 {Object.entries(groupedHistory).map(([group, items]) => (
                     <div key={group} className={styles.group}>
                         <p className={styles.groupLabel}>{t(group)}</p>
@@ -93,10 +98,10 @@ export const HistoryPanel = ({
                     </div>
                 ))}
                 {isLoading && <Spinner style={{ marginTop: "10px" }} />}
-                {history.length === 0 && !isLoading && <p>{t("history.noHistory")}</p>}
+                {history.length === 0 && !isLoading && <p className={styles.emptyState}>{t("history.noHistory")}</p>}
                 {hasMoreHistory && !isLoading && <InfiniteLoadingButton func={loadMoreHistory} />}
             </div>
-        </Panel>
+        </aside>
     );
 };
 

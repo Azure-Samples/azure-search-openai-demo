@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Stack, TextField, Icon } from "@fluentui/react";
+import { Stack, TextField } from "@fluentui/react";
 import { Button, Tooltip } from "@fluentui/react-components";
 import { useTranslation } from "react-i18next";
 
@@ -7,6 +7,14 @@ import styles from "./QuestionInput.module.css";
 import { SpeechInput } from "./SpeechInput";
 import { LoginContext } from "../../loginContext";
 import { requireLogin } from "../../authConfig";
+
+
+const SendIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.sendIcon}>
+    <path d="M4 12h14" />
+    <path d="m13 6 6 6-6 6" />
+  </svg>
+);
 
 interface Props {
   onSend: (question: string) => void;
@@ -87,7 +95,7 @@ export const QuestionInput = ({
         <Tooltip content={t("tooltips.submitQuestion")} relationship="label">
           <Button
             size="large"
-            icon={<Icon iconName="Send" />}
+            icon={<SendIcon />}
             disabled={sendQuestionDisabled}
             onClick={sendQuestion}
           />

@@ -16,7 +16,7 @@
     text-align: left;
     padding: 0;
     margin-right: 4px;
-    background: none;
+    background: transparent;
     border: none;
     cursor: pointer;
 }
@@ -26,19 +26,24 @@
 }
 
 .deleteIcon {
-    width: 20px;
-    height: 20px;
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 .deleteButton {
-    opacity: 0;
+    opacity: 0.72;
     transition: opacity 0.2s;
-    background: none;
+    background: transparent;
     border: none;
     cursor: pointer;
     padding: 4px;
     border-radius: 9999px;
-    color: #6b7280;
+    color: #667085;
 }
 
 .historyItem:hover .deleteButton,
@@ -47,7 +52,7 @@
 }
 
 .deleteButton:hover {
-    color: #111827;
+    color: #ff0014;
 }
 
 .modalOverlay {
@@ -95,7 +100,7 @@
 .modalCancelButton,
 .modalConfirmButton {
     padding: 8px 16px;
-    border-radius: 4px;
+    border-radius: 0.65rem;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -107,7 +112,7 @@
 }
 
 .modalConfirmButton {
-    background-color: #ef4444;
+    background-color: #ff0014;
     color: white;
 }
 
@@ -116,5 +121,5 @@
 }
 
 .modalConfirmButton:hover {
-    background-color: #dc2626;
+    background-color: #a7263d;
 }

@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./HistoryItem.module.css";
-import { DefaultButton, Icon } from "@fluentui/react";
 
 export interface HistoryData {
   id: string;
@@ -14,6 +13,16 @@ interface HistoryItemProps {
   onSelect: (id: string) => void;
   onDelete: (id: string) => void;
 }
+
+const DeleteIcon = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.deleteIcon}>
+    <path d="M6 7h12" />
+    <path d="M9 7V5.8A1.8 1.8 0 0 1 10.8 4h2.4A1.8 1.8 0 0 1 15 5.8V7" />
+    <path d="M8 10v8.2A1.8 1.8 0 0 0 9.8 20h4.4A1.8 1.8 0 0 0 16 18.2V10" />
+    <path d="M10.5 11.5v5" />
+    <path d="M13.5 11.5v5" />
+  </svg>
+);
 
 export function HistoryItem({ item, onSelect, onDelete }: HistoryItemProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,9 +41,10 @@ export function HistoryItem({ item, onSelect, onDelete }: HistoryItemProps) {
       <button
         onClick={() => setIsModalOpen(true)}
         className={styles.deleteButton}
-        aria-label="delete this chat history"
+        aria-label="Delete chat history"
+        title="Delete"
       >
-        <Icon iconName="Delete" className={styles.deleteIcon as any} />
+        <DeleteIcon />
       </button>
 
       <DeleteHistoryModal
@@ -55,8 +65,8 @@ function DeleteHistoryModal({
   onClose: () => void;
   onConfirm: () => void;
 }) {
-  if (!isOpen) return null;
   const { t } = useTranslation();
+  if (!isOpen) return null;
 
   return (
     <div className={styles.modalOverlay}>
@@ -64,12 +74,12 @@ function DeleteHistoryModal({
         <h2 className={styles.modalTitle}>{t("history.deleteModalTitle")}</h2>
         <p className={styles.modalDescription}>{t("history.deleteModalDescription")}</p>
         <div className={styles.modalActions}>
-          <DefaultButton onClick={onClose} className={styles.modalCancelButton}>
+          <button type="button" onClick={onClose} className={styles.modalCancelButton}>
             {t("history.cancelLabel")}
-          </DefaultButton>
-          <DefaultButton onClick={onConfirm} className={styles.modalConfirmButton}>
+          </button>
+          <button type="button" onClick={onConfirm} className={styles.modalConfirmButton}>
             {t("history.deleteLabel")}
-          </DefaultButton>
+          </button>
         </div>
       </div>
     </div>

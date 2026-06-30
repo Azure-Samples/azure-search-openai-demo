@@ -1,11 +1,83 @@
+.panel {
+    position: fixed;
+    top: 4rem;
+    left: 0;
+    bottom: 0;
+    z-index: 45;
+    width: 300px;
+    max-width: 88vw;
+    background: rgba(255, 255, 255, 0.96);
+    border-right: 1px solid rgba(31, 58, 75, 0.10);
+    box-shadow: 18px 0 46px rgba(31, 58, 75, 0.10);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow-y: auto;
+}
+
+.panelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.15rem 1rem 0.75rem;
+    border-bottom: 1px solid rgba(31, 58, 75, 0.08);
+}
+
+.panelTitle {
+    margin: 0;
+    color: #101828;
+    font: 800 1.2rem Nunito, Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.closeButton {
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(31, 58, 75, 0.10);
+    border-radius: 0.65rem;
+    background: #ffffff;
+    color: #1f3a4b;
+    cursor: pointer;
+}
+
+.closeButton:hover,
+.closeButton:focus-visible {
+    color: #ff0014;
+    border-color: rgba(255, 0, 20, 0.22);
+    outline: none;
+}
+
+.closeIcon {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.panelBody {
+    padding: 0.8rem 0.85rem 1.25rem;
+}
+
 .group {
     margin-top: 1rem;
 }
+
 .groupLabel {
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin-top: 0.5rem;
-    margin-bottom: 0.2rem;
+    color: #667085;
+    font: 800 0.78rem Inter, Nunito, ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0.5rem 0 0.4rem;
+}
+
+.emptyState {
+    color: #667085;
+    font-size: 0.95rem;
+    padding: 1rem 0.25rem;
 }
 
 .footer {

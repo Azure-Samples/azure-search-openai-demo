@@ -8,7 +8,7 @@
     "clearChat": "Clear chat",
     "history": {
         "chatHistory": "Chat history",
-        "openChatHistory": "Open chat history",
+        "openChatHistory": "Chat History",
         "noHistory": "No chat history",
         "deleteModalTitle": "Delete chat history",
         "deleteModalDescription": "This action cannot be undone. Delete this chat history?",
@@ -33,26 +33,24 @@
         "fileDeleted": "File deleted"
     },
     "developerSettings": "Developer settings",
-
-      "chatEmptyStateTitle": "MobiAI",
-    "chatEmptyStateSubtitle": "Please choose your language",
+    "chatEmptyStateTitle": "MobiAI",
+    "chatEmptyStateSubtitle": "",
     "defaultExamples": {
         "1": "Get payment instructions",
         "2": "Data package types and purchase instructions",
         "3": "Monpay application",
-        "placeholder": "Please type your question (for example: I’d like to get the opening hours of the branch located in Bayangol district)"
+        "placeholder": "Ask about MobiCom products and services"
     },
-    "askTitle": "Mobi AI",
+    "askTitle": "MobiAI",
     "gpt4vExamples": {
         "1": "Get payment instructions",
         "2": "Data package types and purchase instructions",
         "3": "Monpay application",
-        "placeholder": "Example: I’d like to get the opening hours of the branch located in Bayangol district"
+        "placeholder": "Ask about MobiCom products and services"
     },
     "generatingAnswer": "Generating answer",
     "citationWithColon": "Citation:",
     "followupQuestions": "Follow-up questions:",
-
     "tooltips": {
         "submitQuestion": "Submit question",
         "askWithVoice": "Ask question with voice",
@@ -65,13 +63,11 @@
         "copy": "Copy",
         "copied": "Copied!"
     },
-
-    "headerTexts":{
+    "headerTexts": {
         "thoughtProcess": "Thought Process",
         "supportingContent": "Supporting Content",
         "citation": "Citation"
     },
-
     "labels": {
         "toggleMenu": "Toggle menu",
         "languagePicker": "Select your language",
@@ -133,40 +129,26 @@
         "useGroupsSecurityFilter": "Use groups security filter",
         "shouldStream": "Stream chat completion responses"
     },
-
     "helpTexts": {
-        "promptTemplate":
-            "Overrides the prompt used to generate the answer based on the question and search results. To append to existing prompt instead of replace whole prompt, start your prompt with '>>>'.",
-        "temperature":
-            "Sets the temperature of the request to the LLM that generates the answer. Higher temperatures result in more creative responses, but they may be less grounded.",
+        "promptTemplate": "Overrides the prompt used to generate the answer based on the question and search results. To append to existing prompt instead of replace whole prompt, start your prompt with '>>>'.",
+        "temperature": "Sets the temperature of the request to the LLM that generates the answer. Higher temperatures result in more creative responses, but they may be less grounded.",
         "seed": "Sets a seed to improve the reproducibility of the model's responses. The seed can be any integer.",
-        "searchScore":
-             "Sets a minimum score for search results coming back from Azure AI search. The score range depends on whether you're using hybrid (default), vectors only, or text only.",
-        "rerankerScore":
-             "Sets a minimum score for search results coming back from the semantic reranker. The score always ranges between 0-4. The higher the score, the more semantically relevant the result is to the question.",
-        "retrieveNumber":
-             "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
-        "agenticReasoningEffort":
-            "Controls the amount of reasoning the agent uses while planning retrieval subqueries. Higher effort can improve recall at the cost of additional latency and tokens.",
-        "includeCategory":
-            "Specifies a category to include in the search results. There are no categories used in the default data set.",
-         "excludeCategory":
-            "Specifies a category to exclude from the search results. There are no categories used in the default data set.",
-         "useSemanticReranker":
-            "Enables the Azure AI Search semantic ranker, a model that re-ranks search results based on semantic similarity to the user's query.",
-        "useQueryRewriting":
-            "Enables Azure AI Search query rewriting, a process that modifies the user's query to improve search results. Requires semantic ranker to be enabled.",
-        "reasoningEffort":
-            "Sets the reasoning effort for the LLM. Higher values result in more reasoning, but may take longer to generate a response. The default is medium.",
-        "useSemanticCaptions":
-             "Sends semantic captions to the LLM instead of the full search result. A semantic caption is extracted from a search result during the process of semantic ranking.",
+        "searchScore": "Sets a minimum score for search results coming back from Azure AI search. The score range depends on whether you're using hybrid (default), vectors only, or text only.",
+        "rerankerScore": "Sets a minimum score for search results coming back from the semantic reranker. The score always ranges between 0-4. The higher the score, the more semantically relevant the result is to the question.",
+        "retrieveNumber": "Sets the number of search results to retrieve from Azure AI search. More results may increase the likelihood of finding the correct answer, but may lead to the model getting 'lost in the middle'.",
+        "agenticReasoningEffort": "Controls the amount of reasoning the agent uses while planning retrieval subqueries. Higher effort can improve recall at the cost of additional latency and tokens.",
+        "includeCategory": "Specifies a category to include in the search results. There are no categories used in the default data set.",
+        "excludeCategory": "Specifies a category to exclude from the search results. There are no categories used in the default data set.",
+        "useSemanticReranker": "Enables the Azure AI Search semantic ranker, a model that re-ranks search results based on semantic similarity to the user's query.",
+        "useQueryRewriting": "Enables Azure AI Search query rewriting, a process that modifies the user's query to improve search results. Requires semantic ranker to be enabled.",
+        "reasoningEffort": "Sets the reasoning effort for the LLM. Higher values result in more reasoning, but may take longer to generate a response. The default is medium.",
+        "useSemanticCaptions": "Sends semantic captions to the LLM instead of the full search result. A semantic caption is extracted from a search result during the process of semantic ranking.",
         "suggestFollowupQuestions": "Asks the LLM to suggest follow-up questions based on the user's query.",
         "textEmbeddings": "When selected, search will use embeddings from the text-only embeddings model of extracted text chunks.",
         "imageEmbeddings": "When selected, search will use embeddings from the multimodal embeddings model of extracted images.",
         "llmTextInputs": "When selected, text content from the search results will be sent to the LLM as context.",
         "llmImageInputs": "When selected, images from the search results will be sent to the LLM as context.",
-        "retrievalMode":
-            "Sets the retrieval mode for the Azure AI Search query. `Vectors + Text (Hybrid)` uses a combination of vector search and full text search, `Vectors` uses only vector search, and `Text` uses only full text search. Hybrid is generally optimal.",
+        "retrievalMode": "Sets the retrieval mode for the Azure AI Search query. `Vectors + Text (Hybrid)` uses a combination of vector search and full text search, `Vectors` uses only vector search, and `Text` uses only full text search. Hybrid is generally optimal.",
         "streamChat": "Continuously streams the response to the chat UI as it is generated.",
         "useOidSecurityFilter": "Filter search results based on the authenticated user's OID.",
         "useGroupsSecurityFilter": "Filter search results based on the authenticated user's groups.",
@@ -174,8 +156,14 @@
         "useWebSource": "Augment retrieval with web search results alongside your indexed data set.",
         "useSharePointSource": "Augment retrieval with SharePoint content alongside your indexed data set."
     },
-
     "overallSettings": "Overall settings",
     "searchSettings": "Search settings",
-    "llmSettings": "LLM settings"
+    "llmSettings": "LLM settings",
+    "askSubtitle": "Single answer mode",
+    "multimodalExamples": {
+        "1": "Get payment instructions",
+        "2": "Data package types and purchase instructions",
+        "3": "Monpay application",
+        "placeholder": "Ask about MobiCom products and services"
+    }
 }

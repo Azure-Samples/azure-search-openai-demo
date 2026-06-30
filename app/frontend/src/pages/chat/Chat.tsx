@@ -496,15 +496,23 @@ const Chat = () => {
             <div className={styles.chatRoot} style={{ marginLeft: isHistoryPanelOpen ? "300px" : "0" }}>
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
-                        <div className={styles.chatEmptyState}>
-                            <img src={appLogo} width="120" height="120" alt="App Logo" />
-
-                            <h1 className={styles.chatEmptyStateTitle}>{t("chatEmptyStateTitle")}</h1>
-                            <h2 className={styles.chatEmptyStateSubtitle}>{t("chatEmptyStateSubtitle")}</h2>
-                            {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
-
+                        <section className={styles.chatEmptyState} aria-labelledby="mobi-ai-heading">
+                            <img src={appLogo} width="128" height="128" alt="MobiAI logo" className={styles.heroLogo} />
+                            <h1 id="mobi-ai-heading" className={styles.chatEmptyStateTitle}>{t("chatEmptyStateTitle")}</h1>
+                            <div className={styles.heroInput}>
+                                <QuestionInput
+                                    clearOnSend
+                                    placeholder={t("defaultExamples.placeholder")}
+                                    disabled={isLoading}
+                                    onSend={question => makeApiRequest(question)}
+                                    showSpeechInput={showSpeechInput}
+                                />
+                            </div>
+                            <div className={styles.heroMetaRow}>
+                                {showLanguagePicker && <LanguagePicker onLanguageChange={newLang => i18n.changeLanguage(newLang)} />}
+                            </div>
                             <ExampleList onExampleClicked={onExampleClicked} useMultimodalAnswering={showMultimodalOptions} />
-                        </div>
+                        </section>
                     ) : (
                         <div className={styles.chatMessageStream}>
                             {isStreaming &&
@@ -573,15 +581,17 @@ const Chat = () => {
                         </div>
                     )}
 
-                    <div className={styles.chatInput}>
-                        <QuestionInput
-                            clearOnSend
-                            placeholder={t("defaultExamples.placeholder")}
-                            disabled={isLoading}
-                            onSend={question => makeApiRequest(question)}
-                            showSpeechInput={showSpeechInput}
-                        />
-                    </div>
+                    {lastQuestionRef.current && (
+                        <div className={styles.chatInput}>
+                            <QuestionInput
+                                clearOnSend
+                                placeholder={t("defaultExamples.placeholder")}
+                                disabled={isLoading}
+                                onSend={question => makeApiRequest(question)}
+                                showSpeechInput={showSpeechInput}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {answers.length > 0 && activeAnalysisPanelTab && (

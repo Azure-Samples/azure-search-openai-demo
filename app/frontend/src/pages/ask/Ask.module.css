@@ -2,14 +2,77 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    margin-top: 1rem;
+    width: 100%;
 }
 
 .askTopSection {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: min(100%, 78rem);
+    margin: 0 auto;
+    padding: clamp(2rem, 5vh, 4rem) 1.25rem 0;
+    text-align: center;
+}
+
+.commandsContainer {
     width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 2rem;
+    margin-bottom: 1rem;
+}
+
+.commandButton {
+    margin: 0;
+}
+
+.askHeroBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    border: 1px solid rgba(255, 0, 20, 0.17);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.68);
+    color: #a7263d;
+    font-size: 0.82rem;
+    font-weight: 720;
+    padding: 0.42rem 0.78rem;
+    box-shadow: 0 8px 24px rgba(17, 24, 39, 0.05);
+}
+
+.appLogo {
+    margin-top: 0;
+    width: 132px;
+    height: 132px;
+    border-radius: 999px;
+    object-fit: contain;
+    filter: drop-shadow(0 18px 32px rgba(255, 0, 20, 0.18));
+}
+
+.askTitle {
+    margin: 0.9rem 0 0;
+    color: #101828;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 850;
+    letter-spacing: -0.07em;
+    line-height: 0.95;
+}
+
+.askSubtitle {
+    max-width: 42rem;
+    margin: 1rem auto 0;
+    color: #475467;
+    font-size: clamp(1rem, 1.45vw, 1.18rem);
+    font-weight: 560;
+    line-height: 1.55;
+}
+
+.askQuestionInput {
+    width: min(100%, 64rem);
+    margin-top: 2rem;
 }
 
 .askBottomSection {
@@ -18,32 +81,20 @@
     flex-wrap: wrap;
     justify-content: center;
     align-content: flex-start;
-    width: 100%;
-    margin-top: 1.25rem;
-}
-
-.askTitle {
-    font-size: 2.75rem;
-    font-weight: 600;
-    margin-top: 0;
-}
-
-.askQuestionInput {
-    padding: 1rem;
-    width: 100%;
-    max-width: 64.25rem;
+    width: min(100%, 92rem);
+    margin: 1.2rem auto 0;
+    padding: 0 1.25rem 2rem;
 }
 
 .askAnswerContainer {
-    max-width: 50rem;
+    max-width: 58rem;
     width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 1rem 0;
 }
 
 .askAnalysisPanel {
-    width: 37.5rem;
-    margin-left: 1.25rem;
+    width: min(100%, 37.5rem);
+    margin: 1rem 0 0 1.25rem;
 }
 
 .askSettingsSeparator {
@@ -58,30 +109,60 @@
     margin-top: 1.25rem;
 }
 
-.commandsContainer {
+.askMetaRow {
     display: flex;
-    padding-left: 9rem;
-    padding-right: 1rem;
-    align-self: flex-end;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
 }
 
-.commandButton {
-    margin-bottom: 1.25rem;
+.askHint {
+    display: inline-flex;
+    width: fit-content;
+    border: 1px solid rgba(255, 0, 20, 0.17);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.56);
+    color: #1f3a4b;
+    font-size: 0.82rem;
+    font-weight: 650;
+    padding: 0.42rem 0.78rem;
 }
 
-@media (min-width: 992px) {
-    .askTitle {
-        font-size: 4rem;
-        margin-top: 8.125rem;
+@media (max-width: 767px) {
+    .askTopSection {
+        padding-top: 1.25rem;
     }
 
-    .commandsContainer {
-        padding-left: 0;
-        padding-right: 0;
+    .askHeroBadge,
+    .askHint {
+        display: none;
     }
 
-    .commandButton {
-        margin-right: 1.25rem;
-        margin-bottom: 1.25rem;
+    .appLogo {
+        width: 98px;
+        height: 98px;
+        margin-top: 0.5rem;
     }
+
+    .askAnalysisPanel {
+        margin-left: 0;
+    }
+}
+
+
+.askTitle {
+    font-family: Nunito, Inter, ui-sans-serif, system-ui, sans-serif !important;
+}
+
+.askHeroBadge::before,
+.askHint::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-right: 0.42rem;
+    border-radius: 999px;
+    background: #ff0014;
+    box-shadow: 0 0 0 0.22rem rgba(255, 0, 20, 0.08);
 }

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Stack, IconButton } from "@fluentui/react";
+import { Stack } from "@fluentui/react";
 import { useTranslation } from "react-i18next";
 import DOMPurify from "dompurify";
 import ReactMarkdown from "react-markdown";
@@ -7,11 +7,32 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
 import styles from "./Answer.module.css";
-import { ChatAppResponse, getCitationFilePath, SpeechConfig } from "../../api";
+import { ChatAppResponse, SpeechConfig } from "../../api";
 import { parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
 import { SpeechOutputAzure } from "./SpeechOutputAzure";
+
+
+const CopyIcon = () => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.copyIcon}>
+        <path d="M8 8.5h8.2A1.8 1.8 0 0 1 18 10.3v8A1.8 1.8 0 0 1 16.2 20h-8A1.8 1.8 0 0 1 6.4 18.2v-8A1.8 1.8 0 0 1 8 8.5Z" />
+        <path d="M10 5h6.2A2.8 2.8 0 0 1 19 7.8V14" />
+    </svg>
+);
+
+const CheckIcon = () => (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.copyIcon}>
+        <path d="m5 12.5 4.2 4.2L19 7" />
+    </svg>
+);
+
+const removeCitationMarkup = (html: string) => {
+    const tempElement = document.createElement("div");
+    tempElement.innerHTML = html;
+    tempElement.querySelectorAll(".citationBadgeContainer, .supContainer, sup").forEach(node => node.remove());
+    return tempElement.innerHTML;
+};
 
 interface Props {
     answer: ChatAppResponse;
@@ -48,22 +69,46 @@ export const Answer = ({
 
     const { t } = useTranslation();
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
+    const displayAnswerHtml = useMemo(() => removeCitationMarkup(sanitizedAnswerHtml), [sanitizedAnswerHtml]);
     const [copied, setCopied] = useState(false);
 
-    const handleCopy = () => {
+    const handleCopy = async () => {
         const tempElement = document.createElement("div");
-        tempElement.innerHTML = sanitizedAnswerHtml;
-        tempElement.querySelectorAll("sup").forEach(node => node.remove());
-        tempElement.querySelectorAll(".citationStepBadge").forEach(node => node.remove());
-        const textToCopy = tempElement.textContent ?? "";
+        tempElement.innerHTML = displayAnswerHtml;
+        tempElement.querySelectorAll("sup, .citationStepBadge, .citationBadgeContainer, .supContainer").forEach(node => node.remove());
+        tempElement.style.position = "fixed";
+        tempElement.style.left = "-9999px";
+        tempElement.style.top = "0";
+        document.body.appendChild(tempElement);
+        const textToCopy = (tempElement.innerText || tempElement.textContent || "").trim();
+        document.body.removeChild(tempElement);
 
-        navigator.clipboard
-            .writeText(textToCopy)
-            .then(() => {
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-            })
-            .catch(err => console.error("Failed to copy text: ", err));
+        if (!textToCopy) {
+            return;
+        }
+
+        try {
+            if (navigator.clipboard?.writeText && window.isSecureContext) {
+                await navigator.clipboard.writeText(textToCopy);
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                textArea.setAttribute("readonly", "");
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                textArea.style.top = "0";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+            }
+
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error("Failed to copy text: ", err);
+        }
     };
 
     return (
@@ -75,14 +120,15 @@ export const Answer = ({
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
                     <div>
-                        {/* ЗӨВХӨН COPY ТОВЧ ҮЛДЭВ */}
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: copied ? "CheckMark" : "Copy" }}
+                        <button
+                            type="button"
+                            className={styles.copyButton}
                             title={copied ? t("tooltips.copied") : t("tooltips.copy")}
-                            ariaLabel={copied ? t("tooltips.copied") : t("tooltips.copy")}
+                            aria-label={copied ? t("tooltips.copied") : t("tooltips.copy")}
                             onClick={handleCopy}
-                        />
+                        >
+                            {copied ? <CheckIcon /> : <CopyIcon />}
+                        </button>
 
                         {showSpeechOutputAzure && (
                             <SpeechOutputAzure
@@ -103,74 +149,13 @@ export const Answer = ({
             <Stack.Item grow>
                 <div className={styles.answerText}>
                     <ReactMarkdown
-                        children={sanitizedAnswerHtml}
+                        children={displayAnswerHtml}
                         rehypePlugins={[rehypeRaw]}
                         remarkPlugins={[remarkGfm]}
                     />
                 </div>
             </Stack.Item>
 
-            {!!parsedAnswer.citations.length && (
-                <Stack.Item>
-                    <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
-                        <span className={styles.citationLearnMore}>
-                            {t("citationWithColon")}
-                        </span>
-
-                        {parsedAnswer.citations.map(citation => {
-                            const isWeb = citation.isWeb;
-                            const displayIndex = citation.index;
-                            const reference = citation.reference;
-
-                            if (isWeb) {
-                                const webEntry =
-                                    answer.context.data_points.external_results_metadata?.find(
-                                        w => w.url === reference
-                                    );
-                                const titleOrUrl = webEntry?.title?.trim()
-                                    ? webEntry.title
-                                    : reference;
-
-                                return (
-                                    <span
-                                        key={`${reference}-${displayIndex}`}
-                                        className={styles.citationEntry}
-                                    >
-                                        <a
-                                            className={styles.citation}
-                                            title={reference}
-                                            href={reference}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {`${displayIndex}. ${titleOrUrl}`}
-                                        </a>
-                                    </span>
-                                );
-                            } else {
-                                const path = getCitationFilePath(reference);
-                                return (
-                                    <span
-                                        key={`${reference}-${displayIndex}`}
-                                        className={styles.citationEntry}
-                                    >
-                                        <a
-                                            className={styles.citation}
-                                            title={reference}
-                                            onClick={e => {
-                                                e.preventDefault();
-                                                onCitationClicked(path);
-                                            }}
-                                        >
-                                            {`${displayIndex}. ${reference}`}
-                                        </a>
-                                    </span>
-                                );
-                            }
-                        })}
-                    </Stack>
-                </Stack.Item>
-            )}
 
             {!!followupQuestions?.length &&
                 showFollowupQuestions &&
@@ -180,7 +165,7 @@ export const Answer = ({
                             horizontal
                             wrap
                             className={`${
-                                !!parsedAnswer.citations.length
+                                false
                                     ? styles.followupQuestionsList
                                     : ""
                             }`}

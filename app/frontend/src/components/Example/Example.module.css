@@ -1,68 +1,84 @@
 .examplesNavList {
+    width: min(100%, 64rem);
     list-style: none;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.625rem;
-    flex: 1;
-    justify-content: center;
-}
-
-.example {
-    word-break: break-word;
-    background: #dbdbdb;
-    border-radius: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0.3125rem;
-    cursor: pointer;
-}
-
-.example:hover {
-    box-shadow:
-        0rem 0.5rem 1rem rgba(0, 0, 0, 0.14),
-        0rem 0rem 0.125rem rgba(0, 0, 0, 0.12);
-    outline: 0.125rem solid rgba(115, 118, 225, 1);
-}
-
-.exampleText {
+    padding: 0;
     margin: 0;
-    font-size: 1.25rem;
-    width: 25rem;
-    padding: 0.5rem;
-    min-height: 4.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
 }
 
 .examplesNavList li {
-    display: none;
+    display: block;
+    min-width: 0;
 }
 
-.examplesNavList li:nth-of-type(1),
-.examplesNavList li:nth-of-type(2) {
-    display: block; /* Default to showing two list items */
+.example {
+    position: relative;
+    min-height: 5.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid rgba(31, 58, 75, 0.1);
+    border-radius: 1.15rem;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.78));
+    box-shadow: 0 14px 38px rgba(31, 58, 75, 0.08);
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+    overflow: hidden;
 }
 
-@media only screen and (min-width: 992px) {
+.example::before {
+    content: "";
+    position: absolute;
+    inset: auto -2.5rem -3.2rem auto;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255, 0, 20, 0.08), transparent 68%);
+    pointer-events: none;
+}
+
+.example:hover,
+.example:focus-visible {
+    transform: translateY(-2px);
+    border-color: rgba(255, 0, 20, 0.22);
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 20px 50px rgba(31, 58, 75, 0.13);
+}
+
+.exampleText {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: #101828;
+    font-family: Nunito, Inter, ui-sans-serif, system-ui, sans-serif !important;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    text-align: left;
+}
+
+.exampleArrow {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    color: #1f3a4b;
+    font-size: 1.1rem;
+    transition: transform 180ms ease, color 180ms ease;
+}
+
+.example:hover .exampleArrow,
+.example:focus-visible .exampleArrow {
+    transform: translateX(3px);
+    color: #ff0014;
+}
+
+@media (min-width: 768px) {
     .examplesNavList {
-        flex-direction: row; /* Switch to row layout for wider screens */
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-    .example {
-        margin-bottom: 0.3125rem;
-        padding: 1.25rem;
-    }
-
-    .examplesNavList li:nth-of-type(2),
-    .examplesNavList li:nth-of-type(3) {
-        display: block; /* Show an additional list item for medium heights */
-    }
-    .exampleText {
-        font-size: 1.375rem;
-        width: 17.5rem;
-        padding: 0;
-        min-height: 6.25rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }

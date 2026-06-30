@@ -1,10 +1,9 @@
 .answerContainer {
-    padding: 1.25em;
-    background: rgb(249, 249, 249);
-    border-radius: 0.5em;
-    box-shadow:
-        0em 0.125em 0.25em rgba(0, 0, 0, 0.14),
-        0em 0em 0.125em rgba(0, 0, 0, 0.12);
+    padding: 1.15rem 1.2rem;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    border-radius: 1.2rem 1.2rem 1.2rem 0.35rem;
+    box-shadow: 0 16px 45px rgba(17, 24, 39, 0.08);
     outline: transparent solid 0.0625em;
 }
 
@@ -13,53 +12,65 @@
 }
 
 .answerText {
+    color: #101828;
     font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.375em;
-    padding-top: 1em;
-    padding-bottom: 1em;
+    font-weight: 450;
+    line-height: 1.65;
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
 }
 
 .answerText h1,
-h2,
-h2 {
-    font-size: 1rem;
-    font-weight: bold;
+.answerText h2,
+.answerText h3 {
+    color: #101828;
+    font-size: 1.05rem;
+    font-weight: 800;
 }
 
 .answerText table {
+    width: 100%;
     border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 0.75rem;
 }
 
 .answerText td,
 .answerText th {
-    border: 1px solid;
-    padding: 0.3125em;
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    padding: 0.5em;
 }
 
 .selected {
-    outline: 0.125em solid rgba(115, 118, 225, 1);
+    outline: 0.125em solid rgba(255, 0, 20, 0.24);
 }
 
-.citationLearnMore {
+.citationLearnMore,
+.followupQuestionLearnMore {
     margin-right: 0.3125em;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.5em;
 }
 
-.citation {
-    font-weight: 500;
+.citation,
+.followupQuestion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.12rem;
+    border-radius: 999px;
+    padding: 0.2em 0.65em;
+    background: #eef2ff;
+    color: #1d4ed8;
+    font-weight: 700;
     line-height: 1.5em;
     text-align: center;
-    border-radius: 0.25em;
-    padding: 0em 0.5em;
-    background: #d1dbfa;
-    color: #123bb6;
     text-decoration: none;
     cursor: pointer;
 }
 
-.citation:hover {
+.citation:hover,
+.followupQuestion:hover {
     text-decoration: underline;
 }
 
@@ -67,23 +78,10 @@ h2 {
     margin-top: 0.625em;
 }
 
-.followupQuestionLearnMore {
-    margin-right: 0.3125em;
-    font-weight: 600;
-    line-height: 1.5em;
-}
-
 .followupQuestion {
-    font-weight: 600;
-    line-height: 1.5em;
-    text-align: center;
-    border-radius: 0.25em;
-    padding: 0em 0.5em;
-    background: #e8ebfa;
-    color: black;
-    font-style: italic;
-    text-decoration: none;
-    cursor: pointer;
+    background: #fff1f2;
+    color: #be123c;
+    font-style: normal;
 }
 
 .supContainer {
@@ -113,15 +111,15 @@ sup {
     align-items: center;
     justify-content: center;
     font-size: 0.625em;
-    font-weight: 600;
+    font-weight: 700;
     vertical-align: top;
     top: -1;
     margin: 0em 0.125em;
     min-width: 0.875em;
     height: 0.875em;
     border-radius: 0.1875em;
-    background: #d1dbfa;
-    color: #123bb6;
+    background: #eef2ff;
+    color: #1d4ed8;
     text-decoration-color: transparent;
     outline: transparent solid 0.0625em;
     cursor: pointer;
@@ -134,7 +132,7 @@ sup {
     border-radius: 999px;
     background: #f4f6ff;
     color: #123bb6;
-    font-weight: 600;
+    font-weight: 700;
     border: 0.0625em solid #d1dbfa;
 }
 
@@ -159,24 +157,44 @@ sup {
 }
 
 @keyframes loading {
-    0% {
-        content: "";
-    }
-    25% {
-        content: ".";
-    }
-    50% {
-        content: "..";
-    }
-    75% {
-        content: "...";
-    }
-    100% {
-        content: "";
-    }
+    0% { content: ""; }
+    25% { content: "."; }
+    50% { content: ".."; }
+    75% { content: "..."; }
+    100% { content: ""; }
 }
 
 .loadingdots::after {
     content: "";
     animation: loading 1s infinite;
+}
+
+.copyButton {
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(31, 58, 75, 0.1);
+    border-radius: 0.65rem;
+    background: rgba(255, 255, 255, 0.82);
+    color: #1f3a4b;
+    cursor: pointer;
+    transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+}
+
+.copyButton:hover {
+    border-color: rgba(255, 0, 20, 0.22);
+    background: rgba(255, 255, 255, 0.96);
+    color: #ff0014;
+}
+
+.copyIcon {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
