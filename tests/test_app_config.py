@@ -103,6 +103,18 @@ async def test_app_user_upload_requires_enforce_access_control(monkeypatch, mini
 
 
 @pytest.mark.asyncio
+async def test_app_sharepoint_source_warns_without_enforce_access_control(monkeypatch, minimal_env, caplog):
+    monkeypatch.setenv("USE_SHAREPOINT_SOURCE", "true")
+
+    with caplog.at_level("WARNING"):
+        quart_app = app.create_app()
+        async with quart_app.test_app():
+            pass
+
+    assert "AZURE_ENFORCE_ACCESS_CONTROL must be true when USE_SHAREPOINT_SOURCE is true" in caplog.text
+
+
+@pytest.mark.asyncio
 async def test_app_user_upload_processors_docint(monkeypatch, minimal_env):
     monkeypatch.setenv("AZURE_USERSTORAGE_ACCOUNT", "test-user-storage-account")
     monkeypatch.setenv("AZURE_USERSTORAGE_CONTAINER", "test-user-storage-container")
