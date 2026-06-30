@@ -48,6 +48,7 @@ export interface SettingsProps {
     showWebSourceOption?: boolean;
     useSharePointSource?: boolean;
     showSharePointSourceOption?: boolean;
+    useWebSearch?: boolean;
 }
 
 export const Settings = ({
@@ -90,7 +91,8 @@ export const Settings = ({
     useWebSource = false,
     showWebSourceOption = false,
     useSharePointSource = false,
-    showSharePointSourceOption = false
+    showSharePointSourceOption = false,
+    useWebSearch = false
 }: SettingsProps) => {
     const { t } = useTranslation();
 
@@ -129,6 +131,8 @@ export const Settings = ({
     const shouldStreamFieldId = useId();
     const suggestFollowupQuestionsId = useId();
     const suggestFollowupQuestionsFieldId = useId();
+    const webSearchId = useId();
+    const webSearchFieldId = useId();
 
     const webSourceDisablesStreamingAndFollowup = !!useWebSource;
 
@@ -175,6 +179,21 @@ export const Settings = ({
                     </div>
                 </>
             )}
+
+            <div className={styles.settingsCheckbox}>
+                <Checkbox
+                    id={webSearchFieldId}
+                    checked={useWebSearch}
+                    onChange={(_ev, data) => onChange("useWebSearch", !!data.checked)}
+                    aria-labelledby={webSearchId}
+                />
+                <HelpCallout
+                    labelId={webSearchId}
+                    fieldId={webSearchFieldId}
+                    helpText={t("helpTexts.useWebSearch")}
+                    label={t("labels.useWebSearch")}
+                />
+            </div>
 
             <h3 className={styles.sectionHeader}>{t("searchSettings")}</h3>
 

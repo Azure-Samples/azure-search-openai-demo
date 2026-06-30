@@ -123,6 +123,30 @@ class ChatReadRetrieveReadApproach(Approach):
         )
         response: Response = await cast(Awaitable[Response], response_coroutine)
         content = response.output_text
+
+        # Check for web_search_call items in the response
+        if overrides.get("use_web_search") and response.output:
+            web_search_calls = [
+                item for item in response.output if hasattr(item, "type") and item.type == "web_search_call"
+            ]
+            if web_search_calls:
+                # Extract search queries from web_search_call items
+                search_queries = []
+                for call in web_search_calls:
+                    if hasattr(call, "input") and isinstance(call.input, dict):
+                        query = call.input.get("query", "")
+                        if query:
+                            search_queries.append(query)
+
+                if search_queries:
+                    extra_info.thoughts.append(
+                        ThoughtStep(
+                            title="Web search",
+                            description=f"Searched the web with queries: {', '.join(search_queries)}",
+                            props={"queries": search_queries},
+                        )
+                    )
+
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
@@ -192,6 +216,31 @@ class ChatReadRetrieveReadApproach(Approach):
                 else:
                     yield {"type": "response.output_text.delta", "delta": delta_content}
             elif isinstance(event, ResponseCompletedEvent):
+                # Check for web_search_call items in the response
+                if overrides.get("use_web_search") and event.response.output:
+                    web_search_calls = [
+                        item
+                        for item in event.response.output
+                        if hasattr(item, "type") and item.type == "web_search_call"
+                    ]
+                    if web_search_calls:
+                        # Extract search queries from web_search_call items
+                        search_queries = []
+                        for call in web_search_calls:
+                            if hasattr(call, "input") and isinstance(call.input, dict):
+                                query = call.input.get("query", "")
+                                if query:
+                                    search_queries.append(query)
+
+                        if search_queries:
+                            extra_info.thoughts.append(
+                                ThoughtStep(
+                                    title="Web search",
+                                    description=f"Searched the web with queries: {', '.join(search_queries)}",
+                                    props={"queries": search_queries},
+                                )
+                            )
+
                 if event.response.usage and extra_info.thoughts and self.include_token_usage:
                     extra_info.thoughts[-1].update_token_usage(event.response.usage)
                     yield {"type": "response.context", "context": extra_info, "session_state": session_state}
@@ -272,6 +321,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 "include_follow_up_questions": bool(overrides.get("suggest_followup_questions")),
                 "image_sources": extra_info.data_points.images,
                 "citations": extra_info.data_points.citations,
+                "use_web_search": bool(overrides.get("use_web_search")),
             },
             user_template_path="chat_answer.user.jinja2",
             user_template_variables={
@@ -282,6 +332,12 @@ class ChatReadRetrieveReadApproach(Approach):
             past_messages=messages[:-1],
         )
 
+        # Build tools list for the response - include web_search if enabled
+        tools = []
+        use_web_search = bool(overrides.get("use_web_search"))
+        if use_web_search:
+            tools.append({"type": "web_search"})
+
         response_coroutine = cast(
             Awaitable[Response] | Awaitable[AsyncStream[ResponseStreamEvent]],
             self.create_response(
@@ -291,6 +347,7 @@ class ChatReadRetrieveReadApproach(Approach):
                 overrides,
                 self.get_response_token_limit(self.chatgpt_model, self.RESPONSE_DEFAULT_TOKEN_LIMIT),
                 should_stream,
+                tools=tools if tools else None,
             ),
         )
         extra_info.thoughts.append(
