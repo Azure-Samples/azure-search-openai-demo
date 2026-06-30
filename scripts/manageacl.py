@@ -84,6 +84,8 @@ class ManageAcl:
                 await self.remove_all_acls(search_client)
             elif self.acl_action == "add":
                 await self.add_acl(search_client)
+            elif self.acl_action == "count":
+                await self.count_acls(search_client)
             elif self.acl_action == "update_storage_urls":
                 await self.update_storage_urls(search_client)
             elif self.acl_action == "enable_global_access":
@@ -142,6 +144,14 @@ class ManageAcl:
             await search_client.merge_documents(documents=documents_to_merge)
         else:
             logger.info("Not updating any search documents")
+
+    async def count_acls(self, search_client: SearchClient):
+        acl_counts = {}
+        for document in await self.get_documents(search_client):
+            for acl_value in set(document[self.acl_type]):
+                acl_counts[acl_value] = acl_counts.get(acl_value, 0) + 1
+
+        print(json.dumps(acl_counts, sort_keys=True))
 
     async def get_documents(self, search_client: SearchClient):
         filter = f"storageUrl eq '{self.url}'"
@@ -296,7 +306,16 @@ if __name__ == "__main__":
     parser.add_argument(
         "--acl-action",
         required=False,
-        choices=["remove", "add", "view", "remove_all", "enable_acls", "update_storage_urls", "enable_global_access"],
+        choices=[
+            "remove",
+            "add",
+            "view",
+            "count",
+            "remove_all",
+            "enable_acls",
+            "update_storage_urls",
+            "enable_global_access",
+        ],
         help="Optional. Whether to remove or add the ACL to the document, or enable acls on the index",
     )
     parser.add_argument("--acl", required=False, default=None, help="Optional. Value of ACL to add or remove.")

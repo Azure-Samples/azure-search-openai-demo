@@ -90,6 +90,34 @@ async def test_view_acl(monkeypatch, capsys):
 
 
 @pytest.mark.asyncio
+async def test_count_acls(monkeypatch, capsys):
+    async def mock_search(self, *args, **kwargs):
+        assert kwargs.get("filter") == "storageUrl eq 'https://test.blob.core.windows.net/content/a.txt'"
+        assert kwargs.get("select") == ["id", "oids"]
+        return AsyncSearchResultsIterator(
+            [
+                {"id": 1, "oids": ["OID_SHARED", "OID_UNIQUE_1"]},
+                {"id": 2, "oids": ["OID_SHARED", "OID_UNIQUE_2", "OID_UNIQUE_2"]},
+            ]
+        )
+
+    monkeypatch.setattr(SearchClient, "search", mock_search)
+
+    command = ManageAcl(
+        service_name="SERVICE",
+        index_name="INDEX",
+        url="https://test.blob.core.windows.net/content/a.txt",
+        acl_action="count",
+        acl_type="oids",
+        acl="",
+        credentials=MockAzureCredential(),
+    )
+    await command.run()
+    captured = capsys.readouterr()
+    assert captured.out.strip() == '{"OID_SHARED": 2, "OID_UNIQUE_1": 1, "OID_UNIQUE_2": 1}'
+
+
+@pytest.mark.asyncio
 async def test_remove_acl(monkeypatch, capsys):
     async def mock_search(self, *args, **kwargs):
         assert kwargs.get("filter") == "storageUrl eq 'https://test.blob.core.windows.net/content/a.txt'"
