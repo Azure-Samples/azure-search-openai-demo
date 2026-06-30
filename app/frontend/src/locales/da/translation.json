@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Brug agentisk hentning",
         "useWebSource": "Inkludér websøgning",
         "useSharePointSource": "Inkludér SharePoint-kilde",
+        "useWebSearch": "Aktivér websøgningsfallback",
         "llmInputs": "Input til LLM",
         "llmInputsOptions": {
             "texts": "Tekster",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtrér søgeresultater baseret på den godkendte brugers adgangsgrupper.",
         "useAgenticKnowledgeBase": "Brug agentisk hentning fra Azure AI Search til planlægning af flere forespørgsler. Bruger altid semantisk rangering.",
         "useWebSource": "Udvid hentning med websøgeresultater sammen med dit indekserede datasæt.",
-        "useSharePointSource": "Udvid hentning med SharePoint-indhold sammen med dit indekserede datasæt."
+        "useSharePointSource": "Udvid hentning med SharePoint-indhold sammen med dit indekserede datasæt.",
+        "useWebSearch": "Tillad svarmodellen at bruge Responses API web_search-værktøjet, når indekserede kilder ikke er nok. Slået fra som standard."
     },
     "overallSettings": "Overordnede indstillinger",
     "searchSettings": "Søgeindstillinger",

@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Ajan temelli getirim kullan",
         "useWebSource": "Web aramasını dahil et",
         "useSharePointSource": "SharePoint kaynağını dahil et",
+        "useWebSearch": "Web araması yedeğini etkinleştir",
         "llmInputs": "LLM için Girdiler",
         "llmInputsOptions": {
             "texts": "Metinler",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Kimliği doğrulanmış kullanıcının gruplarına göre arama sonuçlarını filtreler.",
         "useAgenticKnowledgeBase": "Çoklu sorgu planlaması için Azure AI Search'ten agent temelli getirimi kullanın. Her zaman semantik sıralayıcı kullanır.",
         "useWebSource": "İndekslenmiş veri setinizin yanı sıra web arama sonuçlarıyla getirimi genişletin.",
-        "useSharePointSource": "İndekslenmiş veri setinizin yanı sıra SharePoint içeriğiyle getirimi genişletin."
+        "useSharePointSource": "İndekslenmiş veri setinizin yanı sıra SharePoint içeriğiyle getirimi genişletin.",
+        "useWebSearch": "İndekslenmiş kaynaklar yetersiz kaldığında yanıt modelinin Responses API web_search aracını kullanmasına izin verir. Varsayılan olarak kapalıdır."
     },
     "overallSettings": "Genel ayarlar",
     "searchSettings": "Arama ayarları",

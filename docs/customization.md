@@ -53,7 +53,7 @@ The settings can be customized to disable calculating the image vector embedding
 
 #### Making settings overrides permanent
 
-The UI provides a "Developer Settings" menu for customizing the approaches, like disabling semantic ranker or using vector search.
+The UI provides a "Developer Settings" menu for customizing the approaches, like disabling semantic ranker, using vector search, or enabling the optional web-search fallback for answer generation.
 Those settings are passed in the "context" field of the request to the backend, and are not saved permanently.
 However, if you find a setting that you do want to make permanent, there are two approaches:
 

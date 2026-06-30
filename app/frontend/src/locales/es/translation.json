@@ -105,6 +105,7 @@
         "useAgenticKnowledgeBase": "Usar la recuperación agéntica",
         "useWebSource": "Incluir búsqueda web",
         "useSharePointSource": "Incluir fuente de SharePoint",
+        "useWebSearch": "Habilitar respaldo de búsqueda web",
         "llmInputs": "Entradas para LLM",
         "llmInputsOptions": {
             "texts": "Textos",
@@ -154,7 +155,8 @@
         "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado.",
         "useAgenticKnowledgeBase": "Usa la recuperación agéntica de Azure AI Search para la planificación de consultas múltiples. Siempre utiliza el clasificador semántico.",
         "useWebSource": "Potencia la recuperación con resultados de búsqueda web junto con tu conjunto de datos indexado.",
-        "useSharePointSource": "Potencia la recuperación incorporando contenido de SharePoint junto con tu conjunto de datos indexado."
+        "useSharePointSource": "Potencia la recuperación incorporando contenido de SharePoint junto con tu conjunto de datos indexado.",
+        "useWebSearch": "Permite que el modelo de respuesta use la herramienta web_search de Responses API cuando las fuentes indexadas no sean suficientes. Desactivado de forma predeterminada."
     },
     "overallSettings": "Configuración general",
     "searchSettings": "Configuración de búsqueda",

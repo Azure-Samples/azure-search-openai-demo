@@ -96,6 +96,7 @@ const Chat = () => {
     const [webSourceEnabled, setWebSourceEnabled] = useState<boolean>(false);
     const [sharePointSourceSupported, setSharePointSourceSupported] = useState<boolean>(false);
     const [sharePointSourceEnabled, setSharePointSourceEnabled] = useState<boolean>(false);
+    const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
     const [useAgenticKnowledgeBase, setUseAgenticRetrieval] = useState<boolean>(false);
     const [hideMinimalRetrievalReasoningOption, setHideMinimalRetrievalReasoningOption] = useState<boolean>(false);
     const streamingDisabledByOverrides = useAgenticKnowledgeBase && webSourceEnabled;
@@ -297,7 +298,8 @@ const Chat = () => {
                         language: i18n.language,
                         use_agentic_knowledgebase: useAgenticKnowledgeBase,
                         use_web_source: webSourceSupported ? webSourceEnabled : false,
-                        use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false
+                        use_sharepoint_source: sharePointSourceSupported ? sharePointSourceEnabled : false,
+                        use_web_search: useWebSearch
                     }
                 },
                 // AI Chat Protocol: Client must pass on any session state received from the server
@@ -484,6 +486,9 @@ const Chat = () => {
                     return;
                 }
                 setSharePointSourceEnabled(!!value);
+                break;
+            case "useWebSearch":
+                setUseWebSearch(!!value);
                 break;
         }
     };
@@ -724,6 +729,7 @@ const Chat = () => {
                             showWebSourceOption={webSourceSupported}
                             useSharePointSource={sharePointSourceEnabled}
                             showSharePointSourceOption={sharePointSourceSupported}
+                            useWebSearch={useWebSearch}
                             hideMinimalRetrievalReasoningOption={hideMinimalRetrievalReasoningOption}
                             onChange={handleSettingsChange}
                         />

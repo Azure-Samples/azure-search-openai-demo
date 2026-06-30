@@ -43,6 +43,7 @@ from openai.types.responses import (
     ResponseFunctionToolCall,
     ResponseStreamEvent,
     ResponseUsage,
+    ToolParam,
 )
 
 from approaches.promptmanager import PromptManager
@@ -901,7 +902,7 @@ class Approach(ABC):
         multimodal_query_vector = await self.image_embeddings_client.create_embedding_for_text(q)
         return VectorizedQuery(vector=multimodal_query_vector, k=50, fields="images/embedding")
 
-    def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
+    def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, Any]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>
         if override_prompt is None:
             return {}
@@ -954,7 +955,7 @@ class Approach(ABC):
         overrides: dict[str, Any],
         response_token_limit: int,
         should_stream: bool = False,
-        tools: Optional[list[FunctionToolParam]] = None,
+        tools: Optional[list[ToolParam]] = None,
         temperature: Optional[float] = None,
         reasoning_effort: ReasoningEffort = None,
     ) -> Awaitable[Response] | Awaitable[AsyncStream[ResponseStreamEvent]]:
