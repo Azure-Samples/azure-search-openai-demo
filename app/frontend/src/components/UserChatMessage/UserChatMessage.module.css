@@ -8,10 +8,12 @@
 
 .message {
     padding: 1.25em;
-    background: #e8ebfa;
-    border-radius: 0.5em;
+    background: linear-gradient(135deg, #fff7f8 0%, #ffffff 100%);
+    border: 1px solid rgba(255, 0, 20, 0.22);
+    color: #1f2933;
+    border-radius: 0.75em;
     box-shadow:
-        0px 0.125em 0.25em rgba(0, 0, 0, 0.14),
-        0px 0px 0.125em rgba(0, 0, 0, 0.12);
+        0px 0.625em 1.5em rgba(167, 38, 61, 0.10),
+        0px 0.125em 0.25em rgba(0, 0, 0, 0.08);
     outline: transparent solid 0.0625em;
 }
