@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { LocalLanguage24Regular } from "@fluentui/react-icons";
-import { IDropdownOption, Dropdown } from "@fluentui/react";
+import { Icon, IDropdownOption, Dropdown } from "@fluentui/react";
 import { useId } from "@fluentui/react-hooks";
 
 import { supportedLngs } from "./config";
@@ -11,17 +10,17 @@ interface Props {
 }
 
 export const LanguagePicker = ({ onLanguageChange }: Props) => {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
 
-    const handleLanguageChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<string> | undefined) => {
+    const handleLanguageChange = (_ev: React.FormEvent<HTMLDivElement>, option?: IDropdownOption<string>) => {
         onLanguageChange(option?.data || i18n.language);
     };
+
     const languagePickerId = useId("languagePicker");
-    const { t } = useTranslation();
 
     return (
         <div className={styles.languagePicker}>
-            <LocalLanguage24Regular className={styles.languagePickerIcon} />
+            <Icon iconName="Globe" className={styles.languagePickerIcon as any} />
             <Dropdown
                 id={languagePickerId}
                 selectedKey={i18n.language}

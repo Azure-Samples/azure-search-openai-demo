@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "MobiAI",
+    "headerTitle": "MobiAI",
     "chat": "Chat",
     "qa": "Stil et spørgsmål",
     "login": "Log ind",
@@ -33,21 +33,22 @@
         "fileDeleted": "Fil slettet"
     },
     "developerSettings": "Udviklerindstillinger",
-    "chatEmptyStateTitle": "Chat med dine data",
-    "chatEmptyStateSubtitle": "Spørg om hvad som helst eller prøv et eksempel",
+    "chatEmptyStateTitle": "Mobi AI",
+    "chatEmptyStateSubtitle": "Vælg venligst dit sprog",
     "defaultExamples": {
-        "1": "Hvad er inkluderet i min Northwind Health Plus plan, som ikke er i standardplanen?",
-        "2": "Hvordan foregår en medarbejderevaluering?",
-        "3": "Hvad laver en produktchef?",
-        "placeholder": "Skriv et nyt spørgsmål (f.eks. dækker min plan årlige øjenundersøgelser?)"
+      "1": "Få betalingsvejledning",
+      "2": "Datapakketyper og købsvejledning",
+      "3": "Monpay-applikationen",
+      "placeholder": "Skriv venligst dit spørgsmål (for eksempel: Jeg vil gerne kende åbningstiderne for filialen i Bayangol-distriktet)"
     },
-    "askTitle": "Spørg til dine data",
-    "multimodalExamples": {
-        "1": "Sammenlign effekten af renter og BNP på finansmarkederne.",
-        "2": "Hvad er den forventede tendens for S&P 500 indekset over de næste fem år? Sammenlign det med tidligere S&P 500 præstation.",
-        "3": "Kan du identificere nogen korrelation mellem oliepriser og aktiemarkedets tendenser?",
-        "placeholder": "Eksempel: Dækker min plan årlige øjenundersøgelser?"
-    },
+    "askTitle": "Mobi AI",
+    "gpt4vExamples": {
+      "1": "Få betalingsvejledning",
+      "2": "Datapakketyper og købsvejledning",
+      "3": "Monpay-applikationen",
+      "placeholder": "Eksempel: Jeg vil gerne kende åbningstiderne for filialen i Bayangol-distriktet"
+  },
+
     "generatingAnswer": "Genererer svar",
     "citationWithColon": "Kilder:",
     "followupQuestions": "Opfølgende spørgsmål:",

@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "MobiAI",
+    "headerTitle": "MobiAI",
     "chat": "チャット",
     "qa": "一問一答",
     "login": "ログイン",
@@ -34,21 +34,23 @@
     },
     "developerSettings": "高度な設定",
 
-    "chatEmptyStateTitle": "データを用いてチャットを行います",
-    "chatEmptyStateSubtitle": "ご自由にお問い合わせいただくか、もしくは下記のサンプルをお試しください",
+    "chatEmptyStateTitle": "Mobi AI",
+    "chatEmptyStateSubtitle": "言語を選択してください",
     "defaultExamples": {
-        "1": "私が契約中の Northwind Health Plus の標準プランには何が含まれ、何が含まれないのですか？",
-        "2": "パフォーマンス・レビューで何を行いますか？",
-        "3": "プロダクトマネージャーの職務内容について教えてください。",
-        "placeholder": "新しい質問を入力してください (例：私の契約プランは年1回の眼科検診もカバーしていますか？)"
+      "1": "支払い手順を確認する",
+      "2": "データパッケージの種類と購入方法",
+      "3": "Monpayアプリケーション",
+      "placeholder": "質問を入力してください（例：バヤンゴル区にある支店の営業時間を知りたいです）"
     },
-    "askTitle": "データを利用した問い合わせ",
-    "multimodalExamples": {
-        "1": "金融市場における金利とGDPの影響を比較してください。",
-        "2": "S&P 500指数の今後5年間のトレンドを予想してください、そして過去のS&P 500のパフォーマンスと比較してください。",
-        "3": "原油価格と株式市場の動向の間には相関関係があると思いますか？",
-        "placeholder": "例：私の契約プランは年1回の眼科検診もカバーしていますか？"
-    },
+    "askTitle": "Mobi AI",
+    "gpt4vExamples": {
+      "1": "支払い手順を確認する",
+      "2": "データパッケージの種類と購入方法",
+      "3": "Monpayアプリケーション",
+      "placeholder": "例：バヤンゴル区にある支店の営業時間を知りたいです"
+    
+  },
+
     "generatingAnswer": "回答を生成中",
     "citationWithColon": "引用：",
     "followupQuestions": "フォローアップの質問：",

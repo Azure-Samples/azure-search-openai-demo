@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "MobiAI",
+    "headerTitle": "MobiAI",
     "chat": "Chat",
     "qa": "Haz una pregunta",
     "login": "Iniciar sesión",
@@ -34,21 +34,23 @@
     },
     "developerSettings": "Configuración del desarrollador",
 
-    "chatEmptyStateTitle": "Chatea con tus datos",
-    "chatEmptyStateSubtitle": "Pregunta cualquier cosa o prueba un ejemplo",
+     "chatEmptyStateTitle": "Mobi AI",
+    "chatEmptyStateSubtitle": "Por favor, elige tu idioma",
     "defaultExamples": {
-        "1": "¿Qué está incluido en mi plan Northwind Health Plus que no está en el estándar?",
-        "2": "¿Qué sucede en una revisión de rendimiento?",
-        "3": "¿Qué hace un Gerente de producto?",
-        "placeholder": "Escribe una nueva pregunta (por ejemplo, ¿mi plan cubre exámenes anuales de la vista?)"
+      "1": "Obtener instrucciones de pago",
+      "2": "Tipos de paquetes de datos e instrucciones de compra",
+      "3": "Aplicación Monpay",
+      "placeholder": "Escribe tu pregunta (por ejemplo: Quisiera conocer el horario de la sucursal ubicada en el distrito de Bayangol)"
     },
-    "askTitle": "Pregunta a tus datos",
-    "multimodalExamples": {
-        "1": "Compara el impacto de las tasas de interés y el PIB en los mercados financieros.",
-        "2": "¿Cuál es la tendencia esperada para el índice S&P 500 en los próximos cinco años? Compáralo con el rendimiento pasado del S&P 500",
-        "3": "¿Puedes identificar alguna correlación entre los precios del petróleo y las tendencias del mercado de valores?",
-        "placeholder": "Ejemplo: ¿Mi plan cubre exámenes anuales de la vista?"
-    },
+    "askTitle": "Mobi AI",
+    "gpt4vExamples": {
+      "1": "Obtener instrucciones de pago",
+      "2": "Tipos de paquetes de datos e instrucciones de compra",
+      "3": "Aplicación Monpay",
+      "placeholder": "Ejemplo: Quisiera conocer el horario de la sucursal ubicada en el distrito de Bayangol"
+    
+  },
+
     "generatingAnswer": "Generando respuesta",
     "citationWithColon": "Cita:",
     "followupQuestions": "Preguntas de seguimiento:",
