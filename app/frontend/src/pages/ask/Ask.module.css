@@ -166,3 +166,19 @@
     background: #ff0014;
     box-shadow: 0 0 0 0.22rem rgba(255, 0, 20, 0.08);
 }
+/* MobiAI brand loading spinner */
+.askContainer :global(.ms-Spinner-circle) {
+    border-top-color: #ff0014 !important;
+    border-right-color: rgba(255, 0, 20, 0.18) !important;
+    border-bottom-color: rgba(255, 0, 20, 0.18) !important;
+    border-left-color: rgba(255, 0, 20, 0.18) !important;
+}
+
+.askContainer :global(.ms-Spinner-label) {
+    color: #ff0014 !important;
+    font-weight: 650 !important;
+}
+
+.askContainer :global(.ms-Spinner) {
+    color: #ff0014 !important;
+}
