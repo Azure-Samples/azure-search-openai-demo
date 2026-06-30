@@ -5,6 +5,11 @@
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
     "clearChat": "Borrar chat",
+    "exportConversation": {
+        "buttonLabel": "Exportar conversación",
+        "markdown": "Markdown",
+        "json": "JSON"
+    },
     "history": {
         "chatHistory": "Historial de chat",
         "openChatHistory": "Abrir historial de chat",

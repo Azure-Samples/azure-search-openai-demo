@@ -5,6 +5,11 @@
     "login": "Accedi",
     "logout": "Disconnetti",
     "clearChat": "Cancella chat",
+    "exportConversation": {
+        "buttonLabel": "Esporta conversazione",
+        "markdown": "Markdown",
+        "json": "JSON"
+    },
     "history": {
         "chatHistory": "Cronologia chat",
         "openChatHistory": "Apri cronologia chat",

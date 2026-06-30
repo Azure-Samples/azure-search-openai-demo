@@ -27,6 +27,8 @@ import { HistoryProviderOptions, useHistoryManager } from "../../components/Hist
 import { HistoryButton } from "../../components/HistoryButton";
 import { SettingsButton } from "../../components/SettingsButton";
 import { ClearChatButton } from "../../components/ClearChatButton";
+import { ExportButton } from "../../components/ExportButton";
+import { conversationToJSON, conversationToMarkdown, downloadTextFile, exportConversationFilename } from "../../utils/exportConversation";
 import { UploadFile } from "../../components/UploadFile";
 import { useLogin, getToken, requireAccessControl } from "../../authConfig";
 import { useMsal } from "@azure/msal-react";
@@ -365,6 +367,16 @@ const Chat = () => {
         setRestoredQuestion("");
     };
 
+    const onExportMarkdown = () => {
+        if (answers.length === 0) return;
+        downloadTextFile(conversationToMarkdown(answers), exportConversationFilename("md"), "text/markdown;charset=utf-8");
+    };
+
+    const onExportJSON = () => {
+        if (answers.length === 0) return;
+        downloadTextFile(conversationToJSON(answers), exportConversationFilename("json"), "application/json;charset=utf-8");
+    };
+
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
     useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
     useEffect(() => {
@@ -539,6 +551,12 @@ const Chat = () => {
                 </div>
                 <div className={styles.commandsContainer}>
                     <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                    <ExportButton
+                        className={styles.commandButton}
+                        disabled={answers.length === 0 || isLoading}
+                        onExportMarkdown={onExportMarkdown}
+                        onExportJSON={onExportJSON}
+                    />
                     {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
                     <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
                 </div>
