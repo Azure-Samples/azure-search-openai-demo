@@ -5,6 +5,11 @@
     "login": "Inloggen",
     "logout": "Uitloggen",
     "clearChat": "Chat wissen",
+    "exportConversation": {
+        "buttonLabel": "Gesprek exporteren",
+        "markdown": "Markdown",
+        "json": "JSON"
+    },
     "history": {
         "chatHistory": "Chatgeschiedenis",
         "openChatHistory": "Open chatgeschiedenis",

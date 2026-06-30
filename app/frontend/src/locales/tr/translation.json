@@ -5,6 +5,11 @@
     "login": "Giriş yap",
     "logout": "Çıkış yap",
     "clearChat": "Sohbeti temizle",
+    "exportConversation": {
+        "buttonLabel": "Konuşmayı dışa aktar",
+        "markdown": "Markdown",
+        "json": "JSON"
+    },
     "history": {
         "chatHistory": "Sohbet geçmişi",
         "openChatHistory": "Sohbet geçmişini aç",

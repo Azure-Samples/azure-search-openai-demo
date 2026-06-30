@@ -5,6 +5,11 @@
     "login": "Log ind",
     "logout": "Log ud",
     "clearChat": "Ryd chat",
+    "exportConversation": {
+        "buttonLabel": "Eksportér samtale",
+        "markdown": "Markdown",
+        "json": "JSON"
+    },
     "history": {
         "chatHistory": "Chathistorik",
         "openChatHistory": "Åbn chathistorik",

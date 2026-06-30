@@ -163,6 +163,64 @@ def test_chat(sized_page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Clear chat")).to_be_disabled()
 
 
+def test_chat_export_conversation(page: Page, live_server_url: str):
+    """Test that the conversation can be exported as Markdown and JSON."""
+
+    # Set up a mock route to the /chat endpoint with streaming results
+    def handle(route: Route):
+        # Read the JSONL from our snapshot results and return as the response
+        f = open("tests/snapshots/test_app/test_chat_stream_text/client0/result.jsonlines")
+        jsonl = f.read()
+        f.close()
+        route.fulfill(body=jsonl, status=200, headers={"Transfer-encoding": "Chunked"})
+
+    page.route("*/**/chat/stream", handle)
+
+    page.goto(live_server_url)
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+
+    # Export button is disabled until there is at least one answer
+    expect(page.get_by_role("button", name="Export conversation")).to_be_disabled()
+
+    # Ask a question and wait for the answer
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_role("button", name="Submit question").click()
+    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+    # Export button becomes enabled once there is an answer
+    expect(page.get_by_role("button", name="Export conversation")).to_be_enabled()
+
+    # Export as Markdown
+    page.get_by_role("button", name="Export conversation").click()
+    with page.expect_download() as download_info:
+        page.get_by_role("menuitem", name="Markdown").click()
+    markdown_download = download_info.value
+    assert markdown_download.suggested_filename.endswith(".md")
+    with open(markdown_download.path(), encoding="utf-8") as f:
+        markdown_content = f.read()
+    assert "## You" in markdown_content
+    assert "Whats the dental plan?" in markdown_content
+    assert "## Assistant" in markdown_content
+    assert "The capital of France is Paris." in markdown_content
+    assert "### Citations" in markdown_content
+    assert "Benefit_Options-2.pdf" in markdown_content
+
+    # Export as JSON
+    page.get_by_role("button", name="Export conversation").click()
+    with page.expect_download() as download_info:
+        page.get_by_role("menuitem", name="JSON").click()
+    json_download = download_info.value
+    assert json_download.suggested_filename.endswith(".json")
+    with open(json_download.path(), encoding="utf-8") as f:
+        json_content = json.load(f)
+    assert json_content[0][0] == "Whats the dental plan?"
+    assert "The capital of France is Paris." in json_content[0][1]["output_text"]
+    assert json_content[0][1]["context"]["data_points"]["citations"] == ["Benefit_Options-2.pdf"]
+
+
 def test_chat_stop_button_visibility(page: Page, live_server_url: str):
     """Test that the stop button feature works without breaking the chat flow.
 
