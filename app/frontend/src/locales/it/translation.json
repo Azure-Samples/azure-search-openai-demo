@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "MobiAI",
+    "headerTitle": "MobiAI",
     "chat": "Chat",
     "qa": "Fai una domanda",
     "login": "Accedi",
@@ -34,21 +34,22 @@
     },
     "developerSettings": "Impostazioni sviluppatore",
 
-    "chatEmptyStateTitle": "Chatta con i tuoi dati",
-    "chatEmptyStateSubtitle": "Chiedi qualsiasi cosa o prova un esempio",
+     "chatEmptyStateTitle": "Mobi AI",
+    "chatEmptyStateSubtitle": "Per favore, scegli la tua lingua",
     "defaultExamples": {
-        "1": "Cosa è incluso nel mio piano Northwind Health Plus che non è nello standard?",
-        "2": "Cosa succede durante una valutazione delle prestazioni?",
-        "3": "Cosa fa un Product Manager?",
-        "placeholder": "Digita una nuova domanda (es. il mio piano copre gli esami oculistici annuali?)"
+      "1": "Ottieni le istruzioni di pagamento",
+      "2": "Tipi di pacchetti dati e istruzioni per l’acquisto",
+      "3": "Applicazione Monpay",
+      "placeholder": "Scrivi la tua domanda (ad esempio: Vorrei conoscere gli orari di apertura della filiale situata nel distretto di Bayangol)"
     },
-    "askTitle": "Chiedi ai tuoi dati",
-    "multimodalExamples": {
-        "1": "Confronta l'impatto dei tassi di interesse e del PIL sui mercati finanziari.",
-        "2": "Qual è la tendenza prevista per l'indice S&P 500 nei prossimi cinque anni? Confrontalo con le performance passate dell'S&P 500",
-        "3": "Puoi identificare una correlazione tra i prezzi del petrolio e le tendenze del mercato azionario?",
-        "placeholder": "Esempio: Il mio piano copre gli esami oculistici annuali?"
+    "askTitle": "Mobi AI",
+    "gpt4vExamples": {
+      "1": "Ottieni le istruzioni di pagamento",
+      "2": "Tipi di pacchetti dati e istruzioni per l’acquisto",
+      "3": "Applicazione Monpay",
+      "placeholder": "Esempio: Vorrei conoscere gli orari di apertura della filiale situata nel distretto di Bayangol"
     },
+
     "generatingAnswer": "Generazione della risposta",
     "citationWithColon": "Citazione:",
     "followupQuestions": "Domande di follow-up:",

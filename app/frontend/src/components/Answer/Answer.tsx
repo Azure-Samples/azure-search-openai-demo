@@ -20,8 +20,8 @@ interface Props {
     isSelected?: boolean;
     isStreaming: boolean;
     onCitationClicked: (filePath: string) => void;
-    onThoughtProcessClicked: () => void;
-    onSupportingContentClicked: () => void;
+    onThoughtProcessClicked: () => void; // хадгалж үлдээж болно (ашиглахгүй)
+    onSupportingContentClicked: () => void; // хадгалж үлдээж болно (ашиглахгүй)
     onFollowupQuestionClicked?: (question: string) => void;
     showFollowupQuestions?: boolean;
     showSpeechOutputBrowser?: boolean;
@@ -35,15 +35,17 @@ export const Answer = ({
     isSelected,
     isStreaming,
     onCitationClicked,
-    onThoughtProcessClicked,
-    onSupportingContentClicked,
     onFollowupQuestionClicked,
     showFollowupQuestions,
     showSpeechOutputAzure,
     showSpeechOutputBrowser
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
-    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer, isStreaming, onCitationClicked), [answer, isStreaming, onCitationClicked]);
+    const parsedAnswer = useMemo(
+        () => parseAnswerToHtml(answer, isStreaming, onCitationClicked),
+        [answer, isStreaming, onCitationClicked]
+    );
+
     const { t } = useTranslation();
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
     const [copied, setCopied] = useState(false);
@@ -65,11 +67,15 @@ export const Answer = ({
     };
 
     return (
-        <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
+        <Stack
+            className={`${styles.answerContainer} ${isSelected && styles.selected}`}
+            verticalAlign="space-between"
+        >
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
                     <div>
+                        {/* ЗӨВХӨН COPY ТОВЧ ҮЛДЭВ */}
                         <IconButton
                             style={{ color: "black" }}
                             iconProps={{ iconName: copied ? "CheckMark" : "Copy" }}
@@ -77,51 +83,66 @@ export const Answer = ({
                             ariaLabel={copied ? t("tooltips.copied") : t("tooltips.copy")}
                             onClick={handleCopy}
                         />
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: "Lightbulb" }}
-                            title={t("tooltips.showThoughtProcess")}
-                            ariaLabel={t("tooltips.showThoughtProcess")}
-                            onClick={() => onThoughtProcessClicked()}
-                            disabled={!answer.context.thoughts?.length || isStreaming}
-                        />
-                        <IconButton
-                            style={{ color: "black" }}
-                            iconProps={{ iconName: "ClipboardList" }}
-                            title={t("tooltips.showSupportingContent")}
-                            ariaLabel={t("tooltips.showSupportingContent")}
-                            onClick={() => onSupportingContentClicked()}
-                            disabled={!answer.context.data_points || isStreaming}
-                        />
+
                         {showSpeechOutputAzure && (
-                            <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
+                            <SpeechOutputAzure
+                                answer={sanitizedAnswerHtml}
+                                index={index}
+                                speechConfig={speechConfig}
+                                isStreaming={isStreaming}
+                            />
                         )}
-                        {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
+
+                        {showSpeechOutputBrowser && (
+                            <SpeechOutputBrowser answer={sanitizedAnswerHtml} />
+                        )}
                     </div>
                 </Stack>
             </Stack.Item>
 
             <Stack.Item grow>
                 <div className={styles.answerText}>
-                    <ReactMarkdown children={sanitizedAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
+                    <ReactMarkdown
+                        children={sanitizedAnswerHtml}
+                        rehypePlugins={[rehypeRaw]}
+                        remarkPlugins={[remarkGfm]}
+                    />
                 </div>
             </Stack.Item>
 
             {!!parsedAnswer.citations.length && (
                 <Stack.Item>
                     <Stack horizontal wrap tokens={{ childrenGap: 5 }}>
-                        <span className={styles.citationLearnMore}>{t("citationWithColon")}</span>
+                        <span className={styles.citationLearnMore}>
+                            {t("citationWithColon")}
+                        </span>
+
                         {parsedAnswer.citations.map(citation => {
                             const isWeb = citation.isWeb;
                             const displayIndex = citation.index;
                             const reference = citation.reference;
+
                             if (isWeb) {
-                                // Attempt to find the matching web data point to retrieve its title
-                                const webEntry = answer.context.data_points.external_results_metadata?.find(w => w.url === reference);
-                                const titleOrUrl = webEntry?.title?.trim() ? webEntry.title : reference;
+                                const webEntry =
+                                    answer.context.data_points.external_results_metadata?.find(
+                                        w => w.url === reference
+                                    );
+                                const titleOrUrl = webEntry?.title?.trim()
+                                    ? webEntry.title
+                                    : reference;
+
                                 return (
-                                    <span key={`${reference}-${displayIndex}`} className={styles.citationEntry}>
-                                        <a className={styles.citation} title={reference} href={reference} target="_blank" rel="noopener noreferrer">
+                                    <span
+                                        key={`${reference}-${displayIndex}`}
+                                        className={styles.citationEntry}
+                                    >
+                                        <a
+                                            className={styles.citation}
+                                            title={reference}
+                                            href={reference}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
                                             {`${displayIndex}. ${titleOrUrl}`}
                                         </a>
                                     </span>
@@ -129,7 +150,10 @@ export const Answer = ({
                             } else {
                                 const path = getCitationFilePath(reference);
                                 return (
-                                    <span key={`${reference}-${displayIndex}`} className={styles.citationEntry}>
+                                    <span
+                                        key={`${reference}-${displayIndex}`}
+                                        className={styles.citationEntry}
+                                    >
                                         <a
                                             className={styles.citation}
                                             title={reference}
@@ -148,20 +172,36 @@ export const Answer = ({
                 </Stack.Item>
             )}
 
-            {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
-                <Stack.Item>
-                    <Stack horizontal wrap className={`${!!parsedAnswer.citations.length ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
-                        <span className={styles.followupQuestionLearnMore}>{t("followupQuestions")}</span>
-                        {followupQuestions.map((x, i) => {
-                            return (
-                                <a key={i} className={styles.followupQuestion} title={x} onClick={() => onFollowupQuestionClicked(x)}>
-                                    {`${x}`}
+            {!!followupQuestions?.length &&
+                showFollowupQuestions &&
+                onFollowupQuestionClicked && (
+                    <Stack.Item>
+                        <Stack
+                            horizontal
+                            wrap
+                            className={`${
+                                !!parsedAnswer.citations.length
+                                    ? styles.followupQuestionsList
+                                    : ""
+                            }`}
+                            tokens={{ childrenGap: 6 }}
+                        >
+                            <span className={styles.followupQuestionLearnMore}>
+                                {t("followupQuestions")}
+                            </span>
+                            {followupQuestions.map((x, i) => (
+                                <a
+                                    key={i}
+                                    className={styles.followupQuestion}
+                                    title={x}
+                                    onClick={() => onFollowupQuestionClicked(x)}
+                                >
+                                    {x}
                                 </a>
-                            );
-                        })}
-                    </Stack>
-                </Stack.Item>
-            )}
+                            ))}
+                        </Stack>
+                    </Stack.Item>
+                )}
         </Stack>
     );
 };

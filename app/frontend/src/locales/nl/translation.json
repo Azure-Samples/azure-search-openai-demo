@@ -1,6 +1,6 @@
 {
-    "pageTitle": "Azure OpenAI + AI Search",
-    "headerTitle": "Azure OpenAI + AI Search",
+    "pageTitle": "MobiAI",
+    "headerTitle": "MobiAI",
     "chat": "Chat",
     "qa": "Stel een vraag",
     "login": "Inloggen",
@@ -34,21 +34,23 @@
     },
     "developerSettings": "Ontwikkelaarinstellingen",
 
-    "chatEmptyStateTitle": "Chat met je gegevens",
-    "chatEmptyStateSubtitle": "Stel een vraag of probeer een voorbeeld",
+    "chatEmptyStateTitle": "Mobi AI",
+    "chatEmptyStateSubtitle": "Kies je taal",
     "defaultExamples": {
-        "1": "Wat zit er in mijn Northwind Health Plus-pakket dat niet in het standaardpakket zit?",
-        "2": "Wat gebeurt er tijdens een functioneringsgesprek?",
-        "3": "Wat doet een Product Manager?",
-        "placeholder": "Typ een nieuwe vraag (bijv. dekt mijn pakket jaarlijkse oogonderzoeken?)"
+      "1": "Betalingsinstructies opvragen",
+      "2": "Soorten datapakketten en aankoopinstructies",
+      "3": "Monpay-applicatie",
+      "placeholder": "Typ je vraag (bijvoorbeeld: Ik wil graag de openingstijden weten van het filiaal in het district Bayangol)"
     },
-    "askTitle": "Stel je vraag aan de data",
-    "multimodalExamples": {
-        "1": "Vergelijk de impact van rentetarieven en het BBP op financiële markten.",
-        "2": "Wat is de verwachte trend voor de S&P 500-index voor de komende vijf jaar? Vergelijk dit met de eerdere prestaties van de S&P 500",
-        "3": "Kun je enige correlatie vinden tussen olieprijzen en markttrends?",
-        "placeholder": "Voorbeeld: dekt mijn pakket jaarlijkse oogonderzoeken?"
-    },
+    "askTitle": "Mobi AI",
+    "gpt4vExamples": {
+      "1": "Betalingsinstructies opvragen",
+      "2": "Soorten datapakketten en aankoopinstructies",
+      "3": "Monpay-applicatie",
+      "placeholder": "Voorbeeld: Ik wil graag de openingstijden weten van het filiaal in het district Bayangol"
+    
+  },
+
     "generatingAnswer": "Antwoord genereren",
     "citationWithColon": "Citaat:",
     "followupQuestions": "Vervolgvragen:",
