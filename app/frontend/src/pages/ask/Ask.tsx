@@ -315,7 +315,7 @@ export function Component(): JSX.Element {
                     {showUserUpload && <UploadFile className={styles.commandButton} disabled={!loggedIn} />}
                     {/*<SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />*/}
                 </div>
-                <img src={appLogo} alt="MobiAI logo" width={112} height={112} className={styles.appLogo} />
+                <img src={appLogo} alt="mobiAI logo" width={112} height={112} className={styles.appLogo} />
                 <h1 id="mobi-ai-ask-heading" className={styles.askTitle}>{t("askTitle")}</h1>
                 <p className={styles.askSubtitle}>{t("askSubtitle")}</p>
                 <div className={styles.askQuestionInput}>

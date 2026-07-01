@@ -497,7 +497,7 @@ const Chat = () => {
                 <div className={styles.chatContainer}>
                     {!lastQuestionRef.current ? (
                         <section className={styles.chatEmptyState} aria-labelledby="mobi-ai-heading">
-                            <img src={appLogo} width="128" height="128" alt="MobiAI logo" className={styles.heroLogo} />
+                            <img src={appLogo} width="128" height="128" alt="mobiAI logo" className={styles.heroLogo} />
                             <h1 id="mobi-ai-heading" className={styles.chatEmptyStateTitle}>{t("chatEmptyStateTitle")}</h1>
                             <div className={styles.heroInput}>
                                 <QuestionInput

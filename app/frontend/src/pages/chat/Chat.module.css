@@ -207,7 +207,7 @@
     background: #ff0014;
     box-shadow: 0 0 0 0.22rem rgba(255, 0, 20, 0.08);
 }
-/* MobiAI brand loading spinner */
+/* mobiAI brand loading spinner */
 .container :global(.ms-Spinner-circle) {
     border-top-color: #ff0014 !important;
     border-right-color: rgba(255, 0, 20, 0.18) !important;

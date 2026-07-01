@@ -1,6 +1,6 @@
 {
-    "pageTitle": "MobiAI",
-    "headerTitle": "MobiAI",
+    "pageTitle": "mobiAI",
+    "headerTitle": "mobiAI",
     "chat": "Chat",
     "qa": "Ask a question",
     "login": "Login",
@@ -33,7 +33,7 @@
         "fileDeleted": "File deleted"
     },
     "developerSettings": "Developer settings",
-    "chatEmptyStateTitle": "MobiAI",
+    "chatEmptyStateTitle": "mobiAI",
     "chatEmptyStateSubtitle": "",
     "defaultExamples": {
         "1": "Get payment instructions",
@@ -41,7 +41,7 @@
         "3": "Monpay application",
         "placeholder": "Ask about MobiCom products and services"
     },
-    "askTitle": "MobiAI",
+    "askTitle": "mobiAI",
     "gpt4vExamples": {
         "1": "Get payment instructions",
         "2": "Data package types and purchase instructions",
