@@ -830,6 +830,33 @@ class Approach(ABC):
         image_filename = image_url.split("/")[-1]
         return f"{sourcepage_citation}({image_filename})"
 
+    @staticmethod
+    def heal_citation(citation: str, valid_citations: Optional[list[str]]) -> str:
+        """Map a possibly-simplified citation back to a valid source citation.
+
+        LLMs sometimes drop leading special characters (for example a "- " prefix or
+        parentheses) when emitting a citation for a filename. When that happens the
+        citation no longer matches the indexed ``sourcefile``, so the document link
+        returns 403/404. If the citation is not an exact match for a known source,
+        fall back to the unique valid citation that ends with the same string.
+        """
+        if not citation or not valid_citations or citation in valid_citations:
+            return citation
+        matches = [valid for valid in valid_citations if valid != citation and valid.endswith(citation)]
+        if len(matches) == 1:
+            return matches[0]
+        return citation
+
+    def heal_citations(self, answer: str, valid_citations: Optional[list[str]]) -> str:
+        """Heal every ``[citation]`` token in an answer against the valid citations."""
+        if not answer or not valid_citations:
+            return answer
+
+        def _sub(match: re.Match) -> str:
+            return f"[{self.heal_citation(match.group(1), valid_citations)}]"
+
+        return re.sub(r"\[([^\[\]]+)\]", _sub, answer)
+
     async def download_blob_as_base64(self, blob_url: str, user_oid: Optional[str] = None) -> Optional[str]:
         """
         Downloads a blob from either Azure Blob Storage or Azure Data Lake Storage and returns it as a base64 encoded string.

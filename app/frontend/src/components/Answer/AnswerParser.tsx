@@ -117,14 +117,18 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
             return;
         }
 
-        const isValidCitation = possibleCitations.some(citation => citation.endsWith(part));
-        if (!isValidCitation) {
+        // The LLM sometimes simplifies citations by dropping leading special characters,
+        // e.g. rendering "- PyCon US 2025.pdf#page=1" as "PyCon US 2025.pdf#page=1". Resolve
+        // the cited text back to the canonical citation so links and lookups use the indexed
+        // value instead of the simplified text (which would 404/403 against the content route).
+        const canonicalCitation = possibleCitations.find(citation => citation === part) ?? possibleCitations.find(citation => citation.endsWith(part));
+        if (!canonicalCitation) {
             fragments.push({ type: "text", value: `[${part}]` });
             return;
         }
 
         // Resolve SharePoint filename to URL if applicable
-        const resolvedReference = resolveSharePointUrl(part);
+        const resolvedReference = resolveSharePointUrl(canonicalCitation);
 
         // Check if this resolved reference already exists
         const existing = citationMap.get(resolvedReference);
@@ -133,7 +137,7 @@ const collectCitations = (answer: ChatAppResponse, isStreaming: boolean): { frag
             return;
         }
 
-        const backendDetail = citationActivityDetails?.[part];
+        const backendDetail = citationActivityDetails?.[canonicalCitation];
         const activityId = backendDetail?.id;
         const stepMeta = activityId ? activitySteps[String(activityId)] : undefined;
 
