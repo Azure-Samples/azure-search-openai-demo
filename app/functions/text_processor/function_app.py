@@ -61,6 +61,9 @@ def configure_global_settings():
     azure_openai_emb_deployment = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
     azure_openai_emb_model_name = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
     document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
+    # When set to a positive value, CSV rows are grouped into pages of up to this many
+    # characters instead of one page per row (avoids out-of-memory on large CSV files).
+    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS", "0")) or None
 
     # Single shared managed identity credential
     if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):
@@ -78,6 +81,7 @@ def configure_global_settings():
         use_local_pdf_parser=False,
         use_local_html_parser=False,
         process_figures=use_multimodal,
+        csv_max_chars_per_page=csv_max_chars_per_page,
     )
 
     # Embedding service (optional)
