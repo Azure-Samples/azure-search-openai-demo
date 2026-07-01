@@ -25,3 +25,8 @@ Conversation history:
 {% endif %}
 
 Generate search query for: {{ user_query }}
+{% if user_asked_utc %}
+User asked question at UTC time: {{ user_asked_utc }}
+The user may be in a different timezone.
+Use the timestamp to resolve relative time references such as "last year" or "this month" into concrete terms when helpful.
+{% endif %}
