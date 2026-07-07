@@ -115,4 +115,3 @@ async def test_csvparser_large_file_does_not_explode_into_per_row_pages():
 
     # Without grouping this would be 1000 pages; grouping keeps it small
     assert len(pages) < 50
-
