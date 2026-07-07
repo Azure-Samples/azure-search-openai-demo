@@ -17,7 +17,7 @@ With this feature enabled, the following changes are made:
 
 ## Prerequisites
 
-* The use of a model that supports multimodal inputs. The default model for the repository is currently `gpt-4.1-mini`, which does support multimodal inputs. The `gpt-4o-mini` technically supports multimodal inputs, but due to how image tokens are calculated, you need a much higher deployment capacity to use it effectively. Please try `gpt-4.1-mini` first, and experiment with other models later.
+* The use of a model that supports multimodal inputs. The default model for the repository is currently `gpt-5.4-mini`, which does support multimodal inputs. If you change the model, make sure the new model also supports multimodal inputs (e.g. `gpt-5.2`, `gpt-5-mini`, `gpt-4.1-mini`).
 
 ## Deployment
 

@@ -84,7 +84,7 @@
       "value": "${AZURE_SEARCH_FIELD_NAME_EMBEDDING=embedding3}"
     },
     "defaultReasoningEffort": {
-      "value": "${AZURE_OPENAI_REASONING_EFFORT=medium}"
+      "value": "${AZURE_OPENAI_REASONING_EFFORT=low}"
     },
     "defaultRetrievalReasoningEffort": {
       "value": "${AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT=low}"

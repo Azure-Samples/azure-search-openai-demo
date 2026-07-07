@@ -2,7 +2,7 @@ name: Validate Markdown
 
 on:
   # Trigger the workflow on pull request
-  pull_request_target:
+  pull_request:
     branches:
       - main
     paths:
@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Check broken Paths
         id: check-broken-paths
-        uses: john0isaac/action-check-markdown@v1.1.0
+        uses: john0isaac/action-check-markdown@v1.3.1
         with:
           command: check_broken_paths
           directory: ./
@@ -37,12 +37,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Run Check URLs Country Locale
         id: check-urls-locale
-        uses: john0isaac/action-check-markdown@v1.1.0
+        uses: john0isaac/action-check-markdown@v1.3.1
         with:
           command: check_urls_locale
           directory: ./
@@ -54,12 +54,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Run Check Broken URLs
         id: check-broken-urls
-        uses: john0isaac/action-check-markdown@v1.1.0
+        uses: john0isaac/action-check-markdown@v1.3.1
         with:
           command: check_broken_urls
           directory: ./

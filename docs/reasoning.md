@@ -1,117 +1,38 @@
 # RAG chat: Using reasoning models
 
-This repository includes an optional feature that uses reasoning models to generate responses based on retrieved content. These models spend more time processing and understanding the user's request.
+The default model for this repository is gpt-5.4-mini, a reasoning model. Reasoning models spend more time processing and understanding the user's request, leading to higher quality responses. To use this feature, ensure you are deploying a reasoning model, like the gpt-5 series, which is the current default. To switch to a different GPT-5 reasoning model, follow the steps in [Using different chat models](./deploy_features.md#using-different-chat-models).
 
-## Using the feature
+## Supported models
 
-### Supported Models
+We support the GPT-5 model family, but not the earlier o-series models, due to API incompatibilities.
 
-* gpt-5
-* gpt-5-mini
-* gpt-5-nano
-* o4-mini
-* o3
-* o3-mini
-* o1
+## Configuring reasoning
 
-### Prerequisites
+1. **(Optional) Set default reasoning effort**
 
-* The ability to deploy a reasoning model in the [supported regions](https://learn.microsoft.com/azure/ai-services/openai/concepts/models#standard-deployment-model-availability). If you're not sure, try to create a o3-mini deployment from your Azure OpenAI deployments page.
-
-### Deployment
-
-1. **Enable reasoning:**
-
-   Set the environment variables for your Azure OpenAI GPT deployments to your reasoning model
-
-   For gpt-5:
-
-   ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-5
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-08-07
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
-   ```
-
-   For gpt-5-mini:
-
-   ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5-mini
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-5-mini
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-08-07
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
-   ```
-
-   For gpt-5-nano:
-
-   ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL gpt-5-nano
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT gpt-5-nano
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-08-07
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
-   ```
-
-   For o4-mini:
-
-   ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL o4-mini
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o4-mini
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-16
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
-   ```
-
-   For o3:
-
-   ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL o3
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o3
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-16
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
-   ```
-
-   For o3-mini: (No vision support)
-
-   ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL o4-mini
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o4-mini
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2025-04-16
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
-   ```
-
-   For o1: (No streaming support)
-
-   ```shell
-   azd env set AZURE_OPENAI_CHATGPT_MODEL o1
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT o1
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION 2024-12-17
-   azd env set AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU GlobalStandard
-   ```
-
-2. **(Optional) Set default reasoning effort**
-
-   You can configure how much effort the reasoning model spends on processing and understanding the user's request. Valid options are `minimal` (for GPT-5 models only), `low`, `medium`, and `high`. Reasoning effort defaults to `medium` if not set.
+   You can configure how much effort the reasoning model spends on processing and understanding the user's request. Valid options are `minimal` (for base gpt-5 models), `none`, `low`, `medium`, and `high` (for gpt-5.1+), and `xhigh` (for gpt-5.4+). Reasoning effort defaults to `low` if not set.
 
    Set the environment variable for reasoning effort:
 
    ```shell
-   azd env set AZURE_OPENAI_REASONING_EFFORT minimal
+   azd env set AZURE_OPENAI_REASONING_EFFORT medium
    ```
 
-3. **Update the infrastructure and application:**
+2. **Update the infrastructure and application:**
 
-   Execute `azd up` to provision the infrastructure changes (only the new model, if you ran `up` previously) and deploy the application code with the updated environment variables.
+   Execute `azd up` to provision any infrastructure changes (like a changed model) and deploy the application code with the updated environment variables.
 
-4. **Try out the feature:**
+3. **Try out the feature:**
 
    Open the web app and start a new chat. The reasoning model will be used for all Responses API requests, including the query rewriting step.
 
-5. **Experiment with reasoning effort:**
+4. **Experiment with reasoning effort:**
 
-   Select the developer options in the web app and change "Reasoning Effort" to `low`, `medium`, or `high`. This will override the default reasoning effort of "medium".
+   Select the developer options in the web app and change "Reasoning Effort". The available options depend on the deployed model. This will override the default reasoning effort of "low".
 
    ![Reasoning configuration screenshot](./images/reasoning.png)
 
-6. **Understand token usage:**
+5. **Understand token usage:**
 
    The reasoning models use additional billed tokens behind the scenes for the thinking process.
    To see the token usage, select the lightbulb icon on a chat answer. This will open the "Thought process" tab, which shows the reasoning model's thought process and the token usage for each response.
