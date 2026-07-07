@@ -63,7 +63,8 @@ def configure_global_settings():
     document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
     # When set to a positive value, CSV rows are grouped into pages of up to this many
     # characters instead of one page per row (avoids out-of-memory on large CSV files).
-    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS", "0")) or None
+    # `... or "0"` treats an empty-string env var (common in CI substitution) as unset.
+    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS") or "0") or None
 
     # Single shared managed identity credential
     if AZURE_CLIENT_ID := os.getenv("AZURE_CLIENT_ID"):

@@ -184,7 +184,8 @@ if __name__ == "__main__":  # pragma: no cover
     use_sharepoint_source = os.getenv("USE_SHAREPOINT_SOURCE", "").lower() == "true"
     # When set to a positive value, CSV rows are grouped into pages of up to this many
     # characters instead of one page per row (avoids out-of-memory on large CSV files).
-    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS", "0")) or None
+    # `... or "0"` treats an empty-string env var (common in CI substitution) as unset.
+    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS") or "0") or None
 
     # Use the current user identity to connect to Azure services. See infra/main.bicep for role assignments.
     if tenant_id := os.getenv("AZURE_TENANT_ID"):

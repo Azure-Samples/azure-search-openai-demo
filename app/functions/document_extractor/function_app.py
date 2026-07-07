@@ -57,7 +57,8 @@ def configure_global_settings():
     enable_global_document_access = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "false").lower() == "true"
     # When set to a positive value, CSV rows are grouped into pages of up to this many
     # characters instead of one page per row (avoids out-of-memory on large CSV files).
-    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS", "0")) or None
+    # `... or "0"` treats an empty-string env var (common in CI substitution) as unset.
+    csv_max_chars_per_page = int(os.getenv("CSV_MAX_PAGE_CHARS") or "0") or None
 
     # Cloud ingestion storage account (ADLS Gen2 when ACLs enabled, standard blob otherwise)
     # Fallback to AZURE_STORAGE_ACCOUNT is for legacy deployments only - may be removed in future
