@@ -785,7 +785,7 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.7.2' = if (isAzure
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     location: openAiLocation
     tags: tags
-    kind: 'OpenAI'
+    kind: 'AIServices'
     customSubDomainName: !empty(openAiServiceName)
       ? openAiServiceName
       : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
