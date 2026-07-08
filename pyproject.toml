@@ -12,6 +12,7 @@ line-length = 120
 
 [tool.pytest.ini_options]
 addopts = "-ra"
+testpaths = ["tests"]
 pythonpath = ["app/backend", "scripts", "app/functions", "evals"]
 asyncio_default_fixture_loop_scope = "function"
 

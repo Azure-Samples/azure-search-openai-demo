@@ -77,7 +77,7 @@ By default, the evaluation script will evaluate every question in the ground tru
 Run the evaluation script by running the following command:
 
 ```bash
-python evals/evaluate.py
+python evals/run_evaluate.py
 ```
 
 The options are:
