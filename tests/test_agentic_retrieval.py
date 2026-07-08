@@ -9,9 +9,35 @@ from azure.search.documents.knowledgebases.models import (
 )
 from openai.types.chat import ChatCompletion
 
-from approaches.approach import RewriteQueryResult
+from approaches.approach import RewriteQueryResult, camel_to_snake_keys
 
 from .conftest import create_mock_retrieve
+
+
+def test_camel_to_snake_keys_query_plan():
+    """SDK .as_dict() emits camelCase; the frontend query-plan renderer expects snake_case."""
+    activity = {
+        "id": 1,
+        "type": "searchIndex",
+        "elapsedMs": 50,
+        "knowledgeSourceName": "index",
+        "searchIndexArguments": {"search": "q", "sourceDataFields": [{"name": "content"}]},
+        "inputTokens": 10,
+        "outputTokens": 20,
+    }
+    assert camel_to_snake_keys(activity) == {
+        "id": 1,
+        # value discriminators must stay untouched so the frontend switch still matches
+        "type": "searchIndex",
+        "elapsed_ms": 50,
+        "knowledge_source_name": "index",
+        "search_index_arguments": {"search": "q", "source_data_fields": [{"name": "content"}]},
+        "input_tokens": 10,
+        "output_tokens": 20,
+    }
+    # Passthrough for non-dict/list values and lists of activities
+    assert camel_to_snake_keys("modelQueryPlanning") == "modelQueryPlanning"
+    assert camel_to_snake_keys([{"webArguments": {"search": "x"}}]) == [{"web_arguments": {"search": "x"}}]
 
 
 @pytest.mark.asyncio
