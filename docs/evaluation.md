@@ -95,19 +95,22 @@ The evaluation script will output a summary of the evaluation results, inside th
 You can see a summary of results across all evaluation runs by running the following command:
 
 ```bash
-python -m evaltools summary evals/results
+cd evals
+python -m evaltools summary results
 ```
 
 Compare answers to the ground truth by running the following command:
 
 ```bash
-python -m evaltools diff evals/results/baseline/
+cd evals
+python -m evaltools diff results/baseline/
 ```
 
 Compare answers across two runs by running the following command:
 
 ```bash
-python -m evaltools diff evals/results/baseline/ evals/results/SECONDRUNHERE
+cd evals
+python -m evaltools diff results/baseline/ results/SECONDRUNHERE
 ```
 
 ## Evaluate multimodal RAG answers

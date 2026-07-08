@@ -3,4 +3,15 @@ rich
 ragas==0.2.13
 rapidfuzz==3.14.3
 langchain==0.3.30
-git+https://github.com/Azure-Samples/ai-rag-chat-evaluator@2025-06-02
+# Dependencies for the vendored evaltools package (see evals/evaltools/).
+# azure-ai-evaluation must be >=1.18.0 for reasoning-model (gpt-5) support
+# via is_reasoning_model, which sends max_completion_tokens instead of max_tokens.
+azure-ai-evaluation>=1.18.0
+azure-search-documents
+azure-identity
+openai>=1.56.1
+typer
+jmespath
+pandas
+requests
+python-dotenv
