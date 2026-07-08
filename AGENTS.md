@@ -259,6 +259,54 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
 
 If any step fails, check container logs — `AuthError` from `app/backend/core/authentication.py` usually indicates the OBO token exchange or token validation broke.
 
+## Manual test plan for msgraph-sdk / microsoft-kiota-* changes
+
+`msgraph-sdk` (and its transitive `microsoft-kiota-*` deps) is only imported by `scripts/auth_init.py` and `scripts/auth_update.py`, which register Entra client + server apps for the login-enabled deploy. The unit tests in `tests/test_auth_init.py` mock `GraphServiceClient` end-to-end, so a bump can pass CI while breaking a real Graph call (usually due to renamed request-body classes or new required fields).
+
+Validate against a live tenant using the same `pf-ragchat-login` env from the msal test plan:
+
+1. **First run — exercises PATCH + query paths only.** If the client and server app registrations from a prior run already exist, `auth_init.sh` short-circuits the `applications.post()` create path:
+
+   ```shell
+   ./scripts/auth_init.sh
+   ```
+
+   Look for `Application already exists, not creating new one` — that means the POST paths were skipped. The PATCH paths (`applications.by_application_id().patch()`) for permissions + known-client-apps *did* run, plus `oauth2_permission_grants` queries.
+
+2. **Force the create path** to exercise `applications.post()`, `service_principals.post()`, and `applications.by_application_id().add_password.post()` (where major SDK bumps most often break):
+
+   ```shell
+   # Grab the existing app IDs from the azd env
+   CLIENT_APP=$(azd env get-value AZURE_CLIENT_APP_ID)
+   SERVER_APP=$(azd env get-value AZURE_SERVER_APP_ID)
+
+   # Delete both Entra app registrations (safe on a test env)
+   az ad app delete --id $CLIENT_APP
+   az ad app delete --id $SERVER_APP
+
+   # Clear the cached IDs and secrets so auth_init recreates from scratch
+   azd env set AZURE_CLIENT_APP_ID ""
+   azd env set AZURE_CLIENT_APP_SECRET ""
+   azd env set AZURE_SERVER_APP_ID ""
+   azd env set AZURE_SERVER_APP_SECRET ""
+
+   ./scripts/auth_init.sh
+   ```
+
+   You should see `Creating application registration` (twice — once for server, once for client), followed by `Granted admin consent for ...` messages. Every msgraph SDK code path in `auth_init.py` is now exercised.
+
+3. **Test the update path** by running the postprovision hook that updates client-app redirect URIs:
+
+   ```shell
+   ./scripts/auth_update.sh
+   ```
+
+   Look for `Application update for client app id ... complete.`
+
+4. **Re-run the msal test plan** end-to-end (browser sign-in, ACL'd doc question, non-ACL'd doc question) since the fresh apps will have new client IDs. `azd deploy backend` after `auth_init.sh` picks up the new IDs.
+
+If POST fails with a serialization / model-class error (e.g. `AttributeError` on a model instance, or a 400 from Graph complaining about a missing property), the bumped SDK likely renamed or relocated a request-body class. Check the msgraph-sdk release notes and update the corresponding import in `scripts/auth_init.py`.
+
 ## Checking Python type hints
 
 To check Python type hints, use the following command:
