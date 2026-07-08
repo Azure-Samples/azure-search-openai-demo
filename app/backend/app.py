@@ -404,13 +404,12 @@ async def setup_clients():
     AZURE_SEARCH_ENDPOINT = f"https://{AZURE_SEARCH_SERVICE}.search.windows.net"
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     AZURE_SEARCH_KNOWLEDGEBASE_NAME = os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME", "")
-    # azure-search-documents 12.1.0b1 defaults the knowledgebase retrieval client to api-version
-    # "2026-05-01-preview", whose retrieval execution currently returns a service-side 502
-    # ("An unexpected error occurred during retrieval") on services that haven't rolled out that
-    # preview yet, even though every underlying query capability works. "2025-11-01-preview" is the
-    # earliest version that supports the fields the app sends (outputMode, retrievalReasoningEffort)
-    # and retrieves successfully. Override via env once your service supports a newer version.
-    AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION = os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION", "2025-11-01-preview")
+    # Default to the latest knowledgebase retrieval api-version, which supports every field the app
+    # sends (outputMode, retrievalReasoningEffort, query_source_authorization). Some earlier live
+    # testing hit a service-side 502 on this version, but the search team confirmed that was a
+    # transient outage, not a version problem. Override via env if your service hasn't rolled out
+    # this preview yet (e.g. "2025-11-01-preview", the earliest version the app's fields work on).
+    AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION = os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION", "2026-05-01-preview")
     # Shared by all OpenAI deployments
     OPENAI_HOST = OpenAIHost(os.getenv("OPENAI_HOST", "azure"))
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
