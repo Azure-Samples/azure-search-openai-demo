@@ -204,14 +204,15 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
 1. **Create the env and enable auth:**
 
    ```shell
-   azd env new pf-ragchat-login --subscription <SUB_ID> --location eastus2
+   azd env new pf-ragchat-login --subscription <SUB_ID> --location <REGION>
    azd env set AZURE_USE_AUTHENTICATION true
    azd env set AZURE_ENFORCE_ACCESS_CONTROL true
    azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS false
    azd env set AZURE_AUTH_TENANT_ID <YOUR_TENANT_ID>
    azd env set AZURE_TENANT_ID <YOUR_TENANT_ID>
-   # If eastus2 is capacity-constrained for Search:
-   azd env set AZURE_SEARCH_SERVICE_LOCATION westus3
+   # If the chosen region is capacity-constrained for Azure AI Search,
+   # override just the Search location:
+   azd env set AZURE_SEARCH_SERVICE_LOCATION <OTHER_REGION>
    ```
 
 2. **Provision + deploy:**
