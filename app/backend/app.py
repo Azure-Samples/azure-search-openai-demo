@@ -407,8 +407,9 @@ async def setup_clients():
     # Default to the latest knowledgebase retrieval api-version, which supports every field the app
     # sends (outputMode, retrievalReasoningEffort, query_source_authorization). Some earlier live
     # testing hit a service-side 502 on this version, but the search team confirmed that was a
-    # transient outage, not a version problem. Override via env if your service hasn't rolled out
-    # this preview yet (e.g. "2025-11-01-preview", the earliest version the app's fields work on).
+    # regional outage (East US 2 was hard down), not a version problem — this version is correct as
+    # long as the service lives in a healthy region. Override via env if your service hasn't rolled
+    # out this preview yet (e.g. "2025-11-01-preview", the earliest version the app's fields work on).
     AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION = os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION", "2026-05-01-preview")
     # Shared by all OpenAI deployments
     OPENAI_HOST = OpenAIHost(os.getenv("OPENAI_HOST", "azure"))
