@@ -484,6 +484,10 @@ knowledgebase_auth_envs = [
         "AZURE_OPENAI_KNOWLEDGEBASE_MODEL": "gpt-4.1-mini",
         "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_KNOWLEDGEBASE": "true",
+        # query_source_authorization is only forwarded to retrieve() when the client is
+        # configured with an api-version that supports it (2026-05-01-preview+), so the auth
+        # test must use that version to exercise the token-forwarding path.
+        "AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION": "2026-05-01-preview",
         "AZURE_USE_AUTHENTICATION": "true",
         "AZURE_ENFORCE_ACCESS_CONTROL": "true",
         "AZURE_SERVER_APP_ID": "SERVER_APP",
