@@ -230,8 +230,7 @@ async def test_check_path_auth_allowed_empty(
     access_token = None
 
     async def mock_search(self, *args, **kwargs):
-        nonlocal access_token, filter
-        access_token = kwargs.get("query_source_authorization")
+        nonlocal filter
         filter = kwargs.get("filter")
         return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
 
@@ -287,8 +286,7 @@ async def test_check_path_auth_allowed_without_access_control(
     called_search = False
 
     async def mock_search(self, *args, **kwargs):
-        nonlocal filter, access_token, called_search
-        access_token = kwargs.get("query_source_authorization")
+        nonlocal filter, called_search
         filter = kwargs.get("filter")
         called_search = True
         return MockAsyncPageIterator(data=[])
