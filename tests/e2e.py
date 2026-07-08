@@ -441,45 +441,6 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
 
 
-def test_chat_agentic_query_plan(page: Page, live_server_url: str):
-    # Regression guard: agentic retrieval returns a query_plan that the frontend must
-    # render as an agent plan in the thought process. A casing/shape mismatch here was
-    # almost missed during the azure-search-documents SDK upgrade.
-    def handle(route: Route):
-        # Return the agentic (knowledgebase) snapshot, which includes a query_plan
-        f = open("tests/snapshots/test_app/test_chat_text_agent/knowledgebase_client0/result.json")
-        json = f.read()
-        f.close()
-        route.fulfill(body=json, status=200)
-
-    page.route("*/**/chat", handle)
-
-    # Use the non-streaming /chat endpoint since the agentic snapshot is a single result.json
-    page.goto(live_server_url)
-    expect(page).to_have_title("Azure OpenAI + AI Search")
-    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
-    page.get_by_role("button", name="Developer settings").click()
-    page.get_by_text("Stream chat completion responses").click()
-    page.locator("button").filter(has_text="Close").click()
-
-    # Ask a question and wait for the answer to appear
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
-    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
-        "Whats the capital of France?"
-    )
-    page.get_by_label("Submit question").click()
-
-    expect(page.get_by_text("Whats the capital of France?")).to_be_visible()
-    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
-
-    # Show the thought process and assert the agentic query plan is rendered
-    page.get_by_label("Show thought process").click()
-    expect(page.get_by_title("Thought process")).to_be_visible()
-    expect(page.get_by_text("Agentic retrieval response")).to_be_visible()
-    expect(page.get_by_text("Query planning")).to_be_visible()
-    expect(page.get_by_text("Index search")).to_be_visible()
-
-
 def test_chat_followup_streaming(page: Page, live_server_url: str):
     # Set up a mock route to the /chat_stream endpoint
     def handle(route: Route):
@@ -786,19 +747,15 @@ def test_agentic_retrieval_effort_minimal_disables_web(page: Page, live_server_u
     expect(page.get_by_text("Prompt to generate answer")).to_be_visible()
 
 
-def test_agentic_retrieval_query_plan_renders(page: Page, live_server_url: str):
-    """Regression guard for the agentic query plan rendering.
+def test_agentic_retrieval_query_plan(page: Page, live_server_url: str):
+    """Test that the agentic query plan renders its execution steps, search query, and source.
 
-    The azure-search-documents 12.x upgrade changed activity.as_dict() output from snake_case
-    to camelCase. AgentPlan.tsx reads camelCase step fields (step.type, searchIndexArguments,
-    knowledgeSourceName, elapsedMs). If those reads fall out of sync with the backend payload,
-    the "Execution steps" table silently renders fallbacks ("—", "search index") and the wrong
-    step labels instead of the real values. The mocked app/unit tests missed this because the
-    snapshots were hand-edited, so assert the real camelCase-derived values render here.
+    Guards against frontend/backend casing drift silently falling back to placeholder values
+    ("—", "search index") instead of the real step data.
     """
 
     def handle(route: Route):
-        # Non-streaming agentic snapshot whose query_plan uses camelCase step fields
+        # Non-streaming agentic snapshot whose query_plan carries the execution steps
         with open("tests/snapshots/test_app/test_chat_text_agent/knowledgebase_client0/result.json") as f:
             route.fulfill(body=f.read(), status=200)
 
@@ -856,14 +813,9 @@ def test_agentic_retrieval_query_plan_renders(page: Page, live_server_url: str):
     page.get_by_label("Show thought process").click()
     expect(page.get_by_title("Thought process")).to_be_visible()
 
-    # The query plan "Execution steps" table must render real step data derived from the
-    # camelCase payload. Each of these assertions fails if the frontend/backend casing drifts:
+    # Verify the query plan "Execution steps" table renders the real step data
     expect(page.get_by_text("Execution steps")).to_be_visible()
-    # Step labels come from camelCase step.type values ("modelQueryPlanning", "searchIndex")
     expect(page.get_by_text("Query planning")).to_be_visible()
     expect(page.get_by_text("Index search")).to_be_visible()
-    # Search query comes from step.searchIndexArguments.search (renders as "Search: whistleblower query")
     expect(page.get_by_text("Search: whistleblower query")).to_be_visible()
-    # Knowledge source name comes from step.knowledgeSourceName (renders as "Source: index";
-    # if the camelCase field is missing it would fall back to "search index")
     expect(page.get_by_text("Source: index")).to_be_visible()
