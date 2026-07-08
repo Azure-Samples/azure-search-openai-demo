@@ -64,7 +64,10 @@ async function fetchAuthSetup(): Promise<AuthSetup> {
         // Reload the current page so the browser handles the login flow, then never resolve
         // so the rest of the module does not try to initialize with a missing AuthSetup.
         window.location.reload();
-        return new Promise<AuthSetup>(() => {});
+        return new Promise<AuthSetup>(() => {
+            /* Intentionally never resolve: window.location.reload() above is about to unload this page,
+               so no caller should proceed past this await. Do not "clean up" this empty executor. */
+        });
     }
     if (!response.ok) {
         throw new Error(`auth setup response was not ok: ${response.status}`);
