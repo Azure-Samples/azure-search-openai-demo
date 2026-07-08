@@ -263,7 +263,7 @@ If any step fails, check container logs — `AuthError` from `app/backend/core/a
 
 `msgraph-sdk` (and its transitive `microsoft-kiota-*` deps) is only imported by `scripts/auth_init.py` and `scripts/auth_update.py`, which register Entra client + server apps for the login-enabled deploy. The unit tests in `tests/test_auth_init.py` mock `GraphServiceClient` end-to-end, so a bump can pass CI while breaking a real Graph call (usually due to renamed request-body classes or new required fields).
 
-Validate against a live tenant using the same `pf-ragchat-login` env from the msal test plan:
+Validate against a live tenant. If you don't already have a login-enabled deploy, follow steps 1–2 of the msal test plan above to create + provision an auth-enabled azd env (any env name works — the steps below use `$AZURE_ENV_NAME` from your current azd env).
 
 1. **First run — exercises PATCH + query paths only.** If the client and server app registrations from a prior run already exist, `auth_init.sh` short-circuits the `applications.post()` create path:
 
