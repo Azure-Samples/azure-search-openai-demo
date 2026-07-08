@@ -441,6 +441,45 @@ def test_chat_nonstreaming(page: Page, live_server_url: str):
     expect(page.get_by_role("button", name="Clear chat")).to_be_enabled()
 
 
+def test_chat_agentic_query_plan(page: Page, live_server_url: str):
+    # Regression guard: agentic retrieval returns a query_plan that the frontend must
+    # render as an agent plan in the thought process. A casing/shape mismatch here was
+    # almost missed during the azure-search-documents SDK upgrade.
+    def handle(route: Route):
+        # Return the agentic (knowledgebase) snapshot, which includes a query_plan
+        f = open("tests/snapshots/test_app/test_chat_text_agent/knowledgebase_client0/result.json")
+        json = f.read()
+        f.close()
+        route.fulfill(body=json, status=200)
+
+    page.route("*/**/chat", handle)
+
+    # Use the non-streaming /chat endpoint since the agentic snapshot is a single result.json
+    page.goto(live_server_url)
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+    expect(page.get_by_role("button", name="Developer settings")).to_be_enabled()
+    page.get_by_role("button", name="Developer settings").click()
+    page.get_by_text("Stream chat completion responses").click()
+    page.locator("button").filter(has_text="Close").click()
+
+    # Ask a question and wait for the answer to appear
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the capital of France?"
+    )
+    page.get_by_label("Submit question").click()
+
+    expect(page.get_by_text("Whats the capital of France?")).to_be_visible()
+    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+    # Show the thought process and assert the agentic query plan is rendered
+    page.get_by_label("Show thought process").click()
+    expect(page.get_by_title("Thought process")).to_be_visible()
+    expect(page.get_by_text("Agentic retrieval response")).to_be_visible()
+    expect(page.get_by_text("Query planning")).to_be_visible()
+    expect(page.get_by_text("Index search")).to_be_visible()
+
+
 def test_chat_followup_streaming(page: Page, live_server_url: str):
     # Set up a mock route to the /chat_stream endpoint
     def handle(route: Route):
