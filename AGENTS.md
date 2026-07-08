@@ -195,6 +195,69 @@ To upgrade a particular package in the frontend:
 * For major version upgrades of UI libraries like Fluent UI or MSAL, review breaking changes carefully. Manual tests are required for any MSAL changes since the E2E tests do not cover authentication flows.
 * If npm reports peer dependency conflicts, the `.npmrc` file has `legacy-peer-deps=true` which allows the install to proceed. This is currently needed because `react-helmet-async` declares peer dependencies on React 17/18, but works fine with React 19.
 
+## Manual test plan for authentication changes (msal, msal-browser, authentication.py)
+
+The unit tests mock `msal` at the client level, so any change to `msal`, `@azure/msal-browser`, `cryptography`, or `app/backend/core/authentication.py` needs a live deploy against Entra to confirm the on-behalf-of (OBO) flow, token cache, and Container Apps Easy Auth integration still work.
+
+Use a dedicated azd env with login + access control enabled so the OBO code path is actually exercised.
+
+1. **Create the env and enable auth:**
+
+   ```shell
+   azd env new pf-ragchat-login --subscription <SUB_ID> --location eastus2
+   azd env set AZURE_USE_AUTHENTICATION true
+   azd env set AZURE_ENFORCE_ACCESS_CONTROL true
+   azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS false
+   azd env set AZURE_AUTH_TENANT_ID <YOUR_TENANT_ID>
+   azd env set AZURE_TENANT_ID <YOUR_TENANT_ID>
+   # If eastus2 is capacity-constrained for Search:
+   azd env set AZURE_SEARCH_SERVICE_LOCATION westus3
+   ```
+
+2. **Provision + deploy:**
+
+   ```shell
+   ./scripts/auth_init.sh   # creates the client + server Entra app registrations
+   azd up -e pf-ragchat-login
+   ```
+
+   `azd up` runs `auth_update.sh` as a postprovision hook to update the client app's redirect URIs.
+
+3. **Ingest data for this env.** The `.md5` marker files under `data/` are shared across envs and cause `prepdocs` to skip everything on a fresh env, leaving the search index empty. Remove them first, then re-ingest:
+
+   ```shell
+   rm data/*.md5
+   ./scripts/prepdocs.sh
+   ```
+
+4. **Apply an ACL to at least one document for your user oid** (find your oid via `az ad signed-in-user show --query id -o tsv`):
+
+   ```shell
+   python scripts/manageacl.py -v --acl-action add --acl-type oids \
+     --acl <YOUR_OID> \
+     --url "https://<storage-account>.blob.core.windows.net/content/Northwind_Standard_Benefits_Details.pdf"
+   ```
+
+5. **Verify auth enforcement with curl** (both should return `HTTP 401` because Container Apps Easy Auth blocks unauthenticated traffic before the app sees the request):
+
+   ```shell
+   BASE=https://<your-backend-fqdn>
+   curl -sS -o /dev/null -w "%{http_code}\n" "$BASE/auth_setup"
+   curl -sS -o /dev/null -w "%{http_code}\n" -X POST "$BASE/chat" \
+     -H "Content-Type: application/json" \
+     -d '{"messages":[{"role":"user","content":"hi"}]}'
+   ```
+
+6. **Verify the OBO flow in the browser:**
+   * Load the app URL — you should be redirected to Entra sign-in.
+   * Sign in with the tenant user whose oid you ACL'd.
+   * Ask a question that only the ACL'd document can answer (e.g. "What is included in the Northwind Standard plan?"). You should get an answer with citations only from that document.
+   * Ask a question about a document that is NOT ACL'd to you (e.g. "What is included in the Northwind Health Plus plan?"). You should get "I don't know" / no citations. This confirms the OBO token was issued by `msal.ConfidentialClientApplication.acquire_token_on_behalf_of` and correctly passed to Azure AI Search as the access-control filter.
+
+7. **Optional: log out and reload.** Confirms Easy Auth logout works and re-auth kicks in cleanly.
+
+If any step fails, check container logs — `AuthError` from `app/backend/core/authentication.py` usually indicates the OBO token exchange or token validation broke.
+
 ## Checking Python type hints
 
 To check Python type hints, use the following command:
