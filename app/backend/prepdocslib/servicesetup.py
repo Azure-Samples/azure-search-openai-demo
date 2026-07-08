@@ -251,6 +251,7 @@ def build_file_processors(
     use_local_pdf_parser: bool = False,
     use_local_html_parser: bool = False,
     process_figures: bool = False,
+    csv_max_chars_per_page: int | None = None,
 ) -> dict[str, FileProcessor]:
     sentence_text_splitter = SentenceTextSplitter()
 
@@ -289,7 +290,7 @@ def build_file_processors(
         ".json": FileProcessor(JsonParser(), SimpleTextSplitter()),
         ".md": FileProcessor(TextParser(), sentence_text_splitter),
         ".txt": FileProcessor(TextParser(), sentence_text_splitter),
-        ".csv": FileProcessor(CsvParser(), sentence_text_splitter),
+        ".csv": FileProcessor(CsvParser(max_chars_per_page=csv_max_chars_per_page), sentence_text_splitter),
     }
     # These require either a Python package or Document Intelligence
     if pdf_parser is not None:

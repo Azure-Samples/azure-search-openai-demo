@@ -4,7 +4,7 @@ aiofiles==24.1.0
     # via quart
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.14.0
+aiohttp==3.14.1
     # via
     #   -r requirements.in
     #   microsoft-kiota-authentication-azure
@@ -18,14 +18,14 @@ anyio==4.4.0
     #   openai
 asgiref==3.10.0
     # via opentelemetry-instrumentation-asgi
+async-timeout==5.0.1
+    # via aiohttp
 attrs==25.3.0
     # via aiohttp
 azure-ai-documentintelligence==1.0.2
     # via -r requirements.in
 azure-cognitiveservices-speech==1.40.0
     # via -r requirements.in
-azure-common==1.1.28
-    # via azure-search-documents
 azure-core==1.39.0
     # via
     #   azure-ai-documentintelligence
@@ -54,7 +54,7 @@ azure-monitor-opentelemetry==1.8.4
     # via -r requirements.in
 azure-monitor-opentelemetry-exporter==1.0.0b46
     # via azure-monitor-opentelemetry
-azure-search-documents==11.7.0b2
+azure-search-documents==12.1.0b1
     # via -r requirements.in
 azure-storage-blob==12.22.0
     # via
@@ -83,7 +83,7 @@ click==8.4.1
     #   flask
     #   quart
     #   uvicorn
-cryptography==46.0.7
+cryptography==49.0.0
     # via
     #   -r requirements.in
     #   azure-identity
@@ -92,6 +92,11 @@ cryptography==46.0.7
     #   pyjwt
 distro==1.9.0
     # via openai
+exceptiongroup==1.3.1
+    # via
+    #   anyio
+    #   hypercorn
+    #   taskgroup
 flask==3.1.3
     # via quart
 frozenlist==1.8.0
@@ -112,7 +117,7 @@ hpack==4.1.0
     # via h2
 httpcore==1.0.9
     # via httpx
-httpx[http2]==0.28.1
+httpx==0.28.1
     # via
     #   microsoft-kiota-http
     #   msgraph-core
@@ -157,7 +162,7 @@ markupsafe==3.0.3
     #   werkzeug
 mdurl==0.1.2
     # via markdown-it-py
-microsoft-kiota-abstractions==1.9.10
+microsoft-kiota-abstractions==1.11.7
     # via
     #   microsoft-kiota-authentication-azure
     #   microsoft-kiota-http
@@ -166,28 +171,28 @@ microsoft-kiota-abstractions==1.9.10
     #   microsoft-kiota-serialization-multipart
     #   microsoft-kiota-serialization-text
     #   msgraph-core
-microsoft-kiota-authentication-azure==1.9.3
+microsoft-kiota-authentication-azure==1.11.7
     # via msgraph-core
-microsoft-kiota-http==1.9.9
+microsoft-kiota-http==1.11.7
     # via msgraph-core
-microsoft-kiota-serialization-form==1.9.3
+microsoft-kiota-serialization-form==1.11.7
     # via msgraph-sdk
-microsoft-kiota-serialization-json==1.9.3
+microsoft-kiota-serialization-json==1.11.7
     # via msgraph-sdk
-microsoft-kiota-serialization-multipart==1.9.3
+microsoft-kiota-serialization-multipart==1.11.7
     # via msgraph-sdk
-microsoft-kiota-serialization-text==1.9.3
+microsoft-kiota-serialization-text==1.11.7
     # via msgraph-sdk
-msal==1.33.0
+msal==1.37.0
     # via
     #   -r requirements.in
     #   azure-identity
     #   msal-extensions
 msal-extensions==1.3.1
     # via azure-identity
-msgraph-core==1.3.3
+msgraph-core==1.4.0
     # via msgraph-sdk
-msgraph-sdk==1.45.0
+msgraph-sdk==1.58.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
@@ -329,13 +334,13 @@ pydantic-core==2.46.4
     # via pydantic
 pygments==2.20.0
     # via rich
-pyjwt[crypto]==2.12.0
+pyjwt==2.13.0
     # via
     #   -r requirements.in
     #   msal
 pymupdf==1.27.2.3
     # via -r requirements.in
-pypdf==6.10.2
+pypdf==6.13.3
     # via -r requirements.in
 python-dotenv==1.2.2
     # via -r requirements.in
@@ -362,14 +367,18 @@ sniffio==1.3.1
     # via
     #   anyio
     #   openai
-soupsieve==2.7
+soupsieve==2.8.4
     # via beautifulsoup4
 std-uritemplate==2.0.8
     # via microsoft-kiota-abstractions
+taskgroup==0.2.2
+    # via hypercorn
 tenacity==9.1.4
     # via -r requirements.in
 tiktoken==0.12.0
     # via -r requirements.in
+tomli==2.4.1
+    # via hypercorn
 tqdm==4.66.5
     # via openai
 types-beautifulsoup4==4.12.0.20250516
@@ -381,6 +390,10 @@ types-pillow==10.2.0.20240822
 typing-extensions==4.15.0
     # via
     #   -r requirements.in
+    #   aiohttp
+    #   aiosignal
+    #   anyio
+    #   asgiref
     #   azure-ai-documentintelligence
     #   azure-core
     #   azure-cosmos
@@ -389,13 +402,21 @@ typing-extensions==4.15.0
     #   azure-storage-blob
     #   azure-storage-file-datalake
     #   beautifulsoup4
+    #   cryptography
+    #   exceptiongroup
+    #   hypercorn
+    #   multidict
     #   openai
     #   opentelemetry-api
     #   opentelemetry-sdk
     #   opentelemetry-semantic-conventions
     #   pydantic
     #   pydantic-core
+    #   pyjwt
+    #   pypdf
+    #   taskgroup
     #   typing-inspection
+    #   uvicorn
 typing-inspection==0.4.2
     # via pydantic
 urllib3==2.7.0

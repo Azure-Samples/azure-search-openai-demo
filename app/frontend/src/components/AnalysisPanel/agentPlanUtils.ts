@@ -2,26 +2,26 @@ export type QueryPlanStep = {
     id: number | string;
     type: string;
     label?: string;
-    elapsed_ms?: number;
-    knowledge_source_name?: string;
-    search_index_arguments?: {
+    elapsedMs?: number;
+    knowledgeSourceName?: string;
+    searchIndexArguments?: {
         search?: string;
-        search_fields?: string[];
-        semantic_configuration_name?: string;
-        source_data_fields?: { name?: string }[];
+        searchFields?: string[];
+        semanticConfigurationName?: string;
+        sourceDataFields?: { name?: string }[];
     };
-    web_arguments?: {
-        search?: string;
-    };
-    remote_share_point_arguments?: {
+    webArguments?: {
         search?: string;
     };
-    query_time?: string;
+    remoteSharePointArguments?: {
+        search?: string;
+    };
+    queryTime?: string;
     count?: number;
-    input_tokens?: number;
-    output_tokens?: number;
-    reasoning_tokens?: number;
-    retrieval_reasoning_effort?: {
+    inputTokens?: number;
+    outputTokens?: number;
+    reasoningTokens?: number;
+    retrievalReasoningEffort?: {
         kind?: string;
     };
     [key: string]: unknown;

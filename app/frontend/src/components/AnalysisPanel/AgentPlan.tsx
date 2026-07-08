@@ -14,20 +14,20 @@ const renderDetail = (step: QueryPlanStep) => {
     switch (step.type) {
         case "modelQueryPlanning": {
             const usage: TokenUsage = {
-                prompt_tokens: step.input_tokens ?? 0,
-                completion_tokens: step.output_tokens ?? 0,
+                prompt_tokens: step.inputTokens ?? 0,
+                completion_tokens: step.outputTokens ?? 0,
                 reasoning_tokens: 0,
-                total_tokens: (step.input_tokens ?? 0) + (step.output_tokens ?? 0)
+                total_tokens: (step.inputTokens ?? 0) + (step.outputTokens ?? 0)
             };
 
             return <TokenUsageGraph tokenUsage={usage} labels={{ prompt: "Input", output: "Output", total: "Total tokens" }} title="" />;
         }
         case "searchIndex": {
-            const search = step.search_index_arguments?.search ?? "—";
+            const search = step.searchIndexArguments?.search ?? "—";
             return (
                 <>
                     <div>
-                        <strong>Source:</strong> {step.knowledge_source_name ?? "search index"}
+                        <strong>Source:</strong> {step.knowledgeSourceName ?? "search index"}
                     </div>
                     <div>
                         <strong>Search:</strong> {search}
@@ -36,11 +36,11 @@ const renderDetail = (step: QueryPlanStep) => {
             );
         }
         case "web": {
-            const webSearch = step.web_arguments?.search ?? "—";
+            const webSearch = step.webArguments?.search ?? "—";
             return (
                 <>
                     <div>
-                        <strong>Source:</strong> {step.knowledge_source_name ?? "web"}
+                        <strong>Source:</strong> {step.knowledgeSourceName ?? "web"}
                     </div>
                     <div>
                         <strong>Search:</strong>
@@ -50,11 +50,11 @@ const renderDetail = (step: QueryPlanStep) => {
             );
         }
         case "remoteSharePoint": {
-            const sharepointSearch = step.remote_share_point_arguments?.search ?? "—";
+            const sharepointSearch = step.remoteSharePointArguments?.search ?? "—";
             return (
                 <>
                     <div>
-                        <strong>Source:</strong> {step.knowledge_source_name ?? "SharePoint"}
+                        <strong>Source:</strong> {step.knowledgeSourceName ?? "SharePoint"}
                     </div>
                     <div>
                         <strong>Search: </strong>
@@ -66,9 +66,9 @@ const renderDetail = (step: QueryPlanStep) => {
         case "agenticReasoning": {
             const usage: TokenUsage = {
                 prompt_tokens: 0,
-                completion_tokens: step.reasoning_tokens ?? 0,
-                reasoning_tokens: step.reasoning_tokens ?? 0,
-                total_tokens: step.reasoning_tokens ?? 0
+                completion_tokens: step.reasoningTokens ?? 0,
+                reasoning_tokens: step.reasoningTokens ?? 0,
+                total_tokens: step.reasoningTokens ?? 0
             };
 
             return (
@@ -82,10 +82,10 @@ const renderDetail = (step: QueryPlanStep) => {
         }
         case "modelAnswerSynthesis": {
             const usage: TokenUsage = {
-                prompt_tokens: step.input_tokens ?? 0,
-                completion_tokens: step.output_tokens ?? 0,
+                prompt_tokens: step.inputTokens ?? 0,
+                completion_tokens: step.outputTokens ?? 0,
                 reasoning_tokens: 0,
-                total_tokens: (step.input_tokens ?? 0) + (step.output_tokens ?? 0)
+                total_tokens: (step.inputTokens ?? 0) + (step.outputTokens ?? 0)
             };
 
             return <TokenUsageGraph tokenUsage={usage} labels={{ prompt: "Input", output: "Output", total: "Total tokens" }} title="" />;
@@ -109,9 +109,9 @@ interface Props {
 export const AgentPlan: React.FC<Props> = ({ queryPlan, onEffortExtracted, onCitationClicked, results }) => {
     // Helper to get search query for a step
     const getStepQuery = (step: QueryPlanStep): string | undefined => {
-        if (step.search_index_arguments?.search) return step.search_index_arguments.search;
-        if (step.web_arguments?.search) return step.web_arguments.search;
-        if (step.remote_share_point_arguments?.search) return step.remote_share_point_arguments.search;
+        if (step.searchIndexArguments?.search) return step.searchIndexArguments.search;
+        if (step.webArguments?.search) return step.webArguments.search;
+        if (step.remoteSharePointArguments?.search) return step.remoteSharePointArguments.search;
         return undefined;
     };
 
@@ -173,7 +173,7 @@ export const AgentPlan: React.FC<Props> = ({ queryPlan, onEffortExtracted, onCit
     React.useEffect(() => {
         // Extract effort from first agentic reasoning step
         const agenticStep = queryPlan.find(step => step.type === "agenticReasoning");
-        const effort = agenticStep?.retrieval_reasoning_effort?.kind;
+        const effort = agenticStep?.retrievalReasoningEffort?.kind;
         if (onEffortExtracted) {
             onEffortExtracted(effort);
         }
@@ -264,7 +264,7 @@ export const AgentPlan: React.FC<Props> = ({ queryPlan, onEffortExtracted, onCit
                                                         <div className={styles.noResults}>No results found</div>
                                                     ))}
                                             </td>
-                                            <td title={step.query_time ?? undefined}>{step.elapsed_ms ?? "—"}</td>
+                                            <td title={step.queryTime ?? undefined}>{step.elapsedMs ?? "—"}</td>
                                         </tr>
                                     );
                                 })}

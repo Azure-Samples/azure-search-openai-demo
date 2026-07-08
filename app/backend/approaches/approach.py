@@ -91,7 +91,6 @@ class Document:
             "captions": (
                 [
                     {
-                        "additional_properties": caption.additional_properties,
                         "text": caption.text,
                         "highlights": caption.highlights,
                     }
@@ -315,7 +314,7 @@ class Approach(ABC):
                 query_speller=self.query_speller,
                 semantic_configuration_name="default",
                 semantic_query=query_text,
-                x_ms_query_source_authorization=access_token,
+                query_source_authorization=access_token,
             )
         else:
             results = await self.search_client.search(
@@ -323,7 +322,7 @@ class Approach(ABC):
                 filter=filter,
                 top=top,
                 vector_queries=search_vectors,
-                x_ms_query_source_authorization=access_token,
+                query_source_authorization=access_token,
             )
 
         documents: list[Document] = []
@@ -549,7 +548,7 @@ class Approach(ABC):
 
         response = await knowledgebase_client.retrieve(
             retrieval_request=KnowledgeBaseRetrievalRequest(**request_kwargs),
-            x_ms_query_source_authorization=access_token,
+            query_source_authorization=access_token,
         )
 
         # Map activity id -> agent's internal search query and citation
@@ -893,13 +892,13 @@ class Approach(ABC):
         query_vector = embedding.data[0].embedding
         # This performs an oversampling due to how the search index was setup,
         # so we do not need to explicitly pass in an oversampling parameter here
-        return VectorizedQuery(vector=query_vector, k=50, fields=self.embedding_field)
+        return VectorizedQuery(vector=query_vector, k_nearest_neighbors=50, fields=self.embedding_field)
 
     async def compute_multimodal_embedding(self, q: str):
         if not self.image_embeddings_client:
             raise ValueError("Approach is missing an image embeddings client for multimodal queries")
         multimodal_query_vector = await self.image_embeddings_client.create_embedding_for_text(q)
-        return VectorizedQuery(vector=multimodal_query_vector, k=50, fields="images/embedding")
+        return VectorizedQuery(vector=multimodal_query_vector, k_nearest_neighbors=50, fields="images/embedding")
 
     def get_system_prompt_variables(self, override_prompt: Optional[str]) -> dict[str, str]:
         # Allows client to replace the entire prompt, or to inject into the existing prompt using >>>

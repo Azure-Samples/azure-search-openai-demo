@@ -13,13 +13,13 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@azure/msal-browser": "^4.16.0",
-    "@azure/msal-react": "^3.0.16",
+    "@azure/msal-browser": "^5.17.0",
+    "@azure/msal-react": "^5.5.2",
     "@fluentui/react-components": "^9.73.3",
     "@fluentui/react-icons": "^2.0.319",
     "@fluentui/react-table": "^9.19.14",
     "@react-spring/web": "^10.0.3",
-    "dompurify": "^3.4.0",
+    "dompurify": "^3.4.11",
     "i18next": "^24.2.0",
     "i18next-browser-languagedetector": "^8.2.1",
     "i18next-http-backend": "^3.0.5",
@@ -39,6 +39,7 @@
   "devDependencies": {
     "@types/dom-speech-recognition": "^0.0.7",
     "@types/dompurify": "^3.2.0",
+    "@types/node": "^26.0.1",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "@types/react-syntax-highlighter": "^15.5.13",

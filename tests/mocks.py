@@ -141,10 +141,9 @@ class MockAsyncPageIterator:
 
 
 class MockCaption:
-    def __init__(self, text, highlights=None, additional_properties=None):
+    def __init__(self, text, highlights=None):
         self.text = text
         self.highlights = highlights or []
-        self.additional_properties = additional_properties or {}
 
 
 class MockAsyncSearchResultsIterator:
@@ -392,7 +391,7 @@ def create_mock_retrieve(response_type="default"):
         params_list = retrieval_request.knowledge_source_params
         params = params_list[0]
         self.filter = getattr(params, "filter_add_on", None)
-        self.access_token = kwargs.get("x_ms_query_source_authorization", None)
+        self.access_token = kwargs.get("query_source_authorization", None)
 
         # Determine response type from environment if "auto"
         actual_response_type = response_type
