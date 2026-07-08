@@ -6,10 +6,11 @@ from pathlib import Path
 
 from azure.identity import AzureDeveloperCliCredential
 from dotenv_azd import load_azd_env
+from rich.logging import RichHandler
+
 from evaltools.eval.evaluate import run_evaluate_from_config
 from evaltools.eval.evaluate_metrics import register_metric
 from evaltools.eval.evaluate_metrics.base_metric import BaseMetric
-from rich.logging import RichHandler
 
 logger = logging.getLogger("ragapp")
 
