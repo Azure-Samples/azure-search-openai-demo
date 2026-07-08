@@ -1,7 +1,6 @@
 import argparse
 import logging
 import os
-import re
 from pathlib import Path
 
 from azure.identity import AzureDeveloperCliCredential
@@ -9,82 +8,8 @@ from dotenv_azd import load_azd_env
 from rich.logging import RichHandler
 
 from evaltools.eval.evaluate import run_evaluate_from_config
-from evaltools.eval.evaluate_metrics import register_metric
-from evaltools.eval.evaluate_metrics.base_metric import BaseMetric
 
 logger = logging.getLogger("ragapp")
-
-# Regex pattern to match citations of the forms:
-# [Document Name.pdf#page=7]
-# [Document Name.pdf#page=4(figure4_1.png)]
-# and supports multiple document extensions such as:
-#  pdf, html/htm, doc/docx, ppt/pptx, xls/xlsx, csv, txt, json,
-#  images: jpg/jpeg, png, bmp (listed as BPM in doc), tiff/tif, heif/heiff
-# Optional components:
-#   #page=\d+           -> page anchor (primarily for paged docs like PDFs)
-#   ( ... )              -> figure/image or sub-resource reference (e.g., (figure4_1.png))
-# Explanation of pattern components:
-# \[                              - Opening bracket
-# [^\]]+?\.                       - Non-greedy match of any chars up to a dot before extension
-# (?:pdf|docx?|pptx?|xlsx?|csv|txt|json)
-#                                  - Allowed primary file extensions
-# (?:#page=\d+)?                  - Optional page reference
-# (?:\([^()\]]+\))?             - Optional parenthetical (figure/image reference)
-# \]                              - Closing bracket
-CITATION_REGEX = re.compile(
-    r"\[[^\]]+?\.(?:pdf|html?|docx?|pptx?|xlsx?|csv|txt|json|jpe?g|png|bmp|tiff?|heiff?|heif)(?:#page=\d+)?(?:\([^()\]]+\))?\]",
-    re.IGNORECASE,
-)
-
-
-class AnyCitationMetric(BaseMetric):
-    METRIC_NAME = "any_citation"
-
-    @classmethod
-    def evaluator_fn(cls, **kwargs):
-        def any_citation(*, response, **kwargs):
-            if response is None:
-                logger.warning("Received response of None, can't compute any_citation metric. Setting to -1.")
-                return {cls.METRIC_NAME: -1}
-            return {cls.METRIC_NAME: bool(CITATION_REGEX.search(response))}
-
-        return any_citation
-
-    @classmethod
-    def get_aggregate_stats(cls, df):
-        df = df[df[cls.METRIC_NAME] != -1]
-        return {
-            "total": int(df[cls.METRIC_NAME].sum()),
-            "rate": round(df[cls.METRIC_NAME].mean(), 2),
-        }
-
-
-class CitationsMatchedMetric(BaseMetric):
-    METRIC_NAME = "citations_matched"
-
-    @classmethod
-    def evaluator_fn(cls, **kwargs):
-        def citations_matched(*, response, ground_truth, **kwargs):
-            if response is None:
-                logger.warning("Received response of None, can't compute citation_match metric. Setting to -1.")
-                return {cls.METRIC_NAME: -1}
-            # Extract full citation tokens from ground truth and response
-            truth_citations = set(CITATION_REGEX.findall(ground_truth or ""))
-            response_citations = set(CITATION_REGEX.findall(response or ""))
-            # Count the percentage of citations that are present in the response
-            num_citations = len(truth_citations)
-            num_matched_citations = len(truth_citations.intersection(response_citations))
-            return {cls.METRIC_NAME: num_matched_citations / num_citations}
-
-        return citations_matched
-
-    @classmethod
-    def get_aggregate_stats(cls, df):
-        df = df[df[cls.METRIC_NAME] != -1]
-        return {
-            "total": int(df[cls.METRIC_NAME].sum()),
-            "rate": round(df[cls.METRIC_NAME].mean(), 2),
-        }
 
 
 def get_openai_config():
@@ -123,9 +48,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     openai_config = get_openai_config()
-
-    register_metric(CitationsMatchedMetric)
-    register_metric(AnyCitationMetric)
 
     run_evaluate_from_config(
         working_dir=Path(__file__).parent,

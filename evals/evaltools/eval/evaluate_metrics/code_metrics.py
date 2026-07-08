@@ -5,6 +5,20 @@ from .base_metric import BaseMetric
 
 logger = logging.getLogger("evaltools")
 
+# Regex pattern to match citations of the forms:
+# [Document Name.pdf#page=7]
+# [Document Name.pdf#page=4(figure4_1.png)]
+# and supports multiple document extensions such as:
+#  pdf, html/htm, doc/docx, ppt/pptx, xls/xlsx, csv, txt, json,
+#  images: jpg/jpeg, png, bmp, tiff/tif, heif/heiff
+# Optional components:
+#   #page=\d+           -> page anchor (primarily for paged docs like PDFs)
+#   ( ... )              -> figure/image or sub-resource reference (e.g., (figure4_1.png))
+CITATION_REGEX = re.compile(
+    r"\[[^\]]+?\.(?:pdf|html?|docx?|pptx?|xlsx?|csv|txt|json|jpe?g|png|bmp|tiff?|heiff?|heif)(?:#page=\d+)?(?:\([^()\]]+\))?\]",
+    re.IGNORECASE,
+)
+
 
 class AnswerLengthMetric(BaseMetric):
     METRIC_NAME = "answer_length"
@@ -30,18 +44,18 @@ class AnswerLengthMetric(BaseMetric):
         }
 
 
-class HasCitationMetric(BaseMetric):
-    METRIC_NAME = "has_citation"
+class AnyCitationMetric(BaseMetric):
+    METRIC_NAME = "any_citation"
 
     @classmethod
     def evaluator_fn(cls, **kwargs):
-        def has_citation(*, response, **kwargs):
+        def any_citation(*, response, **kwargs):
             if response is None:
-                logger.warning("Received response of None, can't compute has_citation metric. Setting to -1.")
+                logger.warning("Received response of None, can't compute any_citation metric. Setting to -1.")
                 return {cls.METRIC_NAME: -1}
-            return {cls.METRIC_NAME: bool(re.search(r"\[[^\]]+\]", response))}
+            return {cls.METRIC_NAME: bool(CITATION_REGEX.search(response))}
 
-        return has_citation
+        return any_citation
 
     @classmethod
     def get_aggregate_stats(cls, df):
@@ -52,22 +66,24 @@ class HasCitationMetric(BaseMetric):
         }
 
 
-class CitationMatchMetric(BaseMetric):
-    METRIC_NAME = "citation_match"
+class CitationsMatchedMetric(BaseMetric):
+    METRIC_NAME = "citations_matched"
 
     @classmethod
     def evaluator_fn(cls, **kwargs):
-        def citation_match(*, response, ground_truth, **kwargs):
+        def citations_matched(*, response, ground_truth, **kwargs):
             if response is None:
-                logger.warning("Received response of None, can't compute citation_match metric. Setting to -1.")
+                logger.warning("Received response of None, can't compute citations_matched metric. Setting to -1.")
                 return {cls.METRIC_NAME: -1}
-            # Return true if all citations in the truth are present in the response
-            truth_citations = set(re.findall(r"\[([^\]]+)\.\w{3,4}(#page=\d+)*\]", ground_truth))
-            response_citations = set(re.findall(r"\[([^\]]+)\.\w{3,4}(#page=\d+)*\]", response))
-            citation_match = truth_citations.issubset(response_citations)
-            return {cls.METRIC_NAME: citation_match}
+            # Extract full citation tokens from ground truth and response
+            truth_citations = set(CITATION_REGEX.findall(ground_truth or ""))
+            response_citations = set(CITATION_REGEX.findall(response or ""))
+            # Count the percentage of citations that are present in the response
+            num_citations = len(truth_citations)
+            num_matched_citations = len(truth_citations.intersection(response_citations))
+            return {cls.METRIC_NAME: num_matched_citations / num_citations}
 
-        return citation_match
+        return citations_matched
 
     @classmethod
     def get_aggregate_stats(cls, df):

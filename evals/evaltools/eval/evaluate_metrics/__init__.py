@@ -8,8 +8,8 @@ from .builtin_metrics import (
 )
 from .code_metrics import (
     AnswerLengthMetric,
-    CitationMatchMetric,
-    HasCitationMetric,
+    AnyCitationMetric,
+    CitationsMatchedMetric,
     LatencyMetric,
 )
 
@@ -22,8 +22,8 @@ metrics = [
     BuiltinF1ScoreMetric,
     LatencyMetric,
     AnswerLengthMetric,
-    HasCitationMetric,
-    CitationMatchMetric,
+    AnyCitationMetric,
+    CitationsMatchedMetric,
 ]
 
 metrics_by_name = {metric.METRIC_NAME: metric for metric in metrics}
