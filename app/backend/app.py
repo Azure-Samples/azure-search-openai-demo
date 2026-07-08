@@ -404,6 +404,13 @@ async def setup_clients():
     AZURE_SEARCH_ENDPOINT = f"https://{AZURE_SEARCH_SERVICE}.search.windows.net"
     AZURE_SEARCH_INDEX = os.environ["AZURE_SEARCH_INDEX"]
     AZURE_SEARCH_KNOWLEDGEBASE_NAME = os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME", "")
+    # azure-search-documents 12.1.0b1 defaults the knowledgebase retrieval client to api-version
+    # "2026-05-01-preview", whose retrieval execution currently returns a service-side 502
+    # ("An unexpected error occurred during retrieval") on services that haven't rolled out that
+    # preview yet, even though every underlying query capability works. "2025-11-01-preview" is the
+    # earliest version that supports the fields the app sends (outputMode, retrievalReasoningEffort)
+    # and retrieves successfully. Override via env once your service supports a newer version.
+    AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION = os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION", "2025-11-01-preview")
     # Shared by all OpenAI deployments
     OPENAI_HOST = OpenAIHost(os.getenv("OPENAI_HOST", "azure"))
     OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
@@ -516,7 +523,10 @@ async def setup_clients():
     )
 
     knowledgebase_client = KnowledgeBaseRetrievalClient(
-        endpoint=AZURE_SEARCH_ENDPOINT, knowledge_base_name=AZURE_SEARCH_KNOWLEDGEBASE_NAME, credential=azure_credential
+        endpoint=AZURE_SEARCH_ENDPOINT,
+        knowledge_base_name=AZURE_SEARCH_KNOWLEDGEBASE_NAME,
+        credential=azure_credential,
+        api_version=AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION,
     )
     knowledgebase_client_with_web = None
     knowledgebase_client_with_sharepoint = None
@@ -528,18 +538,21 @@ async def setup_clients():
                 endpoint=AZURE_SEARCH_ENDPOINT,
                 knowledge_base_name=f"{AZURE_SEARCH_KNOWLEDGEBASE_NAME}-with-web",
                 credential=azure_credential,
+                api_version=AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION,
             )
         if USE_SHAREPOINT_SOURCE:
             knowledgebase_client_with_sharepoint = KnowledgeBaseRetrievalClient(
                 endpoint=AZURE_SEARCH_ENDPOINT,
                 knowledge_base_name=f"{AZURE_SEARCH_KNOWLEDGEBASE_NAME}-with-sp",
                 credential=azure_credential,
+                api_version=AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION,
             )
         if USE_WEB_SOURCE and USE_SHAREPOINT_SOURCE:
             knowledgebase_client_with_web_and_sharepoint = KnowledgeBaseRetrievalClient(
                 endpoint=AZURE_SEARCH_ENDPOINT,
                 knowledge_base_name=f"{AZURE_SEARCH_KNOWLEDGEBASE_NAME}-with-web-and-sp",
                 credential=azure_credential,
+                api_version=AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION,
             )
 
     # Set up the global blob storage manager (used for global content/images, but not user uploads)
