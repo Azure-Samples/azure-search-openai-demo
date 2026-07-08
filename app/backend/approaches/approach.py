@@ -53,22 +53,6 @@ from prepdocslib.embeddings import ImageEmbeddings
 ReasoningEffort = str | None
 
 
-def camel_to_snake_keys(value: Any) -> Any:
-    """Recursively convert dict keys from camelCase to snake_case.
-
-    Starting with azure-search-documents 12.1.0b1, model .as_dict() emits REST
-    wire names (camelCase), whereas the rest of this app's JSON contract and the
-    frontend query-plan renderer expect snake_case. This normalizes keys while
-    leaving values (e.g. activity "type" discriminators like "searchIndex")
-    untouched.
-    """
-    if isinstance(value, dict):
-        return {re.sub(r"(?<!^)(?=[A-Z])", "_", key).lower(): camel_to_snake_keys(val) for key, val in value.items()}
-    if isinstance(value, list):
-        return [camel_to_snake_keys(item) for item in value]
-    return value
-
-
 @dataclass
 class ActivityDetail:
     id: int
@@ -674,9 +658,7 @@ class Approach(ABC):
                 [result.serialize_for_results() for result in document_results + web_results + sharepoint_results],
                 {
                     "query_plan": (
-                        [camel_to_snake_keys(activity.as_dict()) for activity in response.activity]
-                        if response.activity
-                        else None
+                        [activity.as_dict() for activity in response.activity] if response.activity else None
                     ),
                     "model": self.knowledgebase_model,
                     "deployment": self.knowledgebase_deployment,
