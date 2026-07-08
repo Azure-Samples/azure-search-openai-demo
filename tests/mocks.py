@@ -141,10 +141,9 @@ class MockAsyncPageIterator:
 
 
 class MockCaption:
-    def __init__(self, text, highlights=None, additional_properties=None):
+    def __init__(self, text, highlights=None):
         self.text = text
         self.highlights = highlights or []
-        self.additional_properties = additional_properties or {}
 
 
 class MockAsyncSearchResultsIterator:

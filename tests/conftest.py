@@ -73,9 +73,7 @@ MockKnowledgeBase = KnowledgeBase(
         SearchIndexKnowledgeSource(
             name="test",
             description="The default index for searching",
-            search_index_parameters=SearchIndexKnowledgeSourceParameters(
-                search_index_name="test", include_reference_source_data=True
-            ),
+            search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name="test"),
         )
     ],
 )

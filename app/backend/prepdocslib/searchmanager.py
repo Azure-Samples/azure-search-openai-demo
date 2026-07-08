@@ -13,7 +13,6 @@ from azure.search.documents.indexes.models import (
     HnswParameters,
     KnowledgeBase,
     KnowledgeBaseAzureOpenAIModel,
-    KnowledgeRetrievalOutputMode,
     KnowledgeSourceReference,
     PermissionFilter,
     RemoteSharePointKnowledgeSource,
@@ -39,6 +38,9 @@ from azure.search.documents.indexes.models import (
     VectorSearchProfile,
     VectorSearchVectorizer,
     WebKnowledgeSource,
+)
+from azure.search.documents.knowledgebases.models import (
+    KnowledgeRetrievalOutputMode,
 )
 
 from .blobmanager import BlobManager
@@ -149,7 +151,7 @@ class SearchManager:
 
                 embedding_field = SearchField(
                     name=self.field_name_embedding,
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),  # ty: ignore[call-non-callable]
                     hidden=True,
                     searchable=True,
                     filterable=False,
@@ -184,11 +186,15 @@ class SearchManager:
                 )
                 images_field = SearchField(
                     name="images",
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.ComplexType),
+                    type=SearchFieldDataType.Collection(
+                        SearchFieldDataType.ComplexType
+                    ),  # ty: ignore[call-non-callable]
                     fields=[
                         SearchField(
                             name="embedding",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
+                            type=SearchFieldDataType.Collection(
+                                SearchFieldDataType.Single
+                            ),  # ty: ignore[call-non-callable]
                             searchable=True,
                             stored=False,
                             vector_search_dimensions=1024,
@@ -212,7 +218,9 @@ class SearchManager:
                         ),
                         SearchField(
                             name="boundingbox",
-                            type=SearchFieldDataType.Collection(SearchFieldDataType.Double),
+                            type=SearchFieldDataType.Collection(
+                                SearchFieldDataType.Double
+                            ),  # ty: ignore[call-non-callable]
                             searchable=False,
                             filterable=False,
                             sortable=False,
@@ -224,13 +232,13 @@ class SearchManager:
             if self.use_acls:
                 oids_field = SearchField(
                     name="oids",
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),  # ty: ignore[call-non-callable]
                     filterable=True,
                     permission_filter=PermissionFilter.USER_IDS,
                 )
                 groups_field = SearchField(
                     name="groups",
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),  # ty: ignore[call-non-callable]
                     filterable=True,
                     permission_filter=PermissionFilter.GROUP_IDS,
                 )
