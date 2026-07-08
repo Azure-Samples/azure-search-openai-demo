@@ -546,20 +546,9 @@ class Approach(ABC):
         }
         request_kwargs.update(agentic_retrieval_input)
 
-        retrieve_kwargs: dict[str, Any] = {}
-        # query_source_authorization was only added to the retrieve API in "2026-05-01-preview"
-        # (the app's default). The SDK raises a client-side ValueError if it's passed to an older
-        # api-version, so only forward it when the client is configured with a version that supports
-        # it, in case AZURE_SEARCH_KNOWLEDGEBASE_API_VERSION is overridden to an older preview. It's
-        # only needed to authorize RBAC-secured / web / SharePoint sources anyway; the basic search
-        # index source retrieves fine without it. Date-based preview versions compare as strings.
-        client_api_version = knowledgebase_client._config.api_version
-        if access_token and client_api_version >= "2026-05-01-preview":
-            retrieve_kwargs["query_source_authorization"] = access_token
-
         response = await knowledgebase_client.retrieve(
             retrieval_request=KnowledgeBaseRetrievalRequest(**request_kwargs),
-            **retrieve_kwargs,
+            query_source_authorization=access_token,
         )
 
         # Map activity id -> agent's internal search query and citation
