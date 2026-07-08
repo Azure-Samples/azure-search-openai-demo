@@ -1,4 +1,7 @@
 {{ user_query }}
+{% if user_asked_utc %}
+User asked question at UTC time: {{ user_asked_utc }}
+{% endif %}
 
 {% if text_sources is defined and text_sources %}
 

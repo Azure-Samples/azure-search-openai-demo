@@ -59,6 +59,15 @@ def pop_citation_activity_details(result: dict[str, Any] | None):  # type: ignor
     return data_points.pop("citation_activity_details", None)
 
 
+@pytest.fixture(autouse=True)
+def frozen_current_date(monkeypatch):
+    """Freeze the current date so prompts (and their snapshots) stay deterministic across runs."""
+    monkeypatch.setattr(
+        "approaches.approach.Approach.get_current_date",
+        staticmethod(lambda: "February 3, 2026"),
+    )
+
+
 @pytest.mark.asyncio
 async def test_missing_env_vars():
     with mock.patch.dict(os.environ, clear=True):
