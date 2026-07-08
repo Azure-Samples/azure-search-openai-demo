@@ -3,9 +3,7 @@ import os
 
 import openai
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from azure.core.credentials import AzureKeyCredential
 from azure.identity import AzureDeveloperCliCredential, get_bearer_token_provider
-from azure.search.documents import SearchClient
 
 logger = logging.getLogger("evaltools")
 
@@ -45,54 +43,6 @@ def get_openai_config() -> dict:
             "model": os.environ["OPENAI_GPT_MODEL"],
         }
     return openai_config
-
-
-def get_openai_config_dict() -> dict:
-    """Return a dictionary with OpenAI configuration based on environment variables.
-    This is only used by azure-ai-generative SDK right now, and should be deprecated once
-    the generate functionality is available in azure-ai-evaluation SDK.
-    """
-    if os.environ.get("OPENAI_HOST") == "azure":
-        if os.environ.get("AZURE_OPENAI_KEY"):
-            logger.info("Using Azure OpenAI Service with API Key from AZURE_OPENAI_KEY")
-            api_key = os.environ["AZURE_OPENAI_KEY"]
-        else:
-            logger.info("Using Azure OpenAI Service with Azure Developer CLI Credential")
-            azure_credential = get_azd_credential(os.environ.get("AZURE_OPENAI_TENANT_ID"))
-            api_key = azure_credential.get_token("https://cognitiveservices.azure.com/.default").token
-        openai_config = {
-            "api_type": "azure",
-            "api_base": os.environ["AZURE_OPENAI_ENDPOINT"],
-            "api_key": api_key,
-            "api_version": "2024-02-15-preview",
-            "deployment": os.environ["AZURE_OPENAI_EVAL_DEPLOYMENT"],
-            "model": os.environ["OPENAI_GPT_MODEL"],
-        }
-    else:
-        logger.info("Using OpenAI Service with API Key from OPENAICOM_KEY")
-        openai_config = {
-            "api_type": "openai",
-            "api_key": os.environ["OPENAICOM_KEY"],
-            "organization": os.environ["OPENAICOM_ORGANIZATION"],
-            "model": os.environ["OPENAI_GPT_MODEL"],
-            "deployment": "none-needed-for-openaicom",
-        }
-    return openai_config
-
-
-def get_search_client():
-    if api_key := os.environ.get("AZURE_SEARCH_KEY"):
-        logger.info("Using Azure Search Service with API Key from AZURE_SEARCH_KEY")
-        azure_credential = AzureKeyCredential(api_key)
-    else:
-        logger.info("Using Azure Search Service with Azure Developer CLI Credential")
-        azure_credential = get_azd_credential(os.environ.get("AZURE_SEARCH_TENANT_ID"))
-
-    return SearchClient(
-        endpoint=os.environ["AZURE_SEARCH_ENDPOINT"],
-        index_name=os.environ["AZURE_SEARCH_INDEX"],
-        credential=azure_credential,
-    )
 
 
 def get_openai_client(oai_config: AzureOpenAIModelConfiguration | OpenAIModelConfiguration, azure_credential=None):
