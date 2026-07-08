@@ -81,7 +81,7 @@ MockKnowledgeBase = KnowledgeBase(
 
 async def mock_search(self, *args, **kwargs):
     self.filter = kwargs.get("filter")
-    self.access_token = kwargs.get("x_ms_query_source_authorization")
+    self.access_token = kwargs.get("query_source_authorization")
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
 
