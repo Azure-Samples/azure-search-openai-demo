@@ -255,7 +255,26 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
    * Ask a question that only the ACL'd document can answer (e.g. "What is included in the Northwind Standard plan?"). You should get an answer with citations only from that document.
    * Ask a question about a document that is NOT ACL'd to you (e.g. "What is included in the Northwind Health Plus plan?"). You should get "I don't know" / no citations. This confirms the OBO token was issued by `msal.ConfidentialClientApplication.acquire_token_on_behalf_of` and correctly passed to Azure AI Search as the access-control filter.
 
-7. **Optional: log out and reload.** Confirms Easy Auth logout works and re-auth kicks in cleanly.
+7. **Verify the popup login flow works in local dev.** The deployed Container Apps site uses Easy Auth redirect for login; the local dev server uses the MSAL popup flow, which is a completely different code path. Do NOT skip this — the msal-browser 5.x popup requires that `/redirect` return an empty page (proxied to the backend from vite), and previous upgrades have silently broken this.
+
+   ```shell
+   # Terminal 1: backend, pointed at the deployed login env's config
+   azd env select pf-ragchat-login
+   PORT=50505 ./app/start.sh
+
+   # Terminal 2: frontend dev server
+   cd app/frontend && BACKEND_PORT=50505 npm run dev
+   ```
+
+   Open `http://localhost:5173/`, click **Login**, complete the Entra popup, and confirm:
+   * The popup closes automatically after auth (does NOT leave the popup stuck on `http://localhost:5173/redirect#code=...`).
+   * The Login button in the top bar switches to your username.
+   * Ask a question and confirm ACL-filtered citations come back the same as in step 6.
+   * Click **Logout**, then **Login** again. The popup should complete cleanly a second time.
+
+   If the popup gets stuck on the redirect URL, check that `/redirect` is in the proxy list in `app/frontend/vite.config.ts` — it must be proxied to the backend so the popup lands on the empty page the backend serves rather than vite's SPA `index.html` fallback.
+
+8. **Optional: log out and reload on the deployed site.** Confirms Easy Auth logout works and re-auth kicks in cleanly.
 
 If any step fails, check container logs — `AuthError` from `app/backend/core/authentication.py` usually indicates the OBO token exchange or token validation broke.
 
