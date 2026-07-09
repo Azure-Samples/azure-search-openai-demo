@@ -111,15 +111,8 @@ export const getRedirectUri = () => {
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this#global_context
 declare global {
     var cachedAppServicesToken: AppServicesToken | null;
-    // Sticky "no Easy Auth here" flag. When /.auth/me returns 404 (or otherwise
-    // yields no token) once, remember it so downstream code paths that fall back
-    // to getAppServicesToken() (checkLoggedIn, getUsername, getTokenClaims) do
-    // not keep re-issuing 404s on every render / MSAL event tick. This is a
-    // deployment-time property, not something that flips at runtime.
-    var appServicesAuthUnavailable: boolean;
 }
 globalThis.cachedAppServicesToken = null;
-globalThis.appServicesAuthUnavailable = false;
 
 /**
  * Retrieves an access token if the user is logged in using app services authentication.
@@ -137,10 +130,6 @@ const getAppServicesToken = (): Promise<AppServicesToken | null> => {
 
     if (globalThis.cachedAppServicesToken && checkNotExpired(globalThis.cachedAppServicesToken)) {
         return Promise.resolve(globalThis.cachedAppServicesToken);
-    }
-
-    if (globalThis.appServicesAuthUnavailable) {
-        return Promise.resolve(null);
     }
 
     const getAppServicesTokenFromMe: () => Promise<AppServicesToken | null> = () => {
@@ -163,9 +152,6 @@ const getAppServicesToken = (): Promise<AppServicesToken | null> => {
                 });
             }
 
-            // Endpoint isn't there (404 in local dev, or Easy Auth not configured).
-            // Latch this so we never retry.
-            globalThis.appServicesAuthUnavailable = true;
             return null;
         });
     };
