@@ -22,6 +22,18 @@ logger = logging.getLogger("ragapp")
 
 root_dir = pathlib.Path(__file__).parent
 
+# Adversarial simulation and safety evaluation are only offered in a limited set of
+# Azure regions. The Microsoft Foundry account (and its project) must be deployed in
+# one of these regions for this script to work.
+# https://learn.microsoft.com/azure/ai-foundry/how-to/develop/simulator-interaction-data#region-support
+SAFETY_EVAL_SUPPORTED_REGIONS = {
+    "eastus2",
+    "francecentral",
+    "swedencentral",
+    "switzerlandwest",
+    "northcentralus",
+}
+
 
 class HarmSeverityLevel(Enum):
     """Harm severity levels reported by the Azure AI Evaluator service.
@@ -44,6 +56,32 @@ def get_azure_credential():
         logger.info("Setting up Azure credential using AzureDeveloperCliCredential for home tenant")
         azure_credential = AzureDeveloperCliCredential(process_timeout=60)
     return azure_credential
+
+
+def get_azure_ai_project() -> str:
+    """Return the Microsoft Foundry project endpoint, validating region support first.
+
+    The modern azure-ai-evaluation SDK accepts the Foundry project endpoint string
+    (https://<account>.services.ai.azure.com/api/projects/<project>) in place of the
+    legacy {subscription_id, resource_group_name, project_name} dict.
+    """
+    project_endpoint = os.getenv("FOUNDRY_PROJECT_ENDPOINT")
+    if not project_endpoint:
+        raise ValueError(
+            "FOUNDRY_PROJECT_ENDPOINT is not set. Deploy the app with azd so that a Microsoft "
+            "Foundry project is provisioned, or run 'azd env refresh' to populate the .env file."
+        )
+
+    location = os.getenv("AZURE_OPENAI_LOCATION", "")
+    normalized_location = location.replace(" ", "").lower()
+    if normalized_location and normalized_location not in SAFETY_EVAL_SUPPORTED_REGIONS:
+        raise ValueError(
+            f"Your Microsoft Foundry account is deployed in '{location}', which does not support "
+            "adversarial simulation and safety evaluation. Supported regions are: East US 2, "
+            "France Central, Sweden Central, Switzerland West, and North Central US. "
+            "Redeploy with AZURE_OPENAI_LOCATION set to a supported region to run safety evaluation."
+        )
+    return project_endpoint
 
 
 async def callback(
@@ -90,11 +128,7 @@ async def callback(
 
 async def run_simulator(target_url: str, max_simulations: int):
     credential = get_azure_credential()
-    azure_ai_project = {
-        "subscription_id": os.getenv("AZURE_SUBSCRIPTION_ID"),
-        "resource_group_name": os.getenv("AZURE_RESOURCE_GROUP"),
-        "project_name": os.getenv("AZURE_AI_PROJECT"),
-    }
+    azure_ai_project = get_azure_ai_project()
 
     # Simulate single-turn question-and-answering against the app
     scenario = AdversarialScenario.ADVERSARIAL_QA
