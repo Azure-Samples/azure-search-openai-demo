@@ -272,7 +272,7 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
    * Ask a question and confirm ACL-filtered citations come back the same as in step 6.
    * Click **Logout**, then **Login** again. The popup should complete cleanly a second time.
 
-   If the popup gets stuck on the redirect URL, check that `/redirect` still serves the SPA (`index.html`) and that [app/frontend/src/index.tsx](app/frontend/src/index.tsx) runs `broadcastResponseToMainFrame()` from `@azure/msal-browser/redirect-bridge` before the app mounts. msal-browser 5.x uses a `BroadcastChannel` handshake and can no longer poll a truly blank redirect page.
+   If the popup gets stuck on the redirect URL, check that `/redirect` serves the dedicated [`app/frontend/redirect.html`](app/frontend/redirect.html) page (built from [`app/frontend/src/redirect.ts`](app/frontend/src/redirect.ts)) which runs `broadcastResponseToMainFrame()` from `@azure/msal-browser/redirect-bridge`. Per MSAL best practice this must be a minimal HTML page with ONLY the bridge script — no routing, no other application code. msal-browser 5.x uses a `BroadcastChannel` handshake and a truly blank redirect page no longer works.
 
 8. **Optional: log out and reload on the deployed site.** Confirms Easy Auth logout works and re-auth kicks in cleanly.
 

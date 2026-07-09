@@ -5,7 +5,6 @@ import { I18nextProvider } from "react-i18next";
 import { HelmetProvider } from "react-helmet-async";
 import { MsalProvider } from "@azure/msal-react";
 import { AuthenticationResult, EventType, PublicClientApplication } from "@azure/msal-browser";
-import { broadcastResponseToMainFrame } from "@azure/msal-browser/redirect-bridge";
 
 import "./index.css";
 
@@ -13,29 +12,6 @@ import Chat from "./pages/chat/Chat";
 import LayoutWrapper from "./layoutWrapper";
 import i18next from "./i18n/config";
 import { msalConfig, useLogin } from "./authConfig";
-
-// If this window was opened by MSAL as a login/logout popup and now carries an auth
-// response, hand it back to the opener via BroadcastChannel and close the popup.
-// msal-browser 5.x uses BroadcastChannel bridging instead of URL polling, so a truly
-// blank redirect page no longer works — the redirect URI must run this bridge script.
-// See https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirecturi-considerations
-if (
-    useLogin &&
-    window.opener &&
-    window.opener !== window &&
-    (window.location.hash.includes("code=") ||
-        window.location.hash.includes("error=") ||
-        window.location.search.includes("code=") ||
-        window.location.search.includes("error="))
-) {
-    broadcastResponseToMainFrame().catch(e => {
-        // eslint-disable-next-line no-console
-        console.error("MSAL popup redirect bridge failed", e);
-    });
-    // broadcastResponseToMainFrame calls window.close(); stop here so the SPA
-    // does not mount in the popup and interfere with the handshake.
-    throw new Error("stop-popup-bootstrap");
-}
 
 const router = createHashRouter([
     {
