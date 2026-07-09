@@ -14,13 +14,15 @@ export const LoginButton = () => {
     const [username, setUsername] = useState("");
     const { t } = useTranslation();
 
+    // Re-fetch the username whenever loggedIn flips (LayoutWrapper drives loggedIn from MSAL events),
+    // so the button correctly shows the signed-in user after a popup login/logout without a page reload.
     useEffect(() => {
         const fetchUsername = async () => {
             setUsername((await getUsername(instance)) ?? "");
         };
 
         fetchUsername();
-    }, []);
+    }, [instance, loggedIn]);
 
     const handleLoginPopup = () => {
         /**

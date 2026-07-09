@@ -190,8 +190,12 @@ export const appServicesLogout = () => {
  */
 export const checkLoggedIn = async (client: IPublicClientApplication | undefined): Promise<boolean> => {
     if (client) {
-        const activeAccount = client.getActiveAccount();
-        if (activeAccount) {
+        // getActiveAccount() only returns an account after setActiveAccount() has been called
+        // (which we do in the LOGIN_SUCCESS handler in index.tsx). getAllAccounts() is populated
+        // as soon as MSAL processes the token response, so it's the correct check for "logged in"
+        // regardless of which msal-browser event fired first. See msal-react's own useIsAuthenticated
+        // hook, which uses accounts.length > 0 for the same reason.
+        if (client.getActiveAccount() || client.getAllAccounts().length > 0) {
             return true;
         }
     }
@@ -232,9 +236,13 @@ export const getToken = async (client: IPublicClientApplication): Promise<string
  * @returns {Promise<string | null>} The username of the active account, or null if no username is found.
  */
 export const getUsername = async (client: IPublicClientApplication): Promise<string | null> => {
-    const activeAccount = client.getActiveAccount();
-    if (activeAccount) {
-        return activeAccount.username;
+    // Prefer the active account if one has been set; otherwise fall back to the first cached
+    // account. Immediately after a popup login MSAL populates getAllAccounts() before our
+    // LOGIN_SUCCESS handler runs setActiveAccount(), so a strict getActiveAccount() check
+    // returns null and the UI would appear stale until the user reloads.
+    const account = client.getActiveAccount() ?? client.getAllAccounts()[0];
+    if (account) {
+        return account.username;
     }
 
     const appServicesToken = await getAppServicesToken();
@@ -252,9 +260,10 @@ export const getUsername = async (client: IPublicClientApplication): Promise<str
  * @returns {Promise<Record<string, unknown> | undefined>} A promise that resolves to the token claims of the active account, the user claims from the app services login token, or undefined if no claims are found.
  */
 export const getTokenClaims = async (client: IPublicClientApplication): Promise<Record<string, unknown> | undefined> => {
-    const activeAccount = client.getActiveAccount();
-    if (activeAccount) {
-        return activeAccount.idTokenClaims;
+    // Same active-vs-all-accounts fallback as getUsername — see comment there.
+    const account = client.getActiveAccount() ?? client.getAllAccounts()[0];
+    if (account) {
+        return account.idTokenClaims;
     }
 
     const appServicesToken = await getAppServicesToken();
