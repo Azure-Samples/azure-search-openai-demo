@@ -133,7 +133,7 @@ jobs:
       - name: Install Nodejs
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Log in with Azure (Federated Credentials)
         run: |
