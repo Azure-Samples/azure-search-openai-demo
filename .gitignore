@@ -157,3 +157,7 @@ app/functions/*/requirements.txt
 data/**/*.md5
 
 .DS_Store
+
+# Compiled Bicep output (from `az bicep build`)
+infra/main.json
+infra/main.test.json
