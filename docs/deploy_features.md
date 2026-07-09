@@ -368,7 +368,9 @@ The local parsers will be used the next time you run the data ingestion script. 
 
 You can enable [Azure Health Models](https://learn.microsoft.com/azure/azure-monitor/health-models/overview) to get a graph based view to understand the health of the application deployment.
 
-You can see a screenshot of how it looks like in the [origin PR](https://github.com/Azure-Samples/azure-search-openai-demo/pull/3064).
+Once deployed, the health model provides a graph-based overview of the application's health, as shown below:
+
+![Screenshot of the Azure Health Model overview showing the health status and entities health](images/screenshot_healthmodel.png)
 
 > [!NOTE]
 > Azure Health Models is currently in preview and being actively developed. It deploys into the `uksouth` region by default. You can list the available regions with:
