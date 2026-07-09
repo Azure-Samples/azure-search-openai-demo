@@ -79,8 +79,9 @@ async def test_index(client):
 async def test_redirect(client):
     response = await client.get("/redirect")
     assert response.status_code == 200
-    # /redirect serves the SPA (index.html) so it can run the msal-browser
-    # redirect-bridge script that posts the auth response back to the opener.
+    # /redirect serves the dedicated redirect.html bridge page, which runs the
+    # msal-browser redirect-bridge script that posts the auth response back to
+    # the opener via BroadcastChannel.
     assert response.content_type.startswith("text/html")
 
 

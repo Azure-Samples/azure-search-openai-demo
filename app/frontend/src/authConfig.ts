@@ -172,9 +172,13 @@ const getAppServicesToken = (): Promise<AppServicesToken | null> => {
                 });
             }
 
-            // Endpoint isn't there (404 in local dev, or Easy Auth not configured).
-            // Latch this so we never retry.
-            globalThis.appServicesAuthUnavailable = true;
+            // Only latch on 404 — that's the deploy-time signal that Easy Auth isn't
+            // configured (or we're in local dev with no /.auth/me at all). Other statuses
+            // like 401 (session expired), 403, or transient 5xx can recover on the next
+            // call, so leave the flag alone for those.
+            if (r.status === 404) {
+                globalThis.appServicesAuthUnavailable = true;
+            }
             return null;
         });
     };

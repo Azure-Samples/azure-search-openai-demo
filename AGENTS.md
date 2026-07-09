@@ -255,7 +255,7 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
    * Ask a question that only the ACL'd document can answer (e.g. "What is included in the Northwind Standard plan?"). You should get an answer with citations only from that document.
    * Ask a question about a document that is NOT ACL'd to you (e.g. "What is included in the Northwind Health Plus plan?"). You should get "I don't know" / no citations. This confirms the OBO token was issued by `msal.ConfidentialClientApplication.acquire_token_on_behalf_of` and correctly passed to Azure AI Search as the access-control filter.
 
-7. **Verify the popup login flow works in local dev.** The deployed Container Apps site uses Easy Auth redirect for login; the local dev server uses the MSAL popup flow, which is a completely different code path. Do NOT skip this — the msal-browser 5.x popup requires that `/redirect` return an empty page (proxied to the backend from vite), and previous upgrades have silently broken this.
+7. **Verify the popup login flow works in local dev.** The deployed Container Apps site uses Easy Auth redirect for login; the local dev server uses the MSAL popup flow, which is a completely different code path. Do NOT skip this — the msal-browser 5.x popup requires `/redirect` to serve the dedicated [`app/frontend/redirect.html`](app/frontend/redirect.html) bridge page (in dev the vite server owns it via a `/redirect` → `/redirect.html` middleware rewrite; in prod the Quart `/redirect` route serves the built `redirect.html` from `static/`), and previous upgrades have silently broken this.
 
    ```shell
    # Terminal 1: backend, pointed at the deployed login env's config
