@@ -27,6 +27,14 @@ You should set these values before running `azd up`. Once you've set them, retur
 
 ### Azure OpenAI
 
+> [!NOTE]
+> When this project provisions its own Azure AI account, it now creates a **Microsoft Foundry**
+> account (`kind: 'AIServices'` with project management enabled) plus a Foundry project, and
+> deploys the models on that account. When you bring your own existing account here, its kind is
+> left untouched — a classic `kind: 'OpenAI'` account keeps working for the RAG app, but no
+> Foundry project is created for it. To get a Foundry project, either let the project create the
+> account or point `AZURE_OPENAI_SERVICE` at an existing Microsoft Foundry (AIServices) account.
+
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
 1. Run `azd env set AZURE_OPENAI_LOCATION {Location of existing OpenAI service}`

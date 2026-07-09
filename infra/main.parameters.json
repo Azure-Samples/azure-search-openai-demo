@@ -20,6 +20,9 @@
     "openAiResourceGroupName": {
       "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
     },
+    "foundryProjectName": {
+      "value": "${FOUNDRY_PROJECT_NAME}"
+    },
     "openAiLocation": {
       "value": "${AZURE_OPENAI_LOCATION}"
     },
