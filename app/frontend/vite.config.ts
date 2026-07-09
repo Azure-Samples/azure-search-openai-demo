@@ -3,9 +3,16 @@ import { resolve } from "node:path";
 import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 
-// Vite serves redirect.html at "/redirect.html", but the MSAL redirect URI is "/redirect"
-// (matching the deployed backend route). This tiny middleware rewrites "/redirect" to
-// "/redirect.html" during dev so the popup handshake works locally.
+// MSAL is configured with redirectUri = "/redirect", matching the Quart /redirect route
+// in production (which send_static_file's the built redirect.html). In vite dev, redirect.html
+// is a rollup MPA entry that vite serves at its filename "/redirect.html" with live TS
+// transformation of /src/redirect.ts. This middleware rewrites "/redirect" -> "/redirect.html"
+// so the popup URL matches production without requiring a build step.
+//
+// We can't just proxy "/redirect" to the Quart backend because the built redirect.html
+// references bundled assets under "/assets/" (e.g. /assets/msal-*.js), and vite dev on this
+// origin doesn't own the /assets/ prefix. Letting vite serve the entry keeps the popup
+// running against transformed source and avoids a second server serving that URL space.
 const redirectAlias: Plugin = {
     name: "redirect-html-alias",
     configureServer(server) {
