@@ -3,6 +3,25 @@ const BACKEND_URI = "";
 import { ChatAppResponse, ChatAppResponseOrError, ChatAppRequest, Config, SimpleAPIResponse, HistoryListApiResponse, HistoryApiResponse } from "./models";
 import { useLogin, getToken, isUsingAppServicesLogin } from "../authConfig";
 
+// Wrapper around fetch() that copes with Container Apps / App Service Easy Auth 302-ing to
+// login.microsoftonline.com when the Easy Auth session cookie is missing or expired.
+// A cross-origin 302 on a same-origin fetch is blocked by CORS ("No 'Access-Control-Allow-Origin'
+// header is present on the requested resource"), so instead we ask fetch for a manual redirect
+// and reload the top-level page when we see one — the browser can follow the cross-origin 302
+// on a top-level navigation and Easy Auth will complete the sign-in flow. Same pattern as
+// fetchAuthSetup() in authConfig.ts (see https://github.com/Azure-Samples/azure-search-openai-demo/issues/1780).
+export async function fetchWithAuthRedirect(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+    const response = await fetch(input, { ...init, redirect: "manual" });
+    if (response.type === "opaqueredirect") {
+        window.location.reload();
+        // Never resolve — window.location.reload() is about to unload this page.
+        return new Promise<Response>(() => {
+            /* intentionally empty */
+        });
+    }
+    return response;
+}
+
 export async function getHeaders(idToken: string | undefined): Promise<Record<string, string>> {
     // If using login and not using app services, add the id token of the logged in account as the authorization
     if (useLogin && !isUsingAppServicesLogin) {
@@ -15,7 +34,7 @@ export async function getHeaders(idToken: string | undefined): Promise<Record<st
 }
 
 export async function configApi(): Promise<Config> {
-    const response = await fetch(`${BACKEND_URI}/config`, {
+    const response = await fetchWithAuthRedirect(`${BACKEND_URI}/config`, {
         method: "GET"
     });
 
@@ -28,7 +47,7 @@ export async function chatApi(request: ChatAppRequest, shouldStream: boolean, id
         url += "/stream";
     }
     const headers = await getHeaders(idToken);
-    return await fetch(url, {
+    return await fetchWithAuthRedirect(url, {
         method: "POST",
         headers: { ...headers, "Content-Type": "application/json" },
         body: JSON.stringify(request),
@@ -37,7 +56,7 @@ export async function chatApi(request: ChatAppRequest, shouldStream: boolean, id
 }
 
 export async function getSpeechApi(text: string): Promise<string | null> {
-    return await fetch("/speech", {
+    return await fetchWithAuthRedirect("/speech", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -67,7 +86,7 @@ export function getCitationFilePath(citation: string): string {
 }
 
 export async function uploadFileApi(request: FormData, idToken: string): Promise<SimpleAPIResponse> {
-    const response = await fetch("/upload", {
+    const response = await fetchWithAuthRedirect("/upload", {
         method: "POST",
         headers: await getHeaders(idToken),
         body: request
@@ -83,7 +102,7 @@ export async function uploadFileApi(request: FormData, idToken: string): Promise
 
 export async function deleteUploadedFileApi(filename: string, idToken: string): Promise<SimpleAPIResponse> {
     const headers = await getHeaders(idToken);
-    const response = await fetch("/delete_uploaded", {
+    const response = await fetchWithAuthRedirect("/delete_uploaded", {
         method: "POST",
         headers: { ...headers, "Content-Type": "application/json" },
         body: JSON.stringify({ filename })
@@ -98,7 +117,7 @@ export async function deleteUploadedFileApi(filename: string, idToken: string): 
 }
 
 export async function listUploadedFilesApi(idToken: string): Promise<string[]> {
-    const response = await fetch(`/list_uploaded`, {
+    const response = await fetchWithAuthRedirect(`/list_uploaded`, {
         method: "GET",
         headers: await getHeaders(idToken)
     });
@@ -113,7 +132,7 @@ export async function listUploadedFilesApi(idToken: string): Promise<string[]> {
 
 export async function postChatHistoryApi(item: any, idToken: string): Promise<any> {
     const headers = await getHeaders(idToken);
-    const response = await fetch("/chat_history", {
+    const response = await fetchWithAuthRedirect("/chat_history", {
         method: "POST",
         headers: { ...headers, "Content-Type": "application/json" },
         body: JSON.stringify(item)
@@ -134,7 +153,7 @@ export async function getChatHistoryListApi(count: number, continuationToken: st
         url += `&continuationToken=${continuationToken}`;
     }
 
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithAuthRedirect(url.toString(), {
         method: "GET",
         headers: { ...headers, "Content-Type": "application/json" }
     });
@@ -149,7 +168,7 @@ export async function getChatHistoryListApi(count: number, continuationToken: st
 
 export async function getChatHistoryApi(id: string, idToken: string): Promise<HistoryApiResponse> {
     const headers = await getHeaders(idToken);
-    const response = await fetch(`/chat_history/sessions/${id}`, {
+    const response = await fetchWithAuthRedirect(`/chat_history/sessions/${id}`, {
         method: "GET",
         headers: { ...headers, "Content-Type": "application/json" }
     });
@@ -164,7 +183,7 @@ export async function getChatHistoryApi(id: string, idToken: string): Promise<Hi
 
 export async function deleteChatHistoryApi(id: string, idToken: string): Promise<any> {
     const headers = await getHeaders(idToken);
-    const response = await fetch(`/chat_history/sessions/${id}`, {
+    const response = await fetchWithAuthRedirect(`/chat_history/sessions/${id}`, {
         method: "DELETE",
         headers: { ...headers, "Content-Type": "application/json" }
     });
