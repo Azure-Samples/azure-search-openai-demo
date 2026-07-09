@@ -795,7 +795,14 @@ var openAiDeployments = concat(
 // redeploy of our own account. openAiHost is the intent signal.
 var deployFoundryAccount = isAzureOpenAiHost && deployAzureOpenAi
 
-module openAi 'br/public:avm/res/cognitive-services/account:0.15.0' = if (deployFoundryAccount) {
+// Pinned to 0.14.0 on purpose (do NOT bump to 0.15.0+). Starting at 0.15.0 the AVM
+// account module introduces user-defined types, which force the compiled ARM template
+// into symbolic-name mode (languageVersion 2.0). In that mode the many same-named
+// `existing` resource-group references in this file collide during ARM validation
+// ("resourceGroup ... is defined multiple times") whenever a deploy reuses one resource
+// group for multiple services. 0.14.0 is the newest version that supports
+// `allowProjectManagement` while still compiling to classic (languageVersion none).
+module openAi 'br/public:avm/res/cognitive-services/account:0.14.0' = if (deployFoundryAccount) {
   name: 'openai'
   scope: openAiResourceGroup
   params: {

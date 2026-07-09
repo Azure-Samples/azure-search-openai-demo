@@ -30,17 +30,14 @@ param location string = resourceGroup().location
 @description('Tags to apply to the project.')
 param tags object = {}
 
+// Each element is an object of the shape:
+//   { principalId: string, roleDefinitionId: string, principalType: 'User' | 'Group' | 'ServicePrincipal' }
+// A plain `array` is used (rather than a user-defined type) on purpose: user-defined
+// types force the compiled ARM template into symbolic-name mode (languageVersion 2.0),
+// which makes the many same-named `existing` resource-group references in main.bicep
+// collide during ARM validation ("resourceGroup ... is defined multiple times").
 @description('Role assignments to create at the project scope.')
-param roleAssignments roleAssignmentInfo[] = []
-
-type roleAssignmentInfo = {
-  @description('Principal (object) ID to grant the role to.')
-  principalId: string
-  @description('Role definition GUID (unqualified) to assign.')
-  roleDefinitionId: string
-  @description('Type of the principal being granted the role.')
-  principalType: 'User' | 'Group' | 'ServicePrincipal'
-}
+param roleAssignments array = []
 
 resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' existing = {
   name: accountName
