@@ -7,7 +7,7 @@
             "clientId": "CLIENT_APP",
             "authority": "https://login.microsoftonline.com/TENANT_ID",
             "redirectUri": "/redirect",
-            "postLogoutRedirectUri": "/",
+            "postLogoutRedirectUri": "/redirect",
             "navigateToLoginRequestUrl": false
         },
         "cache": {
