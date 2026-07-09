@@ -28,12 +28,16 @@ You should set these values before running `azd up`. Once you've set them, retur
 ### Azure OpenAI
 
 > [!NOTE]
-> When this project provisions its own Azure AI account, it now creates a **Microsoft Foundry**
+> When this project provisions its own Azure AI account, it creates a **Microsoft Foundry**
 > account (`kind: 'AIServices'` with project management enabled) plus a Foundry project, and
-> deploys the models on that account. When you bring your own existing account here, its kind is
-> left untouched — a classic `kind: 'OpenAI'` account keeps working for the RAG app, but no
-> Foundry project is created for it. To get a Foundry project, either let the project create the
-> account or point `AZURE_OPENAI_SERVICE` at an existing Microsoft Foundry (AIServices) account.
+> deploys the models on that account. When you bring your own existing account (by setting
+> `AZURE_OPENAI_SERVICE`), the deployment **skips creating the account, the model deployments,
+> the Foundry project, and the private endpoint entirely** — it only assigns the RBAC roles the
+> app's managed identity needs to call your account. This means you must **pre-create your chat
+> and embedding model deployments** on the existing account yourself, and manage its private
+> networking on your own. Both classic `kind: 'OpenAI'` and Microsoft Foundry (`AIServices`)
+> accounts work for the RAG app; to get a Foundry project, let this project create the account
+> or point `AZURE_OPENAI_SERVICE` at an existing Microsoft Foundry account.
 
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
