@@ -6,7 +6,7 @@ from pathlib import Path
 import jmespath
 import pandas as pd
 import requests
-from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation import AzureOpenAIModelConfiguration
 from rich.progress import track
 
 from .. import service_setup
@@ -86,7 +86,7 @@ def load_jsonl(path: Path) -> list[dict]:
 
 
 def run_evaluation(
-    openai_config: AzureOpenAIModelConfiguration | OpenAIModelConfiguration,
+    openai_config: AzureOpenAIModelConfiguration,
     testdata_path: Path,
     results_dir: Path,
     target_url: str,
@@ -128,7 +128,7 @@ def run_evaluation(
         return False
 
     logger.info("Sending a test chat completion to the GPT deployment to ensure it is running...")
-    model_or_deployment = openai_config.get("azure_deployment") or openai_config.get("model") or model
+    model_or_deployment = openai_config.get("azure_deployment") or model
     gpt_response = service_setup.get_openai_client(openai_config, azure_credential).chat.completions.create(
         model=model_or_deployment,
         messages=[{"role": "user", "content": "Hello!"}],
