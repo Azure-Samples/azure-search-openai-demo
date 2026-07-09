@@ -3,7 +3,7 @@ import { useMsal } from "@azure/msal-react";
 import { useTranslation } from "react-i18next";
 
 import styles from "./LoginButton.module.css";
-import { getRedirectUri, loginRequest, appServicesLogout, getUsername, checkLoggedIn } from "../../authConfig";
+import { getRedirectUri, loginRequest, appServicesLogout, getActiveOrFirstAccount, getUsername, checkLoggedIn } from "../../authConfig";
 import { useState, useEffect, useContext } from "react";
 import { LoginContext } from "../../loginContext";
 
@@ -41,11 +41,10 @@ export const LoginButton = () => {
             });
     };
     const handleLogoutPopup = () => {
-        // getActiveAccount() can be null between an MSAL token event and our setActiveAccount() handler
-        // (same msal-browser 5.x race that checkLoggedIn/getUsername already handle). Fall back to the
-        // first cached account so we always go down the MSAL logoutPopup path instead of accidentally
-        // triggering appServicesLogout() and navigating the top window to /.auth/logout.
-        const account = instance.getActiveAccount() ?? instance.getAllAccounts()[0];
+        // Fall back to the first cached account if there is no active account, so we always take
+        // the MSAL logoutPopup path instead of accidentally triggering appServicesLogout() and
+        // navigating the top window to /.auth/logout.
+        const account = getActiveOrFirstAccount(instance);
         if (account) {
             instance
                 .logoutPopup({
