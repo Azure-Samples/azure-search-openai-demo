@@ -50,6 +50,9 @@ def summarize_results(results_dir):
         # The second row of columns should just have the stat names
         for stat in shared_metric_stats[metric_name]:
             second_row.append(stat)
+    # Header cell for the per-run question count appended to each run_row below
+    first_row.append("n")
+    second_row.append("count")
 
     rows = [first_row, second_row]
     row_parameters = {}
@@ -88,8 +91,13 @@ def diff_directories(directories: list[Path], changed: str | None = None):
             if data_dicts[0][question].get(changed) is None or data_dicts[1][question].get(changed) is None:
                 data_dicts[0].pop(question)
                 continue
-            if data_dicts[0][question].get(changed) == data_dicts[1][question].get(changed):
-                if math.isclose(data_dicts[0][question].get(changed), data_dicts[1][question].get(changed)):
-                    data_dicts[0].pop(question)
-                    data_dicts[1].pop(question)
+            value1 = data_dicts[0][question].get(changed)
+            value2 = data_dicts[1][question].get(changed)
+            if isinstance(value1, (int, float)) and isinstance(value2, (int, float)):
+                unchanged = math.isclose(value1, value2)
+            else:
+                unchanged = value1 == value2
+            if unchanged:
+                data_dicts[0].pop(question)
+                data_dicts[1].pop(question)
     return data_dicts

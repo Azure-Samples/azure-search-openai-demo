@@ -7,6 +7,7 @@ from pathlib import Path
 import jmespath
 import pandas as pd
 import requests
+from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from rich.progress import track
 
 from .. import service_setup
@@ -18,11 +19,12 @@ logger = logging.getLogger("evaltools")
 def send_question_to_target(
     question: str,
     url: str,
-    parameters: dict = {},
+    parameters: dict | None = None,
     raise_error=False,
     response_answer_jmespath="message.content",
     response_context_jmespath="context.data_points.text",
 ):
+    parameters = parameters or {}
     headers = {"Content-Type": "application/json"}
     body = {
         "messages": [{"content": question, "role": "user"}],
@@ -85,18 +87,20 @@ def load_jsonl(path: Path) -> list[dict]:
 
 
 def run_evaluation(
-    openai_config: dict,
+    openai_config: AzureOpenAIModelConfiguration | OpenAIModelConfiguration,
     testdata_path: Path,
     results_dir: Path,
     target_url: str,
-    target_parameters={},
-    requested_metrics=[],
+    target_parameters=None,
+    requested_metrics=None,
     num_questions=None,
     target_response_answer_jmespath=None,
     target_response_context_jmespath=None,
     model=None,
     azure_credential=None,
 ):
+    target_parameters = target_parameters or {}
+    requested_metrics = requested_metrics or []
     logger.info("Running evaluation using data from %s", testdata_path)
     testdata = load_jsonl(testdata_path)
     if num_questions:
@@ -125,8 +129,9 @@ def run_evaluation(
         return False
 
     logger.info("Sending a test chat completion to the GPT deployment to ensure it is running...")
+    model_or_deployment = openai_config.get("azure_deployment") or openai_config.get("model") or model
     gpt_response = service_setup.get_openai_client(openai_config, azure_credential).chat.completions.create(
-        model=model,
+        model=model_or_deployment,
         messages=[{"role": "user", "content": "Hello!"}],
         n=1,
     )

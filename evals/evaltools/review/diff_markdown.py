@@ -1,3 +1,4 @@
+import html
 from pathlib import Path
 from typing import Any
 
@@ -15,18 +16,18 @@ def main(directories: list[Path], changed: str | None = None):
 
     markdown_str = ""
     for question in data_dicts[0].keys():
-        markdown_str += f"**{question}**\n\n"
+        markdown_str += f"**{html.escape(str(question))}**\n\n"
         # now make an HTML table with the answers
         markdown_str += "<table>\n"
         markdown_str += (
             "<tr><th></th>"
-            + "".join([f"<th>{directory.name}</th>" for directory in directories])
+            + "".join([f"<th>{html.escape(directory.name)}</th>" for directory in directories])
             + "<th>ground_truth</th></tr>\n"
         )
         markdown_str += (
             "<tr><th>answer</th>"
-            + "".join([f"<td>{data_dict[question]['answer']}</td>" for data_dict in data_dicts])
-            + f"<td>{data_dicts[0][question]['truth']}</td></tr>\n"
+            + "".join([f"<td>{html.escape(str(data_dict[question]['answer']))}</td>" for data_dict in data_dicts])
+            + f"<td>{html.escape(str(data_dicts[0][question]['truth']))}</td></tr>\n"
         )
 
         # now make rows for each metric

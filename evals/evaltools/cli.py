@@ -27,7 +27,7 @@ def str_or_none(value: str) -> str | None:
 @app.command()
 def diff(
     directory1: Path = typer.Argument(exists=True, dir_okay=True, file_okay=False),
-    directory2: Path = typer.Argument(default=None, exists=True, dir_okay=True, file_okay=False),
+    directory2: Path | None = typer.Argument(default=None, exists=True, dir_okay=True, file_okay=False),
     changed: str | None = typer.Option(
         help="Show only questions whose values changed for the given column", default=None, parser=str_or_none
     ),

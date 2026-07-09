@@ -29,21 +29,21 @@ class MockResponse:
         return self.json_data
 
 
-def test_send_question_to_target_valid():
+def test_send_question_to_target_valid(monkeypatch):
     response = {
         "message": {"content": "This is the answer"},
         "context": {"data_points": {"text": ["Context 1", "Context 2"]}},
     }
-    requests.post = lambda url, headers, json: MockResponse(response)
+    monkeypatch.setattr(requests, "post", lambda url, headers, json: MockResponse(response))
     result = send_question_to_target("Question 1", "http://example.com")
     assert result["answer"] == "This is the answer"
     assert result["context"] == "Context 1\n\nContext 2"
     assert result["latency"] == 1
 
 
-def test_send_question_to_target_missing_error_stored():
+def test_send_question_to_target_missing_error_stored(monkeypatch):
     response = {}
-    requests.post = lambda url, headers, json: MockResponse(response)
+    monkeypatch.setattr(requests, "post", lambda url, headers, json: MockResponse(response))
     result = send_question_to_target("Question", "http://example.com")
     expected = SCHEMA_ERROR_TEMPLATE.format(response={})
     assert result["answer"] == expected
@@ -51,36 +51,38 @@ def test_send_question_to_target_missing_error_stored():
     assert result["latency"] == -1
 
 
-def test_send_question_to_target_missing_all_raises():
+def test_send_question_to_target_missing_all_raises(monkeypatch):
     response = {}
-    requests.post = lambda url, headers, json: MockResponse(response)
+    monkeypatch.setattr(requests, "post", lambda url, headers, json: MockResponse(response))
     with pytest.raises(ValueError) as exc_info:
         send_question_to_target("Question", "http://example.com", raise_error=True)
     assert str(exc_info.value) == SCHEMA_ERROR_TEMPLATE.format(response={})
 
 
-def test_send_question_to_target_missing_context_raises():
+def test_send_question_to_target_missing_context_raises(monkeypatch):
     response = {"message": {"content": "This is the answer"}}
-    requests.post = lambda url, headers, json: MockResponse(response)
+    monkeypatch.setattr(requests, "post", lambda url, headers, json: MockResponse(response))
     with pytest.raises(ValueError) as exc_info:
         send_question_to_target("Question", "http://example.com", raise_error=True)
     assert str(exc_info.value) == SCHEMA_ERROR_TEMPLATE.format(response=response)
 
 
-def test_send_question_to_target_invalid_json_raises():
-    requests.post = lambda url, headers, json: MockResponse(None, text="not json", raise_json_error=True)
+def test_send_question_to_target_invalid_json_raises(monkeypatch):
+    monkeypatch.setattr(
+        requests, "post", lambda url, headers, json: MockResponse(None, text="not json", raise_json_error=True)
+    )
     with pytest.raises(ValueError) as exc_info:
         send_question_to_target("Question", "http://example.com", raise_error=True)
     assert "is not valid JSON" in str(exc_info.value)
     assert "not json" in str(exc_info.value)
 
 
-def test_send_question_to_target_dict_context():
+def test_send_question_to_target_dict_context(monkeypatch):
     response = {
         "message": {"content": "The answer"},
         "context": {"data_points": {"text": {"doc1": "Context A"}}},
     }
-    requests.post = lambda url, headers, json: MockResponse(response)
+    monkeypatch.setattr(requests, "post", lambda url, headers, json: MockResponse(response))
     result = send_question_to_target("Question", "http://example.com")
     assert result["answer"] == "The answer"
     assert result["context"] == json.dumps({"doc1": "Context A"}, ensure_ascii=False)
