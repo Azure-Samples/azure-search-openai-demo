@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import time
 from pathlib import Path
 
@@ -20,7 +21,7 @@ def send_question_to_target(
     url: str,
     parameters: dict | None = None,
     raise_error=False,
-    response_answer_jmespath="message.content",
+    response_answer_jmespath="output_text",
     response_context_jmespath="context.data_points.text",
 ):
     parameters = parameters or {}
@@ -93,8 +94,8 @@ def run_evaluation(
     target_parameters=None,
     requested_metrics=None,
     num_questions=None,
-    target_response_answer_jmespath=None,
-    target_response_context_jmespath=None,
+    target_response_answer_jmespath="output_text",
+    target_response_context_jmespath="context.data_points.text",
     model=None,
     azure_credential=None,
 ):
@@ -198,7 +199,7 @@ def run_evaluation(
         parameters = {
             "evaluation_gpt_model": model,
             "evaluation_timestamp": int(time.time()),
-            "testdata_path": str(testdata_path),
+            "testdata_path": os.path.relpath(testdata_path, results_dir),
             "target_url": target_url,
             "target_parameters": target_parameters,
             "num_questions": num_questions,
@@ -256,7 +257,7 @@ def run_evaluate_from_config(
             "requested_metrics",
             ["gpt_groundedness", "gpt_relevance", "gpt_coherence", "answer_length", "latency"],
         ),
-        target_response_answer_jmespath=config.get("target_response_answer_jmespath", "message.content"),
+        target_response_answer_jmespath=config.get("target_response_answer_jmespath", "output_text"),
         target_response_context_jmespath=config.get("target_response_context_jmespath", "context.data_points.text"),
         model=model,
         azure_credential=azure_credential,

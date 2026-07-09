@@ -1,7 +1,7 @@
 {
     "evaluation_gpt_model": "gpt-5.4",
     "evaluation_timestamp": 1783616432,
-    "testdata_path": "/Users/pamelafox/copilot-worktrees/azure-search-openai-demo/pamelafox-fluffy-fishstick/evals/ground_truth.jsonl",
+    "testdata_path": "../../ground_truth.jsonl",
     "target_url": "http://localhost:50606/chat",
     "target_parameters": {
         "overrides": {

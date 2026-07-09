@@ -8,7 +8,7 @@ from evaltools.eval.evaluate import send_question_to_target
 
 SCHEMA_ERROR_TEMPLATE = (
     "Response does not adhere to the expected schema. "
-    "The answer should be accessible via the JMESPath expression 'message.content' "
+    "The answer should be accessible via the JMESPath expression 'output_text' "
     "and the context should be accessible via the JMESPath expression 'context.data_points.text'. "
     "Either adjust the app response or adjust send_question_to_target() in evaluate.py "
     "to match the actual schema.\nResponse: {response}"
@@ -31,7 +31,7 @@ class MockResponse:
 
 def test_send_question_to_target_valid(monkeypatch):
     response = {
-        "message": {"content": "This is the answer"},
+        "output_text": "This is the answer",
         "context": {"data_points": {"text": ["Context 1", "Context 2"]}},
     }
     monkeypatch.setattr(requests, "post", lambda url, headers, json: MockResponse(response))
@@ -60,7 +60,7 @@ def test_send_question_to_target_missing_all_raises(monkeypatch):
 
 
 def test_send_question_to_target_missing_context_raises(monkeypatch):
-    response = {"message": {"content": "This is the answer"}}
+    response = {"output_text": "This is the answer"}
     monkeypatch.setattr(requests, "post", lambda url, headers, json: MockResponse(response))
     with pytest.raises(ValueError) as exc_info:
         send_question_to_target("Question", "http://example.com", raise_error=True)
@@ -79,7 +79,7 @@ def test_send_question_to_target_invalid_json_raises(monkeypatch):
 
 def test_send_question_to_target_dict_context(monkeypatch):
     response = {
-        "message": {"content": "The answer"},
+        "output_text": "The answer",
         "context": {"data_points": {"text": {"doc1": "Context A"}}},
     }
     monkeypatch.setattr(requests, "post", lambda url, headers, json: MockResponse(response))
