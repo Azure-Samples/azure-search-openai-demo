@@ -34,7 +34,6 @@ export default defineConfig(() => {
             proxy: {
                 "/content/": backendUrl,
                 "/auth_setup": backendUrl,
-                "/redirect": backendUrl,
                 "/.auth/me": backendUrl,
                 "/chat": backendUrl,
                 "/speech": backendUrl,

@@ -117,11 +117,14 @@ async def index():
     return await bp.send_static_file("index.html")
 
 
-# Empty page is recommended for login redirect to work.
+# The popup redirect URI must load the SPA so it can call
+# broadcastResponseToMainFrame() from @azure/msal-browser/redirect-bridge,
+# which post-messages the auth response back to the opener and closes the popup.
+# msal-browser 5.x removed the old URL-polling flow that a truly blank page relied on.
 # See https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirecturi-considerations for more information
 @bp.route("/redirect")
 async def redirect():
-    return ""
+    return await bp.send_static_file("index.html")
 
 
 @bp.route("/favicon.ico")

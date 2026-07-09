@@ -79,7 +79,9 @@ async def test_index(client):
 async def test_redirect(client):
     response = await client.get("/redirect")
     assert response.status_code == 200
-    assert (await response.get_data()) == b""
+    # /redirect serves the SPA (index.html) so it can run the msal-browser
+    # redirect-bridge script that posts the auth response back to the opener.
+    assert response.content_type.startswith("text/html")
 
 
 @pytest.mark.asyncio
