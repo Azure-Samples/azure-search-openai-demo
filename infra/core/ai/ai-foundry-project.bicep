@@ -1,5 +1,17 @@
 metadata description = 'Creates a Microsoft Foundry project inside an existing AIServices (Foundry) account, with optional project-scoped role assignments.'
 
+// Why a custom module instead of AVM?
+// The AVM account module (avm/res/cognitive-services/account) only exposes an
+// `allowProjectManagement` flag, which turns the account into a Foundry account
+// but does NOT create a project. As of avm/res/cognitive-services/account:0.15.0
+// there is no parameter for a `Microsoft.CognitiveServices/accounts/projects`
+// child resource, and no standalone AVM module for Foundry projects was published
+// at implementation time. We need an actual project (to open in the new Foundry
+// portal and to scope RBAC to), so this thin module declares the project resource
+// directly and assigns roles at the project scope (the AVM `roleAssignments` param
+// only assigns at the account scope). If AVM later ships a supported project
+// module, this file can be replaced with it.
+
 @description('Name of the existing AIServices (Foundry) account that will host the project.')
 param accountName string
 
