@@ -536,7 +536,7 @@ var appEnvVariables = {
   AZURE_OPENAI_REASONING_EFFORT: defaultReasoningEffort
   AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT: defaultRetrievalReasoningEffort
   // Specific to Azure OpenAI
-  AZURE_OPENAI_SERVICE: openAiServiceNameResolved
+  AZURE_OPENAI_SERVICE: deployFoundryAccount ? openAi!.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
   AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
   AZURE_OPENAI_knowledgeBase_MODEL: knowledgeBase.modelName
@@ -782,34 +782,31 @@ var openAiDeployments = concat(
 )
 
 // This deployment only provisions an Azure OpenAI resource when it creates the account itself.
-//   - Fresh deploy (openAiHost == 'azure', no openAiServiceName): create a Microsoft Foundry
-//     account (AIServices + project management) that hosts the models and a Foundry project.
-//   - Bring-your-own (openAiServiceName set): skip the account, model deployments, project, and
-//     private endpoint entirely. You must pre-create the chat + embedding deployments yourself.
-//     Role assignments are still created so the app's managed identity can call your account.
-var deployFoundryAccount = isAzureOpenAiHost && deployAzureOpenAi && empty(openAiServiceName)
-var useExistingOpenAi = isAzureOpenAiHost && deployAzureOpenAi && !empty(openAiServiceName)
-
-// Resolve the account name + endpoint from whichever path applies, so downstream env vars and
-// outputs don't need to know which one ran. For bring-your-own we build the endpoint from the
-// service name (matches how the backend derives it: https://{name}.openai.azure.com).
-var openAiServiceNameResolved = deployFoundryAccount ? openAi!.outputs.name : (useExistingOpenAi ? openAiServiceName : '')
-var openAiEndpointResolved = deployFoundryAccount
-  ? openAi!.outputs.endpoint
-  : (useExistingOpenAi ? 'https://${openAiServiceName}.openai.azure.com/' : '')
+//   - openAiHost == 'azure': create a Microsoft Foundry account (AIServices + project
+//     management) that hosts the models and a Foundry project. If openAiServiceName is set
+//     (e.g. reused from a prior deploy's output, or chosen by the user), that name is reused
+//     idempotently, so redeploys stay stable.
+//   - openAiHost == 'azure_custom' (or any non-azure host): bring-your-own. deployAzureOpenAi
+//     is false, so the account, model deployments, project, private endpoint, and the Azure
+//     OpenAI role assignments are all skipped. The backend talks to your endpoint via
+//     AZURE_OPENAI_CUSTOM_URL and you manage the deployments, networking, and access yourself.
+// NOTE: openAiServiceName cannot be used to detect bring-your-own, because AZURE_OPENAI_SERVICE
+// is also a bicep output that azd writes back after every deploy — so it is populated on every
+// redeploy of our own account. openAiHost is the intent signal.
+var deployFoundryAccount = isAzureOpenAiHost && deployAzureOpenAi
 
 module openAi 'br/public:avm/res/cognitive-services/account:0.15.0' = if (deployFoundryAccount) {
   name: 'openai'
   scope: openAiResourceGroup
   params: {
-    name: '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+    name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     location: openAiLocation
     tags: tags
     // Deploy as a Microsoft Foundry account (AIServices) with project management enabled,
     // so models are hosted on the account and a Foundry project can be created inside it.
     kind: 'AIServices'
     allowProjectManagement: true
-    customSubDomainName: '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+    customSubDomainName: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'
@@ -1622,8 +1619,8 @@ output AZURE_OPENAI_EMB_DIMENSIONS int = embedding.dimensions
 output AZURE_OPENAI_CHATGPT_MODEL string = chatGpt.modelName
 
 // Specific to Azure OpenAI
-output AZURE_OPENAI_SERVICE string = openAiServiceNameResolved
-output AZURE_OPENAI_ENDPOINT string = openAiEndpointResolved
+output AZURE_OPENAI_SERVICE string = deployFoundryAccount ? openAi!.outputs.name : ''
+output AZURE_OPENAI_ENDPOINT string = deployFoundryAccount ? openAi!.outputs.endpoint : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroup.name : ''
 
 // Microsoft Foundry project hosted inside the Foundry (AIServices) account above.
