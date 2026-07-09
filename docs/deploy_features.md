@@ -366,7 +366,7 @@ The local parsers will be used the next time you run the data ingestion script. 
 
 ## Using Azure Health Models (Preview)
 
-You can enable [Azure Health Models](https://learn.microsoft.com/azure/azure-monitor/health-models/overview) to get a graph based view to understand the health of the application deployment.
+You can enable [Azure Health Models](https://learn.microsoft.com/azure/azure-monitor/health-models/overview) to get a graph-based view to understand the health of the application deployment.
 
 Once deployed, the health model provides a graph-based overview of the application's health, as shown below:
 
