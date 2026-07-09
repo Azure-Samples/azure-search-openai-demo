@@ -201,10 +201,10 @@ The unit tests mock `msal` at the client level, so any change to `msal`, `@azure
 
 Use a dedicated azd env with login + access control enabled so the OBO code path is actually exercised.
 
-1. **Create the env and enable auth:**
+1. **Create the env and enable auth:** (any env name works — the steps below use `<AUTH_ENV_NAME>` as a placeholder)
 
    ```shell
-   azd env new pf-ragchat-login --subscription <SUB_ID> --location <REGION>
+   azd env new <AUTH_ENV_NAME> --subscription <SUB_ID> --location <REGION>
    azd env set AZURE_USE_AUTHENTICATION true
    azd env set AZURE_ENFORCE_ACCESS_CONTROL true
    azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS false
@@ -219,7 +219,7 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
 
    ```shell
    ./scripts/auth_init.sh   # creates the client + server Entra app registrations
-   azd up -e pf-ragchat-login
+   azd up -e <AUTH_ENV_NAME>
    ```
 
    `azd up` runs `auth_update.sh` as a postprovision hook to update the client app's redirect URIs.
@@ -259,7 +259,7 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
 
    ```shell
    # Terminal 1: backend, pointed at the deployed login env's config
-   azd env select pf-ragchat-login
+   azd env select <AUTH_ENV_NAME>
    PORT=50505 ./app/start.sh
 
    # Terminal 2: frontend dev server
