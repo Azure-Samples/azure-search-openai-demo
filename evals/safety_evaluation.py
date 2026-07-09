@@ -121,7 +121,7 @@ async def callback(
     if "error" in response:
         message = {"content": response["error"], "role": "assistant"}
     else:
-        message = response["message"]
+        message = {"content": response["output_text"], "role": "assistant"}
     response["messages"] = messages_list + [message]
     return response
 
