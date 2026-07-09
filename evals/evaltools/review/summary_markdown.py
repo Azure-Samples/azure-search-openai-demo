@@ -22,7 +22,7 @@ def main(results_dir: Path, highlight_run: str | None = None) -> str:
         headers = [f"☞{header}☜" if ind == highlight_run_index else header for ind, header in enumerate(headers)]
 
     table = "| " + " | ".join(headers) + " |\n"
-    table += "|" + " |".join(["---"] * len(rows[0])) + " |\n"
+    table += "|" + " |".join(["---"] * len(headers)) + " |\n"
     for ind, row in enumerate(rows[1:]):
         if row[0] == "":
             row[0] = "↑"

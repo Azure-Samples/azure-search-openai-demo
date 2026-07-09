@@ -48,7 +48,7 @@ def summarize_results(results_dir):
         if len(shared_metric_stats[metric_name]) > 1:
             first_row.extend([""] * (len(shared_metric_stats[metric_name]) - 1))
         # The second row of columns should just have the stat names
-        for stat in shared_metric_stats[metric_name]:
+        for stat in sorted(shared_metric_stats[metric_name]):
             second_row.append(stat)
     # Header cell for the per-run question count appended to each run_row below
     first_row.append("n")
@@ -60,7 +60,7 @@ def summarize_results(results_dir):
     for folder, summary in run_summaries.items():
         run_row = [folder]
         for metric_name in shared_metric_names:
-            for stat in shared_metric_stats[metric_name]:
+            for stat in sorted(shared_metric_stats[metric_name]):
                 if stat in summary.get(metric_name, {}):
                     run_row.append(summary[metric_name][stat])
                 else:
@@ -81,6 +81,8 @@ def diff_directories(directories: list[Path], changed: str | None = None):
             data_json = [json.loads(question_json) for question_json in f.readlines()]
             data_dicts.append({question["question"]: question for question in data_json})
     if changed:
+        if len(data_dicts) < 2:
+            raise ValueError("The --changed option requires at least two run directories to compare.")
         # filter out questions that have the same value for the given column
         for question in list(data_dicts[0].keys()):
             # if question isn't in the second directory, skip

@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import time
 from pathlib import Path
 
@@ -259,7 +258,7 @@ def run_evaluate_from_config(
         ),
         target_response_answer_jmespath=config.get("target_response_answer_jmespath", "message.content"),
         target_response_context_jmespath=config.get("target_response_context_jmespath", "context.data_points.text"),
-        model=model or os.environ["OPENAI_GPT_MODEL"],
+        model=model,
         azure_credential=azure_credential,
     )
 

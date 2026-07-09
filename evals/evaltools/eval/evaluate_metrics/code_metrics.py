@@ -80,6 +80,9 @@ class CitationsMatchedMetric(BaseMetric):
             response_citations = set(CITATION_REGEX.findall(response or ""))
             # Count the percentage of citations that are present in the response
             num_citations = len(truth_citations)
+            if num_citations == 0:
+                logger.warning("Ground truth has no citations, can't compute citations_matched metric. Setting to -1.")
+                return {cls.METRIC_NAME: -1}
             num_matched_citations = len(truth_citations.intersection(response_citations))
             return {cls.METRIC_NAME: num_matched_citations / num_citations}
 

@@ -16,6 +16,10 @@ def main(directories: list[Path], changed: str | None = None):
 
     markdown_str = ""
     for question in data_dicts[0].keys():
+        # Skip questions that aren't present in every run to avoid KeyErrors
+        # when the runs have different question sets (e.g. different num_questions).
+        if not all(question in data_dict for data_dict in data_dicts):
+            continue
         markdown_str += f"**{html.escape(str(question))}**\n\n"
         # now make an HTML table with the answers
         markdown_str += "<table>\n"
@@ -34,7 +38,7 @@ def main(directories: list[Path], changed: str | None = None):
         metrics = {}
         question_results = data_dicts[0][question]
         for column, value in question_results.items():
-            if isinstance(value, int | float):
+            if isinstance(value, (int, float)):
                 metrics[column] = []
         for metric_name in metrics.keys():
             first_value = _round_metric(data_dicts[0][question].get(metric_name))
