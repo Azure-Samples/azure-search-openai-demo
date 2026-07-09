@@ -132,7 +132,7 @@ resource healthModel 'Microsoft.CloudHealth/healthModels@2026-01-01-preview' = {
     }
   }
   properties: {}
-   // it's possible to create the Health Model before the role are assigned, but the moment it's created it will try to process signals
+  // it's possible to create the Health Model before the roles are assigned, but the moment it's created it will try to process signals
   dependsOn: [monitoringReaderRole, readerRole]
 }
 
@@ -829,7 +829,7 @@ resource entityAiInference 'Microsoft.CloudHealth/healthModels/entities@2026-01-
     impact: 'Standard'
     icon: { iconName: 'Resource' }
     canvasPosition: {
-      x: json('${xRagChat + 3 * canvasLeafSpacing}')
+      x: json('${xRagChat + (2 + (useApplicationInsights ? 1 : 0)) * canvasLeafSpacing}')
       y: json('${canvasLeafRow}')
     }
     signalGroups: {
