@@ -10,7 +10,6 @@ import { LoginContext } from "../../loginContext";
 export const LoginButton = () => {
     const { instance } = useMsal();
     const { loggedIn, setLoggedIn } = useContext(LoginContext);
-    const activeAccount = instance.getActiveAccount();
     const [username, setUsername] = useState("");
     const { t } = useTranslation();
 
@@ -42,11 +41,16 @@ export const LoginButton = () => {
             });
     };
     const handleLogoutPopup = () => {
-        if (activeAccount) {
+        // getActiveAccount() can be null between an MSAL token event and our setActiveAccount() handler
+        // (same msal-browser 5.x race that checkLoggedIn/getUsername already handle). Fall back to the
+        // first cached account so we always go down the MSAL logoutPopup path instead of accidentally
+        // triggering appServicesLogout() and navigating the top window to /.auth/logout.
+        const account = instance.getActiveAccount() ?? instance.getAllAccounts()[0];
+        if (account) {
             instance
                 .logoutPopup({
                     mainWindowRedirectUri: "/", // redirects the top level app after logout
-                    account: instance.getActiveAccount()
+                    account
                 })
                 .catch(error => console.log(error))
                 .then(async () => {
