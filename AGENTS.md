@@ -56,6 +56,11 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/frontend/src/locales/tr/translation.json: Turkish translations
     * app/frontend/src/pages: Contains the main pages of the application
 * infra: Contains the Bicep templates for provisioning Azure resources.
+* evals: Contains evaluation configs, datasets, and results.
+  * evals/results: Contains raw per-run eval output folders. Use descriptive setup-based names for repeated runs, such as `gpt54-low-top5-run1`.
+  * evals/results_summaries: Contains derived grouped summaries such as `baseline.json` and `baseline.md`.
+  * evals/results_comparisons: Reserved for derived candidate-vs-baseline comparison artifacts.
+  * evals/eval_compare.py: Compares eval result folders and reports averages, confidence intervals, and paired significance tests.
 * tests: Contains the test code, including e2e tests, app integration tests, and unit tests.
 
 ## Adding new data
@@ -190,6 +195,118 @@ To upgrade a particular package in the frontend:
 * For major version upgrades of UI libraries like Fluent UI or MSAL, review breaking changes carefully. Manual tests are required for any MSAL changes since the E2E tests do not cover authentication flows.
 * If npm reports peer dependency conflicts, the `.npmrc` file has `legacy-peer-deps=true` which allows the install to proceed. This is currently needed because `react-helmet-async` declares peer dependencies on React 17/18, but works fine with React 19.
 
+## Manual test plan for authentication changes (msal, msal-browser, authentication.py)
+
+The unit tests mock `msal` at the client level, so any change to `msal`, `@azure/msal-browser`, `cryptography`, or `app/backend/core/authentication.py` needs a live deploy against Entra to confirm the on-behalf-of (OBO) flow, token cache, and Container Apps Easy Auth integration still work.
+
+Use a dedicated azd env with login + access control enabled so the OBO code path is actually exercised.
+
+1. **Create the env and enable auth:**
+
+   ```shell
+   azd env new pf-ragchat-login --subscription <SUB_ID> --location <REGION>
+   azd env set AZURE_USE_AUTHENTICATION true
+   azd env set AZURE_ENFORCE_ACCESS_CONTROL true
+   azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS false
+   azd env set AZURE_AUTH_TENANT_ID <YOUR_TENANT_ID>
+   azd env set AZURE_TENANT_ID <YOUR_TENANT_ID>
+   # If the chosen region is capacity-constrained for Azure AI Search,
+   # override just the Search location:
+   azd env set AZURE_SEARCH_SERVICE_LOCATION <OTHER_REGION>
+   ```
+
+2. **Provision + deploy:**
+
+   ```shell
+   ./scripts/auth_init.sh   # creates the client + server Entra app registrations
+   azd up -e pf-ragchat-login
+   ```
+
+   `azd up` runs `auth_update.sh` as a postprovision hook to update the client app's redirect URIs.
+
+3. **Ingest data for this env.** The `.md5` marker files under `data/` are shared across envs and cause `prepdocs` to skip everything on a fresh env, leaving the search index empty. Remove them first, then re-ingest:
+
+   ```shell
+   rm data/*.md5
+   ./scripts/prepdocs.sh
+   ```
+
+4. **Apply an ACL to at least one document for your user oid** (find your oid via `az ad signed-in-user show --query id -o tsv`):
+
+   ```shell
+   python scripts/manageacl.py -v --acl-action add --acl-type oids \
+     --acl <YOUR_OID> \
+     --url "https://<storage-account>.blob.core.windows.net/content/Northwind_Standard_Benefits_Details.pdf"
+   ```
+
+5. **Verify auth enforcement with curl** (both should return `HTTP 401` because Container Apps Easy Auth blocks unauthenticated traffic before the app sees the request):
+
+   ```shell
+   BASE=https://<your-backend-fqdn>
+   curl -sS -o /dev/null -w "%{http_code}\n" "$BASE/auth_setup"
+   curl -sS -o /dev/null -w "%{http_code}\n" -X POST "$BASE/chat" \
+     -H "Content-Type: application/json" \
+     -d '{"messages":[{"role":"user","content":"hi"}]}'
+   ```
+
+6. **Verify the OBO flow in the browser:**
+   * Load the app URL — you should be redirected to Entra sign-in.
+   * Sign in with the tenant user whose oid you ACL'd.
+   * Ask a question that only the ACL'd document can answer (e.g. "What is included in the Northwind Standard plan?"). You should get an answer with citations only from that document.
+   * Ask a question about a document that is NOT ACL'd to you (e.g. "What is included in the Northwind Health Plus plan?"). You should get "I don't know" / no citations. This confirms the OBO token was issued by `msal.ConfidentialClientApplication.acquire_token_on_behalf_of` and correctly passed to Azure AI Search as the access-control filter.
+
+7. **Optional: log out and reload.** Confirms Easy Auth logout works and re-auth kicks in cleanly.
+
+If any step fails, check container logs — `AuthError` from `app/backend/core/authentication.py` usually indicates the OBO token exchange or token validation broke.
+
+## Manual test plan for msgraph-sdk / microsoft-kiota-* changes
+
+`msgraph-sdk` (and its transitive `microsoft-kiota-*` deps) is only imported by `scripts/auth_init.py` and `scripts/auth_update.py`, which register Entra client + server apps for the login-enabled deploy. The unit tests in `tests/test_auth_init.py` mock `GraphServiceClient` end-to-end, so a bump can pass CI while breaking a real Graph call (usually due to renamed request-body classes or new required fields).
+
+Validate against a live tenant. If you don't already have a login-enabled deploy, follow steps 1–2 of the msal test plan above to create + provision an auth-enabled azd env (any env name works — the steps below use `$AZURE_ENV_NAME` from your current azd env).
+
+1. **First run — exercises PATCH + query paths only.** If the client and server app registrations from a prior run already exist, `auth_init.sh` short-circuits the `applications.post()` create path:
+
+   ```shell
+   ./scripts/auth_init.sh
+   ```
+
+   Look for `Application already exists, not creating new one` — that means the POST paths were skipped. The PATCH paths (`applications.by_application_id().patch()`) for permissions + known-client-apps *did* run, plus `oauth2_permission_grants` queries.
+
+2. **Force the create path** to exercise `applications.post()`, `service_principals.post()`, and `applications.by_application_id().add_password.post()` (where major SDK bumps most often break):
+
+   ```shell
+   # Grab the existing app IDs from the azd env
+   CLIENT_APP=$(azd env get-value AZURE_CLIENT_APP_ID)
+   SERVER_APP=$(azd env get-value AZURE_SERVER_APP_ID)
+
+   # Delete both Entra app registrations (safe on a test env)
+   az ad app delete --id $CLIENT_APP
+   az ad app delete --id $SERVER_APP
+
+   # Clear the cached IDs and secrets so auth_init recreates from scratch
+   azd env set AZURE_CLIENT_APP_ID ""
+   azd env set AZURE_CLIENT_APP_SECRET ""
+   azd env set AZURE_SERVER_APP_ID ""
+   azd env set AZURE_SERVER_APP_SECRET ""
+
+   ./scripts/auth_init.sh
+   ```
+
+   You should see `Creating application registration` (twice — once for server, once for client), followed by `Granted admin consent for ...` messages. Every msgraph SDK code path in `auth_init.py` is now exercised.
+
+3. **Test the update path** by running the postprovision hook that updates client-app redirect URIs:
+
+   ```shell
+   ./scripts/auth_update.sh
+   ```
+
+   Look for `Application update for client app id ... complete.`
+
+4. **Re-run the msal test plan** end-to-end (browser sign-in, ACL'd doc question, non-ACL'd doc question) since the fresh apps will have new client IDs. `azd deploy backend` after `auth_init.sh` picks up the new IDs.
+
+If POST fails with a serialization / model-class error (e.g. `AttributeError` on a model instance, or a 400 from Graph complaining about a missing property), the bumped SDK likely renamed or relocated a request-body class. Check the msgraph-sdk release notes and update the corresponding import in `scripts/auth_init.py`.
+
 ## Checking Python type hints
 
 To check Python type hints, use the following command:
@@ -204,6 +321,35 @@ We only enforce type hints in the main application code and scripts.
 ## Python code style
 
 Do not use single underscores in front of "private" methods or variables in Python code. We do not follow that convention in this codebase, since this is an application and not a library.
+
+## Starting the app locally
+
+The simplest way to start the app is with `./app/start.sh` (or `./app/start.ps1` on Windows). This builds the frontend and starts the backend — no separate frontend process needed unless you want hot reloading.
+
+To avoid port conflicts (e.g. if another instance is already running), pick a random port:
+
+```shell
+PORT=50506 ./app/start.sh
+```
+
+On Windows (PowerShell):
+
+```powershell
+$env:PORT = 50506
+./app/start.ps1
+```
+
+If you also need the frontend dev server with hot reloading (for UI changes), run it separately with the matching `BACKEND_PORT`:
+
+```shell
+# Terminal 1: backend
+PORT=50506 ./app/start.sh
+
+# Terminal 2: frontend with HMR
+cd app/frontend && BACKEND_PORT=50506 npm run dev
+```
+
+**Tips for coding agents**: Always specify your own random port via `PORT` to avoid colliding with a developer's running instance or other parallel agents. The start scripts will detect if the port is already in use and tell you to pick a different one.
 
 ## Deploying the application
 

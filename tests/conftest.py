@@ -73,9 +73,7 @@ MockKnowledgeBase = KnowledgeBase(
         SearchIndexKnowledgeSource(
             name="test",
             description="The default index for searching",
-            search_index_parameters=SearchIndexKnowledgeSourceParameters(
-                search_index_name="test", include_reference_source_data=True
-            ),
+            search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name="test"),
         )
     ],
 )
@@ -83,7 +81,7 @@ MockKnowledgeBase = KnowledgeBase(
 
 async def mock_search(self, *args, **kwargs):
     self.filter = kwargs.get("filter")
-    self.access_token = kwargs.get("x_ms_query_source_authorization")
+    self.access_token = kwargs.get("query_source_authorization")
     return MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
 
 

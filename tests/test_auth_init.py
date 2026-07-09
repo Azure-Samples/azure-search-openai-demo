@@ -268,6 +268,44 @@ async def test_create_or_update_application_existing_with_secret(graph_client, m
     assert len(graph._test_calls["applications.add_password.post"]) == 0
 
 
+@pytest.mark.asyncio
+async def test_create_or_update_application_recreates_with_stale_secret(graph_client, monkeypatch):
+    """When the Entra app was deleted manually but stale AZURE_*_APP_SECRET remains in env,
+    a new app is created and a fresh secret must be generated to replace the stale one.
+    Regression test for https://github.com/Azure-Samples/azure-search-openai-demo/issues/2522."""
+    graph = graph_client
+    updates: list[tuple[str, str]] = []
+
+    def fake_update_env(name, val):
+        updates.append((name, val))
+
+    # Both env vars are set but point to a deleted app + stale secret
+    with mock.patch.dict(
+        os.environ, {"AZURE_SERVER_APP_ID": "DELETED_APP", "AZURE_SERVER_APP_SECRET": "STALE"}, clear=True
+    ):
+        monkeypatch.setattr(auth_init, "update_azd_env", fake_update_env)
+
+        # get_application returns None for the deleted app id -> triggers create path
+        async def fake_get_application(graph_client, client_id):
+            return None
+
+        monkeypatch.setattr("scripts.auth_init.get_application", fake_get_application)
+        object_id, app_id, created = await create_or_update_application_with_secret(
+            graph,
+            app_id_env_var="AZURE_SERVER_APP_ID",
+            app_secret_env_var="AZURE_SERVER_APP_SECRET",
+            request_app=server_app_initial(99),
+        )
+        assert created is True
+        assert object_id == MOCK_OBJECT_ID
+        assert app_id == MOCK_APP_ID
+        # Both app id AND secret must be refreshed even though stale values were in env
+        assert ("AZURE_SERVER_APP_ID", MOCK_APP_ID) in updates
+        assert ("AZURE_SERVER_APP_SECRET", MOCK_SECRET) in updates
+    # A new secret must be requested from Graph
+    assert len(graph._test_calls["applications.add_password.post"]) == 1
+
+
 def test_client_app_validation_errors():
     # Server app without api
     server_app = server_app_initial(1)

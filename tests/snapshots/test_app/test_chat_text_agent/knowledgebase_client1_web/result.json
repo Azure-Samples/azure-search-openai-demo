@@ -30,7 +30,7 @@
                         "source": "web",
                         "type": "web"
                     },
-                    "id": 1,
+                    "id": "1",
                     "title": "Contoso site",
                     "url": "https://contoso.example"
                 }
@@ -73,7 +73,7 @@
                             "source": "web",
                             "type": "web"
                         },
-                        "id": 1,
+                        "id": "1",
                         "ref_id": "1",
                         "title": "Contoso site",
                         "type": "web",
@@ -86,29 +86,29 @@
                     "model": "gpt-4.1-mini",
                     "query_plan": [
                         {
-                            "elapsed_ms": 200,
+                            "elapsedMs": 200,
                             "id": 0,
-                            "input_tokens": 10,
-                            "output_tokens": 20,
+                            "inputTokens": 10,
+                            "outputTokens": 20,
                             "type": "modelQueryPlanning"
                         },
                         {
                             "count": 10,
-                            "elapsed_ms": 50,
+                            "elapsedMs": 50,
                             "id": 1,
-                            "knowledge_source_name": "index",
-                            "search_index_arguments": {
+                            "knowledgeSourceName": "index",
+                            "searchIndexArguments": {
                                 "search": "whistleblower query"
                             },
                             "type": "searchIndex"
                         },
                         {
                             "count": 1,
-                            "elapsed_ms": 100,
+                            "elapsedMs": 100,
                             "id": 2,
-                            "knowledge_source_name": "web",
+                            "knowledgeSourceName": "web",
                             "type": "web",
-                            "web_arguments": {
+                            "webArguments": {
                                 "search": "contoso policy"
                             }
                         }
@@ -120,6 +120,6 @@
             }
         ]
     },
-    "output_text": "There is a whistleblower policy. [ref_id:0] You can also visit [https://contoso.example] for more information.",
+    "output_text": "There is a whistleblower policy. [Benefit_Options-2.pdf] You can also visit [https://contoso.example] for more information.",
     "session_state": null
 }

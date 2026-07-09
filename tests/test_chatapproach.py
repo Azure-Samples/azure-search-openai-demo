@@ -287,7 +287,7 @@ async def test_compute_multimodal_embedding(monkeypatch, chat_approach):
     # Verify the result is a VectorizedQuery with the expected properties
     assert isinstance(result, VectorizedQuery)
     assert result.vector == [0.1, 0.2, 0.3, 0.4, 0.5]
-    assert result.k == 50
+    assert result.k_nearest_neighbors == 50
     assert result.fields == "images/embedding"
 
 

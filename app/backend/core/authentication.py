@@ -193,7 +193,7 @@ class AuthenticationHelper:
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied
         results = await search_client.search(
-            search_text="*", top=1, filter=filter, x_ms_query_source_authorization=auth_claims["access_token"]
+            search_text="*", top=1, filter=filter, query_source_authorization=auth_claims["access_token"]
         )
         allowed = False
         async for _ in results:

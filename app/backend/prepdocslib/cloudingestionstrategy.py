@@ -4,14 +4,12 @@ import logging
 from dataclasses import dataclass
 from datetime import timedelta
 
-from azure.search.documents.indexes._generated.models import (
-    NativeBlobSoftDeleteDeletionDetectionPolicy,
-)
 from azure.search.documents.indexes.models import (
     IndexingParameters,
     IndexingParametersConfiguration,
     IndexProjectionMode,
     InputFieldMappingEntry,
+    NativeBlobSoftDeleteDeletionDetectionPolicy,
     OutputFieldMappingEntry,
     SearchIndexer,
     SearchIndexerDataContainer,
@@ -351,7 +349,7 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
                 skillset_name=self.skillset_name,
                 parameters=IndexingParameters(
                     configuration=IndexingParametersConfiguration(
-                        query_timeout=None,  # type: ignore
+                        query_timeout=None,
                         data_to_extract="storageMetadata",
                         allow_skillset_to_read_file_data=False,
                     )

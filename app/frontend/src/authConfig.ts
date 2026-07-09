@@ -54,7 +54,21 @@ interface AuthSetup {
 
 // Fetch the auth setup JSON data from the API if not already cached
 async function fetchAuthSetup(): Promise<AuthSetup> {
-    const response = await fetch("/auth_setup");
+    // Use redirect: "manual" so that a 302 to a cross-origin login provider (e.g. login.microsoftonline.com)
+    // returned by Container Apps / App Service Easy Auth does not trigger a CORS error on this XHR.
+    // See https://github.com/Azure-Samples/azure-search-openai-demo/issues/1780
+    const response = await fetch("/auth_setup", { redirect: "manual" });
+    if (response.type === "opaqueredirect") {
+        // Easy Auth wants to redirect us to the identity provider to (re-)authenticate.
+        // A top-level navigation can follow the cross-origin 302; fetch cannot.
+        // Reload the current page so the browser handles the login flow, then never resolve
+        // so the rest of the module does not try to initialize with a missing AuthSetup.
+        window.location.reload();
+        return new Promise<AuthSetup>(() => {
+            /* Intentionally never resolve: window.location.reload() above is about to unload this page,
+               so no caller should proceed past this await. Do not "clean up" this empty executor. */
+        });
+    }
     if (!response.ok) {
         throw new Error(`auth setup response was not ok: ${response.status}`);
     }

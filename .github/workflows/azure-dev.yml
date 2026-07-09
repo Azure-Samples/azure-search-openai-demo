@@ -85,6 +85,7 @@ jobs:
       AZURE_HEALTH_MODEL_LOCATION: ${{ vars.AZURE_HEALTH_MODEL_LOCATION }}
       USE_VECTORS: ${{ vars.USE_VECTORS }}
       USE_MULTIMODAL: ${{ vars.USE_MULTIMODAL }}
+      CSV_MAX_PAGE_CHARS: ${{ vars.CSV_MAX_PAGE_CHARS }}
       USE_CLOUD_INGESTION: ${{ vars.USE_CLOUD_INGESTION }}
       USE_CLOUD_INGESTION_ACLS: ${{ vars.USE_CLOUD_INGESTION_ACLS }}
       RESTORE_COGNITIVE_SERVICES: ${{ vars.RESTORE_COGNITIVE_SERVICES }}
@@ -126,7 +127,7 @@ jobs:
       USE_SHAREPOINT_SOURCE: ${{ vars.USE_SHAREPOINT_SOURCE }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install azd
         uses: Azure/setup-azd@v2.3.0
@@ -134,7 +135,7 @@ jobs:
       - name: Install Nodejs
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Log in with Azure (Federated Credentials)
         run: |
