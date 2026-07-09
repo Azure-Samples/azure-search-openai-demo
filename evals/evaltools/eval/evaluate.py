@@ -15,6 +15,10 @@ from .evaluate_metrics import metrics_by_name
 
 logger = logging.getLogger("evaltools")
 
+# Timeout (in seconds) for requests to the target chat endpoint.
+# Generous to allow for LLM generation latency, but bounded so runs fail fast if the target hangs.
+TARGET_REQUEST_TIMEOUT = 120
+
 
 def send_question_to_target(
     question: str,
@@ -31,7 +35,7 @@ def send_question_to_target(
         "context": parameters,
     }
     try:
-        r = requests.post(url, headers=headers, json=body)
+        r = requests.post(url, headers=headers, json=body, timeout=TARGET_REQUEST_TIMEOUT)
         r.encoding = "utf-8"
 
         latency = r.elapsed.total_seconds()
@@ -78,6 +82,7 @@ def send_question_to_target(
 
 
 def truncate_for_log(s: str, max_length=50):
+    s = str(s)
     return s if len(s) < max_length else s[:max_length] + "..."
 
 

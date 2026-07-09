@@ -3,17 +3,9 @@ import os
 
 import openai
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
-from azure.identity import AzureDeveloperCliCredential, get_bearer_token_provider
+from azure.identity import get_bearer_token_provider
 
 logger = logging.getLogger("evaltools")
-
-
-def get_azd_credential(tenant_id: str | None) -> AzureDeveloperCliCredential:
-    if tenant_id:
-        logger.info("Using Azure Developer CLI Credential for tenant %s", tenant_id)
-        return AzureDeveloperCliCredential(tenant_id=tenant_id, process_timeout=60)
-    logger.info("Using Azure Developer CLI Credential for home tenant")
-    return AzureDeveloperCliCredential(process_timeout=60)
 
 
 def get_openai_config() -> AzureOpenAIModelConfiguration:
@@ -40,9 +32,6 @@ def get_openai_config() -> AzureOpenAIModelConfiguration:
 
 def get_openai_client(oai_config: AzureOpenAIModelConfiguration, azure_credential=None):
     azure_token_provider = None
-    if azure_credential is None and not os.environ.get("AZURE_OPENAI_KEY"):
-        logger.info("Using Azure OpenAI Service with Azure Developer CLI Credential")
-        azure_credential = get_azd_credential(os.environ.get("AZURE_OPENAI_TENANT_ID"))
     if azure_credential is not None:
         azure_token_provider = get_bearer_token_provider(
             azure_credential, "https://cognitiveservices.azure.com/.default"

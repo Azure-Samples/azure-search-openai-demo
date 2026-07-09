@@ -28,7 +28,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     openai_config = {
-        "azure_endpoint": f"https://{os.getenv('AZURE_OPENAI_SERVICE')}.openai.azure.com",
+        "azure_endpoint": os.environ["AZURE_OPENAI_ENDPOINT"],
         "azure_deployment": os.environ["AZURE_OPENAI_EVAL_DEPLOYMENT"],
     }
 
