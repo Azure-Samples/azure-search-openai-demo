@@ -33,6 +33,8 @@ jobs:
             activate-environment: true
         - name: Install dependencies
           run: |
-            uv pip install -r evals/requirements.txt pytest
+            uv pip install -r evals/requirements.txt pytest ty
+        - name: Check types with ty
+          run: ty check evals/evaltools
         - name: Run evals tests
           run: pytest evals/tests -vv
