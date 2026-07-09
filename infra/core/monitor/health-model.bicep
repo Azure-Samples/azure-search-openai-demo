@@ -808,6 +808,10 @@ resource entityBackendComputeAppSvc 'Microsoft.CloudHealth/healthModels/entities
     displayName: 'Backend App'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
+    canvasPosition: {
+      x: json('${xRagChat + 1 * canvasLeafSpacing}')
+      y: json('${canvasLeafRow}')
+    }
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
