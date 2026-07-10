@@ -745,3 +745,77 @@ def test_agentic_retrieval_effort_minimal_disables_web(page: Page, live_server_u
     # Verify the expected thought process sections are visible
     expect(page.get_by_text("Agentic retrieval response")).to_be_visible()
     expect(page.get_by_text("Prompt to generate answer")).to_be_visible()
+
+
+def test_agentic_retrieval_query_plan(page: Page, live_server_url: str):
+    """Test that the agentic query plan renders its execution steps, search query, and source.
+
+    Guards against frontend/backend casing drift silently falling back to placeholder values
+    ("—", "search index") instead of the real step data.
+    """
+
+    def handle(route: Route):
+        # Non-streaming agentic snapshot whose query_plan carries the execution steps
+        with open("tests/snapshots/test_app/test_chat_text_agent/knowledgebase_client0/result.json") as f:
+            route.fulfill(body=f.read(), status=200)
+
+    page.route("*/**/chat", handle)
+
+    def handle_config(route: Route):
+        route.fulfill(
+            body=json.dumps(
+                {
+                    "defaultReasoningEffort": "",
+                    "defaultRetrievalReasoningEffort": "low",
+                    "showMultimodalOptions": False,
+                    "showSemanticRankerOption": True,
+                    "showQueryRewritingOption": False,
+                    "showReasoningEffortOption": False,
+                    "reasoningEffortOptions": [],
+                    "streamingEnabled": False,
+                    "showVectorOption": True,
+                    "showUserUpload": False,
+                    "showLanguagePicker": False,
+                    "showSpeechInput": False,
+                    "showSpeechOutputBrowser": False,
+                    "showSpeechOutputAzure": False,
+                    "showChatHistoryBrowser": False,
+                    "showChatHistoryCosmos": False,
+                    "showAgenticRetrievalOption": True,
+                    "ragSearchImageEmbeddings": False,
+                    "ragSearchTextEmbeddings": True,
+                    "ragSendImageSources": False,
+                    "ragSendTextSources": True,
+                    "webSourceEnabled": True,
+                    "sharepointSourceEnabled": True,
+                }
+            ),
+            status=200,
+        )
+
+    page.route("*/**/config", handle_config)
+
+    page.goto(live_server_url)
+    expect(page).to_have_title("Azure OpenAI + AI Search")
+
+    # Ask a question and wait for the answer to appear. streamingEnabled=False in the config
+    # forces the non-streaming /chat path (whose snapshot carries the query_plan), so no
+    # Developer settings toggle is needed.
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").click()
+    page.get_by_placeholder("Type a new question (e.g. does my plan cover annual eye exams?)").fill(
+        "Whats the dental plan?"
+    )
+    page.get_by_role("button", name="Submit question").click()
+
+    expect(page.get_by_text("The capital of France is Paris.")).to_be_visible()
+
+    # Open the thought process by clicking the lightbulb on the answer
+    page.get_by_label("Show thought process").click()
+    expect(page.get_by_title("Thought process")).to_be_visible()
+
+    # Verify the query plan "Execution steps" table renders the real step data
+    expect(page.get_by_text("Execution steps")).to_be_visible()
+    expect(page.get_by_text("Query planning")).to_be_visible()
+    expect(page.get_by_text("Index search")).to_be_visible()
+    expect(page.get_by_text("Search: whistleblower query")).to_be_visible()
+    expect(page.get_by_text("Source: index")).to_be_visible()

@@ -117,11 +117,16 @@ async def index():
     return await bp.send_static_file("index.html")
 
 
-# Empty page is recommended for login redirect to work.
-# See https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#redirecturi-considerations for more information
+# Dedicated MSAL popup-redirect page. Per MSAL best practice this must be a
+# minimal page that only loads the redirect-bridge script — no routing, no
+# other application code — so we serve a separate redirect.html static asset
+# (not index.html). msal-browser 5.x uses a BroadcastChannel handshake and
+# the bridge script inside redirect.html posts the auth response back to the
+# opener window and closes the popup.
+# See https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/login-user.md#redirecturi-considerations
 @bp.route("/redirect")
 async def redirect():
-    return ""
+    return await bp.send_static_file("redirect.html")
 
 
 @bp.route("/favicon.ico")
@@ -516,7 +521,9 @@ async def setup_clients():
     )
 
     knowledgebase_client = KnowledgeBaseRetrievalClient(
-        endpoint=AZURE_SEARCH_ENDPOINT, knowledge_base_name=AZURE_SEARCH_KNOWLEDGEBASE_NAME, credential=azure_credential
+        endpoint=AZURE_SEARCH_ENDPOINT,
+        knowledge_base_name=AZURE_SEARCH_KNOWLEDGEBASE_NAME,
+        credential=azure_credential,
     )
     knowledgebase_client_with_web = None
     knowledgebase_client_with_sharepoint = None

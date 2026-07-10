@@ -1,13 +1,11 @@
 import logging
 from typing import Optional
 
-from azure.search.documents.indexes._generated.models import (
-    NativeBlobSoftDeleteDeletionDetectionPolicy,
-)
 from azure.search.documents.indexes.models import (
     AzureOpenAIEmbeddingSkill,
     IndexProjectionMode,
     InputFieldMappingEntry,
+    NativeBlobSoftDeleteDeletionDetectionPolicy,
     OutputFieldMappingEntry,
     SearchIndexer,
     SearchIndexerDataContainer,

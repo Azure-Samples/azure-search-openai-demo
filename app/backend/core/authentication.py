@@ -85,7 +85,11 @@ class AuthenticationHelper:
                     "clientId": self.client_app_id,  # Client app id used for login
                     "authority": self.authority,  # Directory to use for login https://learn.microsoft.com/entra/identity-platform/msal-client-application-configuration#authority
                     "redirectUri": "/redirect",  # Points to window.location.origin. You must register this URI on Azure Portal/App Registration.
-                    "postLogoutRedirectUri": "/",  # Indicates the page to navigate after logout.
+                    # msal-browser's logoutPopup lands the popup on postLogoutRedirectUri, so it must
+                    # also point to the redirect-bridge page (/redirect) so it can broadcast the
+                    # logout response back to the opener and close the popup. mainWindowRedirectUri
+                    # (set per-call in the LoginButton) navigates the parent window to "/" after logout.
+                    "postLogoutRedirectUri": "/redirect",
                     "navigateToLoginRequestUrl": False,  # If "true", will navigate back to the original request location before processing the auth code response.
                 },
                 "cache": {
@@ -193,7 +197,7 @@ class AuthenticationHelper:
         # If the filter returns any results, the user is allowed to access the document
         # Otherwise, access is denied
         results = await search_client.search(
-            search_text="*", top=1, filter=filter, x_ms_query_source_authorization=auth_claims["access_token"]
+            search_text="*", top=1, filter=filter, query_source_authorization=auth_claims["access_token"]
         )
         allowed = False
         async for _ in results:

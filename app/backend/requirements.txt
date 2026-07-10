@@ -26,8 +26,6 @@ azure-ai-documentintelligence==1.0.2
     # via -r requirements.in
 azure-cognitiveservices-speech==1.40.0
     # via -r requirements.in
-azure-common==1.1.28
-    # via azure-search-documents
 azure-core==1.39.0
     # via
     #   azure-ai-documentintelligence
@@ -56,7 +54,7 @@ azure-monitor-opentelemetry==1.8.4
     # via -r requirements.in
 azure-monitor-opentelemetry-exporter==1.0.0b46
     # via azure-monitor-opentelemetry
-azure-search-documents==11.7.0b2
+azure-search-documents==12.1.0b1
     # via -r requirements.in
 azure-storage-blob==12.22.0
     # via
@@ -80,7 +78,7 @@ cffi==2.0.0
     # via cryptography
 charset-normalizer==3.3.2
     # via requests
-click==8.4.1
+click==8.4.2
     # via
     #   flask
     #   quart
@@ -340,7 +338,7 @@ pyjwt==2.13.0
     # via
     #   -r requirements.in
     #   msal
-pymupdf==1.27.2.3
+pymupdf==1.28.0
     # via -r requirements.in
 pypdf==6.13.3
     # via -r requirements.in

@@ -1,6 +1,15 @@
 // Refactored from https://github.com/Azure-Samples/ms-identity-javascript-react-tutorial/blob/main/1-Authentication/1-sign-in/SPA/src/authConfig.js
 
-import { IPublicClientApplication } from "@azure/msal-browser";
+import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
+
+// getActiveAccount() only returns an account after setActiveAccount() has been called
+// (which we do in the LOGIN_SUCCESS handler in index.tsx). Immediately after a popup login,
+// msal-browser 5.x fires ACQUIRE_TOKEN_SUCCESS *before* LOGIN_SUCCESS, so getActiveAccount()
+// briefly returns null while getAllAccounts() is already populated. Falling back to the first
+// cached account matches what msal-react's own useIsAuthenticated hook does and avoids stale UI.
+export const getActiveOrFirstAccount = (client: IPublicClientApplication): AccountInfo | null => {
+    return client.getActiveAccount() ?? client.getAllAccounts()[0] ?? null;
+};
 
 const appServicesAuthTokenUrl = ".auth/me";
 const appServicesAuthTokenRefreshUrl = ".auth/refresh";
@@ -54,7 +63,21 @@ interface AuthSetup {
 
 // Fetch the auth setup JSON data from the API if not already cached
 async function fetchAuthSetup(): Promise<AuthSetup> {
-    const response = await fetch("/auth_setup");
+    // Use redirect: "manual" so that a 302 to a cross-origin login provider (e.g. login.microsoftonline.com)
+    // returned by Container Apps / App Service Easy Auth does not trigger a CORS error on this XHR.
+    // See https://github.com/Azure-Samples/azure-search-openai-demo/issues/1780
+    const response = await fetch("/auth_setup", { redirect: "manual" });
+    if (response.type === "opaqueredirect") {
+        // Easy Auth wants to redirect us to the identity provider to (re-)authenticate.
+        // A top-level navigation can follow the cross-origin 302; fetch cannot.
+        // Reload the current page so the browser handles the login flow, then never resolve
+        // so the rest of the module does not try to initialize with a missing AuthSetup.
+        window.location.reload();
+        return new Promise<AuthSetup>(() => {
+            /* Intentionally never resolve: window.location.reload() above is about to unload this page,
+               so no caller should proceed past this await. Do not "clean up" this empty executor. */
+        });
+    }
     if (!response.ok) {
         throw new Error(`auth setup response was not ok: ${response.status}`);
     }
@@ -97,8 +120,15 @@ export const getRedirectUri = () => {
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this#global_context
 declare global {
     var cachedAppServicesToken: AppServicesToken | null;
+    // Sticky "no Easy Auth here" flag. When /.auth/me returns 404 (or otherwise
+    // yields no token) once, remember it so downstream code paths that fall back
+    // to getAppServicesToken() (checkLoggedIn, getUsername, getTokenClaims) do
+    // not keep re-issuing 404s on every render / MSAL event tick. This is a
+    // deployment-time property, not something that flips at runtime.
+    var appServicesAuthUnavailable: boolean;
 }
 globalThis.cachedAppServicesToken = null;
+globalThis.appServicesAuthUnavailable = false;
 
 /**
  * Retrieves an access token if the user is logged in using app services authentication.
@@ -116,6 +146,10 @@ const getAppServicesToken = (): Promise<AppServicesToken | null> => {
 
     if (globalThis.cachedAppServicesToken && checkNotExpired(globalThis.cachedAppServicesToken)) {
         return Promise.resolve(globalThis.cachedAppServicesToken);
+    }
+
+    if (globalThis.appServicesAuthUnavailable) {
+        return Promise.resolve(null);
     }
 
     const getAppServicesTokenFromMe: () => Promise<AppServicesToken | null> = () => {
@@ -138,6 +172,13 @@ const getAppServicesToken = (): Promise<AppServicesToken | null> => {
                 });
             }
 
+            // Only latch on 404 — that's the deploy-time signal that Easy Auth isn't
+            // configured (or we're in local dev with no /.auth/me at all). Other statuses
+            // like 401 (session expired), 403, or transient 5xx can recover on the next
+            // call, so leave the flag alone for those.
+            if (r.status === 404) {
+                globalThis.appServicesAuthUnavailable = true;
+            }
             return null;
         });
     };
@@ -175,11 +216,8 @@ export const appServicesLogout = () => {
  * @returns {Promise<boolean>} A promise that resolves to true if the user is logged in, false otherwise.
  */
 export const checkLoggedIn = async (client: IPublicClientApplication | undefined): Promise<boolean> => {
-    if (client) {
-        const activeAccount = client.getActiveAccount();
-        if (activeAccount) {
-            return true;
-        }
+    if (client && getActiveOrFirstAccount(client)) {
+        return true;
     }
 
     const appServicesToken = await getAppServicesToken();
@@ -218,9 +256,9 @@ export const getToken = async (client: IPublicClientApplication): Promise<string
  * @returns {Promise<string | null>} The username of the active account, or null if no username is found.
  */
 export const getUsername = async (client: IPublicClientApplication): Promise<string | null> => {
-    const activeAccount = client.getActiveAccount();
-    if (activeAccount) {
-        return activeAccount.username;
+    const account = getActiveOrFirstAccount(client);
+    if (account) {
+        return account.username;
     }
 
     const appServicesToken = await getAppServicesToken();
@@ -238,9 +276,9 @@ export const getUsername = async (client: IPublicClientApplication): Promise<str
  * @returns {Promise<Record<string, unknown> | undefined>} A promise that resolves to the token claims of the active account, the user claims from the app services login token, or undefined if no claims are found.
  */
 export const getTokenClaims = async (client: IPublicClientApplication): Promise<Record<string, unknown> | undefined> => {
-    const activeAccount = client.getActiveAccount();
-    if (activeAccount) {
-        return activeAccount.idTokenClaims;
+    const account = getActiveOrFirstAccount(client);
+    if (account) {
+        return account.idTokenClaims;
     }
 
     const appServicesToken = await getAppServicesToken();

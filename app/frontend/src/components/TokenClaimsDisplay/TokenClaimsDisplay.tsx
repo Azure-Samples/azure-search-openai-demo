@@ -20,7 +20,6 @@ type Claim = {
 
 export const TokenClaimsDisplay = () => {
     const { instance } = useMsal();
-    const activeAccount = instance.getActiveAccount();
     const [claims, setClaims] = useState<Record<string, unknown> | undefined>(undefined);
 
     useEffect(() => {
