@@ -12,6 +12,7 @@ line-length = 120
 
 [tool.pytest.ini_options]
 addopts = "-ra"
+testpaths = ["tests"]
 pythonpath = ["app/backend", "scripts", "app/functions", "evals"]
 asyncio_default_fixture_loop_scope = "function"
 
@@ -30,7 +31,10 @@ python-version = "3.10"
 root = ["app/backend", "scripts", "app/functions", "evals"]
 
 [tool.ty.src]
-# Directories to actually type-check (excludes tests folder which has many mock-related type errors)
+# Directories to actually type-check (excludes tests folder which has many mock-related type errors).
+# Note: evals/evaltools is intentionally NOT included here — it depends on heavy eval-only packages
+# (azure-ai-evaluation, pandas, typer, ...) that the main python-test job doesn't install. It is
+# type-checked separately in the evals-test workflow, where evals/requirements.txt is installed.
 include = ["app/backend", "scripts", "app/functions", "evals/eval_compare.py"]
 
 [tool.ty.rules]

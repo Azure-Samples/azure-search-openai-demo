@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import styles from "./MarkdownViewer.module.css";
+import { fetchWithAuthRedirect } from "../../api";
 
 interface MarkdownViewerProps {
     src: string;
@@ -29,7 +30,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({ src }) => {
     useEffect(() => {
         const fetchMarkdown = async () => {
             try {
-                const response = await fetch(src);
+                const response = await fetchWithAuthRedirect(src);
 
                 if (!response.ok) {
                     throw new Error("Failed loading markdown file.");

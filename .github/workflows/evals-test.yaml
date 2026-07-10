@@ -1,0 +1,45 @@
+name: Evals check
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "evals/**"
+      - ".github/workflows/evals-test.yaml"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "evals/**"
+      - ".github/workflows/evals-test.yaml"
+  workflow_call:
+
+jobs:
+  test_evals:
+    name: Test evals Python ${{ matrix.python_version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+        - uses: actions/checkout@v7
+        - name: Install uv
+          uses: astral-sh/setup-uv@v7
+          with:
+            enable-cache: true
+            version: "0.9.5"
+            cache-dependency-glob: "evals/requirements.txt"
+            python-version: ${{ matrix.python_version }}
+            activate-environment: true
+        - name: Install dependencies
+          run: |
+            uv pip install -r evals/requirements.txt pytest ty
+        - name: Check types with ty
+          # Override src.include: the pyproject.toml config intentionally excludes
+          # evals/evaltools (so the main python-test job doesn't try to type-check it
+          # without eval-only deps installed). Passing the directory alone would be
+          # filtered out by that include list and check nothing, so scope ty to
+          # evaltools explicitly here where the eval deps are installed.
+          run: ty check evals/evaltools -c 'src.include=["evals/evaltools"]'
+        - name: Run evals tests
+          run: pytest evals/tests -vv

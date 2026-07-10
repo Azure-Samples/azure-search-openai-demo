@@ -201,10 +201,10 @@ The unit tests mock `msal` at the client level, so any change to `msal`, `@azure
 
 Use a dedicated azd env with login + access control enabled so the OBO code path is actually exercised.
 
-1. **Create the env and enable auth:**
+1. **Create the env and enable auth:** (any env name works — the steps below use `<AUTH_ENV_NAME>` as a placeholder)
 
    ```shell
-   azd env new pf-ragchat-login --subscription <SUB_ID> --location <REGION>
+   azd env new <AUTH_ENV_NAME> --subscription <SUB_ID> --location <REGION>
    azd env set AZURE_USE_AUTHENTICATION true
    azd env set AZURE_ENFORCE_ACCESS_CONTROL true
    azd env set AZURE_ENABLE_UNAUTHENTICATED_ACCESS false
@@ -219,7 +219,7 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
 
    ```shell
    ./scripts/auth_init.sh   # creates the client + server Entra app registrations
-   azd up -e pf-ragchat-login
+   azd up -e <AUTH_ENV_NAME>
    ```
 
    `azd up` runs `auth_update.sh` as a postprovision hook to update the client app's redirect URIs.
@@ -255,7 +255,26 @@ Use a dedicated azd env with login + access control enabled so the OBO code path
    * Ask a question that only the ACL'd document can answer (e.g. "What is included in the Northwind Standard plan?"). You should get an answer with citations only from that document.
    * Ask a question about a document that is NOT ACL'd to you (e.g. "What is included in the Northwind Health Plus plan?"). You should get "I don't know" / no citations. This confirms the OBO token was issued by `msal.ConfidentialClientApplication.acquire_token_on_behalf_of` and correctly passed to Azure AI Search as the access-control filter.
 
-7. **Optional: log out and reload.** Confirms Easy Auth logout works and re-auth kicks in cleanly.
+7. **Verify the popup login flow works in local dev.** The deployed Container Apps site uses Easy Auth redirect for login; the local dev server uses the MSAL popup flow, which is a completely different code path. Do NOT skip this — the msal-browser 5.x popup requires `/redirect` to serve the dedicated [`app/frontend/redirect.html`](app/frontend/redirect.html) bridge page (in dev the vite server owns it via a `/redirect` → `/redirect.html` middleware rewrite; in prod the Quart `/redirect` route serves the built `redirect.html` from `static/`), and previous upgrades have silently broken this.
+
+   ```shell
+   # Terminal 1: backend, pointed at the deployed login env's config
+   azd env select <AUTH_ENV_NAME>
+   PORT=50505 ./app/start.sh
+
+   # Terminal 2: frontend dev server
+   cd app/frontend && BACKEND_PORT=50505 npm run dev
+   ```
+
+   Open `http://localhost:5173/`, click **Login**, complete the Entra popup, and confirm:
+   * The popup closes automatically after auth (does NOT leave the popup stuck on `http://localhost:5173/redirect#code=...`).
+   * The Login button in the top bar switches to your username.
+   * Ask a question and confirm ACL-filtered citations come back the same as in step 6.
+   * Click **Logout**, then **Login** again. The popup should complete cleanly a second time.
+
+   If the popup gets stuck on the redirect URL, check that `/redirect` serves the dedicated [`app/frontend/redirect.html`](app/frontend/redirect.html) page (built from [`app/frontend/src/redirect.ts`](app/frontend/src/redirect.ts)) which runs `broadcastResponseToMainFrame()` from `@azure/msal-browser/redirect-bridge`. Per MSAL best practice this must be a minimal HTML page with ONLY the bridge script — no routing, no other application code. msal-browser 5.x uses a `BroadcastChannel` handshake and a truly blank redirect page no longer works.
+
+8. **Optional: log out and reload on the deployed site.** Confirms Easy Auth logout works and re-auth kicks in cleanly.
 
 If any step fails, check container logs — `AuthError` from `app/backend/core/authentication.py` usually indicates the OBO token exchange or token validation broke.
 

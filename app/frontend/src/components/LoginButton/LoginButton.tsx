@@ -3,24 +3,25 @@ import { useMsal } from "@azure/msal-react";
 import { useTranslation } from "react-i18next";
 
 import styles from "./LoginButton.module.css";
-import { getRedirectUri, loginRequest, appServicesLogout, getUsername, checkLoggedIn } from "../../authConfig";
+import { getRedirectUri, loginRequest, appServicesLogout, getActiveOrFirstAccount, getUsername, checkLoggedIn } from "../../authConfig";
 import { useState, useEffect, useContext } from "react";
 import { LoginContext } from "../../loginContext";
 
 export const LoginButton = () => {
     const { instance } = useMsal();
     const { loggedIn, setLoggedIn } = useContext(LoginContext);
-    const activeAccount = instance.getActiveAccount();
     const [username, setUsername] = useState("");
     const { t } = useTranslation();
 
+    // Re-fetch the username whenever loggedIn flips (LayoutWrapper drives loggedIn from MSAL events),
+    // so the button correctly shows the signed-in user after a popup login/logout without a page reload.
     useEffect(() => {
         const fetchUsername = async () => {
             setUsername((await getUsername(instance)) ?? "");
         };
 
         fetchUsername();
-    }, []);
+    }, [instance, loggedIn]);
 
     const handleLoginPopup = () => {
         /**
@@ -40,11 +41,15 @@ export const LoginButton = () => {
             });
     };
     const handleLogoutPopup = () => {
-        if (activeAccount) {
+        // Fall back to the first cached account if there is no active account, so we always take
+        // the MSAL logoutPopup path instead of accidentally triggering appServicesLogout() and
+        // navigating the top window to /.auth/logout.
+        const account = getActiveOrFirstAccount(instance);
+        if (account) {
             instance
                 .logoutPopup({
                     mainWindowRedirectUri: "/", // redirects the top level app after logout
-                    account: instance.getActiveAccount()
+                    account
                 })
                 .catch(error => console.log(error))
                 .then(async () => {
