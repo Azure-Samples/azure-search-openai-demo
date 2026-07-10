@@ -779,6 +779,8 @@ var openAiDeployments = concat(
 // is the intent signal.
 var deployFoundryAccount = isAzureOpenAiHost && deployAzureOpenAi
 
+// Microsoft Foundry account (AIServices) with project management enabled, so the model
+// deployments are hosted on the account and a Foundry project can be created inside it.
 module openAi 'br/public:avm/res/cognitive-services/account:0.15.0' = if (deployFoundryAccount) {
   name: 'openai'
   scope: az.resourceGroup(openAiResourceGroupNameActual)
@@ -786,8 +788,6 @@ module openAi 'br/public:avm/res/cognitive-services/account:0.15.0' = if (deploy
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
     location: openAiLocation
     tags: tags
-    // Deploy as a Microsoft Foundry account (AIServices) with project management enabled,
-    // so models are hosted on the account and a Foundry project can be created inside it.
     kind: 'AIServices'
     allowProjectManagement: true
     customSubDomainName: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
