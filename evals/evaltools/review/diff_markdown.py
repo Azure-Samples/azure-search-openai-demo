@@ -44,10 +44,17 @@ def main(directories: list[Path], changed: str | None = None):
             first_value = _round_metric(data_dicts[0][question].get(metric_name))
             for ind, data_dict in enumerate(data_dicts):
                 value = _round_metric(data_dict[question].get(metric_name))
-                # Insert arrow emoji based on the difference between metric value and the first data_dict
+                # Insert arrow emoji based on the difference between metric value and the first data_dict.
+                # A metric that is numeric in the baseline run may be a non-numeric placeholder (e.g. the
+                # string "Failed") in a later run, so only compare when both values are numeric.
                 value_emoji = ""
-                if value is not None and ind > 0 and value != first_value:
-                    value_emoji = "⬆️" if value > data_dicts[0][question][metric_name] else "⬇️"
+                if (
+                    ind > 0
+                    and isinstance(value, (int, float))
+                    and isinstance(first_value, (int, float))
+                    and value != first_value
+                ):
+                    value_emoji = "⬆️" if value > first_value else "⬇️"
                 metrics[metric_name].append(f"{html.escape(str(value))} {value_emoji}")
         # make a row for each metric
         for metric_name, metric_values in metrics.items():

@@ -39,6 +39,11 @@ def summarize_results(results_dir):
                 elif "rate" in metric:
                     shared_metric_stats[metric_name].add("rate")
 
+    # Drop metrics with no recognized stat (e.g. num_questions has only "total").
+    # These would add a header column with no matching data cells, misaligning the
+    # table; the per-run question count is already shown by the appended "n" column.
+    shared_metric_names = [name for name in shared_metric_names if shared_metric_stats[name]]
+
     first_row = ["folder"]
     # Build second row
     second_row = [""]

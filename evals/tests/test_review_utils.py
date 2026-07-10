@@ -110,6 +110,31 @@ def test_summarize_results_missing_stat_uses_placeholder(tmp_path):
     assert run3_row[m_index] == "?"
 
 
+def test_summarize_results_drops_metric_without_recognized_stat(tmp_path):
+    # A metric like num_questions carries only {"total": ...} with no mean/rate stat.
+    # It must be dropped entirely so header and data rows stay aligned.
+    write_run(
+        tmp_path,
+        "run1",
+        summary={"gpt_relevance": {"mean_rating": 4.0, "pass_rate": 0.8}, "num_questions": {"total": 2}},
+        results=[{"question": "Q1"}, {"question": "Q2"}],
+    )
+    write_run(
+        tmp_path,
+        "run2",
+        summary={"gpt_relevance": {"mean_rating": 4.5, "pass_rate": 0.9}, "num_questions": {"total": 3}},
+        results=[{"question": "Q1"}, {"question": "Q2"}, {"question": "Q3"}],
+    )
+
+    rows, _ = summarize_results(tmp_path)
+
+    header = rows[0]
+    assert "gpt_relevance" in header
+    assert "num_questions" not in header
+    # Every row must have the same width (no misalignment from a statless metric).
+    assert len({len(row) for row in rows}) == 1
+
+
 def test_diff_directories_no_filter(tmp_path):
     d1 = write_run(tmp_path, "a", summary={}, results=[{"question": "Q1", "score": 1}])
     d2 = write_run(tmp_path, "b", summary={}, results=[{"question": "Q1", "score": 2}])
@@ -232,3 +257,28 @@ def test_diff_markdown_includes_metric_rows(tmp_path):
     assert "4.2" in markdown or "4.3" in markdown
     # A downward arrow is added because run2's value is lower than run1's.
     assert "⬇️" in markdown
+
+
+def test_diff_markdown_handles_non_numeric_metric_in_later_run(tmp_path):
+    # A metric numeric in the baseline run may be a non-numeric placeholder (e.g. "Failed")
+    # in a later run. This must not raise a TypeError, and no arrow should be rendered.
+    d1 = write_run(
+        tmp_path,
+        "run1",
+        summary={},
+        results=[{"question": "Q", "answer": "A", "truth": "T", "gpt_relevance": 4.0}],
+    )
+    d2 = write_run(
+        tmp_path,
+        "run2",
+        summary={},
+        results=[{"question": "Q", "answer": "B", "truth": "T", "gpt_relevance": "Failed"}],
+    )
+
+    markdown = diff_markdown_main([d1, d2])
+
+    assert "gpt_relevance" in markdown
+    assert "Failed" in markdown
+    # No arrow is rendered when a compared value is non-numeric.
+    assert "⬆️" not in markdown
+    assert "⬇️" not in markdown
