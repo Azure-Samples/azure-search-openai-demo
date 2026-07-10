@@ -48,11 +48,11 @@ def main(directories: list[Path], changed: str | None = None):
                 value_emoji = ""
                 if value is not None and ind > 0 and value != first_value:
                     value_emoji = "⬆️" if value > data_dicts[0][question][metric_name] else "⬇️"
-                metrics[metric_name].append(f"{value} {value_emoji}")
+                metrics[metric_name].append(f"{html.escape(str(value))} {value_emoji}")
         # make a row for each metric
         for metric_name, metric_values in metrics.items():
             markdown_str += (
-                f"<tr><th>{metric_name}</th>"
+                f"<tr><th>{html.escape(str(metric_name))}</th>"
                 + "".join([f"<td>{value}</td>" for value in metric_values])
                 + "<td>N/A</td></tr>\n"
             )

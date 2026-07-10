@@ -137,12 +137,11 @@ def run_evaluation(
 
     logger.info("Sending a test chat completion to the GPT deployment to ensure it is running...")
     model_or_deployment = openai_config.get("azure_deployment") or model
-    gpt_response = service_setup.get_openai_client(openai_config, azure_credential).chat.completions.create(
+    gpt_response = service_setup.get_openai_client(openai_config, azure_credential).responses.create(
         model=model_or_deployment,
-        messages=[{"role": "user", "content": "Hello!"}],
-        n=1,
+        input="Hello!",
     )
-    logger.info('Successfully received response from GPT: "%s"', gpt_response.choices[0].message.content)
+    logger.info('Successfully received response from GPT: "%s"', gpt_response.output_text)
 
     logger.info("Starting evaluation...")
     for metric in requested_metrics:
