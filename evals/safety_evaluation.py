@@ -192,6 +192,6 @@ if __name__ == "__main__":
         level=logging.WARNING, format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)]
     )
     logger.setLevel(logging.INFO)
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     asyncio.run(run_simulator(args.target_url, args.max_simulations))

@@ -277,7 +277,7 @@ async def grant_application_admin_consent(graph_client: GraphServiceClient, clie
 
 
 async def main():  # pragma: no cover
-    load_azd_env(override=True)
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     if not test_authentication_enabled():
         print("Not setting up authentication.")

@@ -154,7 +154,7 @@ class AdlsGen2Setup:
 
 
 async def main(args: Any):
-    load_azd_env(override=True)
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     if not os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT"):
         raise Exception("AZURE_ADLS_GEN2_STORAGE_ACCOUNT must be set to continue")

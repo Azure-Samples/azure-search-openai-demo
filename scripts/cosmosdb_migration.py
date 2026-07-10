@@ -154,7 +154,7 @@ async def migrate_cosmosdb_data():
 
 
 if __name__ == "__main__":
-    load_azd_env(override=True)
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     import asyncio
 

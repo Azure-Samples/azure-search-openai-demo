@@ -257,7 +257,7 @@ class ManageAcl:
 
 
 async def main(args: Any):
-    load_azd_env(override=True)
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = (

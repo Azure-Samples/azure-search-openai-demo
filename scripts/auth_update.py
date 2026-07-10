@@ -13,7 +13,7 @@ from auth_common import get_application, test_authentication_enabled
 
 
 async def main():
-    load_azd_env(override=True)
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
     if not test_authentication_enabled():
         print("Not updating authentication.")
         exit(0)

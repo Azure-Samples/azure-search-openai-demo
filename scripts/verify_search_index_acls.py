@@ -13,7 +13,7 @@ from dotenv_azd import load_azd_env
 
 
 async def main():
-    load_azd_env(override=True)
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     tenant_id = os.environ["AZURE_TENANT_ID"]
     search_service = os.environ["AZURE_SEARCH_SERVICE"]
