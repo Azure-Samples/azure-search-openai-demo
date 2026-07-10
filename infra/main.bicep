@@ -767,18 +767,16 @@ var openAiDeployments = concat(
     : []
 )
 
-// This deployment only provisions an Azure OpenAI resource when it creates the account itself.
+// Provision a Foundry account + project only when we own the account (deployFoundryAccount):
 //   - openAiHost == 'azure': create a Microsoft Foundry account (AIServices + project
-//     management) that hosts the models and a Foundry project. If openAiServiceName is set
-//     (e.g. reused from a prior deploy's output, or chosen by the user), that name is reused
-//     idempotently, so redeploys stay stable.
-//   - openAiHost == 'azure_custom' (or any non-azure host): bring-your-own. deployAzureOpenAi
-//     is false, so the account, model deployments, project, private endpoint, and the Azure
-//     OpenAI role assignments are all skipped. The backend talks to your endpoint via
-//     AZURE_OPENAI_CUSTOM_URL and you manage the deployments, networking, and access yourself.
-// NOTE: openAiServiceName cannot be used to detect bring-your-own, because AZURE_OPENAI_SERVICE
-// is also a bicep output that azd writes back after every deploy — so it is populated on every
-// redeploy of our own account. openAiHost is the intent signal.
+//     management) hosting the models, plus a Foundry project. A set openAiServiceName (reused
+//     from a prior output or user-chosen) is reused idempotently so redeploys stay stable.
+//   - openAiHost == 'azure_custom' (or non-azure): bring-your-own — account, deployments,
+//     project, private endpoint, and role assignments are all skipped; the backend uses
+//     AZURE_OPENAI_CUSTOM_URL and you manage everything.
+// openAiServiceName can't signal bring-your-own: AZURE_OPENAI_SERVICE is also an output azd
+// writes back after every deploy, so it's set on redeploys of our own account too. openAiHost
+// is the intent signal.
 var deployFoundryAccount = isAzureOpenAiHost && deployAzureOpenAi
 
 // Deployed as a Microsoft Foundry account (AIServices + allowProjectManagement). This uses
