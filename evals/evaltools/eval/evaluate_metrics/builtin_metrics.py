@@ -32,8 +32,8 @@ class BuiltinRelevanceMetric(BuiltinRatingMetric):
     RATING_COLUMN = "relevance"
 
     @classmethod
-    def evaluator_fn(cls, openai_config, **kwargs):
-        return RelevanceEvaluator(openai_config, is_reasoning_model=True)
+    def evaluator_fn(cls, openai_config, azure_credential=None, **kwargs):
+        return RelevanceEvaluator(openai_config, credential=azure_credential, is_reasoning_model=True)
 
 
 class BuiltinCoherenceMetric(BuiltinRatingMetric):
@@ -41,8 +41,8 @@ class BuiltinCoherenceMetric(BuiltinRatingMetric):
     RATING_COLUMN = "coherence"
 
     @classmethod
-    def evaluator_fn(cls, openai_config, **kwargs):
-        return CoherenceEvaluator(openai_config, is_reasoning_model=True)
+    def evaluator_fn(cls, openai_config, azure_credential=None, **kwargs):
+        return CoherenceEvaluator(openai_config, credential=azure_credential, is_reasoning_model=True)
 
 
 class BuiltinGroundednessMetric(BuiltinRatingMetric):
@@ -50,8 +50,8 @@ class BuiltinGroundednessMetric(BuiltinRatingMetric):
     RATING_COLUMN = "groundedness"
 
     @classmethod
-    def evaluator_fn(cls, openai_config, **kwargs):
-        return GroundednessEvaluator(openai_config, is_reasoning_model=True)
+    def evaluator_fn(cls, openai_config, azure_credential=None, **kwargs):
+        return GroundednessEvaluator(openai_config, credential=azure_credential, is_reasoning_model=True)
 
 
 class BuiltinSimilarityMetric(BuiltinRatingMetric):
@@ -59,8 +59,8 @@ class BuiltinSimilarityMetric(BuiltinRatingMetric):
     RATING_COLUMN = "similarity"
 
     @classmethod
-    def evaluator_fn(cls, openai_config, **kwargs):
-        return SimilarityEvaluator(openai_config, is_reasoning_model=True)
+    def evaluator_fn(cls, openai_config, azure_credential=None, **kwargs):
+        return SimilarityEvaluator(openai_config, credential=azure_credential, is_reasoning_model=True)
 
 
 class BuiltinFluencyMetric(BuiltinRatingMetric):
@@ -68,8 +68,8 @@ class BuiltinFluencyMetric(BuiltinRatingMetric):
     RATING_COLUMN = "fluency"
 
     @classmethod
-    def evaluator_fn(cls, openai_config, **kwargs):
-        return FluencyEvaluator(openai_config, is_reasoning_model=True)
+    def evaluator_fn(cls, openai_config, azure_credential=None, **kwargs):
+        return FluencyEvaluator(openai_config, credential=azure_credential, is_reasoning_model=True)
 
 
 class BuiltinF1ScoreMetric(BaseMetric):

@@ -170,7 +170,7 @@ def run_evaluation(
         )
         output.update(target_response)
         for metric in requested_metrics:
-            result = metric.evaluator_fn(openai_config=openai_config)(
+            result = metric.evaluator_fn(openai_config=openai_config, azure_credential=azure_credential)(
                 query=row["question"],
                 response=output["answer"],
                 context=output["context"],

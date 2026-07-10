@@ -27,11 +27,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    openai_config = {
-        "azure_endpoint": os.environ["AZURE_OPENAI_ENDPOINT"],
-        "azure_deployment": os.environ["AZURE_OPENAI_EVAL_DEPLOYMENT"],
-    }
-
     AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
     if AZURE_TENANT_ID:
         logger.info("Setting up Azure credential using AzureDeveloperCliCredential with tenant_id %s", AZURE_TENANT_ID)
@@ -39,6 +34,11 @@ if __name__ == "__main__":
     else:
         logger.info("Setting up Azure credential using AzureDeveloperCliCredential for home tenant")
         azure_credential = AzureDeveloperCliCredential(process_timeout=60)
+
+    openai_config = {
+        "azure_endpoint": os.environ["AZURE_OPENAI_ENDPOINT"],
+        "azure_deployment": os.environ["AZURE_OPENAI_EVAL_DEPLOYMENT"],
+    }
 
     run_evaluate_from_config(
         working_dir=Path(__file__).parent,

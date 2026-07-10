@@ -130,6 +130,39 @@ def test_builtin_fluency():
     assert metric.get_aggregate_stats(df) == {"mean_rating": 4.0, "pass_count": 2, "pass_rate": 0.67}
 
 
+def test_builtin_metrics_use_supplied_credential(monkeypatch):
+    credential = object()
+    openai_config = {
+        "azure_endpoint": "https://example.openai.azure.com",
+        "azure_deployment": "eval",
+    }
+    metric_evaluators = [
+        (builtin_metrics.BuiltinRelevanceMetric, "RelevanceEvaluator"),
+        (builtin_metrics.BuiltinCoherenceMetric, "CoherenceEvaluator"),
+        (builtin_metrics.BuiltinGroundednessMetric, "GroundednessEvaluator"),
+        (builtin_metrics.BuiltinSimilarityMetric, "SimilarityEvaluator"),
+        (builtin_metrics.BuiltinFluencyMetric, "FluencyEvaluator"),
+    ]
+
+    for metric, evaluator_name in metric_evaluators:
+        captured = {}
+
+        def evaluator(model_config, **kwargs):
+            captured["model_config"] = model_config
+            captured["credential"] = kwargs["credential"]
+            captured["is_reasoning_model"] = kwargs["is_reasoning_model"]
+            return object()
+
+        monkeypatch.setattr(builtin_metrics, evaluator_name, evaluator)
+        metric.evaluator_fn(openai_config=openai_config, azure_credential=credential)
+
+        assert captured == {
+            "model_config": openai_config,
+            "credential": credential,
+            "is_reasoning_model": True,
+        }
+
+
 def test_builtin_rating_missing_values():
     metric = builtin_metrics.BuiltinCoherenceMetric()
     # Non-numeric ratings (e.g. "Failed") are coerced to NaN and dropped
