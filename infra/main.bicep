@@ -1436,8 +1436,7 @@ var openAiPrivateEndpointConnection = (usePrivateEndpoint && deployFoundryAccoun
       {
         groupId: 'account'
         // Microsoft Foundry (AIServices) accounts resolve the services.ai.azure.com zone in
-        // addition to openai.azure.com and cognitiveservices.azure.com. See the AI + Machine
-        // Learning section of:
+        // addition to openai.azure.com and cognitiveservices.azure.com.
         // https://learn.microsoft.com/azure/private-link/private-endpoint-dns#ai--machine-learning
         dnsZoneNames: [
           'privatelink.services.ai.azure.com'
