@@ -13,6 +13,9 @@ def main(results_dir: Path, highlight_run: str | None = None) -> str:
     # find the index of the highlight run
     if highlight_run:
         highlight_run = highlight_run.strip()
+        if highlight_run not in headers:
+            available_runs = ", ".join(row_parameters.keys())
+            raise ValueError(f"Highlight run '{highlight_run}' not found. Available runs: {available_runs}")
         highlight_run_index = headers.index(highlight_run)
     else:
         highlight_run_index = None

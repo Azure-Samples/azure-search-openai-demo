@@ -99,18 +99,20 @@ cd evals
 python -m evaltools summary results
 ```
 
-Compare answers to the ground truth by running the following command:
+Compare answers to the ground truth by running the following command,
+replacing `RUNHERE` with the name of a run directory inside `evals/results`:
 
 ```bash
 cd evals
-python -m evaltools diff results/baseline/
+python -m evaltools diff results/RUNHERE
 ```
 
-Compare answers across two runs by running the following command:
+Compare answers across two runs by running the following command,
+replacing `FIRSTRUNHERE` and `SECONDRUNHERE` with run directory names inside `evals/results`:
 
 ```bash
 cd evals
-python -m evaltools diff results/baseline/ results/SECONDRUNHERE
+python -m evaltools diff results/FIRSTRUNHERE results/SECONDRUNHERE
 ```
 
 ## Evaluate multimodal RAG answers

@@ -37,6 +37,10 @@ def send_question_to_target(
     try:
         r = requests.post(url, headers=headers, json=body, timeout=TARGET_REQUEST_TIMEOUT)
         r.encoding = "utf-8"
+        # Surface HTTP errors (4xx/5xx) as HTTP errors with a status code, rather than
+        # letting them fall through to the JSON/schema handling below and producing a
+        # misleading "not valid JSON" diagnostic.
+        r.raise_for_status()
 
         latency = r.elapsed.total_seconds()
 
@@ -75,7 +79,7 @@ def send_question_to_target(
         return response_obj
     except Exception as e:
         if raise_error:
-            raise e
+            raise
         return {
             "answer": str(e),
             "context": str(e),

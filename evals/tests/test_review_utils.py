@@ -1,7 +1,10 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from evaltools.review.diff_markdown import main as diff_markdown_main
+from evaltools.review.summary_markdown import main as summary_markdown_main
 from evaltools.review.utils import diff_directories, summarize_results
 
 
@@ -282,3 +285,40 @@ def test_diff_markdown_handles_non_numeric_metric_in_later_run(tmp_path):
     # No arrow is rendered when a compared value is non-numeric.
     assert "⬆️" not in markdown
     assert "⬇️" not in markdown
+
+
+def test_summary_markdown_highlights_run(tmp_path):
+    write_run(
+        tmp_path,
+        "run1",
+        summary={"gpt_relevance": {"mean_rating": 4.0, "pass_rate": 0.8}},
+        results=[{"question": "Q1"}],
+    )
+    write_run(
+        tmp_path,
+        "run2",
+        summary={"gpt_relevance": {"mean_rating": 4.5, "pass_rate": 0.9}},
+        results=[{"question": "Q1"}],
+    )
+
+    table = summary_markdown_main(tmp_path, highlight_run="run2")
+
+    # The highlighted run header is decorated.
+    assert "☞run2☜" in table
+    assert "run1" in table
+
+
+def test_summary_markdown_unknown_highlight_run_raises(tmp_path):
+    write_run(
+        tmp_path,
+        "run1",
+        summary={"gpt_relevance": {"mean_rating": 4.0, "pass_rate": 0.8}},
+        results=[{"question": "Q1"}],
+    )
+
+    with pytest.raises(ValueError) as exc_info:
+        summary_markdown_main(tmp_path, highlight_run="does-not-exist")
+    message = str(exc_info.value)
+    assert "does-not-exist" in message
+    # The available run names are listed to help the user.
+    assert "run1" in message

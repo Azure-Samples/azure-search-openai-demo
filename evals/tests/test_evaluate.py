@@ -16,17 +16,22 @@ SCHEMA_ERROR_TEMPLATE = (
 
 
 class MockResponse:
-    def __init__(self, json_data, text="", raise_json_error=False):
+    def __init__(self, json_data, text="", raise_json_error=False, status_code=200):
         self.json_data = json_data
         self.text = text
         self.encoding = "utf-8"
         self.raise_json_error = raise_json_error
         self.elapsed = timedelta(seconds=1)
+        self.status_code = status_code
 
     def json(self):
         if self.raise_json_error:
             raise json.JSONDecodeError("Expecting value", "", 0)
         return self.json_data
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.HTTPError(f"{self.status_code} Server Error", response=self)
 
 
 def test_send_question_to_target_valid(monkeypatch):
@@ -88,3 +93,28 @@ def test_send_question_to_target_dict_context(monkeypatch):
     result = send_question_to_target("Question", "http://example.com")
     assert result["answer"] == "The answer"
     assert result["context"] == json.dumps({"doc1": "Context A"}, ensure_ascii=False)
+
+
+def test_send_question_to_target_http_error_raises(monkeypatch):
+    # A 4xx/5xx response should surface as an HTTPError (via raise_for_status) rather
+    # than being misreported as a JSON/schema problem.
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda url, headers, json, **kwargs: MockResponse(None, text="Internal Server Error", status_code=500),
+    )
+    with pytest.raises(requests.HTTPError) as exc_info:
+        send_question_to_target("Question", "http://example.com", raise_error=True)
+    assert "500" in str(exc_info.value)
+
+
+def test_send_question_to_target_http_error_stored(monkeypatch):
+    # When raise_error is False, the HTTP error is stored in the answer/context fields.
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda url, headers, json, **kwargs: MockResponse(None, text="Not Found", status_code=404),
+    )
+    result = send_question_to_target("Question", "http://example.com")
+    assert "404" in result["answer"]
+    assert result["latency"] == -1
