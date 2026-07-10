@@ -7,10 +7,10 @@ from typing import Optional
 import aiohttp
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential
+from dotenv_azd import load_azd_env
 from openai import AsyncOpenAI
 from rich.logging import RichHandler
 
-from load_azd_env import load_azd_env
 from prepdocslib.filestrategy import FileStrategy
 from prepdocslib.integratedvectorizerstrategy import (
     IntegratedVectorizerStrategy,
@@ -157,7 +157,7 @@ if __name__ == "__main__":  # pragma: no cover
         # to avoid seeing the noisy INFO level logs from the Azure SDKs
         logger.setLevel(logging.DEBUG)
 
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     if os.getenv("USE_CLOUD_INGESTION", "").lower() == "true":
         logger.warning(

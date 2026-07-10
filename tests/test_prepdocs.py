@@ -232,7 +232,7 @@ async def test_manageacl_main_uses_search_key(monkeypatch: pytest.MonkeyPatch) -
     monkeypatch.setenv("AZURE_SEARCH_SERVICE", "searchsvc")
     monkeypatch.setenv("AZURE_SEARCH_INDEX", "searchindex")
 
-    monkeypatch.setattr(manageacl_module, "load_azd_env", lambda: None)
+    monkeypatch.setattr(manageacl_module, "load_azd_env", lambda **kwargs: None)
 
     class DummyAzureCredential:
         def __init__(self, *args, **kwargs) -> None:  # pragma: no cover - simple stub

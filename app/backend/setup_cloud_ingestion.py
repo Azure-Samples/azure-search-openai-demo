@@ -6,10 +6,10 @@ import os
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import AzureDeveloperCliCredential
+from dotenv_azd import load_azd_env
 from openai import AsyncOpenAI
 from rich.logging import RichHandler
 
-from load_azd_env import load_azd_env
 from prepdocslib.blobmanager import BlobManager
 from prepdocslib.cloudingestionstrategy import CloudIngestionStrategy
 from prepdocslib.listfilestrategy import LocalListFileStrategy
@@ -147,7 +147,7 @@ async def setup_cloud_ingestion_strategy(
 
 async def main():
     """Main function to setup cloud ingestion."""
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     # Check if cloud ingestion is enabled
     use_cloud_ingestion = os.getenv("USE_CLOUD_INGESTION", "").lower() == "true"
