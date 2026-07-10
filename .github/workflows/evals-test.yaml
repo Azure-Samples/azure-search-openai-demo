@@ -35,6 +35,11 @@ jobs:
           run: |
             uv pip install -r evals/requirements.txt pytest ty
         - name: Check types with ty
-          run: ty check evals/evaltools
+          # Override src.include: the pyproject.toml config intentionally excludes
+          # evals/evaltools (so the main python-test job doesn't try to type-check it
+          # without eval-only deps installed). Passing the directory alone would be
+          # filtered out by that include list and check nothing, so scope ty to
+          # evaltools explicitly here where the eval deps are installed.
+          run: ty check evals/evaltools -c 'src.include=["evals/evaltools"]'
         - name: Run evals tests
           run: pytest evals/tests -vv
