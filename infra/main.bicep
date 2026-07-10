@@ -522,7 +522,7 @@ var appEnvVariables = {
   AZURE_OPENAI_REASONING_EFFORT: defaultReasoningEffort
   AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT: defaultRetrievalReasoningEffort
   // Specific to Azure OpenAI
-  AZURE_OPENAI_SERVICE: deployFoundryAccount ? foundry!.outputs.name : ''
+  AZURE_OPENAI_SERVICE: deployFoundryAccount ? foundryAccount!.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
   AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
   AZURE_OPENAI_knowledgeBase_MODEL: knowledgeBase.modelName
@@ -781,8 +781,8 @@ var deployFoundryAccount = isAzureOpenAiHost && deployAzureOpenAi
 
 // Microsoft Foundry account (AIServices) with project management enabled, so the model
 // deployments are hosted on the account and a Foundry project can be created inside it.
-module foundry 'br/public:avm/res/cognitive-services/account:0.15.0' = if (deployFoundryAccount) {
-  name: 'foundry'
+module foundryAccount 'br/public:avm/res/cognitive-services/account:0.15.0' = if (deployFoundryAccount) {
+  name: 'foundry-account'
   scope: az.resourceGroup(openAiResourceGroupNameActual)
   params: {
     name: !empty(openAiServiceName) ? openAiServiceName : '${abbrs.cognitiveServicesAccounts}${resourceToken}'
@@ -833,7 +833,7 @@ module foundryProject 'core/ai/ai-foundry-project.bicep' = if (deployFoundryAcco
   name: 'foundry-project'
   scope: az.resourceGroup(openAiResourceGroupNameActual)
   params: {
-    accountName: foundry!.outputs.name
+    accountName: foundryAccount!.outputs.name
     projectName: foundryProjectNameResolved
     location: openAiLocation
     tags: tags
@@ -1442,7 +1442,7 @@ var openAiPrivateEndpointConnection = (usePrivateEndpoint && deployFoundryAccoun
           'privatelink.openai.azure.com'
           'privatelink.cognitiveservices.azure.com'
         ]
-        resourceIds: [foundry!.outputs.resourceId]
+        resourceIds: [foundryAccount!.outputs.resourceId]
       }
     ]
   : []
@@ -1588,8 +1588,8 @@ output AZURE_OPENAI_EMB_DIMENSIONS int = embedding.dimensions
 output AZURE_OPENAI_CHATGPT_MODEL string = chatGpt.modelName
 
 // Specific to Azure OpenAI
-output AZURE_OPENAI_SERVICE string = deployFoundryAccount ? foundry!.outputs.name : ''
-output AZURE_OPENAI_ENDPOINT string = deployFoundryAccount ? foundry!.outputs.endpoint : ''
+output AZURE_OPENAI_SERVICE string = deployFoundryAccount ? foundryAccount!.outputs.name : ''
+output AZURE_OPENAI_ENDPOINT string = deployFoundryAccount ? foundryAccount!.outputs.endpoint : ''
 output AZURE_OPENAI_RESOURCE_GROUP string = isAzureOpenAiHost ? openAiResourceGroupNameActual : ''
 
 // Microsoft Foundry project hosted inside the Foundry (AIServices) account above.
