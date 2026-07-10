@@ -254,9 +254,9 @@ param evalModelVersion string = ''
 param evalDeploymentSkuName string = ''
 param evalDeploymentCapacity int = 0
 var eval = {
-  modelName: !empty(evalModelName) ? evalModelName : 'gpt-4.1'
+  modelName: !empty(evalModelName) ? evalModelName : 'gpt-5.4'
   deploymentName: !empty(evalDeploymentName) ? evalDeploymentName : 'eval'
-  deploymentVersion: !empty(evalModelVersion) ? evalModelVersion : '2025-04-14'
+  deploymentVersion: !empty(evalModelVersion) ? evalModelVersion : '2026-03-05'
   deploymentSkuName: !empty(evalDeploymentSkuName) ? evalDeploymentSkuName : 'GlobalStandard'
   deploymentCapacity: evalDeploymentCapacity != 0 ? evalDeploymentCapacity : 30
 }

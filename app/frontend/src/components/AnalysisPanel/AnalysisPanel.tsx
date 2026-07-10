@@ -3,7 +3,7 @@ import { Tab, TabList, SelectTabData, SelectTabEvent } from "@fluentui/react-com
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { ChatAppResponse, getHeaders } from "../../api";
+import { ChatAppResponse, fetchWithAuthRedirect, getHeaders } from "../../api";
 import { getToken, useLogin } from "../../authConfig";
 import { MarkdownViewer } from "../MarkdownViewer";
 import { SupportingContent } from "../SupportingContent";
@@ -42,8 +42,8 @@ export const AnalysisPanel = ({ answer, activeTab, activeCitation, citationHeigh
         if (activeCitation) {
             // Get hash from the URL as it may contain #page=N
             // which helps browser PDF renderer jump to correct page N
-            const originalHash = activeCitation.indexOf("#") ? activeCitation.split("#")[1] : "";
-            const response = await fetch(activeCitation, {
+            const originalHash = activeCitation.includes("#") ? activeCitation.split("#")[1] : "";
+            const response = await fetchWithAuthRedirect(activeCitation, {
                 method: "GET",
                 headers: await getHeaders(token)
             });
