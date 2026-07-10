@@ -779,10 +779,6 @@ var openAiDeployments = concat(
 // is the intent signal.
 var deployFoundryAccount = isAzureOpenAiHost && deployAzureOpenAi
 
-// Deployed as a Microsoft Foundry account (AIServices + allowProjectManagement). This uses
-// the latest AVM account module (0.15.0), which compiles the template to languageVersion 2.0
-// (symbolic-name mode). That mode is safe here because #3146 removed the same-named `existing`
-// resourceGroups resources that previously collided under 2.0.
 module openAi 'br/public:avm/res/cognitive-services/account:0.15.0' = if (deployFoundryAccount) {
   name: 'openai'
   scope: az.resourceGroup(openAiResourceGroupNameActual)
