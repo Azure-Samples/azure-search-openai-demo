@@ -20,8 +20,17 @@ class BaseMetric(ABC):
         # Narrow down dataframe to just the metric
         df = df[[rating_column_name]]
 
-        # Drop invalid ratings - strings like "Failed"
+        # Guard against empty input to avoid division by zero
         rows_before = len(df)
+        if rows_before == 0:
+            logger.warning("No ratings available for metric %s", rating_column_name)
+            return {
+                "pass_count": 0,
+                "pass_rate": 0,
+                "mean_rating": 0,
+            }
+
+        # Drop invalid ratings - strings like "Failed"
         df = df.apply(pd.to_numeric, errors="coerce")
         df = df.dropna()
         rows_after = len(df)

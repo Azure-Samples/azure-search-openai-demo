@@ -50,6 +50,8 @@ def send_question_to_target(
 
         try:
             answer = jmespath.search(response_answer_jmespath, response_dict)
+            if answer is None:
+                raise ValueError("Answer is missing")
             data_points = jmespath.search(response_context_jmespath, response_dict)
             if isinstance(data_points, dict):
                 context = json.dumps(data_points, ensure_ascii=False)
