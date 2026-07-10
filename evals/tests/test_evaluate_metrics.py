@@ -80,8 +80,14 @@ def test_latency():
     assert callable(fn)
     # latency() returns no extra data, since it is already stored in the response
     assert fn(data={"latency": 20}) == {}
-    df = pd.DataFrame([{"latency": 20}, {"latency": 10}, {"latency": 5}])
+    df = pd.DataFrame([{"latency": 20}, {"latency": 10}, {"latency": 5}, {"latency": -1}])
     assert metric.get_aggregate_stats(df) == {"mean": 11.67, "max": 20, "min": 5}
+
+
+def test_latency_all_requests_failed():
+    metric = code_metrics.LatencyMetric()
+    df = pd.DataFrame([{"latency": -1}, {"latency": -1}])
+    assert metric.get_aggregate_stats(df) == {"mean": 0, "max": 0, "min": 0}
 
 
 def test_builtin_relevance():

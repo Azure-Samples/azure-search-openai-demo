@@ -5,5 +5,5 @@ metrics, service setup helpers, and the markdown summary/diff reviewers. The
 synthetic-data generation module and the Textual TUI reviewers are omitted.
 
 Upstream: https://github.com/Azure-Samples/ai-rag-chat-evaluator (MIT License,
-Microsoft Corporation). See LICENSE.md in this folder for attribution.
+Microsoft Corporation).
 """

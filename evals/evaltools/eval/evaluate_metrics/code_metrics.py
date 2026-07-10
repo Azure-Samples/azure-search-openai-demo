@@ -110,6 +110,10 @@ class LatencyMetric(BaseMetric):
 
     @classmethod
     def get_aggregate_stats(cls, df):
+        df = df[df[cls.METRIC_NAME] != -1]
+        if df.empty:
+            logger.warning("No successful requests available for latency metric")
+            return {"mean": 0, "max": 0, "min": 0}
         return {
             "mean": round(df[cls.METRIC_NAME].mean(), 2),
             "max": df[cls.METRIC_NAME].max(),
