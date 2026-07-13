@@ -525,8 +525,8 @@ var appEnvVariables = {
   AZURE_OPENAI_SERVICE: deployFoundryAccount ? foundryAccount!.outputs.name : ''
   AZURE_OPENAI_CHATGPT_DEPLOYMENT: chatGpt.deploymentName
   AZURE_OPENAI_EMB_DEPLOYMENT: embedding.deploymentName
-  AZURE_OPENAI_knowledgeBase_MODEL: knowledgeBase.modelName
-  AZURE_OPENAI_knowledgeBase_DEPLOYMENT: knowledgeBase.deploymentName
+  AZURE_OPENAI_KNOWLEDGEBASE_MODEL: knowledgeBase.modelName
+  AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT: knowledgeBase.deploymentName
   AZURE_OPENAI_API_KEY_OVERRIDE: azureOpenAiApiKey
   AZURE_OPENAI_CUSTOM_URL: azureOpenAiCustomUrl
   // Used only with non-Azure OpenAI deployments
