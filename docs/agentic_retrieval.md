@@ -14,7 +14,7 @@ This repository includes an optional feature that uses [agentic retrieval from A
 
 2. **(Optional) Customize the agentic retrieval model**
 
-   You can configure which model agentic retrieval uses. By default, `gpt-5.4 is used.
+   You can configure which model agentic retrieval uses. By default, `gpt-5.4` is used.
 
    To change the model, set the following environment variables appropriately:
 
