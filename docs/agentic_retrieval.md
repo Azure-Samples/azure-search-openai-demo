@@ -14,14 +14,14 @@ This repository includes an optional feature that uses [agentic retrieval from A
 
 2. **(Optional) Customize the agentic retrieval model**
 
-   You can configure which model agentic retrieval uses. By default, gpt-4.1-mini is used.
+   You can configure which model agentic retrieval uses. By default, `gpt-5-mini` version `2025-08-07` is used.
 
    To change the model, set the following environment variables appropriately:
 
    ```shell
    azd env set AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT knowledgebase
-   azd env set AZURE_OPENAI_KNOWLEDGEBASE_MODEL gpt-4.1-mini
-   azd env set AZURE_OPENAI_KNOWLEDGEBASE_MODEL_VERSION 2025-04-14
+   azd env set AZURE_OPENAI_KNOWLEDGEBASE_MODEL gpt-5-mini
+   azd env set AZURE_OPENAI_KNOWLEDGEBASE_MODEL_VERSION 2025-08-07
    ```
 
    You can only change it to one of the [supported models](https://learn.microsoft.com/azure/search/search-agentic-retrieval-how-to-create#supported-models).

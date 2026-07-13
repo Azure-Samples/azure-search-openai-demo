@@ -270,9 +270,9 @@ param knowledgeBaseModelVersion string = ''
 param knowledgeBaseDeploymentSkuName string = ''
 param knowledgeBaseDeploymentCapacity int = 0
 var knowledgeBase = {
-  modelName: !empty(knowledgeBaseModelName) ? knowledgeBaseModelName : 'gpt-4.1-mini'
+  modelName: !empty(knowledgeBaseModelName) ? knowledgeBaseModelName : 'gpt-5-mini'
   deploymentName: !empty(knowledgeBaseDeploymentName) ? knowledgeBaseDeploymentName : 'knowledgebase'
-  deploymentVersion: !empty(knowledgeBaseModelVersion) ? knowledgeBaseModelVersion : '2025-04-14'
+  deploymentVersion: !empty(knowledgeBaseModelVersion) ? knowledgeBaseModelVersion : '2025-08-07'
   deploymentSkuName: !empty(knowledgeBaseDeploymentSkuName) ? knowledgeBaseDeploymentSkuName : 'GlobalStandard'
   deploymentCapacity: knowledgeBaseDeploymentCapacity != 0 ? knowledgeBaseDeploymentCapacity : 100
 }
