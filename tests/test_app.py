@@ -395,7 +395,10 @@ async def test_chat_text_agent(knowledgebase_client, snapshot):
     )
     assert response.status_code == 200
     result = await response.get_json()
-    assert result["context"]["thoughts"][0]["props"]["reranker_threshold"] == 0
+    retrieval_thought = next(
+        thought for thought in result["context"]["thoughts"] if thought["title"] == "Agentic retrieval response"
+    )
+    assert retrieval_thought["props"]["reranker_threshold"] == 0
     snapshot.assert_match(json.dumps(result, indent=4), "result.json")
 
 

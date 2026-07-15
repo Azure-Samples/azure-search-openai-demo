@@ -28,7 +28,7 @@ This repository includes an optional feature that uses [agentic retrieval from A
 
 3. **(Optional) Choose the default retrieval reasoning effort**
 
-   Agentic retrieval can run in `minimal`, `low`, or `medium` reasoning modes. The default is now `minimal`, which keeps token usage and latency low by summarizing the user's final message into a single search query before running retrieval.
+   Agentic retrieval can run in `minimal`, `low`, or `medium` reasoning modes. The default is `minimal`, which keeps token usage and latency low. Because `minimal` disables the Azure AI Search LLM query-planning features (query expansion and knowledge-source selection), the app first rewrites the conversation into a single search intent and requests `extractiveData`.
 
    Override the default by setting the following environment variable:
 
@@ -36,7 +36,7 @@ This repository includes an optional feature that uses [agentic retrieval from A
    azd env set AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT low
    ```
 
-   Use `minimal` for the lightest planning, `low` for additional query expansion, or `medium` for the most exhaustive (and most expensive) retrieval plans.
+   Use `minimal` for the app's single-intent retrieval flow, `low` for Azure AI Search query planning and expansion, or `medium` for the most exhaustive (and most expensive) retrieval plans. Explicit deployment and Developer settings overrides continue to take precedence over the default.
 
 4. **(Optional) Enable web or SharePoint knowledge sources**
 
@@ -46,9 +46,12 @@ This repository includes an optional feature that uses [agentic retrieval from A
 
    ```shell
    azd env set USE_WEB_SOURCE true
+   azd env set AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT low
    ```
 
-   > [!NOTE]
+   > [!IMPORTANT]
+   > Web Knowledge Source and answer synthesis are not supported with `minimal`, which requires `extractiveData`. When `USE_WEB_SOURCE=true`, explicitly set `AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT` to `low` or `medium`.
+   >
    > Web source requires the agent to use answer synthesis mode, which disables certain UI customizations including streaming, follow-up questions, and LLM parameter options.
    > ⚠️ The Microsoft Data Protection Addendum doesn't apply to data sent to Web Knowledge Source. [Learn more in the Web Knowledge source documentation](https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-web)
 

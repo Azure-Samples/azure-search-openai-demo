@@ -174,7 +174,28 @@ async def test_app_config_default(monkeypatch, minimal_env):
         assert result["showMultimodalOptions"] is False
         assert result["showSemanticRankerOption"] is True
         assert result["showVectorOption"] is True
+        assert result["defaultRetrievalReasoningEffort"] == "minimal"
+
+
+@pytest.mark.asyncio
+async def test_app_config_retrieval_reasoning_effort_override(monkeypatch, minimal_env):
+    monkeypatch.setenv("AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT", "low")
+    quart_app = app.create_app()
+    async with quart_app.test_app() as test_app:
+        client = test_app.test_client()
+        response = await client.get("/config")
+        assert response.status_code == 200
+        result = await response.get_json()
         assert result["defaultRetrievalReasoningEffort"] == "low"
+
+
+@pytest.mark.asyncio
+async def test_app_rejects_web_source_with_default_minimal(monkeypatch, minimal_env):
+    monkeypatch.setenv("USE_WEB_SOURCE", "true")
+    quart_app = app.create_app()
+    with pytest.raises(quart.testing.app.LifespanError, match="Web source cannot be used with minimal"):
+        async with quart_app.test_app():
+            pass
 
 
 @pytest.mark.asyncio
