@@ -88,6 +88,21 @@ The options are:
 
 🕰️ This may take a long time, possibly several hours, depending on the number of ground truth questions, the TPM capacity of the evaluation model, and the number of LLM-based metrics requested.
 
+### Check for hidden rate limiting
+
+The application SDKs automatically retry HTTP 429 responses, so an evaluation request can eventually succeed while spending significant time waiting for capacity. The evaluation client only sees the final successful response.
+
+When Application Insights is enabled for the target deployment, query its Logs after each run:
+
+```kusto
+dependencies
+| where timestamp between (datetime(<RUN_START_UTC>) .. datetime(<RUN_END_UTC>))
+| where resultCode == "429"
+| summarize attempts=count(), affectedRequests=dcount(operation_Id) by target, name
+```
+
+Any returned rows mean the latency results were affected by throttling. Increase the relevant deployment capacity, run `azd provision`, and repeat the evaluation before comparing latency.
+
 ## Review the evaluation results
 
 The evaluation script will output a summary of the evaluation results, inside the `evals/results` directory.
