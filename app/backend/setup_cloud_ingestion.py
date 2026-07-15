@@ -77,6 +77,11 @@ async def setup_cloud_ingestion_strategy(
         index_name=index_name,
         azure_credential=azure_credential,
         azure_vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
+        use_agentic_knowledgebase=os.getenv("USE_AGENTIC_KNOWLEDGEBASE", "").lower() == "true",
+        knowledgebase_name=os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME"),
+        azure_openai_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+        azure_openai_knowledgebase_deployment=os.getenv("AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT"),
+        azure_openai_knowledgebase_model=os.getenv("AZURE_OPENAI_KNOWLEDGEBASE_MODEL"),
     )
 
     # Setup blob manager
