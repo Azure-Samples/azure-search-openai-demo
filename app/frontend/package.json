@@ -33,7 +33,7 @@
     "react-router-dom": "^7.16.0",
     "react-syntax-highlighter": "^16.1.1",
     "rehype-raw": "^7.0.0",
-    "remark-gfm": "^4.0.0",
+    "remark-gfm": "^4.0.1",
     "scheduler": "^0.27.0"
   },
   "devDependencies": {
