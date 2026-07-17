@@ -322,12 +322,6 @@ class CloudIngestionStrategy(Strategy):  # pragma: no cover
 
         await self._search_manager.create_index()
 
-        if self.search_info.knowledgebase_name:
-            logger.info(
-                "Creating knowledge base '%s'...",
-                self.search_info.knowledgebase_name,
-            )
-            await self._search_manager.create_knowledgebase()
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
             # Use ADLS_GEN2 when ACLs are enabled (requires hierarchical namespace storage)
