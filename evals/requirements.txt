@@ -1,6 +1,6 @@
 dotenv-azd==0.3.0
 rich
-ragas==0.2.13
+ragas==0.4.3
 rapidfuzz==3.14.3
 langchain==0.3.30
 # Dependencies for the vendored evaltools package (see evals/evaltools/).
