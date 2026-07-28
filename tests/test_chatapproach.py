@@ -8,6 +8,7 @@ from openai.types.responses import (
     Response,
     ResponseFunctionToolCall,
     ResponseOutputMessage,
+    ResponseTextDeltaEvent,
     ResponseUsage,
 )
 from openai.types.responses.response_usage import (
@@ -623,6 +624,108 @@ async def test_run_until_final_call_rejects_web_streaming(chat_approach):
             should_stream=True,
         )
 
+
+def test_heal_citation_returns_exact_match_unchanged(chat_approach):
+    valid_citations = ["PyCon US 2025.pdf#page=1"]
+    assert chat_approach.heal_citation("PyCon US 2025.pdf#page=1", valid_citations) == "PyCon US 2025.pdf#page=1"
+
+
+def test_heal_citation_recovers_simplified_prefix(chat_approach):
+    # The model dropped the leading "- " prefix that exists in the indexed sourcefile
+    valid_citations = ["- PyCon US 2025.pdf#page=1", "- PyCon US 2025.pdf#page=2"]
+    assert chat_approach.heal_citation("PyCon US 2025.pdf#page=1", valid_citations) == "- PyCon US 2025.pdf#page=1"
+
+
+def test_heal_citation_ambiguous_match_returns_original(chat_approach):
+    # Two valid citations end with the same string, so we cannot safely pick one
+    valid_citations = ["- report.pdf#page=1", "-- report.pdf#page=1"]
+    assert chat_approach.heal_citation("report.pdf#page=1", valid_citations) == "report.pdf#page=1"
+
+
+def test_heal_citation_no_match_returns_original(chat_approach):
+    valid_citations = ["other.pdf#page=1"]
+    assert chat_approach.heal_citation("missing.pdf#page=1", valid_citations) == "missing.pdf#page=1"
+
+
+def test_heal_citations_repairs_tokens_in_answer(chat_approach):
+    valid_citations = ["- PyCon US 2025.pdf#page=1", "(1) notes.pdf#page=3"]
+    answer = "See [PyCon US 2025.pdf#page=1] and [notes.pdf#page=3] for details."
+    healed = chat_approach.heal_citations(answer, valid_citations)
+    assert healed == "See [- PyCon US 2025.pdf#page=1] and [(1) notes.pdf#page=3] for details."
+
+
+def test_heal_citations_leaves_non_citation_brackets_unchanged(chat_approach):
+    valid_citations = ["- PyCon US 2025.pdf#page=1"]
+    answer = "A list item [not a citation] stays as is."
+    assert chat_approach.heal_citations(answer, valid_citations) == answer
+
+
+def test_heal_citations_noop_without_valid_citations(chat_approach):
+    answer = "Nothing to heal [foo.pdf#page=1]."
+    assert chat_approach.heal_citations(answer, []) == answer
+
+
+@pytest.mark.asyncio
+async def test_run_with_streaming_heals_citations_split_across_deltas(chat_approach, monkeypatch):
+    extra_info = ExtraInfo(
+        data_points=DataPoints(text=[], images=[], citations=["- PyCon US 2025.pdf#page=1"]),
+        thoughts=[ThoughtStep("Final", None, props={})],
+    )
+
+    seq = 0
+
+    def make_delta(delta: str) -> ResponseTextDeltaEvent:
+        nonlocal seq
+        seq += 1
+        return ResponseTextDeltaEvent(
+            content_index=0,
+            delta=delta,
+            item_id="item-0",
+            logprobs=[],
+            output_index=0,
+            sequence_number=seq,
+            type="response.output_text.delta",
+        )
+
+    class FakeEventStream:
+        def __init__(self, events):
+            self._events = events
+
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            if not self._events:
+                raise StopAsyncIteration
+            return self._events.pop(0)
+
+    # The "[PyCon US 2025.pdf#page=1]" citation token is split across several deltas
+    events = [
+        make_delta("Answer "),
+        make_delta("[PyCon US 2025"),
+        make_delta(".pdf#page=1]"),
+        make_delta(" done."),
+    ]
+
+    async def fake_completion():
+        return FakeEventStream(events)
+
+    async def fake_run_until_final_call(messages, overrides, auth_claims, should_stream):
+        return extra_info, fake_completion()
+
+    monkeypatch.setattr(chat_approach, "run_until_final_call", fake_run_until_final_call)
+
+    deltas = []
+    async for event in chat_approach.run_with_streaming(
+        messages=[{"role": "user", "content": "Hello"}],
+        overrides={},
+        auth_claims={},
+        session_state="state",
+    ):
+        if event["type"] == "response.output_text.delta":
+            deltas.append(event["delta"])
+
+    assert "".join(deltas) == "Answer [- PyCon US 2025.pdf#page=1] done."
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
