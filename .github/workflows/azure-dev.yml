@@ -131,7 +131,7 @@ jobs:
         uses: Azure/setup-azd@v2.3.0
 
       - name: Install Nodejs
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
 
