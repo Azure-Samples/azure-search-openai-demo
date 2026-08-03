@@ -7,7 +7,11 @@ After deploying the app to Azure, you may want to continue development locally. 
 * [Using VS Code "Development" task](#using-vs-code-development-task)
 * [Using Copilot Chat Debug Mode](#using-copilot-chat-debug-mode)
 * [Using VS Code "Run and Debug"](#using-vs-code-run-and-debug)
-* [Using a local OpenAI-compatible API](#using-a-local-openai-compatible-api)
+* [Using a local OpenAI-compatible API
+
+> **Tip:** The same `OPENAI_BASE_URL` pattern also works with OpenAI-compatible multi-model gateways when you are not running a local server — for example [DaoXE](https://daoxe.com/?utm_source=github&utm_medium=organic&utm_campaign=azure-search-openai-demo&utm_content=openai) at `https://api.daoxe.com/v1`.
+
+Using Ollama server](#using-a-local-openai-compatible-api)
   * [Using Ollama server](#using-ollama-server)
   * [Using llamafile server](#using-llamafile-server)
 
@@ -127,6 +131,10 @@ This project includes configurations defined in `.vscode/launch.json` that allow
 When you run these configurations, you can set breakpoints in your code and debug as you would in a normal VS Code debugging session.
 
 ## Using a local OpenAI-compatible API
+
+> **Tip:** The same `OPENAI_BASE_URL` pattern also works with OpenAI-compatible multi-model gateways when you are not running a local server — for example [DaoXE](https://daoxe.com/?utm_source=github&utm_medium=organic&utm_campaign=azure-search-openai-demo&utm_content=openai) at `https://api.daoxe.com/v1`.
+
+Using Ollama server
 
 You may want to save costs by developing against a local LLM server, such as
 [llamafile](https://github.com/Mozilla-Ocho/llamafile/). Note that a local LLM
