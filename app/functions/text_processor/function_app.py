@@ -56,10 +56,15 @@ def configure_global_settings():
 
     # Conditionally required (based on feature flags)
     openai_host_str = os.getenv("OPENAI_HOST", "azure")
+    openai_host = OpenAIHost(openai_host_str)
     azure_openai_service = os.getenv("AZURE_OPENAI_SERVICE")
     azure_openai_custom_url = os.getenv("AZURE_OPENAI_CUSTOM_URL")
     azure_openai_emb_deployment = os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT")
-    azure_openai_emb_model_name = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-3-large")
+    azure_openai_emb_model_name = os.getenv(
+        "AZURE_OPENAI_EMB_MODEL_NAME",
+        "openai/text-embedding-3-small" if openai_host == OpenAIHost.ORCAROUTER else "text-embedding-3-large",
+    )
+    orcarouter_api_key = os.getenv("ORCAROUTER_API_KEY")
     document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
     # When set to a positive value, CSV rows are grouped into pages of up to this many
     # characters instead of one page per row (avoids out-of-memory on large CSV files).
@@ -88,10 +93,28 @@ def configure_global_settings():
     # Embedding service (optional)
     embedding_service = None
     if use_vectors:
-        if (azure_openai_service or azure_openai_custom_url) and (
+        if openai_host == OpenAIHost.ORCAROUTER:
+            if not orcarouter_api_key:
+                logger.warning("ORCAROUTER_API_KEY is not set; embeddings disabled")
+            else:
+                openai_client, azure_openai_endpoint = setup_openai_client(
+                    openai_host=openai_host,
+                    azure_credential=azure_credential,
+                    azure_openai_service=azure_openai_service,
+                    azure_openai_custom_url=azure_openai_custom_url,
+                    openai_api_key=orcarouter_api_key,
+                )
+                embedding_service = setup_embeddings_service(
+                    openai_host,
+                    openai_client,
+                    emb_model_name=azure_openai_emb_model_name,
+                    emb_model_dimensions=embedding_dimensions,
+                    azure_openai_deployment=azure_openai_emb_deployment,
+                    azure_openai_endpoint=azure_openai_endpoint,
+                )
+        elif (azure_openai_service or azure_openai_custom_url) and (
             azure_openai_emb_deployment and azure_openai_emb_model_name
         ):
-            openai_host = OpenAIHost(openai_host_str)
             openai_client, azure_openai_endpoint = setup_openai_client(
                 openai_host=openai_host,
                 azure_credential=azure_credential,

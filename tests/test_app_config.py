@@ -35,6 +35,18 @@ async def test_app_local_openai(monkeypatch, minimal_env):
 
 
 @pytest.mark.asyncio
+async def test_app_orcarouter(monkeypatch, minimal_env):
+    monkeypatch.setenv("OPENAI_HOST", "orcarouter")
+    monkeypatch.setenv("ORCAROUTER_API_KEY", "sk-orca-test")
+
+    quart_app = app.create_app()
+    async with quart_app.test_app():
+        openai_client = quart_app.config[app.CONFIG_OPENAI_CLIENT]
+        assert openai_client.api_key == "sk-orca-test"
+        assert str(openai_client.base_url) == "https://api.orcarouter.ai/v1/"
+
+
+@pytest.mark.asyncio
 async def test_app_azure_custom_key(monkeypatch, minimal_env):
     monkeypatch.setenv("OPENAI_HOST", "azure_custom")
     monkeypatch.setenv("AZURE_OPENAI_CUSTOM_URL", "http://azureapi.com/api/v1")

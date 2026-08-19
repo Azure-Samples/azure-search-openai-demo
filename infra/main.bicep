@@ -199,6 +199,10 @@ param openAiSkuName string = 'S0'
 param openAiApiKey string = ''
 param openAiApiOrganization string = ''
 
+@secure()
+param orcarouterApiKey string = ''
+param orcarouterBaseUrl string = 'https://api.orcarouter.ai/v1'
+
 param documentIntelligenceServiceName string = '' // Set in main.parameters.json
 param documentIntelligenceResourceGroupName string = '' // Set in main.parameters.json
 
@@ -532,6 +536,9 @@ var appEnvVariables = {
   // Used only with non-Azure OpenAI deployments
   OPENAI_API_KEY: openAiApiKey
   OPENAI_ORGANIZATION: openAiApiOrganization
+  // Used only with OrcaRouter deployments
+  ORCAROUTER_API_KEY: orcarouterApiKey
+  ORCAROUTER_BASE_URL: orcarouterBaseUrl
   // Optional login and document level access control system
   AZURE_USE_AUTHENTICATION: useAuthentication
   AZURE_ENFORCE_ACCESS_CONTROL: enforceAccessControl

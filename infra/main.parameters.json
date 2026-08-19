@@ -191,6 +191,12 @@
     "openAiApiOrganization": {
       "value": "${OPENAI_ORGANIZATION}"
     },
+    "orcarouterApiKey": {
+      "value": "${ORCAROUTER_API_KEY}"
+    },
+    "orcarouterBaseUrl": {
+      "value": "${ORCAROUTER_BASE_URL=https://api.orcarouter.ai/v1}"
+    },
     "useApplicationInsights": {
       "value": "${AZURE_USE_APPLICATION_INSIGHTS=true}"
     },

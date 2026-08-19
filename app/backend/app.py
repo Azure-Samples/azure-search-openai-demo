@@ -411,10 +411,16 @@ async def setup_clients():
     AZURE_SEARCH_KNOWLEDGEBASE_NAME = os.getenv("AZURE_SEARCH_KNOWLEDGEBASE_NAME", "")
     # Shared by all OpenAI deployments
     OPENAI_HOST = OpenAIHost(os.getenv("OPENAI_HOST", "azure"))
-    OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
+    if OPENAI_HOST == OpenAIHost.ORCAROUTER:
+        OPENAI_CHATGPT_MODEL = os.getenv("AZURE_OPENAI_CHATGPT_MODEL", "orcarouter/auto")
+    else:
+        OPENAI_CHATGPT_MODEL = os.environ["AZURE_OPENAI_CHATGPT_MODEL"]
     AZURE_OPENAI_KNOWLEDGEBASE_MODEL = os.getenv("AZURE_OPENAI_KNOWLEDGEBASE_MODEL")
     AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT = os.getenv("AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT")
-    OPENAI_EMB_MODEL = os.getenv("AZURE_OPENAI_EMB_MODEL_NAME", "text-embedding-ada-002")
+    OPENAI_EMB_MODEL = os.getenv(
+        "AZURE_OPENAI_EMB_MODEL_NAME",
+        "openai/text-embedding-3-small" if OPENAI_HOST == OpenAIHost.ORCAROUTER else "text-embedding-ada-002",
+    )
     OPENAI_EMB_DIMENSIONS = int(os.getenv("AZURE_OPENAI_EMB_DIMENSIONS") or 1536)
     OPENAI_REASONING_EFFORT = os.getenv("AZURE_OPENAI_REASONING_EFFORT")
     # Used with Azure OpenAI deployments
@@ -433,6 +439,8 @@ async def setup_clients():
     # Used only with non-Azure OpenAI deployments
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_ORGANIZATION = os.getenv("OPENAI_ORGANIZATION")
+    # Used only with OrcaRouter deployments
+    ORCAROUTER_API_KEY = os.getenv("ORCAROUTER_API_KEY")
 
     AZURE_TENANT_ID = os.getenv("AZURE_TENANT_ID")
     AZURE_USE_AUTHENTICATION = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
@@ -597,7 +605,7 @@ async def setup_clients():
         azure_openai_service=AZURE_OPENAI_SERVICE,
         azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
         azure_openai_api_key=AZURE_OPENAI_API_KEY_OVERRIDE,
-        openai_api_key=OPENAI_API_KEY,
+        openai_api_key=ORCAROUTER_API_KEY if OPENAI_HOST == OpenAIHost.ORCAROUTER else OPENAI_API_KEY,
         openai_organization=OPENAI_ORGANIZATION,
     )
 

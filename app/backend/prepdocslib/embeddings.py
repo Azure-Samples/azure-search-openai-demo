@@ -64,15 +64,24 @@ class OpenAIEmbeddings(ABC):
     def _api_model(self) -> str:
         return self.azure_deployment_name or self.open_ai_model_name
 
+    @staticmethod
+    def _base_model_name(model_name: str) -> str:
+        """Map a vendor-prefixed embedding model (e.g. OrcaRouter's `openai/text-embedding-3-small`)
+        to the plain model name so tiktoken, batch, and dimensions lookups keep working.
+        """
+        if "/" in model_name and model_name.split("/", 1)[1] in OpenAIEmbeddings.SUPPORTED_BATCH_MODEL:
+            return model_name.split("/", 1)[1]
+        return model_name
+
     def before_retry_sleep(self, retry_state):
         logger.info("Rate limited on the OpenAI embeddings API, sleeping before retrying...")
 
     def calculate_token_length(self, text: str):
-        encoding = tiktoken.encoding_for_model(self.open_ai_model_name)
+        encoding = tiktoken.encoding_for_model(self._base_model_name(self.open_ai_model_name))
         return len(encoding.encode(text))
 
     def split_text_into_batches(self, texts: list[str]) -> list[EmbeddingBatch]:
-        batch_info = OpenAIEmbeddings.SUPPORTED_BATCH_MODEL.get(self.open_ai_model_name)
+        batch_info = OpenAIEmbeddings.SUPPORTED_BATCH_MODEL.get(self._base_model_name(self.open_ai_model_name))
         if not batch_info:
             raise NotImplementedError(
                 f"Model {self.open_ai_model_name} is not supported with batch embedding operations"
@@ -80,7 +89,7 @@ class OpenAIEmbeddings(ABC):
 
         batch_token_limit = batch_info["token_limit"]
         batch_max_size = batch_info["max_batch_size"]
-        encoding = tiktoken.encoding_for_model(self.open_ai_model_name)
+        encoding = tiktoken.encoding_for_model(self._base_model_name(self.open_ai_model_name))
         batches: list[EmbeddingBatch] = []
         batch: list[str] = []
         batch_token_length = 0
@@ -173,11 +182,14 @@ class OpenAIEmbeddings(ABC):
     async def create_embeddings(self, texts: list[str]) -> list[list[float]]:
         dimensions_args: ExtraArgs = (
             {"dimensions": self.open_ai_dimensions}
-            if OpenAIEmbeddings.SUPPORTED_DIMENSIONS_MODEL.get(self.open_ai_model_name)
+            if OpenAIEmbeddings.SUPPORTED_DIMENSIONS_MODEL.get(self._base_model_name(self.open_ai_model_name))
             else {}
         )
 
-        if not self.disable_batch and self.open_ai_model_name in OpenAIEmbeddings.SUPPORTED_BATCH_MODEL:
+        if (
+            not self.disable_batch
+            and self._base_model_name(self.open_ai_model_name) in OpenAIEmbeddings.SUPPORTED_BATCH_MODEL
+        ):
             return await self.create_embedding_batch(texts, dimensions_args)
 
         return [await self.create_embedding_single(text, dimensions_args) for text in texts]

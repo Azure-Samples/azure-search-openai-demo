@@ -112,6 +112,14 @@ However, if your goal is to minimize costs while prototyping your application, f
     azd env set OPENAI_API_KEY {Your OpenAI API key}
     ```
 
+    You can also use the [OrcaRouter](https://www.orcarouter.ai) gateway (an OpenAI-compatible
+    endpoint) instead of Azure OpenAI or openai.com:
+
+    ```shell
+    azd env set OPENAI_HOST orcarouter
+    azd env set ORCAROUTER_API_KEY {Your OrcaRouter API key}
+    ```
+
     Both Azure OpenAI and openai.com OpenAI accounts will incur costs, based on tokens used,
     but the costs are fairly low for the amount of sample data (less than $10).
 

@@ -103,7 +103,9 @@ async def setup_cloud_ingestion_strategy(
         azure_openai_service=os.getenv("AZURE_OPENAI_SERVICE"),
         azure_openai_custom_url=os.getenv("AZURE_OPENAI_CUSTOM_URL"),
         azure_openai_api_key=os.getenv("AZURE_OPENAI_API_KEY_OVERRIDE"),
-        openai_api_key=clean_key_if_exists(os.getenv("OPENAI_API_KEY")),
+        openai_api_key=clean_key_if_exists(
+            os.getenv("ORCAROUTER_API_KEY") if OPENAI_HOST == OpenAIHost.ORCAROUTER else os.getenv("OPENAI_API_KEY")
+        ),
         openai_organization=os.getenv("OPENAI_ORGANIZATION"),
     )
 
@@ -114,7 +116,10 @@ async def setup_cloud_ingestion_strategy(
     openai_embeddings_service = setup_embeddings_service(
         OPENAI_HOST,
         openai_client,
-        emb_model_name=os.environ["AZURE_OPENAI_EMB_MODEL_NAME"],
+        emb_model_name=os.getenv(
+            "AZURE_OPENAI_EMB_MODEL_NAME",
+            "openai/text-embedding-3-small" if OPENAI_HOST == OpenAIHost.ORCAROUTER else "text-embedding-ada-002",
+        ),
         emb_model_dimensions=emb_model_dimensions,
         azure_openai_deployment=os.getenv("AZURE_OPENAI_EMB_DEPLOYMENT"),
         azure_openai_endpoint=azure_openai_endpoint,

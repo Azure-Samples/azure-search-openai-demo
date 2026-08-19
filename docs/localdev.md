@@ -154,6 +154,21 @@ You should now be able to use the "Ask" tab.
 > You must set `OPENAI_HOST` back to a non-local value ("azure", "azure_custom", or "openai")
 > before running `azd up` or `azd provision`, since the deployed backend can't access your local server.
 
+### Using the OrcaRouter gateway
+
+You can also point the app at [OrcaRouter](https://www.orcarouter.ai), an OpenAI-compatible
+gateway that fronts models from many providers under one endpoint, instead of a local server:
+
+```shell
+azd env set OPENAI_HOST orcarouter
+azd env set ORCAROUTER_API_KEY <your OrcaRouter API key>
+azd env set AZURE_OPENAI_CHATGPT_MODEL orcarouter/auto
+azd env set AZURE_OPENAI_EMB_MODEL_NAME openai/text-embedding-3-small
+```
+
+Unlike the local host, OrcaRouter does serve embedding models, so vector search keeps working
+as long as your index was built with the same embedding model.
+
 ### Using Ollama server
 
 For example, to point at a local Ollama server running the `llama3.1:8b` model:

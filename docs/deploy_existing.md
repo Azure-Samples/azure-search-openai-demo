@@ -72,6 +72,19 @@ Do *not* check your key into source control.
 
 When you run `azd up` after and are prompted to select a value for `openAiResourceGroupLocation`, you can select any location as it will not be used.
 
+### OrcaRouter
+
+[OrcaRouter](https://www.orcarouter.ai) is an OpenAI-compatible gateway that fronts models from many providers under a single endpoint. It also runs gateway-level, zero-trust security for AI agents on the same endpoint — screening every prompt/response and governing every tool call on a default-deny basis, with no application code changes.
+
+1. Run `azd env set OPENAI_HOST orcarouter`
+2. Run `azd env set ORCAROUTER_API_KEY {Your OrcaRouter API key}` (the key begins with `sk-orca-`)
+3. Run `azd env set ORCAROUTER_BASE_URL https://api.orcarouter.ai/v1` (optional; this is the default)
+4. Run `azd env set AZURE_OPENAI_CHATGPT_MODEL orcarouter/auto` (optional; this is the default chat model)
+5. Run `azd env set AZURE_OPENAI_EMB_MODEL_NAME openai/text-embedding-3-small` (optional; this is the default embedding model)
+6. Run `azd up`
+
+The `orcarouter` host is bring-your-own: it provisions no Azure OpenAI account and requires no Azure OpenAI deployment. You can get an API key from the [OrcaRouter dashboard](https://www.orcarouter.ai). Do *not* check your key into source control.
+
 ## Azure AI Search resource
 
 1. Run `azd env set AZURE_SEARCH_SERVICE {Name of existing Azure AI Search service}`

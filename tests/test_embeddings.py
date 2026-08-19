@@ -91,3 +91,36 @@ def test_split_text_unsupported_model():
     )
     with pytest.raises(NotImplementedError):
         embeddings.split_text_into_batches(["test"])
+
+
+def test_split_text_into_batches_prefixed_model():
+    """OrcaRouter serves the standard OpenAI embedding models under a vendor prefix;
+    batch lookups should strip the prefix so they keep working."""
+    embeddings = OpenAIEmbeddings(
+        open_ai_client=MockClient(MockEmbeddingsClient(None)),
+        open_ai_model_name="openai/text-embedding-3-small",
+        open_ai_dimensions=1536,
+    )
+    assert embeddings._base_model_name("openai/text-embedding-3-small") == "text-embedding-3-small"
+    batches = embeddings.split_text_into_batches(["hello", "world"])
+    assert len(batches) == 1
+
+
+def test_base_model_name_unprefixed():
+    """Non-vendor-prefixed model names pass through unchanged."""
+    embeddings = OpenAIEmbeddings(
+        open_ai_client=MockClient(MockEmbeddingsClient(None)),
+        open_ai_model_name="text-embedding-ada-002",
+        open_ai_dimensions=1536,
+    )
+    assert embeddings._base_model_name("text-embedding-ada-002") == "text-embedding-ada-002"
+
+
+def test_compute_token_length_prefixed_model():
+    embeddings = OpenAIEmbeddings(
+        open_ai_client=MockClient(MockEmbeddingsClient(None)),
+        open_ai_model_name="openai/text-embedding-ada-002",
+        open_ai_dimensions=1536,
+    )
+    # The prefixed name maps back to the plain model for tiktoken.
+    assert embeddings.calculate_token_length("hello world") > 0

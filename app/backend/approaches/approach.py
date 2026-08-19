@@ -876,12 +876,15 @@ class Approach(ABC):
             "text-embedding-3-small": True,
             "text-embedding-3-large": True,
         }
+        # OrcaRouter serves the standard OpenAI embedding models under a vendor-prefixed name
+        # (e.g. `openai/text-embedding-3-small`); strip the prefix for the feature lookup.
+        base_model = self.embedding_model.split("/", 1)[1] if "/" in self.embedding_model else self.embedding_model
 
         class ExtraArgs(TypedDict, total=False):
             dimensions: int
 
         dimensions_args: ExtraArgs = (
-            {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[self.embedding_model] else {}
+            {"dimensions": self.embedding_dimensions} if SUPPORTED_DIMENSIONS_MODEL[base_model] else {}
         )
         embedding = await self.openai_client.embeddings.create(
             # Azure OpenAI takes the deployment name as the model name

@@ -232,6 +232,59 @@ def test_setup_openai_client_azure_custom_requires_url() -> None:
         )
 
 
+def test_setup_openai_client_orcarouter_uses_gateway(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that setup_openai_client configures the OrcaRouter endpoint and API key for the orcarouter host."""
+    captured: dict[str, str] = {}
+
+    class StubAsyncOpenAI:
+        def __init__(self, *, base_url: str, api_key: str, **kwargs) -> None:
+            captured["base_url"] = base_url
+            captured["api_key"] = api_key
+
+    monkeypatch.setattr("prepdocslib.servicesetup.AsyncOpenAI", StubAsyncOpenAI)
+
+    _, endpoint = setup_openai_client(
+        openai_host=OpenAIHost.ORCAROUTER,
+        azure_credential=MockAzureCredential(),
+        openai_api_key="sk-orca-test",
+    )
+
+    assert captured["base_url"] == "https://api.orcarouter.ai/v1"
+    assert captured["api_key"] == "sk-orca-test"
+    # OrcaRouter is a bring-your-own endpoint, not an Azure OpenAI deployment
+    assert endpoint is None
+
+
+def test_setup_openai_client_orcarouter_requires_key() -> None:
+    """Test that setup_openai_client raises ValueError when using OrcaRouter without a key."""
+    with pytest.raises(ValueError, match="ORCAROUTER_API_KEY is required"):
+        setup_openai_client(
+            openai_host=OpenAIHost.ORCAROUTER,
+            azure_credential=MockAzureCredential(),
+            openai_api_key=None,
+        )
+
+
+def test_setup_openai_client_orcarouter_custom_base_url(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that setup_openai_client honors ORCAROUTER_BASE_URL when set."""
+    captured: dict[str, str] = {}
+    monkeypatch.setenv("ORCAROUTER_BASE_URL", "https://my-gateway.example.com/v1")
+
+    class StubAsyncOpenAI:
+        def __init__(self, *, base_url: str, api_key: str, **kwargs) -> None:
+            captured["base_url"] = base_url
+
+    monkeypatch.setattr("prepdocslib.servicesetup.AsyncOpenAI", StubAsyncOpenAI)
+
+    setup_openai_client(
+        openai_host=OpenAIHost.ORCAROUTER,
+        azure_credential=MockAzureCredential(),
+        openai_api_key="sk-orca-test",
+    )
+
+    assert captured["base_url"] == "https://my-gateway.example.com/v1"
+
+
 def test_setup_search_info_agentic_retrieval_without_model():
     """Test that setup_search_info raises ValueError when using agentic retrieval without search agent model."""
     with pytest.raises(ValueError, match="Azure OpenAI deployment for Knowledge Base must be specified"):

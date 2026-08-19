@@ -26,6 +26,8 @@ from .textsplitter import SentenceTextSplitter, SimpleTextSplitter
 
 logger = logging.getLogger("scripts")
 
+ORCAROUTER_ENDPOINT = "https://api.orcarouter.ai/v1"
+
 
 def clean_key_if_exists(key: Optional[str]) -> Optional[str]:
     """Remove leading and trailing whitespace from a key if it exists. If the key is empty, return None."""
@@ -41,12 +43,14 @@ class OpenAIHost(str, Enum):
     AZURE:        Standard Azure OpenAI (service name becomes endpoint).
     AZURE_CUSTOM: A fully custom endpoint URL (for Network Isolation / APIM).
     LOCAL:        A locally hosted OpenAI-compatible endpoint (no key required).
+    ORCAROUTER:   The [OrcaRouter](https://www.orcarouter.ai) gateway (an OpenAI-compatible endpoint).
     """
 
     OPENAI = "openai"
     AZURE = "azure"
     AZURE_CUSTOM = "azure_custom"
     LOCAL = "local"
+    ORCAROUTER = "orcarouter"
 
 
 def setup_search_info(
@@ -125,6 +129,14 @@ def setup_openai_client(
             base_url=os.environ["OPENAI_BASE_URL"],
             api_key="no-key-required",
         )
+    elif openai_host == OpenAIHost.ORCAROUTER:
+        logger.info("OPENAI_HOST is orcarouter, setting up OrcaRouter client")
+        if openai_api_key is None:
+            raise ValueError("ORCAROUTER_API_KEY is required when OPENAI_HOST is orcarouter")
+        openai_client = AsyncOpenAI(
+            base_url=os.getenv("ORCAROUTER_BASE_URL", ORCAROUTER_ENDPOINT),
+            api_key=openai_api_key,
+        )
     else:
         logger.info(
             "OPENAI_HOST is not azure, setting up OpenAI client using OPENAI_API_KEY and OPENAI_ORGANIZATION environment variables"
@@ -168,6 +180,11 @@ def setup_embeddings_service(
             raise ValueError("Azure OpenAI endpoint must be provided when using Azure OpenAI embeddings")
         if azure_openai_deployment is None:
             raise ValueError("Azure OpenAI deployment must be provided when using Azure OpenAI embeddings")
+
+    # OrcaRouter serves the standard OpenAI embedding models under its own model catalog,
+    # so there is no deployment name to pass through for this host.
+    if openai_host == OpenAIHost.ORCAROUTER:
+        azure_openai_deployment = None
 
     return OpenAIEmbeddings(
         open_ai_client=open_ai_client,
