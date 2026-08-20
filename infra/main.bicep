@@ -1559,6 +1559,12 @@ module healthModel 'core/monitor/health-model.bicep' = if (useHealthModel) {
     speechServiceResourceId: useSpeechOutputAzure ? speech!.outputs.resourceId : ''
     cosmosDbResourceId: (useAuthentication && useChatHistoryCosmos) ? cosmosDb!.outputs.resourceId : ''
     documentIntelligenceResourceId: documentIntelligence.outputs.resourceId
+    searchServiceResourceGroupName: searchServiceResourceGroupNameActual
+    storageResourceGroupName: storageResourceGroupNameActual
+    openAiResourceGroupName: openAiResourceGroupNameActual
+    documentIntelligenceResourceGroupName: documentIntelligenceResourceGroupNameActual
+    speechServiceResourceGroupName: speechResourceGroupNameActual
+    cosmosDbResourceGroupName: cosmosDbResourceGroupNameActual
   }
 }
 

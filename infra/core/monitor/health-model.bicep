@@ -1,5 +1,7 @@
 metadata description = 'Deploys an Azure Monitor Health Model with a dedicated managed identity, conditional entities based on deployed resources, and a use-case-driven entity hierarchy.'
 
+import { groupPosition, leafPosition, nextGroupX } from './health-model-layout.bicep'
+
 // ── Parameters ──
 
 @description('Name of the health model resource.')
@@ -58,6 +60,27 @@ param cosmosDbResourceId string = ''
 @description('Resource ID of the Document Intelligence (Form Recognizer) Cognitive Services account.')
 param documentIntelligenceResourceId string
 
+// Resource group names — the resource groups that actually contain each monitored resource.
+// Reader/Monitoring Reader is granted per distinct resource group so signals still evaluate in
+// split-resource-group deployments. Empty means "same resource group as this module".
+@description('Resource group of the Azure AI Search service. Defaults to this module\'s resource group when empty.')
+param searchServiceResourceGroupName string = ''
+
+@description('Resource group of the Storage Account. Defaults to this module\'s resource group when empty.')
+param storageResourceGroupName string = ''
+
+@description('Resource group of the Azure OpenAI (Cognitive Services) account. Defaults to this module\'s resource group when empty.')
+param openAiResourceGroupName string = ''
+
+@description('Resource group of the Document Intelligence account. Defaults to this module\'s resource group when empty.')
+param documentIntelligenceResourceGroupName string = ''
+
+@description('Resource group of the Azure Speech service. Defaults to this module\'s resource group when empty.')
+param speechServiceResourceGroupName string = ''
+
+@description('Resource group of the Cosmos DB account. Defaults to this module\'s resource group when empty.')
+param cosmosDbResourceGroupName string = ''
+
 // Computed flags
 var isContainerApps = deploymentTarget == 'containerapps'
 var isAppService = deploymentTarget == 'appservice'
@@ -83,13 +106,13 @@ var speechChildCount = useSpeechOutputAzure ? 1 : 0                             
 var authHistoryChildCount = useAuthenticationWithCosmos ? 1 : 0                                 // CosmosDB
 var platformChildCount = isContainerApps ? 1 : 0                                               // ContainerPlatform
 
-// Group X positions: tightly packed, each starts after the previous group's children
+// Group X positions: tightly packed, each column starts after the previous group's leaves.
 var xRagChat = 0
-var xDocIngestion = xRagChat + ragChatChildCount * canvasLeafSpacing
-var xSpeech = xDocIngestion + docIngestionChildCount * canvasLeafSpacing
-var xAuthHistory = xSpeech + speechChildCount * canvasLeafSpacing
-var xPlatform = xAuthHistory + authHistoryChildCount * canvasLeafSpacing
-var xObservability = xPlatform + platformChildCount * canvasLeafSpacing
+var xDocIngestion = nextGroupX(xRagChat, ragChatChildCount, canvasLeafSpacing)
+var xSpeech = nextGroupX(xDocIngestion, docIngestionChildCount, canvasLeafSpacing)
+var xAuthHistory = nextGroupX(xSpeech, speechChildCount, canvasLeafSpacing)
+var xPlatform = nextGroupX(xAuthHistory, authHistoryChildCount, canvasLeafSpacing)
+var xObservability = nextGroupX(xPlatform, platformChildCount, canvasLeafSpacing)
 
 // ── Dedicated Managed Identity ──
 
@@ -99,25 +122,70 @@ resource healthModelIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2
   tags: tags
 }
 
-// Monitoring Reader role (43d0d8ad-25c7-4714-9337-8ba259a9fe05)
-resource monitoringReaderRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(subscription().id, resourceGroup().id, healthModelIdentity.id, '43d0d8ad-25c7-4714-9337-8ba259a9fe05')
-  properties: {
-    principalId: healthModelIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '43d0d8ad-25c7-4714-9337-8ba259a9fe05')
-  }
-}
+// ── Reader RBAC across every monitored resource group ──
+// The health model binds signals to resources that may live in different resource groups
+// (OpenAI/Search/Storage/etc. can be scoped to their own *ResourceGroupName in main.bicep).
+// Grant Monitoring Reader + Reader on each DISTINCT resource group that holds a monitored
+// resource so signals evaluate everywhere, not just in this module's resource group.
 
-// Reader role (acdd72a7-3385-48ef-bd42-f606fba81ae7)
-resource readerRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(subscription().id, resourceGroup().id, healthModelIdentity.id, 'acdd72a7-3385-48ef-bd42-f606fba81ae7')
-  properties: {
-    principalId: healthModelIdentity.properties.principalId
-    principalType: 'ServicePrincipal'
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')
+var searchServiceResourceGroupNameActual = empty(searchServiceResourceGroupName) ? resourceGroup().name : searchServiceResourceGroupName
+var storageResourceGroupNameActual = empty(storageResourceGroupName) ? resourceGroup().name : storageResourceGroupName
+var openAiResourceGroupNameActual = empty(openAiResourceGroupName) ? resourceGroup().name : openAiResourceGroupName
+var documentIntelligenceResourceGroupNameActual = empty(documentIntelligenceResourceGroupName) ? resourceGroup().name : documentIntelligenceResourceGroupName
+var speechServiceResourceGroupNameActual = empty(speechServiceResourceGroupName) ? resourceGroup().name : speechServiceResourceGroupName
+var cosmosDbResourceGroupNameActual = empty(cosmosDbResourceGroupName) ? resourceGroup().name : cosmosDbResourceGroupName
+
+// Always-monitored resources: App Service/Container App/Managed Environment/App Insights live in
+// this module's resource group; Search, Storage and Document Intelligence are required inputs.
+var alwaysMonitoredResourceGroupNames = [
+  resourceGroup().name
+  searchServiceResourceGroupNameActual
+  storageResourceGroupNameActual
+  documentIntelligenceResourceGroupNameActual
+]
+
+// Conditionally-monitored resource groups, added only when their feature is enabled.
+var conditionalMonitoredResourceGroupNames = concat(
+  deployAzureOpenAi ? [openAiResourceGroupNameActual] : [],
+  useSpeechOutputAzure ? [speechServiceResourceGroupNameActual] : [],
+  useAuthenticationWithCosmos ? [cosmosDbResourceGroupNameActual] : []
+)
+
+var monitoredResourceGroupNamesRaw = concat(alwaysMonitoredResourceGroupNames, conditionalMonitoredResourceGroupNames)
+
+// De-duplicate so repeated resource groups collapse to a single assignment per role
+// (union(a, a) removes duplicates within a; prevents duplicate role assignments in the
+// common single-resource-group deployment where every name resolves to this module's RG).
+var monitoredResourceGroupNames = union(monitoredResourceGroupNamesRaw, monitoredResourceGroupNamesRaw)
+
+// Reader-family roles the health model identity needs on every monitored resource group.
+// Two single-level loops (not a cartesian) because Bicep does not support nested for-expressions.
+var monitoringReaderRoleDefinitionId = '43d0d8ad-25c7-4714-9337-8ba259a9fe05'
+var readerRoleDefinitionId = 'acdd72a7-3385-48ef-bd42-f606fba81ae7'
+
+module monitoringReaderRoles '../security/role.bicep' = [
+  for monitoredResourceGroupName in monitoredResourceGroupNames: {
+    scope: az.resourceGroup(monitoredResourceGroupName)
+    name: 'hm-monitoring-reader-${uniqueString(name, monitoredResourceGroupName)}'
+    params: {
+      principalId: healthModelIdentity.properties.principalId
+      roleDefinitionId: monitoringReaderRoleDefinitionId
+      principalType: 'ServicePrincipal'
+    }
   }
-}
+]
+
+module readerRoles '../security/role.bicep' = [
+  for monitoredResourceGroupName in monitoredResourceGroupNames: {
+    scope: az.resourceGroup(monitoredResourceGroupName)
+    name: 'hm-reader-${uniqueString(name, monitoredResourceGroupName)}'
+    params: {
+      principalId: healthModelIdentity.properties.principalId
+      roleDefinitionId: readerRoleDefinitionId
+      principalType: 'ServicePrincipal'
+    }
+  }
+]
 
 // ── Health Model ──
 
@@ -133,7 +201,7 @@ resource healthModel 'Microsoft.CloudHealth/healthModels@2026-01-01-preview' = {
   }
   properties: {}
   // it's possible to create the Health Model before the roles are assigned, but the moment it's created it will try to process signals
-  dependsOn: [monitoringReaderRole, readerRole]
+  dependsOn: [monitoringReaderRoles, readerRoles]
 }
 
 // ── Authentication Settings ──
@@ -766,10 +834,7 @@ resource entityRagChat 'Microsoft.CloudHealth/healthModels/entities@2026-01-01-p
     displayName: 'RAG Chat'
     impact: 'Standard'
     icon: { iconName: 'SystemComponent' }
-    canvasPosition: {
-      x: json('${xRagChat}')
-      y: json('${canvasGroupRow}')
-    }
+    canvasPosition: groupPosition(xRagChat, canvasGroupRow)
   }
 }
 
@@ -781,10 +846,7 @@ resource entityBackendComputeAca 'Microsoft.CloudHealth/healthModels/entities@20
     displayName: 'Backend App'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xRagChat + 1 * canvasLeafSpacing}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xRagChat, 1, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -808,10 +870,7 @@ resource entityBackendComputeAppSvc 'Microsoft.CloudHealth/healthModels/entities
     displayName: 'Backend App'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xRagChat + 1 * canvasLeafSpacing}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xRagChat, 1, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -828,10 +887,7 @@ resource entityAiInference 'Microsoft.CloudHealth/healthModels/entities@2026-01-
     displayName: 'AI Inference'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xRagChat + (2 + (useApplicationInsights ? 1 : 0)) * canvasLeafSpacing}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xRagChat, 2 + (useApplicationInsights ? 1 : 0), canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -860,10 +916,7 @@ resource entityKnowledgeSearch 'Microsoft.CloudHealth/healthModels/entities@2026
     displayName: 'Knowledge Search'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xRagChat + 0 * canvasLeafSpacing}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xRagChat, 0, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -888,10 +941,7 @@ resource entityAppPerformance 'Microsoft.CloudHealth/healthModels/entities@2026-
     displayName: 'App Performance'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xRagChat + 2 * canvasLeafSpacing}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xRagChat, 2, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -917,10 +967,7 @@ resource entityDocIngestion 'Microsoft.CloudHealth/healthModels/entities@2026-01
     displayName: 'Document Ingestion'
     impact: 'Standard'
     icon: { iconName: 'SystemComponent' }
-    canvasPosition: {
-      x: json('${xDocIngestion}')
-      y: json('${canvasGroupRow}')
-    }
+    canvasPosition: groupPosition(xDocIngestion, canvasGroupRow)
   }
 }
 
@@ -932,10 +979,7 @@ resource entityDocStorage 'Microsoft.CloudHealth/healthModels/entities@2026-01-0
     displayName: 'Document Storage'
     impact: 'Standard'
     icon: { iconName: 'StorageAccount' }
-    canvasPosition: {
-      x: json('${xDocIngestion + 0 * canvasLeafSpacing}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xDocIngestion, 0, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -957,10 +1001,7 @@ resource entityDocIntelligence 'Microsoft.CloudHealth/healthModels/entities@2026
     displayName: 'Document Intelligence'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xDocIngestion + 1 * canvasLeafSpacing}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xDocIngestion, 1, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -985,10 +1026,7 @@ resource entitySpeech 'Microsoft.CloudHealth/healthModels/entities@2026-01-01-pr
     displayName: 'Speech'
     impact: 'Standard'
     icon: { iconName: 'SystemComponent' }
-    canvasPosition: {
-      x: json('${xSpeech}')
-      y: json('${canvasGroupRow}')
-    }
+    canvasPosition: groupPosition(xSpeech, canvasGroupRow)
   }
 }
 
@@ -999,10 +1037,7 @@ resource entitySpeechService 'Microsoft.CloudHealth/healthModels/entities@2026-0
     displayName: 'Speech Service'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xSpeech}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xSpeech, 0, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -1022,10 +1057,7 @@ resource entityAuthHistory 'Microsoft.CloudHealth/healthModels/entities@2026-01-
     displayName: 'Authentication & History'
     impact: 'Standard'
     icon: { iconName: 'SystemComponent' }
-    canvasPosition: {
-      x: json('${xAuthHistory}')
-      y: json('${canvasGroupRow}')
-    }
+    canvasPosition: groupPosition(xAuthHistory, canvasGroupRow)
   }
 }
 
@@ -1036,10 +1068,7 @@ resource entityCosmosDb 'Microsoft.CloudHealth/healthModels/entities@2026-01-01-
     displayName: 'Cosmos DB'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xAuthHistory}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xAuthHistory, 0, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -1059,10 +1088,7 @@ resource entityPlatform 'Microsoft.CloudHealth/healthModels/entities@2026-01-01-
     displayName: 'Platform'
     impact: 'Standard'
     icon: { iconName: 'SystemComponent' }
-    canvasPosition: {
-      x: json('${xPlatform}')
-      y: json('${canvasGroupRow}')
-    }
+    canvasPosition: groupPosition(xPlatform, canvasGroupRow)
   }
 }
 
@@ -1073,10 +1099,7 @@ resource entityContainerPlatform 'Microsoft.CloudHealth/healthModels/entities@20
     displayName: 'Container Platform'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xPlatform}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xPlatform, 0, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
@@ -1098,10 +1121,7 @@ resource entityObservability 'Microsoft.CloudHealth/healthModels/entities@2026-0
     displayName: 'Observability'
     impact: 'Standard'
     icon: { iconName: 'SystemComponent' }
-    canvasPosition: {
-      x: json('${xObservability}')
-      y: json('${canvasGroupRow}')
-    }
+    canvasPosition: groupPosition(xObservability, canvasGroupRow)
   }
 }
 
@@ -1112,10 +1132,7 @@ resource entityAppTelemetry 'Microsoft.CloudHealth/healthModels/entities@2026-01
     displayName: 'Telemetry Pipeline'
     impact: 'Standard'
     icon: { iconName: 'Resource' }
-    canvasPosition: {
-      x: json('${xObservability + 0 * canvasLeafSpacing}')
-      y: json('${canvasLeafRow}')
-    }
+    canvasPosition: leafPosition(xObservability, 0, canvasLeafSpacing, canvasLeafRow)
     signalGroups: {
       azureResource: {
         authenticationSetting: authReader.name
