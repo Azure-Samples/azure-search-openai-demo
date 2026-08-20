@@ -460,6 +460,7 @@ knowledgebase_envs = [
         "AZURE_OPENAI_KNOWLEDGEBASE_DEPLOYMENT": "gpt-4.1-mini",
         "USE_AGENTIC_KNOWLEDGEBASE": "true",
         "USE_WEB_SOURCE": "true",
+        "AGENTIC_KNOWLEDGEBASE_REASONING_EFFORT": "low",
     },
     {
         "OPENAI_HOST": "azure",

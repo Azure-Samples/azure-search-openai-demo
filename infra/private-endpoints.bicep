@@ -11,7 +11,7 @@ param location string = resourceGroup().location
 
 param vnetPeSubnetId string
 
-@description('A formatted array of private endpoint connections containing the dns zone name, group id, and list of resource ids of Private Endpoints to create')
+@description('A formatted array of private endpoint connections containing the dns zone names, group id, and list of resource ids of Private Endpoints to create')
 param privateEndpointConnections array
 
 @description('A unique token to append to the end of all resource names')
@@ -34,10 +34,14 @@ param logAnalyticsWorkspaceId string
 var abbrs = loadJsonContent('abbreviations.json')
 
 // DNS Zones
-module dnsZones './core/networking/private-dns-zones.bicep' = [for (privateEndpointConnection, i) in privateEndpointConnections: {
-  name: '${privateEndpointConnection.groupId}-${i}-dnszone'
+// A single account private endpoint (e.g. Microsoft Foundry) can require multiple DNS zones,
+// so flatten all requested zone names and deduplicate them into one zone per unique name.
+var allDnsZoneNames = union(flatten(map(privateEndpointConnections, connection => connection.dnsZoneNames)), [])
+
+module dnsZones './core/networking/private-dns-zones.bicep' = [for (dnsZoneName, i) in allDnsZoneNames: {
+  name: '${split(dnsZoneName, '.')[1]}-${i}-dnszone'
   params: {
-    dnsZoneName: privateEndpointConnection.dnsZoneName
+    dnsZoneName: dnsZoneName
     tags: tags
     virtualNetworkName: vnetName
   }
@@ -46,7 +50,7 @@ module dnsZones './core/networking/private-dns-zones.bicep' = [for (privateEndpo
 // Private Endpoints
 var privateEndpointInfo = [
   for (privateEndpointConnection, i) in privateEndpointConnections: map(privateEndpointConnection.resourceIds, resourceId => {
-    dnsZoneIndex: i
+    dnsZoneNames: privateEndpointConnection.dnsZoneNames
     groupId: privateEndpointConnection.groupId
     name: last(split(resourceId, '/'))
     resourceId: resourceId
@@ -62,7 +66,14 @@ module privateEndpoints './core/networking/private-endpoint.bicep' = [for (priva
     subnetId: vnetPeSubnetId
     serviceId: privateEndpointInfo.resourceId
     groupIds: [ privateEndpointInfo.groupId ]
-    dnsZoneId: dnsZones[privateEndpointInfo.dnsZoneIndex].outputs.id
+    privateDnsZoneConfigs: [
+      for dnsZoneName in privateEndpointInfo.dnsZoneNames: {
+        name: split(dnsZoneName, '.')[1]
+        properties: {
+          privateDnsZoneId: dnsZones[indexOf(allDnsZoneNames, dnsZoneName)].outputs.id
+        }
+      }
+    ]
   }
   dependsOn: [ dnsZones ]
 }]
@@ -85,9 +96,10 @@ module monitorDnsZones './core/networking/private-dns-zones.bicep' = [for monito
 }]
 
 // Get blob DNS zone index for monitor private link
-var blobEndpointInfo = filter(flatten(privateEndpointInfo), info => info.groupId == 'blob')
+var blobEndpointConnection = filter(privateEndpointConnections, connection => connection.groupId == 'blob')
 // Assert that blob endpoints exist (required for this application)
-var dnsZoneBlobIndex = blobEndpointInfo[0].dnsZoneIndex
+var blobDnsZoneName = blobEndpointConnection[0].dnsZoneNames[0]
+var dnsZoneBlobIndex = indexOf(allDnsZoneNames, blobDnsZoneName)
 
 // Azure Monitor Private Link Scope
 // https://learn.microsoft.com/azure/azure-monitor/logs/private-link-security

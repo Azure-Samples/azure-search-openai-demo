@@ -20,6 +20,9 @@
     "openAiResourceGroupName": {
       "value": "${AZURE_OPENAI_RESOURCE_GROUP}"
     },
+    "foundryProjectName": {
+      "value": "${FOUNDRY_PROJECT_NAME}"
+    },
     "openAiLocation": {
       "value": "${AZURE_OPENAI_LOCATION}"
     },
@@ -87,7 +90,7 @@
       "value": "${AZURE_OPENAI_REASONING_EFFORT=low}"
     },
     "defaultRetrievalReasoningEffort": {
-      "value": "${AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT=low}"
+      "value": "${AZURE_SEARCH_KNOWLEDGEBASE_RETRIEVAL_REASONING_EFFORT=minimal}"
     },
     "storageAccountName": {
       "value": "${AZURE_STORAGE_ACCOUNT}"
@@ -352,9 +355,6 @@
     },
     "useMediaDescriberAzureCU": {
       "value": "${USE_MEDIA_DESCRIBER_AZURE_CU=false}"
-    },
-    "useAiProject": {
-      "value": "${USE_AI_PROJECT=false}"
     },
     "useAgenticKnowledgeBase": {
       "value": "${USE_AGENTIC_KNOWLEDGEBASE=false}"

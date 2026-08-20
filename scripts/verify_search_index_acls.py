@@ -9,12 +9,11 @@ import os
 from azure.identity.aio import AzureDeveloperCliCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexClient
-
-from load_azd_env import load_azd_env
+from dotenv_azd import load_azd_env
 
 
 async def main():
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     tenant_id = os.environ["AZURE_TENANT_ID"]
     search_service = os.environ["AZURE_SEARCH_SERVICE"]

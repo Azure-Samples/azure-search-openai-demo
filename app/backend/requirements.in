@@ -20,6 +20,7 @@ opentelemetry-instrumentation-aiohttp-client
 opentelemetry-instrumentation-openai
 msal
 cryptography
+dotenv-azd
 PyJWT
 Pillow
 types-Pillow
@@ -28,7 +29,6 @@ PyMuPDF
 beautifulsoup4
 types-beautifulsoup4
 msgraph-sdk
-python-dotenv
 jinja2
 rich
 typing-extensions

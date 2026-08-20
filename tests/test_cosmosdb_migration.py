@@ -1,8 +1,10 @@
 import os
+import runpy
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from scripts import cosmosdb_migration
 from scripts.cosmosdb_migration import CosmosDBMigrator, migrate_cosmosdb_data
 
 # Sample old format item
@@ -190,3 +192,25 @@ async def test_migrate_cosmosdb_data(monkeypatch):
             # Verify migrate and close were called
             mock_migrator.migrate.assert_called_once()
             mock_migrator.close.assert_called_once()
+
+
+@pytest.mark.parametrize(("loading_mode", "expected_override"), [("override", True), ("no-override", False)])
+def test_main_honors_azd_env_loading_mode(monkeypatch, loading_mode, expected_override):
+    calls = []
+
+    def mock_asyncio_run(coro):
+        calls.append("run")
+        assert coro.cr_code.co_name == "migrate_cosmosdb_data"
+        coro.close()
+
+    load_azd_env = MagicMock(side_effect=lambda **kwargs: calls.append("load"))
+    monkeypatch.setenv("LOADING_MODE_FOR_AZD_ENV_VARS", loading_mode)
+
+    with (
+        patch("dotenv_azd.load_azd_env", load_azd_env),
+        patch("asyncio.run", side_effect=mock_asyncio_run),
+    ):
+        runpy.run_path(cosmosdb_migration.__file__, run_name="__main__")
+
+    load_azd_env.assert_called_once_with(override=expected_override)
+    assert calls == ["load", "run"]

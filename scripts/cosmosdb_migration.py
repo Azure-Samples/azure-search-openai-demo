@@ -31,8 +31,7 @@ import os
 
 from azure.cosmos.aio import CosmosClient
 from azure.identity.aio import AzureDeveloperCliCredential
-
-from load_azd_env import load_azd_env
+from dotenv_azd import load_azd_env
 
 
 class CosmosDBMigrator:
@@ -155,7 +154,7 @@ async def migrate_cosmosdb_data():
 
 
 if __name__ == "__main__":
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     import asyncio
 

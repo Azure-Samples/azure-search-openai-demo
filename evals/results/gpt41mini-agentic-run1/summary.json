@@ -1,0 +1,33 @@
+{
+    "gpt_groundedness": {
+        "pass_count": 48,
+        "pass_rate": 0.96,
+        "mean_rating": 4.62
+    },
+    "gpt_relevance": {
+        "pass_count": 46,
+        "pass_rate": 0.92,
+        "mean_rating": 4.18
+    },
+    "answer_length": {
+        "mean": 679.68,
+        "max": 1772,
+        "min": 135
+    },
+    "latency": {
+        "mean": 17.74,
+        "max": 28.528275,
+        "min": 3.593501
+    },
+    "citations_matched": {
+        "total": 25,
+        "rate": 0.51
+    },
+    "any_citation": {
+        "total": 50,
+        "rate": 1.0
+    },
+    "num_questions": {
+        "total": 50
+    }
+}

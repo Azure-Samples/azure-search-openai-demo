@@ -309,7 +309,7 @@ module virtualNetworkGateway 'br/public:avm/res/network/virtual-network-gateway:
     virtualNetworkResourceId: vnet.outputs.resourceId
     vpnGatewayGeneration: 'Generation2'
     vpnClientAddressPoolPrefix: '172.16.201.0/24'
-    skuName: 'VpnGw2'
+    skuName: 'VpnGw2AZ'
     vpnClientAadConfiguration: {
       aadAudience: 'c632b3df-fb67-4d84-bdcf-b95ad541b5c8' // Azure VPN client
       aadIssuer: 'https://sts.windows.net/${tenant().tenantId}/'

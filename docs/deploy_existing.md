@@ -27,6 +27,20 @@ You should set these values before running `azd up`. Once you've set them, retur
 
 ### Azure OpenAI
 
+> [!NOTE]
+> When this project provisions its own Azure OpenAI account, it now creates a **Microsoft
+> Foundry** account (`kind: 'AIServices'` with project management enabled) plus a Foundry
+> project, and deploys the models on that account. If you set `AZURE_OPENAI_SERVICE` below to
+> reuse an existing account (with `OPENAI_HOST` left as `azure`), the deployment still targets
+> that account by name: it reconciles the listed model deployments onto it, patches the account
+> to a Foundry (`AIServices`) account with project management enabled, and creates a Foundry
+> project inside it. If the existing account is a classic `kind: 'OpenAI'` account, this is
+> Microsoft's documented, non-destructive [in-place upgrade to Foundry](https://learn.microsoft.com/azure/foundry/how-to/upgrade-azure-openai)
+> — the existing endpoint, keys, and model deployments are preserved. To keep an existing
+> account completely untouched and manage its kind, networking, and deployments yourself, use
+> the fully bring-your-own path instead (`OPENAI_HOST=azure_custom` with `AZURE_OPENAI_CUSTOM_URL`),
+> which provisions no Foundry account or project.
+
 1. Run `azd env set AZURE_OPENAI_SERVICE {Name of existing OpenAI service}`
 1. Run `azd env set AZURE_OPENAI_RESOURCE_GROUP {Name of existing resource group that OpenAI service is provisioned to}`
 1. Run `azd env set AZURE_OPENAI_LOCATION {Location of existing OpenAI service}`

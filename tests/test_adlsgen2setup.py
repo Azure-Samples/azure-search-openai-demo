@@ -1,11 +1,14 @@
 import builtins
 import json
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, MagicMock
 
 import aiohttp
 import azure.storage.filedatalake.aio
 import pytest
 
 from .mocks import MockAzureCredential, MockResponse
+from scripts import adlsgen2setup
 from scripts.adlsgen2setup import AdlsGen2Setup
 
 valid_data_access_control_format = {
@@ -152,3 +155,39 @@ async def test_adls_gen2_create_group(
     assert await command.create_or_get_group("GROUP_A") == "GROUP_A_ID_CREATED"
     assert await command.create_or_get_group("GROUP_B") == "GROUP_B_ID_CREATED"
     assert await command.create_or_get_group("GROUP_C") == "GROUP_C_ID_CREATED"
+
+
+@pytest.mark.parametrize(("loading_mode", "expected_override"), [("override", True), ("no-override", False)])
+@pytest.mark.asyncio
+async def test_main_honors_azd_env_loading_mode(monkeypatch, tmp_path, loading_mode, expected_override):
+    data_access_control = tmp_path / "data-access-control.json"
+    data_access_control.write_text(json.dumps(valid_data_access_control_format))
+    args = SimpleNamespace(
+        data_access_control=data_access_control,
+        data_directory="/data",
+        create_security_enabled_groups=True,
+    )
+    load_azd_env = MagicMock()
+    command = MagicMock()
+    command.run = AsyncMock()
+    setup_class = MagicMock(return_value=command)
+    credential = MockAzureCredential()
+
+    monkeypatch.setenv("LOADING_MODE_FOR_AZD_ENV_VARS", loading_mode)
+    monkeypatch.setenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT", "storage-account")
+    monkeypatch.setattr(adlsgen2setup, "load_azd_env", load_azd_env)
+    monkeypatch.setattr(adlsgen2setup, "AzureDeveloperCliCredential", lambda: credential)
+    monkeypatch.setattr(adlsgen2setup, "AdlsGen2Setup", setup_class)
+
+    await adlsgen2setup.main(args)
+
+    load_azd_env.assert_called_once_with(override=expected_override)
+    setup_class.assert_called_once_with(
+        data_directory="/data",
+        storage_account_name="storage-account",
+        filesystem_name="gptkbcontainer",
+        security_enabled_groups=True,
+        credentials=credential,
+        data_access_control_format=valid_data_access_control_format,
+    )
+    command.run.assert_awaited_once()

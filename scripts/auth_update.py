@@ -2,6 +2,7 @@ import asyncio
 import os
 
 from azure.identity.aio import AzureDeveloperCliCredential
+from dotenv_azd import load_azd_env
 from msgraph import GraphServiceClient
 from msgraph.generated.models.application import Application
 from msgraph.generated.models.public_client_application import PublicClientApplication
@@ -9,11 +10,10 @@ from msgraph.generated.models.spa_application import SpaApplication
 from msgraph.generated.models.web_application import WebApplication
 
 from auth_common import get_application, test_authentication_enabled
-from load_azd_env import load_azd_env
 
 
 async def main():
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
     if not test_authentication_enabled():
         print("Not updating authentication.")
         exit(0)

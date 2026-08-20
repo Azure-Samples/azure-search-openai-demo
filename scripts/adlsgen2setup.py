@@ -12,8 +12,7 @@ from azure.storage.filedatalake.aio import (
     DataLakeDirectoryClient,
     DataLakeServiceClient,
 )
-
-from load_azd_env import load_azd_env
+from dotenv_azd import load_azd_env
 
 logger = logging.getLogger("scripts")
 
@@ -155,7 +154,7 @@ class AdlsGen2Setup:
 
 
 async def main(args: Any):
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     if not os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT"):
         raise Exception("AZURE_ADLS_GEN2_STORAGE_ACCOUNT must be set to continue")

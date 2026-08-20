@@ -18,8 +18,7 @@ from azure.search.documents.indexes.models import (
     SearchFieldDataType,
     SearchIndexPermissionFilterOption,
 )
-
-from load_azd_env import load_azd_env
+from dotenv_azd import load_azd_env
 
 logger = logging.getLogger("scripts")
 
@@ -258,7 +257,7 @@ class ManageAcl:
 
 
 async def main(args: Any):
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     # Use the current user identity to connect to Azure services unless a key is explicitly set for any of them
     azd_credential = (

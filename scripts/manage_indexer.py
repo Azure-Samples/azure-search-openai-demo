@@ -16,12 +16,11 @@ import sys
 
 from azure.identity.aio import AzureDeveloperCliCredential
 from azure.search.documents.indexes.aio import SearchIndexerClient
-
-from load_azd_env import load_azd_env
+from dotenv_azd import load_azd_env
 
 
 async def main(action: str) -> None:
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     service = os.environ["AZURE_SEARCH_SERVICE"]
     index_name = os.environ["AZURE_SEARCH_INDEX"]

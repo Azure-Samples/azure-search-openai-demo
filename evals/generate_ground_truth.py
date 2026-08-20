@@ -147,7 +147,7 @@ if __name__ == "__main__":
         level=logging.WARNING, format="%(message)s", datefmt="[%X]", handlers=[RichHandler(rich_tracebacks=True)]
     )
     logger.setLevel(logging.INFO)
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     parser = argparse.ArgumentParser(description="Generate ground truth data using AI Search index and RAGAS.")
     parser.add_argument("--numsearchdocs", type=int, help="Specify the number of search results to fetch")

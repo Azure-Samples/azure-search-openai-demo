@@ -18,7 +18,7 @@ if __name__ == "__main__":
     )
     logger.setLevel(logging.INFO)
     logging.getLogger("evaltools").setLevel(logging.INFO)
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     parser = argparse.ArgumentParser(description="Run evaluation with OpenAI configuration.")
     parser.add_argument("--targeturl", type=str, help="Specify the target URL.")

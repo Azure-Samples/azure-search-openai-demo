@@ -7,6 +7,7 @@ import uuid
 from dataclasses import dataclass
 
 from azure.identity.aio import AzureDeveloperCliCredential
+from dotenv_azd import load_azd_env
 from kiota_abstractions.api_error import APIError
 from kiota_abstractions.base_request_configuration import RequestConfiguration
 from msgraph import GraphServiceClient
@@ -29,7 +30,6 @@ from msgraph.generated.oauth2_permission_grants.oauth2_permission_grants_request
 )
 
 from auth_common import get_application, test_authentication_enabled
-from load_azd_env import load_azd_env
 
 
 async def create_application(graph_client: GraphServiceClient, request_app: Application) -> tuple[str, str]:
@@ -277,7 +277,7 @@ async def grant_application_admin_consent(graph_client: GraphServiceClient, clie
 
 
 async def main():  # pragma: no cover
-    load_azd_env()
+    load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     if not test_authentication_enabled():
         print("Not setting up authentication.")
