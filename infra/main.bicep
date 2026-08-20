@@ -344,9 +344,6 @@ param useUserUpload bool = false
 param useLocalPdfParser bool = false
 param useLocalHtmlParser bool = false
 
-@description('Use AI project')
-param useAiProject bool = false
-
 @description('Deploy an Azure Monitor Health Model for application health monitoring (preview feature)')
 param useHealthModel bool = false
 
