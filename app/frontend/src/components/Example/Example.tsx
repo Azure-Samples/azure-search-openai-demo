@@ -18,7 +18,9 @@ export const Example = ({ text, value, onClick }: Props) => {
     return (
         <div className={styles.example} role="button" tabIndex={0} onClick={() => onClick(value)} onKeyDown={handleKeyDown}>
             <p className={styles.exampleText}>{text}</p>
-            <span className={styles.exampleArrow} aria-hidden="true">→</span>
+            <span className={styles.exampleArrow} aria-hidden="true">
+                →
+            </span>
         </div>
     );
 };

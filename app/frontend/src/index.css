@@ -1,13 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap");
 
 /* Global font override */
-html, body, * {
+html,
+body,
+* {
     font-family: "Nunito", sans-serif !important;
     box-sizing: border-box;
 }
 
 /* Background override for html, body, root */
-html, body, #root {
+html,
+body,
+#root {
     background-color: #efefef !important; /* Шинэ өнгө */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

@@ -7,8 +7,8 @@
     width: 300px;
     max-width: 88vw;
     background: rgba(255, 255, 255, 0.96);
-    border-right: 1px solid rgba(31, 58, 75, 0.10);
-    box-shadow: 18px 0 46px rgba(31, 58, 75, 0.10);
+    border-right: 1px solid rgba(31, 58, 75, 0.1);
+    box-shadow: 18px 0 46px rgba(31, 58, 75, 0.1);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     overflow-y: auto;
@@ -26,7 +26,12 @@
 .panelTitle {
     margin: 0;
     color: #101828;
-    font: 800 1.2rem Nunito, Inter, ui-sans-serif, system-ui, sans-serif;
+    font:
+        800 1.2rem Nunito,
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
 }
 
 .closeButton {
@@ -35,7 +40,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(31, 58, 75, 0.10);
+    border: 1px solid rgba(31, 58, 75, 0.1);
     border-radius: 0.65rem;
     background: #ffffff;
     color: #1f3a4b;
@@ -68,7 +73,12 @@
 
 .groupLabel {
     color: #667085;
-    font: 800 0.78rem Inter, Nunito, ui-sans-serif, system-ui, sans-serif;
+    font:
+        800 0.78rem Inter,
+        Nunito,
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     margin: 0.5rem 0 0.4rem;

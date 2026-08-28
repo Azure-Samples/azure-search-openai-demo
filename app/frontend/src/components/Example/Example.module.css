@@ -26,7 +26,11 @@
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.78));
     box-shadow: 0 14px 38px rgba(31, 58, 75, 0.08);
     cursor: pointer;
-    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease;
     overflow: hidden;
 }
 
@@ -68,7 +72,9 @@
     flex: 0 0 auto;
     color: #1f3a4b;
     font-size: 1.1rem;
-    transition: transform 180ms ease, color 180ms ease;
+    transition:
+        transform 180ms ease,
+        color 180ms ease;
 }
 
 .example:hover .exampleArrow,

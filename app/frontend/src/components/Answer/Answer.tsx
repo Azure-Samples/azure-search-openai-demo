@@ -34,15 +34,17 @@ const removeCitationMarkup = (html: string) => {
 };
 
 const getCleanCopyText = (answer: ChatAppResponse) => {
-    return (answer.message?.content || "")
-        // Remove source/file references such as [file.pdf#page=31]
-        .replace(/\s*\[[^\]]*(?:\.pdf|\.docx|\.txt|\.md|#page=|https?:\/\/)[^\]]*\]/gi, "")
-        // Remove numeric citation markers such as [1], [2], [3]
-        .replace(/\s*\[\d+\]/g, "")
-        // Remove generated Citation section if it exists
-        .replace(/\n?\s*Citation:\s*[\s\S]*$/i, "")
-        .replace(/\n{3,}/g, "\n\n")
-        .trim();
+    return (
+        (answer.message?.content || "")
+            // Remove source/file references such as [file.pdf#page=31]
+            .replace(/\s*\[[^\]]*(?:\.pdf|\.docx|\.txt|\.md|#page=|https?:\/\/)[^\]]*\]/gi, "")
+            // Remove numeric citation markers such as [1], [2], [3]
+            .replace(/\s*\[\d+\]/g, "")
+            // Remove generated Citation section if it exists
+            .replace(/\n?\s*Citation:\s*[\s\S]*$/i, "")
+            .replace(/\n{3,}/g, "\n\n")
+            .trim()
+    );
 };
 
 const copyTextToClipboard = async (text: string) => {
@@ -107,10 +109,7 @@ export const Answer = ({
     showSpeechOutputBrowser
 }: Props) => {
     const followupQuestions = answer.context?.followup_questions;
-    const parsedAnswer = useMemo(
-        () => parseAnswerToHtml(answer, isStreaming, onCitationClicked),
-        [answer, isStreaming, onCitationClicked]
-    );
+    const parsedAnswer = useMemo(() => parseAnswerToHtml(answer, isStreaming, onCitationClicked), [answer, isStreaming, onCitationClicked]);
 
     const { t } = useTranslation();
     const sanitizedAnswerHtml = DOMPurify.sanitize(parsedAnswer.answerHtml);
@@ -135,10 +134,7 @@ export const Answer = ({
     };
 
     return (
-        <Stack
-            className={`${styles.answerContainer} ${isSelected && styles.selected}`}
-            verticalAlign="space-between"
-        >
+        <Stack className={`${styles.answerContainer} ${isSelected && styles.selected}`} verticalAlign="space-between">
             <Stack.Item>
                 <Stack horizontal horizontalAlign="space-between">
                     <AnswerIcon />
@@ -154,57 +150,32 @@ export const Answer = ({
                         </button>
 
                         {showSpeechOutputAzure && (
-                            <SpeechOutputAzure
-                                answer={sanitizedAnswerHtml}
-                                index={index}
-                                speechConfig={speechConfig}
-                                isStreaming={isStreaming}
-                            />
+                            <SpeechOutputAzure answer={sanitizedAnswerHtml} index={index} speechConfig={speechConfig} isStreaming={isStreaming} />
                         )}
 
-                        {showSpeechOutputBrowser && (
-                            <SpeechOutputBrowser answer={sanitizedAnswerHtml} />
-                        )}
+                        {showSpeechOutputBrowser && <SpeechOutputBrowser answer={sanitizedAnswerHtml} />}
                     </div>
                 </Stack>
             </Stack.Item>
 
             <Stack.Item grow>
                 <div className={styles.answerText}>
-                    <ReactMarkdown
-                        children={displayAnswerHtml}
-                        rehypePlugins={[rehypeRaw]}
-                        remarkPlugins={[remarkGfm]}
-                    />
+                    <ReactMarkdown children={displayAnswerHtml} rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]} />
                 </div>
             </Stack.Item>
 
-            {!!followupQuestions?.length &&
-                showFollowupQuestions &&
-                onFollowupQuestionClicked && (
-                    <Stack.Item>
-                        <Stack
-                            horizontal
-                            wrap
-                            className={`${false ? styles.followupQuestionsList : ""}`}
-                            tokens={{ childrenGap: 6 }}
-                        >
-                            <span className={styles.followupQuestionLearnMore}>
-                                {t("followupQuestions")}
-                            </span>
-                            {followupQuestions.map((x, i) => (
-                                <a
-                                    key={i}
-                                    className={styles.followupQuestion}
-                                    title={x}
-                                    onClick={() => onFollowupQuestionClicked(x)}
-                                >
-                                    {x}
-                                </a>
-                            ))}
-                        </Stack>
-                    </Stack.Item>
-                )}
+            {!!followupQuestions?.length && showFollowupQuestions && onFollowupQuestionClicked && (
+                <Stack.Item>
+                    <Stack horizontal wrap className={`${false ? styles.followupQuestionsList : ""}`} tokens={{ childrenGap: 6 }}>
+                        <span className={styles.followupQuestionLearnMore}>{t("followupQuestions")}</span>
+                        {followupQuestions.map((x, i) => (
+                            <a key={i} className={styles.followupQuestion} title={x} onClick={() => onFollowupQuestionClicked(x)}>
+                                {x}
+                            </a>
+                        ))}
+                    </Stack>
+                </Stack.Item>
+            )}
         </Stack>
     );
 };
