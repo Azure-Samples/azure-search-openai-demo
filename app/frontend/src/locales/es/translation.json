@@ -33,28 +33,31 @@
         "fileDeleted": "Archivo eliminado"
     },
     "developerSettings": "Configuración del desarrollador",
-
-     "chatEmptyStateTitle": "Mobi AI",
+    "chatEmptyStateTitle": "Mobi AI",
     "chatEmptyStateSubtitle": "Por favor, elige tu idioma",
     "defaultExamples": {
-      "1": "Obtener instrucciones de pago",
-      "2": "Tipos de paquetes de datos e instrucciones de compra",
-      "3": "Aplicación Monpay",
-      "placeholder": "Escribe tu pregunta (por ejemplo: Quisiera conocer el horario de la sucursal ubicada en el distrito de Bayangol)"
+        "1": "Obtener instrucciones de pago",
+        "2": "Tipos de paquetes de datos e instrucciones de compra",
+        "3": "Aplicación Monpay",
+        "placeholder": "Escribe tu pregunta (por ejemplo: Quisiera conocer el horario de la sucursal ubicada en el distrito de Bayangol)"
     },
     "askTitle": "Mobi AI",
+    "askSubtitle": "Modo de respuesta única",
     "gpt4vExamples": {
-      "1": "Obtener instrucciones de pago",
-      "2": "Tipos de paquetes de datos e instrucciones de compra",
-      "3": "Aplicación Monpay",
-      "placeholder": "Ejemplo: Quisiera conocer el horario de la sucursal ubicada en el distrito de Bayangol"
-    
-  },
-
+        "1": "Obtener instrucciones de pago",
+        "2": "Tipos de paquetes de datos e instrucciones de compra",
+        "3": "Aplicación Monpay",
+        "placeholder": "Ejemplo: Quisiera conocer el horario de la sucursal ubicada en el distrito de Bayangol"
+    },
+    "multimodalExamples": {
+        "1": "Obtener instrucciones de pago",
+        "2": "Tipos de paquetes de datos e instrucciones de compra",
+        "3": "Aplicación Monpay",
+        "placeholder": "Pregunta sobre los productos y servicios de MobiCom"
+    },
     "generatingAnswer": "Generando respuesta",
     "citationWithColon": "Cita:",
     "followupQuestions": "Preguntas de seguimiento:",
-
     "tooltips": {
         "submitQuestion": "Enviar pregunta",
         "askWithVoice": "Realizar pregunta con voz",
@@ -67,13 +70,11 @@
         "copy": "Copiar",
         "copied": "¡Copiado!"
     },
-
-    "headerTexts":{
+    "headerTexts": {
         "thoughtProcess": "Proceso de Pensamiento",
         "supportingContent": "Contenido de apoyo",
         "citation": "Cita"
     },
-
     "labels": {
         "toggleMenu": "Alternar menú",
         "languagePicker": "Seleccione su idioma",
@@ -135,43 +136,27 @@
         "useGroupsSecurityFilter": "Usar filtro de seguridad degrupos",
         "shouldStream": "Transmitir respuestas de finalización de chat en tiempo real"
     },
-
     "helpTexts": {
-        "promptTemplate":
-            "Sobrescribe el aviso utilizado para generar la respuesta basada en la pregunta y los resultados de la búsqueda. Para agregar al aviso existente en lugar de reemplazar todo el aviso, comienza tu aviso con '>>>'.",
-        "temperature":
-            "Establece la temperatura de la solicitud al LLM que genera la respuesta. Temperaturas más altas dan como resultado respuestas más creativas, pero pueden ser menos realistas.",
-        "seed":
-            "Define un número entero para mejorar la reproducibilidad de las respuestas del modelo. El número de semilla se utiliza para generar respuestas más consistentes. El número de semilla puede ser cualquier número.",
-        "searchScore":
-            "Establece una puntuación mínima para los resultados de búsqueda que vuelven de Azure AI search. El rango de puntuaciones depende de si estás utilizando híbrido (predeterminado), solo vectores o solo texto.",
-        "rerankerScore":
-            "Establece una puntuación mínima para los resultados de búsqueda que devuelve el reclasificador semántico. La puntuación siempre varía entre 0 y 4. Cuanto mayor sea la puntuación, más relevante será el resultado con respecto a la pregunta.",
-        "retrieveNumber":
-            "Establece el número de resultados de búsqueda que se recuperarán de Azure AI Search. Más resultados pueden aumentar la probabilidad de encontrar la respuesta correcta, pero también pueden hacer que el modelo se distraiga entre demasiada información.",
-        "agenticReasoningEffort":
-            "Controla cuánto razonamiento aplica el agente al construir planes de consultas múltiples. Un esfuerzo mayor puede mejorar la recuperación, pero incrementa los tokens y la latencia.",
-        "includeCategory":
-            "Especifica una categoría para incluir en los resultados de búsqueda. No se aplican categorías en el conjunto de datos predeterminado.",
-        "excludeCategory":
-            "Especifica una categoría para excluir de los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
-        "useSemanticReranker":
-            "Habilita el re-clasificador semántico de Azure AI Search, un modelo que re-clasifica los resultados de búsqueda basándose en la similitud semántica con la consulta del usuario.",
-        "useSemanticCaptions":
-            "Envía subtítulos semánticos al LLM en lugar del resultado de búsqueda completo. Un subtítulo semántico se extrae de un resultado de búsqueda durante el proceso de clasificación semántica.",
-        "useQueryRewriting":
-            "Habilita la reescritura de consultas de Azure AI Search, un proceso que modifica la consulta del usuario para mejorar los resultados de búsqueda. Requiere que el clasificador semántico esté habilitado.",
-        "reasoningEffort":
-            "Establece el esfuerzo de razonamiento para el LLM. Los valores más altos resultan en más razonamiento, pero pueden tardar más en generar una respuesta. El valor predeterminado es medio.",
+        "promptTemplate": "Sobrescribe el aviso utilizado para generar la respuesta basada en la pregunta y los resultados de la búsqueda. Para agregar al aviso existente en lugar de reemplazar todo el aviso, comienza tu aviso con '>>>'.",
+        "temperature": "Establece la temperatura de la solicitud al LLM que genera la respuesta. Temperaturas más altas dan como resultado respuestas más creativas, pero pueden ser menos realistas.",
+        "seed": "Define un número entero para mejorar la reproducibilidad de las respuestas del modelo. El número de semilla se utiliza para generar respuestas más consistentes. El número de semilla puede ser cualquier número.",
+        "searchScore": "Establece una puntuación mínima para los resultados de búsqueda que vuelven de Azure AI search. El rango de puntuaciones depende de si estás utilizando híbrido (predeterminado), solo vectores o solo texto.",
+        "rerankerScore": "Establece una puntuación mínima para los resultados de búsqueda que devuelve el reclasificador semántico. La puntuación siempre varía entre 0 y 4. Cuanto mayor sea la puntuación, más relevante será el resultado con respecto a la pregunta.",
+        "retrieveNumber": "Establece el número de resultados de búsqueda que se recuperarán de Azure AI Search. Más resultados pueden aumentar la probabilidad de encontrar la respuesta correcta, pero también pueden hacer que el modelo se distraiga entre demasiada información.",
+        "agenticReasoningEffort": "Controla cuánto razonamiento aplica el agente al construir planes de consultas múltiples. Un esfuerzo mayor puede mejorar la recuperación, pero incrementa los tokens y la latencia.",
+        "includeCategory": "Especifica una categoría para incluir en los resultados de búsqueda. No se aplican categorías en el conjunto de datos predeterminado.",
+        "excludeCategory": "Especifica una categoría para excluir de los resultados de búsqueda. No se utilizan categorías en el conjunto de datos predeterminado.",
+        "useSemanticReranker": "Habilita el re-clasificador semántico de Azure AI Search, un modelo que re-clasifica los resultados de búsqueda basándose en la similitud semántica con la consulta del usuario.",
+        "useSemanticCaptions": "Envía subtítulos semánticos al LLM en lugar del resultado de búsqueda completo. Un subtítulo semántico se extrae de un resultado de búsqueda durante el proceso de clasificación semántica.",
+        "useQueryRewriting": "Habilita la reescritura de consultas de Azure AI Search, un proceso que modifica la consulta del usuario para mejorar los resultados de búsqueda. Requiere que el clasificador semántico esté habilitado.",
+        "reasoningEffort": "Establece el esfuerzo de razonamiento para el LLM. Los valores más altos resultan en más razonamiento, pero pueden tardar más en generar una respuesta. El valor predeterminado es medio.",
         "suggestFollowupQuestions": "Pide al LLM que sugiera preguntas de seguimiento basadas en la consulta del usuario.",
         "textEmbeddings": "Cuando se selecciona, la búsqueda utilizará embeddings de texto para los fragmentos extraídos.",
         "imageEmbeddings": "Cuando se selecciona, la búsqueda utilizará embeddings multimodales para las imágenes extraídas.",
         "llmTextInputs": "Cuando se selecciona, el contenido de texto de los resultados de búsqueda se enviará al LLM como contexto.",
         "llmImageInputs": "Cuando se selecciona, las imágenes de los resultados de búsqueda se enviarán al LLM como contexto.",
-        "llmInputs":
-            "Establece qué se enviará al modelo de visión. 'Imágenes y texto' envía tanto imágenes como texto, 'Imágenes' solo envía imágenes y 'Texto' solo envía texto.",
-        "retrievalMode":
-            "Establece el modo de recuperación para la consulta de búsqueda de Azure AI. Vectores + Texto (Híbrido) utiliza una combinación de búsqueda vectorial y búsqueda de texto completo, Vectores utiliza solo la búsqueda vectorial y Texto utiliza solo la búsqueda de texto completo. Generalmente, el modo híbrido es óptimo.",
+        "llmInputs": "Establece qué se enviará al modelo de visión. 'Imágenes y texto' envía tanto imágenes como texto, 'Imágenes' solo envía imágenes y 'Texto' solo envía texto.",
+        "retrievalMode": "Establece el modo de recuperación para la consulta de búsqueda de Azure AI. Vectores + Texto (Híbrido) utiliza una combinación de búsqueda vectorial y búsqueda de texto completo, Vectores utiliza solo la búsqueda vectorial y Texto utiliza solo la búsqueda de texto completo. Generalmente, el modo híbrido es óptimo.",
         "streamChat": "Transmite continuamente la respuesta a la interfaz de usuario del chat mientras se genera.",
         "useOidSecurityFilter": "Filtra los resultados de búsqueda en función del OID del usuario autenticado.",
         "useGroupsSecurityFilter": "Filtra los resultados de búsqueda en función de los grupos del usuario autenticado.",
@@ -179,7 +164,6 @@
         "useWebSource": "Potencia la recuperación con resultados de búsqueda web junto con tu conjunto de datos indexado.",
         "useSharePointSource": "Potencia la recuperación incorporando contenido de SharePoint junto con tu conjunto de datos indexado."
     },
-
     "overallSettings": "Configuración general",
     "searchSettings": "Configuración de búsqueda",
     "llmSettings": "Configuración de LLM"

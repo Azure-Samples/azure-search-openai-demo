@@ -42,11 +42,18 @@
     "placeholder": "Wpisz swoje pytanie (np. Chciałbym dowiedzieć się o godzinach otwarcia oddziału znajdującego się w dzielnicy Bayangol)"
   },
   "askTitle": "Mobi AI",
+  "askSubtitle": "Tryb pojedynczej odpowiedzi",
   "gpt4vExamples": {
     "1": "Uzyskaj instrukcje dotyczące płatności",
     "2": "Rodzaje pakietów danych i instrukcje zakupu",
     "3": "Aplikacja Monpay",
     "placeholder": "Przykład: Chciałbym dowiedzieć się o godzinach otwarcia oddziału znajdującego się w dzielnicy Bayangol"
+  },
+  "multimodalExamples": {
+    "1": "Uzyskaj instrukcje dotyczące płatności",
+    "2": "Rodzaje pakietów danych i instrukcje zakupu",
+    "3": "Aplikacja Monpay",
+    "placeholder": "Zapytaj o produkty i usługi MobiCom"
   },
   "generatingAnswer": "Generowanie odpowiedzi",
   "citationWithColon": "Cytat:",
