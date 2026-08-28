@@ -322,8 +322,14 @@ const Chat = () => {
         setIsStreaming(false);
     };
 
-    useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
-    useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" }), [streamedAnswers]);
+    // Keep these bodies braced: whatever an effect returns is treated as its cleanup function, and
+    // scrollIntoView is not guaranteed to return undefined once an extension has wrapped it.
+    useEffect(() => {
+        chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" });
+    }, [isLoading]);
+    useEffect(() => {
+        chatMessageStreamEnd.current?.scrollIntoView({ behavior: "auto" });
+    }, [streamedAnswers]);
     useEffect(() => {
         getConfig();
     }, []);
