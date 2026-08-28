@@ -12,7 +12,11 @@ services:
     # Please check docs/azure_container_apps.md for more information on how to deploy to Azure Container Apps
     host: containerapp
     docker:
-      remoteBuild: true
+      # Remote build fails while azd packs the build context ("archive/tar: write too long"),
+      # and its fallback to a local build cannot run because remote builds produce no local
+      # image to fall back to. Building locally avoids that path entirely. Both Codespaces
+      # and the GitHub Actions runners used by .github/workflows/azure-dev.yml provide Docker.
+      remoteBuild: false
     # Please check docs/azure_app_service.md for more information on how to deploy to Azure App Service
     # host: appservice
     hooks:
