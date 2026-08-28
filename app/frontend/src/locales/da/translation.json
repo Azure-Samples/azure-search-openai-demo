@@ -36,19 +36,25 @@
     "chatEmptyStateTitle": "Mobi AI",
     "chatEmptyStateSubtitle": "Vælg venligst dit sprog",
     "defaultExamples": {
-      "1": "Få betalingsvejledning",
-      "2": "Datapakketyper og købsvejledning",
-      "3": "Monpay-applikationen",
-      "placeholder": "Skriv venligst dit spørgsmål (for eksempel: Jeg vil gerne kende åbningstiderne for filialen i Bayangol-distriktet)"
+        "1": "Få betalingsvejledning",
+        "2": "Datapakketyper og købsvejledning",
+        "3": "Monpay-applikationen",
+        "placeholder": "Skriv venligst dit spørgsmål (for eksempel: Jeg vil gerne kende åbningstiderne for filialen i Bayangol-distriktet)"
     },
     "askTitle": "Mobi AI",
+    "askSubtitle": "Enkeltsvarstilstand",
     "gpt4vExamples": {
-      "1": "Få betalingsvejledning",
-      "2": "Datapakketyper og købsvejledning",
-      "3": "Monpay-applikationen",
-      "placeholder": "Eksempel: Jeg vil gerne kende åbningstiderne for filialen i Bayangol-distriktet"
-  },
-
+        "1": "Få betalingsvejledning",
+        "2": "Datapakketyper og købsvejledning",
+        "3": "Monpay-applikationen",
+        "placeholder": "Eksempel: Jeg vil gerne kende åbningstiderne for filialen i Bayangol-distriktet"
+    },
+    "multimodalExamples": {
+        "1": "Få betalingsvejledning",
+        "2": "Datapakketyper og købsvejledning",
+        "3": "Monpay-applikationen",
+        "placeholder": "Spørg om MobiComs produkter og tjenester"
+    },
     "generatingAnswer": "Genererer svar",
     "citationWithColon": "Kilder:",
     "followupQuestions": "Opfølgende spørgsmål:",
@@ -147,8 +153,8 @@
         "suggestFollowupQuestions": "Beder LLM'en om at foreslå opfølgende spørgsmål baseret på brugerens forespørgsel.",
         "textEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra tekst-kun indlejringsmodellen af udtrukne tekstbidder.",
         "imageEmbeddings": "Når valgt, vil søgningen bruge indlejringer fra den multimodale indlejringsmodel af udtrukne billeder.",
-    "llmTextInputs": "Når valgt, sendes tekstindhold fra søgeresultaterne til LLM'en som kontekst.",
-    "llmImageInputs": "Når valgt, sendes billeder fra søgeresultaterne til LLM'en som kontekst.",
+        "llmTextInputs": "Når valgt, sendes tekstindhold fra søgeresultaterne til LLM'en som kontekst.",
+        "llmImageInputs": "Når valgt, sendes billeder fra søgeresultaterne til LLM'en som kontekst.",
         "llmInputs": "Indstiller hvad der sendes til visionsmodellen. 'Billeder og tekst' sender både billeder og tekst til modellen, 'Billeder' sender kun billeder og 'Tekst' sender kun tekst.",
         "retrievalMode": "Indstiller søgemodus for forespørgslen i Azure AI Search. `Vektorer + Tekst (Hybrid)` bruger en kombination af vektorsøgning og fuldtekstsøgning, `Vektorer` bruger kun vektorsøgning, og `Tekst` bruger kun fuldtekstsøgning. Hybrid er generelt optimalt.",
         "streamChat": "Streamer kontinuerligt svaret til brugergrænsefladen, imens det genereres.",

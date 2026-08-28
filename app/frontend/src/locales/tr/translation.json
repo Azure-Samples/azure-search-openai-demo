@@ -42,11 +42,18 @@
     "placeholder": "Lütfen sorunuzu yazın (örneğin: Bayangol bölgesinde bulunan şubenin çalışma saatlerini öğrenmek istiyorum)"
   },
   "askTitle": "Mobi AI",
+  "askSubtitle": "Tek yanıt modu",
   "gpt4vExamples": {
     "1": "Ödeme talimatlarını al",
     "2": "Veri paketleri türleri ve satın alma talimatları",
     "3": "Monpay Uygulaması",
     "placeholder": "Örnek: Bayangol bölgesinde bulunan şubenin çalışma saatlerini öğrenmek istiyorum"
+  },
+  "multimodalExamples": {
+    "1": "Ödeme talimatlarını al",
+    "2": "Veri paketleri türleri ve satın alma talimatları",
+    "3": "Monpay Uygulaması",
+    "placeholder": "MobiCom ürün ve hizmetleri hakkında soru sorun"
   },
   "generatingAnswer": "Cevap oluşturuluyor",
   "citationWithColon": "Alıntı:",

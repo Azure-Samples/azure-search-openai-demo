@@ -33,28 +33,31 @@
         "fileDeleted": "Arquivo excluído"
     },
     "developerSettings": "Configurações do desenvolvedor",
-
     "chatEmptyStateTitle": "Mobi AI",
     "chatEmptyStateSubtitle": "Por favor, escolha seu idioma",
     "defaultExamples": {
-      "1": "Obter instruções de pagamento",
-      "2": "Tipos de pacotes de dados e instruções de compra",
-      "3": "Aplicativo Monpay",
-      "placeholder": "Digite sua pergunta (por exemplo: Gostaria de saber o horário de funcionamento da agência localizada no distrito de Bayangol)"
+        "1": "Obter instruções de pagamento",
+        "2": "Tipos de pacotes de dados e instruções de compra",
+        "3": "Aplicativo Monpay",
+        "placeholder": "Digite sua pergunta (por exemplo: Gostaria de saber o horário de funcionamento da agência localizada no distrito de Bayangol)"
     },
     "askTitle": "Mobi AI",
+    "askSubtitle": "Modo de resposta única",
     "gpt4vExamples": {
-      "1": "Obter instruções de pagamento",
-      "2": "Tipos de pacotes de dados e instruções de compra",
-      "3": "Aplicativo Monpay",
-      "placeholder": "Exemplo: Gostaria de saber o horário de funcionamento da agência localizada no distrito de Bayangol"
-    
-  },
-
+        "1": "Obter instruções de pagamento",
+        "2": "Tipos de pacotes de dados e instruções de compra",
+        "3": "Aplicativo Monpay",
+        "placeholder": "Exemplo: Gostaria de saber o horário de funcionamento da agência localizada no distrito de Bayangol"
+    },
+    "multimodalExamples": {
+        "1": "Obter instruções de pagamento",
+        "2": "Tipos de pacotes de dados e instruções de compra",
+        "3": "Aplicativo Monpay",
+        "placeholder": "Pergunte sobre os produtos e serviços da MobiCom"
+    },
     "generatingAnswer": "Gerando resposta",
     "citationWithColon": "Citação:",
     "followupQuestions": "Acompanhar as respostas:",
-
     "tooltips": {
         "submitQuestion": "Enviar pergunta",
         "askWithVoice": "Faça uma pergunta com voz",
@@ -67,13 +70,11 @@
         "copy": "Copiar",
         "copied": "Copiado!"
     },
-
-    "headerTexts":{
+    "headerTexts": {
         "thoughtProcess": "Processo de pensamento",
         "supportingContent": "Conteúdo de suporte",
         "citation": "Citação"
     },
-
     "labels": {
         "toggleMenu": "Alternar menu",
         "languagePicker": "Selecione seu idioma",
@@ -135,42 +136,27 @@
         "useGroupsSecurityFilter": "Usar filtro de segurança de grupos",
         "shouldStream": "Stream chat completion responses"
     },
-
     "helpTexts": {
-        "promptTemplate":
-            "Substitui o prompt usado para gerar a resposta com base na pergunta e nos resultados da pesquisa. Para adicionar ao prompt existente em vez de substituí-lo por completo, comece seu prompt com '>>>'.",
-        "temperature":
-            "Define a temperatura da solicitação para o LLM que gera a resposta. Temperaturas mais altas resultam em respostas mais criativas, mas podem ser menos fundamentadas.",
+        "promptTemplate": "Substitui o prompt usado para gerar a resposta com base na pergunta e nos resultados da pesquisa. Para adicionar ao prompt existente em vez de substituí-lo por completo, comece seu prompt com '>>>'.",
+        "temperature": "Define a temperatura da solicitação para o LLM que gera a resposta. Temperaturas mais altas resultam em respostas mais criativas, mas podem ser menos fundamentadas.",
         "seed": "Define um seed para melhorar a reprodutibilidade das respostas do modelo. O seed pode ser qualquer número inteiro.",
-        "searchScore":
-             "Define uma pontuação mínima para os resultados da pesquisa retornados pela pesquisa do Azure AI. O intervalo de pontuação depende de você usar o modo híbrido (padrão), vetores ou texto.",
-        "rerankerScore":
-             "Define uma pontuação mínima para os resultados da pesquisa retornados pelo ranker semântico. A pontuação varia de 0 a 4. Quanto maior a pontuação, mais relevante é o resultado em relação à pergunta.",
-        "retrieveNumber":
-             "Define o número de resultados de pesquisa a serem recuperados na pesquisa do Azure AI. Mais resultados podem aumentar a chance de encontrar a resposta correta, mas podem fazer com que o modelo se 'perca'.",
-       "agenticReasoningEffort":
-            "Controla quanto raciocínio o agente aplica ao montar planos com várias consultas. Um esforço maior pode melhorar a cobertura, mas aumenta tokens e latência.",
-        "includeCategory":
-            "Especifica uma categoria para incluir nos resultados da pesquisa. Não há categorias usadas no conjunto de dados padrão.",
-         "excludeCategory":
-            "Especifica uma categoria para excluir dos resultados da pesquisa. Não há categorias usadas no conjunto de dados padrão.",
-         "useSemanticReranker":
-            "Ativa o rankeador semântico da pesquisa do Azure AI, um modelo que reordena os resultados da pesquisa com base na similaridade semântica à consulta do usuário.",
-        "useSemanticCaptions":
-             "Envia legendas semânticas para o LLM em vez do resultado completo da pesquisa. Uma legenda semântica é extraída durante o processo de ranqueamento semântico.",
-        "useQueryRewriting":
-             "Habilita a reescrita de consultas do Azure AI Search, um processo que modifica a consulta do usuário para melhorar os resultados da pesquisa. Requer que o rankeador semântico esteja habilitado.",
-        "reasoningEffort":
-             "Define o esforço de raciocínio para o LLM. Valores mais altos resultam em mais raciocínio, mas podem levar mais tempo para gerar uma resposta. O padrão é médio.",
+        "searchScore": "Define uma pontuação mínima para os resultados da pesquisa retornados pela pesquisa do Azure AI. O intervalo de pontuação depende de você usar o modo híbrido (padrão), vetores ou texto.",
+        "rerankerScore": "Define uma pontuação mínima para os resultados da pesquisa retornados pelo ranker semântico. A pontuação varia de 0 a 4. Quanto maior a pontuação, mais relevante é o resultado em relação à pergunta.",
+        "retrieveNumber": "Define o número de resultados de pesquisa a serem recuperados na pesquisa do Azure AI. Mais resultados podem aumentar a chance de encontrar a resposta correta, mas podem fazer com que o modelo se 'perca'.",
+        "agenticReasoningEffort": "Controla quanto raciocínio o agente aplica ao montar planos com várias consultas. Um esforço maior pode melhorar a cobertura, mas aumenta tokens e latência.",
+        "includeCategory": "Especifica uma categoria para incluir nos resultados da pesquisa. Não há categorias usadas no conjunto de dados padrão.",
+        "excludeCategory": "Especifica uma categoria para excluir dos resultados da pesquisa. Não há categorias usadas no conjunto de dados padrão.",
+        "useSemanticReranker": "Ativa o rankeador semântico da pesquisa do Azure AI, um modelo que reordena os resultados da pesquisa com base na similaridade semântica à consulta do usuário.",
+        "useSemanticCaptions": "Envia legendas semânticas para o LLM em vez do resultado completo da pesquisa. Uma legenda semântica é extraída durante o processo de ranqueamento semântico.",
+        "useQueryRewriting": "Habilita a reescrita de consultas do Azure AI Search, um processo que modifica a consulta do usuário para melhorar os resultados da pesquisa. Requer que o rankeador semântico esteja habilitado.",
+        "reasoningEffort": "Define o esforço de raciocínio para o LLM. Valores mais altos resultam em mais raciocínio, mas podem levar mais tempo para gerar uma resposta. O padrão é médio.",
         "suggestFollowupQuestions": "Solicita ao LLM que sugira perguntas de acompanhamento com base na consulta do usuário.",
         "textEmbeddings": "Quando selecionado, a pesquisa usará incorporações do modelo de incorporações apenas de texto para os trechos de texto extraídos.",
         "imageEmbeddings": "Quando selecionado, a pesquisa usará incorporações do modelo de incorporações multimodal para as imagens extraídas.",
-       "llmTextInputs": "Quando selecionado, o conteúdo de texto dos resultados de pesquisa é enviado ao LLM como contexto.",
-       "llmImageInputs": "Quando selecionado, as imagens dos resultados de pesquisa são enviadas ao LLM como contexto.",
-        "llmInputs":
-            "Define o que será enviado ao modelo de visão. 'Imagens e texto' envia ambos, 'Imagens' envia apenas imagens e 'Texto' envia apenas texto.",
-        "retrievalMode":
-            "Define o modo de recuperação para a consulta do Azure AI Search. 'Vetores + Texto (Híbrido)' usa uma combinação de busca vetorial e de texto completo, 'Vetores' usa apenas a busca vetorial, e 'Texto' usa apenas a busca de texto completo. O híbrido geralmente é o ideal.",
+        "llmTextInputs": "Quando selecionado, o conteúdo de texto dos resultados de pesquisa é enviado ao LLM como contexto.",
+        "llmImageInputs": "Quando selecionado, as imagens dos resultados de pesquisa são enviadas ao LLM como contexto.",
+        "llmInputs": "Define o que será enviado ao modelo de visão. 'Imagens e texto' envia ambos, 'Imagens' envia apenas imagens e 'Texto' envia apenas texto.",
+        "retrievalMode": "Define o modo de recuperação para a consulta do Azure AI Search. 'Vetores + Texto (Híbrido)' usa uma combinação de busca vetorial e de texto completo, 'Vetores' usa apenas a busca vetorial, e 'Texto' usa apenas a busca de texto completo. O híbrido geralmente é o ideal.",
         "streamChat": "Transmite continuamente a resposta para a interface do chat conforme é gerada.",
         "useOidSecurityFilter": "Filtra os resultados da pesquisa com base no OID do usuário autenticado.",
         "useGroupsSecurityFilter": "Filtra os resultados da pesquisa com base nos grupos do usuário autenticado.",
@@ -178,7 +164,6 @@
         "useWebSource": "Aumente a recuperação com resultados de pesquisa web junto com seu conjunto de dados indexado.",
         "useSharePointSource": "Aumente a recuperação com conteúdo do SharePoint junto com seu conjunto de dados indexado."
     },
-
     "overallSettings": "Configurações gerais",
     "searchSettings": "Configurações de pesquisa",
     "llmSettings": "Configurações LLM"

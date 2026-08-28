@@ -33,27 +33,31 @@
         "fileDeleted": "File eliminato"
     },
     "developerSettings": "Impostazioni sviluppatore",
-
-     "chatEmptyStateTitle": "Mobi AI",
+    "chatEmptyStateTitle": "Mobi AI",
     "chatEmptyStateSubtitle": "Per favore, scegli la tua lingua",
     "defaultExamples": {
-      "1": "Ottieni le istruzioni di pagamento",
-      "2": "Tipi di pacchetti dati e istruzioni per l’acquisto",
-      "3": "Applicazione Monpay",
-      "placeholder": "Scrivi la tua domanda (ad esempio: Vorrei conoscere gli orari di apertura della filiale situata nel distretto di Bayangol)"
+        "1": "Ottieni le istruzioni di pagamento",
+        "2": "Tipi di pacchetti dati e istruzioni per l’acquisto",
+        "3": "Applicazione Monpay",
+        "placeholder": "Scrivi la tua domanda (ad esempio: Vorrei conoscere gli orari di apertura della filiale situata nel distretto di Bayangol)"
     },
     "askTitle": "Mobi AI",
+    "askSubtitle": "Modalità risposta singola",
     "gpt4vExamples": {
-      "1": "Ottieni le istruzioni di pagamento",
-      "2": "Tipi di pacchetti dati e istruzioni per l’acquisto",
-      "3": "Applicazione Monpay",
-      "placeholder": "Esempio: Vorrei conoscere gli orari di apertura della filiale situata nel distretto di Bayangol"
+        "1": "Ottieni le istruzioni di pagamento",
+        "2": "Tipi di pacchetti dati e istruzioni per l’acquisto",
+        "3": "Applicazione Monpay",
+        "placeholder": "Esempio: Vorrei conoscere gli orari di apertura della filiale situata nel distretto di Bayangol"
     },
-
+    "multimodalExamples": {
+        "1": "Ottieni le istruzioni di pagamento",
+        "2": "Tipi di pacchetti dati e istruzioni per l’acquisto",
+        "3": "Applicazione Monpay",
+        "placeholder": "Fai una domanda sui prodotti e servizi MobiCom"
+    },
     "generatingAnswer": "Generazione della risposta",
     "citationWithColon": "Citazione:",
     "followupQuestions": "Domande di follow-up:",
-
     "tooltips": {
         "submitQuestion": "Invia una domanda",
         "askWithVoice": "Fai una domanda usando la voce",
@@ -66,13 +70,11 @@
         "copy": "Copia",
         "copied": "Copiato!"
     },
-
-    "headerTexts":{
+    "headerTexts": {
         "thoughtProcess": "Processo di Pensiero",
         "supportingContent": "Contenuto di Supporto",
         "citation": "Citazione"
     },
-
     "labels": {
         "toggleMenu": "Attiva/disattiva menu",
         "languagePicker": "Seleziona la tua lingua",
@@ -134,51 +136,34 @@
         "useGroupsSecurityFilter": "Usa filtro di sicurezza di gruppo",
         "shouldStream": "Trasmetti in streaming le risposte"
     },
-
     "helpTexts": {
-        "promptTemplate":
-            "Sostituisce il prompt utilizzato per generare la risposta in base alla domanda e ai risultati della ricerca. Per aggiungere al prompt esistente invece di sostituire l'intero prompt, inizia il tuo prompt con '>>>'.",
-        "temperature":
-            "Imposta la temperatura della query al Grande Modello di Linguaggio (LLM) che genera la risposta. Temperature più alte producono risposte più creative, ma possono essere meno ancorate.",
-        "seed":
-            "Determina un numero primo che servirà a migliorare la ripetibilità delle risposte del modello. Il numero primo deve essere un intero qualsiasi.",
-        "searchScore":
-            "Imposta un punteggio minimo per i risultati di ricerca provenienti da Azure AI Search. L'intervallo di punteggi dipende se si utilizza l'ibrido (predefinito), solo vettori, o solo testo.",
-        "rerankerScore":
-            "Imposta un punteggio minimo per i risultati di ricerca provenienti dal reranker semantico. Il punteggio varia sempre tra 0 e 4. Più alto è il punteggio, più il risultato è semanticamente rilevante rispetto alla domanda.",
-        "retrieveNumber":
-            "Imposta il numero di risultati di ricerca da recuperare da Azure AI Search. Più risultati possono aumentare la probabilità di trovare la risposta giusta, ma possono portare il modello a 'perdersi nel mezzo'.",
-        "agenticReasoningEffort":
-            "Controlla quanto ragionamento applica l'agente durante la creazione di piani multi-query. Uno sforzo maggiore può migliorare il richiamo ma aumenta token e latenza.",
-        "includeCategory":
-            "Specifica una categoria da includere nei risultati di ricerca. Non ci sono categorie utilizzate nel set di dati predefinito.",
-        "excludeCategory":
-            "Specifica una categoria da escludere dai risultati di ricerca. Non ci sono categorie utilizzate nel set di dati predefinito.",
-        "useSemanticReranker":
-            "Abilita il ranking semantico di Azure AI Search, un modello che riordina i risultati di ricerca in base alla somiglianza semantica con la query dell'utente.",
-        "useSemanticCaptions":
-            "Invia didascalie semantiche all'LLM invece del risultato di ricerca completo. Una didascalia semantica è estratta da un risultato di ricerca durante il processo di ranking semantico.",
-        "useQueryRewriting":
-            "Abilita la riscrittura delle query di Azure AI Search, un processo che modifica la query dell'utente per migliorare i risultati di ricerca. Richiede che il reranker semantico sia abilitato.",
-        "reasoningEffort":
-            "Imposta lo sforzo di ragionamento per l'LLM. Valori più alti comportano un maggiore ragionamento, ma potrebbero richiedere più tempo per generare una risposta. Il valore predefinito è medio.",
+        "promptTemplate": "Sostituisce il prompt utilizzato per generare la risposta in base alla domanda e ai risultati della ricerca. Per aggiungere al prompt esistente invece di sostituire l'intero prompt, inizia il tuo prompt con '>>>'.",
+        "temperature": "Imposta la temperatura della query al Grande Modello di Linguaggio (LLM) che genera la risposta. Temperature più alte producono risposte più creative, ma possono essere meno ancorate.",
+        "seed": "Determina un numero primo che servirà a migliorare la ripetibilità delle risposte del modello. Il numero primo deve essere un intero qualsiasi.",
+        "searchScore": "Imposta un punteggio minimo per i risultati di ricerca provenienti da Azure AI Search. L'intervallo di punteggi dipende se si utilizza l'ibrido (predefinito), solo vettori, o solo testo.",
+        "rerankerScore": "Imposta un punteggio minimo per i risultati di ricerca provenienti dal reranker semantico. Il punteggio varia sempre tra 0 e 4. Più alto è il punteggio, più il risultato è semanticamente rilevante rispetto alla domanda.",
+        "retrieveNumber": "Imposta il numero di risultati di ricerca da recuperare da Azure AI Search. Più risultati possono aumentare la probabilità di trovare la risposta giusta, ma possono portare il modello a 'perdersi nel mezzo'.",
+        "agenticReasoningEffort": "Controlla quanto ragionamento applica l'agente durante la creazione di piani multi-query. Uno sforzo maggiore può migliorare il richiamo ma aumenta token e latenza.",
+        "includeCategory": "Specifica una categoria da includere nei risultati di ricerca. Non ci sono categorie utilizzate nel set di dati predefinito.",
+        "excludeCategory": "Specifica una categoria da escludere dai risultati di ricerca. Non ci sono categorie utilizzate nel set di dati predefinito.",
+        "useSemanticReranker": "Abilita il ranking semantico di Azure AI Search, un modello che riordina i risultati di ricerca in base alla somiglianza semantica con la query dell'utente.",
+        "useSemanticCaptions": "Invia didascalie semantiche all'LLM invece del risultato di ricerca completo. Una didascalia semantica è estratta da un risultato di ricerca durante il processo di ranking semantico.",
+        "useQueryRewriting": "Abilita la riscrittura delle query di Azure AI Search, un processo che modifica la query dell'utente per migliorare i risultati di ricerca. Richiede che il reranker semantico sia abilitato.",
+        "reasoningEffort": "Imposta lo sforzo di ragionamento per l'LLM. Valori più alti comportano un maggiore ragionamento, ma potrebbero richiedere più tempo per generare una risposta. Il valore predefinito è medio.",
         "suggestFollowupQuestions": "Chiede all'LLM di suggerire domande di follow-up in base alla query dell'utente.",
         "textEmbeddings": "Quando selezionato, la ricerca utilizzerà le incorporazioni dal modello di incorporazioni solo testo dei frammenti di testo estratti.",
         "imageEmbeddings": "Quando selezionato, la ricerca utilizzerà le incorporazioni dal modello di incorporazioni multimodale delle immagini estratte.",
         "llmTextInputs": "Quando selezionato, il contenuto testuale dei risultati di ricerca viene inviato all'LLM come contesto.",
         "llmImageInputs": "Quando selezionato, le immagini dai risultati di ricerca vengono inviate all'LLM come contesto.",
-        "llmInputs":
-            "Imposta cosa sarà inviato al modello di visione. 'Immagini e testo' invia sia immagini che testo al modello, 'Immagini' invia solo immagini, e 'Testo' invia solo testo.",
-        "retrievalMode":
-            "Imposta la modalità di recupero per la query Azure AI Search. Vettori + Testo (Ibrido) utilizza una combinazione di ricerca vettoriale e ricerca full-text, Vettori utilizza solo la ricerca vettoriale, e Testo utilizza solo la ricerca full-text. Ibrido è generalmente ottimale.",
+        "llmInputs": "Imposta cosa sarà inviato al modello di visione. 'Immagini e testo' invia sia immagini che testo al modello, 'Immagini' invia solo immagini, e 'Testo' invia solo testo.",
+        "retrievalMode": "Imposta la modalità di recupero per la query Azure AI Search. Vettori + Testo (Ibrido) utilizza una combinazione di ricerca vettoriale e ricerca full-text, Vettori utilizza solo la ricerca vettoriale, e Testo utilizza solo la ricerca full-text. Ibrido è generalmente ottimale.",
         "streamChat": "Trasmette in streaming la risposta all'interfaccia utente della chat man mano che viene generata.",
-        "useOidSecurityFilter":"Filtra i risultati di ricerca in base all'OID dell'utente autenticato.",
+        "useOidSecurityFilter": "Filtra i risultati di ricerca in base all'OID dell'utente autenticato.",
         "useGroupsSecurityFilter": "Filtra i risultati di ricerca in base ai gruppi dell'utente autenticato.",
         "useAgenticKnowledgeBase": "Usa l'agentic retrieval da Azure AI Search per la pianificazione multi-query. Usa sempre il ranking semantico.",
         "useWebSource": "Arricchisci i risultati con la ricerca web in aggiunta al tuo set di dati indicizzati.",
         "useSharePointSource": "Arricchisci il recupero con contenuto SharePoint insieme al tuo set di dati indicizzati."
     },
-
     "overallSettings": "Impostazioni generali",
     "searchSettings": "Impostazioni di ricerca",
     "llmSettings": "Impostazioni LLM"
