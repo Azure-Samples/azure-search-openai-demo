@@ -316,7 +316,9 @@ export function Component(): JSX.Element {
                     {/*<SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />*/}
                 </div>
                 <img src={appLogo} alt="mobiAI logo" width={112} height={112} className={styles.appLogo} />
-                <h1 id="mobi-ai-ask-heading" className={styles.askTitle}>{t("askTitle")}</h1>
+                <h1 id="mobi-ai-ask-heading" className={styles.askTitle}>
+                    {t("askTitle")}
+                </h1>
                 <p className={styles.askSubtitle}>{t("askSubtitle")}</p>
                 <div className={styles.askQuestionInput}>
                     <QuestionInput

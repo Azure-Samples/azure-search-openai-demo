@@ -43,7 +43,6 @@
     padding-left: 0.1rem;
 }
 
-
 .headerLogo {
     height: 2rem;
     width: auto;
@@ -86,7 +85,10 @@
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 650;
-    transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+    transition:
+        color 160ms ease,
+        background 160ms ease,
+        transform 160ms ease;
 }
 
 .headerNavPageLink:hover,
@@ -123,7 +125,9 @@
     background: rgba(255, 255, 255, 0.08);
     color: #ffffff;
     cursor: pointer;
-    transition: background 160ms ease, border-color 160ms ease;
+    transition:
+        background 160ms ease,
+        border-color 160ms ease;
 }
 
 .menuToggle:hover,
@@ -173,7 +177,6 @@
         display: none;
     }
 }
-
 
 .headerNavPageLinkActive {
     background: linear-gradient(135deg, #ff0014 0%, #a7263d 100%);

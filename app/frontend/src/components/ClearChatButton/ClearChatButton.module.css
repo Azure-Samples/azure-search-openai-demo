@@ -7,9 +7,16 @@
     border-radius: 999px;
     background: transparent;
     color: #101828;
-    font: 800 0.95rem Nunito, Inter, ui-sans-serif, system-ui, sans-serif;
+    font:
+        800 0.95rem Nunito,
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
     cursor: pointer;
-    transition: color 160ms ease, background 160ms ease;
+    transition:
+        color 160ms ease,
+        background 160ms ease;
 }
 
 .button:hover:not(:disabled),

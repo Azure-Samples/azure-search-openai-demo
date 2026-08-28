@@ -9,15 +9,22 @@
     border: 1px solid rgba(31, 58, 75, 0.1);
     border-radius: 1.35rem;
     background: rgba(255, 255, 255, 0.94);
-    box-shadow: 0 22px 60px rgba(31, 58, 75, 0.11), 0 2px 0 rgba(255, 255, 255, 0.70) inset;
+    box-shadow:
+        0 22px 60px rgba(31, 58, 75, 0.11),
+        0 2px 0 rgba(255, 255, 255, 0.7) inset;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
 }
 
 .questionInputContainer:focus-within {
     border-color: rgba(255, 0, 20, 0.34);
-    box-shadow: 0 26px 70px rgba(31, 58, 75, 0.13), 0 0 0 4px rgba(255, 0, 20, 0.09);
+    box-shadow:
+        0 26px 70px rgba(31, 58, 75, 0.13),
+        0 0 0 4px rgba(255, 0, 20, 0.09);
     transform: translateY(-1px);
 }
 
@@ -62,7 +69,10 @@
     color: #ffffff;
     background: linear-gradient(135deg, #ff0014 0%, #ff4d3a 52%, #a7263d 100%);
     box-shadow: 0 12px 28px rgba(255, 0, 20, 0.23);
-    transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        opacity 160ms ease;
 }
 
 .questionInputButtonsContainer button:hover:not(:disabled) {

@@ -64,13 +64,7 @@ const Layout = () => {
                     </nav>
                     <div className={styles.loginMenuContainer}>
                         {useLogin && <LoginButton />}
-                        <button
-                            type="button"
-                            className={styles.menuToggle}
-                            onClick={toggleMenu}
-                            aria-label={t("labels.toggleMenu")}
-                            aria-expanded={menuOpen}
-                        >
+                        <button type="button" className={styles.menuToggle} onClick={toggleMenu} aria-label={t("labels.toggleMenu")} aria-expanded={menuOpen}>
                             <span />
                             <span />
                             <span />
