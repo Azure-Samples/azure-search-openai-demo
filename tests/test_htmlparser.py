@@ -43,8 +43,7 @@ async def test_htmlparser_remove_hyphens():
 
 @pytest.mark.asyncio
 async def test_htmlparser_full():
-    file = io.StringIO(
-        """
+    file = io.StringIO("""
         <html>
             <head>
                 <title>Test title</title>
@@ -62,8 +61,7 @@ async def test_htmlparser_full():
                 </p>
             </body>
         </html>
-        """
-    )
+        """)
     file.name = "test.json"
     htmlparser = LocalHTMLParser()
     pages = [page async for page in htmlparser.parse(file)]
