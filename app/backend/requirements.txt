@@ -12,7 +12,7 @@ aiosignal==1.4.0
     # via aiohttp
 annotated-types==0.7.0
     # via pydantic
-anyio==4.4.0
+anyio==4.14.2
     # via
     #   httpx
     #   openai
