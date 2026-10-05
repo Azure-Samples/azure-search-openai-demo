@@ -324,6 +324,29 @@ def test_document_extractor_managed_identity_reload(monkeypatch: pytest.MonkeyPa
     document_extractor.configure_global_settings()
 
 
+def test_document_extractor_enables_figures_for_content_understanding(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "teststorage")
+    monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "testcontainer")
+    monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "testrg")
+    monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-sub-id")
+    monkeypatch.setenv("USE_MULTIMODAL", "false")
+    monkeypatch.setenv("USE_MEDIA_DESCRIBER_AZURE_CU", "true")
+
+    processor_kwargs: dict[str, Any] = {}
+
+    def fake_build_file_processors(**kwargs):
+        processor_kwargs.update(kwargs)
+        return {}
+
+    monkeypatch.setattr(document_extractor, "ManagedIdentityCredential", lambda *args, **kwargs: object())
+    monkeypatch.setattr(document_extractor, "build_file_processors", fake_build_file_processors)
+    monkeypatch.setattr(document_extractor, "setup_blob_manager", lambda **kwargs: object())
+
+    document_extractor.configure_global_settings()
+
+    assert processor_kwargs["process_figures"] is True
+
+
 @pytest.mark.asyncio
 async def test_figure_processor_returns_enriched_metadata(monkeypatch: pytest.MonkeyPatch) -> None:
     """Figure processor enriches images with URL and description."""
