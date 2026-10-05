@@ -10,6 +10,7 @@ from openai.types.responses.response_usage import (
 
 from prepdocslib.mediadescriber import (
     ContentUnderstandingDescriber,
+    InvalidMediaError,
     MultimodalModelDescriber,
 )
 
@@ -20,6 +21,21 @@ from .mocks import MockAzureCredential, MockResponse
 async def test_contentunderstanding_analyze(monkeypatch):
 
     def mock_post(*args, **kwargs):
+        if kwargs.get("url").find("invalidimage") > 0:
+            return MockResponse(
+                status=400,
+                text=json.dumps(
+                    {
+                        "error": {
+                            "code": "InvalidRequest",
+                            "innererror": {
+                                "code": "InvalidImageDimension",
+                                "message": "Expected min 50x50 pixels.",
+                            },
+                        }
+                    }
+                ),
+            )
         if kwargs.get("url").find("badanalyzer") > 0:
             return MockResponse(
                 status=200,
@@ -204,6 +220,15 @@ async def test_contentunderstanding_analyze(monkeypatch):
     )
     with pytest.raises(Exception):
         await describer_canceled_analyze.describe_image(b"imagebytes")
+
+    describer_invalid_image = ContentUnderstandingDescriber(
+        endpoint="https://invalidimage.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_model="gpt-5.4-mini",
+        completion_deployment="gpt-5.4-mini",
+    )
+    with pytest.raises(InvalidMediaError):
+        await describer_invalid_image.describe_image(b"imagebytes")
 
 
 class MockAsyncOpenAI:

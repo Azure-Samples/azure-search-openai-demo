@@ -30,6 +30,7 @@ from prepdocslib.figureprocessor import (
     build_figure_markup,
     process_page_image,
 )
+from prepdocslib.mediadescriber import InvalidMediaError
 from prepdocslib.page import ImageOnPage
 from prepdocslib.pdfparser import DocumentAnalysisParser
 
@@ -730,7 +731,7 @@ async def test_process_page_image_sets_description(sample_image):
 async def test_process_page_image_continues_when_description_fails(sample_image, caplog):
     blob_manager = AsyncMock()
     figure_processor = AsyncMock()
-    figure_processor.describe = AsyncMock(side_effect=Exception("Invalid image"))
+    figure_processor.describe = AsyncMock(side_effect=InvalidMediaError("Invalid image"))
 
     result = await process_page_image(
         image=sample_image,
@@ -743,6 +744,23 @@ async def test_process_page_image_continues_when_description_fails(sample_image,
 
     assert result.description is None
     assert "Figure description generation failed for figure" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_process_page_image_propagates_systemic_description_failure(sample_image):
+    blob_manager = AsyncMock()
+    figure_processor = AsyncMock()
+    figure_processor.describe = AsyncMock(side_effect=Exception("Authentication failed"))
+
+    with pytest.raises(Exception, match="Authentication failed"):
+        await process_page_image(
+            image=sample_image,
+            document_filename="test.pdf",
+            blob_manager=blob_manager,
+            image_embeddings_client=None,
+            figure_processor=figure_processor,
+            upload_image=False,
+        )
 
 
 @pytest.mark.asyncio

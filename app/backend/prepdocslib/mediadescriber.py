@@ -1,4 +1,5 @@
 import base64
+import json
 import logging
 from abc import ABC
 from typing import Optional
@@ -24,6 +25,10 @@ class MediaDescriber(ABC):
 
     async def describe_image(self, image_bytes) -> str:
         raise NotImplementedError  # pragma: no cover
+
+
+class InvalidMediaError(Exception):
+    """Raised when a single media input cannot be processed."""
 
 
 class ContentUnderstandingDescriber(MediaDescriber):
@@ -128,6 +133,13 @@ class ContentUnderstandingDescriber(MediaDescriber):
             ) as response:
                 if not 200 <= response.status < 300:
                     data = await response.text()
+                    if response.status == 400:
+                        try:
+                            error = json.loads(data).get("error", {})
+                            if error.get("innererror", {}).get("code") == "InvalidImageDimension":
+                                raise InvalidMediaError(data)
+                        except json.JSONDecodeError:
+                            pass
                     raise Exception("Error analyzing image with Content Understanding", data)
                 poll_url = response.headers["Operation-Location"]
 

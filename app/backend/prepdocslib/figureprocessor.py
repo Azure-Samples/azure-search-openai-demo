@@ -11,6 +11,7 @@ from .blobmanager import BaseBlobManager
 from .embeddings import ImageEmbeddings
 from .mediadescriber import (
     ContentUnderstandingDescriber,
+    InvalidMediaError,
     MediaDescriber,
     MultimodalModelDescriber,
 )
@@ -137,7 +138,7 @@ async def process_page_image(
     if figure_processor is not None:
         try:
             description_text = await figure_processor.describe(image.bytes)
-        except Exception:
+        except InvalidMediaError:
             logger.warning("Figure description generation failed for figure %s", image.figure_id, exc_info=True)
 
     # Store plain descriptive text (can be None). HTML rendering is deferred to build_figure_markup.
