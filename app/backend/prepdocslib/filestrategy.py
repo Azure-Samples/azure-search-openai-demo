@@ -26,6 +26,7 @@ async def parse_file(
     image_embeddings_client: Optional[ImageEmbeddings] = None,
     figure_processor: Optional[FigureProcessor] = None,
     user_oid: Optional[str] = None,
+    upload_images: bool = True,
 ) -> list[Section]:
 
     key = file.file_extension().lower()
@@ -45,6 +46,7 @@ async def parse_file(
                 image_embeddings_client=image_embeddings_client,
                 figure_processor=figure_processor,
                 user_oid=user_oid,
+                upload_image=upload_images,
             )
     sections = process_text(pages, file, processor.splitter, category)
     return sections
@@ -130,6 +132,7 @@ class FileStrategy(Strategy):
                         self.blob_manager,
                         self.image_embeddings,
                         figure_processor=self.figure_processor,
+                        upload_images=self.image_embeddings is not None,
                     )
                     if sections:
                         await self.search_manager.update_content(sections, url=blob_url)
@@ -189,6 +192,7 @@ class UploadUserFileStrategy:
             self.image_embeddings,
             figure_processor=self.figure_processor,
             user_oid=user_oid,
+            upload_images=self.image_embeddings is not None,
         )
         if sections:
             await self.search_manager.update_content(sections, url=file.url)

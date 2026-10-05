@@ -125,6 +125,7 @@ async def process_page_image(
     image_embeddings_client: Optional[ImageEmbeddings],
     figure_processor: Optional[FigureProcessor] = None,
     user_oid: Optional[str] = None,
+    upload_image: bool = True,
 ) -> "ImageOnPage":
     """Generate description, upload image, and optionally compute embedding for a figure."""
 
@@ -134,12 +135,15 @@ async def process_page_image(
     # Generate plain (model) description text only; do not wrap in HTML markup here.
     description_text: str | None = None
     if figure_processor is not None:
-        description_text = await figure_processor.describe(image.bytes)
+        try:
+            description_text = await figure_processor.describe(image.bytes)
+        except Exception:
+            logger.warning("Figure description generation failed for figure %s", image.figure_id, exc_info=True)
 
     # Store plain descriptive text (can be None). HTML rendering is deferred to build_figure_markup.
     image.description = description_text
 
-    if image.url is None:
+    if upload_image and image.url is None:
         image.url = await blob_manager.upload_document_image(
             document_filename, image.bytes, image.filename, image.page_num, user_oid=user_oid
         )

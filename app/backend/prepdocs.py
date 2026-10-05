@@ -84,7 +84,7 @@ def setup_file_processors(
         document_intelligence_key=document_intelligence_key,
         use_local_pdf_parser=local_pdf_parser,
         use_local_html_parser=local_html_parser,
-        process_figures=use_multimodal,
+        process_figures=use_multimodal or use_content_understanding,
         csv_max_chars_per_page=csv_max_chars_per_page,
     )
 

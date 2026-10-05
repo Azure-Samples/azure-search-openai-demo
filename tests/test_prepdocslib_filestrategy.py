@@ -1,5 +1,6 @@
 import os
 from io import BytesIO
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -83,6 +84,47 @@ async def test_parse_file_with_images(monkeypatch):
     )
 
     assert sections == []
+
+
+@pytest.mark.asyncio
+async def test_parse_file_can_describe_images_without_uploading(monkeypatch):
+    mock_file = File(content=BytesIO(b"test content"))
+    mock_file.filename = lambda: "test.txt"
+    image = ImageOnPage(
+        bytes=b"fake_image",
+        bbox=(0, 0, 100, 100),
+        page_num=1,
+        figure_id="fig_1",
+        filename="test_image.png",
+        placeholder='<figure id="fig_1"></figure>',
+    )
+
+    async def mock_parse(content):
+        page = Page(page_num=1, text="Some text", offset=0)
+        page.images = [image]
+        yield page
+
+    mock_parser = type("MockParser", (), {})()
+    mock_parser.parse = mock_parse
+    mock_splitter = type("MockSplitter", (), {})()
+    mock_processor = type("MockProcessor", (), {"parser": mock_parser, "splitter": mock_splitter})()
+    mock_blob_manager = type("MockBlobManager", (), {})()
+    mock_blob_manager.upload_document_image = AsyncMock()
+    mock_figure_processor = type("MockFigureProcessor", (), {})()
+    mock_figure_processor.describe = AsyncMock(return_value="A test image")
+    monkeypatch.setattr("prepdocslib.filestrategy.process_text", lambda *args: [])
+
+    await parse_file(
+        mock_file,
+        {".txt": mock_processor},
+        blob_manager=mock_blob_manager,
+        figure_processor=mock_figure_processor,
+        upload_images=False,
+    )
+
+    assert image.description == "A test image"
+    assert image.url is None
+    mock_blob_manager.upload_document_image.assert_not_awaited()
 
 
 @pytest.mark.asyncio

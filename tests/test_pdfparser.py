@@ -727,6 +727,25 @@ async def test_process_page_image_sets_description(sample_image):
 
 
 @pytest.mark.asyncio
+async def test_process_page_image_continues_when_description_fails(sample_image, caplog):
+    blob_manager = AsyncMock()
+    figure_processor = AsyncMock()
+    figure_processor.describe = AsyncMock(side_effect=Exception("Invalid image"))
+
+    result = await process_page_image(
+        image=sample_image,
+        document_filename="test.pdf",
+        blob_manager=blob_manager,
+        image_embeddings_client=None,
+        figure_processor=figure_processor,
+        upload_image=False,
+    )
+
+    assert result.description is None
+    assert "Figure description generation failed for figure" in caplog.text
+
+
+@pytest.mark.asyncio
 async def test_process_page_image_skips_upload_if_url_exists(sample_image):
 
     sample_image.url = "https://existing.com/image.png"

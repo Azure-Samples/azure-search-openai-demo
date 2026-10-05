@@ -126,7 +126,9 @@ class ContentUnderstandingDescriber(MediaDescriber):
                 headers=headers,
                 data=image_bytes,
             ) as response:
-                response.raise_for_status()
+                if not 200 <= response.status < 300:
+                    data = await response.text()
+                    raise Exception("Error analyzing image with Content Understanding", data)
                 poll_url = response.headers["Operation-Location"]
 
                 with Progress() as progress:
