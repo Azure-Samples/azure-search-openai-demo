@@ -153,10 +153,9 @@ async def test_file_strategy_setup_with_content_understanding(monkeypatch, mock_
 
     # Create mock content understanding describer
     class MockContentUnderstandingDescriber:
-        def __init__(self, endpoint, credential, completion_model, completion_deployment):
+        def __init__(self, endpoint, credential, completion_deployment):
             self.endpoint = endpoint
             self.credential = credential
-            self.completion_model = completion_model
             self.completion_deployment = completion_deployment
             self.create_analyzer_called = False
 

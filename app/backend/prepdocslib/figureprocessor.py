@@ -11,7 +11,7 @@ from .blobmanager import BaseBlobManager
 from .embeddings import ImageEmbeddings
 from .mediadescriber import (
     ContentUnderstandingDescriber,
-    InvalidMediaError,
+    InvalidImageDimensionError,
     MediaDescriber,
     MultimodalModelDescriber,
 )
@@ -68,12 +68,11 @@ class FigureProcessor:
                 raise ValueError(
                     "Content Understanding does not support key credentials; provide a token credential instead"
                 )
-            if self.openai_model is None or self.openai_deployment is None:
-                raise ValueError("Content Understanding requires a completion model and deployment")
+            if self.openai_deployment is None:
+                raise ValueError("Content Understanding requires a completion deployment")
             self.media_describer = ContentUnderstandingDescriber(
                 self.content_understanding_endpoint,
                 self.credential,
-                completion_model=self.openai_model,
                 completion_deployment=self.openai_deployment,
             )
             return self.media_describer
@@ -138,7 +137,7 @@ async def process_page_image(
     if figure_processor is not None:
         try:
             description_text = await figure_processor.describe(image.bytes)
-        except InvalidMediaError:
+        except InvalidImageDimensionError:
             logger.warning("Figure description generation failed for figure %s", image.figure_id, exc_info=True)
 
     # Store plain descriptive text (can be None). HTML rendering is deferred to build_figure_markup.

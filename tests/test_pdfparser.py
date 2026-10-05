@@ -30,7 +30,7 @@ from prepdocslib.figureprocessor import (
     build_figure_markup,
     process_page_image,
 )
-from prepdocslib.mediadescriber import InvalidMediaError
+from prepdocslib.mediadescriber import InvalidImageDimensionError
 from prepdocslib.page import ImageOnPage
 from prepdocslib.pdfparser import DocumentAnalysisParser
 
@@ -546,10 +546,9 @@ async def test_figure_processor_content_understanding_initializes_once(monkeypat
     )
 
     class FakeDescriber:
-        def __init__(self, endpoint, credential, completion_model, completion_deployment):
+        def __init__(self, endpoint, credential, completion_deployment):
             self.endpoint = endpoint
             self.credential = credential
-            self.completion_model = completion_model
             self.completion_deployment = completion_deployment
             self.create_analyzer = AsyncMock()
             self.describe_image = AsyncMock(return_value="A diagram")
@@ -560,7 +559,6 @@ async def test_figure_processor_content_understanding_initializes_once(monkeypat
     assert result_first == "A diagram"
     describer_instance = figure_processor.media_describer  # type: ignore[attr-defined]
     assert isinstance(describer_instance, FakeDescriber)
-    assert describer_instance.completion_model == "gpt-5.4-mini"
     assert describer_instance.completion_deployment == "gpt-5.4-mini"
     describer_instance.create_analyzer.assert_awaited_once()
 
@@ -615,14 +613,14 @@ async def test_figure_processor_content_understanding_key_credential():
 
 
 @pytest.mark.asyncio
-async def test_figure_processor_content_understanding_missing_model():
+async def test_figure_processor_content_understanding_missing_deployment():
     figure_processor = FigureProcessor(
         strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
         credential=MockAzureCredential(),
         content_understanding_endpoint="https://example.com",
     )
 
-    with pytest.raises(ValueError, match="Content Understanding requires a completion model and deployment"):
+    with pytest.raises(ValueError, match="Content Understanding requires a completion deployment"):
         await figure_processor.get_media_describer()
 
 
@@ -731,7 +729,7 @@ async def test_process_page_image_sets_description(sample_image):
 async def test_process_page_image_continues_when_description_fails(sample_image, caplog):
     blob_manager = AsyncMock()
     figure_processor = AsyncMock()
-    figure_processor.describe = AsyncMock(side_effect=InvalidMediaError("Invalid image"))
+    figure_processor.describe = AsyncMock(side_effect=InvalidImageDimensionError("Invalid image"))
 
     result = await process_page_image(
         image=sample_image,

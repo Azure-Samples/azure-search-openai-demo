@@ -84,7 +84,7 @@ def configure_global_settings():
 
     # Figure Processor (with optional OpenAI for multimodal)
     openai_client = None
-    openai_model = AZURE_OPENAI_CHATGPT_MODEL or AZURE_OPENAI_CHATGPT_DEPLOYMENT
+    openai_model = None
     openai_deployment = AZURE_OPENAI_CHATGPT_DEPLOYMENT
     if USE_MULTIMODAL and (AZURE_OPENAI_SERVICE or AZURE_OPENAI_CUSTOM_URL) and AZURE_OPENAI_CHATGPT_DEPLOYMENT:
         openai_client, _ = setup_openai_client(
@@ -93,6 +93,7 @@ def configure_global_settings():
             azure_openai_service=AZURE_OPENAI_SERVICE,
             azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
         )
+        openai_model = AZURE_OPENAI_CHATGPT_MODEL or AZURE_OPENAI_CHATGPT_DEPLOYMENT
     elif USE_MULTIMODAL and not USE_MEDIA_DESCRIBER_AZURE_CU:
         logger.warning(
             "USE_MULTIMODAL is true but Azure OpenAI configuration incomplete and Content Understanding not enabled"
@@ -158,6 +159,7 @@ async def process_figure_request(req: func.HttpRequest) -> func.HttpResponse:
                 blob_manager=settings.blob_manager,
                 image_embeddings_client=settings.image_embeddings,
                 figure_processor=settings.figure_processor,
+                upload_image=settings.image_embeddings is not None,
             )
             figure_payload = image_on_page.to_skill_payload(file_name, include_bytes_base64=False)
             output_values.append(

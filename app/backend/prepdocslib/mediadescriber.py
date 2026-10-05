@@ -27,8 +27,8 @@ class MediaDescriber(ABC):
         raise NotImplementedError  # pragma: no cover
 
 
-class InvalidMediaError(Exception):
-    """Raised when a single media input cannot be processed."""
+class InvalidImageDimensionError(Exception):
+    """Raised when an image does not meet Content Understanding dimension limits."""
 
 
 class ContentUnderstandingDescriber(MediaDescriber):
@@ -56,12 +56,10 @@ class ContentUnderstandingDescriber(MediaDescriber):
         self,
         endpoint: str,
         credential: AsyncTokenCredential,
-        completion_model: str,
         completion_deployment: str,
     ):
         self.endpoint = endpoint
         self.credential = credential
-        self.completion_model = completion_model
         self.completion_deployment = completion_deployment
 
     async def poll_api(self, session, poll_url, headers):
@@ -83,7 +81,6 @@ class ContentUnderstandingDescriber(MediaDescriber):
     async def configure_model_defaults(self, session, headers):
         defaults = {
             "modelDeployments": {
-                self.completion_model: self.completion_deployment,
                 "prebuilt-analyzer-completion": self.completion_deployment,
             }
         }
@@ -137,7 +134,7 @@ class ContentUnderstandingDescriber(MediaDescriber):
                         try:
                             error = json.loads(data).get("error", {})
                             if error.get("innererror", {}).get("code") == "InvalidImageDimension":
-                                raise InvalidMediaError(data)
+                                raise InvalidImageDimensionError(data)
                         except json.JSONDecodeError:
                             pass
                     raise Exception("Error analyzing image with Content Understanding", data)

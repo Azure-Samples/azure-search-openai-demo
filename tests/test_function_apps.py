@@ -328,7 +328,10 @@ def test_document_extractor_managed_identity_reload(monkeypatch: pytest.MonkeyPa
 async def test_figure_processor_returns_enriched_metadata(monkeypatch: pytest.MonkeyPatch) -> None:
     """Figure processor enriches images with URL and description."""
 
+    process_kwargs: dict[str, Any] = {}
+
     async def fake_process_page_image(*, image, document_filename: str, **kwargs: Any):
+        process_kwargs.update(kwargs)
         image.url = f"https://images.example.com/{document_filename}/{image.figure_id}.png"
         image.description = f"Description for {image.figure_id}"
         image.embedding = [0.11, 0.22, 0.33]
@@ -376,6 +379,39 @@ async def test_figure_processor_returns_enriched_metadata(monkeypatch: pytest.Mo
     assert data["description"] == "Description for fig-1"
     assert data["embedding"] == [0.11, 0.22, 0.33]
     assert "bytes_base64" not in data
+    assert process_kwargs["upload_image"] is True
+
+
+@pytest.mark.asyncio
+async def test_figure_processor_skips_image_upload_without_embeddings(monkeypatch: pytest.MonkeyPatch) -> None:
+    process_kwargs: dict[str, Any] = {}
+
+    async def fake_process_page_image(*, image, **kwargs: Any):
+        process_kwargs.update(kwargs)
+        image.description = "Description"
+        return image
+
+    monkeypatch.setattr(figure_processor, "process_page_image", fake_process_page_image)
+    monkeypatch.setattr(
+        figure_processor,
+        "settings",
+        figure_processor.GlobalSettings(blob_manager=object(), figure_processor=object(), image_embeddings=None),
+    )
+    figure = figure_processor.ImageOnPage(
+        bytes=TEST_PNG_BYTES,
+        bbox=(1.0, 2.0, 3.0, 4.0),
+        filename="figure1.png",
+        figure_id="fig-1",
+        page_num=0,
+        placeholder='<figure id="fig-1"></figure>',
+    )
+
+    response = await figure_processor.process_figure_request(
+        build_request({"values": [{"recordId": "rec-1", "data": figure.to_skill_payload("sample.pdf")}]})
+    )
+
+    assert response.status_code == 200
+    assert process_kwargs["upload_image"] is False
 
 
 @pytest.mark.asyncio

@@ -268,7 +268,6 @@ def test_setup_figure_processor_content_understanding():
 
     assert isinstance(processor, FigureProcessor)
     assert processor.strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING
-    assert processor.openai_model == "gpt-5.4-mini"
     assert processor.openai_deployment == "gpt-5.4-mini"
 
 

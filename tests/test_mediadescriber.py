@@ -10,7 +10,7 @@ from openai.types.responses.response_usage import (
 
 from prepdocslib.mediadescriber import (
     ContentUnderstandingDescriber,
-    InvalidMediaError,
+    InvalidImageDimensionError,
     MultimodalModelDescriber,
 )
 
@@ -135,7 +135,6 @@ async def test_contentunderstanding_analyze(monkeypatch):
         assert kwargs["headers"]["Content-Type"] == "application/merge-patch+json"
         assert kwargs["json"] == {
             "modelDeployments": {
-                "gpt-5.4-mini": "gpt-5.4-mini",
                 "prebuilt-analyzer-completion": "gpt-5.4-mini",
             }
         }
@@ -180,7 +179,6 @@ async def test_contentunderstanding_analyze(monkeypatch):
     describer = ContentUnderstandingDescriber(
         endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
         credential=MockAzureCredential(),
-        completion_model="gpt-5.4-mini",
         completion_deployment="gpt-5.4-mini",
     )
     await describer.create_analyzer()
@@ -189,7 +187,6 @@ async def test_contentunderstanding_analyze(monkeypatch):
     describer_updated_analyzer = ContentUnderstandingDescriber(
         endpoint="https://updatedanalyzer.cognitiveservices.azure.com",
         credential=MockAzureCredential(),
-        completion_model="gpt-5.4-mini",
         completion_deployment="gpt-5.4-mini",
     )
     await describer_updated_analyzer.create_analyzer()
@@ -197,7 +194,6 @@ async def test_contentunderstanding_analyze(monkeypatch):
     describer_wrong_endpoint = ContentUnderstandingDescriber(
         endpoint="https://wrongservicename.cognitiveservices.azure.com",
         credential=MockAzureCredential(),
-        completion_model="gpt-5.4-mini",
         completion_deployment="gpt-5.4-mini",
     )
     with pytest.raises(Exception):
@@ -206,7 +202,6 @@ async def test_contentunderstanding_analyze(monkeypatch):
     describer_bad_analyze = ContentUnderstandingDescriber(
         endpoint="https://badanalyzer.cognitiveservices.azure.com",
         credential=MockAzureCredential(),
-        completion_model="gpt-5.4-mini",
         completion_deployment="gpt-5.4-mini",
     )
     with pytest.raises(Exception):
@@ -215,7 +210,6 @@ async def test_contentunderstanding_analyze(monkeypatch):
     describer_canceled_analyze = ContentUnderstandingDescriber(
         endpoint="https://canceledanalyzer.cognitiveservices.azure.com",
         credential=MockAzureCredential(),
-        completion_model="gpt-5.4-mini",
         completion_deployment="gpt-5.4-mini",
     )
     with pytest.raises(Exception):
@@ -224,10 +218,9 @@ async def test_contentunderstanding_analyze(monkeypatch):
     describer_invalid_image = ContentUnderstandingDescriber(
         endpoint="https://invalidimage.cognitiveservices.azure.com",
         credential=MockAzureCredential(),
-        completion_model="gpt-5.4-mini",
         completion_deployment="gpt-5.4-mini",
     )
-    with pytest.raises(InvalidMediaError):
+    with pytest.raises(InvalidImageDimensionError):
         await describer_invalid_image.describe_image(b"imagebytes")
 
 
