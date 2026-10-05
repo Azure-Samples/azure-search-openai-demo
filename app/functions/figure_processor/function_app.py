@@ -52,7 +52,7 @@ def configure_global_settings():
     # Environment configuration
     # Required variables
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
-    IMAGE_CONTAINER = os.environ["AZURE_IMAGESTORAGE_CONTAINER"]
+    IMAGE_CONTAINER = os.getenv("AZURE_IMAGESTORAGE_CONTAINER", "")
 
     # Optional feature flags
     USE_MULTIMODAL = os.getenv("USE_MULTIMODAL", "false").lower() == "true"

@@ -99,8 +99,8 @@ module visionUserRole '../core/security/role.bicep' = if (useMultimodal && !empt
   }
 }
 
-// Content Understanding: Cognitive Services User (if multimodal)
-module contentUnderstandingUserRole '../core/security/role.bicep' = if (useMultimodal && !empty(contentUnderstandingServiceName)) {
+// Content Understanding: Cognitive Services User
+module contentUnderstandingUserRole '../core/security/role.bicep' = if (!empty(contentUnderstandingServiceName)) {
   scope: resourceGroup(contentUnderstandingResourceGroupName)
   name: 'function-content-understanding-user-${uniqueString(principalId)}'
   params: {

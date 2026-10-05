@@ -527,6 +527,38 @@ def test_figure_processor_initialisation_with_env(monkeypatch: pytest.MonkeyPatc
     assert call_state["openai_client_args"]["azure_credential"] is call_state["token_credential"]
 
 
+def test_figure_processor_initialisation_without_image_container(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "acct")
+    monkeypatch.delenv("AZURE_IMAGESTORAGE_CONTAINER", raising=False)
+    monkeypatch.setenv("USE_MULTIMODAL", "false")
+    monkeypatch.setenv("USE_MEDIA_DESCRIBER_AZURE_CU", "true")
+    monkeypatch.setenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT", "https://cu.example.com")
+    monkeypatch.setenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT", "cu-deploy")
+
+    call_state: dict[str, Any] = {}
+
+    monkeypatch.setattr(figure_processor, "ManagedIdentityCredential", lambda *args, **kwargs: object())
+
+    def fake_setup_blob_manager(**kwargs):
+        call_state["blob_manager_kwargs"] = kwargs
+        return "blob"
+
+    def fake_setup_figure_processor(**kwargs):
+        call_state["figure_processor_kwargs"] = kwargs
+        return "figproc"
+
+    monkeypatch.setattr(figure_processor, "setup_blob_manager", fake_setup_blob_manager)
+    monkeypatch.setattr(figure_processor, "setup_figure_processor", fake_setup_figure_processor)
+    monkeypatch.setattr(figure_processor, "settings", None)
+
+    figure_processor.configure_global_settings()
+
+    assert call_state["blob_manager_kwargs"]["image_storage_container"] == ""
+    assert call_state["figure_processor_kwargs"]["content_understanding_deployment"] == "cu-deploy"
+    assert figure_processor.settings is not None
+    assert figure_processor.settings.image_embeddings is None
+
+
 def test_figure_processor_warns_when_openai_incomplete(monkeypatch: pytest.MonkeyPatch, caplog) -> None:
     """Figure processor is created with warning when USE_MULTIMODAL is true but OpenAI config is incomplete."""
     monkeypatch.setenv("USE_MULTIMODAL", "true")
