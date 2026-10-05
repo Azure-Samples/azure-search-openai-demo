@@ -40,6 +40,7 @@ class FigureProcessor:
         openai_model: str | None = None,
         openai_deployment: str | None = None,
         content_understanding_endpoint: str | None = None,
+        content_understanding_deployment: str | None = None,
     ) -> None:
         self.credential = credential
         self.strategy = strategy
@@ -47,6 +48,7 @@ class FigureProcessor:
         self.openai_model = openai_model
         self.openai_deployment = openai_deployment
         self.content_understanding_endpoint = content_understanding_endpoint
+        self.content_understanding_deployment = content_understanding_deployment
         self.media_describer: MediaDescriber | None = None
         self.content_understanding_ready = False
 
@@ -68,12 +70,12 @@ class FigureProcessor:
                 raise ValueError(
                     "Content Understanding does not support key credentials; provide a token credential instead"
                 )
-            if self.openai_deployment is None:
+            if self.content_understanding_deployment is None:
                 raise ValueError("Content Understanding requires a completion deployment")
             self.media_describer = ContentUnderstandingDescriber(
                 self.content_understanding_endpoint,
                 self.credential,
-                completion_deployment=self.openai_deployment,
+                completion_deployment=self.content_understanding_deployment,
             )
             return self.media_describer
 

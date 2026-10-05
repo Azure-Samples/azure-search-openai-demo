@@ -215,6 +215,7 @@ def setup_figure_processor(
     use_multimodal: bool,
     use_content_understanding: bool,
     content_understanding_endpoint: str | None,
+    content_understanding_deployment: str | None,
     openai_client: object | None,
     openai_model: str | None,
     openai_deployment: str | None,
@@ -239,7 +240,7 @@ def setup_figure_processor(
             credential=credential,
             strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
             content_understanding_endpoint=content_understanding_endpoint,
-            openai_deployment=openai_deployment,
+            content_understanding_deployment=content_understanding_deployment,
         )
     return None
 

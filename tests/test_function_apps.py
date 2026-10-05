@@ -433,6 +433,8 @@ def test_figure_processor_initialisation_with_env(monkeypatch: pytest.MonkeyPatc
     monkeypatch.setenv("USE_MULTIMODAL", "true")
     monkeypatch.setenv("AZURE_OPENAI_SERVICE", "svc")
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "deploy")
+    monkeypatch.setenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT", "https://cu.example.com")
+    monkeypatch.setenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT", "cu-deploy")
     monkeypatch.setenv("AZURE_VISION_ENDPOINT", "https://vision")
 
     call_state: dict[str, Any] = {}
@@ -495,6 +497,7 @@ def test_figure_processor_initialisation_with_env(monkeypatch: pytest.MonkeyPatc
     assert call_state["credential_client_id"] == "client-456"
     assert call_state["blob_manager_kwargs"]["storage_account"] == "acct"
     assert call_state["figure_processor_kwargs"]["use_multimodal"] is True
+    assert call_state["figure_processor_kwargs"]["content_understanding_deployment"] == "cu-deploy"
     assert call_state["token_scope"] == "https://cognitiveservices.azure.com/.default"
     assert isinstance(call_state["token_credential"], StubCredential)
     assert call_state["openai_client_args"]["azure_openai_service"] == "svc"

@@ -222,6 +222,19 @@ param visionResourceGroupLocation string = '' // Set in main.parameters.json
 param contentUnderstandingServiceName string = '' // Set in main.parameters.json
 param contentUnderstandingResourceGroupName string = '' // Set in main.parameters.json
 
+param contentUnderstandingModelName string = ''
+param contentUnderstandingDeploymentName string = ''
+param contentUnderstandingModelVersion string = ''
+param contentUnderstandingDeploymentSkuName string = ''
+param contentUnderstandingDeploymentCapacity int = 0
+var contentUnderstandingModel = {
+  modelName: !empty(contentUnderstandingModelName) ? contentUnderstandingModelName : 'gpt-5.4-mini'
+  deploymentName: !empty(contentUnderstandingDeploymentName) ? contentUnderstandingDeploymentName : 'gpt-5.4-mini'
+  deploymentVersion: !empty(contentUnderstandingModelVersion) ? contentUnderstandingModelVersion : '2026-03-17'
+  deploymentSkuName: !empty(contentUnderstandingDeploymentSkuName) ? contentUnderstandingDeploymentSkuName : 'GlobalStandard'
+  deploymentCapacity: contentUnderstandingDeploymentCapacity != 0 ? contentUnderstandingDeploymentCapacity : 10
+}
+
 param chatGptModelName string = ''
 param chatGptDeploymentName string = ''
 param chatGptDeploymentVersion string = ''
@@ -556,6 +569,7 @@ var appEnvVariables = {
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
   USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
   AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding!.outputs.endpoint : ''
+  AZURE_CONTENTUNDERSTANDING_DEPLOYMENT: contentUnderstandingModel.deploymentName
   RUNNING_IN_PRODUCTION: 'true'
   // RAG Configuration
   RAG_SEARCH_TEXT_EMBEDDINGS: ragSearchTextEmbeddings
@@ -907,16 +921,15 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
     sku: 'S0'
     deployments: [
       {
-        name: chatGpt.deploymentName
+        name: contentUnderstandingModel.deploymentName
         model: {
           format: 'OpenAI'
-          name: chatGpt.modelName
-          version: chatGpt.deploymentVersion
+          name: contentUnderstandingModel.modelName
+          version: contentUnderstandingModel.deploymentVersion
         }
         sku: {
-          name: chatGpt.deploymentSkuName
-          // Content Understanding only uses this deployment for figure descriptions.
-          capacity: 10
+          name: contentUnderstandingModel.deploymentSkuName
+          capacity: contentUnderstandingModel.deploymentCapacity
         }
       }
     ]

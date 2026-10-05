@@ -541,8 +541,7 @@ async def test_figure_processor_content_understanding_initializes_once(monkeypat
         strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
         credential=MockAzureCredential(),
         content_understanding_endpoint="https://example.com",
-        openai_model="gpt-5.4-mini",
-        openai_deployment="gpt-5.4-mini",
+        content_understanding_deployment="cu-gpt-5.4-mini",
     )
 
     class FakeDescriber:
@@ -559,7 +558,7 @@ async def test_figure_processor_content_understanding_initializes_once(monkeypat
     assert result_first == "A diagram"
     describer_instance = figure_processor.media_describer  # type: ignore[attr-defined]
     assert isinstance(describer_instance, FakeDescriber)
-    assert describer_instance.completion_deployment == "gpt-5.4-mini"
+    assert describer_instance.completion_deployment == "cu-gpt-5.4-mini"
     describer_instance.create_analyzer.assert_awaited_once()
 
     result_second = await figure_processor.describe(b"image")

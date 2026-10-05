@@ -60,6 +60,7 @@ def configure_global_settings():
 
     # Conditionally required (based on feature flags)
     CONTENT_UNDERSTANDING_ENDPOINT = os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT")
+    CONTENT_UNDERSTANDING_DEPLOYMENT = os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT")
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT")
@@ -104,6 +105,7 @@ def configure_global_settings():
         use_multimodal=USE_MULTIMODAL,
         use_content_understanding=USE_MEDIA_DESCRIBER_AZURE_CU,
         content_understanding_endpoint=CONTENT_UNDERSTANDING_ENDPOINT,
+        content_understanding_deployment=CONTENT_UNDERSTANDING_DEPLOYMENT,
         openai_client=openai_client,
         openai_model=openai_model,
         openai_deployment=openai_deployment,
