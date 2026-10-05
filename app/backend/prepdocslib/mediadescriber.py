@@ -33,6 +33,7 @@ class ContentUnderstandingDescriber(MediaDescriber):
     analyzer_schema = {
         "description": "Extract detailed structured information from images extracted from documents.",
         "baseAnalyzerId": "prebuilt-image",
+        "models": {"completion": "prebuilt-analyzer-completion"},
         "config": {"returnDetails": False},
         "fieldSchema": {
             "name": "ImageInformation",
@@ -46,9 +47,17 @@ class ContentUnderstandingDescriber(MediaDescriber):
         },
     }
 
-    def __init__(self, endpoint: str, credential: AsyncTokenCredential):
+    def __init__(
+        self,
+        endpoint: str,
+        credential: AsyncTokenCredential,
+        completion_model: str,
+        completion_deployment: str,
+    ):
         self.endpoint = endpoint
         self.credential = credential
+        self.completion_model = completion_model
+        self.completion_deployment = completion_deployment
 
     async def poll_api(self, session, poll_url, headers):
 
@@ -59,12 +68,29 @@ class ContentUnderstandingDescriber(MediaDescriber):
                 response_json = await response.json()
                 status = response_json["status"]
                 if status in ("Failed", "Canceled"):
-                    raise Exception(status)
+                    raise Exception(status, response_json.get("error"))
                 if status in ("NotStarted", "Running"):
                     raise ValueError(status)
                 return response_json
 
         return await poll()
+
+    async def configure_model_defaults(self, session, headers):
+        defaults = {
+            "modelDeployments": {
+                self.completion_model: self.completion_deployment,
+                "prebuilt-analyzer-completion": self.completion_deployment,
+            }
+        }
+        async with session.patch(
+            url=f"{self.endpoint}/contentunderstanding/defaults",
+            params={"api-version": self.CU_API_VERSION},
+            headers={**headers, "Content-Type": "application/merge-patch+json"},
+            json=defaults,
+        ) as response:
+            if response.status != 200:
+                data = await response.text()
+                raise Exception("Error configuring Content Understanding model defaults", data)
 
     async def create_analyzer(self):
         logger.info("Creating analyzer '%s'...", self.ANALYZER_ID)
@@ -72,16 +98,14 @@ class ContentUnderstandingDescriber(MediaDescriber):
         token_provider = get_bearer_token_provider(self.credential, "https://cognitiveservices.azure.com/.default")
         token = await token_provider()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-        params = {"api-version": self.CU_API_VERSION}
+        params = {"api-version": self.CU_API_VERSION, "allowReplace": "true"}
         cu_endpoint = f"{self.endpoint}/contentunderstanding/analyzers/{self.ANALYZER_ID}"
         async with aiohttp.ClientSession() as session:
+            await self.configure_model_defaults(session, headers)
             async with session.put(
                 url=cu_endpoint, params=params, headers=headers, json=self.analyzer_schema
             ) as response:
-                if response.status == 409:
-                    logger.info("Analyzer '%s' already exists.", self.ANALYZER_ID)
-                    return
-                elif response.status not in (200, 201):
+                if response.status not in (200, 201):
                     data = await response.text()
                     raise Exception("Error creating analyzer", data)
                 else:

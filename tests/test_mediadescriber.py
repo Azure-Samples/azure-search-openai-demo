@@ -1,5 +1,4 @@
 import json
-import logging
 
 import aiohttp
 import pytest
@@ -18,7 +17,7 @@ from .mocks import MockAzureCredential, MockResponse
 
 
 @pytest.mark.asyncio
-async def test_contentunderstanding_analyze(monkeypatch, caplog):
+async def test_contentunderstanding_analyze(monkeypatch):
 
     def mock_post(*args, **kwargs):
         if kwargs.get("url").find("badanalyzer") > 0:
@@ -114,14 +113,27 @@ async def test_contentunderstanding_analyze(monkeypatch, caplog):
 
     monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
 
-    def mock_put(self, *args, **kwargs):
-        if kwargs.get("url").find("existinganalyzer") > 0:
-            return MockResponse(status=409)
+    def mock_patch(self, *args, **kwargs):
+        assert kwargs["url"].endswith("contentunderstanding/defaults")
         assert kwargs["params"] == {"api-version": "2025-11-01"}
+        assert kwargs["headers"]["Content-Type"] == "application/merge-patch+json"
+        assert kwargs["json"] == {
+            "modelDeployments": {
+                "gpt-5.4-mini": "gpt-5.4-mini",
+                "prebuilt-analyzer-completion": "gpt-5.4-mini",
+            }
+        }
+        return MockResponse(status=200)
+
+    monkeypatch.setattr(aiohttp.ClientSession, "patch", mock_patch)
+
+    def mock_put(self, *args, **kwargs):
+        assert kwargs["params"] == {"api-version": "2025-11-01", "allowReplace": "true"}
         assert kwargs["json"] == ContentUnderstandingDescriber.analyzer_schema
         assert "analyzerId" not in kwargs["json"]
         assert "name" not in kwargs["json"]
         assert "scenario" not in kwargs["json"]
+        assert kwargs["json"]["models"] == {"completion": "prebuilt-analyzer-completion"}
         assert kwargs["json"]["fieldSchema"]["description"] == "Description of image."
         if kwargs.get("url").find("updatedanalyzer") > 0:
             return MockResponse(
@@ -150,37 +162,45 @@ async def test_contentunderstanding_analyze(monkeypatch, caplog):
     monkeypatch.setattr(aiohttp.ClientSession, "put", mock_put)
 
     describer = ContentUnderstandingDescriber(
-        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com", credential=MockAzureCredential()
+        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_model="gpt-5.4-mini",
+        completion_deployment="gpt-5.4-mini",
     )
     await describer.create_analyzer()
     await describer.describe_image(b"imagebytes")
 
     describer_updated_analyzer = ContentUnderstandingDescriber(
-        endpoint="https://updatedanalyzer.cognitiveservices.azure.com", credential=MockAzureCredential()
+        endpoint="https://updatedanalyzer.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_model="gpt-5.4-mini",
+        completion_deployment="gpt-5.4-mini",
     )
     await describer_updated_analyzer.create_analyzer()
 
     describer_wrong_endpoint = ContentUnderstandingDescriber(
-        endpoint="https://wrongservicename.cognitiveservices.azure.com", credential=MockAzureCredential()
+        endpoint="https://wrongservicename.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_model="gpt-5.4-mini",
+        completion_deployment="gpt-5.4-mini",
     )
     with pytest.raises(Exception):
         await describer_wrong_endpoint.create_analyzer()
 
-    describer_existing_analyzer = ContentUnderstandingDescriber(
-        endpoint="https://existinganalyzer.cognitiveservices.azure.com", credential=MockAzureCredential()
-    )
-    with caplog.at_level(logging.INFO):
-        await describer_existing_analyzer.create_analyzer()
-        assert "Analyzer 'image_analyzer' already exists." in caplog.text
-
     describer_bad_analyze = ContentUnderstandingDescriber(
-        endpoint="https://badanalyzer.cognitiveservices.azure.com", credential=MockAzureCredential()
+        endpoint="https://badanalyzer.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_model="gpt-5.4-mini",
+        completion_deployment="gpt-5.4-mini",
     )
     with pytest.raises(Exception):
         await describer_bad_analyze.describe_image(b"imagebytes")
 
     describer_canceled_analyze = ContentUnderstandingDescriber(
-        endpoint="https://canceledanalyzer.cognitiveservices.azure.com", credential=MockAzureCredential()
+        endpoint="https://canceledanalyzer.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_model="gpt-5.4-mini",
+        completion_deployment="gpt-5.4-mini",
     )
     with pytest.raises(Exception):
         await describer_canceled_analyze.describe_image(b"imagebytes")

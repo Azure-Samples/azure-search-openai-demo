@@ -905,6 +905,21 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
     location: 'westus'
     tags: tags
     sku: 'S0'
+    deployments: [
+      {
+        name: chatGpt.deploymentName
+        model: {
+          format: 'OpenAI'
+          name: chatGpt.modelName
+          version: chatGpt.deploymentVersion
+        }
+        sku: {
+          name: chatGpt.deploymentSkuName
+          // Content Understanding only uses this deployment for figure descriptions.
+          capacity: 10
+        }
+      }
+    ]
     restore: restoreCognitiveServices
   }
 }

@@ -262,12 +262,14 @@ def test_setup_figure_processor_content_understanding():
         content_understanding_endpoint="https://example.com",
         credential=MockAzureCredential(),
         openai_client=None,
-        openai_model=None,
-        openai_deployment=None,
+        openai_model="gpt-5.4-mini",
+        openai_deployment="gpt-5.4-mini",
     )
 
     assert isinstance(processor, FigureProcessor)
     assert processor.strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING
+    assert processor.openai_model == "gpt-5.4-mini"
+    assert processor.openai_deployment == "gpt-5.4-mini"
 
 
 def test_build_file_processors_with_document_intelligence_key():

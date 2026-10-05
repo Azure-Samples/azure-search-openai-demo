@@ -239,6 +239,8 @@ def setup_figure_processor(
             credential=credential,
             strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
             content_understanding_endpoint=content_understanding_endpoint,
+            openai_model=openai_model,
+            openai_deployment=openai_deployment,
         )
     return None
 

@@ -84,8 +84,8 @@ def configure_global_settings():
 
     # Figure Processor (with optional OpenAI for multimodal)
     openai_client = None
-    openai_model = None
-    openai_deployment = None
+    openai_model = AZURE_OPENAI_CHATGPT_MODEL or AZURE_OPENAI_CHATGPT_DEPLOYMENT
+    openai_deployment = AZURE_OPENAI_CHATGPT_DEPLOYMENT
     if USE_MULTIMODAL and (AZURE_OPENAI_SERVICE or AZURE_OPENAI_CUSTOM_URL) and AZURE_OPENAI_CHATGPT_DEPLOYMENT:
         openai_client, _ = setup_openai_client(
             openai_host=OpenAIHost.AZURE_CUSTOM if AZURE_OPENAI_CUSTOM_URL else OpenAIHost.AZURE,
@@ -93,8 +93,6 @@ def configure_global_settings():
             azure_openai_service=AZURE_OPENAI_SERVICE,
             azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
         )
-        openai_model = AZURE_OPENAI_CHATGPT_MODEL or AZURE_OPENAI_CHATGPT_DEPLOYMENT
-        openai_deployment = AZURE_OPENAI_CHATGPT_DEPLOYMENT
     elif USE_MULTIMODAL and not USE_MEDIA_DESCRIBER_AZURE_CU:
         logger.warning(
             "USE_MULTIMODAL is true but Azure OpenAI configuration incomplete and Content Understanding not enabled"

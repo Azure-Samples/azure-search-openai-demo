@@ -111,9 +111,11 @@ async def test_file_strategy_setup_with_content_understanding(monkeypatch, mock_
 
     # Create mock content understanding describer
     class MockContentUnderstandingDescriber:
-        def __init__(self, endpoint, credential):
+        def __init__(self, endpoint, credential, completion_model, completion_deployment):
             self.endpoint = endpoint
             self.credential = credential
+            self.completion_model = completion_model
+            self.completion_deployment = completion_deployment
             self.create_analyzer_called = False
 
         async def create_analyzer(self):
@@ -128,6 +130,8 @@ async def test_file_strategy_setup_with_content_understanding(monkeypatch, mock_
         strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
         credential=MockAzureCredential(),
         content_understanding_endpoint="https://example.com",
+        openai_model="gpt-5.4-mini",
+        openai_deployment="gpt-5.4-mini",
     )
 
     # Mock create_index

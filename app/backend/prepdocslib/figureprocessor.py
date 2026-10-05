@@ -67,7 +67,14 @@ class FigureProcessor:
                 raise ValueError(
                     "Content Understanding does not support key credentials; provide a token credential instead"
                 )
-            self.media_describer = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.credential)
+            if self.openai_model is None or self.openai_deployment is None:
+                raise ValueError("Content Understanding requires a completion model and deployment")
+            self.media_describer = ContentUnderstandingDescriber(
+                self.content_understanding_endpoint,
+                self.credential,
+                completion_model=self.openai_model,
+                completion_deployment=self.openai_deployment,
+            )
             return self.media_describer
 
         if self.strategy == MediaDescriptionStrategy.OPENAI:

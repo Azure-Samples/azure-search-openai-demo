@@ -203,6 +203,8 @@ azd env set USE_MEDIA_DESCRIBER_AZURE_CU true
 ```
 
 If you have already run `azd up`, you will need to run `azd provision` to create the new Content Understanding service.
+Provisioning also creates a small deployment of the configured chat model on the Content Understanding resource
+and registers it as the analyzer's completion model, so the subscription needs available model quota in West US.
 If you have already indexed your documents and want to re-index them with the media descriptions,
 first [remove the existing documents](./data_ingestion.md#removing-documents) and then [re-ingest the data](./data_ingestion.md#indexing-additional-documents).
 
