@@ -202,9 +202,11 @@ To enable media description with Azure Content Understanding, run:
 azd env set USE_MEDIA_DESCRIBER_AZURE_CU true
 ```
 
-If you have already run `azd up`, you will need to run `azd provision` to create the new Content Understanding service.
-Provisioning also creates a small completion-model deployment on the Content Understanding resource
-and registers it as the analyzer's completion model, so the subscription needs available model quota in West US.
+Before deploying this version, run `azd provision` for every existing environment that uses Content Understanding,
+including environments where Content Understanding was already enabled. The GA analyzer requires a completion-model
+deployment and default mapping that do not exist in environments provisioned by earlier versions, so running only
+`azd deploy` will not complete the upgrade. Provisioning also creates the Content Understanding service when first
+enabling the feature and requires available model quota in West US.
 The Content Understanding completion model is configured independently from the application's chat model. To override
 its defaults, set `AZURE_CONTENTUNDERSTANDING_MODEL`, `AZURE_CONTENTUNDERSTANDING_MODEL_VERSION`,
 `AZURE_CONTENTUNDERSTANDING_DEPLOYMENT`, `AZURE_CONTENTUNDERSTANDING_DEPLOYMENT_SKU`, or
