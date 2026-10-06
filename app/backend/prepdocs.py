@@ -311,7 +311,7 @@ if __name__ == "__main__":  # pragma: no cover
             use_content_understanding=use_content_understanding,
             use_multimodal=use_multimodal,
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
-            content_understanding_deployment=os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT") or "gpt-5.4-mini",
+            content_understanding_deployment=os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT"),
             openai_client=openai_client,
             openai_model=os.getenv("AZURE_OPENAI_CHATGPT_MODEL"),
             openai_deployment=os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == OpenAIHost.AZURE else None,

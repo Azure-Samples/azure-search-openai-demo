@@ -625,7 +625,7 @@ async def setup_clients():
             local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER", "").lower() == "true",
             use_content_understanding=os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() == "true",
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
-            content_understanding_deployment=os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT") or "gpt-5.4-mini",
+            content_understanding_deployment=os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT"),
             use_multimodal=USE_MULTIMODAL,
             openai_client=openai_client,
             openai_model=OPENAI_CHATGPT_MODEL,
