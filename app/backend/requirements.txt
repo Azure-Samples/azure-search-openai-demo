@@ -76,7 +76,7 @@ cffi==2.0.0
     # via cryptography
 charset-normalizer==3.3.2
     # via requests
-click==8.4.2
+click==8.5.0
     # via
     #   flask
     #   quart
@@ -149,7 +149,7 @@ jiter==0.11.0
     # via openai
 markdown-it-py==3.0.0
     # via rich
-markupsafe==3.0.3
+markupsafe==3.0.4
     # via
     #   flask
     #   jinja2
@@ -339,7 +339,7 @@ pypdf==6.14.2
     # via -r requirements.in
 python-dotenv==1.2.2
     # via dotenv-azd
-quart==0.20.0
+quart==0.23.1
     # via
     #   -r requirements.in
     #   quart-cors
@@ -402,7 +402,7 @@ urllib3==2.7.0
     # via requests
 uvicorn==0.30.6
     # via -r requirements.in
-werkzeug==3.1.8
+werkzeug==3.1.9
     # via
     #   azure-functions
     #   flask
