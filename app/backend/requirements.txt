@@ -104,7 +104,7 @@ h11==0.16.0
     #   hypercorn
     #   uvicorn
     #   wsproto
-h2==4.3.0
+h2==4.4.1
     # via
     #   httpx
     #   hypercorn
