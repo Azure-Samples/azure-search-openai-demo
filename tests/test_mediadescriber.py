@@ -1,4 +1,5 @@
 import json
+from unittest.mock import AsyncMock
 
 import aiohttp
 import pytest
@@ -239,7 +240,6 @@ async def test_contentunderstanding_skips_matching_analyzer(monkeypatch):
             "enableOcr": False,
         },
         "id": "image_analyzer",
-        "status": "ready",
     }
 
     def mock_patch(self, *args, **kwargs):
@@ -261,6 +261,44 @@ async def test_contentunderstanding_skips_matching_analyzer(monkeypatch):
         completion_deployment="gpt-5.4-mini",
     )
     await describer.create_analyzer()
+
+
+@pytest.mark.asyncio
+async def test_contentunderstanding_waits_for_matching_analyzer(monkeypatch):
+    existing_analyzer = {
+        **ContentUnderstandingDescriber.analyzer_schema,
+        "status": "ready",
+    }
+    get_call_count = 0
+
+    def mock_patch(self, *args, **kwargs):
+        return MockResponse(status=200)
+
+    def mock_get(self, *args, **kwargs):
+        nonlocal get_call_count
+        get_call_count += 1
+        if get_call_count == 1:
+            return MockResponse(status=200, text=json.dumps({**existing_analyzer, "status": "creating"}))
+        return MockResponse(status=200, text=json.dumps(existing_analyzer))
+
+    def mock_put(self, *args, **kwargs):
+        raise AssertionError("Matching analyzer should not be replaced")
+
+    sleep = AsyncMock()
+    monkeypatch.setattr("asyncio.sleep", sleep)
+    monkeypatch.setattr(aiohttp.ClientSession, "patch", mock_patch)
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+    monkeypatch.setattr(aiohttp.ClientSession, "put", mock_put)
+
+    describer = ContentUnderstandingDescriber(
+        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    await describer.create_analyzer()
+
+    assert get_call_count == 2
+    sleep.assert_awaited_once()
 
 
 @pytest.mark.asyncio

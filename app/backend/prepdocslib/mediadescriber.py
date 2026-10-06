@@ -105,6 +105,25 @@ class ContentUnderstandingDescriber(MediaDescriber):
 
         return contains_expected(existing_analyzer, cls.analyzer_schema)
 
+    async def get_settled_analyzer(self, session, cu_endpoint, params, headers):
+        @retry(stop=stop_after_attempt(60), wait=wait_fixed(2), retry=retry_if_exception_type(ValueError))
+        async def get_analyzer():
+            async with session.get(url=cu_endpoint, params=params, headers=headers) as response:
+                if response.status == 404:
+                    return None
+                if response.status != 200:
+                    data = await response.text()
+                    raise Exception("Error checking analyzer", data)
+
+                analyzer = await response.json()
+                status = analyzer.get("status")
+                if status is not None and status.lower() in ("creating", "deleting"):
+                    logger.info("Waiting for analyzer '%s' while status is '%s'.", self.ANALYZER_ID, status)
+                    raise ValueError(status)
+                return analyzer
+
+        return await get_analyzer()
+
     async def create_analyzer(self):
         token_provider = get_bearer_token_provider(self.credential, "https://cognitiveservices.azure.com/.default")
         token = await token_provider()
@@ -113,15 +132,12 @@ class ContentUnderstandingDescriber(MediaDescriber):
         cu_endpoint = f"{self.endpoint}/contentunderstanding/analyzers/{self.ANALYZER_ID}"
         async with aiohttp.ClientSession() as session:
             await self.configure_model_defaults(session, headers)
-            async with session.get(url=cu_endpoint, params=get_params, headers=headers) as response:
-                if response.status == 200:
-                    existing_analyzer = await response.json()
-                    if self.analyzer_schema_matches(existing_analyzer):
-                        logger.info("Analyzer '%s' is already up to date.", self.ANALYZER_ID)
-                        return
-                elif response.status != 404:
-                    data = await response.text()
-                    raise Exception("Error checking analyzer", data)
+            existing_analyzer = await self.get_settled_analyzer(session, cu_endpoint, get_params, headers)
+            if existing_analyzer is not None:
+                status = existing_analyzer.get("status")
+                if self.analyzer_schema_matches(existing_analyzer) and (status is None or status.lower() == "ready"):
+                    logger.info("Analyzer '%s' is already up to date.", self.ANALYZER_ID)
+                    return
 
             logger.info("Creating or replacing analyzer '%s'...", self.ANALYZER_ID)
             params = {**get_params, "allowReplace": "true"}
