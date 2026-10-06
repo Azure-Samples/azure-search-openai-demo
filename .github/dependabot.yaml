@@ -31,6 +31,10 @@ updates:
       interval: "weekly"
     ignore:
       - dependency-name: "pydantic-core"
+      # Ignore quart >=0.21 for now: quart 0.21+ requires Python >=3.11 (0.23+ requires >=3.13), while the app supports Python 3.10
+      - dependency-name: "quart"
+        versions:
+          - ">=0.21"
     groups:
       telemetry:
         patterns:
