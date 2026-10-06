@@ -232,7 +232,7 @@ var contentUnderstandingModel = {
   deploymentName: !empty(contentUnderstandingDeploymentName) ? contentUnderstandingDeploymentName : 'gpt-5.4-mini'
   deploymentVersion: !empty(contentUnderstandingModelVersion) ? contentUnderstandingModelVersion : '2026-03-17'
   deploymentSkuName: !empty(contentUnderstandingDeploymentSkuName) ? contentUnderstandingDeploymentSkuName : 'GlobalStandard'
-  deploymentCapacity: contentUnderstandingDeploymentCapacity != 0 ? contentUnderstandingDeploymentCapacity : 10
+  deploymentCapacity: contentUnderstandingDeploymentCapacity != 0 ? contentUnderstandingDeploymentCapacity : 30
 }
 
 param chatGptModelName string = ''
