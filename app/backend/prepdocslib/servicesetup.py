@@ -223,10 +223,17 @@ def setup_figure_processor(
     """Create a FigureProcessor based on feature flags.
 
     Priority order:
-      1. use_multimodal -> MediaDescriptionStrategy.OPENAI
-      2. else if use_content_understanding and endpoint -> CONTENTUNDERSTANDING
+      1. use_content_understanding -> CONTENTUNDERSTANDING
+      2. else if use_multimodal -> MediaDescriptionStrategy.OPENAI
       3. else -> return None (no figure description)
     """
+    if use_content_understanding:
+        return FigureProcessor(
+            credential=credential,
+            strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
+            content_understanding_endpoint=content_understanding_endpoint,
+            content_understanding_deployment=content_understanding_deployment,
+        )
     if use_multimodal:
         return FigureProcessor(
             credential=credential,
@@ -234,13 +241,6 @@ def setup_figure_processor(
             openai_client=openai_client,
             openai_model=openai_model,
             openai_deployment=openai_deployment,
-        )
-    if use_content_understanding and content_understanding_endpoint:
-        return FigureProcessor(
-            credential=credential,
-            strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
-            content_understanding_endpoint=content_understanding_endpoint,
-            content_understanding_deployment=content_understanding_deployment,
         )
     return None
 

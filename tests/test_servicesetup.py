@@ -254,10 +254,11 @@ def test_setup_image_embeddings_multimodal_without_vision():
         )
 
 
-def test_setup_figure_processor_content_understanding():
+@pytest.mark.parametrize("use_multimodal", [False, True])
+def test_setup_figure_processor_content_understanding(use_multimodal):
     """Test that setup_figure_processor returns correct processor for content understanding."""
     processor = setup_figure_processor(
-        use_multimodal=False,
+        use_multimodal=use_multimodal,
         use_content_understanding=True,
         content_understanding_endpoint="https://example.com",
         content_understanding_deployment="cu-gpt-5.4-mini",
