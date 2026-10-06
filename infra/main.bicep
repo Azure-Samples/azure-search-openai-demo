@@ -1605,6 +1605,19 @@ module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserU
   }
 }
 
+// For Content Understanding access by the backend
+module contentUnderstandingRoleBackend 'core/security/role.bicep' = if (useUserUpload && useMediaDescriberAzureCU) {
+  scope: az.resourceGroup(contentUnderstandingResourceGroupNameActual)
+  name: 'content-understanding-role-backend'
+  params: {
+    principalId: (deploymentTarget == 'appservice')
+      ? backend!.outputs.identityPrincipalId
+      : acaBackend!.outputs.identityPrincipalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
+    principalType: 'ServicePrincipal'
+  }
+}
+
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenantId
 output AZURE_AUTH_TENANT_ID string = authTenantId
