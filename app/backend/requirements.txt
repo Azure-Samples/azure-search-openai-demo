@@ -191,7 +191,7 @@ msgraph-sdk==1.58.0
     # via -r requirements.in
 msrest==0.7.1
     # via azure-monitor-opentelemetry-exporter
-multidict==6.7.0
+multidict==6.9.1
     # via
     #   aiohttp
     #   yarl
