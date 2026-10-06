@@ -94,16 +94,37 @@ class ContentUnderstandingDescriber(MediaDescriber):
                 data = await response.text()
                 raise Exception("Error configuring Content Understanding model defaults", data)
 
-    async def create_analyzer(self):
-        logger.info("Creating analyzer '%s'...", self.ANALYZER_ID)
+    @classmethod
+    def analyzer_schema_matches(cls, existing_analyzer: dict) -> bool:
+        def contains_expected(actual, expected) -> bool:
+            if isinstance(expected, dict):
+                return isinstance(actual, dict) and all(
+                    key in actual and contains_expected(actual[key], value) for key, value in expected.items()
+                )
+            return actual == expected
 
+        return contains_expected(existing_analyzer, cls.analyzer_schema)
+
+    async def create_analyzer(self):
         token_provider = get_bearer_token_provider(self.credential, "https://cognitiveservices.azure.com/.default")
         token = await token_provider()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-        params = {"api-version": self.CU_API_VERSION, "allowReplace": "true"}
+        get_params = {"api-version": self.CU_API_VERSION}
         cu_endpoint = f"{self.endpoint}/contentunderstanding/analyzers/{self.ANALYZER_ID}"
         async with aiohttp.ClientSession() as session:
             await self.configure_model_defaults(session, headers)
+            async with session.get(url=cu_endpoint, params=get_params, headers=headers) as response:
+                if response.status == 200:
+                    existing_analyzer = await response.json()
+                    if self.analyzer_schema_matches(existing_analyzer):
+                        logger.info("Analyzer '%s' is already up to date.", self.ANALYZER_ID)
+                        return
+                elif response.status != 404:
+                    data = await response.text()
+                    raise Exception("Error checking analyzer", data)
+
+            logger.info("Creating or replacing analyzer '%s'...", self.ANALYZER_ID)
+            params = {**get_params, "allowReplace": "true"}
             async with session.put(
                 url=cu_endpoint, params=params, headers=headers, json=self.analyzer_schema
             ) as response:

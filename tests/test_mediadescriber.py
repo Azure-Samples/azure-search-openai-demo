@@ -67,7 +67,12 @@ async def test_contentunderstanding_analyze(monkeypatch):
     num_poll_calls = 0
 
     def mock_get(self, url, **kwargs):
-        if url.endswith(
+        if url.endswith("contentunderstanding/analyzers/image_analyzer"):
+            assert kwargs["params"] == {"api-version": "2025-11-01"}
+            if url.startswith("https://updatedanalyzer"):
+                return MockResponse(status=200, text=json.dumps({"baseAnalyzerId": "prebuilt-document"}))
+            return MockResponse(status=404)
+        elif url.endswith(
             "contentunderstanding/analyzers/image_analyzer/results/53e4c016-d2c0-48a9-a9f4-38891f7d45f0?api-version=2025-11-01"
         ):
             nonlocal num_poll_calls
@@ -222,6 +227,60 @@ async def test_contentunderstanding_analyze(monkeypatch):
     )
     with pytest.raises(InvalidImageDimensionError):
         await describer_invalid_image.describe_image(b"imagebytes")
+
+
+@pytest.mark.asyncio
+async def test_contentunderstanding_skips_matching_analyzer(monkeypatch):
+    existing_analyzer = {
+        **ContentUnderstandingDescriber.analyzer_schema,
+        "config": {
+            **ContentUnderstandingDescriber.analyzer_schema["config"],
+            "disableFaceBlurring": False,
+            "enableOcr": False,
+        },
+        "id": "image_analyzer",
+        "status": "ready",
+    }
+
+    def mock_patch(self, *args, **kwargs):
+        return MockResponse(status=200)
+
+    def mock_get(self, *args, **kwargs):
+        return MockResponse(status=200, text=json.dumps(existing_analyzer))
+
+    def mock_put(self, *args, **kwargs):
+        raise AssertionError("Matching analyzer should not be replaced")
+
+    monkeypatch.setattr(aiohttp.ClientSession, "patch", mock_patch)
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+    monkeypatch.setattr(aiohttp.ClientSession, "put", mock_put)
+
+    describer = ContentUnderstandingDescriber(
+        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    await describer.create_analyzer()
+
+
+@pytest.mark.asyncio
+async def test_contentunderstanding_analyzer_get_error(monkeypatch):
+    def mock_patch(self, *args, **kwargs):
+        return MockResponse(status=200)
+
+    def mock_get(self, *args, **kwargs):
+        return MockResponse(status=500, text="service unavailable")
+
+    monkeypatch.setattr(aiohttp.ClientSession, "patch", mock_patch)
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+
+    describer = ContentUnderstandingDescriber(
+        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    with pytest.raises(Exception, match="Error checking analyzer"):
+        await describer.create_analyzer()
 
 
 class MockAsyncOpenAI:

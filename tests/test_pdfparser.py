@@ -1,3 +1,4 @@
+import asyncio
 import io
 import json
 import logging
@@ -554,15 +555,19 @@ async def test_figure_processor_content_understanding_initializes_once(monkeypat
 
     monkeypatch.setattr("prepdocslib.figureprocessor.ContentUnderstandingDescriber", FakeDescriber)
 
-    result_first = await figure_processor.describe(b"image")
+    result_first, result_second = await asyncio.gather(
+        figure_processor.describe(b"image"),
+        figure_processor.describe(b"image"),
+    )
     assert result_first == "A diagram"
+    assert result_second == "A diagram"
     describer_instance = figure_processor.media_describer  # type: ignore[attr-defined]
     assert isinstance(describer_instance, FakeDescriber)
     assert describer_instance.completion_deployment == "cu-gpt-5.4-mini"
     describer_instance.create_analyzer.assert_awaited_once()
 
-    result_second = await figure_processor.describe(b"image")
-    assert result_second == "A diagram"
+    result_third = await figure_processor.describe(b"image")
+    assert result_third == "A diagram"
     assert describer_instance.create_analyzer.await_count == 1
 
 

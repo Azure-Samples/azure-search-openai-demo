@@ -1,5 +1,6 @@
 """Utilities for describing and enriching figures extracted from documents."""
 
+import asyncio
 import logging
 from enum import Enum
 from typing import Any, Optional
@@ -51,6 +52,7 @@ class FigureProcessor:
         self.content_understanding_deployment = content_understanding_deployment
         self.media_describer: MediaDescriber | None = None
         self.content_understanding_ready = False
+        self.content_understanding_lock = asyncio.Lock()
 
     async def get_media_describer(self) -> MediaDescriber | None:
         """Return (and lazily create) the media describer for this processor."""
@@ -102,8 +104,10 @@ class FigureProcessor:
         if describer is None:
             return None
         if isinstance(describer, ContentUnderstandingDescriber) and not self.content_understanding_ready:
-            await describer.create_analyzer()
-            self.content_understanding_ready = True
+            async with self.content_understanding_lock:
+                if not self.content_understanding_ready:
+                    await describer.create_analyzer()
+                    self.content_understanding_ready = True
         return await describer.describe_image(image_bytes)
 
 
