@@ -1608,7 +1608,6 @@ module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserU
 // For Content Understanding access by the backend
 module contentUnderstandingRoleBackend 'core/security/role.bicep' = if (useUserUpload && useMediaDescriberAzureCU) {
   scope: az.resourceGroup(contentUnderstandingResourceGroupNameActual)
-  name: 'content-understanding-role-backend'
   params: {
     principalId: (deploymentTarget == 'appservice')
       ? backend!.outputs.identityPrincipalId
