@@ -254,20 +254,23 @@ def test_setup_image_embeddings_multimodal_without_vision():
         )
 
 
-def test_setup_figure_processor_content_understanding():
+@pytest.mark.parametrize("use_multimodal", [False, True])
+def test_setup_figure_processor_content_understanding(use_multimodal):
     """Test that setup_figure_processor returns correct processor for content understanding."""
     processor = setup_figure_processor(
-        use_multimodal=False,
+        use_multimodal=use_multimodal,
         use_content_understanding=True,
         content_understanding_endpoint="https://example.com",
+        content_understanding_deployment="cu-gpt-5.4-mini",
         credential=MockAzureCredential(),
         openai_client=None,
-        openai_model=None,
-        openai_deployment=None,
+        openai_model="gpt-5.4-mini",
+        openai_deployment="gpt-5.4-mini",
     )
 
     assert isinstance(processor, FigureProcessor)
     assert processor.strategy == MediaDescriptionStrategy.CONTENTUNDERSTANDING
+    assert processor.content_understanding_deployment == "cu-gpt-5.4-mini"
 
 
 def test_build_file_processors_with_document_intelligence_key():

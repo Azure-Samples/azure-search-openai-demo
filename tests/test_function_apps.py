@@ -324,11 +324,37 @@ def test_document_extractor_managed_identity_reload(monkeypatch: pytest.MonkeyPa
     document_extractor.configure_global_settings()
 
 
+def test_document_extractor_enables_figures_for_content_understanding(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "teststorage")
+    monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "testcontainer")
+    monkeypatch.setenv("AZURE_STORAGE_RESOURCE_GROUP", "testrg")
+    monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", "test-sub-id")
+    monkeypatch.setenv("USE_MULTIMODAL", "false")
+    monkeypatch.setenv("USE_MEDIA_DESCRIBER_AZURE_CU", "true")
+
+    processor_kwargs: dict[str, Any] = {}
+
+    def fake_build_file_processors(**kwargs):
+        processor_kwargs.update(kwargs)
+        return {}
+
+    monkeypatch.setattr(document_extractor, "ManagedIdentityCredential", lambda *args, **kwargs: object())
+    monkeypatch.setattr(document_extractor, "build_file_processors", fake_build_file_processors)
+    monkeypatch.setattr(document_extractor, "setup_blob_manager", lambda **kwargs: object())
+
+    document_extractor.configure_global_settings()
+
+    assert processor_kwargs["process_figures"] is True
+
+
 @pytest.mark.asyncio
 async def test_figure_processor_returns_enriched_metadata(monkeypatch: pytest.MonkeyPatch) -> None:
     """Figure processor enriches images with URL and description."""
 
+    process_kwargs: dict[str, Any] = {}
+
     async def fake_process_page_image(*, image, document_filename: str, **kwargs: Any):
+        process_kwargs.update(kwargs)
         image.url = f"https://images.example.com/{document_filename}/{image.figure_id}.png"
         image.description = f"Description for {image.figure_id}"
         image.embedding = [0.11, 0.22, 0.33]
@@ -376,6 +402,39 @@ async def test_figure_processor_returns_enriched_metadata(monkeypatch: pytest.Mo
     assert data["description"] == "Description for fig-1"
     assert data["embedding"] == [0.11, 0.22, 0.33]
     assert "bytes_base64" not in data
+    assert process_kwargs["upload_image"] is True
+
+
+@pytest.mark.asyncio
+async def test_figure_processor_skips_image_upload_without_embeddings(monkeypatch: pytest.MonkeyPatch) -> None:
+    process_kwargs: dict[str, Any] = {}
+
+    async def fake_process_page_image(*, image, **kwargs: Any):
+        process_kwargs.update(kwargs)
+        image.description = "Description"
+        return image
+
+    monkeypatch.setattr(figure_processor, "process_page_image", fake_process_page_image)
+    monkeypatch.setattr(
+        figure_processor,
+        "settings",
+        figure_processor.GlobalSettings(blob_manager=object(), figure_processor=object(), image_embeddings=None),
+    )
+    figure = figure_processor.ImageOnPage(
+        bytes=TEST_PNG_BYTES,
+        bbox=(1.0, 2.0, 3.0, 4.0),
+        filename="figure1.png",
+        figure_id="fig-1",
+        page_num=0,
+        placeholder='<figure id="fig-1"></figure>',
+    )
+
+    response = await figure_processor.process_figure_request(
+        build_request({"values": [{"recordId": "rec-1", "data": figure.to_skill_payload("sample.pdf")}]})
+    )
+
+    assert response.status_code == 200
+    assert process_kwargs["upload_image"] is False
 
 
 @pytest.mark.asyncio
@@ -397,6 +456,8 @@ def test_figure_processor_initialisation_with_env(monkeypatch: pytest.MonkeyPatc
     monkeypatch.setenv("USE_MULTIMODAL", "true")
     monkeypatch.setenv("AZURE_OPENAI_SERVICE", "svc")
     monkeypatch.setenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT", "deploy")
+    monkeypatch.setenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT", "https://cu.example.com")
+    monkeypatch.setenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT", "cu-deploy")
     monkeypatch.setenv("AZURE_VISION_ENDPOINT", "https://vision")
 
     call_state: dict[str, Any] = {}
@@ -459,10 +520,43 @@ def test_figure_processor_initialisation_with_env(monkeypatch: pytest.MonkeyPatc
     assert call_state["credential_client_id"] == "client-456"
     assert call_state["blob_manager_kwargs"]["storage_account"] == "acct"
     assert call_state["figure_processor_kwargs"]["use_multimodal"] is True
+    assert call_state["figure_processor_kwargs"]["content_understanding_deployment"] == "cu-deploy"
     assert call_state["token_scope"] == "https://cognitiveservices.azure.com/.default"
     assert isinstance(call_state["token_credential"], StubCredential)
     assert call_state["openai_client_args"]["azure_openai_service"] == "svc"
     assert call_state["openai_client_args"]["azure_credential"] is call_state["token_credential"]
+
+
+def test_figure_processor_initialisation_without_image_container(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("AZURE_STORAGE_ACCOUNT", "acct")
+    monkeypatch.delenv("AZURE_IMAGESTORAGE_CONTAINER", raising=False)
+    monkeypatch.setenv("USE_MULTIMODAL", "false")
+    monkeypatch.setenv("USE_MEDIA_DESCRIBER_AZURE_CU", "true")
+    monkeypatch.setenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT", "https://cu.example.com")
+    monkeypatch.setenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT", "cu-deploy")
+
+    call_state: dict[str, Any] = {}
+
+    monkeypatch.setattr(figure_processor, "ManagedIdentityCredential", lambda *args, **kwargs: object())
+
+    def fake_setup_blob_manager(**kwargs):
+        call_state["blob_manager_kwargs"] = kwargs
+        return "blob"
+
+    def fake_setup_figure_processor(**kwargs):
+        call_state["figure_processor_kwargs"] = kwargs
+        return "figproc"
+
+    monkeypatch.setattr(figure_processor, "setup_blob_manager", fake_setup_blob_manager)
+    monkeypatch.setattr(figure_processor, "setup_figure_processor", fake_setup_figure_processor)
+    monkeypatch.setattr(figure_processor, "settings", None)
+
+    figure_processor.configure_global_settings()
+
+    assert call_state["blob_manager_kwargs"]["image_storage_container"] == ""
+    assert call_state["figure_processor_kwargs"]["content_understanding_deployment"] == "cu-deploy"
+    assert figure_processor.settings is not None
+    assert figure_processor.settings.image_embeddings is None
 
 
 def test_figure_processor_warns_when_openai_incomplete(monkeypatch: pytest.MonkeyPatch, caplog) -> None:

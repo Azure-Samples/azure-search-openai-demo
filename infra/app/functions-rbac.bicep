@@ -99,13 +99,13 @@ module visionUserRole '../core/security/role.bicep' = if (useMultimodal && !empt
   }
 }
 
-// Content Understanding: Cognitive Services User (if multimodal)
-module contentUnderstandingUserRole '../core/security/role.bicep' = if (useMultimodal && !empty(contentUnderstandingServiceName)) {
+// Content Understanding: Cognitive Services Content Understanding Contributor
+module contentUnderstandingUserRole '../core/security/role.bicep' = if (!empty(contentUnderstandingServiceName)) {
   scope: resourceGroup(contentUnderstandingResourceGroupName)
   name: 'function-content-understanding-user-${uniqueString(principalId)}'
   params: {
     principalId: principalId
-    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908' // Cognitive Services User
+    roleDefinitionId: '59a2dba3-6303-4fd8-9a2e-8cbb4bdda972' // Cognitive Services Content Understanding Contributor
     principalType: 'ServicePrincipal'
   }
 }

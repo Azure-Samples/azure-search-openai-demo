@@ -1,5 +1,6 @@
 """Utilities for describing and enriching figures extracted from documents."""
 
+import asyncio
 import logging
 from enum import Enum
 from typing import Any, Optional
@@ -11,6 +12,7 @@ from .blobmanager import BaseBlobManager
 from .embeddings import ImageEmbeddings
 from .mediadescriber import (
     ContentUnderstandingDescriber,
+    InvalidImageDimensionError,
     MediaDescriber,
     MultimodalModelDescriber,
 )
@@ -39,6 +41,7 @@ class FigureProcessor:
         openai_model: str | None = None,
         openai_deployment: str | None = None,
         content_understanding_endpoint: str | None = None,
+        content_understanding_deployment: str | None = None,
     ) -> None:
         self.credential = credential
         self.strategy = strategy
@@ -46,8 +49,10 @@ class FigureProcessor:
         self.openai_model = openai_model
         self.openai_deployment = openai_deployment
         self.content_understanding_endpoint = content_understanding_endpoint
+        self.content_understanding_deployment = content_understanding_deployment
         self.media_describer: MediaDescriber | None = None
         self.content_understanding_ready = False
+        self.content_understanding_lock = asyncio.Lock()
 
     async def get_media_describer(self) -> MediaDescriber | None:
         """Return (and lazily create) the media describer for this processor."""
@@ -67,7 +72,13 @@ class FigureProcessor:
                 raise ValueError(
                     "Content Understanding does not support key credentials; provide a token credential instead"
                 )
-            self.media_describer = ContentUnderstandingDescriber(self.content_understanding_endpoint, self.credential)
+            if self.content_understanding_deployment is None:
+                raise ValueError("Content Understanding requires a completion deployment")
+            self.media_describer = ContentUnderstandingDescriber(
+                self.content_understanding_endpoint,
+                self.credential,
+                completion_deployment=self.content_understanding_deployment,
+            )
             return self.media_describer
 
         if self.strategy == MediaDescriptionStrategy.OPENAI:
@@ -93,8 +104,10 @@ class FigureProcessor:
         if describer is None:
             return None
         if isinstance(describer, ContentUnderstandingDescriber) and not self.content_understanding_ready:
-            await describer.create_analyzer()
-            self.content_understanding_ready = True
+            async with self.content_understanding_lock:
+                if not self.content_understanding_ready:
+                    await describer.create_analyzer()
+                    self.content_understanding_ready = True
         return await describer.describe_image(image_bytes)
 
 
@@ -118,6 +131,7 @@ async def process_page_image(
     image_embeddings_client: Optional[ImageEmbeddings],
     figure_processor: Optional[FigureProcessor] = None,
     user_oid: Optional[str] = None,
+    upload_image: bool = True,
 ) -> "ImageOnPage":
     """Generate description, upload image, and optionally compute embedding for a figure."""
 
@@ -127,12 +141,15 @@ async def process_page_image(
     # Generate plain (model) description text only; do not wrap in HTML markup here.
     description_text: str | None = None
     if figure_processor is not None:
-        description_text = await figure_processor.describe(image.bytes)
+        try:
+            description_text = await figure_processor.describe(image.bytes)
+        except InvalidImageDimensionError:
+            logger.warning("Figure description generation failed for figure %s", image.figure_id, exc_info=True)
 
     # Store plain descriptive text (can be None). HTML rendering is deferred to build_figure_markup.
     image.description = description_text
 
-    if image.url is None:
+    if upload_image and image.url is None:
         image.url = await blob_manager.upload_document_image(
             document_filename, image.bytes, image.filename, image.page_num, user_oid=user_oid
         )

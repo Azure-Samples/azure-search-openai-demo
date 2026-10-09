@@ -52,7 +52,7 @@ def configure_global_settings():
     # Environment configuration
     # Required variables
     AZURE_STORAGE_ACCOUNT = os.environ["AZURE_STORAGE_ACCOUNT"]
-    IMAGE_CONTAINER = os.environ["AZURE_IMAGESTORAGE_CONTAINER"]
+    IMAGE_CONTAINER = os.getenv("AZURE_IMAGESTORAGE_CONTAINER", "")
 
     # Optional feature flags
     USE_MULTIMODAL = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
@@ -60,6 +60,7 @@ def configure_global_settings():
 
     # Conditionally required (based on feature flags)
     CONTENT_UNDERSTANDING_ENDPOINT = os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT")
+    CONTENT_UNDERSTANDING_DEPLOYMENT = os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT")
     AZURE_OPENAI_SERVICE = os.getenv("AZURE_OPENAI_SERVICE")
     AZURE_OPENAI_CUSTOM_URL = os.getenv("AZURE_OPENAI_CUSTOM_URL")
     AZURE_OPENAI_CHATGPT_DEPLOYMENT = os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT")
@@ -85,7 +86,7 @@ def configure_global_settings():
     # Figure Processor (with optional OpenAI for multimodal)
     openai_client = None
     openai_model = None
-    openai_deployment = None
+    openai_deployment = AZURE_OPENAI_CHATGPT_DEPLOYMENT
     if USE_MULTIMODAL and (AZURE_OPENAI_SERVICE or AZURE_OPENAI_CUSTOM_URL) and AZURE_OPENAI_CHATGPT_DEPLOYMENT:
         openai_client, _ = setup_openai_client(
             openai_host=OpenAIHost.AZURE_CUSTOM if AZURE_OPENAI_CUSTOM_URL else OpenAIHost.AZURE,
@@ -94,7 +95,6 @@ def configure_global_settings():
             azure_openai_custom_url=AZURE_OPENAI_CUSTOM_URL,
         )
         openai_model = AZURE_OPENAI_CHATGPT_MODEL or AZURE_OPENAI_CHATGPT_DEPLOYMENT
-        openai_deployment = AZURE_OPENAI_CHATGPT_DEPLOYMENT
     elif USE_MULTIMODAL and not USE_MEDIA_DESCRIBER_AZURE_CU:
         logger.warning(
             "USE_MULTIMODAL is true but Azure OpenAI configuration incomplete and Content Understanding not enabled"
@@ -105,6 +105,7 @@ def configure_global_settings():
         use_multimodal=USE_MULTIMODAL,
         use_content_understanding=USE_MEDIA_DESCRIBER_AZURE_CU,
         content_understanding_endpoint=CONTENT_UNDERSTANDING_ENDPOINT,
+        content_understanding_deployment=CONTENT_UNDERSTANDING_DEPLOYMENT,
         openai_client=openai_client,
         openai_model=openai_model,
         openai_deployment=openai_deployment,
@@ -160,6 +161,7 @@ async def process_figure_request(req: func.HttpRequest) -> func.HttpResponse:
                 blob_manager=settings.blob_manager,
                 image_embeddings_client=settings.image_embeddings,
                 figure_processor=settings.figure_processor,
+                upload_image=settings.image_embeddings is not None,
             )
             figure_payload = image_on_page.to_skill_payload(file_name, include_bytes_base64=False)
             output_values.append(

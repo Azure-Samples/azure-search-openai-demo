@@ -71,6 +71,7 @@ def setup_file_processors(
     openai_model: Optional[str] = None,
     openai_deployment: Optional[str] = None,
     content_understanding_endpoint: Optional[str] = None,
+    content_understanding_deployment: Optional[str] = None,
     csv_max_chars_per_page: Optional[int] = None,
 ):
     """Setup file processors and figure processor for document ingestion.
@@ -84,7 +85,7 @@ def setup_file_processors(
         document_intelligence_key=document_intelligence_key,
         use_local_pdf_parser=local_pdf_parser,
         use_local_html_parser=local_html_parser,
-        process_figures=use_multimodal,
+        process_figures=use_multimodal or use_content_understanding,
         csv_max_chars_per_page=csv_max_chars_per_page,
     )
 
@@ -93,6 +94,7 @@ def setup_file_processors(
         use_multimodal=use_multimodal,
         use_content_understanding=use_content_understanding,
         content_understanding_endpoint=content_understanding_endpoint,
+        content_understanding_deployment=content_understanding_deployment,
         openai_client=openai_client,
         openai_model=openai_model,
         openai_deployment=openai_deployment,
@@ -309,6 +311,7 @@ if __name__ == "__main__":  # pragma: no cover
             use_content_understanding=use_content_understanding,
             use_multimodal=use_multimodal,
             content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
+            content_understanding_deployment=os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT"),
             openai_client=openai_client,
             openai_model=os.getenv("AZURE_OPENAI_CHATGPT_MODEL"),
             openai_deployment=os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == OpenAIHost.AZURE else None,

@@ -52,6 +52,7 @@ def configure_global_settings():
     use_local_pdf_parser = os.getenv("USE_LOCAL_PDF_PARSER", "false").lower() == "true"
     use_local_html_parser = os.getenv("USE_LOCAL_HTML_PARSER", "false").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "false").lower() == "true"
+    use_content_understanding = os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "false").lower() == "true"
     document_intelligence_service = os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE")
     storage_is_adls = os.getenv("USE_CLOUD_INGESTION_ACLS", "false").lower() == "true"
     enable_global_document_access = os.getenv("AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS", "false").lower() == "true"
@@ -80,7 +81,7 @@ def configure_global_settings():
         document_intelligence_key=None,
         use_local_pdf_parser=use_local_pdf_parser,
         use_local_html_parser=use_local_html_parser,
-        process_figures=use_multimodal,
+        process_figures=use_multimodal or use_content_understanding,
         csv_max_chars_per_page=csv_max_chars_per_page,
     )
 

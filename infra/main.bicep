@@ -222,6 +222,19 @@ param visionResourceGroupLocation string = '' // Set in main.parameters.json
 param contentUnderstandingServiceName string = '' // Set in main.parameters.json
 param contentUnderstandingResourceGroupName string = '' // Set in main.parameters.json
 
+param contentUnderstandingModelName string = ''
+param contentUnderstandingDeploymentName string = ''
+param contentUnderstandingModelVersion string = ''
+param contentUnderstandingDeploymentSkuName string = ''
+param contentUnderstandingDeploymentCapacity int = 0
+var contentUnderstandingModel = {
+  modelName: !empty(contentUnderstandingModelName) ? contentUnderstandingModelName : 'gpt-5.4-mini'
+  deploymentName: !empty(contentUnderstandingDeploymentName) ? contentUnderstandingDeploymentName : 'gpt-5.4-mini'
+  deploymentVersion: !empty(contentUnderstandingModelVersion) ? contentUnderstandingModelVersion : '2026-03-17'
+  deploymentSkuName: !empty(contentUnderstandingDeploymentSkuName) ? contentUnderstandingDeploymentSkuName : 'GlobalStandard'
+  deploymentCapacity: contentUnderstandingDeploymentCapacity != 0 ? contentUnderstandingDeploymentCapacity : 30
+}
+
 param chatGptModelName string = ''
 param chatGptDeploymentName string = ''
 param chatGptDeploymentVersion string = ''
@@ -556,6 +569,7 @@ var appEnvVariables = {
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
   USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
   AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding!.outputs.endpoint : ''
+  AZURE_CONTENTUNDERSTANDING_DEPLOYMENT: contentUnderstandingModel.deploymentName
   RUNNING_IN_PRODUCTION: 'true'
   // RAG Configuration
   RAG_SEARCH_TEXT_EMBEDDINGS: ragSearchTextEmbeddings
@@ -905,6 +919,20 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
     location: 'westus'
     tags: tags
     sku: 'S0'
+    deployments: [
+      {
+        name: contentUnderstandingModel.deploymentName
+        model: {
+          format: 'OpenAI'
+          name: contentUnderstandingModel.modelName
+          version: contentUnderstandingModel.deploymentVersion
+        }
+        sku: {
+          name: contentUnderstandingModel.deploymentSkuName
+          capacity: contentUnderstandingModel.deploymentCapacity
+        }
+      }
+    ]
     restore: restoreCognitiveServices
   }
 }
@@ -1577,6 +1605,18 @@ module documentIntelligenceRoleBackend 'core/security/role.bicep' = if (useUserU
   }
 }
 
+// For Content Understanding access by the backend
+module contentUnderstandingRoleBackend 'core/security/role.bicep' = if (useUserUpload && useMediaDescriberAzureCU) {
+  scope: az.resourceGroup(contentUnderstandingResourceGroupNameActual)
+  params: {
+    principalId: (deploymentTarget == 'appservice')
+      ? backend!.outputs.identityPrincipalId
+      : acaBackend!.outputs.identityPrincipalId
+    roleDefinitionId: '59a2dba3-6303-4fd8-9a2e-8cbb4bdda972' // Cognitive Services Content Understanding Contributor
+    principalType: 'ServicePrincipal'
+  }
+}
+
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenantId
 output AZURE_AUTH_TENANT_ID string = authTenantId
@@ -1599,7 +1639,6 @@ output FOUNDRY_PROJECT_ENDPOINT string = deployFoundryAccount ? foundryProject!.
 
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT string = isAzureOpenAiHost ? chatGpt.deploymentName : ''
 output AZURE_OPENAI_CHATGPT_DEPLOYMENT_VERSION string = isAzureOpenAiHost ? chatGpt.deploymentVersion : ''
-output AZURE_OPENAI_CHATGPT_DEPLOYMENT_SKU string = isAzureOpenAiHost ? chatGpt.deploymentSkuName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT string = isAzureOpenAiHost ? embedding.deploymentName : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT_VERSION string = isAzureOpenAiHost ? embedding.deploymentVersion : ''
 output AZURE_OPENAI_EMB_DEPLOYMENT_SKU string = isAzureOpenAiHost ? embedding.deploymentSkuName : ''
@@ -1615,6 +1654,7 @@ output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech!.out
 
 output AZURE_VISION_ENDPOINT string = useMultimodal ? vision!.outputs.endpoint : ''
 output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding!.outputs.endpoint : ''
+output AZURE_CONTENTUNDERSTANDING_DEPLOYMENT string = useMediaDescriberAzureCU ? contentUnderstandingModel.deploymentName : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
 output AZURE_DOCUMENTINTELLIGENCE_RESOURCE_GROUP string = documentIntelligenceResourceGroupNameActual
