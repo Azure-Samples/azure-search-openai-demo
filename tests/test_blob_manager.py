@@ -38,7 +38,6 @@ def adls_blob_manager(monkeypatch):
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher (due to NamedTemporaryFile)")
 @pytest.mark.skipif(WINDOWS, reason="NamedTemporaryFile keeps handles open on Windows")
 async def test_upload_and_remove(monkeypatch, mock_env, mock_blob_container_client_exists, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
@@ -87,7 +86,6 @@ async def test_upload_and_remove(monkeypatch, mock_env, mock_blob_container_clie
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher (due to NamedTemporaryFile)")
 @pytest.mark.skipif(WINDOWS, reason="NamedTemporaryFile keeps handles open on Windows")
 async def test_upload_and_remove_all(monkeypatch, mock_env, mock_blob_container_client_exists, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
@@ -136,7 +134,6 @@ async def test_upload_and_remove_all(monkeypatch, mock_env, mock_blob_container_
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher (due to NamedTemporaryFile)")
 @pytest.mark.skipif(WINDOWS, reason="NamedTemporaryFile keeps handles open on Windows")
 async def test_create_container_upon_upload(monkeypatch, mock_env, blob_manager):
     with NamedTemporaryFile(suffix=".pdf") as temp_file:
@@ -179,7 +176,6 @@ async def test_dont_remove_if_no_container(
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(sys.version_info.minor < 10, reason="requires Python 3.10 or higher (due to NamedTemporaryFile)")
 @pytest.mark.skipif(WINDOWS, reason="NamedTemporaryFile keeps handles open on Windows")
 @pytest.mark.parametrize("directory_exists", [True, False])
 async def test_upload_document_image(monkeypatch, mock_env, directory_exists):
