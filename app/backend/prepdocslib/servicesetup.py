@@ -3,7 +3,7 @@
 import logging
 import os
 from collections.abc import Awaitable, Callable
-from enum import Enum
+from enum import StrEnum
 from typing import Optional
 
 from azure.core.credentials import AzureKeyCredential
@@ -34,7 +34,7 @@ def clean_key_if_exists(key: Optional[str]) -> Optional[str]:
     return None
 
 
-class OpenAIHost(str, Enum):
+class OpenAIHost(StrEnum):
     """Supported OpenAI hosting styles.
 
     OPENAI:       Public OpenAI API.
