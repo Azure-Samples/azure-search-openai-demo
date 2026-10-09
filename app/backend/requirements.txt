@@ -337,7 +337,7 @@ pydantic-core==2.46.4
     # via pydantic
 pygments==2.20.0
     # via rich
-pyjwt[crypto]==2.13.0
+pyjwt[crypto]==2.15.1
     # via
     #   -r requirements.in
     #   msal
