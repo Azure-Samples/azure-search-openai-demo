@@ -1612,7 +1612,7 @@ module contentUnderstandingRoleBackend 'core/security/role.bicep' = if (useUserU
     principalId: (deploymentTarget == 'appservice')
       ? backend!.outputs.identityPrincipalId
       : acaBackend!.outputs.identityPrincipalId
-    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
+    roleDefinitionId: '59a2dba3-6303-4fd8-9a2e-8cbb4bdda972' // Cognitive Services Content Understanding Contributor
     principalType: 'ServicePrincipal'
   }
 }
