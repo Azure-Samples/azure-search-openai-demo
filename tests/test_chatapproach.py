@@ -240,6 +240,47 @@ async def test_search_results_filtering_by_scores(
     ), f"Expected {expected_result_count} results with minimum_search_score={minimum_search_score} and minimum_reranker_score={minimum_reranker_score}"
 
 
+async def mock_search_without_reranker_score(*args, **kwargs):
+    results = MockAsyncSearchResultsIterator(kwargs.get("search_text"), kwargs.get("vector_queries"))
+    for page in results.data:
+        for document in page:
+            document.pop("@search.reranker_score", None)
+    return results
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "minimum_search_score,minimum_reranker_score,expected_result_count",
+    [
+        (0, 0, 1),
+        (0, 1.9, 1),
+        (0.03, 1.9, 1),
+        (1, 1.9, 0),
+    ],
+)
+async def test_search_results_filtering_without_reranker_score(
+    chat_approach, monkeypatch, minimum_search_score, minimum_reranker_score, expected_result_count
+):
+    monkeypatch.setattr(SearchClient, "search", mock_search_without_reranker_score)
+
+    filtered_results = await chat_approach.search(
+        top=10,
+        query_text="test query",
+        filter=None,
+        vectors=[],
+        use_text_search=True,
+        use_vector_search=True,
+        use_semantic_ranker=False,
+        use_semantic_captions=False,
+        minimum_search_score=minimum_search_score,
+        minimum_reranker_score=minimum_reranker_score,
+    )
+
+    assert (
+        len(filtered_results) == expected_result_count
+    ), f"Expected {expected_result_count} results with minimum_search_score={minimum_search_score} and minimum_reranker_score={minimum_reranker_score}"
+
+
 @pytest.mark.asyncio
 async def test_search_results_query_rewriting(chat_approach, monkeypatch):
 
