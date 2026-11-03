@@ -20,7 +20,7 @@ urlFragment: azure-search-openai-demo
 # RAG chat app with Azure OpenAI and Azure AI Search (Python)
 
 This solution creates a ChatGPT-like frontend experience over your own documents using RAG (Retrieval Augmented Generation). It uses Azure OpenAI Service to access GPT models, and Azure AI Search for data indexing and retrieval.
- to test use: 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
+ to test use: example_abv
 
 This solution's backend is written in Python. There are also [**JavaScript**](https://aka.ms/azai/js/code), [**.NET**](https://aka.ms/azai/net/code), and [**Java**](https://aka.ms/azai/java/code) samples based on this one. Learn more about [developing AI apps using Azure AI Services](https://aka.ms/azai).
 
