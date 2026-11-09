@@ -25,4 +25,3 @@ These are advanced topics that are not necessary for a basic deployment.
 - [Safety evaluation](safety_evaluation.md)
 - [Monitoring with Application Insights](monitoring.md)
 - [Productionizing](productionizing.md)
-- [Alternative RAG chat samples](other_samples.md)
