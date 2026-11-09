@@ -10,6 +10,8 @@ updates:
       github-actions:
         patterns:
           - "*"
+    cooldown:
+      default-days: 7
 
   # Maintain dependencies for npm
   - package-ecosystem: "npm"

@@ -332,7 +332,7 @@ class MockResponse:
         return json.loads(self._text)
 
     def raise_for_status(self):
-        if self.status != 200:
+        if not 200 <= self.status < 300:
             raise Exception(f"HTTP status {self.status}")
 
 

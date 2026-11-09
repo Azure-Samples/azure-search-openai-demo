@@ -1,5 +1,5 @@
 import json
-import logging
+from unittest.mock import AsyncMock
 
 import aiohttp
 import pytest
@@ -11,6 +11,7 @@ from openai.types.responses.response_usage import (
 
 from prepdocslib.mediadescriber import (
     ContentUnderstandingDescriber,
+    InvalidImageDimensionError,
     MultimodalModelDescriber,
 )
 
@@ -18,21 +19,45 @@ from .mocks import MockAzureCredential, MockResponse
 
 
 @pytest.mark.asyncio
-async def test_contentunderstanding_analyze(monkeypatch, caplog):
+async def test_contentunderstanding_analyze(monkeypatch):
 
     def mock_post(*args, **kwargs):
+        if kwargs.get("url").find("invalidimage") > 0:
+            return MockResponse(
+                status=400,
+                text=json.dumps(
+                    {
+                        "error": {
+                            "code": "InvalidRequest",
+                            "innererror": {
+                                "code": "InvalidImageDimension",
+                                "message": "Expected min 50x50 pixels.",
+                            },
+                        }
+                    }
+                ),
+            )
         if kwargs.get("url").find("badanalyzer") > 0:
             return MockResponse(
                 status=200,
                 headers={
-                    "Operation-Location": "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/badanalyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2024-12-01-preview"
+                    "Operation-Location": "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/badanalyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2025-11-01"
                 },
             )
-        if kwargs.get("url").endswith("contentunderstanding/analyzers/image_analyzer:analyze"):
+        if kwargs.get("url").find("canceledanalyzer") > 0:
             return MockResponse(
-                status=200,
+                status=202,
                 headers={
-                    "Operation-Location": "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/results/53e4c016-d2c0-48a9-a9f4-38891f7d45f0?api-version=2024-12-01-preview"
+                    "Operation-Location": "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/canceledanalyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2025-11-01"
+                },
+            )
+        if kwargs.get("url").endswith("contentunderstanding/analyzers/image_analyzer:analyzeBinary"):
+            assert kwargs["params"] == {"api-version": "2025-11-01"}
+            assert kwargs["data"] == b"imagebytes"
+            return MockResponse(
+                status=202,
+                headers={
+                    "Operation-Location": "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/results/53e4c016-d2c0-48a9-a9f4-38891f7d45f0?api-version=2025-11-01"
                 },
             )
         else:
@@ -43,9 +68,20 @@ async def test_contentunderstanding_analyze(monkeypatch, caplog):
     num_poll_calls = 0
 
     def mock_get(self, url, **kwargs):
-        if url.endswith(
-            "contentunderstanding/analyzers/image_analyzer/results/53e4c016-d2c0-48a9-a9f4-38891f7d45f0?api-version=2024-12-01-preview"
+        if url.endswith("contentunderstanding/analyzers/image_analyzer"):
+            assert kwargs["params"] == {"api-version": "2025-11-01"}
+            if url.startswith("https://updatedanalyzer"):
+                return MockResponse(status=200, text=json.dumps({"baseAnalyzerId": "prebuilt-document"}))
+            return MockResponse(status=404)
+        elif url.endswith(
+            "contentunderstanding/analyzers/image_analyzer/results/53e4c016-d2c0-48a9-a9f4-38891f7d45f0?api-version=2025-11-01"
         ):
+            nonlocal num_poll_calls
+            num_poll_calls += 1
+            if num_poll_calls == 1:
+                return MockResponse(status=200, text=json.dumps({"status": "NotStarted"}))
+            if num_poll_calls == 2:
+                return MockResponse(status=200, text=json.dumps({"status": "Running"}))
             return MockResponse(
                 status=200,
                 text=json.dumps(
@@ -54,7 +90,7 @@ async def test_contentunderstanding_analyze(monkeypatch, caplog):
                         "status": "Succeeded",
                         "result": {
                             "analyzerId": "image_analyzer",
-                            "apiVersion": "2024-12-01-preview",
+                            "apiVersion": "2025-11-01",
                             "createdAt": "2024-12-05T17:33:04Z",
                             "warnings": [],
                             "contents": [
@@ -78,26 +114,55 @@ async def test_contentunderstanding_analyze(monkeypatch, caplog):
                 ),
             )
         elif url.endswith(
-            "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/badanalyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2024-12-01-preview"
+            "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/badanalyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2025-11-01"
         ):
             return MockResponse(status=200, text=json.dumps({"status": "Failed"}))
         elif url.endswith(
-            "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2024-12-01-preview"
+            "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/canceledanalyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2025-11-01"
         ):
-            nonlocal num_poll_calls
+            return MockResponse(status=200, text=json.dumps({"status": "Canceled"}))
+        elif url.endswith(
+            "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2025-11-01"
+        ):
             num_poll_calls += 1
-            if num_poll_calls == 1:
+            if num_poll_calls == 4:
+                return MockResponse(status=200, text=json.dumps({"status": "NotStarted"}))
+            if num_poll_calls == 5:
                 return MockResponse(status=200, text=json.dumps({"status": "Running"}))
-            elif num_poll_calls > 1:
-                return MockResponse(status=200, text=json.dumps({"status": "Succeeded"}))
+            return MockResponse(status=200, text=json.dumps({"status": "Succeeded"}))
         else:
             raise Exception("Unexpected URL for mock call to ClientSession.get()")
 
     monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
 
+    def mock_patch(self, *args, **kwargs):
+        assert kwargs["url"].endswith("contentunderstanding/defaults")
+        assert kwargs["params"] == {"api-version": "2025-11-01"}
+        assert kwargs["headers"]["Content-Type"] == "application/merge-patch+json"
+        assert kwargs["json"] == {
+            "modelDeployments": {
+                "prebuilt-analyzer-completion": "gpt-5.4-mini",
+            }
+        }
+        return MockResponse(status=200)
+
+    monkeypatch.setattr(aiohttp.ClientSession, "patch", mock_patch)
+
     def mock_put(self, *args, **kwargs):
-        if kwargs.get("url").find("existinganalyzer") > 0:
-            return MockResponse(status=409)
+        assert kwargs["params"] == {"api-version": "2025-11-01", "allowReplace": "true"}
+        assert kwargs["json"] == ContentUnderstandingDescriber.analyzer_schema
+        assert "analyzerId" not in kwargs["json"]
+        assert "name" not in kwargs["json"]
+        assert "scenario" not in kwargs["json"]
+        assert kwargs["json"]["models"] == {"completion": "prebuilt-analyzer-completion"}
+        assert kwargs["json"]["fieldSchema"]["description"] == "Description of image."
+        if kwargs.get("url").find("updatedanalyzer") > 0:
+            return MockResponse(
+                status=200,
+                headers={
+                    "Operation-Location": "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2025-11-01"
+                },
+            )
         if kwargs.get("url").find("wrongservicename") > 0:
             return MockResponse(
                 status=404,
@@ -109,7 +174,7 @@ async def test_contentunderstanding_analyze(monkeypatch, caplog):
             return MockResponse(
                 status=201,
                 headers={
-                    "Operation-Location": "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2024-12-01-preview"
+                    "Operation-Location": "https://testcontentunderstanding.cognitiveservices.azure.com/contentunderstanding/analyzers/image_analyzer/operations/7f313e00-4da1-4b19-a25e-53f121c24d10?api-version=2025-11-01"
                 },
             )
         else:
@@ -118,29 +183,142 @@ async def test_contentunderstanding_analyze(monkeypatch, caplog):
     monkeypatch.setattr(aiohttp.ClientSession, "put", mock_put)
 
     describer = ContentUnderstandingDescriber(
-        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com", credential=MockAzureCredential()
+        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
     )
     await describer.create_analyzer()
     await describer.describe_image(b"imagebytes")
 
+    describer_updated_analyzer = ContentUnderstandingDescriber(
+        endpoint="https://updatedanalyzer.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    await describer_updated_analyzer.create_analyzer()
+
     describer_wrong_endpoint = ContentUnderstandingDescriber(
-        endpoint="https://wrongservicename.cognitiveservices.azure.com", credential=MockAzureCredential()
+        endpoint="https://wrongservicename.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
     )
     with pytest.raises(Exception):
         await describer_wrong_endpoint.create_analyzer()
 
-    describer_existing_analyzer = ContentUnderstandingDescriber(
-        endpoint="https://existinganalyzer.cognitiveservices.azure.com", credential=MockAzureCredential()
-    )
-    with caplog.at_level(logging.INFO):
-        await describer_existing_analyzer.create_analyzer()
-        assert "Analyzer 'image_analyzer' already exists." in caplog.text
-
     describer_bad_analyze = ContentUnderstandingDescriber(
-        endpoint="https://badanalyzer.cognitiveservices.azure.com", credential=MockAzureCredential()
+        endpoint="https://badanalyzer.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
     )
     with pytest.raises(Exception):
         await describer_bad_analyze.describe_image(b"imagebytes")
+
+    describer_canceled_analyze = ContentUnderstandingDescriber(
+        endpoint="https://canceledanalyzer.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    with pytest.raises(Exception):
+        await describer_canceled_analyze.describe_image(b"imagebytes")
+
+    describer_invalid_image = ContentUnderstandingDescriber(
+        endpoint="https://invalidimage.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    with pytest.raises(InvalidImageDimensionError):
+        await describer_invalid_image.describe_image(b"imagebytes")
+
+
+@pytest.mark.asyncio
+async def test_contentunderstanding_skips_matching_analyzer(monkeypatch):
+    existing_analyzer = {
+        **ContentUnderstandingDescriber.analyzer_schema,
+        "config": {
+            **ContentUnderstandingDescriber.analyzer_schema["config"],
+            "disableFaceBlurring": False,
+            "enableOcr": False,
+        },
+        "id": "image_analyzer",
+    }
+
+    def mock_patch(self, *args, **kwargs):
+        return MockResponse(status=200)
+
+    def mock_get(self, *args, **kwargs):
+        return MockResponse(status=200, text=json.dumps(existing_analyzer))
+
+    def mock_put(self, *args, **kwargs):
+        raise AssertionError("Matching analyzer should not be replaced")
+
+    monkeypatch.setattr(aiohttp.ClientSession, "patch", mock_patch)
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+    monkeypatch.setattr(aiohttp.ClientSession, "put", mock_put)
+
+    describer = ContentUnderstandingDescriber(
+        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    await describer.create_analyzer()
+
+
+@pytest.mark.asyncio
+async def test_contentunderstanding_waits_for_matching_analyzer(monkeypatch):
+    existing_analyzer = {
+        **ContentUnderstandingDescriber.analyzer_schema,
+        "status": "ready",
+    }
+    get_call_count = 0
+
+    def mock_patch(self, *args, **kwargs):
+        return MockResponse(status=200)
+
+    def mock_get(self, *args, **kwargs):
+        nonlocal get_call_count
+        get_call_count += 1
+        if get_call_count == 1:
+            return MockResponse(status=200, text=json.dumps({**existing_analyzer, "status": "creating"}))
+        return MockResponse(status=200, text=json.dumps(existing_analyzer))
+
+    def mock_put(self, *args, **kwargs):
+        raise AssertionError("Matching analyzer should not be replaced")
+
+    sleep = AsyncMock()
+    monkeypatch.setattr("asyncio.sleep", sleep)
+    monkeypatch.setattr(aiohttp.ClientSession, "patch", mock_patch)
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+    monkeypatch.setattr(aiohttp.ClientSession, "put", mock_put)
+
+    describer = ContentUnderstandingDescriber(
+        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    await describer.create_analyzer()
+
+    assert get_call_count == 2
+    sleep.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_contentunderstanding_analyzer_get_error(monkeypatch):
+    def mock_patch(self, *args, **kwargs):
+        return MockResponse(status=200)
+
+    def mock_get(self, *args, **kwargs):
+        return MockResponse(status=500, text="service unavailable")
+
+    monkeypatch.setattr(aiohttp.ClientSession, "patch", mock_patch)
+    monkeypatch.setattr(aiohttp.ClientSession, "get", mock_get)
+
+    describer = ContentUnderstandingDescriber(
+        endpoint="https://testcontentunderstanding.cognitiveservices.azure.com",
+        credential=MockAzureCredential(),
+        completion_deployment="gpt-5.4-mini",
+    )
+    with pytest.raises(Exception, match="Error checking analyzer"):
+        await describer.create_analyzer()
 
 
 class MockAsyncOpenAI:

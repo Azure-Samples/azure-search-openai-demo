@@ -15,6 +15,7 @@ from prepdocslib.embeddings import ImageEmbeddings, OpenAIEmbeddings
 from .mocks import (
     MOCK_EMBEDDING_DIMENSIONS,
     MOCK_EMBEDDING_MODEL_NAME,
+    MockAzureCredential,
 )
 
 
@@ -29,6 +30,28 @@ class MockEmbeddingsClient:
 class MockClient:
     def __init__(self, embeddings_client):
         self.embeddings = embeddings_client
+
+
+def test_setup_file_processors_extracts_figures_for_content_understanding(monkeypatch):
+    import prepdocs as prepdocs_module
+
+    captured: dict[str, object] = {}
+
+    def mock_build_file_processors(**kwargs):
+        captured.update(kwargs)
+        return {}
+
+    monkeypatch.setattr(prepdocs_module, "build_file_processors", mock_build_file_processors)
+    monkeypatch.setattr(prepdocs_module, "setup_figure_processor", lambda **kwargs: None)
+
+    prepdocs_module.setup_file_processors(
+        azure_credential=MockAzureCredential(),
+        document_intelligence_service="document-intelligence",
+        use_content_understanding=True,
+        use_multimodal=False,
+    )
+
+    assert captured["process_figures"] is True
 
 
 @pytest.mark.asyncio

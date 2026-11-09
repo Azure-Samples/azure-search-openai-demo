@@ -1,4 +1,5 @@
 import base64
+import json
 import logging
 from abc import ABC
 from typing import Optional
@@ -26,19 +27,22 @@ class MediaDescriber(ABC):
         raise NotImplementedError  # pragma: no cover
 
 
+class InvalidImageDimensionError(Exception):
+    """Raised when an image does not meet Content Understanding dimension limits."""
+
+
 class ContentUnderstandingDescriber(MediaDescriber):
-    CU_API_VERSION = "2024-12-01-preview"
+    CU_API_VERSION = "2025-11-01"
+    ANALYZER_ID = "image_analyzer"
 
     analyzer_schema = {
-        "analyzerId": "image_analyzer",
-        "name": "Image understanding",
         "description": "Extract detailed structured information from images extracted from documents.",
         "baseAnalyzerId": "prebuilt-image",
-        "scenario": "image",
+        "models": {"completion": "prebuilt-analyzer-completion"},
         "config": {"returnDetails": False},
         "fieldSchema": {
             "name": "ImageInformation",
-            "descriptions": "Description of image.",
+            "description": "Description of image.",
             "fields": {
                 "Description": {
                     "type": "string",
@@ -48,9 +52,15 @@ class ContentUnderstandingDescriber(MediaDescriber):
         },
     }
 
-    def __init__(self, endpoint: str, credential: AsyncTokenCredential):
+    def __init__(
+        self,
+        endpoint: str,
+        credential: AsyncTokenCredential,
+        completion_deployment: str,
+    ):
         self.endpoint = endpoint
         self.credential = credential
+        self.completion_deployment = completion_deployment
 
     async def poll_api(self, session, poll_url, headers):
 
@@ -59,31 +69,82 @@ class ContentUnderstandingDescriber(MediaDescriber):
             async with session.get(poll_url, headers=headers) as response:
                 response.raise_for_status()
                 response_json = await response.json()
-                if response_json["status"] == "Failed":
-                    raise Exception("Failed")
-                if response_json["status"] == "Running":
-                    raise ValueError("Running")
+                status = response_json["status"]
+                if status in ("Failed", "Canceled"):
+                    raise Exception(status, response_json.get("error"))
+                if status in ("NotStarted", "Running"):
+                    raise ValueError(status)
                 return response_json
 
         return await poll()
 
-    async def create_analyzer(self):
-        logger.info("Creating analyzer '%s'...", self.analyzer_schema["analyzerId"])
+    async def configure_model_defaults(self, session, headers):
+        defaults = {
+            "modelDeployments": {
+                "prebuilt-analyzer-completion": self.completion_deployment,
+            }
+        }
+        async with session.patch(
+            url=f"{self.endpoint}/contentunderstanding/defaults",
+            params={"api-version": self.CU_API_VERSION},
+            headers={**headers, "Content-Type": "application/merge-patch+json"},
+            json=defaults,
+        ) as response:
+            if response.status != 200:
+                data = await response.text()
+                raise Exception("Error configuring Content Understanding model defaults", data)
 
+    @classmethod
+    def analyzer_schema_matches(cls, existing_analyzer: dict) -> bool:
+        def contains_expected(actual, expected) -> bool:
+            if isinstance(expected, dict):
+                return isinstance(actual, dict) and all(
+                    key in actual and contains_expected(actual[key], value) for key, value in expected.items()
+                )
+            return actual == expected
+
+        return contains_expected(existing_analyzer, cls.analyzer_schema)
+
+    async def get_settled_analyzer(self, session, cu_endpoint, params, headers):
+        @retry(stop=stop_after_attempt(60), wait=wait_fixed(2), retry=retry_if_exception_type(ValueError))
+        async def get_analyzer():
+            async with session.get(url=cu_endpoint, params=params, headers=headers) as response:
+                if response.status == 404:
+                    return None
+                if response.status != 200:
+                    data = await response.text()
+                    raise Exception("Error checking analyzer", data)
+
+                analyzer = await response.json()
+                status = analyzer.get("status")
+                if status is not None and status.lower() in ("creating", "deleting"):
+                    logger.info("Waiting for analyzer '%s' while status is '%s'.", self.ANALYZER_ID, status)
+                    raise ValueError(status)
+                return analyzer
+
+        return await get_analyzer()
+
+    async def create_analyzer(self):
         token_provider = get_bearer_token_provider(self.credential, "https://cognitiveservices.azure.com/.default")
         token = await token_provider()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-        params = {"api-version": self.CU_API_VERSION}
-        analyzer_id = self.analyzer_schema["analyzerId"]
-        cu_endpoint = f"{self.endpoint}/contentunderstanding/analyzers/{analyzer_id}"
+        get_params = {"api-version": self.CU_API_VERSION}
+        cu_endpoint = f"{self.endpoint}/contentunderstanding/analyzers/{self.ANALYZER_ID}"
         async with aiohttp.ClientSession() as session:
+            await self.configure_model_defaults(session, headers)
+            existing_analyzer = await self.get_settled_analyzer(session, cu_endpoint, get_params, headers)
+            if existing_analyzer is not None:
+                status = existing_analyzer.get("status")
+                if self.analyzer_schema_matches(existing_analyzer) and (status is None or status.lower() == "ready"):
+                    logger.info("Analyzer '%s' is already up to date.", self.ANALYZER_ID)
+                    return
+
+            logger.info("Creating or replacing analyzer '%s'...", self.ANALYZER_ID)
+            params = {**get_params, "allowReplace": "true"}
             async with session.put(
                 url=cu_endpoint, params=params, headers=headers, json=self.analyzer_schema
             ) as response:
-                if response.status == 409:
-                    logger.info("Analyzer '%s' already exists.", analyzer_id)
-                    return
-                elif response.status != 201:
+                if response.status not in (200, 201):
                     data = await response.text()
                     raise Exception("Error creating analyzer", data)
                 else:
@@ -98,14 +159,22 @@ class ContentUnderstandingDescriber(MediaDescriber):
             token = await self.credential.get_token("https://cognitiveservices.azure.com/.default")
             headers = {"Authorization": "Bearer " + token.token}
             params = {"api-version": self.CU_API_VERSION}
-            analyzer_name = self.analyzer_schema["analyzerId"]
             async with session.post(
-                url=f"{self.endpoint}/contentunderstanding/analyzers/{analyzer_name}:analyze",
+                url=f"{self.endpoint}/contentunderstanding/analyzers/{self.ANALYZER_ID}:analyzeBinary",
                 params=params,
                 headers=headers,
                 data=image_bytes,
             ) as response:
-                response.raise_for_status()
+                if not 200 <= response.status < 300:
+                    data = await response.text()
+                    if response.status == 400:
+                        try:
+                            error = json.loads(data).get("error", {})
+                            if error.get("innererror", {}).get("code") == "InvalidImageDimension":
+                                raise InvalidImageDimensionError(data)
+                        except json.JSONDecodeError:
+                            pass
+                    raise Exception("Error analyzing image with Content Understanding", data)
                 poll_url = response.headers["Operation-Location"]
 
                 with Progress() as progress:

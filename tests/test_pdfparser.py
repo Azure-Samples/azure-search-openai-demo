@@ -1,3 +1,4 @@
+import asyncio
 import io
 import json
 import logging
@@ -30,6 +31,7 @@ from prepdocslib.figureprocessor import (
     build_figure_markup,
     process_page_image,
 )
+from prepdocslib.mediadescriber import InvalidImageDimensionError
 from prepdocslib.page import ImageOnPage
 from prepdocslib.pdfparser import DocumentAnalysisParser
 
@@ -540,25 +542,32 @@ async def test_figure_processor_content_understanding_initializes_once(monkeypat
         strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
         credential=MockAzureCredential(),
         content_understanding_endpoint="https://example.com",
+        content_understanding_deployment="cu-gpt-5.4-mini",
     )
 
     class FakeDescriber:
-        def __init__(self, endpoint, credential):
+        def __init__(self, endpoint, credential, completion_deployment):
             self.endpoint = endpoint
             self.credential = credential
+            self.completion_deployment = completion_deployment
             self.create_analyzer = AsyncMock()
             self.describe_image = AsyncMock(return_value="A diagram")
 
     monkeypatch.setattr("prepdocslib.figureprocessor.ContentUnderstandingDescriber", FakeDescriber)
 
-    result_first = await figure_processor.describe(b"image")
+    result_first, result_second = await asyncio.gather(
+        figure_processor.describe(b"image"),
+        figure_processor.describe(b"image"),
+    )
     assert result_first == "A diagram"
+    assert result_second == "A diagram"
     describer_instance = figure_processor.media_describer  # type: ignore[attr-defined]
     assert isinstance(describer_instance, FakeDescriber)
+    assert describer_instance.completion_deployment == "cu-gpt-5.4-mini"
     describer_instance.create_analyzer.assert_awaited_once()
 
-    result_second = await figure_processor.describe(b"image")
-    assert result_second == "A diagram"
+    result_third = await figure_processor.describe(b"image")
+    assert result_third == "A diagram"
     assert describer_instance.create_analyzer.await_count == 1
 
 
@@ -604,6 +613,18 @@ async def test_figure_processor_content_understanding_key_credential():
     )
 
     with pytest.raises(ValueError, match="Content Understanding does not support key credentials"):
+        await figure_processor.get_media_describer()
+
+
+@pytest.mark.asyncio
+async def test_figure_processor_content_understanding_missing_deployment():
+    figure_processor = FigureProcessor(
+        strategy=MediaDescriptionStrategy.CONTENTUNDERSTANDING,
+        credential=MockAzureCredential(),
+        content_understanding_endpoint="https://example.com",
+    )
+
+    with pytest.raises(ValueError, match="Content Understanding requires a completion deployment"):
         await figure_processor.get_media_describer()
 
 
@@ -706,6 +727,42 @@ async def test_process_page_image_sets_description(sample_image):
 
     assert result.description == "A bar chart"
     figure_processor.describe.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_process_page_image_continues_when_description_fails(sample_image, caplog):
+    blob_manager = AsyncMock()
+    figure_processor = AsyncMock()
+    figure_processor.describe = AsyncMock(side_effect=InvalidImageDimensionError("Invalid image"))
+
+    result = await process_page_image(
+        image=sample_image,
+        document_filename="test.pdf",
+        blob_manager=blob_manager,
+        image_embeddings_client=None,
+        figure_processor=figure_processor,
+        upload_image=False,
+    )
+
+    assert result.description is None
+    assert "Figure description generation failed for figure" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_process_page_image_propagates_systemic_description_failure(sample_image):
+    blob_manager = AsyncMock()
+    figure_processor = AsyncMock()
+    figure_processor.describe = AsyncMock(side_effect=Exception("Authentication failed"))
+
+    with pytest.raises(Exception, match="Authentication failed"):
+        await process_page_image(
+            image=sample_image,
+            document_filename="test.pdf",
+            blob_manager=blob_manager,
+            image_embeddings_client=None,
+            figure_processor=figure_processor,
+            upload_image=False,
+        )
 
 
 @pytest.mark.asyncio

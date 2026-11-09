@@ -110,6 +110,21 @@
     "backendServiceName": {
       "value": "${AZURE_APP_SERVICE}"
     },
+    "contentUnderstandingModelName": {
+      "value": "${AZURE_CONTENTUNDERSTANDING_MODEL}"
+    },
+    "contentUnderstandingModelVersion": {
+      "value": "${AZURE_CONTENTUNDERSTANDING_MODEL_VERSION}"
+    },
+    "contentUnderstandingDeploymentName": {
+      "value": "${AZURE_CONTENTUNDERSTANDING_DEPLOYMENT}"
+    },
+    "contentUnderstandingDeploymentSkuName": {
+      "value": "${AZURE_CONTENTUNDERSTANDING_DEPLOYMENT_SKU}"
+    },
+    "contentUnderstandingDeploymentCapacity": {
+      "value": "${AZURE_CONTENTUNDERSTANDING_DEPLOYMENT_CAPACITY}"
+    },
     "chatGptModelName": {
       "value": "${AZURE_OPENAI_CHATGPT_MODEL}"
     },
