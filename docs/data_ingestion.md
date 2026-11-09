@@ -189,12 +189,12 @@ The deployment provisions an Azure AI Services account for Content Understanding
 
 Keep these differences in mind:
 
-* **Multimodal isn't supported yet.** Setting both `USE_CLOUD_INGESTION_BUILTIN` and `USE_MULTIMODAL` to `true` fails with an error. Use the default Azure Functions pipeline for multimodal.
-* **Access control uses native ADLS Gen2 permissions.** With `USE_CLOUD_INGESTION_ACLS`, the search indexer reads the file permissions itself. See [Cloud ingestion with Azure Data Lake Storage Gen2](login_and_acl.md#cloud-ingestion-with-azure-data-lake-storage-gen2).
-* **Large files on the Basic tier are skipped.** Azure AI Search extracts at most 16 MB per file on the Basic tier, so larger files produce an indexer warning and no searchable content. Use a [higher tier](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity#indexer-limits) or the Azure Functions pipeline for larger files.
-* **Chunks are sized by characters, not tokens.** For Chinese, Japanese, and Korean text, a 1,000-character chunk can be much larger than the 500-token chunks from the [local text splitter](textsplitter.md).
-* **JSON and CSV files are indexed as plain text.** They aren't parsed like they are in local ingestion.
-* **Content Understanding is billed per page.** It has no free per-indexer allowance. See [Azure Content Understanding pricing](https://azure.microsoft.com/pricing/details/content-understanding/).
+- **Multimodal isn't supported yet.** Setting both `USE_CLOUD_INGESTION_BUILTIN` and `USE_MULTIMODAL` to `true` fails with an error. Use the default Azure Functions pipeline for multimodal.
+- **Access control uses native ADLS Gen2 permissions.** With `USE_CLOUD_INGESTION_ACLS`, the search indexer reads the file permissions itself. See [Cloud ingestion with Azure Data Lake Storage Gen2](login_and_acl.md#cloud-ingestion-with-azure-data-lake-storage-gen2).
+- **Large files on the Basic tier are skipped.** Azure AI Search extracts at most 16 MB per file on the Basic tier, so larger files produce an indexer warning and no searchable content. Use a [higher tier](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity#indexer-limits) or the Azure Functions pipeline for larger files.
+- **Chunks are sized by characters, not tokens.** For Chinese, Japanese, and Korean text, a 1,000-character chunk can be much larger than the 500-token chunks from the [local text splitter](textsplitter.md).
+- **JSON and CSV files are indexed as plain text.** They aren't parsed like they are in local ingestion.
+- **Content Understanding is billed per page.** It has no free per-indexer allowance. See [Azure Content Understanding pricing](https://azure.microsoft.com/pricing/details/content-understanding/).
 
 If you switch an existing index between the two pipelines, re-run the indexer over all documents so that the index doesn't mix chunks and embeddings from both pipelines. The built-in pipeline reuses the same indexer, skillset, and data source names, so switching replaces the previous pipeline.
 

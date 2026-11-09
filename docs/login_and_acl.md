@@ -261,9 +261,9 @@ If you also set `USE_CLOUD_INGESTION_BUILTIN=true` (see [Using built-in skills i
 
 Native permission ingestion computes effective access, so it accounts for the ACL mask and for permissions on parent directories. It differs from the document extractor in a few ways:
 
-* Changing only a file's ACL doesn't change its last-modified time, so a normal indexer run doesn't pick up the change. [Resync the permissions](https://learn.microsoft.com/azure/search/search-indexer-access-control-lists-and-role-based-access#synchronize-permissions-between-indexed-and-source-content) after changing ACLs.
-* `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` isn't applied: the "other" ACL entry isn't converted to `["all"]`. Review the [limitations](https://learn.microsoft.com/azure/search/search-indexer-access-control-lists-and-role-based-access#limitations) for owning user, owning group, and "other" entries.
-* Multimodal isn't available, because permission ingestion can't be combined with the knowledge store or custom skills.
+- Changing only a file's ACL doesn't change its last-modified time, so a normal indexer run doesn't pick up the change. [Resync the permissions](https://learn.microsoft.com/azure/search/search-indexer-access-control-lists-and-role-based-access#synchronize-permissions-between-indexed-and-source-content) after changing ACLs.
+- `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` isn't applied: the "other" ACL entry isn't converted to `["all"]`. Review the [limitations](https://learn.microsoft.com/azure/search/search-indexer-access-control-lists-and-role-based-access#limitations) for owning user, owning group, and "other" entries.
+- Multimodal isn't available, because permission ingestion can't be combined with the knowledge store or custom skills.
 
 #### Setup
 
