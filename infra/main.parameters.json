@@ -341,9 +341,6 @@
     "bypass": {
       "value": "${AZURE_NETWORK_BYPASS=AzureServices}"
     },
-    "useIntegratedVectorization": {
-      "value": "${USE_FEATURE_INT_VECTORIZATION}"
-    },
     "useUserUpload": {
       "value": "${USE_USER_UPLOAD}"
     },

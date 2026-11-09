@@ -346,8 +346,6 @@ param useChatHistoryBrowser bool = false
 param useChatHistoryCosmos bool = false
 @description('Show options to use vector embeddings for searching in the app UI')
 param useVectors bool = false
-@description('Use Built-in integrated Vectorization feature of AI Search to vectorize and ingest documents')
-param useIntegratedVectorization bool = false
 
 @description('Use media description feature with Azure Content Understanding during ingestion')
 param useMediaDescriberAzureCU bool = true
@@ -970,7 +968,6 @@ module searchService 'core/search/search-services.bicep' = {
     publicNetworkAccess: publicNetworkAccess == 'Enabled'
       ? 'enabled'
       : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
-    sharedPrivateLinkStorageAccounts: (usePrivateEndpoint && useIntegratedVectorization) ? [storage.outputs.id] : []
   }
 }
 
@@ -1327,23 +1324,13 @@ module storageOwnerRoleBackend 'core/security/role.bicep' = if (useUserUpload) {
   }
 }
 
-// Search service needs blob read access for both integrated vectorization and cloud ingestion indexer data source
-module storageRoleSearchService 'core/security/role.bicep' = if ((useIntegratedVectorization || useCloudIngestion) && searchServiceSkuName != 'free') {
+// Search service needs blob read access for the cloud ingestion indexer data source
+module storageRoleSearchService 'core/security/role.bicep' = if (useCloudIngestion && searchServiceSkuName != 'free') {
   scope: az.resourceGroup(storageResourceGroupNameActual)
   name: 'storage-role-searchservice'
   params: {
     principalId: searchService.outputs.systemAssignedPrincipalId
     roleDefinitionId: '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1' // Storage Blob Data Reader
-    principalType: 'ServicePrincipal'
-  }
-}
-
-module storageRoleContributorSearchService 'core/security/role.bicep' = if ((useIntegratedVectorization && useMultimodal) && searchServiceSkuName != 'free') {
-  scope: az.resourceGroup(storageResourceGroupNameActual)
-  name: 'storage-role-contributor-searchservice'
-  params: {
-    principalId: searchService.outputs.systemAssignedPrincipalId
-    roleDefinitionId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe' // Storage Blob Data Contributor
     principalType: 'ServicePrincipal'
   }
 }

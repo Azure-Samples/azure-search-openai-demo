@@ -62,7 +62,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
 
 
 @pytest.mark.asyncio
-async def test_create_index_using_int_vectorization(monkeypatch, search_info):
+async def test_create_index_with_parent_index_projection(monkeypatch, search_info):
     indexes = []
 
     async def mock_create_index(self, index):
