@@ -94,6 +94,10 @@ def test_build_skillset_uses_only_builtin_skills():
     assert data_source.type == SearchIndexerDataSourceType.AZURE_BLOB
     assert data_source.indexer_permission_options is None
 
+    indexer = strategy.build_indexer()
+    assert indexer.skillset_name == "gptkbindex-cloud-skillset"
+    assert indexer.parameters.configuration.allow_skillset_to_read_file_data is True
+
 
 def test_build_skillset_with_acls_uses_native_permissions():
     strategy = create_strategy(use_acls=True)
@@ -205,3 +209,23 @@ async def test_setup_cloud_ingestion_strategy_builtin_rejects_multimodal(cloud_i
     monkeypatch.setenv("USE_MULTIMODAL", "true")
     with pytest.raises(ValueError, match="does not support USE_MULTIMODAL"):
         await setup_cloud_ingestion_strategy(MockAzureCredential())
+
+
+@pytest.mark.asyncio
+async def test_setup_cloud_ingestion_strategy_selects_custom_functions(cloud_ingestion_env, monkeypatch):
+    from prepdocslib.cloudingestionstrategy import CloudIngestionStrategy
+    from setup_cloud_ingestion import setup_cloud_ingestion_strategy
+
+    monkeypatch.setenv("USE_CLOUD_INGESTION_BUILTIN", "false")
+    monkeypatch.setenv("AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID", "/subscriptions/sub/identity")
+    for skill in ["DOCUMENT_EXTRACTOR", "FIGURE_PROCESSOR", "TEXT_PROCESSOR"]:
+        monkeypatch.setenv(f"{skill}_SKILL_ENDPOINT", f"https://{skill.lower()}.azurewebsites.net/api/process")
+        monkeypatch.setenv(f"{skill}_SKILL_AUTH_RESOURCE_ID", f"api://{skill.lower()}")
+
+    strategy, openai_client, _, blob_manager = await setup_cloud_ingestion_strategy(MockAzureCredential())
+    try:
+        assert isinstance(strategy, CloudIngestionStrategy)
+        assert strategy.text_processor.uri == "https://text_processor.azurewebsites.net/api/process"
+    finally:
+        await blob_manager.close_clients()
+        await openai_client.close()
