@@ -44,7 +44,7 @@ services:
     project: ./app/functions/document_extractor
     language: py
     host: function
-    condition: ${USE_CLOUD_INGESTION}
+    condition: ${USE_CLOUD_INGESTION_FUNCTIONS}
     hooks:
       prepackage:
         windows:
@@ -61,7 +61,7 @@ services:
     project: ./app/functions/figure_processor
     language: py
     host: function
-    condition: ${USE_CLOUD_INGESTION}
+    condition: ${USE_CLOUD_INGESTION_FUNCTIONS}
     hooks:
       prepackage:
         windows:
@@ -78,7 +78,7 @@ services:
     project: ./app/functions/text_processor
     language: py
     host: function
-    condition: ${USE_CLOUD_INGESTION}
+    condition: ${USE_CLOUD_INGESTION_FUNCTIONS}
     hooks:
       prepackage:
         windows:

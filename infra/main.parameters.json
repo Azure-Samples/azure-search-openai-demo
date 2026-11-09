@@ -236,6 +236,9 @@
     "useCloudIngestion": {
       "value": "${USE_CLOUD_INGESTION=false}"
     },
+    "useCloudIngestionBuiltin": {
+      "value": "${USE_CLOUD_INGESTION_BUILTIN=false}"
+    },
     "useCloudIngestionAcls": {
       "value": "${USE_CLOUD_INGESTION_ACLS=false}"
     },

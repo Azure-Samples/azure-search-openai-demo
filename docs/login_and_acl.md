@@ -255,6 +255,16 @@ The document extractor parses the POSIX-style ACL string from ADLS Gen2 (e.g., `
 
 > **Note:** The document extractor only reads ACLs directly from each file - it does not consider directory-level ACL inheritance or propagation. If a user or group has read permission on the file's ACL, they will be granted access to that document in Azure AI Search. Make sure ACLs are set explicitly on each file, not just on parent directories.
 
+#### Using built-in skills for ACL ingestion
+
+If you also set `USE_CLOUD_INGESTION_BUILTIN=true` (see [Using built-in skills instead of Azure Functions](data_ingestion.md#using-built-in-skills-instead-of-azure-functions)), the document extractor isn't used. Instead, the search indexer reads permissions itself with [ADLS Gen2 permission ingestion](https://learn.microsoft.com/azure/search/search-indexer-access-control-lists-and-role-based-access) (preview), and copies the user and group IDs onto every chunk. Permission ingestion requires a `metadata_storage_path` field in the index, so the setup script adds one if it's missing.
+
+Native permission ingestion computes effective access, so it accounts for the ACL mask and for permissions on parent directories. It differs from the document extractor in a few ways:
+
+* Changing only a file's ACL doesn't change its last-modified time, so a normal indexer run doesn't pick up the change. [Resync the permissions](https://learn.microsoft.com/azure/search/search-indexer-access-control-lists-and-role-based-access#synchronize-permissions-between-indexed-and-source-content) after changing ACLs.
+* `AZURE_ENABLE_GLOBAL_DOCUMENT_ACCESS` isn't applied: the "other" ACL entry isn't converted to `["all"]`. Review the [limitations](https://learn.microsoft.com/azure/search/search-indexer-access-control-lists-and-role-based-access#limitations) for owning user, owning group, and "other" entries.
+* Multimodal isn't available, because permission ingestion can't be combined with the knowledge store or custom skills.
+
 #### Setup
 
 1. **Enable cloud ingestion and ACLs**

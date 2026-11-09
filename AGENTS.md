@@ -19,6 +19,7 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/backend/approaches/prompts/chat_answer.user.jinja2: Jinja2 template for the user message used by the Chat approach, including sources
     * app/backend/prepdocslib: Contains the document ingestion library used by both local and cloud ingestion
       * app/backend/prepdocslib/blobmanager.py: Manages uploads to Azure Blob Storage
+      * app/backend/prepdocslib/builtincloudingestionstrategy.py: Builds the Azure AI Search indexer and built-in skillset (Content Understanding, page citations, embeddings) for cloud ingestion without Azure Functions, used when USE_CLOUD_INGESTION_BUILTIN is true
       * app/backend/prepdocslib/cloudingestionstrategy.py: Builds the Azure AI Search indexer and skillset for the cloud ingestion pipeline
       * app/backend/prepdocslib/csvparser.py: Parses CSV files
       * app/backend/prepdocslib/embeddings.py: Generates embeddings for text and images using Azure OpenAI
