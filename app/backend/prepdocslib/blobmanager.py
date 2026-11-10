@@ -381,7 +381,7 @@ class AdlsBlobManager(BaseBlobManager):
                     files.append(filename)
         except ResourceNotFoundError as error:
             if error.status_code != 404:
-                logger.exception("Error listing uploaded files", error)
+                logger.exception("Error listing uploaded files: %s", error)
             # Return empty list for 404 (no directory) as this is expected for new users
         return files
 
