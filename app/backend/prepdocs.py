@@ -164,6 +164,17 @@ if __name__ == "__main__":  # pragma: no cover
         )
         exit(0)
 
+    if os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true":
+        # The removed integrated vectorization option wrote indexer-generated keys, so ingesting
+        # into the same index with prepdocs would leave stale records alongside the new ones.
+        logger.error(
+            "USE_FEATURE_INT_VECTORIZATION is no longer supported. To keep indexer-based ingestion, "
+            "set USE_CLOUD_INGESTION=true and run 'azd up'. To use local ingestion instead, "
+            "set a new AZURE_SEARCH_INDEX, delete the .md5 files in the data folder, "
+            "run 'azd env set USE_FEATURE_INT_VECTORIZATION false', and run this script again. Exiting."
+        )
+        exit(1)
+
     if (
         os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled"
         and os.getenv("AZURE_USE_VPN_GATEWAY", "").lower() != "true"
