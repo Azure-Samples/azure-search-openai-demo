@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import (
     AIServicesAccountIdentity,
     AzureOpenAIEmbeddingSkill,
@@ -11,14 +12,21 @@ from azure.search.documents.indexes.models import (
     IndexerExecutionResult,
     IndexerExecutionStatus,
     MergeSkill,
+    PermissionFilter,
+    SearchField,
+    SearchFieldDataType,
+    SearchIndex,
     SearchIndexerDataSourceType,
     SearchIndexerError,
     SearchIndexerStatus,
     SearchIndexerWarning,
+    SimpleField,
 )
 
 from prepdocslib.builtincloudingestionstrategy import (
     BuiltInCloudIngestionStrategy,
+    check_acl_ingestion,
+    validate_acl_configuration,
     wait_for_indexer,
 )
 from prepdocslib.embeddings import OpenAIEmbeddings
@@ -109,7 +117,90 @@ def test_build_skillset_with_acls_uses_native_permissions():
 
     data_source = strategy.build_data_source()
     assert data_source.type == SearchIndexerDataSourceType.ADLS_GEN2
-    assert data_source.indexer_permission_options == ["userIds", "groupIds"]
+    # The option is set after construction, so check that it's in the request body sent to the service
+    assert data_source.as_dict()["indexerPermissionOptions"] == ["userIds", "groupIds"]
+
+
+def acl_index(oids_filter=PermissionFilter.USER_IDS, include_storage_path=True) -> SearchIndex:
+    fields = [
+        SimpleField(name="id", type="Edm.String", key=True),
+        SearchField(
+            name="oids",
+            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+            filterable=True,
+            permission_filter=oids_filter,
+        ),
+        SearchField(
+            name="groups",
+            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
+            filterable=True,
+            permission_filter=PermissionFilter.GROUP_IDS,
+        ),
+    ]
+    if include_storage_path:
+        fields.append(SimpleField(name="metadata_storage_path", type="Edm.String", filterable=True))
+    return SearchIndex(name="gptkbindex", fields=fields)
+
+
+def test_validate_acl_configuration_accepts_valid_configuration():
+    data_source = create_strategy(use_acls=True).build_data_source()
+    validate_acl_configuration(data_source, acl_index())
+
+
+def test_validate_acl_configuration_reports_every_problem():
+    data_source = create_strategy(use_acls=False).build_data_source()
+    index = acl_index(oids_filter=None, include_storage_path=False)
+
+    with pytest.raises(ValueError) as exc_info:
+        validate_acl_configuration(data_source, index)
+
+    message = str(exc_info.value)
+    assert "not 'adlsgen2'" in message
+    assert "expected userIds and groupIds" in message
+    assert "'oids' is missing or doesn't have permissionFilter" in message
+    assert "'metadata_storage_path' is missing" in message
+
+
+def search_client_with_counts(total: int, missing: int) -> MagicMock:
+    async def search(**kwargs):
+        results = MagicMock()
+        results.get_count = AsyncMock(return_value=missing if "filter" in kwargs else total)
+        return results
+
+    search_client = MagicMock()
+    search_client.search = AsyncMock(side_effect=search)
+    return search_client
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "total, missing, level, expected",
+    [
+        (6, 6, logging.ERROR, "None of the 6 indexed chunks have permissions"),
+        (6, 2, logging.WARNING, "2 of 6 indexed chunks have no permissions"),
+        (6, 0, logging.INFO, "All 6 indexed chunks have permissions"),
+    ],
+)
+async def test_check_acl_ingestion(caplog, total, missing, level, expected):
+    search_client = search_client_with_counts(total, missing)
+
+    with caplog.at_level(logging.INFO, logger="scripts"):
+        await check_acl_ingestion(search_client, use_elevated_read=True)
+
+    assert any(record.levelno == level and expected in record.getMessage() for record in caplog.records)
+    for call in search_client.search.await_args_list:
+        assert call.kwargs["enable_elevated_read"] is True
+
+
+@pytest.mark.asyncio
+async def test_check_acl_ingestion_warns_when_check_fails(caplog):
+    search_client = MagicMock()
+    search_client.search = AsyncMock(side_effect=HttpResponseError(message="missing elevated read permission"))
+
+    with caplog.at_level(logging.WARNING, logger="scripts"):
+        await check_acl_ingestion(search_client, use_elevated_read=False)
+
+    assert "Couldn't verify that permissions were ingested: missing elevated read permission" in caplog.text
 
 
 def indexer_status(status: str, start_time: datetime, warnings=None, errors=None) -> SearchIndexerStatus:

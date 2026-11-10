@@ -4,6 +4,8 @@ import asyncio
 import logging
 from datetime import datetime
 
+from azure.core.exceptions import HttpResponseError
+from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes.aio import SearchIndexerClient
 from azure.search.documents.indexes.models import (
     AIServicesAccountIdentity,
@@ -22,6 +24,8 @@ from azure.search.documents.indexes.models import (
     MergeSkill,
     NativeBlobSoftDeleteDeletionDetectionPolicy,
     OutputFieldMappingEntry,
+    PermissionFilter,
+    SearchIndex,
     SearchIndexer,
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
@@ -256,9 +260,14 @@ class BuiltInCloudIngestionStrategy(Strategy):
             await self.ensure_metadata_storage_path_field()
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
-            await indexer_client.create_or_update_data_source_connection(self.build_data_source())
+            data_source = await indexer_client.create_or_update_data_source_connection(self.build_data_source())
             await indexer_client.create_or_update_skillset(self.build_skillset())
             await indexer_client.create_or_update_indexer(self.build_indexer())
+
+        if self.use_acls:
+            async with self.search_info.create_search_index_client() as index_client:
+                index = await index_client.get_index(self.search_info.index_name)
+            validate_acl_configuration(data_source, index)
 
     async def ensure_metadata_storage_path_field(self) -> None:  # pragma: no cover
         """ADLS Gen2 permission ingestion requires a metadata_storage_path field in the target index."""
@@ -291,6 +300,74 @@ class BuiltInCloudIngestionStrategy(Strategy):
             await indexer_client.run_indexer(self.indexer_name)
             logger.info("Triggered indexer '%s' for cloud ingestion", self.indexer_name)
             await wait_for_indexer(indexer_client, self.indexer_name, previous_start_time)
+
+        if self.use_acls:
+            async with self.search_info.create_search_client() as search_client:
+                await check_acl_ingestion(search_client, use_elevated_read=self.enforce_access_control)
+
+
+def validate_acl_configuration(data_source: SearchIndexerDataSourceConnection, index: SearchIndex) -> None:
+    """Fails fast if the deployed data source or index can't ingest ADLS Gen2 permissions.
+
+    A misconfigured pipeline doesn't produce indexer errors: chunks are indexed without
+    permissions, so this checks the configuration as stored by the search service.
+    """
+    problems = []
+    if data_source.type != SearchIndexerDataSourceType.ADLS_GEN2:
+        problems.append(f"data source '{data_source.name}' has type '{data_source.type}', not 'adlsgen2'")
+    permission_options = set(data_source.indexer_permission_options or [])
+    if not {IndexerPermissionOption.USER_IDS, IndexerPermissionOption.GROUP_IDS} <= permission_options:
+        problems.append(
+            f"data source '{data_source.name}' has indexerPermissionOptions {sorted(permission_options)}, "
+            "expected userIds and groupIds"
+        )
+    fields = {field.name: field for field in index.fields}
+    for field_name, permission_filter in [("oids", PermissionFilter.USER_IDS), ("groups", PermissionFilter.GROUP_IDS)]:
+        field = fields.get(field_name)
+        if field is None or field.permission_filter != permission_filter:
+            problems.append(
+                f"index field '{field_name}' is missing or doesn't have permissionFilter '{permission_filter}'"
+            )
+    if METADATA_STORAGE_PATH_FIELD not in fields:
+        problems.append(f"index field '{METADATA_STORAGE_PATH_FIELD}' is missing")
+    if problems:
+        raise ValueError("ADLS Gen2 permission ingestion isn't configured correctly: " + "; ".join(problems))
+
+
+async def check_acl_ingestion(search_client: SearchClient, use_elevated_read: bool) -> None:
+    """Warns if indexed chunks have no permissions, which means ACL ingestion silently didn't happen.
+
+    Files without any named user or group ACL entries are indexed with ["none"], so empty
+    oids and groups fields indicate a pipeline problem rather than a file without access.
+    When permission filtering is enforced, the check needs elevated read (Search Index Data
+    Contributor) to see every chunk.
+    """
+    try:
+        total_results = await search_client.search(
+            search_text="*", top=0, include_total_count=True, enable_elevated_read=use_elevated_read or None
+        )
+        total = await total_results.get_count()
+        missing_results = await search_client.search(
+            search_text="*",
+            filter="not oids/any() and not groups/any()",
+            top=0,
+            include_total_count=True,
+            enable_elevated_read=use_elevated_read or None,
+        )
+        missing = await missing_results.get_count()
+    except HttpResponseError as error:
+        logger.warning("Couldn't verify that permissions were ingested: %s", error.message)
+        return
+    if total and missing == total:
+        logger.error(
+            "None of the %d indexed chunks have permissions (oids/groups). ADLS Gen2 permission ingestion didn't run; "
+            "check the data source's indexerPermissionOptions and the search service's access to the storage account.",
+            total,
+        )
+    elif missing:
+        logger.warning("%d of %d indexed chunks have no permissions (oids/groups).", missing, total)
+    else:
+        logger.info("All %d indexed chunks have permissions.", total)
 
 
 async def wait_for_indexer(
