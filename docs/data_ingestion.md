@@ -23,17 +23,17 @@ The chat app provides two ways to ingest data: manual ingestion and cloud ingest
 
 ## Supported document formats
 
-In order to ingest a document format, we need a tool that can turn it into text. By default, the manual indexing uses Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
+In order to ingest a document format, we need a tool that can turn it into text. By default, both local and cloud ingestion use Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
 
-| Format | Manual indexing                      | Integrated Vectorization |
-| ------ | ------------------------------------ | ------------------------ |
-| PDF    | Yes (DI or local with PyPDF)         | Yes                      |
-| HTML   | Yes (DI or local with BeautifulSoup) | Yes                      |
-| DOCX, PPTX, XLSX   | Yes (DI)                             | Yes                      |
-| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes                      |
-| TXT    | Yes (Local)                          | Yes                      |
-| JSON   | Yes (Local)                          | Yes                      |
-| CSV    | Yes (Local)                          | Yes                      |
+| Format | Local and cloud ingestion            |
+| ------ | ------------------------------------ |
+| PDF    | Yes (DI or local with PyPDF)         |
+| HTML   | Yes (DI or local with BeautifulSoup) |
+| DOCX, PPTX, XLSX   | Yes (DI)                 |
+| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) |
+| TXT    | Yes (Local)                          |
+| JSON   | Yes (Local)                          |
+| CSV    | Yes (Local)                          |
 
 ## Ingestion stages
 
