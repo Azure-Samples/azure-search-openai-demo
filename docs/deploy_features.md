@@ -224,6 +224,8 @@ Convert them first to PDF or image formats to enable media description.
 
 By default, this project runs a local script in order to ingest data. Once you move beyond the sample documents, you may want to enable [cloud ingestion](./data_ingestion.md#cloud-ingestion), which uses Azure AI Search indexers and custom Azure AI Search skills based off the same code used by the local ingestion. That approach scales better to larger amounts of data.
 
+Alternatively, you can run cloud ingestion with only [built-in Azure AI Search skills](./data_ingestion.md#using-built-in-skills-instead-of-azure-functions), so no Azure Functions are deployed. That option uses Azure Content Understanding for extraction and chunking, and doesn't support multimodal yet.
+
 Learn more in the [cloud ingestion guide](./data_ingestion.md#cloud-ingestion).
 
 ## Enabling client-side chat history
