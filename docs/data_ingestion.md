@@ -24,17 +24,17 @@ The chat app provides two ways to ingest data: manual ingestion and cloud ingest
 
 ## Supported document formats
 
-In order to ingest a document format, we need a tool that can turn it into text. By default, both local and cloud ingestion use Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
+In order to ingest a document format, we need a tool that can turn it into text. Local ingestion and cloud ingestion with custom Functions use Azure Document Intelligence (DI in the table below) by default, but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges. [Cloud ingestion with built-in skills](#using-built-in-skills-instead-of-azure-functions) uses [Azure Content Understanding](https://learn.microsoft.com/azure/search/cognitive-search-skill-content-understanding#supported-file-formats) (CU in the table below) instead.
 
-| Format | Local and cloud ingestion            |
-| ------ | ------------------------------------ |
-| PDF    | Yes (DI or local with PyPDF)         |
-| HTML   | Yes (DI or local with BeautifulSoup) |
-| DOCX, PPTX, XLSX   | Yes (DI)                 |
-| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) |
-| TXT    | Yes (Local)                          |
-| JSON   | Yes (Local)                          |
-| CSV    | Yes (Local)                          |
+| Format | Local and cloud ingestion with custom Functions | Cloud ingestion with built-in skills |
+| ------ | ------------------------------------ | ------------------------------------ |
+| PDF    | Yes (DI or local with PyPDF)         | Yes (CU) |
+| HTML   | Yes (DI or local with BeautifulSoup) | Yes (CU) |
+| DOCX, PPTX, XLSX   | Yes (DI)                 | Yes (CU) |
+| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes (CU) |
+| TXT, MD | Yes (Local)                         | Yes (CU) |
+| JSON   | Yes (Local)                          | No |
+| CSV    | Yes (Local)                          | No |
 
 ## Ingestion stages
 
@@ -42,7 +42,7 @@ The ingestion pipeline consists of three main stages that transform raw document
 
 ### Document extraction
 
-The first stage extracts text and structured content from source documents using parsers tailored to each file format. For PDF, HTML, DOCX, PPTX, XLSX, and image files, the pipeline defaults to using [Azure Document Intelligence](https://learn.microsoft.com/azure/ai-services/document-intelligence/overview) to extract text, tables, and figures with layout information. Alternatively, local parsers like PyPDF and BeautifulSoup can be used to reduce costs for simpler documents. For TXT, JSON, and CSV files, lightweight local parsers extract the content directly.
+The first stage extracts text and structured content from source documents using parsers tailored to each file format. (This section describes local ingestion and cloud ingestion with custom Functions. Cloud ingestion with built-in skills uses Content Understanding for extraction and chunking instead, as described in [its own section](#using-built-in-skills-instead-of-azure-functions).) For PDF, HTML, DOCX, PPTX, XLSX, and image files, the pipeline defaults to using [Azure Document Intelligence](https://learn.microsoft.com/azure/ai-services/document-intelligence/overview) to extract text, tables, and figures with layout information. Alternatively, local parsers like PyPDF and BeautifulSoup can be used to reduce costs for simpler documents. For TXT, JSON, and CSV files, lightweight local parsers extract the content directly.
 
 During extraction, tables are converted to HTML markup to preserve their structure, and figures (when multimodal is enabled) are identified with bounding boxes and placeholders.
 
