@@ -168,10 +168,11 @@ if __name__ == "__main__":  # pragma: no cover
         # The removed integrated vectorization option wrote indexer-generated keys, so ingesting
         # into the same index with prepdocs would leave stale records alongside the new ones.
         logger.error(
-            "USE_FEATURE_INT_VECTORIZATION is no longer supported. To keep indexer-based ingestion, "
-            "set USE_CLOUD_INGESTION=true and run 'azd up'. To use local ingestion instead, "
-            "set a new AZURE_SEARCH_INDEX, delete the .md5 files in the data folder, "
-            "run 'azd env set USE_FEATURE_INT_VECTORIZATION false', and run this script again. Exiting."
+            "USE_FEATURE_INT_VECTORIZATION is no longer supported. To migrate: "
+            "run 'azd env set USE_FEATURE_INT_VECTORIZATION false', "
+            "set a new AZURE_SEARCH_INDEX so that old records are not mixed with new ones, "
+            "optionally run 'azd env set USE_CLOUD_INGESTION true' to keep indexer-based ingestion, "
+            "delete the .md5 files in the data folder, and run 'azd up'. Exiting."
         )
         exit(1)
 

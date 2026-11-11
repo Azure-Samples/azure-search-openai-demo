@@ -25,4 +25,5 @@ $argumentList = "./app/backend/prepdocs.py $dataArg --verbose $additionalArgs"
 
 $argumentList
 
-Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow
+$process = Start-Process -FilePath $venvPythonPath -ArgumentList $argumentList -Wait -NoNewWindow -PassThru
+exit $process.ExitCode
