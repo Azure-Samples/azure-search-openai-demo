@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from dataclasses import dataclass
 from datetime import datetime
 
 from azure.core.exceptions import HttpResponseError
@@ -15,6 +16,8 @@ from azure.search.documents.indexes.models import (
     ContentUnderstandingSkillChunkingProperties,
     ContentUnderstandingSkillChunkingUnit,
     ContentUnderstandingSkillExtractionOptions,
+    FieldMapping,
+    FieldMappingFunction,
     IndexerExecutionEnvironment,
     IndexerExecutionStatus,
     IndexerPermissionOption,
@@ -53,8 +56,56 @@ INDEXER_POLL_TIMEOUT_SECONDS = 30 * 60
 
 SECTIONS_CONTEXT = "/document/text_sections/*"
 PAGE_NUMBER_SOURCE = f"{SECTIONS_CONTEXT}/locationMetadata/pageNumberFrom"
-FILE_EXTENSION_SOURCE = "$(/document/metadata_storage_file_extension)"
 METADATA_STORAGE_PATH_FIELD = "metadata_storage_path"
+
+
+@dataclass(frozen=True)
+class SourceFields:
+    """Enrichment tree paths for the metadata that differs between indexer data sources."""
+
+    file_name: str
+    url: str
+    # Base of the sourcepage citation; PDFs get "#page=N" appended
+    citation: str
+    is_pdf_condition: str
+
+
+BLOB_SOURCE_FIELDS = SourceFields(
+    file_name="/document/metadata_storage_name",
+    url="/document/metadata_storage_path",
+    citation="/document/metadata_storage_name",
+    is_pdf_condition=(
+        "($(/document/metadata_storage_file_extension) == '.pdf'"
+        " || $(/document/metadata_storage_file_extension) == '.PDF')"
+    ),
+)
+
+# SharePoint items have no metadata_storage_* fields. Citations use the item's web URL, so clicking
+# one opens the document in SharePoint, which checks the user's access (and honors #page=N for PDFs).
+SHAREPOINT_SOURCE_FIELDS = SourceFields(
+    file_name="/document/metadata_spo_item_name",
+    url="/document/metadata_spo_item_weburi",
+    citation="/document/metadata_spo_item_weburi",
+    is_pdf_condition="$(/document/metadata_spo_item_content_type) == 'application/pdf'",
+)
+
+
+@dataclass(frozen=True)
+class SharePointSource:
+    """Connection settings for indexing a SharePoint Online site with an Entra app registration."""
+
+    site_url: str
+    app_id: str
+    app_secret: str
+    tenant_id: str
+    # Optional container query, such as "includeLibrary=<library URL>" (defaults to the site's default library)
+    query: str | None = None
+
+    def connection_string(self) -> str:
+        return (
+            f"SharePointOnlineEndpoint={self.site_url};ApplicationId={self.app_id};"
+            f"ApplicationSecret={self.app_secret};TenantId={self.tenant_id}"
+        )
 
 
 class BuiltInCloudIngestionStrategy(Strategy):
@@ -64,6 +115,9 @@ class BuiltInCloudIngestionStrategy(Strategy):
     the ``sourcepage`` citation (``file.pdf#page=N`` for PDFs), and the Azure OpenAI Embedding skill
     vectorizes each chunk. When ``use_acls`` is enabled, the ADLS Gen2 data source ingests native
     file permissions into the ``oids`` and ``groups`` fields.
+
+    When ``sharepoint`` is set, a second data source, skillset, and indexer also ingest documents
+    from a SharePoint Online site into the same index.
     """
 
     def __init__(
@@ -83,6 +137,7 @@ class BuiltInCloudIngestionStrategy(Strategy):
         figure_description_model: str | None = None,
         figure_description_deployment: str | None = None,
         use_private_execution: bool = False,
+        sharepoint: SharePointSource | None = None,
     ) -> None:
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -106,7 +161,14 @@ class BuiltInCloudIngestionStrategy(Strategy):
         self.indexer_name = f"{prefix}-indexer"
         self.data_source_name = f"{prefix}-blob"
 
-    def build_skillset(self) -> SearchIndexerSkillset:
+        self.sharepoint = sharepoint
+        self.sharepoint_skillset_name = f"{prefix}-sharepoint-skillset"
+        self.sharepoint_indexer_name = f"{prefix}-sharepoint-indexer"
+        self.sharepoint_data_source_name = f"{prefix}-sharepoint"
+
+    def build_skillset(
+        self, name: str | None = None, source_fields: SourceFields = BLOB_SOURCE_FIELDS
+    ) -> SearchIndexerSkillset:
         content_understanding_skill = ContentUnderstandingSkill(
             name="content-understanding-skill",
             description="Extracts text, tables and page locations, and splits the content into chunks",
@@ -130,33 +192,30 @@ class BuiltInCloudIngestionStrategy(Strategy):
         # the numeric page number (wrapped in an array) to the file name.
         page_citation_skill = MergeSkill(
             name="page-citation-skill",
-            description="Builds a file.pdf#page=N citation from the chunk's first page",
+            description="Builds a <citation>#page=N citation from the chunk's first page",
             context=SECTIONS_CONTEXT,
             insert_pre_tag="#page=",
             insert_post_tag="",
             inputs=[
-                InputFieldMappingEntry(name="text", source="/document/metadata_storage_name"),
+                InputFieldMappingEntry(name="text", source=source_fields.citation),
                 InputFieldMappingEntry(name="itemsToInsert", source=f"=[$({PAGE_NUMBER_SOURCE})]"),
             ],
             outputs=[OutputFieldMappingEntry(name="mergedText", target_name="pageCitation")],
         )
 
-        # Only PDFs get a page fragment (matching local ingestion); other files cite the file name.
+        # Only PDFs get a page fragment (matching local ingestion); other files use the plain citation.
         # pageNumberFrom is 0 when Content Understanding finds no page location.
         sourcepage_skill = ConditionalSkill(
             name="sourcepage-skill",
-            description="Uses the page citation for PDFs and the file name for other formats",
+            description="Uses the page citation for PDFs and the plain citation for other formats",
             context=SECTIONS_CONTEXT,
             inputs=[
                 InputFieldMappingEntry(
                     name="condition",
-                    source=(
-                        f"=({FILE_EXTENSION_SOURCE} == '.pdf' || {FILE_EXTENSION_SOURCE} == '.PDF')"
-                        f" && $({PAGE_NUMBER_SOURCE}) > 0"
-                    ),
+                    source=f"={source_fields.is_pdf_condition} && $({PAGE_NUMBER_SOURCE}) > 0",
                 ),
                 InputFieldMappingEntry(name="whenTrue", source=f"{SECTIONS_CONTEXT}/pageCitation"),
-                InputFieldMappingEntry(name="whenFalse", source="/document/metadata_storage_name"),
+                InputFieldMappingEntry(name="whenFalse", source=source_fields.citation),
             ],
             outputs=[OutputFieldMappingEntry(name="output", target_name="sourcepage")],
         )
@@ -176,8 +235,8 @@ class BuiltInCloudIngestionStrategy(Strategy):
         mappings = [
             InputFieldMappingEntry(name="content", source=f"{SECTIONS_CONTEXT}/content"),
             InputFieldMappingEntry(name="sourcepage", source=f"{SECTIONS_CONTEXT}/sourcepage"),
-            InputFieldMappingEntry(name="sourcefile", source="/document/metadata_storage_name"),
-            InputFieldMappingEntry(name="storageUrl", source="/document/metadata_storage_path"),
+            InputFieldMappingEntry(name="sourcefile", source=source_fields.file_name),
+            InputFieldMappingEntry(name="storageUrl", source=source_fields.url),
             InputFieldMappingEntry(name=self.search_field_name_embedding, source=f"{SECTIONS_CONTEXT}/embedding"),
         ]
         if self.use_acls:
@@ -202,7 +261,7 @@ class BuiltInCloudIngestionStrategy(Strategy):
         )
 
         return SearchIndexerSkillset(
-            name=self.skillset_name,
+            name=name or self.skillset_name,
             description="Built-in skills: Content Understanding extraction and chunking, page citations, embeddings",
             skills=[content_understanding_skill, page_citation_skill, sourcepage_skill, embedding_skill],
             cognitive_services_account=AIServicesAccountIdentity(subdomain_url=self.content_understanding_endpoint),
@@ -244,6 +303,42 @@ class BuiltInCloudIngestionStrategy(Strategy):
             ),
         )
 
+    def build_sharepoint_data_source(self, sharepoint: SharePointSource) -> SearchIndexerDataSourceConnection:
+        return SearchIndexerDataSourceConnection(
+            name=self.sharepoint_data_source_name,
+            type=SearchIndexerDataSourceType.SHAREPOINT,
+            connection_string=sharepoint.connection_string(),
+            container=SearchIndexerDataContainer(
+                name="useQuery" if sharepoint.query else "defaultSiteLibrary", query=sharepoint.query
+            ),
+        )
+
+    def build_sharepoint_indexer(self) -> SearchIndexer:
+        return SearchIndexer(
+            name=self.sharepoint_indexer_name,
+            description="Indexer for SharePoint documents using built-in skills",
+            data_source_name=self.sharepoint_data_source_name,
+            target_index_name=self.search_info.index_name,
+            skillset_name=self.sharepoint_skillset_name,
+            parameters=IndexingParameters(
+                configuration=IndexingParametersConfiguration(
+                    query_timeout=None,
+                    data_to_extract="contentAndMetadata",
+                    allow_skillset_to_read_file_data=True,
+                    # The skillset reaches the AI services through shared private links, like the blob indexer
+                    execution_environment=(IndexerExecutionEnvironment.PRIVATE if self.use_private_execution else None),
+                )
+            ),
+            # SharePoint item IDs contain characters that aren't allowed in document keys
+            field_mappings=[
+                FieldMapping(
+                    source_field_name="metadata_spo_site_library_item_id",
+                    target_field_name="id",
+                    mapping_function=FieldMappingFunction(name="base64Encode"),
+                )
+            ],
+        )
+
     async def setup(self) -> None:  # pragma: no cover
         logger.info("Setting up search index and built-in skillset for cloud ingestion")
 
@@ -282,6 +377,15 @@ class BuiltInCloudIngestionStrategy(Strategy):
                 validate_acl_configuration(data_source, index)
             await indexer_client.create_or_update_skillset(self.build_skillset())
             await indexer_client.create_or_update_indexer(self.build_indexer())
+            if self.sharepoint:
+                logger.info("Setting up SharePoint indexer for %s", self.sharepoint.site_url)
+                await indexer_client.create_or_update_data_source_connection(
+                    self.build_sharepoint_data_source(self.sharepoint)
+                )
+                await indexer_client.create_or_update_skillset(
+                    self.build_skillset(self.sharepoint_skillset_name, SHAREPOINT_SOURCE_FIELDS)
+                )
+                await indexer_client.create_or_update_indexer(self.build_sharepoint_indexer())
 
     async def ensure_metadata_storage_path_field(self) -> None:  # pragma: no cover
         """ADLS Gen2 permission ingestion requires a metadata_storage_path field in the target index."""
@@ -303,34 +407,41 @@ class BuiltInCloudIngestionStrategy(Strategy):
                     file.close()
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
-            previous_result = (await indexer_client.get_indexer_status(self.indexer_name)).last_result
-            initial_run = previous_result is not None and previous_result.status == IndexerExecutionStatus.IN_PROGRESS
-            if initial_run:
-                # Creating the indexer in setup() starts a run automatically, which may have begun
-                # before the uploads above. Let it finish, then run again to pick up every file.
-                logger.info(
-                    "Waiting for the initial run of indexer '%s' to finish. Azure AI Search starts it automatically "
-                    "when the indexer is created, so it may have missed files uploaded afterward.",
-                    self.indexer_name,
-                )
-                if not await wait_for_indexer(indexer_client, self.indexer_name, None):
+            indexer_names = [self.indexer_name] + ([self.sharepoint_indexer_name] if self.sharepoint else [])
+            for indexer_name in indexer_names:
+                if not await run_indexer_and_wait(indexer_client, indexer_name):
                     return
-                previous_result = (await indexer_client.get_indexer_status(self.indexer_name)).last_result
-            previous_start_time = previous_result.start_time if previous_result else None
-            await indexer_client.run_indexer(self.indexer_name)
-            if initial_run:
-                logger.info(
-                    "Running indexer '%s' again to index every uploaded file. Warnings from the initial run may repeat.",
-                    self.indexer_name,
-                )
-            else:
-                logger.info("Triggered indexer '%s' for cloud ingestion", self.indexer_name)
-            if not await wait_for_indexer(indexer_client, self.indexer_name, previous_start_time):
-                return
 
         if self.use_acls:
             async with self.search_info.create_search_client() as search_client:
                 await check_acl_ingestion(search_client, use_elevated_read=self.enforce_access_control)
+
+
+async def run_indexer_and_wait(indexer_client: SearchIndexerClient, indexer_name: str) -> bool:  # pragma: no cover
+    """Runs the indexer and waits for it. Returns False if a wait timed out."""
+    previous_result = (await indexer_client.get_indexer_status(indexer_name)).last_result
+    initial_run = previous_result is not None and previous_result.status == IndexerExecutionStatus.IN_PROGRESS
+    if initial_run:
+        # Creating the indexer in setup() starts a run automatically, which may have begun
+        # before files were uploaded. Let it finish, then run again to pick up every file.
+        logger.info(
+            "Waiting for the initial run of indexer '%s' to finish. Azure AI Search starts it automatically "
+            "when the indexer is created, so it may have missed files uploaded afterward.",
+            indexer_name,
+        )
+        if not await wait_for_indexer(indexer_client, indexer_name, None):
+            return False
+        previous_result = (await indexer_client.get_indexer_status(indexer_name)).last_result
+    previous_start_time = previous_result.start_time if previous_result else None
+    await indexer_client.run_indexer(indexer_name)
+    if initial_run:
+        logger.info(
+            "Running indexer '%s' again to index every uploaded file. Warnings from the initial run may repeat.",
+            indexer_name,
+        )
+    else:
+        logger.info("Triggered indexer '%s' for cloud ingestion", indexer_name)
+    return await wait_for_indexer(indexer_client, indexer_name, previous_start_time)
 
 
 def validate_acl_configuration(data_source: SearchIndexerDataSourceConnection, index: SearchIndex) -> None:

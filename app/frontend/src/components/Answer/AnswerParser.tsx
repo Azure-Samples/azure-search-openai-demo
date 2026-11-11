@@ -31,6 +31,21 @@ type HtmlParsedAnswer = {
 
 const isWebCitation = (reference: string) => reference.startsWith("http://") || reference.startsWith("https://");
 
+// Document URLs (such as SharePoint files indexed by cloud ingestion) are labeled like blob citations:
+// the file name plus any "#page=N" fragment. Other URLs keep the full URL as their label.
+export const getWebCitationLabel = (reference: string): string => {
+    try {
+        const url = new URL(reference);
+        const fileName = decodeURIComponent(url.pathname.split("/").pop() ?? "");
+        if (/\.[a-z0-9]{2,5}$/i.test(fileName)) {
+            return `${fileName}${url.hash}`;
+        }
+    } catch {
+        // Not a parseable URL, so fall back to the raw reference
+    }
+    return reference;
+};
+
 const normalizeAnswerText = (answer: ChatAppResponse, isStreaming: boolean): string => {
     let parsedAnswer = answer.output_text.trim();
 

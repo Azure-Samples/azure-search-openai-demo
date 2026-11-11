@@ -24,7 +24,9 @@ from azure.search.documents.indexes.models import (
 )
 
 from prepdocslib.builtincloudingestionstrategy import (
+    SHAREPOINT_SOURCE_FIELDS,
     BuiltInCloudIngestionStrategy,
+    SharePointSource,
     check_acl_ingestion,
     validate_acl_configuration,
     wait_for_indexer,
@@ -37,7 +39,9 @@ from .mocks import MockAzureCredential
 CU_ENDPOINT = "https://cu-test.cognitiveservices.azure.com/"
 
 
-def create_strategy(use_acls: bool = False) -> BuiltInCloudIngestionStrategy:
+def create_strategy(
+    use_acls: bool = False, sharepoint: SharePointSource | None = None
+) -> BuiltInCloudIngestionStrategy:
     blob_manager = MagicMock()
     blob_manager.container = "content"
     blob_manager.get_managedidentity_connectionstring.return_value = "ResourceId=/subscriptions/sub/storage;"
@@ -57,6 +61,7 @@ def create_strategy(use_acls: bool = False) -> BuiltInCloudIngestionStrategy:
         search_field_name_embedding="embedding3",
         content_understanding_endpoint=CU_ENDPOINT,
         use_acls=use_acls,
+        sharepoint=sharepoint,
     )
 
 
@@ -438,3 +443,120 @@ async def test_setup_cloud_ingestion_strategy_custom_functions_warns_with_privat
     await openai_client.close()
 
     assert "doesn't support private endpoints" in caplog.text
+
+
+SHAREPOINT = SharePointSource(
+    site_url="https://contoso.sharepoint.com/sites/hr",
+    app_id="sp-app-id",
+    app_secret="sp-secret",
+    tenant_id="sp-tenant",
+)
+
+
+def test_build_sharepoint_skillset_uses_sharepoint_metadata():
+    strategy = create_strategy(sharepoint=SHAREPOINT)
+    skillset = strategy.build_skillset(strategy.sharepoint_skillset_name, SHAREPOINT_SOURCE_FIELDS)
+
+    assert skillset.name == "gptkbindex-cloud-sharepoint-skillset"
+    _, page_citation, sourcepage, _ = skillset.skills
+    assert {i.name: i.source for i in page_citation.inputs}["text"] == "/document/metadata_spo_item_weburi"
+    condition_inputs = {i.name: i.source for i in sourcepage.inputs}
+    assert "$(/document/metadata_spo_item_content_type) == 'application/pdf'" in condition_inputs["condition"]
+    assert condition_inputs["whenFalse"] == "/document/metadata_spo_item_weburi"
+    mappings = {m.name: m.source for m in skillset.index_projection.selectors[0].mappings}
+    assert mappings["sourcefile"] == "/document/metadata_spo_item_name"
+    assert mappings["storageUrl"] == "/document/metadata_spo_item_weburi"
+
+
+@pytest.mark.parametrize(
+    "query, container_name",
+    [(None, "defaultSiteLibrary"), ("includeLibrary=https://contoso.sharepoint.com/sites/hr/Docs", "useQuery")],
+)
+def test_build_sharepoint_data_source(query, container_name):
+    sharepoint = SharePointSource(
+        site_url=SHAREPOINT.site_url, app_id="sp-app-id", app_secret="sp-secret", tenant_id="sp-tenant", query=query
+    )
+    data_source = create_strategy(sharepoint=sharepoint).build_sharepoint_data_source(sharepoint)
+
+    assert data_source.name == "gptkbindex-cloud-sharepoint"
+    assert data_source.type == SearchIndexerDataSourceType.SHAREPOINT
+    assert data_source.connection_string == (
+        "SharePointOnlineEndpoint=https://contoso.sharepoint.com/sites/hr;ApplicationId=sp-app-id;"
+        "ApplicationSecret=sp-secret;TenantId=sp-tenant"
+    )
+    assert data_source.container.name == container_name
+    assert data_source.container.query == query
+
+
+def test_build_sharepoint_indexer_maps_item_id_to_key():
+    indexer = create_strategy(sharepoint=SHAREPOINT).build_sharepoint_indexer()
+
+    assert indexer.data_source_name == "gptkbindex-cloud-sharepoint"
+    assert indexer.skillset_name == "gptkbindex-cloud-sharepoint-skillset"
+    assert indexer.parameters.configuration.allow_skillset_to_read_file_data is True
+    [field_mapping] = indexer.field_mappings
+    assert field_mapping.source_field_name == "metadata_spo_site_library_item_id"
+    assert field_mapping.target_field_name == "id"
+    assert field_mapping.mapping_function.name == "base64Encode"
+    assert indexer.parameters.configuration.execution_environment is None
+
+
+def test_build_sharepoint_indexer_uses_private_execution():
+    strategy = create_strategy(sharepoint=SHAREPOINT)
+    strategy.use_private_execution = True
+
+    indexer = strategy.build_sharepoint_indexer()
+
+    assert indexer.parameters.configuration.execution_environment == "private"
+
+
+@pytest.fixture
+def sharepoint_env(cloud_ingestion_env, monkeypatch):
+    for key, value in {
+        "USE_CLOUD_INGESTION_SHAREPOINT": "true",
+        "AZURE_SHAREPOINT_SITE_URL": SHAREPOINT.site_url,
+        "AZURE_SHAREPOINT_INDEXER_APP_ID": "sp-app-id",
+        "AZURE_SHAREPOINT_INDEXER_APP_SECRET": "sp-secret",
+        "AZURE_TENANT_ID": "main-tenant",
+    }.items():
+        monkeypatch.setenv(key, value)
+    for key in ["AZURE_SHAREPOINT_TENANT_ID", "AZURE_SHAREPOINT_QUERY"]:
+        monkeypatch.delenv(key, raising=False)
+
+
+@pytest.mark.asyncio
+async def test_setup_cloud_ingestion_strategy_configures_sharepoint(sharepoint_env):
+    from setup_cloud_ingestion import setup_cloud_ingestion_strategy
+
+    strategy, openai_client, _, blob_manager = await setup_cloud_ingestion_strategy(MockAzureCredential())
+    try:
+        assert isinstance(strategy, BuiltInCloudIngestionStrategy)
+        assert strategy.sharepoint == SharePointSource(
+            site_url=SHAREPOINT.site_url,
+            app_id="sp-app-id",
+            app_secret="sp-secret",
+            tenant_id="main-tenant",
+            query=None,
+        )
+    finally:
+        await blob_manager.close_clients()
+        await openai_client.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "env_overrides, message",
+    [
+        ({"USE_CLOUD_INGESTION_BUILTIN": "false"}, "requires USE_CLOUD_INGESTION_BUILTIN"),
+        ({"USE_CLOUD_INGESTION_ACLS": "true"}, "doesn't support USE_CLOUD_INGESTION_ACLS"),
+    ],
+)
+async def test_setup_cloud_ingestion_strategy_sharepoint_rejects_unsupported(
+    sharepoint_env, monkeypatch, env_overrides, message
+):
+    from setup_cloud_ingestion import setup_cloud_ingestion_strategy
+
+    for key, value in env_overrides.items():
+        monkeypatch.setenv(key, value)
+    with pytest.raises(ValueError, match=message):
+        await setup_cloud_ingestion_strategy(MockAzureCredential())
