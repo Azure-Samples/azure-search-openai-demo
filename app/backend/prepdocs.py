@@ -12,9 +12,6 @@ from openai import AsyncOpenAI
 from rich.logging import RichHandler
 
 from prepdocslib.filestrategy import FileStrategy
-from prepdocslib.integratedvectorizerstrategy import (
-    IntegratedVectorizerStrategy,
-)
 from prepdocslib.listfilestrategy import (
     LocalListFileStrategy,
 )
@@ -167,6 +164,18 @@ if __name__ == "__main__":  # pragma: no cover
         )
         exit(0)
 
+    if os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true":
+        # The removed integrated vectorization option wrote indexer-generated keys, so ingesting
+        # into the same index with prepdocs would leave stale records alongside the new ones.
+        logger.error(
+            "USE_FEATURE_INT_VECTORIZATION is no longer supported. To migrate: "
+            "run 'azd env set USE_FEATURE_INT_VECTORIZATION false', "
+            "set a new AZURE_SEARCH_INDEX so that old records are not mixed with new ones, "
+            "optionally run 'azd env set USE_CLOUD_INGESTION true' to keep indexer-based ingestion, "
+            "delete the .md5 files in the data folder, and run 'azd up'. Exiting."
+        )
+        exit(1)
+
     if (
         os.getenv("AZURE_PUBLIC_NETWORK_ACCESS") == "Disabled"
         and os.getenv("AZURE_USE_VPN_GATEWAY", "").lower() != "true"
@@ -174,7 +183,6 @@ if __name__ == "__main__":  # pragma: no cover
         logger.error("AZURE_PUBLIC_NETWORK_ACCESS is set to Disabled. Exiting.")
         exit(0)
 
-    use_int_vectorization = os.getenv("USE_FEATURE_INT_VECTORIZATION", "").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
     use_acls = os.getenv("AZURE_USE_AUTHENTICATION", "").lower() == "true"
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
@@ -282,66 +290,46 @@ if __name__ == "__main__":  # pragma: no cover
             disable_batch=args.disablebatchvectors,
         )
 
-    ingestion_strategy: Strategy
-    if use_int_vectorization:
+    file_processors, figure_processor = setup_file_processors(
+        azure_credential=azd_credential,
+        document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
+        document_intelligence_key=clean_key_if_exists(args.documentintelligencekey),
+        local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER") == "true",
+        local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER") == "true",
+        use_content_understanding=use_content_understanding,
+        use_multimodal=use_multimodal,
+        content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
+        content_understanding_deployment=os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT"),
+        openai_client=openai_client,
+        openai_model=os.getenv("AZURE_OPENAI_CHATGPT_MODEL"),
+        openai_deployment=os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == OpenAIHost.AZURE else None,
+        csv_max_chars_per_page=csv_max_chars_per_page,
+    )
 
-        if not openai_embeddings_service or OPENAI_HOST not in [OpenAIHost.AZURE, OpenAIHost.AZURE_CUSTOM]:
-            raise Exception("Integrated vectorization strategy requires an Azure OpenAI embeddings service")
+    image_embeddings_service = setup_image_embeddings_service(
+        azure_credential=azd_credential,
+        vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
+        use_multimodal=use_multimodal,
+    )
 
-        ingestion_strategy = IntegratedVectorizerStrategy(
-            search_info=search_info,
-            list_file_strategy=list_file_strategy,
-            blob_manager=blob_manager,
-            document_action=document_action,
-            embeddings=openai_embeddings_service,
-            search_field_name_embedding=os.environ["AZURE_SEARCH_FIELD_NAME_EMBEDDING"],
-            subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
-            search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
-            use_acls=use_acls,
-            category=args.category,
-            enforce_access_control=enforce_access_control,
-        )
-    else:
-        file_processors, figure_processor = setup_file_processors(
-            azure_credential=azd_credential,
-            document_intelligence_service=os.getenv("AZURE_DOCUMENTINTELLIGENCE_SERVICE"),
-            document_intelligence_key=clean_key_if_exists(args.documentintelligencekey),
-            local_pdf_parser=os.getenv("USE_LOCAL_PDF_PARSER") == "true",
-            local_html_parser=os.getenv("USE_LOCAL_HTML_PARSER") == "true",
-            use_content_understanding=use_content_understanding,
-            use_multimodal=use_multimodal,
-            content_understanding_endpoint=os.getenv("AZURE_CONTENTUNDERSTANDING_ENDPOINT"),
-            content_understanding_deployment=os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT"),
-            openai_client=openai_client,
-            openai_model=os.getenv("AZURE_OPENAI_CHATGPT_MODEL"),
-            openai_deployment=os.getenv("AZURE_OPENAI_CHATGPT_DEPLOYMENT") if OPENAI_HOST == OpenAIHost.AZURE else None,
-            csv_max_chars_per_page=csv_max_chars_per_page,
-        )
-
-        image_embeddings_service = setup_image_embeddings_service(
-            azure_credential=azd_credential,
-            vision_endpoint=os.getenv("AZURE_VISION_ENDPOINT"),
-            use_multimodal=use_multimodal,
-        )
-
-        ingestion_strategy = FileStrategy(
-            search_info=search_info,
-            list_file_strategy=list_file_strategy,
-            blob_manager=blob_manager,
-            file_processors=file_processors,
-            document_action=document_action,
-            embeddings=openai_embeddings_service,
-            image_embeddings=image_embeddings_service,
-            search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
-            # Default to the previous field names for backward compatibility
-            search_field_name_embedding=os.getenv("AZURE_SEARCH_FIELD_NAME_EMBEDDING", "embedding"),
-            use_acls=use_acls,
-            category=args.category,
-            figure_processor=figure_processor,
-            enforce_access_control=enforce_access_control,
-            use_web_source=use_web_source,
-            use_sharepoint_source=use_sharepoint_source,
-        )
+    ingestion_strategy = FileStrategy(
+        search_info=search_info,
+        list_file_strategy=list_file_strategy,
+        blob_manager=blob_manager,
+        file_processors=file_processors,
+        document_action=document_action,
+        embeddings=openai_embeddings_service,
+        image_embeddings=image_embeddings_service,
+        search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
+        # Default to the previous field names for backward compatibility
+        search_field_name_embedding=os.getenv("AZURE_SEARCH_FIELD_NAME_EMBEDDING", "embedding"),
+        use_acls=use_acls,
+        category=args.category,
+        figure_processor=figure_processor,
+        enforce_access_control=enforce_access_control,
+        use_web_source=use_web_source,
+        use_sharepoint_source=use_sharepoint_source,
+    )
 
     try:
         loop.run_until_complete(main(ingestion_strategy, setup_index=not args.remove and not args.removeall))

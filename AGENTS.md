@@ -26,7 +26,6 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/backend/prepdocslib/fileprocessor.py: Orchestrates parsing and chunking of individual files
       * app/backend/prepdocslib/filestrategy.py: Strategy for uploading and indexing files (local ingestion)
       * app/backend/prepdocslib/htmlparser.py: Parses HTML files
-      * app/backend/prepdocslib/integratedvectorizerstrategy.py: Strategy using Azure AI Search integrated vectorization
       * app/backend/prepdocslib/jsonparser.py: Parses JSON files
       * app/backend/prepdocslib/listfilestrategy.py: Lists files from local filesystem or Azure Data Lake
       * app/backend/prepdocslib/mediadescriber.py: Interfaces for describing images (Azure OpenAI GPT-4o, Content Understanding)

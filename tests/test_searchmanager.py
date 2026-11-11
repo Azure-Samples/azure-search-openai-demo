@@ -62,7 +62,7 @@ async def test_create_index_doesnt_exist_yet(monkeypatch, search_info):
 
 
 @pytest.mark.asyncio
-async def test_create_index_using_int_vectorization(monkeypatch, search_info):
+async def test_create_index_with_parent_index_projection(monkeypatch, search_info):
     indexes = []
 
     async def mock_create_index(self, index):
@@ -83,7 +83,13 @@ async def test_create_index_using_int_vectorization(monkeypatch, search_info):
     await manager.create_index()
     assert len(indexes) == 1, "It should have created one index"
     assert indexes[0].name == "test"
-    assert len(indexes[0].fields) == 7
+    fields = {field.name: field for field in indexes[0].fields}
+    assert len(fields) == 7
+    # Index projections need a parent_id field and a filterable id with the keyword analyzer
+    assert fields["parent_id"].filterable
+    assert fields["id"].key
+    assert fields["id"].filterable
+    assert fields["id"].analyzer_name == "keyword"
 
 
 @pytest.mark.asyncio
