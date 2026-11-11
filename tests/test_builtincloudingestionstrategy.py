@@ -161,10 +161,17 @@ def test_validate_acl_configuration_reports_every_problem():
     assert "'metadata_storage_path' is missing" in message
 
 
-def search_client_with_counts(total: int, missing: int) -> MagicMock:
+def search_client_with_counts(total: int, missing: int, no_access: int = 0) -> MagicMock:
     async def search(**kwargs):
         results = MagicMock()
-        results.get_count = AsyncMock(return_value=missing if "filter" in kwargs else total)
+        filter = kwargs.get("filter")
+        if filter is None:
+            count = total
+        elif "'none'" in filter:
+            count = no_access
+        else:
+            count = missing
+        results.get_count = AsyncMock(return_value=count)
         return results
 
     search_client = MagicMock()
@@ -174,15 +181,16 @@ def search_client_with_counts(total: int, missing: int) -> MagicMock:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "total, missing, level, expected",
+    "total, missing, no_access, level, expected",
     [
-        (6, 6, logging.ERROR, "None of the 6 indexed chunks have permissions"),
-        (6, 2, logging.WARNING, "2 of 6 indexed chunks have no permissions"),
-        (6, 0, logging.INFO, "All 6 indexed chunks have permissions"),
+        (6, 6, 0, logging.ERROR, "None of the 6 indexed chunks have permissions"),
+        (6, 2, 0, logging.WARNING, "2 of 6 indexed chunks have no permissions"),
+        (6, 0, 4, logging.WARNING, "4 of 6 indexed chunks are from files without named user or group ACL entries"),
+        (6, 0, 0, logging.INFO, "All 6 indexed chunks have permissions"),
     ],
 )
-async def test_check_acl_ingestion(caplog, total, missing, level, expected):
-    search_client = search_client_with_counts(total, missing)
+async def test_check_acl_ingestion(caplog, total, missing, no_access, level, expected):
+    search_client = search_client_with_counts(total, missing, no_access)
 
     with caplog.at_level(logging.INFO, logger="scripts"):
         await check_acl_ingestion(search_client, use_elevated_read=True)

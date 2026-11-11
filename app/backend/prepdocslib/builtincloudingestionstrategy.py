@@ -355,6 +355,14 @@ async def check_acl_ingestion(search_client: SearchClient, use_elevated_read: bo
             enable_elevated_read=use_elevated_read or None,
         )
         missing = await missing_results.get_count()
+        no_access_results = await search_client.search(
+            search_text="*",
+            filter="oids/any(o: o eq 'none') and groups/any(g: g eq 'none')",
+            top=0,
+            include_total_count=True,
+            enable_elevated_read=use_elevated_read or None,
+        )
+        no_access = await no_access_results.get_count()
     except HttpResponseError as error:
         logger.warning("Couldn't verify that permissions were ingested: %s", error.message)
         return
@@ -364,9 +372,18 @@ async def check_acl_ingestion(search_client: SearchClient, use_elevated_read: bo
             "check the data source's indexerPermissionOptions and the search service's access to the storage account.",
             total,
         )
-    elif missing:
+        return
+    if missing:
         logger.warning("%d of %d indexed chunks have no permissions (oids/groups).", missing, total)
-    else:
+    if no_access:
+        # ["none"] means the file had no named user or group ACL entries, so no user can see these chunks.
+        logger.warning(
+            "%d of %d indexed chunks are from files without named user or group ACL entries, so no users can access "
+            "them. Add ACL entries to those files in ADLS Gen2, then touch the files or reset the indexer to reindex.",
+            no_access,
+            total,
+        )
+    if not missing and not no_access:
         logger.info("All %d indexed chunks have permissions.", total)
 
 
