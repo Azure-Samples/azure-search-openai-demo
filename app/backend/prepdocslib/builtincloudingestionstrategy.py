@@ -290,15 +290,26 @@ class BuiltInCloudIngestionStrategy(Strategy):
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
             previous_result = (await indexer_client.get_indexer_status(self.indexer_name)).last_result
-            if previous_result is not None and previous_result.status == IndexerExecutionStatus.IN_PROGRESS:
+            initial_run = previous_result is not None and previous_result.status == IndexerExecutionStatus.IN_PROGRESS
+            if initial_run:
                 # Creating the indexer in setup() starts a run automatically, which may have begun
                 # before the uploads above. Let it finish, then run again to pick up every file.
-                logger.info("Waiting for in-progress run of indexer '%s' to finish", self.indexer_name)
+                logger.info(
+                    "Waiting for the initial run of indexer '%s' to finish. Azure AI Search starts it automatically "
+                    "when the indexer is created, so it may have missed files uploaded afterward.",
+                    self.indexer_name,
+                )
                 await wait_for_indexer(indexer_client, self.indexer_name, None)
                 previous_result = (await indexer_client.get_indexer_status(self.indexer_name)).last_result
             previous_start_time = previous_result.start_time if previous_result else None
             await indexer_client.run_indexer(self.indexer_name)
-            logger.info("Triggered indexer '%s' for cloud ingestion", self.indexer_name)
+            if initial_run:
+                logger.info(
+                    "Running indexer '%s' again to index every uploaded file. Warnings from the initial run may repeat.",
+                    self.indexer_name,
+                )
+            else:
+                logger.info("Triggered indexer '%s' for cloud ingestion", self.indexer_name)
             await wait_for_indexer(indexer_client, self.indexer_name, previous_start_time)
 
         if self.use_acls:
