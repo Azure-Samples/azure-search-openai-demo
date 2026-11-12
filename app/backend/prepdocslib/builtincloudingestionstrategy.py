@@ -79,6 +79,8 @@ class BuiltInCloudIngestionStrategy(Strategy):
         use_acls: bool = False,
         enforce_access_control: bool = False,
         use_web_source: bool = False,
+        figure_description_model: str | None = None,
+        figure_description_deployment: str | None = None,
     ) -> None:
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -91,6 +93,8 @@ class BuiltInCloudIngestionStrategy(Strategy):
         self.use_acls = use_acls
         self.enforce_access_control = enforce_access_control
         self.use_web_source = use_web_source
+        self.figure_description_model = figure_description_model
+        self.figure_description_deployment = figure_description_deployment
 
         # Same names as the custom-skill CloudIngestionStrategy, so switching modes replaces
         # the existing pipeline rather than leaving two indexers writing to the same index.
@@ -113,6 +117,11 @@ class BuiltInCloudIngestionStrategy(Strategy):
             inputs=[InputFieldMappingEntry(name="file_data", source="/document/file_data")],
             outputs=[OutputFieldMappingEntry(name="text_sections", target_name="text_sections")],
         )
+        if self.figure_description_model and self.figure_description_deployment:
+            # Preview: Content Understanding describes figures inline in the chunk text. Set after
+            # construction because the SDK doesn't declare these properties yet.
+            content_understanding_skill["modelName"] = self.figure_description_model
+            content_understanding_skill["modelDeployment"] = self.figure_description_deployment
 
         # Skill expressions can't concatenate a string with a number, but Text Merge can append
         # the numeric page number (wrapped in an array) to the file name.

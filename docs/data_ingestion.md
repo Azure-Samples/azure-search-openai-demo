@@ -180,7 +180,7 @@ azd up
 
 The built-in skillset processes each document like this:
 
-1. The [Content Understanding skill](https://learn.microsoft.com/azure/search/cognitive-search-skill-content-understanding) extracts text and tables, and splits the content into chunks of up to 1,000 characters with a 100-character overlap. It also records the page range of each chunk.
+1. The [Content Understanding skill](https://learn.microsoft.com/azure/search/cognitive-search-skill-content-understanding) extracts text and tables, and splits the content into chunks of up to 1,000 characters with a 100-character overlap. It also records the page range of each chunk. If `USE_MEDIA_DESCRIBER_AZURE_CU` is `true`, it also describes charts, diagrams, and other figures inline in the chunk text, using the chat model deployed on the Content Understanding account (preview).
 2. The [Text Merge](https://learn.microsoft.com/azure/search/cognitive-search-skill-textmerger) and [Conditional](https://learn.microsoft.com/azure/search/cognitive-search-skill-conditional) skills build the citation stored in `sourcepage`. For PDFs, that's `file.pdf#page=N` using the first page of the chunk, and for other formats, it's the file name. That matches local ingestion.
 3. The [Azure OpenAI Embedding skill](https://learn.microsoft.com/azure/search/cognitive-search-skill-azure-openai-embedding) generates an embedding for each chunk.
 4. [Index projections](https://learn.microsoft.com/azure/search/search-how-to-define-index-projections) write one search document per chunk.
@@ -194,7 +194,7 @@ Keep these differences in mind:
 - **Large files on the Basic tier are skipped.** Azure AI Search extracts at most 16 MB per file on the Basic tier, so larger files produce an indexer warning and no searchable content. Use a [higher tier](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity#indexer-limits) or the Azure Functions pipeline for larger files.
 - **Chunks are sized by characters, not tokens.** For Chinese, Japanese, and Korean text, a 1,000-character chunk can be much larger than the 500-token chunks from the [local text splitter](textsplitter.md).
 - **JSON and CSV files are indexed as plain text.** They aren't parsed like they are in local ingestion.
-- **Content Understanding is billed per page.** It has no free per-indexer allowance. See [Azure Content Understanding pricing](https://azure.microsoft.com/pricing/details/content-understanding/).
+- **Content Understanding is billed per page.** It has no free per-indexer allowance. Figure descriptions also use chat model tokens. See [Azure Content Understanding pricing](https://azure.microsoft.com/pricing/details/content-understanding/).
 
 If you switch an existing deployment between the two pipelines, set a new index name with `azd env set AZURE_SEARCH_INDEX <new-index-name>` and run `azd up`. The built-in pipeline reuses the same indexer, skillset, and data source names, so switching replaces the previous pipeline, but the indexer's change tracking skips unchanged files. Reusing the old index would leave chunks, embeddings, and permissions from the previous pipeline in place.
 

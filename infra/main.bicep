@@ -925,7 +925,8 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
     location: 'westus'
     tags: tags
     sku: 'S0'
-    deployments: [
+    // The chat model is only needed for figure descriptions, which USE_MEDIA_DESCRIBER_AZURE_CU turns on
+    deployments: useMediaDescriberAzureCU ? [
       {
         name: contentUnderstandingModel.deploymentName
         model: {
@@ -938,7 +939,7 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
           capacity: contentUnderstandingModel.deploymentCapacity
         }
       }
-    ]
+    ] : []
     restore: restoreCognitiveServices
   }
 }

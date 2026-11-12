@@ -27,6 +27,18 @@ from prepdocslib.strategy import DocumentAction
 logger = logging.getLogger("scripts")
 
 
+def figure_description_settings() -> dict[str, str]:
+    """Model settings for figure descriptions in built-in mode, matching USE_MEDIA_DESCRIBER_AZURE_CU."""
+    deployment = os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT")
+    if os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() != "true" or not deployment:
+        return {}
+    # The deployment is named after the model unless AZURE_CONTENTUNDERSTANDING_MODEL overrides it.
+    return {
+        "figure_description_model": os.getenv("AZURE_CONTENTUNDERSTANDING_MODEL") or deployment,
+        "figure_description_deployment": deployment,
+    }
+
+
 async def setup_cloud_ingestion_strategy(
     azure_credential: AsyncTokenCredential,
     document_action: DocumentAction = DocumentAction.Add,
@@ -138,6 +150,7 @@ async def setup_cloud_ingestion_strategy(
             use_acls=use_acls,
             enforce_access_control=enforce_access_control,
             use_web_source=use_web_source,
+            **figure_description_settings(),
         )
         return ingestion_strategy, openai_client, azure_credential, blob_manager
 

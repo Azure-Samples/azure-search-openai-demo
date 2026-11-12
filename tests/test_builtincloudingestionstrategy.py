@@ -74,6 +74,7 @@ def test_build_skillset_uses_only_builtin_skills():
     content_understanding, page_citation, sourcepage, embedding = skillset.skills
     assert isinstance(content_understanding, ContentUnderstandingSkill)
     assert content_understanding.extraction_options == ["locationMetadata"]
+    assert "modelName" not in content_understanding and "modelDeployment" not in content_understanding
     assert isinstance(embedding, AzureOpenAIEmbeddingSkill)
     assert embedding.deployment_name == "emb-deployment"
     assert embedding.dimensions == 3072
@@ -293,7 +294,14 @@ def cloud_ingestion_env(monkeypatch):
         "USE_CLOUD_INGESTION_BUILTIN": "true",
     }.items():
         monkeypatch.setenv(key, value)
-    for key in ["USE_MULTIMODAL", "USE_CLOUD_INGESTION_ACLS", "AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT"]:
+    for key in [
+        "USE_MULTIMODAL",
+        "USE_CLOUD_INGESTION_ACLS",
+        "AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT",
+        "USE_MEDIA_DESCRIBER_AZURE_CU",
+        "AZURE_CONTENTUNDERSTANDING_DEPLOYMENT",
+        "AZURE_CONTENTUNDERSTANDING_MODEL",
+    ]:
         monkeypatch.delenv(key, raising=False)
 
 
@@ -306,6 +314,45 @@ async def test_setup_cloud_ingestion_strategy_selects_builtin(cloud_ingestion_en
         assert isinstance(strategy, BuiltInCloudIngestionStrategy)
         assert strategy.content_understanding_endpoint == CU_ENDPOINT
         assert strategy.use_acls is False
+    finally:
+        await blob_manager.close_clients()
+        await openai_client.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "env, expected",
+    [
+        ({"USE_MEDIA_DESCRIBER_AZURE_CU": "false", "AZURE_CONTENTUNDERSTANDING_DEPLOYMENT": "gpt-dep"}, None),
+        (
+            {"USE_MEDIA_DESCRIBER_AZURE_CU": "true", "AZURE_CONTENTUNDERSTANDING_DEPLOYMENT": "gpt-dep"},
+            ("gpt-dep", "gpt-dep"),
+        ),
+        (
+            {
+                "USE_MEDIA_DESCRIBER_AZURE_CU": "true",
+                "AZURE_CONTENTUNDERSTANDING_DEPLOYMENT": "gpt-dep",
+                "AZURE_CONTENTUNDERSTANDING_MODEL": "gpt-model",
+            },
+            ("gpt-model", "gpt-dep"),
+        ),
+    ],
+)
+async def test_setup_cloud_ingestion_strategy_builtin_figure_descriptions(
+    cloud_ingestion_env, monkeypatch, env, expected
+):
+    from setup_cloud_ingestion import setup_cloud_ingestion_strategy
+
+    for key, value in env.items():
+        monkeypatch.setenv(key, value)
+    strategy, openai_client, _, blob_manager = await setup_cloud_ingestion_strategy(MockAzureCredential())
+    try:
+        assert isinstance(strategy, BuiltInCloudIngestionStrategy)
+        skill = strategy.build_skillset().skills[0]
+        if expected is None:
+            assert "modelName" not in skill
+        else:
+            assert (skill["modelName"], skill["modelDeployment"]) == expected
     finally:
         await blob_manager.close_clients()
         await openai_client.close()
