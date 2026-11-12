@@ -280,12 +280,12 @@ The document extractor parses the POSIX-style ACL string from ADLS Gen2 (e.g., `
 
 4. **Upload documents with ACLs**
 
-   Upload documents to the provisioned ADLS storage account (`AZURE_ADLS_STORAGE_ACCOUNT`) and set ACLs on them.
+   Upload documents to the `AZURE_STORAGE_CONTAINER` container (`content` by default) in the ADLS storage account (`AZURE_ADLS_STORAGE_ACCOUNT`), since that's the container the indexer reads from, and set ACLs on them.
 
    You can use the [adlsgen2setup.py](/scripts/adlsgen2setup.py) script to upload sample data with ACLs:
 
    ```shell
-   python scripts/adlsgen2setup.py './data/*' --data-access-control './scripts/sampleacls.json' -v
+   python scripts/adlsgen2setup.py ./data --data-access-control './scripts/sampleacls.json' -v
    ```
 
    Alternatively, use [Azure Storage Explorer](https://azure.microsoft.com/products/storage/storage-explorer/) or the Azure portal to upload files and manage ACLs.
@@ -470,7 +470,6 @@ The following environment variables are used to setup the optional login and doc
 - `USE_EXISTING_ADLS_STORAGE`: (Optional) Set to `true` to use an existing ADLS Gen2 storage account instead of provisioning a new one. Used with [cloud ingestion](#using-your-own-adls-gen2-storage-account).
 - `AZURE_ADLS_GEN2_STORAGE_ACCOUNT`: (Optional) Name of existing [Data Lake Storage Gen2 storage account](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Required when `USE_EXISTING_ADLS_STORAGE` is `true`. Used with [cloud ingestion](#cloud-ingestion-with-azure-data-lake-storage-gen2).
 - `AZURE_ADLS_GEN2_STORAGE_RESOURCE_GROUP`: (Optional) Resource group containing the existing ADLS Gen2 storage account. Defaults to the main resource group if not specified. Used with [cloud ingestion](#using-your-own-adls-gen2-storage-account).
-- `AZURE_ADLS_GEN2_FILESYSTEM`: (Optional) Name of existing [Data Lake Storage Gen2 filesystem](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction) for storing sample data with [access control lists](https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-access-control). Used with [cloud ingestion](#cloud-ingestion-with-azure-data-lake-storage-gen2).
 
 ### Authentication behavior by environment
 

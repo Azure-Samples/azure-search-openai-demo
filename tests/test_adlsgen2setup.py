@@ -91,7 +91,9 @@ def mock_put_group(monkeypatch):
         assert obj
         assert "displayName" in obj
         assert obj.get("groupTypes") == ["Unified"]
-        assert obj.get("securityEnabled") is False
+        assert obj.get("securityEnabled") is True
+        assert obj.get("mailEnabled") is True
+        assert obj.get("mailNickname") == obj["displayName"]
         return MockResponse(
             text=json.dumps({"id": obj["displayName"] + "_ID_CREATED"}),
             status=201,
@@ -108,7 +110,6 @@ async def test_adls_gen2_setup(
         data_directory="",
         storage_account_name="STORAGE",
         filesystem_name="FILESYSTEM",
-        security_enabled_groups=False,
         data_access_control_format=valid_data_access_control_format,
         credentials=MockAzureCredential(),
     )
@@ -137,6 +138,11 @@ async def test_adls_gen2_setup(
     assert "GROUP_B" in filesystem_client.directories["d2"].files["b.txt"].acl
     assert "GROUP_C" in filesystem_client.directories["d2"].files["b.txt"].acl
     assert len(filesystem_client.directories["/"].files) == 0
+    # Groups granted access to subdirectories can traverse the root, but only once each,
+    # and the root keeps the read/execute entry for the group granted access to it directly.
+    assert filesystem_client.directories["/"].acl == (
+        "user::rwx,group:GROUP_A_ID:--x,group:GROUP_B_ID:--x,group:GROUP_C_ID:r-x"
+    )
 
 
 @pytest.mark.asyncio
@@ -147,7 +153,6 @@ async def test_adls_gen2_create_group(
         data_directory="",
         storage_account_name="STORAGE",
         filesystem_name="FILESYSTEM",
-        security_enabled_groups=False,
         data_access_control_format=valid_data_access_control_format,
         credentials=MockAzureCredential(),
     )
@@ -165,7 +170,6 @@ async def test_main_honors_azd_env_loading_mode(monkeypatch, tmp_path, loading_m
     args = SimpleNamespace(
         data_access_control=data_access_control,
         data_directory="/data",
-        create_security_enabled_groups=True,
     )
     load_azd_env = MagicMock()
     command = MagicMock()
@@ -174,7 +178,8 @@ async def test_main_honors_azd_env_loading_mode(monkeypatch, tmp_path, loading_m
     credential = MockAzureCredential()
 
     monkeypatch.setenv("LOADING_MODE_FOR_AZD_ENV_VARS", loading_mode)
-    monkeypatch.setenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT", "storage-account")
+    monkeypatch.setenv("AZURE_ADLS_STORAGE_ACCOUNT", "storage-account")
+    monkeypatch.setenv("AZURE_STORAGE_CONTAINER", "content")
     monkeypatch.setattr(adlsgen2setup, "load_azd_env", load_azd_env)
     monkeypatch.setattr(adlsgen2setup, "AzureDeveloperCliCredential", lambda: credential)
     monkeypatch.setattr(adlsgen2setup, "AdlsGen2Setup", setup_class)
@@ -185,9 +190,54 @@ async def test_main_honors_azd_env_loading_mode(monkeypatch, tmp_path, loading_m
     setup_class.assert_called_once_with(
         data_directory="/data",
         storage_account_name="storage-account",
-        filesystem_name="gptkbcontainer",
-        security_enabled_groups=True,
+        filesystem_name="content",
         credentials=credential,
         data_access_control_format=valid_data_access_control_format,
     )
     command.run.assert_awaited_once()
+
+
+@pytest.mark.parametrize(
+    ("env", "expected_account", "expected_filesystem"),
+    [
+        (
+            {"AZURE_ADLS_STORAGE_ACCOUNT": "provisioned", "AZURE_ADLS_GEN2_STORAGE_ACCOUNT": "existing"},
+            "provisioned",
+            "content",
+        ),
+        ({"AZURE_ADLS_GEN2_STORAGE_ACCOUNT": "existing", "AZURE_STORAGE_CONTAINER": "docs"}, "existing", "docs"),
+    ],
+)
+@pytest.mark.asyncio
+async def test_main_uses_indexer_storage_account_and_container(
+    monkeypatch, tmp_path, env, expected_account, expected_filesystem
+):
+    data_access_control = tmp_path / "data-access-control.json"
+    data_access_control.write_text(json.dumps(valid_data_access_control_format))
+    args = SimpleNamespace(data_access_control=data_access_control, data_directory="/data")
+    for name in ["AZURE_ADLS_STORAGE_ACCOUNT", "AZURE_ADLS_GEN2_STORAGE_ACCOUNT", "AZURE_STORAGE_CONTAINER"]:
+        monkeypatch.delenv(name, raising=False)
+    for name, value in env.items():
+        monkeypatch.setenv(name, value)
+    command = MagicMock()
+    command.run = AsyncMock()
+    setup_class = MagicMock(return_value=command)
+    monkeypatch.setattr(adlsgen2setup, "load_azd_env", MagicMock())
+    monkeypatch.setattr(adlsgen2setup, "AzureDeveloperCliCredential", lambda: MockAzureCredential())
+    monkeypatch.setattr(adlsgen2setup, "AdlsGen2Setup", setup_class)
+
+    await adlsgen2setup.main(args)
+
+    assert setup_class.call_args.kwargs["storage_account_name"] == expected_account
+    assert setup_class.call_args.kwargs["filesystem_name"] == expected_filesystem
+
+
+@pytest.mark.asyncio
+async def test_main_requires_adls_storage_account(monkeypatch, tmp_path):
+    args = SimpleNamespace(data_access_control=tmp_path / "unused.json", data_directory="/data")
+    monkeypatch.delenv("AZURE_ADLS_STORAGE_ACCOUNT", raising=False)
+    monkeypatch.delenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT", raising=False)
+    monkeypatch.setattr(adlsgen2setup, "load_azd_env", MagicMock())
+
+    with pytest.raises(Exception, match="AZURE_ADLS_STORAGE_ACCOUNT must be set"):
+        await adlsgen2setup.main(args)
