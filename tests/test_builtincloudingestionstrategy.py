@@ -106,6 +106,7 @@ def test_build_skillset_uses_only_builtin_skills():
     indexer = strategy.build_indexer()
     assert indexer.skillset_name == "gptkbindex-cloud-skillset"
     assert indexer.parameters.configuration.allow_skillset_to_read_file_data is True
+    assert indexer.parameters.configuration.execution_environment is None
 
 
 def test_build_skillset_with_acls_uses_native_permissions():
@@ -301,6 +302,8 @@ def cloud_ingestion_env(monkeypatch):
         "USE_MEDIA_DESCRIBER_AZURE_CU",
         "AZURE_CONTENTUNDERSTANDING_DEPLOYMENT",
         "AZURE_CONTENTUNDERSTANDING_MODEL",
+        "AZURE_USE_PRIVATE_ENDPOINT",
+        "AZURE_SEARCH_SERVICE_SKU",
     ]:
         monkeypatch.delenv(key, raising=False)
 
@@ -359,6 +362,35 @@ async def test_setup_cloud_ingestion_strategy_builtin_figure_descriptions(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("sku", [None, "basic"])
+async def test_setup_cloud_ingestion_strategy_builtin_private_requires_standard_tier(
+    cloud_ingestion_env, monkeypatch, sku
+):
+    from setup_cloud_ingestion import setup_cloud_ingestion_strategy
+
+    monkeypatch.setenv("AZURE_USE_PRIVATE_ENDPOINT", "true")
+    if sku:
+        monkeypatch.setenv("AZURE_SEARCH_SERVICE_SKU", sku)
+    with pytest.raises(ValueError, match="requires the Standard \\(S1\\) search tier"):
+        await setup_cloud_ingestion_strategy(MockAzureCredential())
+
+
+@pytest.mark.asyncio
+async def test_setup_cloud_ingestion_strategy_builtin_private_uses_private_execution(cloud_ingestion_env, monkeypatch):
+    from setup_cloud_ingestion import setup_cloud_ingestion_strategy
+
+    monkeypatch.setenv("AZURE_USE_PRIVATE_ENDPOINT", "true")
+    monkeypatch.setenv("AZURE_SEARCH_SERVICE_SKU", "standard")
+    strategy, openai_client, _, blob_manager = await setup_cloud_ingestion_strategy(MockAzureCredential())
+    try:
+        assert isinstance(strategy, BuiltInCloudIngestionStrategy)
+        assert strategy.build_indexer().parameters.configuration.execution_environment == "private"
+    finally:
+        await blob_manager.close_clients()
+        await openai_client.close()
+
+
+@pytest.mark.asyncio
 async def test_setup_cloud_ingestion_strategy_builtin_rejects_multimodal(cloud_ingestion_env, monkeypatch):
     from setup_cloud_ingestion import setup_cloud_ingestion_strategy
 
@@ -385,3 +417,24 @@ async def test_setup_cloud_ingestion_strategy_selects_custom_functions(cloud_ing
     finally:
         await blob_manager.close_clients()
         await openai_client.close()
+
+
+@pytest.mark.asyncio
+async def test_setup_cloud_ingestion_strategy_custom_functions_warns_with_private_endpoint(
+    cloud_ingestion_env, monkeypatch, caplog
+):
+    from setup_cloud_ingestion import setup_cloud_ingestion_strategy
+
+    monkeypatch.setenv("USE_CLOUD_INGESTION_BUILTIN", "false")
+    monkeypatch.setenv("AZURE_USE_PRIVATE_ENDPOINT", "true")
+    monkeypatch.setenv("AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID", "/subscriptions/sub/identity")
+    for skill in ["DOCUMENT_EXTRACTOR", "FIGURE_PROCESSOR", "TEXT_PROCESSOR"]:
+        monkeypatch.setenv(f"{skill}_SKILL_ENDPOINT", f"https://{skill.lower()}.azurewebsites.net/api/process")
+        monkeypatch.setenv(f"{skill}_SKILL_AUTH_RESOURCE_ID", f"api://{skill.lower()}")
+
+    with caplog.at_level(logging.WARNING, logger="scripts"):
+        _, openai_client, _, blob_manager = await setup_cloud_ingestion_strategy(MockAzureCredential())
+    await blob_manager.close_clients()
+    await openai_client.close()
+
+    assert "doesn't support private endpoints" in caplog.text

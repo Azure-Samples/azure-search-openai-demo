@@ -191,6 +191,7 @@ Keep these differences in mind:
 
 - **Multimodal isn't supported yet.** Setting both `USE_CLOUD_INGESTION_BUILTIN` and `USE_MULTIMODAL` to `true` fails with an error. Use the default Azure Functions pipeline for multimodal.
 - **Access control uses native ADLS Gen2 permissions.** With `USE_CLOUD_INGESTION_ACLS`, the search indexer reads the file permissions itself. See [Cloud ingestion with Azure Data Lake Storage Gen2](login_and_acl.md#cloud-ingestion-with-azure-data-lake-storage-gen2).
+- **Private access needs the Standard (S1) tier.** With `AZURE_USE_PRIVATE_ENDPOINT`, the indexer reaches storage and the AI services through shared private links, which skillsets can only use on S1 or higher. See [Deploying with private access](deploy_private.md#compatibility-with-other-features).
 - **Large files on the Basic tier are skipped.** Azure AI Search extracts at most 16 MB per file on the Basic tier, so larger files produce an indexer warning and no searchable content. Use a [higher tier](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity#indexer-limits) or the Azure Functions pipeline for larger files.
 - **Chunks are sized by characters, not tokens.** For Chinese, Japanese, and Korean text, a 1,000-character chunk can be much larger than the 500-token chunks from the [local text splitter](textsplitter.md).
 - **JSON and CSV files are indexed as plain text.** They aren't parsed like they are in local ingestion.

@@ -67,6 +67,23 @@ async def setup_cloud_ingestion_strategy(
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
 
+    use_private_endpoint = os.getenv("AZURE_USE_PRIVATE_ENDPOINT", "").lower() == "true"
+    if use_builtin_skills and use_private_endpoint:
+        search_sku = os.getenv("AZURE_SEARCH_SERVICE_SKU") or "basic"
+        if search_sku.lower() in ("free", "basic"):
+            raise ValueError(
+                f"USE_CLOUD_INGESTION_BUILTIN with AZURE_USE_PRIVATE_ENDPOINT requires the Standard (S1) search tier "
+                f"or higher, since skillsets can only use shared private links from the private execution "
+                f"environment on those tiers. AZURE_SEARCH_SERVICE_SKU is '{search_sku}'. "
+                "Run 'azd env set AZURE_SEARCH_SERVICE_SKU standard' and 'azd up'."
+            )
+    elif use_private_endpoint:
+        logger.warning(
+            "The custom skill Functions pipeline doesn't support private endpoints, so indexing fails if "
+            "AZURE_PUBLIC_NETWORK_ACCESS is Disabled. Set USE_CLOUD_INGESTION_BUILTIN=true to use built-in skills, "
+            "which support private endpoints."
+        )
+
     if use_builtin_skills and use_multimodal:
         raise ValueError(
             "USE_CLOUD_INGESTION_BUILTIN does not support USE_MULTIMODAL yet. "
@@ -151,6 +168,7 @@ async def setup_cloud_ingestion_strategy(
             enforce_access_control=enforce_access_control,
             use_web_source=use_web_source,
             **figure_description_settings(),
+            use_private_execution=use_private_endpoint,
         )
         return ingestion_strategy, openai_client, azure_credential, blob_manager
 

@@ -497,6 +497,38 @@ var useContentUnderstanding = useMediaDescriberAzureCU || useCloudIngestionBuilt
 
 // For cloud ingestion with ACLs, use the ADLS Gen2 storage account; otherwise use the standard storage account
 var cloudIngestionStorageAccount = useCloudIngestionAcls ? adlsStorageAccountNameResolved : storage.outputs.name
+var cloudIngestionStorageResourceId = useCloudIngestionAcls
+  ? (useExistingAdlsStorage ? existingAdlsStorage.id : adlsStorage!.outputs.id)
+  : storage.outputs.id
+
+// With private endpoints, the search indexer reaches its data source and skill services through
+// shared private links, which require the private indexer execution environment (Standard tier or higher).
+// The custom skill Functions pipeline isn't supported with private endpoints yet.
+var searchSharedPrivateLinks = (usePrivateEndpoint && useCloudIngestionBuiltinSkills)
+  ? concat(
+      [{ name: 'storage-blob', groupId: 'blob', resourceId: cloudIngestionStorageResourceId }],
+      useCloudIngestionAcls
+        ? [{ name: 'storage-dfs', groupId: 'dfs', resourceId: cloudIngestionStorageResourceId }]
+        : [],
+      deployFoundryAccount
+        ? [{ name: 'openai', groupId: 'openai_account', resourceId: foundryAccount!.outputs.resourceId }]
+        : [],
+      [
+        // The Content Understanding skill runs through foundry_account, and the skillset's billing
+        // connection to the same account (AIServicesByIdentity) goes through cognitiveservices_account
+        {
+          name: 'contentunderstanding-skill'
+          groupId: 'foundry_account'
+          resourceId: contentUnderstanding!.outputs.resourceId
+        }
+        {
+          name: 'contentunderstanding-billing'
+          groupId: 'cognitiveservices_account'
+          resourceId: contentUnderstanding!.outputs.resourceId
+        }
+      ]
+    )
+  : []
 
 var appEnvVariables = {
   AZURE_STORAGE_ACCOUNT: storage.outputs.name
@@ -915,6 +947,7 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
       ? contentUnderstandingServiceName
       : '${abbrs.cognitiveServicesContentUnderstanding}${resourceToken}'
     kind: 'AIServices'
+    publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'
     }
@@ -977,6 +1010,7 @@ module searchService 'core/search/search-services.bicep' = {
     publicNetworkAccess: publicNetworkAccess == 'Enabled'
       ? 'enabled'
       : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
+    sharedPrivateLinks: searchSharedPrivateLinks
   }
 }
 

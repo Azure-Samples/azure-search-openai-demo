@@ -112,3 +112,12 @@ You might also decide to delete the VPN Gateway when not in use.
 ## Compatibility with other features
 
 * **GitHub Actions / Azure DevOps**: The private access deployment is not compatible with the built-in CI/CD pipelines, as it requires a VPN connection to deploy the app. You could modify the pipeline to only do provisioning, and set up a different deployment strategy for the app.
+* **Cloud ingestion**: Only [cloud ingestion with built-in skills](data_ingestion.md#using-built-in-skills-instead-of-azure-functions) (`USE_CLOUD_INGESTION_BUILTIN=true`) supports private access. The custom skill Azure Functions pipeline isn't supported, because the Function apps don't have private endpoints.
+
+    With built-in skills, the deployment creates [shared private links](https://learn.microsoft.com/azure/search/search-indexer-howto-access-private) from the search service to the storage account (or ADLS Gen2 account), the Azure OpenAI account, and the Content Understanding account, and the indexer runs in the search service's private execution environment. Each shared private link creates a pending private endpoint connection on its target resource, which the `postprovision` hook approves with [`scripts/approve_search_private_links.py`](/scripts/approve_search_private_links.py). Approval can take a few minutes to reach the search service, and the indexer fails with a "Public access is disabled" error until it does.
+
+    This requires the Standard (S1) search tier or higher, since skillsets can't use shared private links on the Basic tier:
+
+    ```shell
+    azd env set AZURE_SEARCH_SERVICE_SKU standard
+    ```

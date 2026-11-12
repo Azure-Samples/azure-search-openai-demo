@@ -15,6 +15,7 @@ from azure.search.documents.indexes.models import (
     ContentUnderstandingSkillChunkingProperties,
     ContentUnderstandingSkillChunkingUnit,
     ContentUnderstandingSkillExtractionOptions,
+    IndexerExecutionEnvironment,
     IndexerExecutionStatus,
     IndexerPermissionOption,
     IndexingParameters,
@@ -81,6 +82,7 @@ class BuiltInCloudIngestionStrategy(Strategy):
         use_web_source: bool = False,
         figure_description_model: str | None = None,
         figure_description_deployment: str | None = None,
+        use_private_execution: bool = False,
     ) -> None:
         self.list_file_strategy = list_file_strategy
         self.blob_manager = blob_manager
@@ -95,6 +97,7 @@ class BuiltInCloudIngestionStrategy(Strategy):
         self.use_web_source = use_web_source
         self.figure_description_model = figure_description_model
         self.figure_description_deployment = figure_description_deployment
+        self.use_private_execution = use_private_execution
 
         # Same names as the custom-skill CloudIngestionStrategy, so switching modes replaces
         # the existing pipeline rather than leaving two indexers writing to the same index.
@@ -235,6 +238,8 @@ class BuiltInCloudIngestionStrategy(Strategy):
                     query_timeout=None,
                     data_to_extract="storageMetadata",
                     allow_skillset_to_read_file_data=True,
+                    # Shared private links only work from the search service's private execution environment
+                    execution_environment=(IndexerExecutionEnvironment.PRIVATE if self.use_private_execution else None),
                 )
             ),
         )

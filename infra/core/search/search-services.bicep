@@ -31,7 +31,8 @@ param replicaCount int = 1
 ])
 param semanticSearch string = 'disabled'
 
-param sharedPrivateLinkStorageAccounts array = []
+@description('Shared private links for outbound indexer connections, as objects with name, groupId, and resourceId')
+param sharedPrivateLinks array = []
 
 resource searchIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = if (sku.name != 'free') {
   name: '${name}-identity'
@@ -64,14 +65,15 @@ resource search 'Microsoft.Search/searchServices@2025-05-01' = {
   }
   sku: sku
 
-  resource sharedPrivateLinkResource 'sharedPrivateLinkResources@2025-05-01' = [for (resourceId, i) in sharedPrivateLinkStorageAccounts: {
-    name: 'search-shared-private-link-${i}'
+  // Created one at a time, since the search service rejects concurrent shared private link operations
+  @batchSize(1)
+  resource sharedPrivateLinkResource 'sharedPrivateLinkResources@2025-05-01' = [for link in sharedPrivateLinks: {
+    name: link.name
     properties: {
-      groupId: 'blob'
-      status: 'Approved'
-      provisioningState: 'Succeeded'
-      requestMessage: 'automatically created by the system'
-      privateLinkResourceId: resourceId
+      groupId: link.groupId
+      // The target resource's owner must approve the connection; scripts/approve_search_private_links.py does that
+      requestMessage: 'Created by azd for Azure AI Search indexer access'
+      privateLinkResourceId: link.resourceId
     }
   }]
 }
