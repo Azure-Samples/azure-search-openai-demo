@@ -202,14 +202,15 @@ async def main(args: Any):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Upload sample data to a Data Lake Storage Gen2 account and associate sample access control lists with it using sample groups",
-        epilog="Example: ./scripts/adlsgen2setup.py ./data --data-access-control ./scripts/sampleacls.json --create-security-enabled-groups <true|false>",
+        epilog="Example: ./scripts/adlsgen2setup.py ./data --data-access-control ./scripts/sampleacls.json",
     )
     parser.add_argument("data_directory", help="Data directory that contains sample PDFs")
     parser.add_argument(
         "--create-security-enabled-groups",
-        required=False,
-        action="store_true",
-        help="Whether or not the sample groups created are security enabled in Microsoft Entra",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Whether the sample groups created are security enabled in Microsoft Entra. Azure AI Search "
+        "permission filtering only matches security-enabled groups, so only disable this if you assign ACLs another way.",
     )
     parser.add_argument(
         "--data-access-control", required=True, help="JSON file describing access control for the sample data"
