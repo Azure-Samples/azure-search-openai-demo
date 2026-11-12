@@ -147,3 +147,12 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
         azd deploy --no-prompt
+    env:
+      # The postdeploy hook runs cloud ingestion setup, which reads these settings
+      USE_CLOUD_INGESTION: $(USE_CLOUD_INGESTION)
+      USE_CLOUD_INGESTION_BUILTIN: $(USE_CLOUD_INGESTION_BUILTIN)
+      USE_CLOUD_INGESTION_ACLS: $(USE_CLOUD_INGESTION_ACLS)
+      AZURE_ENFORCE_ACCESS_CONTROL: $(AZURE_ENFORCE_ACCESS_CONTROL)
+      USE_MULTIMODAL: $(USE_MULTIMODAL)
+      USE_WEB_SOURCE: $(USE_WEB_SOURCE)
+      USE_AGENTIC_KNOWLEDGEBASE: $(USE_AGENTIC_KNOWLEDGEBASE)
