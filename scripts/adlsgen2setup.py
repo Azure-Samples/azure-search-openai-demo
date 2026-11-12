@@ -28,7 +28,6 @@ class AdlsGen2Setup:
         data_directory: str,
         storage_account_name: str,
         filesystem_name: str,
-        security_enabled_groups: bool,
         data_access_control_format: dict[str, Any],
         credentials: AsyncTokenCredential,
     ):
@@ -43,8 +42,6 @@ class AdlsGen2Setup:
             Name of the Data Lake Storage Gen 2 account to use
         filesystem_name
             Name of the container / filesystem in the Data Lake Storage Gen 2 account to use
-        security_enabled_groups
-            When creating groups in Microsoft Entra, whether or not to make them security enabled
         data_access_control_format
             File describing how to create groups, upload files with access control. See the sampleacls.json for the format of this file
         """
@@ -52,7 +49,6 @@ class AdlsGen2Setup:
         self.storage_account_name = storage_account_name
         self.filesystem_name = filesystem_name
         self.credentials = credentials
-        self.security_enabled_groups = security_enabled_groups
         self.data_access_control_format = data_access_control_format
         self.graph_headers: Optional[dict[str, str]] = None
 
@@ -157,7 +153,8 @@ class AdlsGen2Setup:
                 logger.info(f"Could not find group {group_name}, creating...")
                 group = {
                     "displayName": group_name,
-                    "securityEnabled": self.security_enabled_groups,
+                    # Azure AI Search permission filtering only matches security-enabled groups.
+                    "securityEnabled": True,
                     # Microsoft Graph requires mailEnabled and mailNickname; Microsoft 365 (Unified) groups are mail-enabled.
                     "groupTypes": ["Unified"],
                     "mailEnabled": True,
@@ -192,7 +189,6 @@ async def main(args: Any):
             data_directory=args.data_directory,
             storage_account_name=storage_account,
             filesystem_name=filesystem_name,
-            security_enabled_groups=args.create_security_enabled_groups,
             credentials=credentials,
             data_access_control_format=data_access_control_format,
         )
@@ -205,13 +201,6 @@ if __name__ == "__main__":
         epilog="Example: ./scripts/adlsgen2setup.py ./data --data-access-control ./scripts/sampleacls.json",
     )
     parser.add_argument("data_directory", help="Data directory that contains sample PDFs")
-    parser.add_argument(
-        "--create-security-enabled-groups",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Whether the sample groups created are security enabled in Microsoft Entra. Azure AI Search "
-        "permission filtering only matches security-enabled groups, so only disable this if you assign ACLs another way.",
-    )
     parser.add_argument(
         "--data-access-control", required=True, help="JSON file describing access control for the sample data"
     )

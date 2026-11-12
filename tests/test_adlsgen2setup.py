@@ -91,7 +91,7 @@ def mock_put_group(monkeypatch):
         assert obj
         assert "displayName" in obj
         assert obj.get("groupTypes") == ["Unified"]
-        assert obj.get("securityEnabled") is False
+        assert obj.get("securityEnabled") is True
         assert obj.get("mailEnabled") is True
         assert obj.get("mailNickname") == obj["displayName"]
         return MockResponse(
@@ -110,7 +110,6 @@ async def test_adls_gen2_setup(
         data_directory="",
         storage_account_name="STORAGE",
         filesystem_name="FILESYSTEM",
-        security_enabled_groups=False,
         data_access_control_format=valid_data_access_control_format,
         credentials=MockAzureCredential(),
     )
@@ -151,7 +150,6 @@ async def test_adls_gen2_create_group(
         data_directory="",
         storage_account_name="STORAGE",
         filesystem_name="FILESYSTEM",
-        security_enabled_groups=False,
         data_access_control_format=valid_data_access_control_format,
         credentials=MockAzureCredential(),
     )
@@ -169,7 +167,6 @@ async def test_main_honors_azd_env_loading_mode(monkeypatch, tmp_path, loading_m
     args = SimpleNamespace(
         data_access_control=data_access_control,
         data_directory="/data",
-        create_security_enabled_groups=True,
     )
     load_azd_env = MagicMock()
     command = MagicMock()
@@ -191,7 +188,6 @@ async def test_main_honors_azd_env_loading_mode(monkeypatch, tmp_path, loading_m
         data_directory="/data",
         storage_account_name="storage-account",
         filesystem_name="content",
-        security_enabled_groups=True,
         credentials=credential,
         data_access_control_format=valid_data_access_control_format,
     )
@@ -215,9 +211,7 @@ async def test_main_uses_indexer_storage_account_and_container(
 ):
     data_access_control = tmp_path / "data-access-control.json"
     data_access_control.write_text(json.dumps(valid_data_access_control_format))
-    args = SimpleNamespace(
-        data_access_control=data_access_control, data_directory="/data", create_security_enabled_groups=False
-    )
+    args = SimpleNamespace(data_access_control=data_access_control, data_directory="/data")
     for name in ["AZURE_ADLS_STORAGE_ACCOUNT", "AZURE_ADLS_GEN2_STORAGE_ACCOUNT", "AZURE_STORAGE_CONTAINER"]:
         monkeypatch.delenv(name, raising=False)
     for name, value in env.items():
@@ -237,9 +231,7 @@ async def test_main_uses_indexer_storage_account_and_container(
 
 @pytest.mark.asyncio
 async def test_main_requires_adls_storage_account(monkeypatch, tmp_path):
-    args = SimpleNamespace(
-        data_access_control=tmp_path / "unused.json", data_directory="/data", create_security_enabled_groups=False
-    )
+    args = SimpleNamespace(data_access_control=tmp_path / "unused.json", data_directory="/data")
     monkeypatch.delenv("AZURE_ADLS_STORAGE_ACCOUNT", raising=False)
     monkeypatch.delenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT", raising=False)
     monkeypatch.setattr(adlsgen2setup, "load_azd_env", MagicMock())
