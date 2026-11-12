@@ -196,7 +196,7 @@ Keep these differences in mind:
 - **JSON and CSV files are indexed as plain text.** They aren't parsed like they are in local ingestion.
 - **Content Understanding is billed per page.** It has no free per-indexer allowance. See [Azure Content Understanding pricing](https://azure.microsoft.com/pricing/details/content-understanding/).
 
-If you switch an existing index between the two pipelines, re-run the indexer over all documents so that the index doesn't mix chunks and embeddings from both pipelines. The built-in pipeline reuses the same indexer, skillset, and data source names, so switching replaces the previous pipeline.
+If you switch an existing deployment between the two pipelines, set a new index name with `azd env set AZURE_SEARCH_INDEX <new-index-name>` and run `azd up`. The built-in pipeline reuses the same indexer, skillset, and data source names, so switching replaces the previous pipeline, but the indexer's change tracking skips unchanged files. Reusing the old index would leave chunks, embeddings, and permissions from the previous pipeline in place.
 
 ### Indexer architecture
 
