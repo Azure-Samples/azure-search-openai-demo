@@ -138,8 +138,11 @@ async def test_adls_gen2_setup(
     assert "GROUP_B" in filesystem_client.directories["d2"].files["b.txt"].acl
     assert "GROUP_C" in filesystem_client.directories["d2"].files["b.txt"].acl
     assert len(filesystem_client.directories["/"].files) == 0
-    # Groups granted access to subdirectories can traverse the root, but only once each.
-    assert filesystem_client.directories["/"].acl == "user::rwx,group:GROUP_A_ID:--x,group:GROUP_B_ID:--x"
+    # Groups granted access to subdirectories can traverse the root, but only once each,
+    # and the root keeps the read/execute entry for the group granted access to it directly.
+    assert filesystem_client.directories["/"].acl == (
+        "user::rwx,group:GROUP_A_ID:--x,group:GROUP_B_ID:--x,group:GROUP_C_ID:r-x"
+    )
 
 
 @pytest.mark.asyncio

@@ -1075,13 +1075,15 @@ def mock_data_lake_service_client(monkeypatch):
         return self.files[path]
 
     async def mock_update_access_control_recursive_aio(self, acl, *args, **kwargs):
+        self.acl = f"{getattr(self, 'acl', 'user::rwx')},{acl}"
         for file in self.files.values():
             if len(file.acl) > 0:
                 file.acl += ","
             file.acl += acl
         if self.path == "/":
             for directory in self.child_directories.values():
-                await mock_update_access_control_recursive_aio(directory, acl)
+                if directory is not self:
+                    await mock_update_access_control_recursive_aio(directory, acl)
 
     async def mock_close_aio(self, *args, **kwargs):
         pass
