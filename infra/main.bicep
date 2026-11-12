@@ -1299,7 +1299,7 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
 }
 
 // Search service calls Content Understanding from the built-in skillset (AIServicesByIdentity)
-module contentUnderstandingRoleSearchService 'core/security/role.bicep' = if (useCloudIngestionBuiltinSkills) {
+module contentUnderstandingRoleSearchService 'core/security/role.bicep' = if (useCloudIngestionBuiltinSkills && searchServiceSkuName != 'free') {
   scope: az.resourceGroup(contentUnderstandingResourceGroupNameActual)
   name: 'contentunderstanding-role-searchservice'
   params: {

@@ -261,13 +261,13 @@ class BuiltInCloudIngestionStrategy(Strategy):
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
             data_source = await indexer_client.create_or_update_data_source_connection(self.build_data_source())
+            # Validate before creating the indexer, since creating it starts a run immediately.
+            if self.use_acls:
+                async with self.search_info.create_search_index_client() as index_client:
+                    index = await index_client.get_index(self.search_info.index_name)
+                validate_acl_configuration(data_source, index)
             await indexer_client.create_or_update_skillset(self.build_skillset())
             await indexer_client.create_or_update_indexer(self.build_indexer())
-
-        if self.use_acls:
-            async with self.search_info.create_search_index_client() as index_client:
-                index = await index_client.get_index(self.search_info.index_name)
-            validate_acl_configuration(data_source, index)
 
     async def ensure_metadata_storage_path_field(self) -> None:  # pragma: no cover
         """ADLS Gen2 permission ingestion requires a metadata_storage_path field in the target index."""
@@ -299,7 +299,8 @@ class BuiltInCloudIngestionStrategy(Strategy):
                     "when the indexer is created, so it may have missed files uploaded afterward.",
                     self.indexer_name,
                 )
-                await wait_for_indexer(indexer_client, self.indexer_name, None)
+                if not await wait_for_indexer(indexer_client, self.indexer_name, None):
+                    return
                 previous_result = (await indexer_client.get_indexer_status(self.indexer_name)).last_result
             previous_start_time = previous_result.start_time if previous_result else None
             await indexer_client.run_indexer(self.indexer_name)
@@ -310,7 +311,8 @@ class BuiltInCloudIngestionStrategy(Strategy):
                 )
             else:
                 logger.info("Triggered indexer '%s' for cloud ingestion", self.indexer_name)
-            await wait_for_indexer(indexer_client, self.indexer_name, previous_start_time)
+            if not await wait_for_indexer(indexer_client, self.indexer_name, previous_start_time):
+                return
 
         if self.use_acls:
             async with self.search_info.create_search_client() as search_client:
@@ -404,9 +406,11 @@ async def wait_for_indexer(
     previous_start_time: datetime | None,
     poll_interval_seconds: float = INDEXER_POLL_INTERVAL_SECONDS,
     timeout_seconds: float = INDEXER_POLL_TIMEOUT_SECONDS,
-) -> None:
+) -> bool:
     """Waits for the indexer run started after ``previous_start_time`` to finish, then logs its warnings and errors.
 
+    Returns False if the run is still going after ``timeout_seconds``, so callers don't start
+    another run or check results while it's in progress.
     Warnings matter because some documents are skipped without failing the run, for example
     files larger than the search tier's extraction limit (16 MB on the Basic tier).
     """
@@ -422,11 +426,12 @@ async def wait_for_indexer(
             break
         if elapsed >= timeout_seconds:
             logger.warning(
-                "Indexer '%s' is still running after %d minutes. Check its status in the Azure portal.",
+                "Indexer '%s' is still running after %d minutes. Check its status in the Azure portal, "
+                "and rerun this script after it finishes.",
                 indexer_name,
                 timeout_seconds // 60,
             )
-            return
+            return False
         await asyncio.sleep(poll_interval_seconds)
         elapsed += poll_interval_seconds
 
@@ -439,5 +444,8 @@ async def wait_for_indexer(
     )
     for warning in result.warnings or []:
         logger.warning("Indexer warning for '%s': %s", warning.key or warning.name, warning.message)
+    if result.error_message:
+        logger.error("Indexer '%s' run error: %s", indexer_name, result.error_message)
     for error in result.errors or []:
         logger.error("Indexer error for '%s': %s", error.key or error.name, error.error_message)
+    return True

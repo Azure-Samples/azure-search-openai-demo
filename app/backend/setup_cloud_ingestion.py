@@ -190,6 +190,8 @@ async def main():
         logger.info("Connecting to Azure services using the azd credential for home tenant")
         azd_credential = AzureDeveloperCliCredential(process_timeout=60)
 
+    blob_manager: BlobManager | None = None
+    openai_client: AsyncOpenAI | None = None
     try:
         ingestion_strategy, openai_client, credential, blob_manager = await setup_cloud_ingestion_strategy(
             azure_credential=azd_credential,
@@ -203,8 +205,11 @@ async def main():
         await ingestion_strategy.run()
 
     finally:
-        await blob_manager.close_clients()
-        await openai_client.close()
+        # Setup can fail before these are created, for example on an unsupported configuration.
+        if blob_manager:
+            await blob_manager.close_clients()
+        if openai_client:
+            await openai_client.close()
         await azd_credential.close()
 
 

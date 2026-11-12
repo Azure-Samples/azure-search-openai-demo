@@ -211,11 +211,14 @@ async def test_check_acl_ingestion_warns_when_check_fails(caplog):
     assert "Couldn't verify that permissions were ingested: missing elevated read permission" in caplog.text
 
 
-def indexer_status(status: str, start_time: datetime, warnings=None, errors=None) -> SearchIndexerStatus:
+def indexer_status(
+    status: str, start_time: datetime, warnings=None, errors=None, error_message=None
+) -> SearchIndexerStatus:
     return SearchIndexerStatus(
         last_result=IndexerExecutionResult(
             status=status,
             start_time=start_time,
+            error_message=error_message,
             item_count=3,
             failed_item_count=len(errors or []),
             warnings=warnings or [],
@@ -238,16 +241,19 @@ async def test_wait_for_indexer_logs_warnings_and_errors(caplog):
                 new_start,
                 warnings=[SearchIndexerWarning(key="big.pdf", message="Document exceeds the 16 MB limit")],
                 errors=[SearchIndexerError(key="bad.pdf", error_message="Could not parse", status_code=400)],
+                error_message="Data source is not accessible",
             ),
         ]
     )
 
     with caplog.at_level(logging.INFO, logger="scripts"):
-        await wait_for_indexer(indexer_client, "test-indexer", previous_start, poll_interval_seconds=0)
+        finished = await wait_for_indexer(indexer_client, "test-indexer", previous_start, poll_interval_seconds=0)
 
+    assert finished is True
     assert indexer_client.get_indexer_status.await_count == 3
     assert "Indexer warning for 'big.pdf': Document exceeds the 16 MB limit" in caplog.text
     assert "Indexer error for 'bad.pdf': Could not parse" in caplog.text
+    assert "Indexer 'test-indexer' run error: Data source is not accessible" in caplog.text
 
 
 @pytest.mark.asyncio
@@ -259,7 +265,11 @@ async def test_wait_for_indexer_times_out(caplog, monkeypatch):
     )
 
     with caplog.at_level(logging.WARNING, logger="scripts"):
-        await wait_for_indexer(indexer_client, "test-indexer", None, poll_interval_seconds=1, timeout_seconds=2)
+        finished = await wait_for_indexer(
+            indexer_client, "test-indexer", None, poll_interval_seconds=1, timeout_seconds=2
+        )
+
+    assert finished is False
 
     assert "still running" in caplog.text
 
