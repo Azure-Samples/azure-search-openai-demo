@@ -11,6 +11,7 @@ from azure.identity.aio import AzureDeveloperCliCredential
 from azure.storage.filedatalake.aio import (
     DataLakeDirectoryClient,
     DataLakeServiceClient,
+    FileSystemClient,
 )
 from dotenv_azd import load_azd_env
 
@@ -92,22 +93,40 @@ class AdlsGen2Setup:
                     logger.info("Setting access control...")
                     for directory, access_control in self.data_access_control_format["directories"].items():
                         directory_client = directories[directory]
-                        if "groups" in access_control:
-                            for group_name in access_control["groups"]:
-                                if group_name not in groups:
-                                    logger.error(
-                                        f"Directory {directory} has unknown group {group_name} in access control list, exiting"
-                                    )
-                                    return
-                                await directory_client.update_access_control_recursive(
-                                    acl=f"group:{groups[group_name]}:r-x"
+                        principals: list[str] = []
+                        for group_name in access_control.get("groups", []):
+                            if group_name not in groups:
+                                logger.error(
+                                    f"Directory {directory} has unknown group {group_name} in access control list, exiting"
                                 )
-                        if "oids" in access_control:
-                            for oid in access_control["oids"]:
-                                await directory_client.update_access_control_recursive(acl=f"user:{oid}:r-x")
+                                return
+                            principals.append(f"group:{groups[group_name]}")
+                        principals.extend(f"user:{oid}" for oid in access_control.get("oids", []))
+                        for principal in principals:
+                            await directory_client.update_access_control_recursive(acl=f"{principal}:r-x")
+                            if directory != "/":
+                                await self.grant_traverse(filesystem_client, directory, principal)
                 finally:
                     for directory_client in directories.values():
                         await directory_client.close()
+
+    async def grant_traverse(self, filesystem_client: FileSystemClient, directory: str, principal: str):
+        """Grants execute on each parent directory so the principal can reach files in the directory.
+
+        ADLS Gen2 only allows reading a file when the principal can traverse every parent directory,
+        and Azure AI Search permission ingestion indexes that effective access.
+        """
+        parts = directory.strip("/").split("/")[:-1]
+        parents = ["/"] + ["/".join(parts[: i + 1]) for i in range(len(parts))]
+        for parent in parents:
+            parent_client = (
+                filesystem_client._get_root_directory_client()
+                if parent == "/"
+                else filesystem_client.get_directory_client(parent)
+            )
+            acl = (await parent_client.get_access_control())["acl"]
+            if not any(entry.startswith(f"{principal}:") for entry in acl.split(",")):
+                await parent_client.set_access_control(acl=f"{acl},{principal}:--x")
 
     def create_service_client(self):
         return DataLakeServiceClient(
@@ -139,10 +158,10 @@ class AdlsGen2Setup:
                 group = {
                     "displayName": group_name,
                     "securityEnabled": self.security_enabled_groups,
+                    # Microsoft Graph requires mailEnabled and mailNickname; Microsoft 365 (Unified) groups are mail-enabled.
                     "groupTypes": ["Unified"],
-                    # If Unified does not work for you, then you may need the following settings instead:
-                    # "mailEnabled": False,
-                    # "mailNickname": group_name,
+                    "mailEnabled": True,
+                    "mailNickname": group_name,
                 }
                 async with session.post("https://graph.microsoft.com/v1.0/groups", json=group) as response:
                     content = await response.json()
@@ -156,16 +175,23 @@ class AdlsGen2Setup:
 async def main(args: Any):
     load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
-    if not os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT"):
-        raise Exception("AZURE_ADLS_GEN2_STORAGE_ACCOUNT must be set to continue")
+    # AZURE_ADLS_STORAGE_ACCOUNT is output by the deployment for both provisioned and existing accounts.
+    storage_account = os.getenv("AZURE_ADLS_STORAGE_ACCOUNT") or os.getenv("AZURE_ADLS_GEN2_STORAGE_ACCOUNT")
+    if not storage_account:
+        raise Exception(
+            "AZURE_ADLS_STORAGE_ACCOUNT must be set to continue. Deploy with USE_CLOUD_INGESTION_ACLS=true, "
+            "or set AZURE_ADLS_GEN2_STORAGE_ACCOUNT to an existing ADLS Gen2 account."
+        )
+    # Upload to the same container that the cloud ingestion indexer reads from.
+    filesystem_name = os.getenv("AZURE_STORAGE_CONTAINER") or "content"
 
     async with AzureDeveloperCliCredential() as credentials:
         with open(args.data_access_control) as f:
             data_access_control_format = json.load(f)
         command = AdlsGen2Setup(
             data_directory=args.data_directory,
-            storage_account_name=os.environ["AZURE_ADLS_GEN2_STORAGE_ACCOUNT"],
-            filesystem_name="gptkbcontainer",
+            storage_account_name=storage_account,
+            filesystem_name=filesystem_name,
             security_enabled_groups=args.create_security_enabled_groups,
             credentials=credentials,
             data_access_control_format=data_access_control_format,

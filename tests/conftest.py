@@ -1062,7 +1062,10 @@ def mock_data_lake_service_client(monkeypatch):
         return azure.storage.filedatalake.DirectoryProperties()
 
     async def mock_get_access_control(self, *args, **kwargs):
-        return {"owner": "OID_X"}
+        return {"owner": "OID_X", "acl": getattr(self, "acl", "user::rwx")}
+
+    async def mock_set_access_control(self, acl, *args, **kwargs):
+        self.acl = acl
 
     def mock_directory_get_file_client(self, *args, **kwargs):
         path = kwargs.get("file")
@@ -1101,6 +1104,9 @@ def mock_data_lake_service_client(monkeypatch):
     )
     monkeypatch.setattr(
         azure.storage.filedatalake.aio.DataLakeDirectoryClient, "get_access_control", mock_get_access_control
+    )
+    monkeypatch.setattr(
+        azure.storage.filedatalake.aio.DataLakeDirectoryClient, "set_access_control", mock_set_access_control
     )
     monkeypatch.setattr(azure.storage.filedatalake.aio.DataLakeDirectoryClient, "close", mock_close_aio)
 
