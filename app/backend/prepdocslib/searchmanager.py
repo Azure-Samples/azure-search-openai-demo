@@ -151,7 +151,7 @@ class SearchManager:
 
                 embedding_field = SearchField(
                     name=self.field_name_embedding,
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),  # ty: ignore[call-non-callable]
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                     hidden=True,
                     searchable=True,
                     filterable=False,
@@ -186,15 +186,11 @@ class SearchManager:
                 )
                 images_field = SearchField(
                     name="images",
-                    type=SearchFieldDataType.Collection(
-                        SearchFieldDataType.ComplexType
-                    ),  # ty: ignore[call-non-callable]
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.ComplexType),
                     fields=[
                         SearchField(
                             name="embedding",
-                            type=SearchFieldDataType.Collection(
-                                SearchFieldDataType.Single
-                            ),  # ty: ignore[call-non-callable]
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                             searchable=True,
                             stored=False,
                             vector_search_dimensions=1024,
@@ -218,9 +214,7 @@ class SearchManager:
                         ),
                         SearchField(
                             name="boundingbox",
-                            type=SearchFieldDataType.Collection(
-                                SearchFieldDataType.Double
-                            ),  # ty: ignore[call-non-callable]
+                            type=SearchFieldDataType.Collection(SearchFieldDataType.Double),
                             searchable=False,
                             filterable=False,
                             sortable=False,
@@ -232,13 +226,13 @@ class SearchManager:
             if self.use_acls:
                 oids_field = SearchField(
                     name="oids",
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),  # ty: ignore[call-non-callable]
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
                     filterable=True,
                     permission_filter=PermissionFilter.USER_IDS,
                 )
                 groups_field = SearchField(
                     name="groups",
-                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),  # ty: ignore[call-non-callable]
+                    type=SearchFieldDataType.Collection(SearchFieldDataType.String),
                     filterable=True,
                     permission_filter=PermissionFilter.GROUP_IDS,
                 )

@@ -159,13 +159,13 @@ class ManageAcl:
     async def enable_acls(self, endpoint: str):
         oids_field = SearchField(
             name="oids",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.String),  # ty: ignore[call-non-callable]
+            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
             filterable=True,
             permission_filter=PermissionFilter.USER_IDS,
         )
         groups_field = SearchField(
             name="groups",
-            type=SearchFieldDataType.Collection(SearchFieldDataType.String),  # ty: ignore[call-non-callable]
+            type=SearchFieldDataType.Collection(SearchFieldDataType.String),
             filterable=True,
             permission_filter=PermissionFilter.GROUP_IDS,
         )
