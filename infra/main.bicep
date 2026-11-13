@@ -1555,7 +1555,11 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
       {
         groupId: 'blob'
         dnsZoneNames: ['privatelink.blob.${environmentData.suffixes.storage}']
-        resourceIds: concat([storage.outputs.id], useUserUpload ? [userStorage!.outputs.id] : [])
+        resourceIds: concat(
+          [storage.outputs.id],
+          useUserUpload ? [userStorage!.outputs.id] : [],
+          useCloudIngestionAcls ? [cloudIngestionStorageResourceId] : []
+        )
       }
       {
         groupId: 'searchService'
@@ -1570,7 +1574,18 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
     ]
   : []
 
-var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection, containerAppsPrivateEndpointConnection, appServicePrivateEndpointConnection)
+// The ADLS Gen2 account for ACL ingestion also needs its DFS endpoint, which the setup script uses
+var adlsDfsPrivateEndpointConnection = (usePrivateEndpoint && useCloudIngestionAcls)
+  ? [
+      {
+        groupId: 'dfs'
+        dnsZoneNames: ['privatelink.dfs.${environmentData.suffixes.storage}']
+        resourceIds: [cloudIngestionStorageResourceId]
+      }
+    ]
+  : []
+
+var privateEndpointConnections = concat(otherPrivateEndpointConnections, adlsDfsPrivateEndpointConnection, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection, containerAppsPrivateEndpointConnection, appServicePrivateEndpointConnection)
 
 module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
   name: 'privateEndpoints'
