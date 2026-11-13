@@ -204,7 +204,7 @@ If you switch an existing deployment between the two pipelines, set a new index 
 
 With built-in skills, cloud ingestion can also index documents from a SharePoint Online site, using the [SharePoint indexer](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online) (preview). SharePoint documents go through the same Content Understanding, citation, and embedding skills, into the same index as the documents in Blob storage.
 
-This is different from `USE_SHAREPOINT_SOURCE`, which queries SharePoint at question time through [agentic retrieval](agentic_retrieval.md) with the signed-in user's token, and requires a Microsoft 365 Copilot license for each user. Indexing doesn't need that license, but indexed documents don't have SharePoint permissions yet, so every user of the app can search them.
+This is different from `USE_SHAREPOINT_SOURCE`, which queries SharePoint at question time through [agentic retrieval](agentic_retrieval.md) with the signed-in user's token, and requires a Microsoft 365 Copilot license for each user. Indexing doesn't need that license. To keep SharePoint permissions on indexed documents, turn on [access control](#sharepoint-access-control).
 
 1. Enable cloud ingestion with built-in skills and SharePoint, and set the site to index:
 
@@ -235,9 +235,28 @@ Citations for SharePoint documents link to the document in SharePoint, for examp
 
 Keep these limitations in mind:
 
-- **No access control yet.** Setting `USE_CLOUD_INGESTION_ACLS` together with `USE_CLOUD_INGESTION_SHAREPOINT` fails with an error.
 - **Preview.** The SharePoint indexer is in preview, and doesn't support [private endpoints](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online#limitations-and-considerations) or tenants with Microsoft Entra Conditional Access.
 - **Reprocessing.** The indexer can reprocess unchanged documents, which calls Content Understanding and the embedding model again.
+
+#### SharePoint access control
+
+Without access control, every user of the app can search the indexed SharePoint documents. To index each document's SharePoint permissions and only return documents that the signed-in user can access, also set:
+
+```shell
+azd env set USE_CLOUD_INGESTION_ACLS true
+azd env set AZURE_USE_AUTHENTICATION true
+azd env set AZURE_ENFORCE_ACCESS_CONTROL true
+```
+
+`USE_CLOUD_INGESTION_ACLS` applies to both sources: documents in Blob storage move to an ADLS Gen2 account and keep their [ADLS Gen2 ACLs](login_and_acl.md#cloud-ingestion-with-azure-data-lake-storage-gen2), and SharePoint documents keep their SharePoint permissions.
+
+The SharePoint indexer uses [SharePoint permission ingestion](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists) (preview) to compute each document's effective permissions, following inheritance from the site, library, and folders, and stores the user and group IDs in the index's `oids` and `groups` fields. At query time, Azure AI Search compares them with the signed-in user's ID and Microsoft Entra group memberships, including nested groups.
+
+Keep in mind:
+
+- **Users and Microsoft Entra groups.** Access granted to users directly, or to Microsoft Entra security groups and Microsoft 365 groups, is enforced. Access granted only through SharePoint site groups (such as the site's Owners, Members, and Visitors groups) is indexed with a `spg:` prefix, but matching it at query time requires a [federated credential](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists#configure-sharepoint-groups-support) that this app doesn't configure, so those users won't see the documents.
+- **Unsupported sharing.** "Anyone" and "People in your organization" sharing links, and guest users, aren't supported.
+- **Permission changes.** The indexer picks up permission changes on items and folders when it runs. Changes at the site or library level need a [reset](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists#synchronize-permissions-between-indexed-and-source-content).
 
 ### Indexer architecture
 

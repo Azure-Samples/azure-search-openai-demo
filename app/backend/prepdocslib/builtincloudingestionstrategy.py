@@ -57,6 +57,8 @@ INDEXER_POLL_TIMEOUT_SECONDS = 30 * 60
 SECTIONS_CONTEXT = "/document/text_sections/*"
 PAGE_NUMBER_SOURCE = f"{SECTIONS_CONTEXT}/locationMetadata/pageNumberFrom"
 METADATA_STORAGE_PATH_FIELD = "metadata_storage_path"
+METADATA_SPO_ITEM_PATH_FIELD = "metadata_spo_item_path"
+PROPAGATE_FOLDER_CHANGES = "propagateFolderChanges=true"
 
 
 @dataclass(frozen=True)
@@ -68,6 +70,8 @@ class SourceFields:
     # Base of the sourcepage citation; PDFs get "#page=N" appended
     citation: str
     is_pdf_condition: str
+    # Index field that permission ingestion requires, populated from the same-named metadata
+    acl_path_field: str
 
 
 BLOB_SOURCE_FIELDS = SourceFields(
@@ -78,6 +82,7 @@ BLOB_SOURCE_FIELDS = SourceFields(
         "($(/document/metadata_storage_file_extension) == '.pdf'"
         " || $(/document/metadata_storage_file_extension) == '.PDF')"
     ),
+    acl_path_field=METADATA_STORAGE_PATH_FIELD,
 )
 
 # SharePoint items have no metadata_storage_* fields. Citations use the item's web URL, so clicking
@@ -87,6 +92,7 @@ SHAREPOINT_SOURCE_FIELDS = SourceFields(
     url="/document/metadata_spo_item_weburi",
     citation="/document/metadata_spo_item_weburi",
     is_pdf_condition="$(/document/metadata_spo_item_content_type) == 'application/pdf'",
+    acl_path_field=METADATA_SPO_ITEM_PATH_FIELD,
 )
 
 
@@ -113,7 +119,7 @@ class BuiltInCloudIngestionStrategy(Strategy):
 
     Content Understanding extracts and chunks documents, Text Merge and Conditional skills build
     the ``sourcepage`` citation (``file.pdf#page=N`` for PDFs), and the Azure OpenAI Embedding skill
-    vectorizes each chunk. When ``use_acls`` is enabled, the ADLS Gen2 data source ingests native
+    vectorizes each chunk. When ``use_acls`` is enabled, the ADLS Gen2 and SharePoint data sources ingest native
     file permissions into the ``oids`` and ``groups`` fields.
 
     When ``sharepoint`` is set, a second data source, skillset, and indexer also ingest documents
@@ -243,7 +249,9 @@ class BuiltInCloudIngestionStrategy(Strategy):
             mappings.append(InputFieldMappingEntry(name="oids", source="/document/metadata_user_ids"))
             mappings.append(InputFieldMappingEntry(name="groups", source="/document/metadata_group_ids"))
             mappings.append(
-                InputFieldMappingEntry(name=METADATA_STORAGE_PATH_FIELD, source="/document/metadata_storage_path")
+                InputFieldMappingEntry(
+                    name=source_fields.acl_path_field, source=f"/document/{source_fields.acl_path_field}"
+                )
             )
 
         index_projection = SearchIndexerIndexProjection(
@@ -304,14 +312,26 @@ class BuiltInCloudIngestionStrategy(Strategy):
         )
 
     def build_sharepoint_data_source(self, sharepoint: SharePointSource) -> SearchIndexerDataSourceConnection:
-        return SearchIndexerDataSourceConnection(
+        query = sharepoint.query
+        if self.use_acls:
+            # Permission ingestion turns on folder propagation (reindexing a folder's items when its
+            # permissions change) anyway, and warns on every run unless the query opts in explicitly
+            query = f"{query};{PROPAGATE_FOLDER_CHANGES}" if query else PROPAGATE_FOLDER_CHANGES
+        data_source = SearchIndexerDataSourceConnection(
             name=self.sharepoint_data_source_name,
             type=SearchIndexerDataSourceType.SHAREPOINT,
             connection_string=sharepoint.connection_string(),
             container=SearchIndexerDataContainer(
-                name="useQuery" if sharepoint.query else "defaultSiteLibrary", query=sharepoint.query
+                name="useQuery" if sharepoint.query else "defaultSiteLibrary", query=query
             ),
         )
+        if self.use_acls:
+            # SharePoint permission ingestion computes each file's effective user and group IDs
+            data_source.indexer_permission_options = [
+                IndexerPermissionOption.USER_IDS,
+                IndexerPermissionOption.GROUP_IDS,
+            ]
+        return data_source
 
     def build_sharepoint_indexer(self) -> SearchIndexer:
         return SearchIndexer(
@@ -366,7 +386,7 @@ class BuiltInCloudIngestionStrategy(Strategy):
         )
         await search_manager.create_index()
         if self.use_acls:
-            await self.ensure_metadata_storage_path_field()
+            await self.ensure_acl_path_fields()
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
             data_source = await indexer_client.create_or_update_data_source_connection(self.build_data_source())
@@ -379,22 +399,29 @@ class BuiltInCloudIngestionStrategy(Strategy):
             await indexer_client.create_or_update_indexer(self.build_indexer())
             if self.sharepoint:
                 logger.info("Setting up SharePoint indexer for %s", self.sharepoint.site_url)
-                await indexer_client.create_or_update_data_source_connection(
+                sharepoint_data_source = await indexer_client.create_or_update_data_source_connection(
                     self.build_sharepoint_data_source(self.sharepoint)
                 )
+                if self.use_acls:
+                    validate_acl_configuration(sharepoint_data_source, index, METADATA_SPO_ITEM_PATH_FIELD)
                 await indexer_client.create_or_update_skillset(
                     self.build_skillset(self.sharepoint_skillset_name, SHAREPOINT_SOURCE_FIELDS)
                 )
                 await indexer_client.create_or_update_indexer(self.build_sharepoint_indexer())
 
-    async def ensure_metadata_storage_path_field(self) -> None:  # pragma: no cover
-        """ADLS Gen2 permission ingestion requires a metadata_storage_path field in the target index."""
+    async def ensure_acl_path_fields(self) -> None:  # pragma: no cover
+        """Permission ingestion requires an item path field in the target index: metadata_storage_path
+        for ADLS Gen2, and metadata_spo_item_path for SharePoint."""
+        required = [METADATA_STORAGE_PATH_FIELD] + ([METADATA_SPO_ITEM_PATH_FIELD] if self.sharepoint else [])
         async with self.search_info.create_search_index_client() as index_client:
             index = await index_client.get_index(self.search_info.index_name)
-            if any(field.name == METADATA_STORAGE_PATH_FIELD for field in index.fields):
+            existing = {field.name for field in index.fields}
+            missing = [name for name in required if name not in existing]
+            if not missing:
                 return
-            logger.info("Adding %s field to index for ADLS Gen2 permission ingestion", METADATA_STORAGE_PATH_FIELD)
-            index.fields.append(SimpleField(name=METADATA_STORAGE_PATH_FIELD, type="Edm.String", filterable=True))
+            logger.info("Adding %s to index for permission ingestion", ", ".join(missing))
+            for name in missing:
+                index.fields.append(SimpleField(name=name, type="Edm.String", filterable=True))
             await index_client.create_or_update_index(index)
 
     async def run(self) -> None:  # pragma: no cover
@@ -444,15 +471,26 @@ async def run_indexer_and_wait(indexer_client: SearchIndexerClient, indexer_name
     return await wait_for_indexer(indexer_client, indexer_name, previous_start_time)
 
 
-def validate_acl_configuration(data_source: SearchIndexerDataSourceConnection, index: SearchIndex) -> None:
-    """Fails fast if the deployed data source or index can't ingest ADLS Gen2 permissions.
+def validate_acl_configuration(
+    data_source: SearchIndexerDataSourceConnection,
+    index: SearchIndex,
+    path_field: str = METADATA_STORAGE_PATH_FIELD,
+) -> None:
+    """Fails fast if the deployed data source or index can't ingest permissions.
 
     A misconfigured pipeline doesn't produce indexer errors: chunks are indexed without
     permissions, so this checks the configuration as stored by the search service.
+    ADLS Gen2 data sources need a metadata_storage_path index field, and SharePoint data
+    sources need a metadata_spo_item_path field.
     """
+    expected_type = (
+        SearchIndexerDataSourceType.SHAREPOINT
+        if path_field == METADATA_SPO_ITEM_PATH_FIELD
+        else SearchIndexerDataSourceType.ADLS_GEN2
+    )
     problems = []
-    if data_source.type != SearchIndexerDataSourceType.ADLS_GEN2:
-        problems.append(f"data source '{data_source.name}' has type '{data_source.type}', not 'adlsgen2'")
+    if data_source.type != expected_type:
+        problems.append(f"data source '{data_source.name}' has type '{data_source.type}', not '{expected_type.value}'")
     permission_options = set(data_source.indexer_permission_options or [])
     if not {IndexerPermissionOption.USER_IDS, IndexerPermissionOption.GROUP_IDS} <= permission_options:
         problems.append(
@@ -466,10 +504,10 @@ def validate_acl_configuration(data_source: SearchIndexerDataSourceConnection, i
             problems.append(
                 f"index field '{field_name}' is missing or doesn't have permissionFilter '{permission_filter}'"
             )
-    if METADATA_STORAGE_PATH_FIELD not in fields:
-        problems.append(f"index field '{METADATA_STORAGE_PATH_FIELD}' is missing")
+    if path_field not in fields:
+        problems.append(f"index field '{path_field}' is missing")
     if problems:
-        raise ValueError("ADLS Gen2 permission ingestion isn't configured correctly: " + "; ".join(problems))
+        raise ValueError("Permission ingestion isn't configured correctly: " + "; ".join(problems))
 
 
 async def check_acl_ingestion(search_client: SearchClient, use_elevated_read: bool) -> None:
@@ -506,8 +544,8 @@ async def check_acl_ingestion(search_client: SearchClient, use_elevated_read: bo
         return
     if total and missing == total:
         logger.error(
-            "None of the %d indexed chunks have permissions (oids/groups). ADLS Gen2 permission ingestion didn't run; "
-            "check the data source's indexerPermissionOptions and the search service's access to the storage account.",
+            "None of the %d indexed chunks have permissions (oids/groups). Permission ingestion didn't run; "
+            "check the data sources' indexerPermissionOptions and the search service's access to the content.",
             total,
         )
         return
@@ -517,7 +555,8 @@ async def check_acl_ingestion(search_client: SearchClient, use_elevated_read: bo
         # ["none"] means the file had no named user or group ACL entries, so no user can see these chunks.
         logger.warning(
             "%d of %d indexed chunks are from files without named user or group ACL entries, so no users can access "
-            "them. Add ACL entries to those files in ADLS Gen2, then touch the files or reset the indexer to reindex.",
+            "them. Grant access to those files in ADLS Gen2 or SharePoint, then touch the files or reset the indexer "
+            "to reindex.",
             no_access,
             total,
         )

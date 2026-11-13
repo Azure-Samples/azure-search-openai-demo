@@ -73,11 +73,6 @@ async def setup_cloud_ingestion_strategy(
 
     if use_sharepoint and not use_builtin_skills:
         raise ValueError("USE_CLOUD_INGESTION_SHAREPOINT requires USE_CLOUD_INGESTION_BUILTIN=true.")
-    if use_sharepoint and use_acls:
-        raise ValueError(
-            "USE_CLOUD_INGESTION_SHAREPOINT doesn't support USE_CLOUD_INGESTION_ACLS yet. "
-            "SharePoint documents would be indexed without permissions."
-        )
 
     use_private_endpoint = os.getenv("AZURE_USE_PRIVATE_ENDPOINT", "").lower() == "true"
     if use_builtin_skills and use_private_endpoint:

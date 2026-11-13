@@ -128,7 +128,7 @@ def test_build_skillset_with_acls_uses_native_permissions():
     assert data_source.as_dict()["indexerPermissionOptions"] == ["userIds", "groupIds"]
 
 
-def acl_index(oids_filter=PermissionFilter.USER_IDS, include_storage_path=True) -> SearchIndex:
+def acl_index(oids_filter=PermissionFilter.USER_IDS, path_fields=("metadata_storage_path",)) -> SearchIndex:
     fields = [
         SimpleField(name="id", type="Edm.String", key=True),
         SearchField(
@@ -144,8 +144,8 @@ def acl_index(oids_filter=PermissionFilter.USER_IDS, include_storage_path=True) 
             permission_filter=PermissionFilter.GROUP_IDS,
         ),
     ]
-    if include_storage_path:
-        fields.append(SimpleField(name="metadata_storage_path", type="Edm.String", filterable=True))
+    for path_field in path_fields:
+        fields.append(SimpleField(name=path_field, type="Edm.String", filterable=True))
     return SearchIndex(name="gptkbindex", fields=fields)
 
 
@@ -156,7 +156,7 @@ def test_validate_acl_configuration_accepts_valid_configuration():
 
 def test_validate_acl_configuration_reports_every_problem():
     data_source = create_strategy(use_acls=False).build_data_source()
-    index = acl_index(oids_filter=None, include_storage_path=False)
+    index = acl_index(oids_filter=None, path_fields=())
 
     with pytest.raises(ValueError) as exc_info:
         validate_acl_configuration(data_source, index)
@@ -166,6 +166,22 @@ def test_validate_acl_configuration_reports_every_problem():
     assert "expected userIds and groupIds" in message
     assert "'oids' is missing or doesn't have permissionFilter" in message
     assert "'metadata_storage_path' is missing" in message
+
+
+def test_validate_acl_configuration_for_sharepoint():
+    strategy = create_strategy(use_acls=True, sharepoint=SHAREPOINT)
+    data_source = strategy.build_sharepoint_data_source(SHAREPOINT)
+    validate_acl_configuration(
+        data_source, acl_index(path_fields=("metadata_spo_item_path",)), "metadata_spo_item_path"
+    )
+
+    # An index with only the ADLS Gen2 path field can't ingest SharePoint permissions
+    with pytest.raises(ValueError, match="'metadata_spo_item_path' is missing"):
+        validate_acl_configuration(data_source, acl_index(), "metadata_spo_item_path")
+    with pytest.raises(ValueError, match="not 'sharepoint'"):
+        validate_acl_configuration(
+            strategy.build_data_source(), acl_index(path_fields=("metadata_spo_item_path",)), "metadata_spo_item_path"
+        )
 
 
 def search_client_with_counts(total: int, missing: int, no_access: int = 0) -> MagicMock:
@@ -468,6 +484,39 @@ def test_build_sharepoint_skillset_uses_sharepoint_metadata():
     assert mappings["storageUrl"] == "/document/metadata_spo_item_weburi"
 
 
+def test_build_sharepoint_skillset_with_acls_maps_item_path():
+    strategy = create_strategy(use_acls=True, sharepoint=SHAREPOINT)
+    skillset = strategy.build_skillset(strategy.sharepoint_skillset_name, SHAREPOINT_SOURCE_FIELDS)
+
+    mappings = {m.name: m.source for m in skillset.index_projection.selectors[0].mappings}
+    assert mappings["oids"] == "/document/metadata_user_ids"
+    assert mappings["groups"] == "/document/metadata_group_ids"
+    assert mappings["metadata_spo_item_path"] == "/document/metadata_spo_item_path"
+    assert "metadata_storage_path" not in mappings
+
+
+@pytest.mark.parametrize(
+    "query, container_name, acl_query",
+    [
+        (None, "defaultSiteLibrary", "propagateFolderChanges=true"),
+        (
+            "includeLibrary=https://contoso.sharepoint.com/sites/hr/Docs",
+            "useQuery",
+            "includeLibrary=https://contoso.sharepoint.com/sites/hr/Docs;propagateFolderChanges=true",
+        ),
+    ],
+)
+def test_build_sharepoint_data_source_with_acls(query, container_name, acl_query):
+    sharepoint = SharePointSource(
+        site_url=SHAREPOINT.site_url, app_id="sp-app-id", app_secret="sp-secret", tenant_id="sp-tenant", query=query
+    )
+    data_source = create_strategy(use_acls=True, sharepoint=sharepoint).build_sharepoint_data_source(sharepoint)
+
+    assert data_source.container.name == container_name
+    assert data_source.container.query == acl_query
+    assert data_source.as_dict()["indexerPermissionOptions"] == ["userIds", "groupIds"]
+
+
 @pytest.mark.parametrize(
     "query, container_name",
     [(None, "defaultSiteLibrary"), ("includeLibrary=https://contoso.sharepoint.com/sites/hr/Docs", "useQuery")],
@@ -486,6 +535,7 @@ def test_build_sharepoint_data_source(query, container_name):
     )
     assert data_source.container.name == container_name
     assert data_source.container.query == query
+    assert data_source.indexer_permission_options is None
 
 
 def test_build_sharepoint_indexer_maps_item_id_to_key():
@@ -544,19 +594,24 @@ async def test_setup_cloud_ingestion_strategy_configures_sharepoint(sharepoint_e
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "env_overrides, message",
-    [
-        ({"USE_CLOUD_INGESTION_BUILTIN": "false"}, "requires USE_CLOUD_INGESTION_BUILTIN"),
-        ({"USE_CLOUD_INGESTION_ACLS": "true"}, "doesn't support USE_CLOUD_INGESTION_ACLS"),
-    ],
-)
-async def test_setup_cloud_ingestion_strategy_sharepoint_rejects_unsupported(
-    sharepoint_env, monkeypatch, env_overrides, message
-):
+async def test_setup_cloud_ingestion_strategy_sharepoint_requires_builtin(sharepoint_env, monkeypatch):
     from setup_cloud_ingestion import setup_cloud_ingestion_strategy
 
-    for key, value in env_overrides.items():
-        monkeypatch.setenv(key, value)
-    with pytest.raises(ValueError, match=message):
+    monkeypatch.setenv("USE_CLOUD_INGESTION_BUILTIN", "false")
+    with pytest.raises(ValueError, match="requires USE_CLOUD_INGESTION_BUILTIN"):
         await setup_cloud_ingestion_strategy(MockAzureCredential())
+
+
+@pytest.mark.asyncio
+async def test_setup_cloud_ingestion_strategy_sharepoint_with_acls(sharepoint_env, monkeypatch):
+    from setup_cloud_ingestion import setup_cloud_ingestion_strategy
+
+    monkeypatch.setenv("USE_CLOUD_INGESTION_ACLS", "true")
+    strategy, openai_client, _, blob_manager = await setup_cloud_ingestion_strategy(MockAzureCredential())
+    try:
+        assert isinstance(strategy, BuiltInCloudIngestionStrategy)
+        assert strategy.use_acls is True
+        assert strategy.sharepoint is not None
+    finally:
+        await blob_manager.close_clients()
+        await openai_client.close()
