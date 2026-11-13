@@ -202,7 +202,7 @@ If you switch an existing deployment between the two pipelines, set a new index 
 
 ### Indexing documents from SharePoint
 
-With built-in skills, cloud ingestion can also index documents from a SharePoint Online site, using the [SharePoint indexer](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online) (preview). SharePoint documents go through the same Content Understanding, citation, and embedding skills, into the same index as the documents in Blob storage.
+With built-in skills, cloud ingestion can also index documents from a SharePoint Online site, using the [SharePoint indexer](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online) (preview). SharePoint documents go through the same Content Understanding, citation, and embedding skills. When SharePoint is enabled, it replaces Blob storage as the source: the files in `data` aren't uploaded, and only the SharePoint indexer runs. If you switch an existing deployment to SharePoint, set a new index name with `azd env set AZURE_SEARCH_INDEX <new-index-name>`, so the index doesn't keep the documents from Blob storage.
 
 This is different from `USE_SHAREPOINT_SOURCE`, which queries SharePoint at question time through [agentic retrieval](agentic_retrieval.md) with the signed-in user's token, and requires a Microsoft 365 Copilot license for each user. Indexing doesn't need that license. To keep SharePoint permissions on indexed documents, turn on [access control](#sharepoint-access-control).
 
@@ -229,7 +229,7 @@ This is different from `USE_SHAREPOINT_SOURCE`, which queries SharePoint at ques
 
 4. Run `azd up`. Before provisioning, the `scripts/sharepoint_indexer_init.py` script creates a Microsoft Entra app registration for the indexer, with the Microsoft Graph application permissions `Files.Read.All` and `Sites.Read.All` and a client secret, and stores them as `AZURE_SHAREPOINT_INDEXER_APP_ID` and `AZURE_SHAREPOINT_INDEXER_APP_SECRET`. Application permissions require [admin consent](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent). The script grants it if you're a Privileged Role Administrator or Global Administrator. Otherwise it prints the command for an administrator to run. To use an existing app registration instead, set `AZURE_SHAREPOINT_INDEXER_APP_ID` and `AZURE_SHAREPOINT_INDEXER_APP_SECRET` before running `azd up`.
 
-5. After deployment, the setup script creates a second data source, skillset, and indexer for SharePoint, runs both indexers, and logs any indexer warnings and errors.
+5. After deployment, the setup script creates a data source, skillset, and indexer for SharePoint, runs the indexer, and logs any indexer warnings and errors.
 
 Citations for SharePoint documents link to the document in SharePoint, for example `https://contoso.sharepoint.com/sites/mysite/Shared%20Documents/benefits.pdf#page=3`, so clicking a citation opens it in SharePoint (at that page for PDFs), where SharePoint checks the user's access. The app shows the citation as the file name.
 
@@ -248,7 +248,7 @@ azd env set AZURE_USE_AUTHENTICATION true
 azd env set AZURE_ENFORCE_ACCESS_CONTROL true
 ```
 
-`USE_CLOUD_INGESTION_ACLS` applies to both sources: documents in Blob storage move to an ADLS Gen2 account and keep their [ADLS Gen2 ACLs](login_and_acl.md#cloud-ingestion-with-azure-data-lake-storage-gen2), and SharePoint documents keep their SharePoint permissions.
+`USE_CLOUD_INGESTION_ACLS` still provisions an ADLS Gen2 storage account, which isn't used when SharePoint is the source.
 
 The SharePoint indexer uses [SharePoint permission ingestion](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists) (preview) to compute each document's effective permissions, following inheritance from the site, library, and folders, and stores the user and group IDs in the index's `oids` and `groups` fields. At query time, Azure AI Search compares them with the signed-in user's ID and Microsoft Entra group memberships, including nested groups.
 

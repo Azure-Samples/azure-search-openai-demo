@@ -122,8 +122,9 @@ class BuiltInCloudIngestionStrategy(Strategy):
     vectorizes each chunk. When ``use_acls`` is enabled, the ADLS Gen2 and SharePoint data sources ingest native
     file permissions into the ``oids`` and ``groups`` fields.
 
-    When ``sharepoint`` is set, a second data source, skillset, and indexer also ingest documents
-    from a SharePoint Online site into the same index.
+    When ``sharepoint`` is set, the SharePoint Online site is the only source: a SharePoint data
+    source, skillset, and indexer ingest its documents, and no files are uploaded to or indexed
+    from Blob storage.
     """
 
     def __init__(
@@ -365,13 +366,8 @@ class BuiltInCloudIngestionStrategy(Strategy):
         if not self.embeddings.azure_endpoint or not self.embeddings.azure_deployment_name:
             raise ValueError("Cloud ingestion requires Azure OpenAI endpoint and deployment")
 
-        container_client = self.blob_manager.blob_service_client.get_container_client(self.blob_manager.container)
-        if not await container_client.exists():
-            raise ValueError(
-                f"Storage container '{self.blob_manager.container}' does not exist in storage account "
-                f"'{self.blob_manager.account}'. Please create the container first, or set AZURE_STORAGE_CONTAINER "
-                "to an existing container name."
-            )
+        if not self.sharepoint:
+            await self.ensure_storage_container()
 
         search_manager = SearchManager(
             search_info=self.search_info,
@@ -385,59 +381,70 @@ class BuiltInCloudIngestionStrategy(Strategy):
             use_web_source=self.use_web_source,
         )
         await search_manager.create_index()
-        if self.use_acls:
-            await self.ensure_acl_path_fields()
+        index = await self.ensure_acl_path_field() if self.use_acls else None
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
-            data_source = await indexer_client.create_or_update_data_source_connection(self.build_data_source())
-            # Validate before creating the indexer, since creating it starts a run immediately.
-            if self.use_acls:
-                async with self.search_info.create_search_index_client() as index_client:
-                    index = await index_client.get_index(self.search_info.index_name)
-                validate_acl_configuration(data_source, index)
-            await indexer_client.create_or_update_skillset(self.build_skillset())
-            await indexer_client.create_or_update_indexer(self.build_indexer())
+            # Validate each data source before creating its indexer, since creating it starts a run immediately.
             if self.sharepoint:
                 logger.info("Setting up SharePoint indexer for %s", self.sharepoint.site_url)
                 sharepoint_data_source = await indexer_client.create_or_update_data_source_connection(
                     self.build_sharepoint_data_source(self.sharepoint)
                 )
-                if self.use_acls:
-                    validate_acl_configuration(sharepoint_data_source, index, METADATA_SPO_ITEM_PATH_FIELD)
+                if index is not None:
+                    validate_acl_configuration(sharepoint_data_source, index, self.acl_path_field)
                 await indexer_client.create_or_update_skillset(
                     self.build_skillset(self.sharepoint_skillset_name, SHAREPOINT_SOURCE_FIELDS)
                 )
                 await indexer_client.create_or_update_indexer(self.build_sharepoint_indexer())
+            else:
+                data_source = await indexer_client.create_or_update_data_source_connection(self.build_data_source())
+                if index is not None:
+                    validate_acl_configuration(data_source, index, self.acl_path_field)
+                await indexer_client.create_or_update_skillset(self.build_skillset())
+                await indexer_client.create_or_update_indexer(self.build_indexer())
 
-    async def ensure_acl_path_fields(self) -> None:  # pragma: no cover
+    async def ensure_storage_container(self) -> None:  # pragma: no cover
+        container_client = self.blob_manager.blob_service_client.get_container_client(self.blob_manager.container)
+        if not await container_client.exists():
+            raise ValueError(
+                f"Storage container '{self.blob_manager.container}' does not exist in storage account "
+                f"'{self.blob_manager.account}'. Please create the container first, or set AZURE_STORAGE_CONTAINER "
+                "to an existing container name."
+            )
+
+    @property
+    def acl_path_field(self) -> str:
+        """The index field that permission ingestion requires for this strategy's data source."""
+        return METADATA_SPO_ITEM_PATH_FIELD if self.sharepoint else METADATA_STORAGE_PATH_FIELD
+
+    @property
+    def active_indexer_name(self) -> str:
+        return self.sharepoint_indexer_name if self.sharepoint else self.indexer_name
+
+    async def ensure_acl_path_field(self) -> SearchIndex:  # pragma: no cover
         """Permission ingestion requires an item path field in the target index: metadata_storage_path
-        for ADLS Gen2, and metadata_spo_item_path for SharePoint."""
-        required = [METADATA_STORAGE_PATH_FIELD] + ([METADATA_SPO_ITEM_PATH_FIELD] if self.sharepoint else [])
+        for ADLS Gen2, and metadata_spo_item_path for SharePoint. Returns the index."""
         async with self.search_info.create_search_index_client() as index_client:
             index = await index_client.get_index(self.search_info.index_name)
-            existing = {field.name for field in index.fields}
-            missing = [name for name in required if name not in existing]
-            if not missing:
-                return
-            logger.info("Adding %s to index for permission ingestion", ", ".join(missing))
-            for name in missing:
-                index.fields.append(SimpleField(name=name, type="Edm.String", filterable=True))
-            await index_client.create_or_update_index(index)
+            if any(field.name == self.acl_path_field for field in index.fields):
+                return index
+            logger.info("Adding %s field to index for permission ingestion", self.acl_path_field)
+            index.fields.append(SimpleField(name=self.acl_path_field, type="Edm.String", filterable=True))
+            return await index_client.create_or_update_index(index)
 
     async def run(self) -> None:  # pragma: no cover
-        files = self.list_file_strategy.list()
-        async for file in files:
-            try:
-                await self.blob_manager.upload_blob(file)
-            finally:
-                if file:
-                    file.close()
+        if not self.sharepoint:
+            files = self.list_file_strategy.list()
+            async for file in files:
+                try:
+                    await self.blob_manager.upload_blob(file)
+                finally:
+                    if file:
+                        file.close()
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
-            indexer_names = [self.indexer_name] + ([self.sharepoint_indexer_name] if self.sharepoint else [])
-            for indexer_name in indexer_names:
-                if not await run_indexer_and_wait(indexer_client, indexer_name):
-                    return
+            if not await run_indexer_and_wait(indexer_client, self.active_indexer_name):
+                return
 
         if self.use_acls:
             async with self.search_info.create_search_client() as search_client:

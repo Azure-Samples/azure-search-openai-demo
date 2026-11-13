@@ -484,6 +484,16 @@ def test_build_sharepoint_skillset_uses_sharepoint_metadata():
     assert mappings["storageUrl"] == "/document/metadata_spo_item_weburi"
 
 
+def test_sharepoint_replaces_blob_source():
+    blob_strategy = create_strategy()
+    assert blob_strategy.active_indexer_name == "gptkbindex-cloud-indexer"
+    assert blob_strategy.acl_path_field == "metadata_storage_path"
+
+    sharepoint_strategy = create_strategy(sharepoint=SHAREPOINT)
+    assert sharepoint_strategy.active_indexer_name == "gptkbindex-cloud-sharepoint-indexer"
+    assert sharepoint_strategy.acl_path_field == "metadata_spo_item_path"
+
+
 def test_build_sharepoint_skillset_with_acls_maps_item_path():
     strategy = create_strategy(use_acls=True, sharepoint=SHAREPOINT)
     skillset = strategy.build_skillset(strategy.sharepoint_skillset_name, SHAREPOINT_SOURCE_FIELDS)
