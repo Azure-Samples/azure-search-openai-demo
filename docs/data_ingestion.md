@@ -2,7 +2,7 @@
 
 The [azure-search-openai-demo](/) project can set up a full RAG chat app on Azure AI Search and OpenAI so that you can chat on custom data, like internal enterprise data or domain-specific knowledge sets. For full instructions on setting up the project, consult the [main README](/README.md), and then return here for detailed instructions on the data ingestion component.
 
-The chat app provides two ways to ingest data: manual ingestion and cloud ingestion. Both approaches use the same code for processing the data, but the manual ingestion runs locally while cloud ingestion runs in Azure Functions as Azure AI Search custom skills.
+The chat app provides two ways to ingest data: manual ingestion and cloud ingestion. Both approaches use the same code for processing the data, but the manual ingestion runs locally while cloud ingestion runs in Azure Functions as Azure AI Search custom skills. Cloud ingestion can alternatively use only [Azure AI Search built-in skills](#using-built-in-skills-instead-of-azure-functions), with no Azure Functions to deploy.
 
 - [Supported document formats](#supported-document-formats)
 - [Ingestion stages](#ingestion-stages)
@@ -15,6 +15,7 @@ The chat app provides two ways to ingest data: manual ingestion and cloud ingest
   - [Removing documents](#removing-documents)
 - [Cloud ingestion](#cloud-ingestion)
   - [Enabling cloud ingestion](#enabling-cloud-ingestion)
+  - [Using built-in skills instead of Azure Functions](#using-built-in-skills-instead-of-azure-functions)
   - [Indexer architecture](#indexer-architecture)
   - [Indexing of additional documents](#indexing-of-additional-documents)
   - [Removal of documents](#removal-of-documents)
@@ -23,17 +24,17 @@ The chat app provides two ways to ingest data: manual ingestion and cloud ingest
 
 ## Supported document formats
 
-In order to ingest a document format, we need a tool that can turn it into text. By default, both local and cloud ingestion use Azure Document Intelligence (DI in the table below), but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges.
+In order to ingest a document format, we need a tool that can turn it into text. Local ingestion and cloud ingestion with custom Functions use Azure Document Intelligence (DI in the table below) by default, but we also have local parsers for several formats. The local parsers are not as sophisticated as Azure Document Intelligence, but they can be used to decrease charges. [Cloud ingestion with built-in skills](#using-built-in-skills-instead-of-azure-functions) uses [Azure Content Understanding](https://learn.microsoft.com/azure/search/cognitive-search-skill-content-understanding#supported-file-formats) (CU in the table below) instead.
 
-| Format | Local and cloud ingestion            |
-| ------ | ------------------------------------ |
-| PDF    | Yes (DI or local with PyPDF)         |
-| HTML   | Yes (DI or local with BeautifulSoup) |
-| DOCX, PPTX, XLSX   | Yes (DI)                 |
-| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) |
-| TXT    | Yes (Local)                          |
-| JSON   | Yes (Local)                          |
-| CSV    | Yes (Local)                          |
+| Format | Local and cloud ingestion with custom Functions | Cloud ingestion with built-in skills |
+| ------ | ------------------------------------ | ------------------------------------ |
+| PDF    | Yes (DI or local with PyPDF)         | Yes (CU) |
+| HTML   | Yes (DI or local with BeautifulSoup) | Yes (CU) |
+| DOCX, PPTX, XLSX   | Yes (DI)                 | Yes (CU) |
+| Images (JPG, PNG, BPM, TIFF, HEIFF)| Yes (DI) | Yes (CU) |
+| TXT, MD | Yes (Local)                         | Yes (CU) |
+| JSON   | Yes (Local)                          | No |
+| CSV    | Yes (Local)                          | No |
 
 ## Ingestion stages
 
@@ -41,7 +42,7 @@ The ingestion pipeline consists of three main stages that transform raw document
 
 ### Document extraction
 
-The first stage extracts text and structured content from source documents using parsers tailored to each file format. For PDF, HTML, DOCX, PPTX, XLSX, and image files, the pipeline defaults to using [Azure Document Intelligence](https://learn.microsoft.com/azure/ai-services/document-intelligence/overview) to extract text, tables, and figures with layout information. Alternatively, local parsers like PyPDF and BeautifulSoup can be used to reduce costs for simpler documents. For TXT, JSON, and CSV files, lightweight local parsers extract the content directly.
+The first stage extracts text and structured content from source documents using parsers tailored to each file format. (This section describes local ingestion and cloud ingestion with custom Functions. Cloud ingestion with built-in skills uses Content Understanding for extraction and chunking instead, as described in [its own section](#using-built-in-skills-instead-of-azure-functions).) For PDF, HTML, DOCX, PPTX, XLSX, and image files, the pipeline defaults to using [Azure Document Intelligence](https://learn.microsoft.com/azure/ai-services/document-intelligence/overview) to extract text, tables, and figures with layout information. Alternatively, local parsers like PyPDF and BeautifulSoup can be used to reduce costs for simpler documents. For TXT, JSON, and CSV files, lightweight local parsers extract the content directly.
 
 During extraction, tables are converted to HTML markup to preserve their structure, and figures (when multimodal is enabled) are identified with bounding boxes and placeholders.
 
@@ -167,7 +168,40 @@ This project includes an optional feature to perform data ingestion in the cloud
 
 6. When you have new documents to ingest, you can upload documents to the Blob storage container and run the indexer from the Azure Portal to ingest new documents.
 
+### Using built-in skills instead of Azure Functions
+
+By default, cloud ingestion uses custom skills hosted in Azure Functions. You can instead use a skillset made only of [Azure AI Search built-in skills](https://learn.microsoft.com/azure/search/cognitive-search-predefined-skills), so no Function apps are deployed:
+
+```shell
+azd env set USE_CLOUD_INGESTION true
+azd env set USE_CLOUD_INGESTION_BUILTIN true
+azd up
+```
+
+The built-in skillset processes each document like this:
+
+1. The [Content Understanding skill](https://learn.microsoft.com/azure/search/cognitive-search-skill-content-understanding) extracts text and tables, and splits the content into chunks of up to 1,000 characters with a 100-character overlap. It also records the page range of each chunk. If `USE_MEDIA_DESCRIBER_AZURE_CU` is `true`, it also describes charts, diagrams, and other figures inline in the chunk text, using the chat model deployed on the Content Understanding account (preview).
+2. The [Text Merge](https://learn.microsoft.com/azure/search/cognitive-search-skill-textmerger) and [Conditional](https://learn.microsoft.com/azure/search/cognitive-search-skill-conditional) skills build the citation stored in `sourcepage`. For PDFs, that's `file.pdf#page=N` using the first page of the chunk, and for other formats, it's the file name. That matches local ingestion.
+3. The [Azure OpenAI Embedding skill](https://learn.microsoft.com/azure/search/cognitive-search-skill-azure-openai-embedding) generates an embedding for each chunk.
+4. [Index projections](https://learn.microsoft.com/azure/search/search-how-to-define-index-projections) write one search document per chunk.
+
+The deployment provisions an Azure AI Services account for Content Understanding, and grants the search service access to it. After the indexer run that `azd up` triggers finishes, the setup script logs any indexer warnings and errors.
+
+Keep these differences in mind:
+
+- **Multimodal isn't supported yet.** Setting both `USE_CLOUD_INGESTION_BUILTIN` and `USE_MULTIMODAL` to `true` fails with an error. Use the default Azure Functions pipeline for multimodal.
+- **Access control uses native ADLS Gen2 permissions.** With `USE_CLOUD_INGESTION_ACLS`, the search indexer reads the file permissions itself. See [Cloud ingestion with Azure Data Lake Storage Gen2](login_and_acl.md#cloud-ingestion-with-azure-data-lake-storage-gen2).
+- **Private access needs the Standard (S1) tier.** With `AZURE_USE_PRIVATE_ENDPOINT`, the indexer reaches storage and the AI services through shared private links, which skillsets can only use on S1 or higher. See [Deploying with private access](deploy_private.md#compatibility-with-other-features).
+- **Large files on the Basic tier are skipped.** Azure AI Search extracts at most 16 MB per file on the Basic tier, so larger files produce an indexer warning and no searchable content. Use a [higher tier](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity#indexer-limits) or the Azure Functions pipeline for larger files.
+- **Chunks are sized by characters, not tokens.** For Chinese, Japanese, and Korean text, a 1,000-character chunk can be much larger than the 500-token chunks from the [local text splitter](textsplitter.md).
+- **JSON and CSV files are indexed as plain text.** They aren't parsed like they are in local ingestion.
+- **Content Understanding is billed per page.** It has no free per-indexer allowance. Figure descriptions also use chat model tokens. See [Azure Content Understanding pricing](https://azure.microsoft.com/pricing/details/content-understanding/).
+
+If you switch an existing deployment between the two pipelines, set a new index name with `azd env set AZURE_SEARCH_INDEX <new-index-name>` and run `azd up`. The built-in pipeline reuses the same indexer, skillset, and data source names, so switching replaces the previous pipeline, but the indexer's change tracking skips unchanged files. Reusing the old index would leave chunks, embeddings, and permissions from the previous pipeline in place.
+
 ### Indexer architecture
+
+This section describes the default cloud ingestion pipeline, which uses Azure Functions. For the alternative pipeline, see [Using built-in skills instead of Azure Functions](#using-built-in-skills-instead-of-azure-functions).
 
 The cloud ingestion pipeline uses four Azure Functions as custom skills within an Azure AI Search indexer. Each function corresponds to a stage in the ingestion process. Here's how it works:
 

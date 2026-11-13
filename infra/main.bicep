@@ -135,6 +135,8 @@ param speechServiceVoice string = ''
 param useMultimodal bool = false
 param useEval bool = false
 param useCloudIngestion bool = false
+@description('Use Azure AI Search built-in skills for cloud ingestion instead of the custom skill Azure Functions')
+param useCloudIngestionBuiltin bool = false
 
 // When greater than 0, CSV rows are grouped into pages of up to this many characters
 // during ingestion instead of one page per row (avoids out-of-memory on large CSV files).
@@ -487,8 +489,46 @@ module appServicePlan 'core/host/appserviceplan.bicep' = if (deploymentTarget ==
 // Determine which ADLS storage account name to use (existing or provisioned)
 var adlsStorageAccountNameResolved = useExistingAdlsStorage ? existingAdlsStorage.name : (useCloudIngestionAcls ? adlsStorage!.outputs.name : '')
 
+// Built-in skills cloud ingestion replaces the custom skill Azure Functions with Azure AI Search built-in skills
+var useCloudIngestionBuiltinSkills = useCloudIngestion && useCloudIngestionBuiltin
+var useCloudIngestionFunctions = useCloudIngestion && !useCloudIngestionBuiltin
+// The Content Understanding account is used by the media describer and by built-in skills cloud ingestion
+var useContentUnderstanding = useMediaDescriberAzureCU || useCloudIngestionBuiltinSkills
+
 // For cloud ingestion with ACLs, use the ADLS Gen2 storage account; otherwise use the standard storage account
 var cloudIngestionStorageAccount = useCloudIngestionAcls ? adlsStorageAccountNameResolved : storage.outputs.name
+var cloudIngestionStorageResourceId = useCloudIngestionAcls
+  ? (useExistingAdlsStorage ? existingAdlsStorage.id : adlsStorage!.outputs.id)
+  : storage.outputs.id
+
+// With private endpoints, the search indexer reaches its data source and skill services through
+// shared private links, which require the private indexer execution environment (Standard tier or higher).
+// The custom skill Functions pipeline isn't supported with private endpoints yet.
+var searchSharedPrivateLinks = (usePrivateEndpoint && useCloudIngestionBuiltinSkills)
+  ? concat(
+      [{ name: 'storage-blob', groupId: 'blob', resourceId: cloudIngestionStorageResourceId }],
+      useCloudIngestionAcls
+        ? [{ name: 'storage-dfs', groupId: 'dfs', resourceId: cloudIngestionStorageResourceId }]
+        : [],
+      deployFoundryAccount
+        ? [{ name: 'openai', groupId: 'openai_account', resourceId: foundryAccount!.outputs.resourceId }]
+        : [],
+      [
+        // The Content Understanding skill runs through foundry_account, and the skillset's billing
+        // connection to the same account (AIServicesByIdentity) goes through cognitiveservices_account
+        {
+          name: 'contentunderstanding-skill'
+          groupId: 'foundry_account'
+          resourceId: contentUnderstanding!.outputs.resourceId
+        }
+        {
+          name: 'contentunderstanding-billing'
+          groupId: 'cognitiveservices_account'
+          resourceId: contentUnderstanding!.outputs.resourceId
+        }
+      ]
+    )
+  : []
 
 var appEnvVariables = {
   AZURE_STORAGE_ACCOUNT: storage.outputs.name
@@ -566,7 +606,7 @@ var appEnvVariables = {
   USE_LOCAL_PDF_PARSER: useLocalPdfParser
   USE_LOCAL_HTML_PARSER: useLocalHtmlParser
   USE_MEDIA_DESCRIBER_AZURE_CU: useMediaDescriberAzureCU
-  AZURE_CONTENTUNDERSTANDING_ENDPOINT: useMediaDescriberAzureCU ? contentUnderstanding!.outputs.endpoint : ''
+  AZURE_CONTENTUNDERSTANDING_ENDPOINT: useContentUnderstanding ? contentUnderstanding!.outputs.endpoint : ''
   AZURE_CONTENTUNDERSTANDING_DEPLOYMENT: contentUnderstandingModel.deploymentName
   RUNNING_IN_PRODUCTION: 'true'
   // RAG Configuration
@@ -693,7 +733,7 @@ module acaAuth 'core/host/container-apps-auth.bicep' = if (deploymentTarget == '
 }
 
 // Optional Azure Functions for document ingestion and processing
-module functions 'app/functions.bicep' = if (useCloudIngestion) {
+module functions 'app/functions.bicep' = if (useCloudIngestionFunctions) {
   name: 'functions'
   scope: resourceGroup
   params: {
@@ -899,7 +939,7 @@ module vision 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMult
 }
 
 
-module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useMediaDescriberAzureCU) {
+module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2' = if (useContentUnderstanding) {
   name: 'content-understanding'
   scope: az.resourceGroup(contentUnderstandingResourceGroupNameActual)
   params: {
@@ -907,6 +947,7 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
       ? contentUnderstandingServiceName
       : '${abbrs.cognitiveServicesContentUnderstanding}${resourceToken}'
     kind: 'AIServices'
+    publicNetworkAccess: publicNetworkAccess
     networkAcls: {
       defaultAction: 'Allow'
     }
@@ -917,7 +958,8 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
     location: 'westus'
     tags: tags
     sku: 'S0'
-    deployments: [
+    // The chat model is only needed for figure descriptions, which USE_MEDIA_DESCRIBER_AZURE_CU turns on
+    deployments: useMediaDescriberAzureCU ? [
       {
         name: contentUnderstandingModel.deploymentName
         model: {
@@ -930,7 +972,7 @@ module contentUnderstanding 'br/public:avm/res/cognitive-services/account:0.7.2'
           capacity: contentUnderstandingModel.deploymentCapacity
         }
       }
-    ]
+    ] : []
     restore: restoreCognitiveServices
   }
 }
@@ -968,6 +1010,7 @@ module searchService 'core/search/search-services.bicep' = {
     publicNetworkAccess: publicNetworkAccess == 'Enabled'
       ? 'enabled'
       : (publicNetworkAccess == 'Disabled' ? 'disabled' : null)
+    sharedPrivateLinks: searchSharedPrivateLinks
   }
 }
 
@@ -1290,6 +1333,17 @@ module openAiRoleSearchService 'core/security/role.bicep' = if (isAzureOpenAiHos
   }
 }
 
+// Search service calls Content Understanding from the built-in skillset (AIServicesByIdentity)
+module contentUnderstandingRoleSearchService 'core/security/role.bicep' = if (useCloudIngestionBuiltinSkills && searchServiceSkuName != 'free') {
+  scope: az.resourceGroup(contentUnderstandingResourceGroupNameActual)
+  name: 'contentunderstanding-role-searchservice'
+  params: {
+    principalId: searchService.outputs.systemAssignedPrincipalId
+    roleDefinitionId: 'a97b65f3-24c7-4388-baec-2e87135dc908' // Cognitive Services User
+    principalType: 'ServicePrincipal'
+  }
+}
+
 module visionRoleSearchService 'core/security/role.bicep' = if (useMultimodal && searchServiceSkuName != 'free') {
   scope: az.resourceGroup(visionResourceGroupNameActual)
   name: 'vision-role-searchservice'
@@ -1362,10 +1416,8 @@ module adlsStorageOwnerRoleUser 'core/security/storage-role.bicep' = if (useClou
 }
 
 // Storage Blob Data Reader on ADLS storage for Azure Functions to read during cloud ingestion
-// Note: This module requires useCloudIngestion=true because it references functions!.outputs.principalId.
-// If useCloudIngestionAcls=true but useCloudIngestion=false, deployment will fail.
-// Documentation states USE_CLOUD_INGESTION_ACLS requires USE_CLOUD_INGESTION to be true.
-module adlsStorageRoleFunctions 'core/security/storage-role.bicep' = if (useCloudIngestionAcls && useCloudIngestion) {
+// Only needed when the custom skill Functions are deployed (built-in skills read storage as the search service)
+module adlsStorageRoleFunctions 'core/security/storage-role.bicep' = if (useCloudIngestionAcls && useCloudIngestionFunctions) {
   scope: az.resourceGroup(adlsStorageResourceGroupNameActual)
   name: 'adls-storage-role-functions'
   params: {
@@ -1463,7 +1515,7 @@ var openAiPrivateEndpointConnection = (usePrivateEndpoint && deployFoundryAccoun
     ]
   : []
 
-var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLocalPdfParser || useMultimodal || useMediaDescriberAzureCU))
+var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLocalPdfParser || useMultimodal || useContentUnderstanding))
   ? [
       {
         groupId: 'account'
@@ -1473,7 +1525,7 @@ var cognitiveServicesPrivateEndpointConnection = (usePrivateEndpoint && (!useLoc
         resourceIds: concat(
           !useLocalPdfParser ? [documentIntelligence.outputs.resourceId] : [],
           useMultimodal ? [vision!.outputs.resourceId] : [],
-          useMediaDescriberAzureCU ? [contentUnderstanding!.outputs.resourceId] : []
+          useContentUnderstanding ? [contentUnderstanding!.outputs.resourceId] : []
         )
       }
     ]
@@ -1503,7 +1555,11 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
       {
         groupId: 'blob'
         dnsZoneNames: ['privatelink.blob.${environmentData.suffixes.storage}']
-        resourceIds: concat([storage.outputs.id], useUserUpload ? [userStorage!.outputs.id] : [])
+        resourceIds: concat(
+          [storage.outputs.id],
+          useUserUpload ? [userStorage!.outputs.id] : [],
+          useCloudIngestionAcls ? [cloudIngestionStorageResourceId] : []
+        )
       }
       {
         groupId: 'searchService'
@@ -1518,7 +1574,18 @@ var otherPrivateEndpointConnections = (usePrivateEndpoint)
     ]
   : []
 
-var privateEndpointConnections = concat(otherPrivateEndpointConnections, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection, containerAppsPrivateEndpointConnection, appServicePrivateEndpointConnection)
+// The ADLS Gen2 account for ACL ingestion also needs its DFS endpoint, which the setup script uses
+var adlsDfsPrivateEndpointConnection = (usePrivateEndpoint && useCloudIngestionAcls)
+  ? [
+      {
+        groupId: 'dfs'
+        dnsZoneNames: ['privatelink.dfs.${environmentData.suffixes.storage}']
+        resourceIds: [cloudIngestionStorageResourceId]
+      }
+    ]
+  : []
+
+var privateEndpointConnections = concat(otherPrivateEndpointConnections, adlsDfsPrivateEndpointConnection, openAiPrivateEndpointConnection, cognitiveServicesPrivateEndpointConnection, containerAppsPrivateEndpointConnection, appServicePrivateEndpointConnection)
 
 module privateEndpoints 'private-endpoints.bicep' = if (usePrivateEndpoint) {
   name: 'privateEndpoints'
@@ -1640,7 +1707,7 @@ output AZURE_SPEECH_SERVICE_ID string = useSpeechOutputAzure ? speech!.outputs.r
 output AZURE_SPEECH_SERVICE_LOCATION string = useSpeechOutputAzure ? speech!.outputs.location : ''
 
 output AZURE_VISION_ENDPOINT string = useMultimodal ? vision!.outputs.endpoint : ''
-output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useMediaDescriberAzureCU ? contentUnderstanding!.outputs.endpoint : ''
+output AZURE_CONTENTUNDERSTANDING_ENDPOINT string = useContentUnderstanding ? contentUnderstanding!.outputs.endpoint : ''
 output AZURE_CONTENTUNDERSTANDING_DEPLOYMENT string = useMediaDescriberAzureCU ? contentUnderstandingModel.deploymentName : ''
 
 output AZURE_DOCUMENTINTELLIGENCE_SERVICE string = documentIntelligence.outputs.name
@@ -1666,7 +1733,6 @@ output AZURE_STORAGE_RESOURCE_GROUP string = storageResourceGroupNameActual
 output AZURE_ADLS_STORAGE_ACCOUNT string = useCloudIngestionAcls ? adlsStorageAccountNameResolved : ''
 output AZURE_CLOUD_INGESTION_STORAGE_ACCOUNT string = useCloudIngestionAcls ? adlsStorageAccountNameResolved : storage.outputs.name
 output AZURE_CLOUD_INGESTION_STORAGE_RESOURCE_GROUP string = useCloudIngestionAcls ? adlsStorageResourceGroupNameActual : storageResourceGroupNameActual
-output USE_CLOUD_INGESTION_ACLS bool = useCloudIngestionAcls
 
 output AZURE_USERSTORAGE_ACCOUNT string = useUserUpload ? userStorage!.outputs.name : ''
 output AZURE_USERSTORAGE_CONTAINER string = userStorageContainerName
@@ -1675,14 +1741,17 @@ output AZURE_USERSTORAGE_RESOURCE_GROUP string = storageResourceGroupNameActual
 
 output AZURE_IMAGESTORAGE_CONTAINER string = useMultimodal ? imageStorageContainerName : ''
 
+// Whether the custom skill Functions are deployed (used as the azure.yaml condition for the function services)
+output USE_CLOUD_INGESTION_FUNCTIONS bool = useCloudIngestionFunctions
+
 // Cloud ingestion function skill endpoints & resource IDs
-output DOCUMENT_EXTRACTOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.documentExtractorUrl}/api/extract' : ''
-output FIGURE_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
-output TEXT_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestion ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
+output DOCUMENT_EXTRACTOR_SKILL_ENDPOINT string = useCloudIngestionFunctions ? 'https://${functions!.outputs.documentExtractorUrl}/api/extract' : ''
+output FIGURE_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestionFunctions ? 'https://${functions!.outputs.figureProcessorUrl}/api/process' : ''
+output TEXT_PROCESSOR_SKILL_ENDPOINT string = useCloudIngestionFunctions ? 'https://${functions!.outputs.textProcessorUrl}/api/process' : ''
 // Identifier URI used as authResourceId for all custom skill endpoints
-output DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.documentExtractorAuthIdentifierUri : ''
-output FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.figureProcessorAuthIdentifierUri : ''
-output TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestion ? functions!.outputs.textProcessorAuthIdentifierUri : ''
+output DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestionFunctions ? functions!.outputs.documentExtractorAuthIdentifierUri : ''
+output FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestionFunctions ? functions!.outputs.figureProcessorAuthIdentifierUri : ''
+output TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID string = useCloudIngestionFunctions ? functions!.outputs.textProcessorAuthIdentifierUri : ''
 
 output AZURE_USE_AUTHENTICATION bool = useAuthentication
 

@@ -11,6 +11,7 @@ from openai import AsyncOpenAI
 from rich.logging import RichHandler
 
 from prepdocslib.blobmanager import BlobManager
+from prepdocslib.builtincloudingestionstrategy import BuiltInCloudIngestionStrategy
 from prepdocslib.cloudingestionstrategy import CloudIngestionStrategy
 from prepdocslib.listfilestrategy import LocalListFileStrategy
 from prepdocslib.servicesetup import (
@@ -26,16 +27,27 @@ from prepdocslib.strategy import DocumentAction
 logger = logging.getLogger("scripts")
 
 
+def figure_description_settings() -> dict[str, str]:
+    """Model settings for figure descriptions in built-in mode, matching USE_MEDIA_DESCRIBER_AZURE_CU."""
+    deployment = os.getenv("AZURE_CONTENTUNDERSTANDING_DEPLOYMENT")
+    if os.getenv("USE_MEDIA_DESCRIBER_AZURE_CU", "").lower() != "true" or not deployment:
+        return {}
+    # The deployment is named after the model unless AZURE_CONTENTUNDERSTANDING_MODEL overrides it.
+    return {
+        "figure_description_model": os.getenv("AZURE_CONTENTUNDERSTANDING_MODEL") or deployment,
+        "figure_description_deployment": deployment,
+    }
+
+
 async def setup_cloud_ingestion_strategy(
     azure_credential: AsyncTokenCredential,
     document_action: DocumentAction = DocumentAction.Add,
-) -> tuple[CloudIngestionStrategy, AsyncOpenAI, AsyncTokenCredential, BlobManager]:
+) -> tuple[CloudIngestionStrategy | BuiltInCloudIngestionStrategy, AsyncOpenAI, AsyncTokenCredential, BlobManager]:
     """Setup the cloud ingestion strategy with all required services."""
 
     # Get environment variables
     search_service = os.environ["AZURE_SEARCH_SERVICE"]
     index_name = os.environ["AZURE_SEARCH_INDEX"]
-    search_user_assigned_identity_resource_id = os.environ["AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID"]
     storage_container = os.environ["AZURE_STORAGE_CONTAINER"]
     subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
     image_storage_container = os.environ.get("AZURE_IMAGESTORAGE_CONTAINER")
@@ -48,19 +60,36 @@ async def setup_cloud_ingestion_strategy(
         os.getenv("AZURE_CLOUD_INGESTION_STORAGE_RESOURCE_GROUP") or os.environ["AZURE_STORAGE_RESOURCE_GROUP"]
     )
 
-    # Cloud ingestion specific endpoints
-    document_extractor_uri = os.environ["DOCUMENT_EXTRACTOR_SKILL_ENDPOINT"]
-    document_extractor_resource_id = os.environ["DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID"]
-    figure_processor_uri = os.environ["FIGURE_PROCESSOR_SKILL_ENDPOINT"]
-    figure_processor_resource_id = os.environ["FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID"]
-    text_processor_uri = os.environ["TEXT_PROCESSOR_SKILL_ENDPOINT"]
-    text_processor_resource_id = os.environ["TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID"]
-
     # Feature flags
+    use_builtin_skills = os.getenv("USE_CLOUD_INGESTION_BUILTIN", "").lower() == "true"
     use_multimodal = os.getenv("USE_MULTIMODAL", "").lower() == "true"
     use_acls = os.getenv("USE_CLOUD_INGESTION_ACLS", "").lower() == "true"
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+
+    use_private_endpoint = os.getenv("AZURE_USE_PRIVATE_ENDPOINT", "").lower() == "true"
+    if use_builtin_skills and use_private_endpoint:
+        search_sku = os.getenv("AZURE_SEARCH_SERVICE_SKU") or "basic"
+        if search_sku.lower() in ("free", "basic"):
+            raise ValueError(
+                f"USE_CLOUD_INGESTION_BUILTIN with AZURE_USE_PRIVATE_ENDPOINT requires the Standard (S1) search tier "
+                f"or higher, since skillsets can only use shared private links from the private execution "
+                f"environment on those tiers. AZURE_SEARCH_SERVICE_SKU is '{search_sku}'. "
+                "Run 'azd env set AZURE_SEARCH_SERVICE_SKU standard' and 'azd up'."
+            )
+    elif use_private_endpoint:
+        logger.warning(
+            "The custom skill Functions pipeline doesn't support private endpoints, so indexing fails if "
+            "AZURE_PUBLIC_NETWORK_ACCESS is Disabled. Set USE_CLOUD_INGESTION_BUILTIN=true to use built-in skills, "
+            "which support private endpoints."
+        )
+
+    if use_builtin_skills and use_multimodal:
+        raise ValueError(
+            "USE_CLOUD_INGESTION_BUILTIN does not support USE_MULTIMODAL yet. "
+            "Either set USE_CLOUD_INGESTION_BUILTIN=false to use the custom skill Functions, "
+            "or set USE_MULTIMODAL=false."
+        )
 
     # Warn if access control is enforced but ACL extraction is not enabled
     if enforce_access_control and not use_acls:
@@ -124,19 +153,37 @@ async def setup_cloud_ingestion_strategy(
     # Create a list file strategy for uploading files from the data folder
     list_file_strategy = LocalListFileStrategy(path_pattern="data/*", enable_global_documents=False)
 
-    # Create the cloud ingestion strategy
+    ingestion_strategy: CloudIngestionStrategy | BuiltInCloudIngestionStrategy
+    if use_builtin_skills:
+        ingestion_strategy = BuiltInCloudIngestionStrategy(
+            list_file_strategy=list_file_strategy,
+            blob_manager=blob_manager,
+            search_info=search_info,
+            embeddings=openai_embeddings_service,
+            search_field_name_embedding=search_embedding_field,
+            content_understanding_endpoint=os.environ["AZURE_CONTENTUNDERSTANDING_ENDPOINT"],
+            document_action=document_action,
+            search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
+            use_acls=use_acls,
+            enforce_access_control=enforce_access_control,
+            use_web_source=use_web_source,
+            **figure_description_settings(),
+            use_private_execution=use_private_endpoint,
+        )
+        return ingestion_strategy, openai_client, azure_credential, blob_manager
+
     ingestion_strategy = CloudIngestionStrategy(
         list_file_strategy=list_file_strategy,
         blob_manager=blob_manager,
         search_info=search_info,
         embeddings=openai_embeddings_service,
         search_field_name_embedding=search_embedding_field,
-        document_extractor_uri=document_extractor_uri,
-        document_extractor_auth_resource_id=document_extractor_resource_id,
-        figure_processor_uri=figure_processor_uri,
-        figure_processor_auth_resource_id=figure_processor_resource_id,
-        text_processor_uri=text_processor_uri,
-        text_processor_auth_resource_id=text_processor_resource_id,
+        document_extractor_uri=os.environ["DOCUMENT_EXTRACTOR_SKILL_ENDPOINT"],
+        document_extractor_auth_resource_id=os.environ["DOCUMENT_EXTRACTOR_SKILL_AUTH_RESOURCE_ID"],
+        figure_processor_uri=os.environ["FIGURE_PROCESSOR_SKILL_ENDPOINT"],
+        figure_processor_auth_resource_id=os.environ["FIGURE_PROCESSOR_SKILL_AUTH_RESOURCE_ID"],
+        text_processor_uri=os.environ["TEXT_PROCESSOR_SKILL_ENDPOINT"],
+        text_processor_auth_resource_id=os.environ["TEXT_PROCESSOR_SKILL_AUTH_RESOURCE_ID"],
         subscription_id=subscription_id,
         document_action=document_action,
         search_analyzer_name=os.getenv("AZURE_SEARCH_ANALYZER_NAME"),
@@ -144,7 +191,7 @@ async def setup_cloud_ingestion_strategy(
         use_multimodal=use_multimodal,
         enforce_access_control=enforce_access_control,
         use_web_source=use_web_source,
-        search_user_assigned_identity_resource_id=search_user_assigned_identity_resource_id,
+        search_user_assigned_identity_resource_id=os.environ["AZURE_SEARCH_USER_ASSIGNED_IDENTITY_RESOURCE_ID"],
     )
 
     return ingestion_strategy, openai_client, azure_credential, blob_manager
@@ -174,6 +221,8 @@ async def main():
         logger.info("Connecting to Azure services using the azd credential for home tenant")
         azd_credential = AzureDeveloperCliCredential(process_timeout=60)
 
+    blob_manager: BlobManager | None = None
+    openai_client: AsyncOpenAI | None = None
     try:
         ingestion_strategy, openai_client, credential, blob_manager = await setup_cloud_ingestion_strategy(
             azure_credential=azd_credential,
@@ -187,8 +236,11 @@ async def main():
         await ingestion_strategy.run()
 
     finally:
-        await blob_manager.close_clients()
-        await openai_client.close()
+        # Setup can fail before these are created, for example on an unsupported configuration.
+        if blob_manager:
+            await blob_manager.close_clients()
+        if openai_client:
+            await openai_client.close()
         await azd_credential.close()
 
 

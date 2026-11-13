@@ -11,4 +11,5 @@ if (Test-Path -Path "/usr") {
   $venvPythonPath = "./.venv/bin/python"
 }
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "./app/backend/setup_cloud_ingestion.py" -Wait -NoNewWindow
+$process = Start-Process -FilePath $venvPythonPath -ArgumentList "./app/backend/setup_cloud_ingestion.py" -Wait -NoNewWindow -PassThru
+exit $process.ExitCode

@@ -52,7 +52,8 @@ var privateEndpointInfo = [
   for (privateEndpointConnection, i) in privateEndpointConnections: map(privateEndpointConnection.resourceIds, resourceId => {
     dnsZoneNames: privateEndpointConnection.dnsZoneNames
     groupId: privateEndpointConnection.groupId
-    name: last(split(resourceId, '/'))
+    // An account can have both blob and dfs endpoints, so dfs endpoints get a distinct name
+    name: privateEndpointConnection.groupId == 'dfs' ? '${last(split(resourceId, '/'))}-dfs' : last(split(resourceId, '/'))
     resourceId: resourceId
   })
 ]
