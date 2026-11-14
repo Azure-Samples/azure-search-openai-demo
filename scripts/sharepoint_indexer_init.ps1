@@ -12,4 +12,5 @@ if (Test-Path -Path "/usr") {
   $venvPythonPath = "./.venv/bin/python"
 }
 
-Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/sharepoint_indexer_init.py" -Wait -NoNewWindow
+$process = Start-Process -FilePath $venvPythonPath -ArgumentList "./scripts/sharepoint_indexer_init.py" -Wait -NoNewWindow -PassThru
+exit $process.ExitCode

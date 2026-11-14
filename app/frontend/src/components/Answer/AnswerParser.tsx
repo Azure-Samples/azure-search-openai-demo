@@ -29,7 +29,7 @@ type HtmlParsedAnswer = {
     citations: CitationDetail[];
 };
 
-const isWebCitation = (reference: string) => reference.startsWith("http://") || reference.startsWith("https://");
+export const isWebCitation = (reference: string) => reference.startsWith("http://") || reference.startsWith("https://");
 
 // Document URLs (such as SharePoint files indexed by cloud ingestion) are labeled like blob citations:
 // the file name plus any "#page=N" fragment. Other URLs keep the full URL as their label.

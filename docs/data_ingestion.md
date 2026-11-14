@@ -221,13 +221,13 @@ This is different from `USE_SHAREPOINT_SOURCE`, which queries SharePoint at ques
     azd env set AZURE_SHAREPOINT_QUERY "includeLibrary=https://contoso.sharepoint.com/sites/mysite/Shared Documents;includeFolder=https://contoso.sharepoint.com/sites/mysite/Shared Documents/benefits"
     ```
 
-3. (Optional) If the SharePoint site is in a different Microsoft Entra tenant than your Azure subscription, set that tenant:
+3. Set the Microsoft Entra tenant of your SharePoint site:
 
     ```shell
     azd env set AZURE_SHAREPOINT_TENANT_ID <sharepoint-tenant-id>
     ```
 
-4. Run `azd up`. Before provisioning, the `scripts/sharepoint_indexer_init.py` script creates a Microsoft Entra app registration for the indexer, with the Microsoft Graph application permissions `Files.Read.All` and `Sites.Read.All` and a client secret, and stores them as `AZURE_SHAREPOINT_INDEXER_APP_ID` and `AZURE_SHAREPOINT_INDEXER_APP_SECRET`. Application permissions require [admin consent](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent). The script grants it if you're a Privileged Role Administrator or Global Administrator. Otherwise it prints the command for an administrator to run. To use an existing app registration instead, set `AZURE_SHAREPOINT_INDEXER_APP_ID` and `AZURE_SHAREPOINT_INDEXER_APP_SECRET` before running `azd up`.
+4. Run `azd up`. Before provisioning, the `scripts/sharepoint_indexer_init.py` script creates a Microsoft Entra app registration for the indexer, with the Microsoft Graph application permissions `Files.Read.All` and `Sites.Read.All` and a client secret, and stores them as `AZURE_SHAREPOINT_INDEXER_APP_ID` and `AZURE_SHAREPOINT_INDEXER_APP_SECRET`. Application permissions require [admin consent](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent). The script grants it if you're a Privileged Role Administrator or Global Administrator. Otherwise it prints the command for an administrator to run. If `AZURE_SHAREPOINT_INDEXER_APP_ID` is already set, the script reuses that app registration and updates its name and permissions (like `auth_init.py` does for the login apps), so it must be an app you can modify. If `AZURE_SHAREPOINT_INDEXER_APP_SECRET` is also set, the script reuses that secret instead of creating a new one.
 
 5. After deployment, the setup script creates a data source, skillset, and indexer for SharePoint, runs the indexer, and logs any indexer warnings and errors.
 

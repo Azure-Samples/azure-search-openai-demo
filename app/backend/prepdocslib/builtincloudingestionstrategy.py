@@ -443,7 +443,10 @@ class BuiltInCloudIngestionStrategy(Strategy):
                         file.close()
 
         async with self.search_info.create_search_indexer_client() as indexer_client:
-            if not await run_indexer_and_wait(indexer_client, self.active_indexer_name):
+            # SharePoint mode uploads nothing, so the automatic initial run already sees every file
+            if not await run_indexer_and_wait(
+                indexer_client, self.active_indexer_name, rerun_after_initial_run=not self.sharepoint
+            ):
                 return
 
         if self.use_acls:
@@ -451,11 +454,16 @@ class BuiltInCloudIngestionStrategy(Strategy):
                 await check_acl_ingestion(search_client, use_elevated_read=self.enforce_access_control)
 
 
-async def run_indexer_and_wait(indexer_client: SearchIndexerClient, indexer_name: str) -> bool:  # pragma: no cover
+async def run_indexer_and_wait(  # pragma: no cover
+    indexer_client: SearchIndexerClient, indexer_name: str, rerun_after_initial_run: bool = True
+) -> bool:
     """Runs the indexer and waits for it. Returns False if a wait timed out."""
     previous_result = (await indexer_client.get_indexer_status(indexer_name)).last_result
     initial_run = previous_result is not None and previous_result.status == IndexerExecutionStatus.IN_PROGRESS
     if initial_run:
+        if not rerun_after_initial_run:
+            logger.info("Waiting for the initial run of indexer '%s' to finish", indexer_name)
+            return await wait_for_indexer(indexer_client, indexer_name, None)
         # Creating the indexer in setup() starts a run automatically, which may have begun
         # before files were uploaded. Let it finish, then run again to pick up every file.
         logger.info(

@@ -11,6 +11,7 @@ from scripts.sharepoint_indexer_init import (
     get_graph_role_ids,
     grant_application_permissions,
     sharepoint_indexer_app,
+    validate_sharepoint_settings,
 )
 
 GRAPH_SP_ID = str(uuid.uuid4())
@@ -134,3 +135,21 @@ async def test_missing_service_principals_raise(graph_client, monkeypatch):
         await get_graph_role_ids(graph_client)
     with pytest.raises(ValueError, match="SharePoint indexer application"):
         await grant_application_permissions(graph_client, INDEXER_APP_ID, GRAPH_SP_ID, ROLE_IDS)
+
+
+def test_validate_sharepoint_settings_valid(monkeypatch):
+    monkeypatch.setenv("USE_CLOUD_INGESTION", "true")
+    monkeypatch.setenv("USE_CLOUD_INGESTION_BUILTIN", "true")
+    monkeypatch.setenv("AZURE_SHAREPOINT_SITE_URL", "https://contoso.sharepoint.com/sites/mysite")
+    assert validate_sharepoint_settings() == []
+
+
+def test_validate_sharepoint_settings_reports_each_missing_prerequisite(monkeypatch):
+    monkeypatch.delenv("USE_CLOUD_INGESTION", raising=False)
+    monkeypatch.setenv("USE_CLOUD_INGESTION_BUILTIN", "false")
+    monkeypatch.setenv("AZURE_SHAREPOINT_SITE_URL", "  ")
+    problems = validate_sharepoint_settings()
+    assert len(problems) == 3
+    assert any("USE_CLOUD_INGESTION must" in p for p in problems)
+    assert any("USE_CLOUD_INGESTION_BUILTIN" in p for p in problems)
+    assert any("AZURE_SHAREPOINT_SITE_URL" in p for p in problems)

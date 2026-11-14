@@ -92,12 +92,32 @@ async def grant_application_permissions(
     return True
 
 
+def validate_sharepoint_settings() -> list[str]:
+    """Returns problems that would keep the SharePoint indexer from being set up after deployment,
+    so the app registration (with tenant-wide read permissions) isn't created for nothing."""
+    problems = []
+    if os.getenv("USE_CLOUD_INGESTION", "").lower() != "true":
+        problems.append("USE_CLOUD_INGESTION must be set to true.")
+    if os.getenv("USE_CLOUD_INGESTION_BUILTIN", "").lower() != "true":
+        problems.append("USE_CLOUD_INGESTION_BUILTIN must be set to true.")
+    if not os.getenv("AZURE_SHAREPOINT_SITE_URL", "").strip():
+        problems.append("AZURE_SHAREPOINT_SITE_URL must be set to the URL of your SharePoint site.")
+    return problems
+
+
 async def main():  # pragma: no cover
     load_azd_env(override=os.getenv("LOADING_MODE_FOR_AZD_ENV_VARS") != "no-override")
 
     if os.getenv("USE_CLOUD_INGESTION_SHAREPOINT", "").lower() != "true":
         print("USE_CLOUD_INGESTION_SHAREPOINT is not set, skipping SharePoint indexer app setup.")
         return
+
+    problems = validate_sharepoint_settings()
+    if problems:
+        print("Error: USE_CLOUD_INGESTION_SHAREPOINT is set to true, but:")
+        for problem in problems:
+            print(f"  - {problem}")
+        exit(1)
 
     tenant_id = (os.getenv("AZURE_SHAREPOINT_TENANT_ID") or os.getenv("AZURE_TENANT_ID") or "").strip()
     if not tenant_id:
