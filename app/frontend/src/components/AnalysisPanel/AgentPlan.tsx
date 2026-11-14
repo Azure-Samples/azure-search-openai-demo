@@ -4,6 +4,7 @@ import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
 import { a11yLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import { getCitationFilePath } from "../../api";
+import { getWebCitationLabel, isWebCitation } from "../Answer/AnswerParser";
 import { QueryPlanStep, getStepLabel } from "./agentPlanUtils";
 import styles from "./AnalysisPanel.module.css";
 import { TokenUsage, TokenUsageGraph } from "./TokenUsageGraph";
@@ -235,6 +236,15 @@ export const AgentPlan: React.FC<Props> = ({ queryPlan, onEffortExtracted, onCit
                                                                         <div key={idx} className={styles.stepResult}>
                                                                             <a href={result.url} target="_blank" rel="noopener noreferrer">
                                                                                 {result.title || result.url}
+                                                                            </a>
+                                                                        </div>
+                                                                    );
+                                                                } else if (result.sourcepage && isWebCitation(result.sourcepage)) {
+                                                                    // Document stored at a URL (such as SharePoint) - open it in a new tab
+                                                                    return (
+                                                                        <div key={idx} className={styles.stepResult}>
+                                                                            <a href={result.sourcepage} target="_blank" rel="noopener noreferrer">
+                                                                                {getWebCitationLabel(result.sourcepage)}
                                                                             </a>
                                                                         </div>
                                                                     );

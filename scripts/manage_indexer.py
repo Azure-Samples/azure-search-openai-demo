@@ -6,8 +6,8 @@ Usage:
   python scripts/manage_indexer.py status
   python scripts/manage_indexer.py wait      # poll status until not "inProgress"
 
-The indexer name is derived from AZURE_SEARCH_INDEX to match
-CloudIngestionStrategy in app/backend/prepdocslib/cloudingestionstrategy.py.
+The indexer name is derived from AZURE_SEARCH_INDEX to match the cloud ingestion strategies in
+app/backend/prepdocslib/, using the SharePoint indexer when USE_CLOUD_INGESTION_SHAREPOINT is true.
 """
 
 import asyncio
@@ -24,8 +24,11 @@ async def main(action: str) -> None:
 
     service = os.environ["AZURE_SEARCH_SERVICE"]
     index_name = os.environ["AZURE_SEARCH_INDEX"]
-    # Keep indexer_name in sync with app/backend/prepdocslib/cloudingestionstrategy.py
-    indexer_name = f"{index_name}-cloud-indexer"
+    # Keep indexer names in sync with app/backend/prepdocslib/builtincloudingestionstrategy.py
+    if os.getenv("USE_CLOUD_INGESTION_SHAREPOINT", "").lower() == "true":
+        indexer_name = f"{index_name}-cloud-sharepoint-indexer"
+    else:
+        indexer_name = f"{index_name}-cloud-indexer"
     endpoint = f"https://{service}.search.windows.net"
     tenant_id = os.environ.get("AZURE_TENANT_ID")
 

@@ -227,6 +227,8 @@ The sample supports 2 main strategies for adding data with document level access
 - [Using cloud ingestion with Azure Data Lake Storage Gen2](#cloud-ingestion-with-azure-data-lake-storage-gen2) (Recommended). Uses Azure Functions and an Azure AI Search indexer to automatically extract ACLs from files stored in Azure Data Lake Storage Gen2 and index them with document-level access control.
 - [Using the Add Documents API](#using-the-add-documents-api). Sample scripts are provided which use the Azure AI Search Service Add Documents API to directly manage access control information on _existing documents_ in the index.
 
+To index documents from SharePoint with their SharePoint permissions, use cloud ingestion with built-in skills. See [SharePoint access control](data_ingestion.md#sharepoint-access-control).
+
 > [!NOTE]
 > The previous "ADLS local file strategy" (using `prepdocs` directly against Azure Data Lake Storage) has been deprecated and removed. If you were using that approach in earlier versions of this sample, you must migrate to the cloud ingestion flow described in [Cloud ingestion with Azure Data Lake Storage Gen2](#cloud-ingestion-with-azure-data-lake-storage-gen2), which runs ingestion in Azure Functions and the Azure AI Search indexer instead of on the client machine.
 
