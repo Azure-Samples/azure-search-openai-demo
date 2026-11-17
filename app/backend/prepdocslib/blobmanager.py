@@ -148,6 +148,21 @@ class AdlsBlobManager(BaseBlobManager):
     async def close_clients(self):
         await self.file_system_client.close()
 
+    @staticmethod
+    def validate_filename(filename: object) -> str:
+        """Validate a literal leaf filename without changing the stored or indexed name."""
+        if (
+            not isinstance(filename, str)
+            or not filename.strip()
+            or filename in (".", "..")
+            or re.search(r"[\\/\x00-\x1f\x7f]|%[0-9a-fA-F]{2}", filename)
+        ):
+            raise ValueError(
+                "Filename must be a non-empty name without path separators, dot segments, "
+                "control characters, or percent escapes."
+            )
+        return filename
+
     async def _ensure_directory(self, directory_path: str, user_oid: str) -> DataLakeDirectoryClient:
         """
         Ensures that a directory path exists and has proper permissions.
@@ -176,12 +191,16 @@ class AdlsBlobManager(BaseBlobManager):
 
         Args:
             file: Either a File object or an IO object to upload
-            filename: The name of the file to upload
+            filename: The literal file name to upload, without path components
             user_oid: The user's object ID
 
         Returns:
             str: The URL of the uploaded file, with forward slashes (not URL-encoded)
+
+        Raises:
+            ValueError: If filename is not a literal leaf filename
         """
+        filename = self.validate_filename(filename)
         # Ensure user directory exists but don't create a subdirectory
         user_directory_client = await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
 
@@ -231,7 +250,7 @@ class AdlsBlobManager(BaseBlobManager):
     ) -> Optional[str]:
         """
         Uploads an image from a document to ADLS in a directory structure:
-        {user_oid}/{document_name}/images/{image_name}
+        {user_oid}/images/{document_filename}/page_{image_page_num}/{image_filename}
         This structure allows for easy cleanup when documents are deleted.
 
         Args:
@@ -246,6 +265,8 @@ class AdlsBlobManager(BaseBlobManager):
         """
         if user_oid is None:
             raise ValueError("user_oid must be provided for user-specific operations.")
+        document_filename = self.validate_filename(document_filename)
+        image_filename = self.validate_filename(image_filename)
         await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
         image_directory_path = self._get_image_directory_path(document_filename, user_oid, image_page_num)
         image_directory_client = await self._ensure_directory(directory_path=image_directory_path, user_oid=user_oid)
@@ -326,7 +347,9 @@ class AdlsBlobManager(BaseBlobManager):
 
         Raises:
             ResourceNotFoundError: If the file does not exist
+            ValueError: If filename is not a literal leaf filename
         """
+        filename = self.validate_filename(filename)
         # Ensure the user directory exists
         user_directory_client = await self._ensure_directory(directory_path=user_oid, user_oid=user_oid)
         # Delete the main document file
