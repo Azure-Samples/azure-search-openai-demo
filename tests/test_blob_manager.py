@@ -1,7 +1,9 @@
 import os
 import sys
+from io import BytesIO
 from tempfile import NamedTemporaryFile
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock, call
+from urllib.parse import quote
 
 import azure.storage.blob.aio
 import azure.storage.filedatalake.aio
@@ -35,6 +37,74 @@ def adls_blob_manager(monkeypatch):
         container="test-storage-container",
         credential=MockAzureCredential(),
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "../folder/report.pdf",
+        r"..\folder\report.pdf",
+        "%252e%252e%252freport.pdf",
+        ".",
+        "..",
+        "",
+        None,
+        42,
+        "a\x00.txt",
+    ],
+)
+@pytest.mark.parametrize("operation", ["upload", "remove"])
+async def test_adls_rejects_invalid_filenames(monkeypatch, adls_blob_manager, filename, operation):
+    ensure_directory = AsyncMock(side_effect=AssertionError("Storage accessed before filename validation"))
+    monkeypatch.setattr(adls_blob_manager, "_ensure_directory", ensure_directory)
+
+    with pytest.raises(ValueError, match="Filename"):
+        if operation == "upload":
+            await adls_blob_manager.upload_blob(BytesIO(b"test content"), filename, "OID_X")
+        else:
+            await adls_blob_manager.remove_blob(filename, "OID_X")
+    ensure_directory.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "document_filename, image_filename",
+    [("../folder/report.pdf", "figure.png"), ("report.pdf", "../folder/figure.png")],
+)
+async def test_adls_images_reject_invalid_filenames(monkeypatch, adls_blob_manager, document_filename, image_filename):
+    ensure_directory = AsyncMock(side_effect=AssertionError("Storage accessed before filename validation"))
+    monkeypatch.setattr(adls_blob_manager, "_ensure_directory", ensure_directory)
+
+    with pytest.raises(ValueError, match="Filename"):
+        await adls_blob_manager.upload_document_image(
+            document_filename, b"unused image bytes", image_filename, 0, "OID_X"
+        )
+    ensure_directory.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("filename", ["a's report.txt", "100% complete \u00e9.txt", "report..txt"])
+async def test_adls_preserves_valid_filenames(monkeypatch, adls_blob_manager, filename):
+    file_client = MagicMock()
+    file_client.url = f"https://test.dfs.core.windows.net/user-content/OID_X/{quote(filename)}"
+    file_client.upload_data = AsyncMock()
+    file_client.delete_file = AsyncMock()
+    directory_client = MagicMock()
+    directory_client.get_file_client.return_value = file_client
+    directory_client.delete_directory = AsyncMock()
+    ensure_directory = AsyncMock(return_value=directory_client)
+    monkeypatch.setattr(adls_blob_manager, "_ensure_directory", ensure_directory)
+    content = BytesIO(b"test content")
+
+    url = await adls_blob_manager.upload_blob(content, filename, "OID_X")
+    await adls_blob_manager.remove_blob(filename, "OID_X")
+
+    assert url == f"https://test.dfs.core.windows.net/user-content/OID_X/{filename}"
+    assert directory_client.get_file_client.call_args_list == [call(filename), call(filename)]
+    file_client.upload_data.assert_awaited_once_with(content, overwrite=True)
+    file_client.delete_file.assert_awaited_once()
+    ensure_directory.assert_any_await(directory_path=f"OID_X/images/{filename}", user_oid="OID_X")
 
 
 @pytest.mark.asyncio

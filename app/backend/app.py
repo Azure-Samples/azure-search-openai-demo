@@ -354,11 +354,16 @@ async def upload(auth_claims: dict[str, Any]):
     if "file" not in request_files:
         return jsonify({"message": "No file part in the request", "status": "failed"}), 400
 
+    file = request_files.getlist("file")[0]
+    try:
+        filename = AdlsBlobManager.validate_filename(file.filename)
+    except ValueError as error:
+        return jsonify({"message": str(error), "status": "failed"}), 400
+
     try:
         user_oid = auth_claims["oid"]
-        file = request_files.getlist("file")[0]
         adls_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
-        file_url = await adls_manager.upload_blob(file, file.filename, user_oid)
+        file_url = await adls_manager.upload_blob(file, filename, user_oid)
         ingester: UploadUserFileStrategy = current_app.config[CONFIG_INGESTER]
         await ingester.add_file(File(content=file, url=file_url, acls={"oids": [user_oid]}), user_oid=user_oid)
         return jsonify({"message": "File uploaded successfully"}), 200
@@ -371,7 +376,13 @@ async def upload(auth_claims: dict[str, Any]):
 @authenticated
 async def delete_uploaded(auth_claims: dict[str, Any]):
     request_json = await request.get_json()
-    filename = request_json.get("filename")
+    try:
+        filename = AdlsBlobManager.validate_filename(
+            request_json.get("filename") if isinstance(request_json, dict) else None
+        )
+    except ValueError as error:
+        return jsonify({"message": str(error), "status": "failed"}), 400
+
     user_oid = auth_claims["oid"]
     adls_manager: AdlsBlobManager = current_app.config[CONFIG_USER_BLOB_MANAGER]
     await adls_manager.remove_blob(filename, user_oid)

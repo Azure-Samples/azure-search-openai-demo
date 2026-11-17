@@ -1,4 +1,5 @@
 from io import BytesIO
+from unittest.mock import AsyncMock
 
 import azure.core.exceptions
 import azure.storage.filedatalake
@@ -8,7 +9,77 @@ from azure.search.documents.aio import SearchClient
 from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient
 from quart.datastructures import FileStorage
 
+import app
 from prepdocslib.embeddings import OpenAIEmbeddings
+
+
+@pytest.fixture
+def user_file_mutations(auth_client, monkeypatch):
+    manager = auth_client.config[app.CONFIG_USER_BLOB_MANAGER]
+    ingester = auth_client.config[app.CONFIG_INGESTER]
+    mutations = []
+    for target, name in (
+        (manager, "upload_blob"),
+        (manager, "remove_blob"),
+        (ingester, "add_file"),
+        (ingester, "remove_file"),
+    ):
+        mutation = AsyncMock()
+        monkeypatch.setattr(target, name, mutation)
+        mutations.append(mutation)
+    mutations[0].return_value = "https://test.dfs.core.windows.net/user-content/OID_X/report.txt"
+    return mutations
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "../folder/report.pdf",
+        r"..\folder\report.pdf",
+        "../../folder/report.pdf",
+        "/report.pdf",
+        "nested/report.pdf",
+        ".",
+        "..",
+        "",
+        "   ",
+        "%2E%2e%2Ffolder%2freport.pdf",
+        "%252e%252e%252freport.pdf",
+        "report%00.pdf",
+        "report\x00.pdf",
+    ],
+)
+@pytest.mark.parametrize("route", ["/upload", "/delete_uploaded"])
+async def test_user_file_routes_reject_invalid_filenames(auth_client, user_file_mutations, route, filename):
+    if route == "/upload":
+        # Quart's test encoder does not escape backslashes in quoted multipart filenames.
+        multipart_filename = filename.replace("\\", "\\\\")
+        response = await auth_client.post(
+            route,
+            headers={"Authorization": "Bearer test"},
+            files={"file": FileStorage(BytesIO(b"test content"), filename=multipart_filename)},
+        )
+    else:
+        response = await auth_client.post(route, headers={"Authorization": "Bearer test"}, json={"filename": filename})
+
+    assert response.status_code == 400
+    result = await response.get_json()
+    assert result["status"] == "failed"
+    assert "Filename" in result["message"]
+    for mutation in user_file_mutations:
+        mutation.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("payload", [{}, {"filename": None}, {"filename": 42}, {"filename": []}, []])
+async def test_delete_uploaded_requires_filename(auth_client, user_file_mutations, payload):
+    response = await auth_client.post("/delete_uploaded", headers={"Authorization": "Bearer test"}, json=payload)
+
+    assert response.status_code == 400
+    assert (await response.get_json())["status"] == "failed"
+    for mutation in user_file_mutations:
+        mutation.assert_not_awaited()
 
 
 @pytest.mark.asyncio
