@@ -1,4 +1,5 @@
 import os
+from unittest.mock import AsyncMock
 
 import azure.storage.blob.aio
 import azure.storage.filedatalake.aio
@@ -16,9 +17,54 @@ import app
 from .mocks import (
     MockAiohttpClientResponse,
     MockAiohttpClientResponse404,
+    MockAsyncPageIterator,
     MockAzureCredential,
     MockBlob,
 )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "requested_path, indexed_name, downloaded_name",
+    [
+        ("report.pdf", "report.pdf", "report.pdf"),
+        ("report.pdf%23draft", "report.pdf", None),
+        ("report.pdf%2523draft", "report.pdf", None),
+        ("report.pdf%23draft", "report.pdf#draft", "report.pdf#draft"),
+        ("report.pdf%23page=2", "report.pdf", "report.pdf"),
+        ("report.pdf%23draft%23page=2", "report.pdf", None),
+        ("report.pdf%23draft%23page=2", "report.pdf#draft", "report.pdf#draft"),
+        ("report.pdf%23page=1%23page=2", "report.pdf", None),
+        ("report.pdf%23page=1%23page=2", "report.pdf#page=1", "report.pdf#page=1"),
+    ],
+)
+async def test_content_file_hash_in_filename(auth_client, monkeypatch, requested_path, indexed_name, downloaded_name):
+    indexed_filter_name = indexed_name.replace("'", "''")
+    indexed_filter = f"(sourcefile eq '{indexed_filter_name}') or (sourcepage eq '{indexed_filter_name}')"
+
+    async def search(*args, **kwargs):
+        documents = [{"sourcefile": indexed_name}] if kwargs["filter"] == indexed_filter else []
+        return MockAsyncPageIterator(documents)
+
+    search_mock = AsyncMock(side_effect=search)
+    monkeypatch.setattr(auth_client.config[app.CONFIG_SEARCH_CLIENT], "search", search_mock)
+    download = AsyncMock(return_value=(b"test content", {"content_settings": {"content_type": "application/pdf"}}))
+    user_download = AsyncMock()
+    monkeypatch.setattr(auth_client.config[app.CONFIG_GLOBAL_BLOB_MANAGER], "download_blob", download)
+    monkeypatch.setattr(auth_client.config[app.CONFIG_USER_BLOB_MANAGER], "download_blob", user_download)
+
+    response = await auth_client.get(f"/content/{requested_path}", headers={"Authorization": "Bearer test"})
+
+    search_mock.assert_awaited_once()
+    assert search_mock.call_args.kwargs["query_source_authorization"] == "MockToken"
+    if downloaded_name is None:
+        assert response.status_code == 403
+        download.assert_not_awaited()
+    else:
+        assert response.status_code == 200
+        assert await response.get_data() == b"test content"
+        download.assert_awaited_once_with(downloaded_name)
+    user_download.assert_not_awaited()
 
 
 @pytest.mark.asyncio
@@ -74,7 +120,7 @@ async def test_content_file(monkeypatch, mock_env, mock_acs_search, mock_blob_co
         assert response.headers["Content-Type"] == "application/pdf"
         assert await response.get_data() == b"test content"
 
-        response = await client.get("/content/role_library.pdf#page=10")
+        response = await client.get("/content/role_library.pdf%23page=10")
         assert response.status_code == 200
         assert response.headers["Content-Type"] == "application/pdf"
         assert await response.get_data() == b"test content"

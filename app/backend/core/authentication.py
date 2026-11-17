@@ -182,11 +182,6 @@ class AuthenticationHelper:
         if not self.enforce_access_control or len(path) == 0:
             return True
 
-        # Remove any fragment string from the path before checking
-        fragment_index = path.find("#")
-        if fragment_index != -1:
-            path = path[:fragment_index]
-
         # Filter down to only chunks that are from the specific source file
         # Sourcepage is used for GPT-4V
         # Replace ' with '' to escape the single quote for the filter
