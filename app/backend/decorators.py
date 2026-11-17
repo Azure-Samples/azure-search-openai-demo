@@ -17,6 +17,10 @@ def authenticated_path(route_fn: Callable[[str, dict[str, Any]], Any]):
 
     @wraps(route_fn)
     async def auth_handler(path=""):
+        # Remove page number from path, filename.pdf#page=1 -> filename.pdf
+        if path.find("#page=") > 0:
+            path = path.rsplit("#page=", 1)[0]
+
         # If authentication is enabled, validate the user can access the file
         auth_helper = current_app.config[CONFIG_AUTH_CLIENT]
         search_client = current_app.config[CONFIG_SEARCH_CLIENT]

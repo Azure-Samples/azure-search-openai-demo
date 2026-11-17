@@ -249,7 +249,7 @@ async def test_check_path_auth_allowed_empty(
 
 
 @pytest.mark.asyncio
-async def test_check_path_auth_allowed_fragment(
+async def test_check_path_auth_hash_in_filename(
     monkeypatch, mock_confidential_client_success, mock_validate_token_success
 ):
     auth_helper_enforce_access_control = create_authentication_helper(enforce_access_control=True)
@@ -260,7 +260,7 @@ async def test_check_path_auth_allowed_fragment(
         nonlocal access_token, filter
         access_token = kwargs.get("query_source_authorization")
         filter = kwargs.get("filter")
-        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf"}])
+        return MockAsyncPageIterator(data=[{"sourcefile": "Benefit_Options.pdf#textafterfragment"}])
 
     monkeypatch.setattr(SearchClient, "search", mock_search)
 
@@ -273,7 +273,10 @@ async def test_check_path_auth_allowed_fragment(
         is True
     )
     assert access_token == "MockToken"
-    assert filter == "(sourcefile eq 'Benefit_Options.pdf') or (sourcepage eq 'Benefit_Options.pdf')"
+    assert filter == (
+        "(sourcefile eq 'Benefit_Options.pdf#textafterfragment') "
+        "or (sourcepage eq 'Benefit_Options.pdf#textafterfragment')"
+    )
 
 
 @pytest.mark.asyncio
