@@ -98,6 +98,9 @@
     "storageResourceGroupName": {
       "value": "${AZURE_STORAGE_RESOURCE_GROUP}"
     },
+    "storageResourceGroupLocation": {
+      "value": "${AZURE_STORAGE_ACCOUNT_LOCATION}"
+    },
     "storageSkuName": {
       "value": "${AZURE_STORAGE_SKU=Standard_LRS}"
     },

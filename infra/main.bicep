@@ -95,7 +95,7 @@ var actualSearchServiceSemanticRankerLevel = (searchServiceSkuName == 'free')
 param searchServiceQueryRewriting string // Set in main.parameters.json
 param storageAccountName string = '' // Set in main.parameters.json
 param storageResourceGroupName string = '' // Set in main.parameters.json
-param storageResourceGroupLocation string = location
+param storageResourceGroupLocation string = '' // Set in main.parameters.json
 param storageContainerName string = 'content'
 param storageSkuName string // Set in main.parameters.json
 
@@ -1028,7 +1028,7 @@ module storage 'core/storage/storage-account.bicep' = {
   scope: az.resourceGroup(storageResourceGroupNameActual)
   params: {
     name: !empty(storageAccountName) ? storageAccountName : '${abbrs.storageStorageAccounts}${resourceToken}'
-    location: storageResourceGroupLocation
+    location: !empty(storageResourceGroupLocation) ? storageResourceGroupLocation : location
     tags: tags
     publicNetworkAccess: publicNetworkAccess
     bypass: bypass
@@ -1065,7 +1065,7 @@ module userStorage 'core/storage/storage-account.bicep' = if (useUserUpload) {
     name: !empty(userStorageAccountName)
       ? userStorageAccountName
       : 'user${abbrs.storageStorageAccounts}${resourceToken}'
-    location: storageResourceGroupLocation
+    location: !empty(storageResourceGroupLocation) ? storageResourceGroupLocation : location
     tags: tags
     publicNetworkAccess: publicNetworkAccess
     bypass: bypass
@@ -1097,7 +1097,7 @@ module adlsStorage 'core/storage/storage-account.bicep' = if (useCloudIngestionA
   scope: az.resourceGroup(storageResourceGroupNameActual)
   params: {
     name: 'adls${abbrs.storageStorageAccounts}${resourceToken}'
-    location: storageResourceGroupLocation
+    location: !empty(storageResourceGroupLocation) ? storageResourceGroupLocation : location
     tags: tags
     publicNetworkAccess: publicNetworkAccess
     bypass: bypass
