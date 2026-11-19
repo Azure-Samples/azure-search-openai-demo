@@ -202,7 +202,7 @@ If you switch an existing deployment between the two pipelines, set a new index 
 
 ### Indexing documents from SharePoint
 
-With built-in skills, cloud ingestion can also index documents from a SharePoint Online site, using the [SharePoint indexer](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online) (preview). SharePoint documents go through the same Content Understanding, citation, and embedding skills. When SharePoint is enabled, it replaces Blob storage as the source: the files in `data` aren't uploaded, and only the SharePoint indexer runs. If you switch an existing deployment to SharePoint, set a new index name with `azd env set AZURE_SEARCH_INDEX <new-index-name>`, so the index doesn't keep the documents from Blob storage.
+With built-in skills, cloud ingestion can also index documents from a SharePoint Online site, using the [SharePoint indexer](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online). SharePoint documents go through the same Content Understanding, citation, and embedding skills. When SharePoint is enabled, it replaces Blob storage as the source: the files in `data` aren't uploaded, and only the SharePoint indexer runs. If you switch an existing deployment to SharePoint, set a new index name with `azd env set AZURE_SEARCH_INDEX <new-index-name>`, so the index doesn't keep the documents from Blob storage.
 
 This is different from `USE_SHAREPOINT_SOURCE`, which queries SharePoint at question time through [agentic retrieval](agentic_retrieval.md) with the signed-in user's token, and requires a Microsoft 365 Copilot license for each user. Indexing doesn't need that license. To keep SharePoint permissions on indexed documents, turn on [access control](#sharepoint-access-control).
 
@@ -235,7 +235,7 @@ Citations for SharePoint documents link to the document in SharePoint, for examp
 
 Keep these limitations in mind:
 
-- **Preview.** The SharePoint indexer is in preview, and doesn't support [private endpoints](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online#limitations-and-considerations) or tenants with Microsoft Entra Conditional Access.
+- **No private networking.** The SharePoint indexer can't reach SharePoint through [shared private links](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online#limitations-and-considerations), and doesn't support tenants with Microsoft Entra Conditional Access.
 - **Reprocessing.** The indexer can reprocess unchanged documents, which calls Content Understanding and the embedding model again.
 
 #### SharePoint access control
@@ -250,7 +250,7 @@ azd env set AZURE_ENFORCE_ACCESS_CONTROL true
 
 `USE_CLOUD_INGESTION_ACLS` still provisions an ADLS Gen2 storage account, which isn't used when SharePoint is the source.
 
-The SharePoint indexer uses [SharePoint permission ingestion](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists) (preview) to compute each document's effective permissions, following inheritance from the site, library, and folders, and stores the user and group IDs in the index's `oids` and `groups` fields. At query time, Azure AI Search compares them with the signed-in user's ID and Microsoft Entra group memberships, including nested groups.
+The SharePoint indexer uses [SharePoint permission ingestion](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists) to compute each document's effective permissions, following inheritance from the site, library, and folders, and stores the user and group IDs in the index's `oids` and `groups` fields. At query time, Azure AI Search compares them with the signed-in user's ID and Microsoft Entra group memberships, including nested groups.
 
 Keep in mind:
 
