@@ -9,7 +9,7 @@ import rehypeRaw from "rehype-raw";
 
 import styles from "./Answer.module.css";
 import { ChatAppResponse, getCitationFilePath, SpeechConfig } from "../../api";
-import { parseAnswerToHtml } from "./AnswerParser";
+import { getWebCitationLabel, parseAnswerToHtml } from "./AnswerParser";
 import { AnswerIcon } from "./AnswerIcon";
 import { SpeechOutputBrowser } from "./SpeechOutputBrowser";
 import { SpeechOutputAzure } from "./SpeechOutputAzure";
@@ -125,7 +125,7 @@ export const Answer = ({
                             if (isWeb) {
                                 // Attempt to find the matching web data point to retrieve its title
                                 const webEntry = answer.context.data_points.external_results_metadata?.find(w => w.url === reference);
-                                const titleOrUrl = webEntry?.title?.trim() ? webEntry.title : reference;
+                                const titleOrUrl = webEntry ? webEntry.title?.trim() || reference : getWebCitationLabel(reference);
                                 return (
                                     <span key={`${reference}-${displayIndex}`} className={styles.citationEntry}>
                                         <a className={styles.citation} title={reference} href={reference} target="_blank" rel="noopener noreferrer">

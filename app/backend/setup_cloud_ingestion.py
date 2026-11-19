@@ -11,7 +11,10 @@ from openai import AsyncOpenAI
 from rich.logging import RichHandler
 
 from prepdocslib.blobmanager import BlobManager
-from prepdocslib.builtincloudingestionstrategy import BuiltInCloudIngestionStrategy
+from prepdocslib.builtincloudingestionstrategy import (
+    BuiltInCloudIngestionStrategy,
+    SharePointSource,
+)
 from prepdocslib.cloudingestionstrategy import CloudIngestionStrategy
 from prepdocslib.listfilestrategy import LocalListFileStrategy
 from prepdocslib.servicesetup import (
@@ -66,6 +69,10 @@ async def setup_cloud_ingestion_strategy(
     use_acls = os.getenv("USE_CLOUD_INGESTION_ACLS", "").lower() == "true"
     enforce_access_control = os.getenv("AZURE_ENFORCE_ACCESS_CONTROL", "").lower() == "true"
     use_web_source = os.getenv("USE_WEB_SOURCE", "").lower() == "true"
+    use_sharepoint = os.getenv("USE_CLOUD_INGESTION_SHAREPOINT", "").lower() == "true"
+
+    if use_sharepoint and not use_builtin_skills:
+        raise ValueError("USE_CLOUD_INGESTION_SHAREPOINT requires USE_CLOUD_INGESTION_BUILTIN=true.")
 
     use_private_endpoint = os.getenv("AZURE_USE_PRIVATE_ENDPOINT", "").lower() == "true"
     if use_builtin_skills and use_private_endpoint:
@@ -155,6 +162,15 @@ async def setup_cloud_ingestion_strategy(
 
     ingestion_strategy: CloudIngestionStrategy | BuiltInCloudIngestionStrategy
     if use_builtin_skills:
+        sharepoint = None
+        if use_sharepoint:
+            sharepoint = SharePointSource(
+                site_url=os.environ["AZURE_SHAREPOINT_SITE_URL"],
+                app_id=os.environ["AZURE_SHAREPOINT_INDEXER_APP_ID"],
+                app_secret=os.environ["AZURE_SHAREPOINT_INDEXER_APP_SECRET"],
+                tenant_id=os.getenv("AZURE_SHAREPOINT_TENANT_ID") or os.environ["AZURE_TENANT_ID"],
+                query=os.getenv("AZURE_SHAREPOINT_QUERY") or None,
+            )
         ingestion_strategy = BuiltInCloudIngestionStrategy(
             list_file_strategy=list_file_strategy,
             blob_manager=blob_manager,
@@ -169,6 +185,7 @@ async def setup_cloud_ingestion_strategy(
             use_web_source=use_web_source,
             **figure_description_settings(),
             use_private_execution=use_private_endpoint,
+            sharepoint=sharepoint,
         )
         return ingestion_strategy, openai_client, azure_credential, blob_manager
 

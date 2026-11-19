@@ -19,7 +19,7 @@ If necessary, edit this file to ensure it accurately reflects the current state 
       * app/backend/approaches/prompts/chat_answer.user.jinja2: Jinja2 template for the user message used by the Chat approach, including sources
     * app/backend/prepdocslib: Contains the document ingestion library used by both local and cloud ingestion
       * app/backend/prepdocslib/blobmanager.py: Manages uploads to Azure Blob Storage
-      * app/backend/prepdocslib/builtincloudingestionstrategy.py: Builds the Azure AI Search indexer and built-in skillset (Content Understanding, page citations, embeddings) for cloud ingestion without Azure Functions, used when USE_CLOUD_INGESTION_BUILTIN is true
+      * app/backend/prepdocslib/builtincloudingestionstrategy.py: Builds the Azure AI Search indexer and built-in skillset (Content Understanding, page citations, embeddings) for cloud ingestion without Azure Functions, used when USE_CLOUD_INGESTION_BUILTIN is true. When USE_CLOUD_INGESTION_SHAREPOINT is also true, it adds a SharePoint data source, skillset, and indexer
       * app/backend/prepdocslib/cloudingestionstrategy.py: Builds the Azure AI Search indexer and skillset for the cloud ingestion pipeline
       * app/backend/prepdocslib/csvparser.py: Parses CSV files
       * app/backend/prepdocslib/embeddings.py: Generates embeddings for text and images using Azure OpenAI
@@ -280,7 +280,7 @@ If any step fails, check container logs — `AuthError` from `app/backend/core/a
 
 ## Manual test plan for msgraph-sdk / microsoft-kiota-* changes
 
-`msgraph-sdk` (and its transitive `microsoft-kiota-*` deps) is only imported by `scripts/auth_init.py` and `scripts/auth_update.py`, which register Entra client + server apps for the login-enabled deploy. The unit tests in `tests/test_auth_init.py` mock `GraphServiceClient` end-to-end, so a bump can pass CI while breaking a real Graph call (usually due to renamed request-body classes or new required fields).
+`msgraph-sdk` (and its transitive `microsoft-kiota-*` deps) is only imported by `scripts/auth_init.py` and `scripts/auth_update.py`, which register Entra client + server apps for the login-enabled deploy, and `scripts/sharepoint_indexer_init.py`, which registers the SharePoint indexer app for cloud ingestion (re-run it with `USE_CLOUD_INGESTION_SHAREPOINT=true` to check its app-role consent path). The unit tests in `tests/test_auth_init.py` and `tests/test_sharepoint_indexer_init.py` mock `GraphServiceClient` end-to-end, so a bump can pass CI while breaking a real Graph call (usually due to renamed request-body classes or new required fields).
 
 Validate against a live tenant. If you don't already have a login-enabled deploy, follow steps 1–2 of the msal test plan above to create + provision an auth-enabled azd env (any env name works — the steps below use `$AZURE_ENV_NAME` from your current azd env).
 

@@ -95,12 +95,12 @@ hooks:
     preprovision:
       windows:
         shell: pwsh
-        run: ./scripts/auth_init.ps1
+        run: ./scripts/auth_init.ps1 && ./scripts/sharepoint_indexer_init.ps1
         interactive: true
         continueOnError: false
       posix:
         shell: sh
-        run: ./scripts/auth_init.sh
+        run: ./scripts/auth_init.sh && ./scripts/sharepoint_indexer_init.sh
         interactive: true
         continueOnError: false
     postprovision:

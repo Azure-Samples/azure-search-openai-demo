@@ -16,6 +16,7 @@ The chat app provides two ways to ingest data: manual ingestion and cloud ingest
 - [Cloud ingestion](#cloud-ingestion)
   - [Enabling cloud ingestion](#enabling-cloud-ingestion)
   - [Using built-in skills instead of Azure Functions](#using-built-in-skills-instead-of-azure-functions)
+  - [Indexing documents from SharePoint](#indexing-documents-from-sharepoint)
   - [Indexer architecture](#indexer-architecture)
   - [Indexing of additional documents](#indexing-of-additional-documents)
   - [Removal of documents](#removal-of-documents)
@@ -198,6 +199,64 @@ Keep these differences in mind:
 - **Content Understanding is billed per page.** It has no free per-indexer allowance. Figure descriptions also use chat model tokens. See [Azure Content Understanding pricing](https://azure.microsoft.com/pricing/details/content-understanding/).
 
 If you switch an existing deployment between the two pipelines, set a new index name with `azd env set AZURE_SEARCH_INDEX <new-index-name>` and run `azd up`. The built-in pipeline reuses the same indexer, skillset, and data source names, so switching replaces the previous pipeline, but the indexer's change tracking skips unchanged files. Reusing the old index would leave chunks, embeddings, and permissions from the previous pipeline in place.
+
+### Indexing documents from SharePoint
+
+With built-in skills, cloud ingestion can also index documents from a SharePoint Online site, using the [SharePoint indexer](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online) (preview). SharePoint documents go through the same Content Understanding, citation, and embedding skills. When SharePoint is enabled, it replaces Blob storage as the source: the files in `data` aren't uploaded, and only the SharePoint indexer runs. If you switch an existing deployment to SharePoint, set a new index name with `azd env set AZURE_SEARCH_INDEX <new-index-name>`, so the index doesn't keep the documents from Blob storage.
+
+This is different from `USE_SHAREPOINT_SOURCE`, which queries SharePoint at question time through [agentic retrieval](agentic_retrieval.md) with the signed-in user's token, and requires a Microsoft 365 Copilot license for each user. Indexing doesn't need that license. To keep SharePoint permissions on indexed documents, turn on [access control](#sharepoint-access-control).
+
+1. Enable cloud ingestion with built-in skills and SharePoint, and set the site to index:
+
+    ```shell
+    azd env set USE_CLOUD_INGESTION true
+    azd env set USE_CLOUD_INGESTION_BUILTIN true
+    azd env set USE_CLOUD_INGESTION_SHAREPOINT true
+    azd env set AZURE_SHAREPOINT_SITE_URL https://contoso.sharepoint.com/sites/mysite
+    ```
+
+2. (Optional) Index only part of the site. By default, the indexer reads the site's default document library. Set a [container query](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online#query) to index specific libraries or folders, for example:
+
+    ```shell
+    azd env set AZURE_SHAREPOINT_QUERY "includeLibrary=https://contoso.sharepoint.com/sites/mysite/Shared Documents;includeFolder=https://contoso.sharepoint.com/sites/mysite/Shared Documents/benefits"
+    ```
+
+3. Set the Microsoft Entra tenant of your SharePoint site:
+
+    ```shell
+    azd env set AZURE_SHAREPOINT_TENANT_ID <sharepoint-tenant-id>
+    ```
+
+4. Run `azd up`. Before provisioning, the `scripts/sharepoint_indexer_init.py` script creates a Microsoft Entra app registration for the indexer, with the Microsoft Graph application permissions `Files.Read.All` and `Sites.Read.All` and a client secret, and stores them as `AZURE_SHAREPOINT_INDEXER_APP_ID` and `AZURE_SHAREPOINT_INDEXER_APP_SECRET`. Application permissions require [admin consent](https://learn.microsoft.com/entra/identity/enterprise-apps/grant-admin-consent). The script grants it if you're a Privileged Role Administrator or Global Administrator. Otherwise it prints the command for an administrator to run. If `AZURE_SHAREPOINT_INDEXER_APP_ID` is already set, the script reuses that app registration and updates its name and permissions (like `auth_init.py` does for the login apps), so it must be an app you can modify. If `AZURE_SHAREPOINT_INDEXER_APP_SECRET` is also set, the script reuses that secret instead of creating a new one.
+
+5. After deployment, the setup script creates a data source, skillset, and indexer for SharePoint, runs the indexer, and logs any indexer warnings and errors.
+
+Citations for SharePoint documents link to the document in SharePoint, for example `https://contoso.sharepoint.com/sites/mysite/Shared%20Documents/benefits.pdf#page=3`, so clicking a citation opens it in SharePoint (at that page for PDFs), where SharePoint checks the user's access. The app shows the citation as the file name.
+
+Keep these limitations in mind:
+
+- **Preview.** The SharePoint indexer is in preview, and doesn't support [private endpoints](https://learn.microsoft.com/azure/search/search-howto-index-sharepoint-online#limitations-and-considerations) or tenants with Microsoft Entra Conditional Access.
+- **Reprocessing.** The indexer can reprocess unchanged documents, which calls Content Understanding and the embedding model again.
+
+#### SharePoint access control
+
+Without access control, every user of the app can search the indexed SharePoint documents. To index each document's SharePoint permissions and only return documents that the signed-in user can access, also set:
+
+```shell
+azd env set USE_CLOUD_INGESTION_ACLS true
+azd env set AZURE_USE_AUTHENTICATION true
+azd env set AZURE_ENFORCE_ACCESS_CONTROL true
+```
+
+`USE_CLOUD_INGESTION_ACLS` still provisions an ADLS Gen2 storage account, which isn't used when SharePoint is the source.
+
+The SharePoint indexer uses [SharePoint permission ingestion](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists) (preview) to compute each document's effective permissions, following inheritance from the site, library, and folders, and stores the user and group IDs in the index's `oids` and `groups` fields. At query time, Azure AI Search compares them with the signed-in user's ID and Microsoft Entra group memberships, including nested groups.
+
+Keep in mind:
+
+- **Users and Microsoft Entra groups.** Access granted to users directly, or to Microsoft Entra security groups and Microsoft 365 groups, is enforced. Access granted only through SharePoint site groups (such as the site's Owners, Members, and Visitors groups) is indexed with a `spg:` prefix, but matching it at query time requires a [federated credential](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists#configure-sharepoint-groups-support) that this app doesn't configure, so those users won't see the documents.
+- **Unsupported sharing.** "Anyone" and "People in your organization" sharing links, and guest users, aren't supported.
+- **Permission changes.** The indexer picks up permission changes on items and folders when it runs. Changes at the site or library level need a [reset](https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists#synchronize-permissions-between-indexed-and-source-content).
 
 ### Indexer architecture
 
