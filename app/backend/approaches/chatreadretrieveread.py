@@ -126,6 +126,8 @@ class ChatReadRetrieveReadApproach(Approach):
         if overrides.get("suggest_followup_questions"):
             content, followup_questions = self.extract_followup_questions(content)
             extra_info.followup_questions = followup_questions
+        # Repair citations the model may have simplified so they match the indexed sources
+        content = self.heal_citations(content, extra_info.data_points.citations)
         if self.include_token_usage and extra_info.thoughts and response.usage:
             extra_info.thoughts[-1].update_token_usage(response.usage)
         chat_app_response = {
@@ -166,6 +168,9 @@ class ChatReadRetrieveReadApproach(Approach):
                 content, followup_questions = self.extract_followup_questions(content)
                 extra_info.followup_questions = followup_questions
 
+            # Repair citations the model may have simplified so they match the indexed sources
+            content = self.heal_citations(content, extra_info.data_points.citations)
+
             if self.include_token_usage and extra_info.thoughts and result.usage:
                 extra_info.thoughts[-1].update_token_usage(result.usage)
 
@@ -178,23 +183,56 @@ class ChatReadRetrieveReadApproach(Approach):
         # Handle streaming Response events
         stream = cast(AsyncStream[ResponseStreamEvent], result)
 
+        # Buffer text inside a "[citation]" token so it can be repaired before being emitted.
+        # The model sometimes simplifies citations (e.g. dropping a "- " filename prefix),
+        # which would otherwise break the document link the frontend builds from the token.
+        valid_citations = extra_info.data_points.citations
+        citation_buffer: Optional[str] = None
+
+        def heal_streamed_text(text: str) -> str:
+            nonlocal citation_buffer
+            output = ""
+            for char in text:
+                if citation_buffer is not None:
+                    citation_buffer += char
+                    if char == "]":
+                        inner = citation_buffer[1:-1]
+                        output += f"[{self.heal_citation(inner, valid_citations)}]"
+                        citation_buffer = None
+                elif char == "[":
+                    citation_buffer = "["
+                else:
+                    output += char
+            return output
+
         async for event in stream:
             if isinstance(event, ResponseTextDeltaEvent):
                 delta_content: str = event.delta or ""
                 if overrides.get("suggest_followup_questions") and "<<" in delta_content:
                     followup_questions_started = True
-                    earlier_content = delta_content[: delta_content.index("<<")]
+                    earlier_content = heal_streamed_text(delta_content[: delta_content.index("<<")])
+                    # Flush any unterminated citation token before the followup section begins
+                    if citation_buffer:
+                        earlier_content += citation_buffer
+                        citation_buffer = None
                     if earlier_content:
                         yield {"type": "response.output_text.delta", "delta": earlier_content}
                     followup_content += delta_content[delta_content.index("<<") :]
                 elif followup_questions_started:
                     followup_content += delta_content
                 else:
-                    yield {"type": "response.output_text.delta", "delta": delta_content}
+                    healed_content = heal_streamed_text(delta_content)
+                    if healed_content:
+                        yield {"type": "response.output_text.delta", "delta": healed_content}
             elif isinstance(event, ResponseCompletedEvent):
                 if event.response.usage and extra_info.thoughts and self.include_token_usage:
                     extra_info.thoughts[-1].update_token_usage(event.response.usage)
                     yield {"type": "response.context", "context": extra_info, "session_state": session_state}
+
+        # Flush any unterminated citation token left in the buffer at the end of the stream
+        if citation_buffer:
+            yield {"type": "response.output_text.delta", "delta": citation_buffer}
+            citation_buffer = None
 
         if followup_content:
             _, followup_questions = self.extract_followup_questions(followup_content)
