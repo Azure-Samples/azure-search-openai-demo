@@ -824,6 +824,27 @@ def test_image_on_page_from_skill_payload_without_bytes():
     assert doc_filename == "test.pdf"
 
 
+def test_image_on_page_skill_payload_round_trip_keeps_embedding():
+    """Test that the image embedding survives to_skill_payload -> from_skill_payload."""
+    image = ImageOnPage(
+        bytes=b"fake_image",
+        bbox=(0, 0, 100, 100),
+        filename="test.png",
+        figure_id="fig_1",
+        page_num=0,
+        placeholder='<figure id="fig_1"></figure>',
+        url="https://example.com/test.png",
+        description="A chart",
+        embedding=[0.1, 0.2, 0.3],
+    )
+
+    restored, _ = ImageOnPage.from_skill_payload(image.to_skill_payload("test.pdf"))
+
+    assert restored.embedding == [0.1, 0.2, 0.3]
+    assert restored.description == "A chart"
+    assert restored.url == "https://example.com/test.png"
+
+
 def test_image_on_page_from_skill_payload_invalid_page_num():
     """Test ImageOnPage.from_skill_payload with invalid page_num."""
     payload = {

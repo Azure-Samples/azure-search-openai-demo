@@ -84,6 +84,7 @@ class ImageOnPage:
             title=data.get("title") or "",
             description=data.get("description"),
             url=data.get("url"),
+            embedding=data.get("embedding"),
         )
         return image, data.get("document_file_name", "")
 
